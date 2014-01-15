@@ -1,0 +1,86 @@
+<libraries xmlns="http://labkey.org/clientLibrary/xml/">
+    <library compileInProductionMode="true">
+
+        <!-- CDS Dependencies -->
+        <!--<script path="query/olap.js"/>-->
+        <script path="cds/cube.js"/>
+
+        <!-- Connector Application -->
+        <script path="cds/js/Connector/controller/Connector.js"/>
+        <script path="cds/js/Connector/controller/AbstractViewController.js"/>
+        <script path="cds/js/Connector/controller/Router.js"/>
+        <script path="cds/js/Connector/model/Dimension.js"/>
+        <script path="cds/js/Connector/model/FilterGroup.js"/>
+        <script path="cds/js/Connector/model/Filter.js"/>
+        <script path="cds/js/Connector/view/RawData.js"/>
+        <script path="cds/js/Connector/view/Citation.js"/>
+        <script path="cds/js/Connector/model/Citation.js"/>
+        <script path="cds/js/Connector/store/CDSStore.js"/>
+        <script path="cds/js/Connector/view/GroupPreview.js"/>
+        <script path="cds/js/Connector/view/Navigation.js"/>
+        <script path="cds/js/Connector/view/FilterSave.js"/>
+        <script path="cds/js/Connector/view/GroupSave.js"/>
+        <script path="cds/js/Connector/panel/Header.js"/>
+        <script path="cds/js/Connector/panel/Feedback.js"/>
+        <script path="cds/js/Connector/panel/FilterPanel.js"/>
+        <script path="cds/js/Connector/model/Explorer.js"/>
+        <script path="cds/js/Connector/panel/GroupList.js"/>
+        <script path="cds/js/Connector/window/SystemMessage.js"/>
+        <script path="cds/js/Connector/button/DropDownButton.js"/>
+        <script path="cds/js/Connector/model/Summary.js"/>
+        <script path="cds/js/Connector/types/Filter.js"/>
+        <script path="cds/js/Connector/model/Detail.js"/>
+        <script path="cds/js/Connector/store/Details.js"/>
+        <script path="cds/js/Connector/button/RoundedButton.js"/>
+        <script path="cds/js/Connector/controller/Citation.js"/>
+        <script path="cds/js/Connector/controller/RawData.js"/>
+        <script path="cds/js/Connector/controller/Navigation.js"/>
+        <script path="cds/js/Connector/view/SingleAxisExplorer.js"/>
+        <script path="cds/js/Connector/store/Explorer.js"/>
+        <script path="cds/js/Connector/controller/Explorer.js"/>
+        <script path="cds/js/Connector/model/State.js"/>
+        <script path="cds/js/Connector/controller/State.js"/>
+        <script path="cds/js/Connector/store/Summary.js"/>
+        <script path="cds/js/Connector/store/FilterStatus.js"/>
+        <script path="cds/js/Connector/view/Summary.js"/>
+        <script path="cds/js/Connector/controller/Summary.js"/>
+        <script path="cds/js/Connector/view/FilterStatus.js"/>
+        <script path="cds/js/Connector/controller/FilterStatus.js"/>
+        <script path="cds/js/Connector/view/search/Container.js"/>
+        <script path="cds/js/Connector/view/Viewport.js"/>
+        <script path="cds/js/Connector/view/Time.js"/>
+        <script path="cds/js/Connector/view/Compare.js"/>
+        <script path="cds/js/Connector/panel/AxisSelector.js"/>
+        <script path="cds/js/Connector/view/Scatter.js"/>
+        <script path="cds/js/Connector/controller/Chart.js"/>
+        <script path="cds/js/Connector/controller/Learn.js"/>
+        <script path="cds/js/Connector/view/Learn.js"/>
+
+        <!-- App specific Model/Views -->
+        <script path="cds/js/Connector/app/store/Assay.js"/>
+        <script path="cds/js/Connector/app/model/Assay.js"/>
+        <script path="cds/js/Connector/app/view/Assay.js"/>
+
+        <script path="cds/js/Connector/app/store/Labs.js"/>
+        <script path="cds/js/Connector/app/model/Labs.js"/>
+        <script path="cds/js/Connector/app/view/Labs.js"/>
+
+        <script path="cds/js/Connector/app/store/Site.js"/>
+        <script path="cds/js/Connector/app/model/Site.js"/>
+        <script path="cds/js/Connector/app/view/Site.js"/>
+
+        <script path="cds/js/Connector/app/store/Study.js"/>
+        <script path="cds/js/Connector/app/model/Study.js"/>
+        <script path="cds/js/Connector/app/view/Study.js"/>
+
+        <script path="cds/js/Connector/app/store/StudyProducts.js"/>
+        <script path="cds/js/Connector/app/model/StudyProducts.js"/>
+        <script path="cds/js/Connector/app/view/StudyProducts.js"/>
+
+        <!-- Connector Launch -->
+        <script path="cds/js/app.js"/>
+    </library>
+    <requiredModuleContext>
+        <module name="CDS"/>
+    </requiredModuleContext>
+</libraries>

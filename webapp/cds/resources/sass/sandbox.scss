@@ -1,0 +1,167 @@
+/* Site wide coloring scheme */
+$highlight-color: #14C9CC;         // Bright Blue
+$subhighlight-color: #A0DBDB;      // Light Blue
+$primary-color: #DCD8D8;           // Main Gray
+$secondary-color: #F4F4F4;         // Light Gray
+$light-color: #FFFFFF;             // White
+$dark-color: #333333;              // Dark Gray
+$legend-color: #BAB4B4;            // 10% darker than $secondary-color
+
+$accent-color-1: #9B0D96;          // Accent Purple
+$accent-color-2: #F5A73A;          // Accent Orange
+
+// these could be an actual scale using a function -- stick with Artefact colors for now
+$heat-scale-1: #666363;            // Heatmap Gray #1
+$heat-scale-2: #A09C9C;            // Heatmap Gray #2
+$heat-scale-3: #CCC8C8;            // Heatmap Gray #3
+$heat-scale-4: #E6E1E1;            // Heatmap Gray #4
+
+$title : 28pt;
+$headline : 18pt;
+$pageLeftPadding: 48px;
+$headerHeight: 53px;
+
+$info-font : Helvetica, sans-serif;
+$data-font : Georgia, serif;
+
+@mixin headline {
+  font-size: $headline;
+  text-transform: uppercase;
+};
+
+@mixin standout {
+  font-size: $title;
+  font-family: $data-font;
+};
+
+@mixin smallStandout {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 11pt;
+  font-family: $info-font;
+  span {
+    color: $dark-color;
+  }
+}
+
+@mixin pagePaddingLeft {
+  padding-left: $pageLeftPadding;
+}
+
+@mixin unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary
+{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+li.fadein {
+  -moz-animation-duration: 1s;
+  -webkit-animation-duration: 1s;
+  -moz-animation-name: fadein;
+  -webkit-animation-name: fadein;
+}
+
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.cds-body
+{
+  position: absolute;
+  left: 0;
+  top: $headerHeight;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.cds-header
+{
+  position: absolute;
+  height: $headerHeight;
+  width: 100%;
+  margin: 0;
+  top: 0;
+  left: 0;
+}
+
+.cds-header, .cds-header-collapse {
+  background-color: #000000;
+  color : $light-color;
+  background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from(#000000), to($dark-color)); // TODO: Change to compass
+  background: -moz-linear-gradient(left, #000000,  $dark-color);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
+}
+
+.cds-header .logo {
+  @include headline;
+  position: absolute;
+  height: 47px;
+  top: 0;
+  margin: 0;
+  left: 0;
+}
+
+.cds-header .logo h2 {
+  float: left;
+  padding: 20px 0px 0px 27px;
+  font-family: $info-font;
+  font-weight: bold;
+  font-size: 11pt;
+}
+
+.cds-header .logo h2:hover {
+  cursor: pointer;
+}
+
+.cds-header .logo span,
+.cds-header-collapse .logo span {
+  color : $highlight-color;
+}
+
+.cds-header .logo img {
+  padding-top: 11px;
+  width: 32px;
+}
+
+#main
+{
+  position: absolute;
+  background-color: $secondary-color;
+  height: 100%;
+  width: 100%;
+}
+
+#navigation
+{
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 290px;
+  height: 100%;
+}
+
+.cds-navigation
+{
+  background-color: $light-color;
+  height: 100%;
+}

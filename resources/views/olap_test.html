@@ -1,0 +1,13 @@
+<div id='cube'></div>
+<div id='cellset'></div>
+<script type="text/javascript">
+    LABKEY.requiresExt4Sandbox(true);
+</script>
+<script type="text/javascript">
+    LABKEY.requiresScript([
+        'cds/olap.js',
+        'cds/olap_test.js'
+    ], true, function() {
+        startOlapTest(); // defined in olap_test.js
+    });
+</script>
