@@ -76,6 +76,7 @@ import org.labkey.cds.model.Citable;
 import org.labkey.cds.model.CitableAuthor;
 import org.labkey.cds.model.Citation;
 import org.labkey.cds.view.template.CDSTemplate;
+import org.labkey.cds.view.template.ConnectorTemplate;
 import org.labkey.cds.view.template.SandboxTemplate;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -141,6 +142,27 @@ public class CDSController extends SpringActionController
             JspView view = new JspView("/org/labkey/cds/view/app.jsp");
 
             HttpView template = new CDSTemplate(getViewContext(), getContainer(), view, defaultPageConfig(), new NavTree[0]);
+            getPageConfig().setTemplate(PageConfig.Template.None);
+
+            return template;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return root;
+        }
+    }
+
+    @RequiresPermissionClass(ReadPermission.class)
+    public class ExtAppAction extends SimpleViewAction
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            JspView view = new JspView("/org/labkey/cds/view/extApp.jsp");
+
+            HttpView template = new ConnectorTemplate(getViewContext(), getContainer(), view, defaultPageConfig(), new NavTree[0]);
             getPageConfig().setTemplate(PageConfig.Template.None);
 
             return template;

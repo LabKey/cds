@@ -53564,7 +53564,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   if (LABKEY.ActionURL) 
   {
     var params = LABKEY.ActionURL.getParameters();
-    this.allowAnimations = !Ext.isDefined(params['transition']);
+    this.allowAnimations = false;
   }
   this.stateController = this.getController('State');
   this.actions = {hide: {'filtersave': {fn: this.hideFilterSaveView, scope: this}, 'groupsave': {fn: this.hideGroupSaveView, scope: this}, 'singleaxis': {fn: this.hideExplorerView, scope: this}, 'summary': {fn: this.hideSummaryView, scope: this}}, show: {'filtersave': {fn: this.showFilterSaveView, scope: this}, 'groupsave': {fn: this.showGroupSaveView, scope: this}}};
@@ -55469,7 +55469,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 ;
 (Ext.cmd.derive('Connector.view.DimensionSelector', Ext.Panel, {dimLabels: {'Antigen': 'Assay Antigens', 'Assay': 'Assays', 'Lab': 'Labs', 'Study': 'Studies', 'Vaccine': 'Regimen Components', 'Vaccine Component': 'Vaccine Immunogens', 'Participant': 'Subjects'}, titleComponentId: 'dimtitle', sortComponentId: 'dimsort', initComponent: function() {
   var btnId = Ext.id();
-  this.items = [{itemId: this.titleComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'dimlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: this.getDimensionLabel()}}, {xtype: 'dropdownbutton', margin: '8 0 0 5', menu: {ui: 'custom', itemId: 'dimensionmenu', margin: '0 0 10 0', showSeparator: false}}]}, {itemId: this.sortComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'sortlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimensionsort', html: 'Sorted by:  <span class="sorttype"></span>'}}, {id: btnId, xtype: 'dropdownbutton', ui: 'dropdown-alt', cls: 'sortDropdown', margin: '5 0 0 4', menu: {xtype: 'menu', autoShow: true, itemId: 'sortedmenu', margin: '0 0 0 0', showSeparator: false, ui: 'custom', btn: btnId}, listeners: {afterrender: function(b) {
+  this.items = [{itemId: this.titleComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'dimlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: this.getDimensionLabel()}}, {xtype: 'dropdownbutton', itemId: 'dimensionbtn', margin: '8 0 0 5', menu: {xtype: 'menu', ui: 'custom', itemId: 'dimensionmenu', margin: '0 0 10 0', showSeparator: false}}]}, {itemId: this.sortComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'sortlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimensionsort', html: 'Sorted by:  <span class="sorttype"></span>'}}, {id: btnId, xtype: 'dropdownbutton', ui: 'dropdown-alt', cls: 'sortDropdown', margin: '5 0 0 4', menu: {xtype: 'menu', autoShow: true, itemId: 'sortedmenu', margin: '0 0 0 0', showSeparator: false, ui: 'custom', btn: btnId}, listeners: {afterrender: function(b) {
   b.showMenu();
   b.hideMenu();
 }}}]}];
@@ -56088,7 +56088,22 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 
 (Ext.cmd.derive('Connector.controller.Explorer', Connector.controller.AbstractViewController, {stores: ['Explorer'], views: ['SingleAxisExplorer'], init: function() {
   this.control('singleaxisview', {itemmouseenter: this.onExplorerEnter, itemmouseleave: this.onExplorerLeave, itemclick: this.onExplorerSelect});
-  this.control('#dimensionmenu', {click: this.onDimensionSelect});
+  this.control('#dimensionbtn', {click: function(btn) {
+  btn.showMenu();
+}});
+  this.control('#dimensionmenu', {afterrender: function(m) {
+  var summaryControl = this.application.getController('Summary');
+  if (summaryControl) 
+  {
+    var s = summaryControl.getSummaryStore();
+    if (s.getCount() > 0) 
+    {
+      m.show();
+    } else {
+      s.load();
+    }
+  }
+}, click: this.onDimensionSelect});
   this.control('#sortedmenu', {afterrender: function(menu) {
   var updateDimension = function(m, dim) {
   m.removeAll();
@@ -56220,6 +56235,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   }
 }, this);
 }, onDimensionSelect: function(m, item) {
+  console.log('dimension selected');
   var state = this.getStateManager();
   state.onMDXReady(function(mdx) {
   var context = {dimension: item.rec.data.hierarchy.split('.')[0]};
@@ -56688,7 +56704,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 (Ext.cmd.derive('Connector.model.Dimension', Ext.data.Model, {fields: [{name: 'name'}, {name: 'uniqueName'}, {name: 'singularName'}, {name: 'pluralName'}, {name: 'hidden', type: 'boolean'}, {name: 'priority', type: 'int'}, {name: 'supportsDetails', type: 'boolean'}, {name: 'detailModel'}, {name: 'detailView'}]}, 0, 0, 0, 0, 0, 0, [Connector.model, 'Dimension'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.Learn', Ext.container.Container, {layout: {xtype: 'hbox', align: 'stretch'}, cls: 'learnview', bubbleEvents: ['selectdimension'], initComponent: function() {
+(Ext.cmd.derive('Connector.view.Learn', Ext.container.Container, {layout: {type: 'hbox', align: 'stretch'}, cls: 'learnview', bubbleEvents: ['selectdimension'], initComponent: function() {
   this.columnPresent = true;
   this.items = [this.getHeader(), this.getLearnColumnHeaderView()];
   this.callParent();
@@ -56787,7 +56803,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined);
 }}, 0, ["learn"], ["component", "container", "learn", "box"], {"component": true, "container": true, "learn": true, "box": true}, ["widget.learn"], 0, [Connector.view, 'Learn'], 0));
 ;
-(Ext.cmd.derive('Connector.view.LearnHeader', Ext.container.Container, {height: 140, layout: {xtype: 'hbox', align: 'stretch'}, cls: 'learnheader', defaults: {ui: 'custom', flex: 1}, initComponent: function() {
+(Ext.cmd.derive('Connector.view.LearnHeader', Ext.container.Container, {height: 140, layout: {type: 'hbox', align: 'stretch'}, cls: 'learnheader', defaults: {ui: 'custom', flex: 1}, initComponent: function() {
   this.items = [{xtype: 'box', autoEl: {tag: 'div', cls: 'titlepanel', html: '<span>Learn About...</span>'}}, {xtype: 'container', itemId: 'dataviewcontainer', cls: 'learn-header-container', items: [{xtype: 'learnheaderdataview', itemId: 'headerdataview', dimensions: this.dimensions}]}];
   this.callParent();
   this.addEvents('selectdimension');
@@ -56847,10 +56863,9 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   }
 }, _select: function(model) {
   this.getSelectionModel().select(model);
-  this.fireEvent('itemclick', this, model);
 }}, 0, ["learnheaderdataview"], ["learnheaderdataview", "component", "box", "dataview"], {"learnheaderdataview": true, "component": true, "box": true, "dataview": true}, ["widget.learnheaderdataview"], 0, [Connector.view, 'LearnHeaderDataView'], 0));
 ;
-(Ext.cmd.derive('Connector.view.LearnColumnHeader', Ext.container.Container, {height: 30, layout: {xtype: 'hbox', align: 'stretch'}, cls: 'learncolumnheader', defaults: {ui: 'custom', flex: 1}, initComponent: function() {
+(Ext.cmd.derive('Connector.view.LearnColumnHeader', Ext.container.Container, {height: 30, layout: {type: 'hbox', align: 'stretch'}, cls: 'learncolumnheader', defaults: {ui: 'custom', flex: 1}, initComponent: function() {
   this.items = [{xtype: 'box', cls: 'learn-column-header', autoEl: {tag: 'div'}}];
   this.callParent();
 }}, 0, 0, ["component", "container", "box"], {"component": true, "container": true, "box": true}, 0, 0, [Connector.view, 'LearnColumnHeader'], 0));
@@ -59166,7 +59181,6 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 1, 0, ["panel", "window", "component", "container", "box"], {"panel": true, "window": true, "component": true, "container": true, "box": true}, 0, 0, [Connector.window, 'SystemMessage'], 0));
 ;
 
-Ext4 = Ext;
 var launchApp = function(cube) {
   Ext.onReady(function() {
   Ext.application({name: 'Connector', extend: 'Connector.Application', autoCreateViewport: true, launch: function() {
