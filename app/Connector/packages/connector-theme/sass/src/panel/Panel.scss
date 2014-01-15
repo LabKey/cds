@@ -1,0 +1,25 @@
+@include extjs-panel-ui(
+  $ui-label: 'primary-view',
+  $ui-body-background-color: $secondary-color,
+  $ui-border-width: 0,
+  $ui-body-border-width: 0
+);
+
+@include extjs-panel-ui(
+  $ui-label: 'axispanel',
+  $ui-header-font-size: 11pt,
+  $ui-header-color: $legend-color
+);
+
+@include extjs-panel-ui(
+  $ui-label: 'east-view',
+  $ui-body-background-color: $primary-color,
+  $ui-border-width: 0,
+  $ui-body-border-width: 0
+);
+
+@include extjs-panel-ui(
+  $ui-label: 'navigation',
+  $ui-body-background-color: $select-color,
+  $ui-body-font-size: 13.5pt
+);
