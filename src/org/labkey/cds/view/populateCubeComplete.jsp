@@ -21,15 +21,98 @@
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.FactLoader" %>
 <%@ page import="java.util.List" %>
+<%@ page import="org.labkey.cds.PopulateBehavior" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
-    @SuppressWarnings({"unchecked"})
-    List<FactLoader> loaders = (List<FactLoader>) this.getModelBean();
+    PopulateBehavior behavior = (PopulateBehavior) this.getModelBean();
+    List<FactLoader> loaders = behavior.getFactLoaders();
+    boolean isUpdateGroups = behavior.isUpdateParticipantGroups();
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
     Container c = getContainer();
+    String contextPath = request.getContextPath();
 %>
+<% if (isUpdateGroups) { %>
+    <%--TODO: clean up these includes--%>
+    <script type="text/javascript" src="<%=contextPath%>/query/olap.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/controller/AbstractViewController.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/view/FilterSave.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/model/Detail.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/model/filter.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/panel/Feedback.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/view/GroupSave.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/view/FilterStatus.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/store/FilterStatus.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/controller/FilterStatus.js"></script>
+    <script>
+        var init = function() {
+            var cube = LABKEY.query.olap.CubeManager.getCube({
+                configId: 'CDS:/CDS',
+                schemaName: 'CDS',
+                name: 'ParticipantCube'
+            });
 
+            var getParticipantUrl = function(participantId)
+            {
+                var encodedPid = Ext4.util.Format.htmlEncode(participantId);
+                var url = LABKEY.ActionURL.buildURL("study", 'participant.view', null, {participantId: encodedPid});
+                return "<a href='" + url + "' target='_blank'>" + encodedPid + "</a>";
+            };
 
+            var htmlParticipantGroups = [];
+            htmlParticipantGroups.push("<h2>Participant Groups</h2>");
+
+            var onGroupUpdate = function(group)
+            {
+                htmlParticipantGroups.push("<h3>" + Ext4.util.Format.htmlEncode(group.label) + " ");
+                var participantIds = group.participantIds;
+                if (participantIds.length > 0)
+                {
+                    for (var j = 0; j < participantIds.length; j++)
+                    {
+                        htmlParticipantGroups.push((j == 0) ? "now has participants: " : ", ");
+                        htmlParticipantGroups.push(getParticipantUrl(participantIds[j]));
+                    }
+                    htmlParticipantGroups.push(".");
+                }
+                else
+                {
+                    htmlParticipantGroups.push("now has no participants.")
+                }
+
+                htmlParticipantGroups.push("</h3>");
+                document.getElementById('updateParticipants').innerHTML = htmlParticipantGroups.join("");
+            }
+
+            document.getElementById('updateParticipants').innerHTML = "<h3>Updating Participant Groups...</h3>";
+            Ext4.Ajax.request({
+                url : LABKEY.ActionURL.buildURL('participant-group', 'getParticipantGroupsWithLiveFilters'),
+                method: 'POST',
+                success: function(response)
+                {
+                    var obj = Ext4.decode(response.responseText);
+                    var groups = obj.participantGroups;
+                    if (groups.length == 0)
+                    {
+                        htmlParticipantGroups.push("<h3>No Participant Groups with Live Filters were defined.</h3>");
+                        document.getElementById('updateParticipants').innerHTML = htmlParticipantGroups.join("");
+                    }
+                    else
+                    {
+                        cube.onReady(function(mdx)
+                        {
+                            var filterStatus = Ext4.create('Connector.controller.FilterStatus');
+                            for (var i = 0; i < groups.length; i++)
+                                filterStatus.doGroupUpdate(mdx, groups[i], onGroupUpdate);
+                        }, this);
+                    }
+                }
+            });
+        };
+
+        Ext4.onReady(init);
+    </script>
+    <h2>Fact Table</h2>
+<% } %>
 <% for(FactLoader loader : loaders) { %>
     <h3><a href="<%=studyUrls.getDatasetURL(c, loader.getSourceDataset().getDataSetId())%>"><%=h(loader.getSourceDataset().getName())%></a></h3>
     <%
@@ -46,7 +129,9 @@
     <!--
     SQL Used to populate table
     <%=h(loader.getPopulateSql().toString(), true)%> -->
-<%} %>
-<br>
+<% } %>
+<% if (isUpdateGroups) {%>
+    <div id="updateParticipants"></div>
+<% } %>
+    <br>
 <%=textLink("CDS Management", CDSController.BeginAction.class)%><br>
-

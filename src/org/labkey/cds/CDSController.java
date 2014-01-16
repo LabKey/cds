@@ -259,7 +259,7 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
         {
-            return new JspView("/org/labkey/cds/view/populateCube.jsp", null, errors);
+            return new JspView("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, false), errors);
         }
 
         @Override
@@ -289,7 +289,7 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getSuccessView(Object o)
         {
-            return new JspView("/org/labkey/cds/view/populateCubeComplete.jsp", _factLoaders);
+            return new  JspView("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, false));
         }
 
         @Override
@@ -302,6 +302,29 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Populate Fact Table");
+            return root;
+        }
+    }
+
+    @RequiresPermissionClass(AdminPermission.class)
+    public class UpdateParticipantGroupsAction extends PopulateCubeAction
+    {
+        @Override
+        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
+        {
+            return new JspView("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, true), errors);
+        }
+
+        @Override
+        public ModelAndView getSuccessView(Object o)
+        {
+            return new JspView("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, true));
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Update Participant Groups");
             return root;
         }
     }

@@ -184,6 +184,18 @@ Ext.define('Connector.controller.FilterStatus', {
         this.getViewManager().showView('groupsave');
     },
 
+    filtersToJSON : function(filters, isLive) {
+        return Ext4.encode({
+            isLive : isLive,
+            filters : Ext4.Array.pluck(filters, 'data')
+        });
+    },
+
+    filtersFromJSON : function(jsonFilter) {
+        var filterWrapper = Ext4.decode(jsonFilter);
+        return filterWrapper.filters;
+    },
+
     doGroupSave : function() {
         var view = this.getViewManager().getViewInstance('groupsave');
 
@@ -201,6 +213,8 @@ Ext.define('Connector.controller.FilterStatus', {
                 state.moveSelectionToFilter();
             }
 
+            var isLiveFilter = values.livefilter ? true : false;
+
             state.onMDXReady(function(mdx){
 
                 mdx.queryParticipantList({
@@ -213,7 +227,7 @@ Ext.define('Connector.controller.FilterStatus', {
                             description : values.groupdescription,
                             shared : false,
                             type : 'list',
-                            filters : Ext.encode(Ext.Array.pluck(state.getFilters(true), 'data')) // only send the data
+                            filters : me.filtersToJSON(state.getFilters(true), isLiveFilter)
                         };
 
                         Ext.Ajax.request({
@@ -251,6 +265,45 @@ Ext.define('Connector.controller.FilterStatus', {
 
             }, this);
         }
+    },
+
+    /**
+     * Convert the persisted 'CDS' filter into the appropriate set of Olap filters.
+     * @param data - the persisted filter for this group as saved by doGroupSave
+     */
+    getOlapFilters : function(data) {
+        var olapFilters = [];
+        var cdsFilter = Ext4.create('Connector.model.Filter');
+        for (var i = 0; i < data.length; i++) {
+            cdsFilter.data = data[i];
+            olapFilters.push(cdsFilter.getOlapFilter());
+        }
+        return olapFilters;
+    },
+
+    /**
+     * This function is called outside of the App from an admin jsp.
+     * @param mdx - from external cube
+     * @param grpData - config data that has been received from the server.  This is analagous to the grpData used
+     * to save the group
+     */
+    doGroupUpdate : function(mdx, grpData, onGroupUpdated) {
+        mdx.queryParticipantList({
+            filter : this.getOlapFilters(this.filtersFromJSON(grpData.filters)),
+            group : grpData,
+            success : function (cs, mdx, config) {
+                var group = config.group;
+                var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
+                LABKEY.ParticipantGroup.updateParticipantGroup({
+                    rowId : group.rowId,
+                    participantIds : ids,
+                    success : function(group, response) {
+                        if (onGroupUpdated)
+                            onGroupUpdated.call(this, group);
+                    }
+                });
+            }
+        });
     },
 
     onGroupSaved : function(grp, filters) {

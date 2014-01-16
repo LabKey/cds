@@ -24,20 +24,24 @@
 <%@ page import="org.labkey.api.view.ViewContext" %>
 <%@ page import="org.labkey.cds.FactLoader" %>
 <%@ page import="java.util.List" %>
+<%@ page import="org.labkey.cds.PopulateBehavior" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     ViewContext context = getViewContext();
     Container c = getContainer();
     Study study = StudyService.get().getStudy(c);
-
+    PopulateBehavior behavior = (PopulateBehavior) this.getModelBean();
     List<? extends DataSet> datasets = study.getDataSets();
     List<String> selectedDatasets = context.getList("dataset");
     boolean selected = null != selectedDatasets && selectedDatasets.size() > 0;
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
 
 %>
-This action deletes all rows from the fact table and populates it with data from the datasets in the study.<br><br>
-
+This action deletes all rows from the fact table and populates it with data from the datasets in the study.
+<% if (behavior.isUpdateParticipantGroups()) { %>
+  After the fact table has been populated successfully, participant groups saved with a Live Filter will be updated to reflect their latest participant information.
+<% } %>
+<br><br>
 For each selected dataset below the cube in this folder will be populated using the columns illustrated. <br>
 Columns for mapping are found if they look up to the relevant columns in the cds schema or if their names match some predefined names.
 The columns used for mapping are shown below each table.<br>
