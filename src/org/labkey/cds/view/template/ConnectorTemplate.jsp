@@ -53,16 +53,15 @@
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(new LinkedHashSet<ClientDependency>())%>
 
+    <script type="text/javascript">
+        LABKEY.contextPath = <%=PageFlowUtil.jsString(contextPath)%>;
+        tutorialAvailable = <%=tutorialAvailable%>;
+        Ext = {}; Ext4 = Ext;
+    </script>
+
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ExtAdapter.js"></script>
-
-    <!-- This is due to the client API depending on Ext -->
-    <script type="text/javascript">
-        Ext4 = Ext; // sandbox compliant
-        LABKEY.contextPath = <%=PageFlowUtil.jsString(contextPath)%>;
-        tutorialAvailable = <%=tutorialAvailable%>;
-    </script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
@@ -175,7 +174,7 @@
 
     <% } else {  %>
     <!-- PRODUCTION -->
-    <script type="text/javascript" src="<%=text(productionPath)%>/app.js"></script>
+    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js"></script>
     <% } %>
 </head>
 <body>

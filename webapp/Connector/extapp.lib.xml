@@ -1,0 +1,117 @@
+<libraries xmlns="http://labkey.org/clientLibrary/xml/">
+    <library compileInProductionMode="true">
+
+        <!-- ExtJS Dependencies -->
+        <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-all.js"/>
+
+        <!-- Client API Dependencies -->
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/ExtAdapter.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/Ajax.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/Utils.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/ActionURL.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/Filter.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/Query.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/Visualization.js"/>
+
+        <!-- Study Dependencies -->
+        <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
+
+        <!-- Ext Widget Dependencies -->
+        <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
+        <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4GridPanel.js"/>
+
+        <!-- Internal Module Dependencies -->
+        <script path="../../../internal/explodedModule/web/vis/lib/patches.js"/>
+        <script path="../../../internal/explodedModule/web/vis/lib/d3-3.3.9.min.js"/>
+        <script path="../../../internal/explodedModule/web/vis/lib/raphael-min-2.1.0.js"/>
+
+        <!-- Query Module Dependencies -->
+        <script path="../../../query/explodedModule/web/query/olap.js"/>
+
+        <!-- CDS Module Dependencies -->
+        <script path="cds/cube.js"/>
+
+        <!-- Connector Application -->
+        <script path="Connector/src/button/DropDownButton.js"/>
+        <script path="Connector/src/button/RoundedButton.js"/>
+        <script path="Connector/src/types/Filter.js"/>
+        <script path="Connector/src/window/SystemMessage.js"/>
+        <script path="Connector/src/panel/AxisSelector.js"/>
+        <script path="Connector/src/panel/Feedback.js"/>
+        <script path="Connector/src/panel/FilterPanel.js"/>
+        <script path="Connector/src/panel/GroupList.js"/>
+
+        <!-- Application Models -->
+        <script path="Connector/src/model/Citation.js"/>
+        <script path="Connector/src/model/Detail.js"/>
+        <script path="Connector/src/model/Dimension.js"/>
+        <script path="Connector/src/model/Explorer.js"/>
+        <script path="Connector/src/model/Filter.js"/>
+        <script path="Connector/src/model/State.js"/>
+        <script path="Connector/src/model/Summary.js"/>
+
+        <!-- Application Stores -->
+        <script path="Connector/src/store/Explorer.js"/>
+        <script path="Connector/src/store/FilterStatus.js"/>
+        <script path="Connector/src/store/Summary.js"/>
+
+        <!-- Application Views -->
+        <script path="Connector/src/view/Citation.js"/>
+        <script path="Connector/src/view/Compare.js"/>
+        <script path="Connector/src/view/FilterSave.js"/>
+        <script path="Connector/src/view/FilterStatus.js"/>
+        <script path="Connector/src/view/GroupPreview.js"/>
+        <script path="Connector/src/view/GroupSave.js"/>
+        <script path="Connector/src/view/Header.js"/>
+        <script path="Connector/src/view/Learn.js"/>
+        <script path="Connector/src/view/Main.js"/>
+        <script path="Connector/src/view/Navigation.js"/>
+        <script path="Connector/src/view/RawData.js"/>
+        <script path="Connector/src/view/Scatter.js"/>
+        <script path="Connector/src/view/SingleAxisExplorer.js"/>
+        <script path="Connector/src/view/Summary.js"/>
+        <script path="Connector/src/view/Time.js"/>
+        <script path="Connector/src/view/Viewport.js"/>
+        <script path="Connector/src/view/search/Container.js"/>
+
+        <!-- Application Controllers -->
+        <script path="Connector/src/controller/AbstractViewController.js"/>
+        <script path="Connector/src/controller/Chart.js"/>
+        <script path="Connector/src/controller/Citation.js"/>
+        <script path="Connector/src/controller/Connector.js"/>
+        <script path="Connector/src/controller/Explorer.js"/>
+        <script path="Connector/src/controller/FilterStatus.js"/>
+        <script path="Connector/src/controller/Learn.js"/>
+        <script path="Connector/src/controller/Main.js"/>
+        <script path="Connector/src/controller/Navigation.js"/>
+        <script path="Connector/src/controller/RawData.js"/>
+        <script path="Connector/src/controller/Router.js"/>
+        <script path="Connector/src/controller/State.js"/>
+        <script path="Connector/src/controller/Summary.js"/>
+
+        <script path="Connector/src/app/model/Assay.js"/>
+        <script path="Connector/src/app/model/Labs.js"/>
+        <script path="Connector/src/app/model/Site.js"/>
+        <script path="Connector/src/app/model/Study.js"/>
+        <script path="Connector/src/app/model/StudyProducts.js"/>
+
+        <script path="Connector/src/app/store/Assay.js"/>
+        <script path="Connector/src/app/store/Labs.js"/>
+        <script path="Connector/src/app/store/Site.js"/>
+        <script path="Connector/src/app/store/Study.js"/>
+        <script path="Connector/src/app/store/StudyProducts.js"/>
+
+        <script path="Connector/src/app/view/Assay.js"/>
+        <script path="Connector/src/app/view/Labs.js"/>
+        <script path="Connector/src/app/view/Site.js"/>
+        <script path="Connector/src/app/view/Study.js"/>
+        <script path="Connector/src/app/view/StudyProducts.js"/>
+
+        <script path="Connector/src/Application.js"/>
+
+        <script path="Connector/src/app.js"/>
+    </library>
+    <requiredModuleContext>
+        <module name="CDS"/>
+    </requiredModuleContext>
+</libraries>
