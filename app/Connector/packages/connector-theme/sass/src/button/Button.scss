@@ -1,6 +1,6 @@
 /* Connector.button.RoundedButton */
 @include extjs-button-ui (
-  'rounded-small',
+  $ui: 'rounded-small',
 
   $border-radius : 15px,
 
@@ -32,7 +32,7 @@
 );
 
 @include extjs-button-ui (
-  'rounded-accent-small',
+  $ui: 'rounded-accent-small',
 
   $border-radius : 15px,
   $background-color: $interactive-color,
@@ -55,7 +55,7 @@
 
 /* Connector.button.DropDownButton */
 @include extjs-button-ui (
-  'dropdown-small',
+  $ui: 'dropdown-small',
 
   $border-radius : 16px,
 
@@ -80,12 +80,33 @@
   $font-family-pressed: $info-font,
   $font-family-disabled: $info-font,
 
-  $icon-size : 10px,
+  $icon-size : 18px,
   $glyph-color : #FFFFFF
 );
 
+.x-btn-dropdown-small {
+  height: 24px;
+  width: 24px;
+  padding: 3px 0px 0px 1px;
+}
+
+.x-btn-dropdown-small-icon button,
+.x-btn-dropdown-small-icon .x-btn-inner,
+.x-btn-dropdown-small-noicon button, .x-btn-dropdown-small-noicon .x-btn-inner {
+  height: 21px;
+  line-height: normal;
+}
+
+.x-btn-dropdown-small-hld {
+  background-color: $light-color;
+
+  span.x-btn-inner {
+    color: $interactive-color;
+  }
+}
+
 @include extjs-button-ui (
-  'dropdown-alt-small',
+  $ui: 'dropdown-alt-small',
 
   $border-radius : 16px,
 
@@ -110,12 +131,34 @@
   $font-family-pressed: $info-font,
   $font-family-disabled: $info-font,
 
-  $icon-size : 10px,
+  $icon-size : 12px,
   $glyph-color : #FFFFFF
 );
 
+.x-btn-dropdown-alt-small {
+  height: 17px;
+  width: 17px;
+  padding: 1px;
+}
+
+.x-btn-dropdown-alt-small-icon button,
+.x-btn-dropdown-alt-small-icon .x-btn-inner,
+.x-btn-dropdown-alt-small-noicon button,
+.x-btn-dropdown-alt-small-noicon .x-btn-inner {
+  height: 15px;
+  line-height: normal;
+}
+
+.x-btn-dropdown-alt-small-hld {
+  background-color: $light-color;
+
+  span.x-btn-inner {
+    color: $interactive-color;
+  }
+}
+
 @include extjs-button-ui (
-  'rounded-inverted-accent-small',
+  $ui: 'rounded-inverted-accent-small',
 
   $border-radius : 15px,
   $border-width : 1px,
@@ -145,7 +188,7 @@
 );
 
 @include extjs-button-ui (
-  'rounded-inverted-accent-icon-small',
+  $ui: 'rounded-inverted-accent-icon-small',
 
   $border-radius : 15px,
   $border-width : 2px,
@@ -171,3 +214,121 @@
   $icon-size : 15px,
   $glyph-color : #FFFFFF
 );
+
+.x-btn-rounded-small,
+.x-btn-rounded-accent-small {
+  padding: 3px 5px 4px 5px;
+  background-image: none;
+  border-width: 0px;
+}
+
+.x-btn-rounded-small.dark {
+  border: 2px solid $heat-scale-3;
+
+  &:hover, &:hover span {
+    background-color: $dark-color;
+    color: $light-color;
+  }
+}
+
+.x-btn-rounded-small-disabled.dark:hover,
+.x-btn-rounded-small-disabled.dark:hover span {
+  background-color: transparent;
+  color: $dark-color;
+}
+
+.x-btn-rounded-small.contrast {
+  border: 2px solid black;
+  background-color: black;
+
+  span {
+    color: white;
+  }
+
+  &:hover {
+    border: 2px solid $light-color;
+    background-color: $light-color;
+    span {
+      color: black;
+    }
+  }
+}
+
+.x-btn-rounded-small-disabled.contrast:hover,
+.x-btn-rounded-small-disabled.contrast:hover span {
+  background-color: transparent;
+  color: $dark-color;
+}
+
+
+.x-btn-rounded-accent-small-over {
+  opacity: 0.9;
+}
+
+.x-btn-rounded-small-noicon button,
+.x-btn-rounded-accent-small-noicon button {
+  height: 14px;
+}
+
+.x-btn-rounded-small-icon button,
+.x-btn-rounded-small-noicon .x-btn-inner,
+.x-btn-rounded-accent-small-icon button,
+.x-btn-rounded-accent-small-noicon .x-btn-inner {
+  height : 13px;
+  line-height: 11px;
+}
+
+.x-btn-arrow {
+  background-image: none;
+}
+
+.x-btn-rounded-inverted-accent-small {
+  padding: 0px 1px 2px 2px;
+  background-image: none;
+}
+
+.x-btn-rounded-inverted-accent-small-noicon button,
+.x-btn-rounded-inverted-accent-small-noicon .x-btn-inner {
+  height: 11px !important;
+}
+
+.x-btn-rounded-inverted-accent-small-over {
+  opacity: 0.9;
+}
+
+.x-btn-rounded-inverted-accent-icon-small {
+  padding: 0px 4px 1px 2px;
+  top: 0px;
+
+  .info {
+    top: -4px;
+    background-image: url(/labkey/cds/images/info.png);
+    background-size: 15px 15px;
+  }
+}
+
+.x-btn-rounded-inverted-accent-icon-small-over {
+
+  .info {
+    top: -4px;
+    background-image: url(/labkey/cds/images/infoover.png);
+    background-size: 15px 15px;
+  }
+}
+
+.x-btn-rounded-inverted-accent-icon-small-over {
+  opacity: 0.9;
+}
+
+.x-btn-rounded-inverted-accent-icon-small:hover {
+  background-color: $info-color;
+  border-color : $info-color;
+
+  .x-btn-inner {
+    color: $light-color;
+  }
+
+  .icon {
+    background-image: url(/labkey/cds/images/infoover.png);
+  }
+}

@@ -1,23 +1,20 @@
 Ext.define('Connector.panel.AxisSelector', {
 
-    extend : 'Ext.Panel',
+    extend: 'Ext.panel.Panel',
 
-    alias  : 'widget.axisselector',
+    alias: 'widget.axisselector',
 
-    ui : 'axispanel',
+    ui: 'custom',
 
-    constructor : function(config) {
+    showDisplay: true,
 
-        Ext.applyIf(config, {
-            showDisplay : true,
-            displayConfig : {},
-            measureConfig : {},
-            scalename : 'scale',
-            disableScale : false
-        });
+    displayConfig: {},
 
-        this.callParent([config]);
-    },
+    measureConfig: {},
+
+    scalename: 'scale',
+
+    disableScale: false,
 
     initComponent : function() {
 
@@ -27,12 +24,13 @@ Ext.define('Connector.panel.AxisSelector', {
             this.items.push(this.getSelectionDisplay());
         }
 
-        this.items.push(this.getMeasurePicker());
+        var picker = this.getMeasurePicker();
+        this.items.push(picker);
 
         this.callParent();
 
-        this.getMeasurePicker().sourcesGrid.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
-        this.getMeasurePicker().measuresGrid.getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
+        picker.sourcesGrid.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
+        picker.measuresGrid.getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
     },
 
     getSelectionDisplay : function() {

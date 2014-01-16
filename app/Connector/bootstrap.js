@@ -1088,7 +1088,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.GroupPreview": [
     "widget.grouppreview"
   ],
-  "Connector.view.GroupSave": [],
+  "Connector.view.GroupSave": [
+    "widget.groupsave"
+  ],
   "Connector.view.Header": [
     "widget.connectorheader"
   ],

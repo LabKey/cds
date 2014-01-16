@@ -31,7 +31,6 @@
     ActionURL url      = getActionURL();
     String contextPath = request.getContextPath();
     String serverHash   = PageFlowUtil.getServerSessionHash();
-//    String grayImagePath = "cds/lib/ext-4.0.7/resources/themes/images/gray";
     Boolean devMode = AppProps.getInstance().isDevMode();
     boolean tutorialAvailable = CDSManager.get().isTutorialAvailable(getContainer(), getUser());
 
@@ -39,6 +38,7 @@
     String sdkPath = contextPath + "/ext-4.2.1";
     String srcPath = appPath + "/src";
     String productionPath = contextPath + "/production/Connector";
+    String resourcePath = productionPath + "/resources";
 %>
 <!DOCTYPE html>
 <html>
@@ -48,7 +48,63 @@
     <title>HIV Vaccine Connector</title>
     <%= bean.getMetaTags(url) %>
     <link rel="icon" type="image/png" href="<%=text(contextPath)%>/cds/images/logo_02.png">
-    <link type="text/css" href="<%=text(productionPath)%>/resources/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
+    <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
+
+    <!-- Context Path required for CSS -->
+    <style type="text/css">
+
+        .x-mask {
+            background: #333;
+            opacity : 0.35;
+        }
+
+        .x-btn-rounded-inverted-accent-icon-small .info {
+            background-image: url(<%=text(contextPath)%>/cds/images/info.png);
+        }
+
+        .x-btn-rounded-inverted-accent-icon-small-over .info {
+            background-image: url(<%=text(contextPath)%>/cds/images/infoover.png);
+        }
+
+        <%--div.status-row:hover .x-btn-icon,--%>
+        <%--.x-btn-rounded-inverted-accent-icon-small:hover .x-btn-icon {--%>
+            <%--background-image: url(<%=text(contextPath)%>/cds/images/infoover.png);--%>
+        <%--}--%>
+
+        .x-form-trigger {
+            background-image : url(<%=text(contextPath)%>/cds/images/combotrigger.gif);
+        }
+
+        .x-column-header-trigger {
+            background-image: url(<%=text(contextPath)%>/cds/images/gridtrigger.gif) !important;
+        }
+
+        /* Paging Toolbar */
+        .x-tbar-page-next {
+            background-image: url('<%=text(resourcePath)%>/images/grid/page-next.gif') !important;
+        }
+
+        .x-tbar-page-last {
+            background-image: url('<%=text(resourcePath)%>/images/grid/page-last.gif') !important;
+        }
+
+        .x-tbar-page-prev {
+            background-image: url('<%=text(resourcePath)%>/images/grid/page-prev.gif') !important;
+        }
+
+        .x-tbar-page-first {
+            background-image: url('<%=text(resourcePath)%>/images/grid/page-first.gif') !important;
+        }
+
+        .x-tbar-loading {
+            background-image: url('<%=text(resourcePath)%>/images/grid/refresh.gif') !important;
+        }
+
+        div.showload {
+            background: url('<%=text(resourcePath)%>/images/grid/loading.gif') no-repeat 15px;
+            background-size: 20px;
+        }        
+    </style>
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(new LinkedHashSet<ClientDependency>())%>

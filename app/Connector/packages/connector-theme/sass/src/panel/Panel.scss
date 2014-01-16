@@ -5,11 +5,11 @@
   $ui-body-border-width: 0
 );
 
-@include extjs-panel-ui(
-  $ui-label: 'axispanel',
-  $ui-header-font-size: 11pt,
-  $ui-header-color: $legend-color
-);
+//@include extjs-panel-ui(
+//  $ui-label: 'axispanel',
+//  $ui-header-font-size: 11pt,
+//  $ui-header-color: $legend-color
+//);
 
 @include extjs-panel-ui(
   $ui-label: 'east-view',
@@ -18,8 +18,58 @@
   $ui-body-border-width: 0
 );
 
+.x-panel-body-east-view {
+  background: linear-gradient(90deg, #ebebeb, #f0f0f0) !important;
+}
+
 @include extjs-panel-ui(
   $ui-label: 'navigation',
+  $ui-body-border-width: 0px,
   $ui-body-background-color: $select-color,
   $ui-body-font-size: 13.5pt
 );
+
+div.xaxispicker div.x-panel-body,
+div.yaxispicker div.x-panel-body {
+  background-color: transparent !important;
+}
+
+div.sourcegrid .x-grid-row .x-grid-cell,
+div.measuresgrid .x-grid-row .x-grid-cell {
+  border-color: transparent !important;
+  font-family: $info-font;
+}
+
+div.sourcegrid .x-grid-view,
+div.measuresgrid .x-grid-view {
+  background-color: $light-color;
+}
+
+//.x-panel-header-axispanel.x-docked-top {
+//  border-bottom: 1px solid $legend-color !important;
+//}
+
+div.curselhdr {
+  font-size: 28pt;
+  font-weight: normal;
+  font-family: $data-font;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+div.curselauth {
+  font-size: 13pt;
+  font-weight: normal;
+  font-family: $data-font;
+  padding-bottom: 15px;
+}
+
+div.curseldesc {
+  font-size: 11pt;
+  font-weight: normal;
+  width: 60%;
+  font-family: $info-font;
+  color: $heat-scale-1;
+}

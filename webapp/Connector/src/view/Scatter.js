@@ -1,6 +1,6 @@
 Ext.define('Connector.view.Scatter', {
 
-    extend : 'Ext.Panel',
+    extend : 'Ext.panel.Panel',
 
     requires : ['Connector.panel.AxisSelector'],
 
@@ -643,30 +643,30 @@ Ext.define('Connector.view.Scatter', {
             var sCls = 'yaxissource';
 
             this.axisPanelY = Ext.create('Connector.panel.AxisSelector', {
-                flex      : 1,
-                ui        : 'axispanel',
-                title     : 'Y Axis',
-                bodyStyle : 'padding-left: 27px; padding-top: 15px;',
-                open      : function() {},
-                measureConfig : {
-                    allColumns : this.allColumns,
-                    filter     : LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}),
-                    showHidden : this.canShowHidden,
-                    cls        : 'yaxispicker',
-                    sourceCls  : sCls,
+                flex: 1,
+                title: 'Y Axis',
+                bodyStyle: 'padding-left: 27px; padding-top: 15px;',
+                open : function() {},
+                measureConfig: {
+                    allColumns: this.allColumns,
+                    filter: LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}),
+                    showHidden: this.canShowHidden,
+                    cls: 'yaxispicker',
+                    sourceCls: sCls,
                     multiSelect: false
                 },
-                displayConfig : {
+                displayConfig: {
                     defaultHeader : 'Choose Y Axis'
                 },
-                scalename : 'yscale'
+                scalename: 'yscale'
             });
 
             var w = parseInt(canvas.dom.attributes.width.value);
 
             this.ywin = Ext.create('Ext.window.Window', {
-                id        : 'plotymeasurewin',
-                cls       : 'axiswindow',
+                id: 'plotymeasurewin',
+                ui: 'axiswindow',
+                cls: 'axiswindow',
                 animateTarget : targetEl,
                 sourceCls : sCls,
                 axisPanel : this.axisPanelY,

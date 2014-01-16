@@ -54617,19 +54617,17 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 0, 0, 0, 0, 0, 0, [Connector.controller, 'Citation'], 0));
 ;
 
-(Ext.cmd.derive('Connector.panel.AxisSelector', Ext.Panel, {ui: 'axispanel', constructor: function(config) {
-  Ext.applyIf(config, {showDisplay: true, displayConfig: {}, measureConfig: {}, scalename: 'scale', disableScale: false});
-  this.callParent([config]);
-}, initComponent: function() {
+(Ext.cmd.derive('Connector.panel.AxisSelector', Ext.panel.Panel, {ui: 'custom', showDisplay: true, displayConfig: {}, measureConfig: {}, scalename: 'scale', disableScale: false, initComponent: function() {
   this.items = [];
   if (this.showDisplay) 
   {
     this.items.push(this.getSelectionDisplay());
   }
-  this.items.push(this.getMeasurePicker());
+  var picker = this.getMeasurePicker();
+  this.items.push(picker);
   this.callParent();
-  this.getMeasurePicker().sourcesGrid.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
-  this.getMeasurePicker().measuresGrid.getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
+  picker.sourcesGrid.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
+  picker.measuresGrid.getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
 }, getSelectionDisplay: function() {
   if (this.selectDisplay) 
   {
@@ -54713,10 +54711,10 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   {
     this.getSelectionDisplay().setSourceSelection(records[0]);
   }
-}}, 1, ["axisselector"], ["panel", "component", "container", "box", "axisselector"], {"panel": true, "component": true, "container": true, "box": true, "axisselector": true}, ["widget.axisselector"], 0, [Connector.panel, 'AxisSelector'], 0));
+}}, 0, ["axisselector"], ["panel", "component", "container", "box", "axisselector"], {"panel": true, "component": true, "container": true, "box": true, "axisselector": true}, ["widget.axisselector"], 0, [Connector.panel, 'AxisSelector'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.Scatter', Ext.Panel, {cls: 'scatterview', measures: [], subjectColumn: 'ParticipantId', subjectVisitColumn: 'ParticipantVisit', isActiveView: true, refreshRequired: true, initialized: false, showAxisButtons: true, plotHeightOffset: 48, rowlimit: 5000, constructor: function(config) {
+(Ext.cmd.derive('Connector.view.Scatter', Ext.panel.Panel, {cls: 'scatterview', measures: [], subjectColumn: 'ParticipantId', subjectVisitColumn: 'ParticipantVisit', isActiveView: true, refreshRequired: true, initialized: false, showAxisButtons: true, plotHeightOffset: 48, rowlimit: 5000, constructor: function(config) {
   Ext.applyIf(config, {allColumns: false, canShowHidden: false});
   this.callParent([config]);
 }, initComponent: function() {
@@ -55070,10 +55068,10 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   if (!this.ywin) 
   {
     var sCls = 'yaxissource';
-    this.axisPanelY = Ext.create('Connector.panel.AxisSelector', {flex: 1, ui: 'axispanel', title: 'Y Axis', bodyStyle: 'padding-left: 27px; padding-top: 15px;', open: function() {
+    this.axisPanelY = Ext.create('Connector.panel.AxisSelector', {flex: 1, title: 'Y Axis', bodyStyle: 'padding-left: 27px; padding-top: 15px;', open: function() {
 }, measureConfig: {allColumns: this.allColumns, filter: LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}), showHidden: this.canShowHidden, cls: 'yaxispicker', sourceCls: sCls, multiSelect: false}, displayConfig: {defaultHeader: 'Choose Y Axis'}, scalename: 'yscale'});
     var w = parseInt(canvas.dom.attributes.width.value);
-    this.ywin = Ext.create('Ext.window.Window', {id: 'plotymeasurewin', cls: 'axiswindow', animateTarget: targetEl, sourceCls: sCls, axisPanel: this.axisPanelY, modal: true, draggable: false, resizable: false, minHeight: 450, height: query.length > 1 ? parseInt(canvas.dom.attributes.height.value) : 450, width: query.length > 1 ? (w > 600 ? w : 600) : 600, x: box ? (box.x + 1) : null, y: box ? (box.y) : null, layout: {type: 'vbox', align: 'stretch'}, items: [this.axisPanelY], buttons: [{text: 'Set Y-Axis', ui: 'rounded-inverted-accent', handler: function() {
+    this.ywin = Ext.create('Ext.window.Window', {id: 'plotymeasurewin', ui: 'axiswindow', cls: 'axiswindow', animateTarget: targetEl, sourceCls: sCls, axisPanel: this.axisPanelY, modal: true, draggable: false, resizable: false, minHeight: 450, height: query.length > 1 ? parseInt(canvas.dom.attributes.height.value) : 450, width: query.length > 1 ? (w > 600 ? w : 600) : 600, x: box ? (box.x + 1) : null, y: box ? (box.y) : null, layout: {type: 'vbox', align: 'stretch'}, items: [this.axisPanelY], buttons: [{text: 'Set Y-Axis', ui: 'rounded-inverted-accent', handler: function() {
   if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) 
   {
     this.initialized = true;
@@ -55469,7 +55467,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 ;
 (Ext.cmd.derive('Connector.view.DimensionSelector', Ext.Panel, {dimLabels: {'Antigen': 'Assay Antigens', 'Assay': 'Assays', 'Lab': 'Labs', 'Study': 'Studies', 'Vaccine': 'Regimen Components', 'Vaccine Component': 'Vaccine Immunogens', 'Participant': 'Subjects'}, titleComponentId: 'dimtitle', sortComponentId: 'dimsort', initComponent: function() {
   var btnId = Ext.id();
-  this.items = [{itemId: this.titleComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'dimlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: this.getDimensionLabel()}}, {xtype: 'dropdownbutton', itemId: 'dimensionbtn', margin: '8 0 0 5', menu: {xtype: 'menu', ui: 'custom', itemId: 'dimensionmenu', margin: '0 0 10 0', showSeparator: false}}]}, {itemId: this.sortComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'sortlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimensionsort', html: 'Sorted by:  <span class="sorttype"></span>'}}, {id: btnId, xtype: 'dropdownbutton', ui: 'dropdown-alt', cls: 'sortDropdown', margin: '5 0 0 4', menu: {xtype: 'menu', autoShow: true, itemId: 'sortedmenu', margin: '0 0 0 0', showSeparator: false, ui: 'custom', btn: btnId}, listeners: {afterrender: function(b) {
+  this.items = [{itemId: this.titleComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'dimlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: this.getDimensionLabel()}}, {xtype: 'dropdownbutton', itemId: 'dimensionbtn', margin: '16 0 0 10', menu: {xtype: 'menu', ui: 'custom', itemId: 'dimensionmenu', margin: '0 0 10 0', showSeparator: false}}]}, {itemId: this.sortComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'sortlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimensionsort', html: 'Sorted by:  <span class="sorttype"></span>'}}, {id: btnId, xtype: 'dropdownbutton', ui: 'dropdown-alt', cls: 'sortDropdown', margin: '10 0 0 8', menu: {xtype: 'menu', autoShow: true, itemId: 'sortedmenu', margin: '0 0 0 0', showSeparator: false, ui: 'custom', btn: btnId}, listeners: {afterrender: function(b) {
   b.showMenu();
   b.hideMenu();
 }}}]}];
@@ -55648,7 +55646,9 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   }
 }, _renderHasAdd: function(sel, bar, width, cls, remove) {
   if (sel) 
-  sel.setWidth('' + width + '%');
+  {
+    sel.setWidth('' + width + 'px');
+  }
   if (remove) 
   {
     if (bar.hasCls(cls)) 
@@ -56547,7 +56547,59 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 (Ext.cmd.derive('Connector.view.FilterSave', Ext.Component, {html: 'Hello, World!!'}, 0, 0, ["component", "box"], {"component": true, "box": true}, 0, 0, [Connector.view, 'FilterSave'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.GroupSave', Ext.Component, {html: 'Hello, World!!'}, 0, 0, ["component", "box"], {"component": true, "box": true}, 0, 0, [Connector.view, 'GroupSave'], 0));
+(Ext.cmd.derive('Connector.view.GroupSave', Ext.Panel, {initComponent: function() {
+  this.items = [];
+  this.items.push({xtype: 'box', autoEl: {tag: 'div', cls: 'savetitle', html: 'Save group'}});
+  this.items.push(this.getForm());
+  this.callParent();
+  this.on('show', function() {
+  if (this.form) 
+  {
+    this.form.setDefaultFocus();
+    this.onSelectionChange();
+  }
+}, this);
+}, getForm: function() {
+  if (this.form) 
+  return this.form;
+  var saveBtn = Ext.create('Connector.button.RoundedButton', {itemId: 'dogroupsave', cls: 'dark', text: 'Save'});
+  this.selectText = 'Selection and Active Filters';
+  this.filterText = 'Only Active Filters';
+  this.form = Ext.create('Ext.form.Panel', {ui: 'custom', style: 'padding: 8px 0 0 27px', layout: {align: 'stretch'}, defaults: {labelAlign: 'top', validateOnBlur: false, validateOnChange: false, width: 225}, defaultType: 'textfield', items: [{itemId: 'groupselection', xtype: 'radiogroup', fieldLabel: 'Group selection', vertical: true, columns: 1, items: [{boxLabel: this.selectText, cls: 'withSelectionRadio', width: 200, name: 'groupselect', inputValue: true, checked: true}, {boxLabel: this.filterText, cls: 'filterOnlyRadio', width: 200, name: 'groupselect', inputValue: false}], name: 'groupselect', plain: true, allowBlank: false, cls: 'grouptop', flex: 1}, {xtype: 'checkbox', itemId: 'livefilter', name: 'livefilter', fieldLabel: 'Live filter', vertical: 'true'}, {itemId: 'groupnamefield', fieldLabel: 'Subject group name', name: 'groupname', plain: true, allowBlank: false, cls: 'grouptop', flex: 1}, {xtype: 'textareafield', name: 'groupdescription', hideLabel: true, emptyText: 'Group description', flex: 1}, {xtype: 'box', hidden: true, itemId: 'error', autoEl: {tag: 'div', cls: 'errormsg'}}], buttons: [saveBtn, {itemId: 'cancelgroupsave', xtype: 'roundedbutton', cls: 'dark', text: 'Cancel', handler: this.clearForm, scope: this}], buttonAlign: 'left', setDefaultFocus: function() {
+  this.getComponent(1).focus();
+}});
+  return this.form;
+}, clearForm: function() {
+  if (this.form) 
+  {
+    this.form.getForm().reset();
+    this.hideError();
+  }
+}, requestGroupSave: function(group, filters) {
+  this.fireEvent('groupsaved', group, filters);
+}, onSelectionChange: function() {
+  var me = this;
+  this.state.onMDXReady(function(mdx) {
+  mdx.queryMultiple([{onRows: [{hierarchy: 'Study', lnum: 0}], useNamedFilters: ['stateSelectionFilter', 'statefilter'], label: {singular: 'Subject', plural: 'Subjects'}}, {onRows: [{hierarchy: 'Study', lnum: 0}], useNamedFilters: ['statefilter'], label: {singular: 'Subject', plural: 'Subjects'}}], function(qrArray) {
+  var items = me.form.getForm().findField('groupselect').items.items;
+  items[0].boxLabelEl.update(me.selectText + ' (' + qrArray[0].cells[0][0].value + ')');
+  items[1].boxLabelEl.update(me.filterText + ' (' + qrArray[1].cells[0][0].value + ')');
+});
+}, this);
+}, showError: function(error) {
+  var errorEl = this.form.getComponent('error');
+  if (errorEl) 
+  {
+    errorEl.update(error);
+    errorEl.show();
+  }
+}, hideError: function() {
+  var errorEl = this.form.getComponent('error');
+  if (errorEl) 
+  {
+    errorEl.hide();
+  }
+}}, 0, ["groupsave"], ["panel", "component", "container", "groupsave", "box"], {"panel": true, "component": true, "container": true, "groupsave": true, "box": true}, ["widget.groupsave"], 0, [Connector.view, 'GroupSave'], 0));
 ;
 
 (Ext.cmd.derive('Connector.store.FilterStatus', Ext.data.Store, {model: 'Connector.model.Detail', constructor: function(config) {
@@ -56657,6 +56709,11 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   this.getViewManager().hideView('groupsave');
 }, onGroupSave: function() {
   this.getViewManager().showView('groupsave');
+}, filtersToJSON: function(filters, isLive) {
+  return Ext4.encode({isLive: isLive, filters: Ext4.Array.pluck(filters, 'data')});
+}, filtersFromJSON: function(jsonFilter) {
+  var filterWrapper = Ext4.decode(jsonFilter);
+  return filterWrapper.filters;
 }, doGroupSave: function() {
   var view = this.getViewManager().getViewInstance('groupsave');
   var form = view.getForm();
@@ -56668,9 +56725,10 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
     {
       state.moveSelectionToFilter();
     }
+    var isLiveFilter = values.livefilter ? true : false;
     state.onMDXReady(function(mdx) {
   mdx.queryParticipantList({useNamedFilters: ['statefilter'], success: function(cs) {
-  var grpData = {label: values.groupname, participantIds: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions), 'name'), description: values.groupdescription, shared: false, type: 'list', filters: Ext.encode(Ext.Array.pluck(state.getFilters(true), 'data'))};
+  var grpData = {label: values.groupname, participantIds: Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions), 'name'), description: values.groupdescription, shared: false, type: 'list', filters: me.filtersToJSON(state.getFilters(true), isLiveFilter)};
   Ext.Ajax.request({url: LABKEY.ActionURL.buildURL('participant-group', 'createParticipantCategory'), method: 'POST', success: function(response) {
   var group = Ext.decode(response.responseText);
   view.requestGroupSave(group, state.getFilters(true));
@@ -56690,6 +56748,24 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }});
 }, this);
   }
+}, getOlapFilters: function(data) {
+  var olapFilters = [];
+  var cdsFilter = Ext4.create('Connector.model.Filter');
+  for (var i = 0; i < data.length; i++) 
+    {
+      cdsFilter.data = data[i];
+      olapFilters.push(cdsFilter.getOlapFilter());
+    }
+  return olapFilters;
+}, doGroupUpdate: function(mdx, grpData, onGroupUpdated) {
+  mdx.queryParticipantList({filter: this.getOlapFilters(this.filtersFromJSON(grpData.filters)), group: grpData, success: function(cs, mdx, config) {
+  var group = config.group;
+  var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions), 'name');
+  LABKEY.ParticipantGroup.updateParticipantGroup({rowId: group.rowId, participantIds: ids, success: function(group, response) {
+  if (onGroupUpdated) 
+  onGroupUpdated.call(this, group);
+}});
+}});
 }, onGroupSaved: function(grp, filters) {
   var group = Ext.create('Connector.model.FilterGroup', {name: grp.category.label, filters: filters});
   this.getStateManager().setFilters([group]);
@@ -59172,7 +59248,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 0, ["grouplistview"], ["component", "grouplistview", "box", "dataview"], {"component": true, "grouplistview": true, "box": true, "dataview": true}, ["widget.grouplistview"], 0, [Connector.view, 'GroupListView'], 0));
 ;
 
-(Ext.cmd.derive('Connector.window.SystemMessage', Ext.window.Window, {cls: 'sysmsg', constructor: function(config) {
+(Ext.cmd.derive('Connector.window.SystemMessage', Ext.window.Window, {cls: 'sysmsg', minHeight: 0, minWidth: 0, constructor: function(config) {
   Ext.applyIf(config, {autoShow: true, ui: 'swmsg', closable: false, resizable: false, draggable: false});
   this.callParent([config]);
 }, initComponent: function() {

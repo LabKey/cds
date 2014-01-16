@@ -271,7 +271,7 @@ Ext.define('Connector.view.DimensionSelector', {
             },{
                 xtype: 'dropdownbutton',
                 itemId: 'dimensionbtn',
-                margin: '8 0 0 5',
+                margin: '16 0 0 10',
                 menu : {
                     xtype: 'menu',
                     ui: 'custom',
@@ -300,7 +300,7 @@ Ext.define('Connector.view.DimensionSelector', {
                 xtype : 'dropdownbutton',
                 ui    : 'dropdown-alt',
                 cls   : 'sortDropdown',
-                margin: '5 0 0 4',
+                margin: '10 0 0 8',
                 menu : {
                     xtype: 'menu',
                     autoShow : true,
@@ -632,8 +632,9 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     },
 
     _renderHasAdd : function(sel, bar, width, cls, remove) {
-        if (sel)
-            sel.setWidth('' + width + '%');
+        if (sel) {
+            sel.setWidth('' + width + 'px');
+        }
         if (remove) {
             if (bar.hasCls(cls)) {
                 bar.removeCls(cls);

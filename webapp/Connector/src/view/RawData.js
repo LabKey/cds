@@ -6,23 +6,27 @@
 
 Ext.define('Connector.view.RawData', {
 
-    extend : 'Ext.Panel',
+    extend: 'Ext.panel.Panel',
 
-    alias  : 'widget.datagrid',
+    alias: 'widget.datagrid',
 
-    cls : 'rawdataview',
+    cls: 'rawdataview',
 
-    grid : null,
+    grid: null,
 
-    gridMargin : 20,
+    gridMargin: 20,
 
-    flights : 0,
+    flights: 0,
+
+    allowExport: true,
+
+    axisSourceCls: 'rawdatasource',
 
     /**
      * columns not reachable via getData API but joined in via the grid API.
      * Each lookup col has array of Connector.model.ColumnInfo objects.
      */
-    foreignColumns : {},
+    foreignColumns: {},
 
     constructor : function(config) {
 
@@ -34,97 +38,114 @@ Ext.define('Connector.view.RawData', {
     initComponent : function() {
 
         this.initialized = false;
-        this.items = [];
 
-        this.exportButton = Ext.create('Connector.button.RoundedButton', {
-            text : 'Export',
-            cls    : 'dark',
-            margin : '5 0 0 5',
-            handler : function() {
-                if (this.store) {
-                    // First post the set of Participants -- can be too large for url
-                    var filters = {
-                        filters : LABKEY.Filter.appendFilterParams({}, this.store.filterArray)
-                    };
-                    Ext.Ajax.request({
-                        url : LABKEY.ActionURL.buildURL('cds', 'storeFilter'),
-                        method : 'POST',
-                        jsonData : filters,
-                        success : function(){
-                            var config = this.store.getExportConfig();
-
-                            // replace configured action with CDS version
-                            config.action = 'exportExcel';
-
-                            // Request File
-                            window.location = LABKEY.ActionURL.buildURL('cds', config.action, this.store.containerPath, config.params);
-                        },
-                        failure : function(){ /* No-op */ console.warn('Failed to store filter.'); },
-                        scope : this
-                    });
-                }
-            },
-            hidden : true,
-            scope : this
-        });
-
-        this.items.push([{
-            xtype : 'panel',
-            ui : 'custom',
-            layout : {
-                type : 'hbox'
-            },
-            items : [{
-                xtype : 'box',
-                autoEl: {
-                    tag : 'div',
-                    cls : 'dimgroup',
-                    html: 'Data Grid'
-                }
-            },{
-                xtype  : 'roundedbutton',
-                id     : 'choosecolumns',
-                text   : 'Choose Columns',
-                cls    : 'dark',
-                margin : '5 0 0 5',
-                handler : this.showMeasureSelection,
-                scope  : this
-            },
-                this.exportButton
-            ]
-        }]);
-
-        this.axisSourceCls = 'rawdatasource';
-        this.axisPanel = Ext.create('Connector.panel.AxisSelector', {
-            flex      : 1,
-            ui        : 'axispanel',
-            bodyStyle : 'padding-left: 27px; padding-top: 15px;',
-            measureConfig : {
-                allColumns : true,
-                sourceCls  : this.axisSourceCls,
-                filter     : LABKEY.Query.Visualization.Filter.create({
-                    schemaName : 'study',
-                    queryType  : LABKEY.Query.Visualization.Filter.QueryType.DATASETS
-                }),
-                showHidden : this.canShowHidden,
-                bubbleEvents : ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
-            },
-            displayConfig : {
-                defaultHeader : 'Add Measures'
-            },
-            disableScale : true
-        });
-
+        this.getAxisPanel();
         this.getMeasureWindow();
 
+        var subItems = [{
+            xtype: 'box',
+            autoEl: {
+                tag: 'div',
+                cls: 'dimgroup',
+                html: 'Data Grid'
+            }
+        },{
+            xtype: 'roundedbutton',
+            id: 'choosecolumns',
+            text: 'Choose Columns',
+            cls: 'dark',
+            margin: '5 0 0 5',
+            handler: this.showMeasureSelection,
+            scope: this
+        }];
+
+        if (this.allowExport) {
+            subItems.push(this.getExportButton());
+        }
+
+        this.items = [{
+            xtype: 'panel',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            items: subItems
+        }];
+
         this.resizeTask = new Ext.util.DelayedTask(this.handleResize, this);
+
         this.callParent();
 
-        this.on('resize', function() {
-            this.resizeTask.delay(250);
-        }, this);
+        //
+        // Additional Listeners
+        //
+        this.on('resize', function() { this.resizeTask.delay(250); }, this);
+        this.on('afterlayout', this.showMeasureSelection, this, {single: true});
+    },
 
-        this.on('afterrender', this.showMeasureSelection, this, {single: true});
+    getAxisPanel : function() {
+        if (!this.axisPanel) {
+            this.axisPanel = Ext.create('Connector.panel.AxisSelector', {
+                flex      : 1,
+                ui        : 'axispanel',
+                bodyStyle : 'padding-left: 27px; padding-top: 15px;',
+                measureConfig : {
+                    allColumns : true,
+                    sourceCls  : this.axisSourceCls,
+                    filter     : LABKEY.Query.Visualization.Filter.create({
+                        schemaName : 'study',
+                        queryType  : LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    }),
+                    showHidden : this.canShowHidden,
+                    bubbleEvents : ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
+                },
+                displayConfig : {
+                    defaultHeader : 'Add Measures'
+                },
+                disableScale : true
+            });
+        }
+
+        return this.axisPanel;
+    },
+
+    getExportButton : function() {
+
+        if (!this.exportButton) {
+            this.exportButton = Ext.create('Connector.button.RoundedButton', {
+                text : 'Export',
+                cls    : 'dark',
+                margin : '5 0 0 5',
+                handler : function() {
+                    if (this.store) {
+                        // First post the set of Participants -- can be too large for url
+                        var filters = {
+                            filters : LABKEY.Filter.appendFilterParams({}, this.store.filterArray)
+                        };
+                        Ext.Ajax.request({
+                            url : LABKEY.ActionURL.buildURL('cds', 'storeFilter'),
+                            method : 'POST',
+                            jsonData : filters,
+                            success : function(){
+                                var config = this.store.getExportConfig();
+
+                                // replace configured action with CDS version
+                                config.action = 'exportExcel';
+
+                                // Request File
+                                window.location = LABKEY.ActionURL.buildURL('cds', config.action, this.store.containerPath, config.params);
+                            },
+                            failure : function(){ /* No-op */ console.warn('Failed to store filter.'); },
+                            scope : this
+                        });
+                    }
+                },
+                hidden : true,
+                scope : this
+            });
+        }
+
+        return this.exportButton;
     },
 
     handleResize : function () {
@@ -332,11 +353,10 @@ Ext.define('Connector.view.RawData', {
             }]
         });
 
-        this.add(this.grid);
-        this.add(this.bottomBar);
+        this.add(this.grid, this.bottomBar);
 
-        if (this.exportButton) {
-            this.exportButton.show();
+        if (this.allowExport) {
+            this.getExportButton().show();
         }
     },
 
