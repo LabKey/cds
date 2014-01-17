@@ -1,0 +1,15 @@
+.x-boundlist {
+  border-color: $heat-scale-3;
+}
+
+.x-boundlist-selected {
+  background: $select-color;
+  border-color: $select-color;
+  color: $light-color;
+}
+
+.x-boundlist-item-over {
+  background: $select-color;
+  border-color: $select-color;
+  color: $light-color;
+}

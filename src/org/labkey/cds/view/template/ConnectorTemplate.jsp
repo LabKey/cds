@@ -66,14 +66,9 @@
             background-image: url(<%=text(contextPath)%>/cds/images/infoover.png);
         }
 
-        <%--div.status-row:hover .x-btn-icon,--%>
-        <%--.x-btn-rounded-inverted-accent-icon-small:hover .x-btn-icon {--%>
-            <%--background-image: url(<%=text(contextPath)%>/cds/images/infoover.png);--%>
+        <%--.x-form-trigger {--%>
+            <%--background-image : url(<%=text(contextPath)%>/cds/images/combotrigger.gif);--%>
         <%--}--%>
-
-        .x-form-trigger {
-            background-image : url(<%=text(contextPath)%>/cds/images/combotrigger.gif);
-        }
 
         .x-column-header-trigger {
             background-image: url(<%=text(contextPath)%>/cds/images/gridtrigger.gif) !important;
@@ -103,7 +98,13 @@
         div.showload {
             background: url('<%=text(resourcePath)%>/images/grid/loading.gif') no-repeat 15px;
             background-size: 20px;
-        }        
+        }
+
+        /* Ext.Grid */
+        .x-column-header-trigger {
+            background-image: url(<%=text(contextPath)%>/cds/images/gridtrigger.gif);
+            background-color: transparent;
+        }
     </style>
 
     <!-- Include base labkey.js -->
@@ -117,15 +118,27 @@
 
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
+    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ExtAdapter.js"></script>
 
+    <!-- Client API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Query.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
+
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Reader.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Proxy.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Store.js"></script>
+
+    <!-- Study Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
+
+    <!-- Ext Widget Dependencies -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4Helper.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
 
@@ -148,24 +161,27 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/cds/cube.js"></script>
 
-    <!-- Application source -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/button/DropDownButton.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
 
     <!-- Application Models -->
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Citation.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/ColumnInfo.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Detail.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Dimension.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
+
+    <!-- Application source -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/button/DropDownButton.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
 
     <!-- Application Stores -->
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>

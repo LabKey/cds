@@ -39,7 +39,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.State": "../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../webapp/Connector/src/controller/Summary.js",
   "Connector.model.Citation": "../../webapp/Connector/src/model/Citation.js",
-  "Connector.model.ColumnInfo": "../../webapp/Connector/src/view/RawData.js",
+  "Connector.model.ColumnInfo": "../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../webapp/Connector/src/model/Detail.js",
   "Connector.model.Dimension": "../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.Explorer": "../../webapp/Connector/src/model/Explorer.js",
@@ -84,7 +84,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Time": "../../webapp/Connector/src/view/Time.js",
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.search.Container": "../../webapp/Connector/src/view/search/Container.js",
-  "Connector.window.Filter": "../../webapp/Connector/src/view/RawData.js",
+  "Connector.window.Filter": "../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../webapp/Connector/src/window/SystemMessage.js",
   "Ext": "ext/src",
   "Ext.Msg": "ext/src/window/MessageBox.js",
@@ -1078,7 +1078,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.dimensionview"
   ],
   "Connector.view.DimensionSelector": [],
-  "Connector.view.FilterSave": [],
+  "Connector.view.FilterSave": [
+    "widget.filtersave"
+  ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"
   ],

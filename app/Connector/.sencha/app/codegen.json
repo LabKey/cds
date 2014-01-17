@@ -697,6 +697,18 @@
         "name": "RawData",
         "viewFileName": "RawData"
       }
+    },
+    "app/model/ColumnInfo.js": {
+      "source": "{modelFileName}.js.tpl.merge",
+      "version": "31d5356142a167c72422f7902f19df3c583f3249",
+      "parameters": {
+        "appName": "Connector",
+        "modelNamespace": "Connector.model",
+        "baseClass": "Ext.data.Model",
+        "modelFileName": "ColumnInfo",
+        "name": "ColumnInfo",
+        "fields": "shortCaption:string:null"
+      }
     }
   }
 }

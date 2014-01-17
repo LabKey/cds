@@ -1171,30 +1171,10 @@ div.feedback {
   background-color: $heat-scale-4;
 }
 
-/* Ext Grids*/
-.x-panel .x-grid-body {
-  border-color: $heat-scale-4;
-}
-
-.x-grid-header-ct, .x-scroller-vertical, .x-scroller-horizontal {
-  border-color: $heat-scale-4;
-  background-color: $light-color;
-}
-
-.x-grid-header-hidden .x-grid-body {
-  border-top-color: $heat-scale-4 !important;
-}
-
-.x-grid .x-docked.x-toolbar-custom {
-  background-color: $light-color;
-  border: 1px solid transparent;
-}
-
-/* Ext Grid Columns */
-.x-column-header {
-  font-family : $info-font;
+/* Ext.Grid*/
+.x-column-header-text {
+  font-family: $info-font;
   font-size: 11pt;
-  height: 50px;
 }
 
 .x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC {
@@ -1205,23 +1185,12 @@ div.feedback {
 
 .x-column-header-trigger {
   display: block;
-  background-image: url(/labkey/cds/images/gridtrigger.gif);
-  background-color: transparent;
   width: 17px;
   border-left: 1px solid $primary-color;
 }
 
 .x-column-header-trigger:hover {
   background-color: #F4F4F4 !important;
-}
-
-.x-column-header-align-right .x-column-header-text {
-  padding-right: 8px;
-}
-
-.x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC {
-  background-image: none !important;
-  background-color: transparent !important;
 }
 
 div.filterheader {
@@ -1231,11 +1200,6 @@ div.filterheader {
 #gridfilterwindow .x-form-item {
   background-color: transparent;
   border-bottom: none;
-}
-
-.x-mask {
-  background: #333;
-  opacity : 0.35;
 }
 
 /* Measure Picker */
@@ -1258,30 +1222,6 @@ div.measure-label {
   background-image: none !important;
 }
 
-.x-form-focus, textarea.x-form-focus {
-  border-color: $heat-scale-1;
-}
-
-.x-form-trigger {
-  background-image : url(/labkey/cds/images/combotrigger.gif);
-}
-
-.x-boundlist {
-  border-color: $heat-scale-3;
-}
-
-.x-boundlist-selected {
-  background: $select-color;
-  border-color: $select-color;
-  color: $light-color;
-}
-
-.x-boundlist-item-over {
-  background: $select-color;
-  border-color: $select-color;
-  color: $light-color;
-}
-
 /* Ext Mask */
 .x-mask-msg div {
   border: 1px solid transparent;
@@ -1296,10 +1236,7 @@ div.measure-label {
   width:16px;
   height:16px;
   display:block;
-  border-radius:8px;
-  -moz-border-radius:8px;
-  -webkit-border-radius:8px;
-  -khtml-border-radius:8px;
+  @include border-radius(8px);
   background-color: $selectongrey-color;
   float: left;
   margin-top: 2px;

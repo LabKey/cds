@@ -3,6 +3,7 @@
 
         <!-- ExtJS Dependencies -->
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-all.js"/>
+        <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
 
         <!-- Client API Dependencies -->
         <script path="../../../../staging/labkeyWebapp/clientapi/core/ExtAdapter.js"/>
@@ -13,10 +14,16 @@
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Query.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Visualization.js"/>
 
+        <script path="../../../../staging/labkeyWebapp/clientapi/ext4/Util.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Reader.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Proxy.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Store.js"/>
+
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
 
         <!-- Ext Widget Dependencies -->
+        <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4Helper.js"/>
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4GridPanel.js"/>
 
@@ -32,23 +39,27 @@
         <script path="cds/cube.js"/>
 
         <!-- Connector Application -->
-        <script path="Connector/src/button/DropDownButton.js"/>
-        <script path="Connector/src/button/RoundedButton.js"/>
         <script path="Connector/src/types/Filter.js"/>
-        <script path="Connector/src/window/SystemMessage.js"/>
-        <script path="Connector/src/panel/AxisSelector.js"/>
-        <script path="Connector/src/panel/Feedback.js"/>
-        <script path="Connector/src/panel/FilterPanel.js"/>
-        <script path="Connector/src/panel/GroupList.js"/>
 
         <!-- Application Models -->
         <script path="Connector/src/model/Citation.js"/>
+        <script path="Connector/src/model/ColumnInfo.js"/>
         <script path="Connector/src/model/Detail.js"/>
         <script path="Connector/src/model/Dimension.js"/>
         <script path="Connector/src/model/Explorer.js"/>
         <script path="Connector/src/model/Filter.js"/>
         <script path="Connector/src/model/State.js"/>
         <script path="Connector/src/model/Summary.js"/>
+
+        <!-- Application Widgets -->
+        <script path="Connector/src/button/DropDownButton.js"/>
+        <script path="Connector/src/button/RoundedButton.js"/>
+        <script path="Connector/src/window/Filter.js"/>
+        <script path="Connector/src/window/SystemMessage.js"/>
+        <script path="Connector/src/panel/AxisSelector.js"/>
+        <script path="Connector/src/panel/Feedback.js"/>
+        <script path="Connector/src/panel/FilterPanel.js"/>
+        <script path="Connector/src/panel/GroupList.js"/>
 
         <!-- Application Stores -->
         <script path="Connector/src/store/Explorer.js"/>

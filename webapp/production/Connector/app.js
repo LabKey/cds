@@ -43312,6 +43312,431 @@ Ext.define('Ext.layout.container.border.Region', {override: 'Ext.Component', ini
 }}, 0, ["radiogroup"], ["radiogroup", "checkboxgroup", "component", "container", "fieldcontainer", "box"], {"radiogroup": true, "checkboxgroup": true, "component": true, "container": true, "fieldcontainer": true, "box": true}, ["widget.radiogroup"], 0, [Ext.form, 'RadioGroup'], 0));
 ;
 
+(Ext.cmd.derive('Ext.layout.component.field.Trigger', Ext.layout.component.field.Field, {type: 'triggerfield', borderWidths: {}, beginLayout: function(ownerContext) {
+  var me = this, owner = me.owner, flags;
+  ownerContext.triggerWrap = ownerContext.getEl('triggerWrap');
+  me.callParent(arguments);
+  flags = owner.getTriggerStateFlags();
+  if (flags != owner.lastTriggerStateFlags) 
+  {
+    owner.lastTriggerStateFlags = flags;
+    me.updateEditState();
+  }
+}, beginLayoutCycle: function(ownerContext) {
+  this.callParent(arguments);
+  if (ownerContext.widthModel.shrinkWrap && !this.owner.inputWidth) 
+  {
+    ownerContext.inputContext.el.setStyle('width', '');
+  }
+}, beginLayoutFixed: function(ownerContext, width, suffix) {
+  var me = this, owner = ownerContext.target, ieInputWidthAdjustment = me.ieInputWidthAdjustment || 0, inputWidth = '100%', triggerWrap = owner.triggerWrap;
+  me.callParent(arguments);
+  owner.inputCell.setStyle('width', '100%');
+  if (ieInputWidthAdjustment) 
+  {
+    me.adjustIEInputPadding(ownerContext);
+    if (suffix === 'px') 
+    {
+      if (owner.inputWidth) 
+      {
+        inputWidth = owner.inputWidth - me.getExtraWidth(ownerContext);
+      } else {
+        inputWidth = width - ieInputWidthAdjustment - me.getExtraWidth(ownerContext);
+      }
+      inputWidth += 'px';
+    }
+  }
+  owner.inputEl.setStyle('width', inputWidth);
+  inputWidth = owner.inputWidth;
+  if (inputWidth) 
+  {
+    triggerWrap.setStyle('width', inputWidth + (ieInputWidthAdjustment) + 'px');
+  } else {
+    triggerWrap.setStyle('width', width + suffix);
+  }
+  triggerWrap.setStyle('table-layout', 'fixed');
+}, adjustIEInputPadding: function(ownerContext) {
+  this.owner.inputCell.setStyle('padding-right', this.ieInputWidthAdjustment + 'px');
+}, getExtraWidth: function(ownerContext) {
+  var me = this, owner = me.owner, borderWidths = me.borderWidths, ui = owner.ui + owner.triggerEl.getCount();
+  if (!(ui in borderWidths)) 
+  {
+    borderWidths[ui] = ownerContext.triggerWrap.getBorderInfo().width;
+  }
+  return borderWidths[ui] + owner.getTriggerWidth();
+}, beginLayoutShrinkWrap: function(ownerContext) {
+  var owner = ownerContext.target, emptyString = '', inputWidth = owner.inputWidth, triggerWrap = owner.triggerWrap;
+  this.callParent(arguments);
+  if (inputWidth) 
+  {
+    triggerWrap.setStyle('width', inputWidth + 'px');
+    inputWidth = (inputWidth - this.getExtraWidth(ownerContext)) + 'px';
+    owner.inputEl.setStyle('width', inputWidth);
+    owner.inputCell.setStyle('width', inputWidth);
+  } else {
+    owner.inputCell.setStyle('width', emptyString);
+    owner.inputEl.setStyle('width', emptyString);
+    triggerWrap.setStyle('width', emptyString);
+    triggerWrap.setStyle('table-layout', 'auto');
+  }
+}, getTextWidth: function() {
+  var me = this, owner = me.owner, inputEl = owner.inputEl, value;
+  value = (inputEl.dom.value || (owner.hasFocus ? '' : owner.emptyText) || '') + owner.growAppend;
+  return inputEl.getTextWidth(value);
+}, publishOwnerWidth: function(ownerContext, width) {
+  var owner = this.owner;
+  this.callParent(arguments);
+  if (!owner.grow && !owner.inputWidth) 
+  {
+    width -= this.getExtraWidth(ownerContext);
+    if (owner.labelAlign != 'top') 
+    {
+      width -= owner.getLabelWidth();
+    }
+    ownerContext.inputContext.setWidth(width);
+  }
+}, publishInnerHeight: function(ownerContext, height) {
+  ownerContext.inputContext.setHeight(height - this.measureLabelErrorHeight(ownerContext));
+}, measureContentWidth: function(ownerContext) {
+  var me = this, owner = me.owner, width = me.callParent(arguments), inputContext = ownerContext.inputContext, calcWidth, max, min;
+  if (owner.grow && !ownerContext.state.growHandled) 
+  {
+    calcWidth = me.getTextWidth() + ownerContext.inputContext.getFrameInfo().width;
+    max = owner.growMax;
+    min = Math.min(max, width);
+    max = Math.max(owner.growMin, max, min);
+    calcWidth = Ext.Number.constrain(calcWidth, owner.growMin, max);
+    inputContext.setWidth(calcWidth);
+    ownerContext.state.growHandled = true;
+    inputContext.domBlock(me, 'width');
+    width = NaN;
+  } else if (!owner.inputWidth) 
+  {
+    width -= me.getExtraWidth(ownerContext);
+  }
+  return width;
+}, updateEditState: function() {
+  var me = this, owner = me.owner, inputEl = owner.inputEl, noeditCls = Ext.baseCSSPrefix + 'trigger-noedit', displayed, readOnly;
+  if (me.owner.readOnly) 
+  {
+    inputEl.addCls(noeditCls);
+    readOnly = true;
+    displayed = false;
+  } else {
+    if (me.owner.editable) 
+    {
+      inputEl.removeCls(noeditCls);
+      readOnly = false;
+    } else {
+      inputEl.addCls(noeditCls);
+      readOnly = true;
+    }
+    displayed = !me.owner.hideTrigger;
+  }
+  owner.triggerCell.setDisplayed(displayed);
+  inputEl.dom.readOnly = readOnly;
+}}, 0, 0, 0, 0, ["layout.triggerfield"], 0, [Ext.layout.component.field, 'Trigger'], 0));
+;
+
+(Ext.cmd.derive('Ext.form.field.Trigger', Ext.form.field.Text, {alternateClassName: ['Ext.form.TriggerField', 'Ext.form.TwinTriggerField', 'Ext.form.Trigger'], childEls: [{name: 'triggerCell', select: '.' + Ext.baseCSSPrefix + 'trigger-cell'}, {name: 'triggerEl', select: '.' + Ext.baseCSSPrefix + 'form-trigger'}, 'triggerWrap', 'inputCell'], triggerBaseCls: Ext.baseCSSPrefix + 'form-trigger', triggerWrapCls: Ext.baseCSSPrefix + 'form-trigger-wrap', triggerNoEditCls: Ext.baseCSSPrefix + 'trigger-noedit', hideTrigger: false, editable: true, readOnly: false, repeatTriggerClick: false, autoSize: Ext.emptyFn, monitorTab: true, mimicing: false, triggerIndexRe: /trigger-index-(\d+)/, extraTriggerCls: '', componentLayout: 'triggerfield', initComponent: function() {
+  this.wrapFocusCls = this.triggerWrapCls + '-focus';
+  this.callParent(arguments);
+}, getSubTplMarkup: function(values) {
+  var me = this, childElCls = values.childElCls, field = me.callParent(arguments);
+  return '<table id="' + me.id + '-triggerWrap" class="' + Ext.baseCSSPrefix + 'form-trigger-wrap' + childElCls + '" cellpadding="0" cellspacing="0"><tbody><tr>' + '<td id="' + me.id + '-inputCell" class="' + Ext.baseCSSPrefix + 'form-trigger-input-cell' + childElCls + '">' + field + '</td>' + me.getTriggerMarkup() + '</tr></tbody></table>';
+}, getSubTplData: function() {
+  var me = this, data = me.callParent(), readOnly = me.readOnly === true, editable = me.editable !== false;
+  return Ext.apply(data, {editableCls: (readOnly || !editable) ? ' ' + me.triggerNoEditCls : '', readOnly: !editable || readOnly});
+}, getLabelableRenderData: function() {
+  var me = this, triggerWrapCls = me.triggerWrapCls, result = me.callParent(arguments);
+  return Ext.applyIf(result, {triggerWrapCls: triggerWrapCls, triggerMarkup: me.getTriggerMarkup()});
+}, getTriggerMarkup: function() {
+  var me = this, i = 0, hideTrigger = (me.readOnly || me.hideTrigger), triggerCls, triggerBaseCls = me.triggerBaseCls, triggerConfigs = [], unselectableCls = Ext.dom.Element.unselectableCls, style = 'width:' + me.triggerWidth + 'px;' + (hideTrigger ? 'display:none;' : ''), cls = me.extraTriggerCls + ' ' + Ext.baseCSSPrefix + 'trigger-cell ' + unselectableCls;
+  if (!me.trigger1Cls) 
+  {
+    me.trigger1Cls = me.triggerCls;
+  }
+  for (i = 0; (triggerCls = me['trigger' + (i + 1) + 'Cls']) || i < 1; i++) 
+    {
+      triggerConfigs.push({tag: 'td', valign: 'top', cls: cls, style: style, cn: {cls: [Ext.baseCSSPrefix + 'trigger-index-' + i, triggerBaseCls, triggerCls].join(' '), role: 'button'}});
+    }
+  triggerConfigs[0].cn.cls += ' ' + triggerBaseCls + '-first';
+  return Ext.DomHelper.markup(triggerConfigs);
+}, disableCheck: function() {
+  return !this.disabled;
+}, beforeRender: function() {
+  var me = this, triggerBaseCls = me.triggerBaseCls, tempEl;
+  if (!me.triggerWidth) 
+  {
+    tempEl = Ext.getBody().createChild({style: 'position: absolute;', cls: Ext.baseCSSPrefix + 'form-trigger'});
+    Ext.form.field.Trigger.prototype.triggerWidth = tempEl.getWidth();
+    tempEl.remove();
+  }
+  me.callParent();
+  if (triggerBaseCls != Ext.baseCSSPrefix + 'form-trigger') 
+  {
+    me.addChildEls({name: 'triggerEl', select: '.' + triggerBaseCls});
+  }
+  me.lastTriggerStateFlags = me.getTriggerStateFlags();
+}, onRender: function() {
+  var me = this;
+  me.callParent(arguments);
+  me.doc = Ext.getDoc();
+  me.initTrigger();
+}, getTriggerWidth: function() {
+  var me = this, totalTriggerWidth = 0;
+  if (me.triggerWrap && !me.hideTrigger && !me.readOnly) 
+  {
+    totalTriggerWidth = me.triggerEl.getCount() * me.triggerWidth;
+  }
+  return totalTriggerWidth;
+}, setHideTrigger: function(hideTrigger) {
+  if (hideTrigger != this.hideTrigger) 
+  {
+    this.hideTrigger = hideTrigger;
+    this.updateLayout();
+  }
+}, setEditable: function(editable) {
+  if (editable != this.editable) 
+  {
+    this.editable = editable;
+    this.updateLayout();
+  }
+}, setReadOnly: function(readOnly) {
+  var me = this, old = me.readOnly;
+  me.callParent(arguments);
+  if (readOnly != old) 
+  {
+    me.updateLayout();
+  }
+}, initTrigger: function() {
+  var me = this, triggerWrap = me.triggerWrap, triggerEl = me.triggerEl, disableCheck = me.disableCheck, els, eLen, el, e, idx;
+  if (me.repeatTriggerClick) 
+  {
+    me.triggerRepeater = new Ext.util.ClickRepeater(triggerWrap, {preventDefault: true, handler: me.onTriggerWrapClick, listeners: {mouseup: me.onTriggerWrapMouseup, scope: me}, scope: me});
+  } else {
+    me.mon(triggerWrap, {click: me.onTriggerWrapClick, mouseup: me.onTriggerWrapMouseup, scope: me});
+  }
+  triggerEl.setVisibilityMode(Ext.Element.DISPLAY);
+  triggerEl.addClsOnOver(me.triggerBaseCls + '-over', disableCheck, me);
+  els = triggerEl.elements;
+  eLen = els.length;
+  for (e = 0; e < eLen; e++) 
+    {
+      el = els[e];
+      idx = e + 1;
+      el.addClsOnOver(me['trigger' + (idx) + 'Cls'] + '-over', disableCheck, me);
+      el.addClsOnClick(me['trigger' + (idx) + 'Cls'] + '-click', disableCheck, me);
+    }
+  triggerEl.addClsOnClick(me.triggerBaseCls + '-click', disableCheck, me);
+}, onDestroy: function() {
+  var me = this;
+  Ext.destroyMembers(me, 'triggerRepeater', 'triggerWrap', 'triggerEl');
+  delete me.doc;
+  me.callParent();
+}, onFocus: function() {
+  var me = this;
+  me.callParent(arguments);
+  if (!me.mimicing) 
+  {
+    me.bodyEl.addCls(me.wrapFocusCls);
+    me.mimicing = true;
+    me.mon(me.doc, 'mousedown', me.mimicBlur, me, {delay: 10});
+    if (me.monitorTab) 
+    {
+      me.on('specialkey', me.checkTab, me);
+    }
+  }
+}, checkTab: function(me, e) {
+  if (!this.ignoreMonitorTab && e.getKey() == e.TAB) 
+  {
+    this.triggerBlur();
+  }
+}, getTriggerStateFlags: function() {
+  var me = this, state = 0;
+  if (me.readOnly) 
+  {
+    state += 1;
+  }
+  if (me.editable) 
+  {
+    state += 2;
+  }
+  if (me.hideTrigger) 
+  {
+    state += 4;
+  }
+  return state;
+}, onBlur: Ext.emptyFn, mimicBlur: function(e) {
+  if (!this.isDestroyed && !this.bodyEl.contains(e.target) && this.validateBlur(e)) 
+  {
+    this.triggerBlur(e);
+  }
+}, triggerBlur: function(e) {
+  var me = this;
+  me.mimicing = false;
+  me.mun(me.doc, 'mousedown', me.mimicBlur, me);
+  if (me.monitorTab && me.inputEl) 
+  {
+    me.un('specialkey', me.checkTab, me);
+  }
+  Ext.form.field.Trigger.superclass.onBlur.call(me, e);
+  if (me.bodyEl) 
+  {
+    me.bodyEl.removeCls(me.wrapFocusCls);
+  }
+}, validateBlur: function(e) {
+  return true;
+}, onTriggerWrapClick: function() {
+  var me = this, targetEl, match, triggerClickMethod, event;
+  event = arguments[me.triggerRepeater ? 1 : 0];
+  if (event && !me.readOnly && !me.disabled) 
+  {
+    targetEl = event.getTarget('.' + me.triggerBaseCls, null);
+    match = targetEl && targetEl.className.match(me.triggerIndexRe);
+    if (match) 
+    {
+      triggerClickMethod = me['onTrigger' + (parseInt(match[1], 10) + 1) + 'Click'] || me.onTriggerClick;
+      if (triggerClickMethod) 
+      {
+        triggerClickMethod.call(me, event);
+      }
+    }
+  }
+}, onTriggerWrapMouseup: Ext.emptyFn, onTriggerClick: Ext.emptyFn}, 0, ["trigger", "triggerfield"], ["field", "trigger", "textfield", "component", "box", "triggerfield"], {"field": true, "trigger": true, "textfield": true, "component": true, "box": true, "triggerfield": true}, ["widget.trigger", "widget.triggerfield"], 0, [Ext.form.field, 'Trigger', Ext.form, 'TriggerField', Ext.form, 'TwinTriggerField', Ext.form, 'Trigger'], 0));
+;
+
+(Ext.cmd.derive('Ext.form.field.Picker', Ext.form.field.Trigger, {alternateClassName: 'Ext.form.Picker', matchFieldWidth: true, pickerAlign: 'tl-bl?', openCls: Ext.baseCSSPrefix + 'pickerfield-open', editable: true, initComponent: function() {
+  this.callParent();
+  this.addEvents('expand', 'collapse', 'select');
+}, initEvents: function() {
+  var me = this;
+  me.callParent();
+  me.keyNav = new Ext.util.KeyNav(me.inputEl, {down: me.onDownArrow, esc: {handler: me.onEsc, scope: me, defaultEventAction: false}, scope: me, forceKeyDown: true});
+  if (!me.editable) 
+  {
+    me.mon(me.inputEl, 'click', me.onTriggerClick, me);
+  }
+  if (Ext.isGecko) 
+  {
+    me.inputEl.dom.setAttribute('autocomplete', 'off');
+  }
+}, onEsc: function(e) {
+  if (Ext.isIE) 
+  {
+    e.preventDefault();
+  }
+  if (this.isExpanded) 
+  {
+    this.collapse();
+    e.stopEvent();
+  }
+}, onDownArrow: function(e) {
+  if (!this.isExpanded) 
+  {
+    this.onTriggerClick();
+  }
+}, expand: function() {
+  var me = this, bodyEl, picker, collapseIf;
+  if (me.rendered && !me.isExpanded && !me.isDestroyed) 
+  {
+    me.expanding = true;
+    bodyEl = me.bodyEl;
+    picker = me.getPicker();
+    collapseIf = me.collapseIf;
+    picker.show();
+    me.isExpanded = true;
+    me.alignPicker();
+    bodyEl.addCls(me.openCls);
+    me.mon(Ext.getDoc(), {mousewheel: collapseIf, mousedown: collapseIf, scope: me});
+    Ext.EventManager.onWindowResize(me.alignPicker, me);
+    me.fireEvent('expand', me);
+    me.onExpand();
+    delete me.expanding;
+  }
+}, onExpand: Ext.emptyFn, alignPicker: function() {
+  var me = this, picker = me.getPicker();
+  if (me.isExpanded) 
+  {
+    if (me.matchFieldWidth) 
+    {
+      picker.setWidth(me.bodyEl.getWidth());
+    }
+    if (picker.isFloating()) 
+    {
+      me.doAlign();
+    }
+  }
+}, doAlign: function() {
+  var me = this, picker = me.picker, aboveSfx = '-above', isAbove;
+  me.picker.alignTo(me.triggerWrap, me.pickerAlign, me.pickerOffset);
+  isAbove = picker.el.getY() < me.inputEl.getY();
+  me.bodyEl[isAbove ? 'addCls' : 'removeCls'](me.openCls + aboveSfx);
+  picker[isAbove ? 'addCls' : 'removeCls'](picker.baseCls + aboveSfx);
+}, collapse: function() {
+  if (this.isExpanded && !this.isDestroyed) 
+  {
+    var me = this, openCls = me.openCls, picker = me.picker, doc = Ext.getDoc(), collapseIf = me.collapseIf, aboveSfx = '-above';
+    picker.hide();
+    me.isExpanded = false;
+    me.bodyEl.removeCls([openCls, openCls + aboveSfx]);
+    picker.el.removeCls(picker.baseCls + aboveSfx);
+    doc.un('mousewheel', collapseIf, me);
+    doc.un('mousedown', collapseIf, me);
+    Ext.EventManager.removeResizeListener(me.alignPicker, me);
+    me.fireEvent('collapse', me);
+    me.onCollapse();
+  }
+}, onCollapse: Ext.emptyFn, collapseIf: function(e) {
+  var me = this;
+  if (!me.isDestroyed && !e.within(me.bodyEl, false, true) && !e.within(me.picker.el, false, true) && !me.isEventWithinPickerLoadMask(e)) 
+  {
+    me.collapse();
+  }
+}, getPicker: function() {
+  var me = this;
+  return me.picker || (me.picker = me.createPicker());
+}, createPicker: Ext.emptyFn, onTriggerClick: function() {
+  var me = this;
+  if (!me.readOnly && !me.disabled) 
+  {
+    if (me.isExpanded) 
+    {
+      me.collapse();
+    } else {
+      me.expand();
+    }
+    me.inputEl.focus();
+  }
+}, triggerBlur: function() {
+  var picker = this.picker;
+  this.callParent(arguments);
+  if (picker && picker.isVisible()) 
+  {
+    picker.hide();
+  }
+}, mimicBlur: function(e) {
+  var me = this, picker = me.picker;
+  if (!picker || !e.within(picker.el, false, true) && !me.isEventWithinPickerLoadMask(e)) 
+  {
+    me.callParent(arguments);
+  }
+}, onDestroy: function() {
+  var me = this, picker = me.picker;
+  Ext.EventManager.removeResizeListener(me.alignPicker, me);
+  Ext.destroy(me.keyNav);
+  if (picker) 
+  {
+    delete picker.pickerField;
+    picker.destroy();
+  }
+  me.callParent();
+}, isEventWithinPickerLoadMask: function(e) {
+  var loadMask = this.picker.loadMask;
+  return loadMask ? e.within(loadMask.maskEl, false, true) || e.within(loadMask.el, false, true) : false;
+}}, 0, ["pickerfield"], ["field", "trigger", "textfield", "pickerfield", "component", "box", "triggerfield"], {"field": true, "trigger": true, "textfield": true, "pickerfield": true, "component": true, "box": true, "triggerfield": true}, ["widget.pickerfield"], 0, [Ext.form.field, 'Picker', Ext.form, 'Picker'], 0));
+;
+
 (Ext.cmd.derive('Ext.selection.Model', Ext.util.Observable, {alternateClassName: 'Ext.AbstractSelectionModel', allowDeselect: undefined, toggleOnClick: true, selected: null, pruneRemoved: true, suspendChange: 0, constructor: function(cfg) {
   var me = this;
   cfg = cfg || {};
@@ -44778,6 +45203,65 @@ Ext.define('Ext.layout.container.border.Region', {override: 'Ext.Component', ini
 }}, 0, ["dataview"], ["component", "box", "dataview"], {"component": true, "box": true, "dataview": true}, ["widget.dataview"], 0, [Ext.view, 'View', Ext, 'DataView'], 0));
 ;
 
+(Ext.cmd.derive('Ext.layout.component.BoundList', Ext.layout.component.Auto, {type: 'component', beginLayout: function(ownerContext) {
+  var me = this, owner = me.owner, toolbar = owner.pagingToolbar;
+  me.callParent(arguments);
+  if (owner.floating) 
+  {
+    ownerContext.savedXY = owner.getXY();
+    owner.setXY([0, -9999]);
+  }
+  if (toolbar) 
+  {
+    ownerContext.toolbarContext = ownerContext.context.getCmp(toolbar);
+  }
+  ownerContext.listContext = ownerContext.getEl('listEl');
+}, beginLayoutCycle: function(ownerContext) {
+  var owner = this.owner;
+  this.callParent(arguments);
+  if (ownerContext.heightModel.auto) 
+  {
+    owner.el.setHeight('auto');
+    owner.listEl.setHeight('auto');
+  }
+}, getLayoutItems: function() {
+  var toolbar = this.owner.pagingToolbar;
+  return toolbar ? [toolbar] : [];
+}, isValidParent: function() {
+  return true;
+}, finishedLayout: function(ownerContext) {
+  var xy = ownerContext.savedXY;
+  this.callParent(arguments);
+  if (xy) 
+  {
+    this.owner.setXY(xy);
+  }
+}, measureContentWidth: function(ownerContext) {
+  return this.owner.listEl.getWidth();
+}, measureContentHeight: function(ownerContext) {
+  return this.owner.listEl.getHeight();
+}, publishInnerHeight: function(ownerContext, height) {
+  var toolbar = ownerContext.toolbarContext, toolbarHeight = 0;
+  if (toolbar) 
+  {
+    toolbarHeight = toolbar.getProp('height');
+  }
+  if (toolbarHeight === undefined) 
+  {
+    this.done = false;
+  } else {
+    ownerContext.listContext.setHeight(height - ownerContext.getFrameInfo().height - toolbarHeight);
+  }
+}, calculateOwnerHeightFromContentHeight: function(ownerContext) {
+  var height = this.callParent(arguments), toolbar = ownerContext.toolbarContext;
+  if (toolbar) 
+  {
+    height += toolbar.getProp('height');
+  }
+  return height;
+}}, 0, 0, 0, 0, ["layout.boundlist"], 0, [Ext.layout.component, 'BoundList'], 0));
+;
+
 (Ext.cmd.derive('Ext.toolbar.TextItem', Ext.toolbar.Item, {alternateClassName: 'Ext.Toolbar.TextItem', text: '', renderTpl: '{text}', baseCls: Ext.baseCSSPrefix + 'toolbar-text', beforeRender: function() {
   var me = this;
   me.callParent();
@@ -44791,6 +45275,1249 @@ Ext.define('Ext.layout.container.border.Region', {override: 'Ext.Component', ini
     me.updateLayout();
   }
 }}, 0, ["tbtext"], ["tbitem", "component", "box", "tbtext"], {"tbitem": true, "component": true, "box": true, "tbtext": true}, ["widget.tbtext"], 0, [Ext.toolbar, 'TextItem', Ext.Toolbar, 'TextItem'], 0));
+;
+
+(Ext.cmd.derive('Ext.form.field.Spinner', Ext.form.field.Trigger, {alternateClassName: 'Ext.form.Spinner', trigger1Cls: Ext.baseCSSPrefix + 'form-spinner-up', trigger2Cls: Ext.baseCSSPrefix + 'form-spinner-down', spinUpEnabled: true, spinDownEnabled: true, keyNavEnabled: true, mouseWheelEnabled: true, repeatTriggerClick: true, onSpinUp: Ext.emptyFn, onSpinDown: Ext.emptyFn, triggerTpl: '<td style="{triggerStyle}" class="{triggerCls}">' + '<div class="' + Ext.baseCSSPrefix + 'trigger-index-0 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-up {spinnerUpCls} {childElCls}" role="button"></div>' + '<div class="' + Ext.baseCSSPrefix + 'trigger-index-1 ' + Ext.baseCSSPrefix + 'form-trigger ' + Ext.baseCSSPrefix + 'form-spinner-down {spinnerDownCls} {childElCls}" role="button"></div>' + '</td>' + '</tr>', initComponent: function() {
+  this.callParent();
+  this.addEvents('spin', 'spinup', 'spindown');
+}, onRender: function() {
+  var me = this, triggers;
+  me.callParent(arguments);
+  triggers = me.triggerEl;
+  me.spinUpEl = triggers.item(0);
+  me.spinDownEl = triggers.item(1);
+  me.triggerCell = me.spinUpEl.parent();
+  if (me.keyNavEnabled) 
+  {
+    me.spinnerKeyNav = new Ext.util.KeyNav(me.inputEl, {scope: me, up: me.spinUp, down: me.spinDown});
+  }
+  if (me.mouseWheelEnabled) 
+  {
+    me.mon(me.bodyEl, 'mousewheel', me.onMouseWheel, me);
+  }
+}, getSubTplMarkup: function(values) {
+  var me = this, childElCls = values.childElCls, field = Ext.form.field.Base.prototype.getSubTplMarkup.apply(me, arguments);
+  return '<table id="' + me.id + '-triggerWrap" class="' + Ext.baseCSSPrefix + 'form-trigger-wrap' + childElCls + '" cellpadding="0" cellspacing="0">' + '<tbody>' + '<tr><td id="' + me.id + '-inputCell" class="' + Ext.baseCSSPrefix + 'form-trigger-input-cell' + childElCls + '">' + field + '</td>' + me.getTriggerMarkup() + '</tbody></table>';
+}, getTriggerMarkup: function() {
+  return this.getTpl('triggerTpl').apply(this.getTriggerData());
+}, getTriggerData: function() {
+  var me = this, hideTrigger = (me.readOnly || me.hideTrigger);
+  return {triggerCls: Ext.baseCSSPrefix + 'trigger-cell', triggerStyle: hideTrigger ? 'display:none' : '', spinnerUpCls: !me.spinUpEnabled ? me.trigger1Cls + '-disabled' : '', spinnerDownCls: !me.spinDownEnabled ? me.trigger2Cls + '-disabled' : ''};
+}, getTriggerWidth: function() {
+  var me = this, totalTriggerWidth = 0;
+  if (me.triggerWrap && !me.hideTrigger && !me.readOnly) 
+  {
+    totalTriggerWidth = me.triggerWidth;
+  }
+  return totalTriggerWidth;
+}, onTrigger1Click: function() {
+  this.spinUp();
+}, onTrigger2Click: function() {
+  this.spinDown();
+}, onTriggerWrapMouseup: function() {
+  this.inputEl.focus();
+}, spinUp: function() {
+  var me = this;
+  if (me.spinUpEnabled && !me.disabled) 
+  {
+    me.fireEvent('spin', me, 'up');
+    me.fireEvent('spinup', me);
+    me.onSpinUp();
+  }
+}, spinDown: function() {
+  var me = this;
+  if (me.spinDownEnabled && !me.disabled) 
+  {
+    me.fireEvent('spin', me, 'down');
+    me.fireEvent('spindown', me);
+    me.onSpinDown();
+  }
+}, setSpinUpEnabled: function(enabled) {
+  var me = this, wasEnabled = me.spinUpEnabled;
+  me.spinUpEnabled = enabled;
+  if (wasEnabled !== enabled && me.rendered) 
+  {
+    me.spinUpEl[enabled ? 'removeCls' : 'addCls'](me.trigger1Cls + '-disabled');
+  }
+}, setSpinDownEnabled: function(enabled) {
+  var me = this, wasEnabled = me.spinDownEnabled;
+  me.spinDownEnabled = enabled;
+  if (wasEnabled !== enabled && me.rendered) 
+  {
+    me.spinDownEl[enabled ? 'removeCls' : 'addCls'](me.trigger2Cls + '-disabled');
+  }
+}, onMouseWheel: function(e) {
+  var me = this, delta;
+  if (me.hasFocus) 
+  {
+    delta = e.getWheelDelta();
+    if (delta > 0) 
+    {
+      me.spinUp();
+    } else if (delta < 0) 
+    {
+      me.spinDown();
+    }
+    e.stopEvent();
+  }
+}, onDestroy: function() {
+  Ext.destroyMembers(this, 'spinnerKeyNav', 'spinUpEl', 'spinDownEl');
+  this.callParent();
+}}, 0, ["spinnerfield"], ["field", "trigger", "textfield", "component", "box", "spinnerfield", "triggerfield"], {"field": true, "trigger": true, "textfield": true, "component": true, "box": true, "spinnerfield": true, "triggerfield": true}, ["widget.spinnerfield"], 0, [Ext.form.field, 'Spinner', Ext.form, 'Spinner'], 0));
+;
+
+(Ext.cmd.derive('Ext.form.field.Number', Ext.form.field.Spinner, {alternateClassName: ['Ext.form.NumberField', 'Ext.form.Number'], allowExponential: true, allowDecimals: true, decimalSeparator: '.', submitLocaleSeparator: true, decimalPrecision: 2, minValue: Number.NEGATIVE_INFINITY, maxValue: Number.MAX_VALUE, step: 1, minText: 'The minimum value for this field is {0}', maxText: 'The maximum value for this field is {0}', nanText: '{0} is not a valid number', negativeText: 'The value cannot be negative', baseChars: '0123456789', autoStripChars: false, initComponent: function() {
+  var me = this;
+  me.callParent();
+  me.setMinValue(me.minValue);
+  me.setMaxValue(me.maxValue);
+}, getErrors: function(value) {
+  var me = this, errors = me.callParent(arguments), format = Ext.String.format, num;
+  value = Ext.isDefined(value) ? value : this.processRawValue(this.getRawValue());
+  if (value.length < 1) 
+  {
+    return errors;
+  }
+  value = String(value).replace(me.decimalSeparator, '.');
+  if (isNaN(value)) 
+  {
+    errors.push(format(me.nanText, value));
+  }
+  num = me.parseValue(value);
+  if (me.minValue === 0 && num < 0) 
+  {
+    errors.push(this.negativeText);
+  } else if (num < me.minValue) 
+  {
+    errors.push(format(me.minText, me.minValue));
+  }
+  if (num > me.maxValue) 
+  {
+    errors.push(format(me.maxText, me.maxValue));
+  }
+  return errors;
+}, rawToValue: function(rawValue) {
+  var value = this.fixPrecision(this.parseValue(rawValue));
+  if (value === null) 
+  {
+    value = rawValue || null;
+  }
+  return value;
+}, valueToRaw: function(value) {
+  var me = this, decimalSeparator = me.decimalSeparator;
+  value = me.parseValue(value);
+  value = me.fixPrecision(value);
+  value = Ext.isNumber(value) ? value : parseFloat(String(value).replace(decimalSeparator, '.'));
+  value = isNaN(value) ? '' : String(value).replace('.', decimalSeparator);
+  return value;
+}, getSubmitValue: function() {
+  var me = this, value = me.callParent();
+  if (!me.submitLocaleSeparator) 
+  {
+    value = value.replace(me.decimalSeparator, '.');
+  }
+  return value;
+}, onChange: function() {
+  this.toggleSpinners();
+  this.callParent(arguments);
+}, toggleSpinners: function() {
+  var me = this, value = me.getValue(), valueIsNull = value === null, enabled;
+  if (me.spinUpEnabled || me.spinUpDisabledByToggle) 
+  {
+    enabled = valueIsNull || value < me.maxValue;
+    me.setSpinUpEnabled(enabled, true);
+  }
+  if (me.spinDownEnabled || me.spinDownDisabledByToggle) 
+  {
+    enabled = valueIsNull || value > me.minValue;
+    me.setSpinDownEnabled(enabled, true);
+  }
+}, setMinValue: function(value) {
+  var me = this, allowed;
+  me.minValue = Ext.Number.from(value, Number.NEGATIVE_INFINITY);
+  me.toggleSpinners();
+  if (me.disableKeyFilter !== true) 
+  {
+    allowed = me.baseChars + '';
+    if (me.allowExponential) 
+    {
+      allowed += me.decimalSeparator + 'e+-';
+    } else {
+      if (me.allowDecimals) 
+      {
+        allowed += me.decimalSeparator;
+      }
+      if (me.minValue < 0) 
+      {
+        allowed += '-';
+      }
+    }
+    allowed = Ext.String.escapeRegex(allowed);
+    me.maskRe = new RegExp('[' + allowed + ']');
+    if (me.autoStripChars) 
+    {
+      me.stripCharsRe = new RegExp('[^' + allowed + ']', 'gi');
+    }
+  }
+}, setMaxValue: function(value) {
+  this.maxValue = Ext.Number.from(value, Number.MAX_VALUE);
+  this.toggleSpinners();
+}, parseValue: function(value) {
+  value = parseFloat(String(value).replace(this.decimalSeparator, '.'));
+  return isNaN(value) ? null : value;
+}, fixPrecision: function(value) {
+  var me = this, nan = isNaN(value), precision = me.decimalPrecision;
+  if (nan || !value) 
+  {
+    return nan ? '' : value;
+  } else if (!me.allowDecimals || precision <= 0) 
+  {
+    precision = 0;
+  }
+  return parseFloat(Ext.Number.toFixed(parseFloat(value), precision));
+}, beforeBlur: function() {
+  var me = this, v = me.parseValue(me.getRawValue());
+  if (!Ext.isEmpty(v)) 
+  {
+    me.setValue(v);
+  }
+}, setSpinUpEnabled: function(enabled, internal) {
+  this.callParent(arguments);
+  if (!internal) 
+  {
+    delete this.spinUpDisabledByToggle;
+  } else {
+    this.spinUpDisabledByToggle = !enabled;
+  }
+}, onSpinUp: function() {
+  var me = this;
+  if (!me.readOnly) 
+  {
+    me.setSpinValue(Ext.Number.constrain(me.getValue() + me.step, me.minValue, me.maxValue));
+  }
+}, setSpinDownEnabled: function(enabled, internal) {
+  this.callParent(arguments);
+  if (!internal) 
+  {
+    delete this.spinDownDisabledByToggle;
+  } else {
+    this.spinDownDisabledByToggle = !enabled;
+  }
+}, onSpinDown: function() {
+  var me = this;
+  if (!me.readOnly) 
+  {
+    me.setSpinValue(Ext.Number.constrain(me.getValue() - me.step, me.minValue, me.maxValue));
+  }
+}, setSpinValue: function(value) {
+  var me = this, len;
+  if (me.enforceMaxLength) 
+  {
+    if (me.fixPrecision(value).toString().length > me.maxLength) 
+    {
+      return;
+    }
+  }
+  me.setValue(value);
+}}, 0, ["numberfield"], ["field", "trigger", "textfield", "component", "box", "numberfield", "spinnerfield", "triggerfield"], {"field": true, "trigger": true, "textfield": true, "component": true, "box": true, "numberfield": true, "spinnerfield": true, "triggerfield": true}, ["widget.numberfield"], 0, [Ext.form.field, 'Number', Ext.form, 'NumberField', Ext.form, 'Number'], 0));
+;
+
+(Ext.cmd.derive('Ext.toolbar.Paging', Ext.toolbar.Toolbar, {alternateClassName: 'Ext.PagingToolbar', displayInfo: false, prependButtons: false, displayMsg: 'Displaying {0} - {1} of {2}', emptyMsg: 'No data to display', beforePageText: 'Page', afterPageText: 'of {0}', firstText: 'First Page', prevText: 'Previous Page', nextText: 'Next Page', lastText: 'Last Page', refreshText: 'Refresh', inputItemWidth: 30, getPagingItems: function() {
+  var me = this;
+  return [{itemId: 'first', tooltip: me.firstText, overflowText: me.firstText, iconCls: Ext.baseCSSPrefix + 'tbar-page-first', disabled: true, handler: me.moveFirst, scope: me}, {itemId: 'prev', tooltip: me.prevText, overflowText: me.prevText, iconCls: Ext.baseCSSPrefix + 'tbar-page-prev', disabled: true, handler: me.movePrevious, scope: me}, '-', me.beforePageText, {xtype: 'numberfield', itemId: 'inputItem', name: 'inputItem', cls: Ext.baseCSSPrefix + 'tbar-page-number', allowDecimals: false, minValue: 1, hideTrigger: true, enableKeyEvents: true, keyNavEnabled: false, selectOnFocus: true, submitValue: false, isFormField: false, width: me.inputItemWidth, margins: '-1 2 3 2', listeners: {scope: me, keydown: me.onPagingKeyDown, blur: me.onPagingBlur}}, {xtype: 'tbtext', itemId: 'afterTextItem', text: Ext.String.format(me.afterPageText, 1)}, '-', {itemId: 'next', tooltip: me.nextText, overflowText: me.nextText, iconCls: Ext.baseCSSPrefix + 'tbar-page-next', disabled: true, handler: me.moveNext, scope: me}, {itemId: 'last', tooltip: me.lastText, overflowText: me.lastText, iconCls: Ext.baseCSSPrefix + 'tbar-page-last', disabled: true, handler: me.moveLast, scope: me}, '-', {itemId: 'refresh', tooltip: me.refreshText, overflowText: me.refreshText, iconCls: Ext.baseCSSPrefix + 'tbar-loading', handler: me.doRefresh, scope: me}];
+}, initComponent: function() {
+  var me = this, pagingItems = me.getPagingItems(), userItems = me.items || me.buttons || [];
+  if (me.prependButtons) 
+  {
+    me.items = userItems.concat(pagingItems);
+  } else {
+    me.items = pagingItems.concat(userItems);
+  }
+  delete me.buttons;
+  if (me.displayInfo) 
+  {
+    me.items.push('->');
+    me.items.push({xtype: 'tbtext', itemId: 'displayItem'});
+  }
+  me.callParent();
+  me.addEvents('change', 'beforechange');
+  me.on('beforerender', me.onLoad, me, {single: true});
+  me.bindStore(me.store || 'ext-empty-store', true);
+}, updateInfo: function() {
+  var me = this, displayItem = me.child('#displayItem'), store = me.store, pageData = me.getPageData(), count, msg;
+  if (displayItem) 
+  {
+    count = store.getCount();
+    if (count === 0) 
+    {
+      msg = me.emptyMsg;
+    } else {
+      msg = Ext.String.format(me.displayMsg, pageData.fromRecord, pageData.toRecord, pageData.total);
+    }
+    displayItem.setText(msg);
+  }
+}, onLoad: function() {
+  var me = this, pageData, currPage, pageCount, afterText, count, isEmpty, item;
+  count = me.store.getCount();
+  isEmpty = count === 0;
+  if (!isEmpty) 
+  {
+    pageData = me.getPageData();
+    currPage = pageData.currentPage;
+    pageCount = pageData.pageCount;
+    afterText = Ext.String.format(me.afterPageText, isNaN(pageCount) ? 1 : pageCount);
+  } else {
+    currPage = 0;
+    pageCount = 0;
+    afterText = Ext.String.format(me.afterPageText, 0);
+  }
+  Ext.suspendLayouts();
+  item = me.child('#afterTextItem');
+  if (item) 
+  {
+    item.setText(afterText);
+  }
+  item = me.getInputItem();
+  if (item) 
+  {
+    item.setDisabled(isEmpty).setValue(currPage);
+  }
+  me.setChildDisabled('#first', currPage === 1 || isEmpty);
+  me.setChildDisabled('#prev', currPage === 1 || isEmpty);
+  me.setChildDisabled('#next', currPage === pageCount || isEmpty);
+  me.setChildDisabled('#last', currPage === pageCount || isEmpty);
+  me.setChildDisabled('#refresh', false);
+  me.updateInfo();
+  Ext.resumeLayouts(true);
+  if (me.rendered) 
+  {
+    me.fireEvent('change', me, pageData);
+  }
+}, setChildDisabled: function(selector, disabled) {
+  var item = this.child(selector);
+  if (item) 
+  {
+    item.setDisabled(disabled);
+  }
+}, getPageData: function() {
+  var store = this.store, totalCount = store.getTotalCount();
+  return {total: totalCount, currentPage: store.currentPage, pageCount: Math.ceil(totalCount / store.pageSize), fromRecord: ((store.currentPage - 1) * store.pageSize) + 1, toRecord: Math.min(store.currentPage * store.pageSize, totalCount)};
+}, onLoadError: function() {
+  if (!this.rendered) 
+  {
+    return;
+  }
+  this.setChildDisabled('#refresh', false);
+}, getInputItem: function() {
+  return this.child('#inputItem');
+}, readPageFromInput: function(pageData) {
+  var inputItem = this.getInputItem(), pageNum = false, v;
+  if (inputItem) 
+  {
+    v = inputItem.getValue();
+    pageNum = parseInt(v, 10);
+    if (!v || isNaN(pageNum)) 
+    {
+      inputItem.setValue(pageData.currentPage);
+      return false;
+    }
+  }
+  return pageNum;
+}, onPagingFocus: function() {
+  var inputItem = this.getInputItem();
+  if (inputItem) 
+  {
+    inputItem.select();
+  }
+}, onPagingBlur: function(e) {
+  var inputItem = this.getInputItem(), curPage;
+  if (inputItem) 
+  {
+    curPage = this.getPageData().currentPage;
+    inputItem.setValue(curPage);
+  }
+}, onPagingKeyDown: function(field, e) {
+  var me = this, k = e.getKey(), pageData = me.getPageData(), increment = e.shiftKey ? 10 : 1, pageNum;
+  if (k == e.RETURN) 
+  {
+    e.stopEvent();
+    pageNum = me.readPageFromInput(pageData);
+    if (pageNum !== false) 
+    {
+      pageNum = Math.min(Math.max(1, pageNum), pageData.pageCount);
+      if (me.fireEvent('beforechange', me, pageNum) !== false) 
+      {
+        me.store.loadPage(pageNum);
+      }
+    }
+  } else if (k == e.HOME || k == e.END) 
+  {
+    e.stopEvent();
+    pageNum = k == e.HOME ? 1 : pageData.pageCount;
+    field.setValue(pageNum);
+  } else if (k == e.UP || k == e.PAGE_UP || k == e.DOWN || k == e.PAGE_DOWN) 
+  {
+    e.stopEvent();
+    pageNum = me.readPageFromInput(pageData);
+    if (pageNum) 
+    {
+      if (k == e.DOWN || k == e.PAGE_DOWN) 
+      {
+        increment *= -1;
+      }
+      pageNum += increment;
+      if (pageNum >= 1 && pageNum <= pageData.pageCount) 
+      {
+        field.setValue(pageNum);
+      }
+    }
+  }
+}, beforeLoad: function() {
+  if (this.rendered) 
+  {
+    this.setChildDisabled('#refresh', true);
+  }
+}, moveFirst: function() {
+  if (this.fireEvent('beforechange', this, 1) !== false) 
+  {
+    this.store.loadPage(1);
+  }
+}, movePrevious: function() {
+  var me = this, prev = me.store.currentPage - 1;
+  if (prev > 0) 
+  {
+    if (me.fireEvent('beforechange', me, prev) !== false) 
+    {
+      me.store.previousPage();
+    }
+  }
+}, moveNext: function() {
+  var me = this, total = me.getPageData().pageCount, next = me.store.currentPage + 1;
+  if (next <= total) 
+  {
+    if (me.fireEvent('beforechange', me, next) !== false) 
+    {
+      me.store.nextPage();
+    }
+  }
+}, moveLast: function() {
+  var me = this, last = me.getPageData().pageCount;
+  if (me.fireEvent('beforechange', me, last) !== false) 
+  {
+    me.store.loadPage(last);
+  }
+}, doRefresh: function() {
+  var me = this, current = me.store.currentPage;
+  if (me.fireEvent('beforechange', me, current) !== false) 
+  {
+    me.store.loadPage(current);
+  }
+}, getStoreListeners: function() {
+  return {beforeload: this.beforeLoad, load: this.onLoad, exception: this.onLoadError};
+}, unbind: function(store) {
+  this.bindStore(null);
+}, bind: function(store) {
+  this.bindStore(store);
+}, onDestroy: function() {
+  this.unbind();
+  this.callParent();
+}}, 0, ["pagingtoolbar"], ["toolbar", "component", "container", "pagingtoolbar", "box"], {"toolbar": true, "component": true, "container": true, "pagingtoolbar": true, "box": true}, ["widget.pagingtoolbar"], [['bindable', Ext.util.Bindable]], [Ext.toolbar, 'Paging', Ext, 'PagingToolbar'], 0));
+;
+
+(Ext.cmd.derive('Ext.view.BoundList', Ext.view.View, {alternateClassName: 'Ext.BoundList', pageSize: 0, baseCls: Ext.baseCSSPrefix + 'boundlist', itemCls: Ext.baseCSSPrefix + 'boundlist-item', listItemCls: '', shadow: false, trackOver: true, refreshed: 0, deferInitialRefresh: false, componentLayout: 'boundlist', childEls: ['listEl'], renderTpl: ['<div id="{id}-listEl" class="{baseCls}-list-ct ', Ext.dom.Element.unselectableCls, '" style="overflow:auto"></div>', '{%', 'var me=values.$comp, pagingToolbar=me.pagingToolbar;', 'if (pagingToolbar) {', 'pagingToolbar.ownerLayout = me.componentLayout;', 'Ext.DomHelper.generateMarkup(pagingToolbar.getRenderTree(), out);', '}', '%}', {disableFormats: true}], initComponent: function() {
+  var me = this, baseCls = me.baseCls, itemCls = me.itemCls;
+  me.selectedItemCls = baseCls + '-selected';
+  if (me.trackOver) 
+  {
+    me.overItemCls = baseCls + '-item-over';
+  }
+  me.itemSelector = "." + itemCls;
+  if (me.floating) 
+  {
+    me.addCls(baseCls + '-floating');
+  }
+  if (!me.tpl) 
+  {
+    me.tpl = new Ext.XTemplate('<ul class="' + Ext.plainListCls + '"><tpl for=".">', '<li role="option" unselectable="on" class="' + itemCls + '">' + me.getInnerTpl(me.displayField) + '</li>', '</tpl></ul>');
+  } else if (!me.tpl.isTemplate) 
+  {
+    me.tpl = new Ext.XTemplate(me.tpl);
+  }
+  if (me.pageSize) 
+  {
+    me.pagingToolbar = me.createPagingToolbar();
+  }
+  me.callParent();
+}, beforeRender: function() {
+  var me = this;
+  me.callParent(arguments);
+  if (me.up('menu')) 
+  {
+    me.addCls(Ext.baseCSSPrefix + 'menu');
+  }
+}, getRefOwner: function() {
+  return this.pickerField || this.callParent();
+}, getRefItems: function() {
+  return this.pagingToolbar ? [this.pagingToolbar] : [];
+}, createPagingToolbar: function() {
+  return Ext.widget('pagingtoolbar', {id: this.id + '-paging-toolbar', pageSize: this.pageSize, store: this.dataSource, border: false, ownerCt: this, ownerLayout: this.getComponentLayout()});
+}, finishRenderChildren: function() {
+  var toolbar = this.pagingToolbar;
+  this.callParent(arguments);
+  if (toolbar) 
+  {
+    toolbar.finishRender();
+  }
+}, refresh: function() {
+  var me = this, tpl = me.tpl, toolbar = me.pagingToolbar, rendered = me.rendered;
+  tpl.field = me.pickerField;
+  tpl.store = me.store;
+  me.callParent();
+  tpl.field = tpl.store = null;
+  if (rendered && toolbar && toolbar.rendered && !me.preserveScrollOnRefresh) 
+  {
+    me.el.appendChild(toolbar.el);
+  }
+  if (rendered && Ext.isIE6 && Ext.isStrict) 
+  {
+    me.listEl.repaint();
+  }
+}, bindStore: function(store, initial) {
+  var toolbar = this.pagingToolbar;
+  this.callParent(arguments);
+  if (toolbar) 
+  {
+    toolbar.bindStore(store, initial);
+  }
+}, getTargetEl: function() {
+  return this.listEl || this.el;
+}, getInnerTpl: function(displayField) {
+  return '{' + displayField + '}';
+}, onDestroy: function() {
+  Ext.destroyMembers(this, 'pagingToolbar', 'listEl');
+  this.callParent();
+}}, 0, ["boundlist"], ["component", "boundlist", "box", "dataview"], {"component": true, "boundlist": true, "box": true, "dataview": true}, ["widget.boundlist"], [['queryable', Ext.Queryable]], [Ext.view, 'BoundList', Ext, 'BoundList'], 0));
+;
+
+(Ext.cmd.derive('Ext.view.BoundListKeyNav', Ext.util.KeyNav, {constructor: function(el, config) {
+  var me = this;
+  me.boundList = config.boundList;
+  me.callParent([el, Ext.apply({}, config, me.defaultHandlers)]);
+}, defaultHandlers: {up: function() {
+  var me = this, boundList = me.boundList, allItems = boundList.all, oldItem = boundList.highlightedItem, oldItemIdx = oldItem ? boundList.indexOf(oldItem) : -1, newItemIdx = oldItemIdx > 0 ? oldItemIdx - 1 : allItems.getCount() - 1;
+  me.highlightAt(newItemIdx);
+}, down: function() {
+  var me = this, boundList = me.boundList, allItems = boundList.all, oldItem = boundList.highlightedItem, oldItemIdx = oldItem ? boundList.indexOf(oldItem) : -1, newItemIdx = oldItemIdx < allItems.getCount() - 1 ? oldItemIdx + 1 : 0;
+  me.highlightAt(newItemIdx);
+}, pageup: function() {
+}, pagedown: function() {
+}, home: function() {
+  this.highlightAt(0);
+}, end: function() {
+  var me = this;
+  me.highlightAt(me.boundList.all.getCount() - 1);
+}, enter: function(e) {
+  this.selectHighlighted(e);
+}}, highlightAt: function(index) {
+  var boundList = this.boundList, item = boundList.all.item(index);
+  if (item) 
+  {
+    item = item.dom;
+    boundList.highlightItem(item);
+    boundList.getTargetEl().scrollChildIntoView(item, false);
+  }
+}, selectHighlighted: function(e) {
+  var me = this, boundList = me.boundList, highlighted = boundList.highlightedItem, selModel = boundList.getSelectionModel();
+  if (highlighted) 
+  {
+    selModel.selectWithEvent(boundList.getRecord(highlighted), e);
+  }
+}}, 1, 0, 0, 0, 0, 0, [Ext.view, 'BoundListKeyNav'], 0));
+;
+
+(Ext.cmd.derive('Ext.layout.component.field.ComboBox', Ext.layout.component.field.Trigger, {type: 'combobox', startingWidth: null, getTextWidth: function() {
+  var me = this, owner = me.owner, store = owner.store, field = owner.displayField, storeLn = store.data.length, value = '', i = 0, n = 0, ln, item, width;
+  for (; i < storeLn; i++) 
+    {
+      item = store.getAt(i).data[field];
+      ln = item.length;
+      if (ln > n) 
+      {
+        n = ln;
+        value = item;
+      }
+    }
+  width = Math.max(me.callParent(arguments), owner.inputEl.getTextWidth(value + owner.growAppend));
+  if (!me.startingWidth || owner.removingRecords) 
+  {
+    me.startingWidth = width;
+    if (width < owner.growMin) 
+    {
+      owner.defaultListConfig.minWidth = owner.growMin;
+    }
+    owner.removingRecords = false;
+  }
+  return (width < me.startingWidth) ? me.startingWidth : width;
+}}, 0, 0, 0, 0, ["layout.combobox"], 0, [Ext.layout.component.field, 'ComboBox'], 0));
+;
+
+(Ext.cmd.derive('Ext.form.field.ComboBox', Ext.form.field.Picker, {alternateClassName: 'Ext.form.ComboBox', componentLayout: 'combobox', triggerCls: Ext.baseCSSPrefix + 'form-arrow-trigger', hiddenName: '', hiddenDataCls: Ext.baseCSSPrefix + 'hide-display ' + Ext.baseCSSPrefix + 'form-data-hidden', fieldSubTpl: ['<div class="{hiddenDataCls}" role="presentation"></div>', '<input id="{id}" type="{type}" {inputAttrTpl} class="{fieldCls} {typeCls} {editableCls}" autocomplete="off"', '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>', '<tpl if="name"> name="{name}"</tpl>', '<tpl if="placeholder"> placeholder="{placeholder}"</tpl>', '<tpl if="size"> size="{size}"</tpl>', '<tpl if="maxLength !== undefined"> maxlength="{maxLength}"</tpl>', '<tpl if="readOnly"> readonly="readonly"</tpl>', '<tpl if="disabled"> disabled="disabled"</tpl>', '<tpl if="tabIdx"> tabIndex="{tabIdx}"</tpl>', '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>', '/>', {compiled: true, disableFormats: true}], getSubTplData: function() {
+  var me = this;
+  Ext.applyIf(me.subTplData, {hiddenDataCls: me.hiddenDataCls});
+  return me.callParent(arguments);
+}, afterRender: function() {
+  var me = this;
+  me.callParent(arguments);
+  me.setHiddenValue(me.value);
+}, multiSelect: false, delimiter: ', ', displayField: 'text', triggerAction: 'all', allQuery: '', queryParam: 'query', queryMode: 'remote', queryCaching: true, pageSize: 0, anyMatch: false, caseSensitive: false, autoSelect: true, typeAhead: false, typeAheadDelay: 250, selectOnTab: true, forceSelection: false, growToLongestValue: true, defaultListConfig: {loadingHeight: 70, minWidth: 70, maxHeight: 300, shadow: 'sides'}, ignoreSelection: 0, removingRecords: null, resizeComboToGrow: function() {
+  var me = this;
+  return me.grow && me.growToLongestValue;
+}, initComponent: function() {
+  var me = this, isDefined = Ext.isDefined, store = me.store, transform = me.transform, transformSelect, isLocalMode;
+  Ext.applyIf(me.renderSelectors, {hiddenDataEl: '.' + me.hiddenDataCls.split(' ').join('.')});
+  this.addEvents('beforequery', 'select', 'beforeselect', 'beforedeselect');
+  if (transform) 
+  {
+    transformSelect = Ext.getDom(transform);
+    if (transformSelect) 
+    {
+      if (!me.store) 
+      {
+        store = Ext.Array.map(Ext.Array.from(transformSelect.options), function(option) {
+  return [option.value, option.text];
+});
+      }
+      if (!me.name) 
+      {
+        me.name = transformSelect.name;
+      }
+      if (!('value' in me)) 
+      {
+        me.value = transformSelect.value;
+      }
+    }
+  }
+  me.bindStore(store || 'ext-empty-store', true);
+  store = me.store;
+  if (store.autoCreated) 
+  {
+    me.queryMode = 'local';
+    me.valueField = me.displayField = 'field1';
+    if (!store.expanded) 
+    {
+      me.displayField = 'field2';
+    }
+  }
+  if (!isDefined(me.valueField)) 
+  {
+    me.valueField = me.displayField;
+  }
+  isLocalMode = me.queryMode === 'local';
+  if (!isDefined(me.queryDelay)) 
+  {
+    me.queryDelay = isLocalMode ? 10 : 500;
+  }
+  if (!isDefined(me.minChars)) 
+  {
+    me.minChars = isLocalMode ? 0 : 4;
+  }
+  if (!me.displayTpl) 
+  {
+    me.displayTpl = new Ext.XTemplate('<tpl for=".">' + '{[typeof values === "string" ? values : values["' + me.displayField + '"]]}' + '<tpl if="xindex < xcount">' + me.delimiter + '</tpl>' + '</tpl>');
+  } else if (Ext.isString(me.displayTpl)) 
+  {
+    me.displayTpl = new Ext.XTemplate(me.displayTpl);
+  }
+  me.callParent();
+  me.doQueryTask = new Ext.util.DelayedTask(me.doRawQuery, me);
+  if (me.store.getCount() > 0) 
+  {
+    me.setValue(me.value);
+  }
+  if (transformSelect) 
+  {
+    me.render(transformSelect.parentNode, transformSelect);
+    Ext.removeNode(transformSelect);
+    delete me.renderTo;
+  }
+}, getStore: function() {
+  return this.store;
+}, beforeBlur: function() {
+  this.doQueryTask.cancel();
+  this.assertValue();
+}, assertValue: function() {
+  var me = this, value = me.getRawValue(), rec, currentValue;
+  if (me.forceSelection) 
+  {
+    if (me.multiSelect) 
+    {
+      if (value !== me.getDisplayValue()) 
+      {
+        me.setValue(me.lastSelection);
+      }
+    } else {
+      rec = me.findRecordByDisplay(value);
+      if (rec) 
+      {
+        currentValue = me.value;
+        if (!me.findRecordByValue(currentValue)) 
+        {
+          me.select(rec, true);
+        }
+      } else {
+        me.setValue(me.lastSelection);
+      }
+    }
+  }
+  me.collapse();
+}, onTypeAhead: function() {
+  var me = this, displayField = me.displayField, record = me.store.findRecord(displayField, me.getRawValue()), boundList = me.getPicker(), newValue, len, selStart;
+  if (record) 
+  {
+    newValue = record.get(displayField);
+    len = newValue.length;
+    selStart = me.getRawValue().length;
+    boundList.highlightItem(boundList.getNode(record));
+    if (selStart !== 0 && selStart !== len) 
+    {
+      me.setRawValue(newValue);
+      me.selectText(selStart, newValue.length);
+    }
+  }
+}, resetToDefault: Ext.emptyFn, beforeReset: function() {
+  this.callParent();
+  if (this.queryFilter && !this.queryFilter.disabled) 
+  {
+    this.queryFilter.disabled = true;
+    this.store.filter();
+  }
+}, onUnbindStore: function(store) {
+  var me = this, picker = me.picker;
+  if (me.queryFilter) 
+  {
+    me.store.removeFilter(me.queryFilter);
+  }
+  if (!store && picker) 
+  {
+    picker.bindStore(null);
+  }
+}, onBindStore: function(store, initial) {
+  var picker = this.picker;
+  if (!initial) 
+  {
+    this.resetToDefault();
+  }
+  if (picker) 
+  {
+    picker.bindStore(store);
+  }
+}, getStoreListeners: function() {
+  var me = this;
+  return {beforeload: me.onBeforeLoad, clear: me.onClear, datachanged: me.onDataChanged, load: me.onLoad, exception: me.onException, remove: me.onRemove};
+}, onBeforeLoad: function() {
+  ++this.ignoreSelection;
+}, onDataChanged: function() {
+  var me = this;
+  if (me.resizeComboToGrow()) 
+  {
+    me.updateLayout();
+  }
+}, onClear: function() {
+  var me = this;
+  if (me.resizeComboToGrow()) 
+  {
+    me.removingRecords = true;
+    me.onDataChanged();
+  }
+}, onRemove: function() {
+  var me = this;
+  if (me.resizeComboToGrow()) 
+  {
+    me.removingRecords = true;
+  }
+}, onException: function() {
+  if (this.ignoreSelection > 0) 
+  {
+    --this.ignoreSelection;
+  }
+  this.collapse();
+}, onLoad: function(store, records, success) {
+  var me = this;
+  if (me.ignoreSelection > 0) 
+  {
+    --me.ignoreSelection;
+  }
+  if (success && !store.lastOptions.rawQuery) 
+  {
+    if (me.value == null) 
+    {
+      if (me.store.getCount()) 
+      {
+        me.doAutoSelect();
+      } else {
+        me.setValue(me.value);
+      }
+    } else {
+      me.setValue(me.value);
+    }
+  }
+}, doRawQuery: function() {
+  this.doQuery(this.getRawValue(), false, true);
+}, doQuery: function(queryString, forceAll, rawQuery) {
+  var me = this, queryPlan = me.beforeQuery({query: queryString || '', rawQuery: rawQuery, forceAll: forceAll, combo: me, cancel: false});
+  if (queryPlan === false || queryPlan.cancel) 
+  {
+    return false;
+  }
+  if (me.queryCaching && queryPlan.query === me.lastQuery) 
+  {
+    me.expand();
+  } else {
+    me.lastQuery = queryPlan.query;
+    if (me.queryMode === 'local') 
+    {
+      me.doLocalQuery(queryPlan);
+    } else {
+      me.doRemoteQuery(queryPlan);
+    }
+  }
+  return true;
+}, beforeQuery: function(queryPlan) {
+  var me = this;
+  if (me.fireEvent('beforequery', queryPlan) === false) 
+  {
+    queryPlan.cancel = true;
+  } else if (!queryPlan.cancel) 
+  {
+    if (queryPlan.query.length < me.minChars && !queryPlan.forceAll) 
+    {
+      queryPlan.cancel = true;
+    }
+  }
+  return queryPlan;
+}, doLocalQuery: function(queryPlan) {
+  var me = this, queryString = queryPlan.query;
+  if (!me.queryFilter) 
+  {
+    me.queryFilter = new Ext.util.Filter({id: me.id + '-query-filter', anyMatch: me.anyMatch, caseSensitive: me.caseSensitive, root: 'data', property: me.displayField});
+    me.store.addFilter(me.queryFilter, false);
+  }
+  if (queryString || !queryPlan.forceAll) 
+  {
+    me.queryFilter.disabled = false;
+    me.queryFilter.setValue(me.enableRegEx ? new RegExp(queryString) : queryString);
+  } else {
+    me.queryFilter.disabled = true;
+  }
+  me.store.filter();
+  if (me.store.getCount()) 
+  {
+    me.expand();
+  } else {
+    me.collapse();
+  }
+  me.afterQuery(queryPlan);
+}, doRemoteQuery: function(queryPlan) {
+  var me = this, loadCallback = function() {
+  me.afterQuery(queryPlan);
+};
+  me.expand();
+  if (me.pageSize) 
+  {
+    me.loadPage(1, {rawQuery: queryPlan.rawQuery, callback: loadCallback});
+  } else {
+    me.store.load({params: me.getParams(queryPlan.query), rawQuery: queryPlan.rawQuery, callback: loadCallback});
+  }
+}, afterQuery: function(queryPlan) {
+  var me = this;
+  if (me.store.getCount()) 
+  {
+    if (me.typeAhead) 
+    {
+      me.doTypeAhead();
+    }
+    if (me.getRawValue() !== me.getDisplayValue()) 
+    {
+      me.ignoreSelection++;
+      me.picker.getSelectionModel().deselectAll();
+      me.ignoreSelection--;
+    }
+    if (queryPlan.rawQuery) 
+    {
+      me.syncSelection();
+      if (me.picker && !me.picker.getSelectionModel().hasSelection()) 
+      {
+        me.doAutoSelect();
+      }
+    } else {
+      me.doAutoSelect();
+    }
+  }
+}, loadPage: function(pageNum, options) {
+  this.store.loadPage(pageNum, Ext.apply({params: this.getParams(this.lastQuery)}, options));
+}, onPageChange: function(toolbar, newPage) {
+  this.loadPage(newPage);
+  return false;
+}, getParams: function(queryString) {
+  var params = {}, param = this.queryParam;
+  if (param) 
+  {
+    params[param] = queryString;
+  }
+  return params;
+}, doAutoSelect: function() {
+  var me = this, picker = me.picker, lastSelected, itemNode;
+  if (picker && me.autoSelect && me.store.getCount() > 0) 
+  {
+    lastSelected = picker.getSelectionModel().lastSelected;
+    itemNode = picker.getNode(lastSelected || 0);
+    if (itemNode) 
+    {
+      picker.highlightItem(itemNode);
+      picker.listEl.scrollChildIntoView(itemNode, false);
+    }
+  }
+}, doTypeAhead: function() {
+  if (!this.typeAheadTask) 
+  {
+    this.typeAheadTask = new Ext.util.DelayedTask(this.onTypeAhead, this);
+  }
+  if (this.lastKey != Ext.EventObject.BACKSPACE && this.lastKey != Ext.EventObject.DELETE) 
+  {
+    this.typeAheadTask.delay(this.typeAheadDelay);
+  }
+}, onTriggerClick: function() {
+  var me = this;
+  if (!me.readOnly && !me.disabled) 
+  {
+    if (me.isExpanded) 
+    {
+      me.collapse();
+    } else {
+      me.onFocus({});
+      if (me.triggerAction === 'all') 
+      {
+        me.doQuery(me.allQuery, true);
+      } else if (me.triggerAction === 'last') 
+      {
+        me.doQuery(me.lastQuery, true);
+      } else {
+        me.doQuery(me.getRawValue(), false, true);
+      }
+    }
+    me.inputEl.focus();
+  }
+}, onPaste: function() {
+  var me = this;
+  if (!me.readOnly && !me.disabled && me.editable) 
+  {
+    me.doQueryTask.delay(me.queryDelay);
+  }
+}, onKeyUp: function(e, t) {
+  var me = this, key = e.getKey();
+  if (!me.readOnly && !me.disabled && me.editable) 
+  {
+    me.lastKey = key;
+    if (!e.isSpecialKey() || key == e.BACKSPACE || key == e.DELETE) 
+    {
+      me.doQueryTask.delay(me.queryDelay);
+    }
+  }
+  if (me.enableKeyEvents) 
+  {
+    me.callParent(arguments);
+  }
+}, initEvents: function() {
+  var me = this;
+  me.callParent();
+  if (!me.enableKeyEvents) 
+  {
+    me.mon(me.inputEl, 'keyup', me.onKeyUp, me);
+  }
+  me.mon(me.inputEl, 'paste', me.onPaste, me);
+}, onDestroy: function() {
+  Ext.destroy(this.listKeyNav);
+  this.bindStore(null);
+  this.callParent();
+}, onAdded: function() {
+  var me = this;
+  me.callParent(arguments);
+  if (me.picker) 
+  {
+    me.picker.ownerCt = me.up('[floating]');
+    me.picker.registerWithOwnerCt();
+  }
+}, createPicker: function() {
+  var me = this, picker, pickerCfg = Ext.apply({xtype: 'boundlist', pickerField: me, selModel: {mode: me.multiSelect ? 'SIMPLE' : 'SINGLE'}, floating: true, hidden: true, store: me.store, displayField: me.displayField, focusOnToFront: false, pageSize: me.pageSize, tpl: me.tpl}, me.listConfig, me.defaultListConfig);
+  picker = me.picker = Ext.widget(pickerCfg);
+  if (me.pageSize) 
+  {
+    picker.pagingToolbar.on('beforechange', me.onPageChange, me);
+  }
+  me.mon(picker, {itemclick: me.onItemClick, refresh: me.onListRefresh, scope: me});
+  me.mon(picker.getSelectionModel(), {beforeselect: me.onBeforeSelect, beforedeselect: me.onBeforeDeselect, selectionchange: me.onListSelectionChange, scope: me});
+  return picker;
+}, alignPicker: function() {
+  var me = this, picker = me.getPicker(), heightAbove = me.getPosition()[1] - Ext.getBody().getScroll().top, heightBelow = Ext.Element.getViewHeight() - heightAbove - me.getHeight(), space = Math.max(heightAbove, heightBelow);
+  if (picker.height) 
+  {
+    delete picker.height;
+    picker.updateLayout();
+  }
+  if (picker.getHeight() > space - 5) 
+  {
+    picker.setHeight(space - 5);
+  }
+  me.callParent();
+}, onListRefresh: function() {
+  if (!this.expanding) 
+  {
+    this.alignPicker();
+  }
+  this.syncSelection();
+}, onItemClick: function(picker, record) {
+  var me = this, selection = me.picker.getSelectionModel().getSelection(), valueField = me.valueField;
+  if (!me.multiSelect && selection.length) 
+  {
+    if (record.get(valueField) === selection[0].get(valueField)) 
+    {
+      me.displayTplData = [record.data];
+      me.setRawValue(me.getDisplayValue());
+      me.collapse();
+    }
+  }
+}, onBeforeSelect: function(list, record) {
+  return this.fireEvent('beforeselect', this, record, record.index);
+}, onBeforeDeselect: function(list, record) {
+  return this.fireEvent('beforedeselect', this, record, record.index);
+}, onListSelectionChange: function(list, selectedRecords) {
+  var me = this, isMulti = me.multiSelect, hasRecords = selectedRecords.length > 0;
+  if (!me.ignoreSelection && me.isExpanded) 
+  {
+    if (!isMulti) 
+    {
+      Ext.defer(me.collapse, 1, me);
+    }
+    if (isMulti || hasRecords) 
+    {
+      me.setValue(selectedRecords, false);
+    }
+    if (hasRecords) 
+    {
+      me.fireEvent('select', me, selectedRecords);
+    }
+    me.inputEl.focus();
+  }
+}, onExpand: function() {
+  var me = this, keyNav = me.listKeyNav, selectOnTab = me.selectOnTab, picker = me.getPicker();
+  if (keyNav) 
+  {
+    keyNav.enable();
+  } else {
+    keyNav = me.listKeyNav = new Ext.view.BoundListKeyNav(this.inputEl, {boundList: picker, forceKeyDown: true, tab: function(e) {
+  if (selectOnTab) 
+  {
+    this.selectHighlighted(e);
+    me.triggerBlur();
+  }
+  return true;
+}, enter: function(e) {
+  var selModel = picker.getSelectionModel(), count = selModel.getCount();
+  this.selectHighlighted(e);
+  if (!me.multiSelect && count === selModel.getCount()) 
+  {
+    me.collapse();
+  }
+}});
+  }
+  if (selectOnTab) 
+  {
+    me.ignoreMonitorTab = true;
+  }
+  Ext.defer(keyNav.enable, 1, keyNav);
+  me.inputEl.focus();
+}, onCollapse: function() {
+  var me = this, keyNav = me.listKeyNav;
+  if (keyNav) 
+  {
+    keyNav.disable();
+    me.ignoreMonitorTab = false;
+  }
+}, select: function(r, assert) {
+  var me = this, picker = me.picker, doSelect = true, fireSelect;
+  if (r && r.isModel && assert === true && picker) 
+  {
+    fireSelect = !picker.getSelectionModel().isSelected(r);
+  }
+  me.setValue(r, true);
+  if (fireSelect) 
+  {
+    me.fireEvent('select', me, r);
+  }
+}, findRecord: function(field, value) {
+  var ds = this.store, idx = ds.findExact(field, value);
+  return idx !== -1 ? ds.getAt(idx) : false;
+}, findRecordByValue: function(value) {
+  return this.findRecord(this.valueField, value);
+}, findRecordByDisplay: function(value) {
+  return this.findRecord(this.displayField, value);
+}, setValue: function(value, doSelect) {
+  var me = this, valueNotFoundText = me.valueNotFoundText, inputEl = me.inputEl, i, len, record, dataObj, matchedRecords = [], displayTplData = [], processedValue = [];
+  if (me.store.loading) 
+  {
+    me.value = value;
+    me.setHiddenValue(me.value);
+    return me;
+  }
+  value = Ext.Array.from(value);
+  for (i = 0 , len = value.length; i < len; i++) 
+    {
+      record = value[i];
+      if (!record || !record.isModel) 
+      {
+        record = me.findRecordByValue(record);
+      }
+      if (record) 
+      {
+        matchedRecords.push(record);
+        displayTplData.push(record.data);
+        processedValue.push(record.get(me.valueField));
+      } else {
+        if (!me.forceSelection) 
+        {
+          processedValue.push(value[i]);
+          dataObj = {};
+          dataObj[me.displayField] = value[i];
+          displayTplData.push(dataObj);
+        } else if (Ext.isDefined(valueNotFoundText)) 
+        {
+          displayTplData.push(valueNotFoundText);
+        }
+      }
+    }
+  me.setHiddenValue(processedValue);
+  me.value = me.multiSelect ? processedValue : processedValue[0];
+  if (!Ext.isDefined(me.value)) 
+  {
+    me.value = null;
+  }
+  me.displayTplData = displayTplData;
+  me.lastSelection = me.valueModels = matchedRecords;
+  if (inputEl && me.emptyText && !Ext.isEmpty(value)) 
+  {
+    inputEl.removeCls(me.emptyCls);
+  }
+  me.setRawValue(me.getDisplayValue());
+  me.checkChange();
+  if (doSelect !== false) 
+  {
+    me.syncSelection();
+  }
+  me.applyEmptyText();
+  return me;
+}, setHiddenValue: function(values) {
+  var me = this, name = me.hiddenName, i, dom, childNodes, input, valueCount, childrenCount;
+  if (!me.hiddenDataEl || !name) 
+  {
+    return;
+  }
+  values = Ext.Array.from(values);
+  dom = me.hiddenDataEl.dom;
+  childNodes = dom.childNodes;
+  input = childNodes[0];
+  valueCount = values.length;
+  childrenCount = childNodes.length;
+  if (!input && valueCount > 0) 
+  {
+    me.hiddenDataEl.update(Ext.DomHelper.markup({tag: 'input', type: 'hidden', name: name}));
+    childrenCount = 1;
+    input = dom.firstChild;
+  }
+  while (childrenCount > valueCount) 
+    {
+      dom.removeChild(childNodes[0]);
+      --childrenCount;
+    }
+  while (childrenCount < valueCount) 
+    {
+      dom.appendChild(input.cloneNode(true));
+      ++childrenCount;
+    }
+  for (i = 0; i < valueCount; i++) 
+    {
+      childNodes[i].value = values[i];
+    }
+}, getDisplayValue: function() {
+  return this.displayTpl.apply(this.displayTplData);
+}, getValue: function() {
+  var me = this, picker = me.picker, rawValue = me.getRawValue(), value = me.value;
+  if (me.getDisplayValue() !== rawValue) 
+  {
+    value = rawValue;
+    me.value = me.displayTplData = me.valueModels = null;
+    if (picker) 
+    {
+      me.ignoreSelection++;
+      picker.getSelectionModel().deselectAll();
+      me.ignoreSelection--;
+    }
+  }
+  return value;
+}, getSubmitValue: function() {
+  var value = this.getValue();
+  if (Ext.isEmpty(value)) 
+  {
+    value = '';
+  }
+  return value;
+}, isEqual: function(v1, v2) {
+  var fromArray = Ext.Array.from, i, len;
+  v1 = fromArray(v1);
+  v2 = fromArray(v2);
+  len = v1.length;
+  if (len !== v2.length) 
+  {
+    return false;
+  }
+  for (i = 0; i < len; i++) 
+    {
+      if (v2[i] !== v1[i]) 
+      {
+        return false;
+      }
+    }
+  return true;
+}, clearValue: function() {
+  this.setValue([]);
+}, syncSelection: function() {
+  var me = this, picker = me.picker, selection, selModel, values = me.valueModels || [], vLen = values.length, v, value;
+  if (picker) 
+  {
+    selection = [];
+    for (v = 0; v < vLen; v++) 
+      {
+        value = values[v];
+        if (value && value.isModel && me.store.indexOf(value) >= 0) 
+        {
+          selection.push(value);
+        }
+      }
+    me.ignoreSelection++;
+    selModel = picker.getSelectionModel();
+    selModel.deselectAll();
+    if (selection.length) 
+    {
+      selModel.select(selection, undefined, true);
+    }
+    me.ignoreSelection--;
+  }
+}, onEditorTab: function(e) {
+  var keyNav = this.listKeyNav;
+  if (this.selectOnTab && keyNav) 
+  {
+    keyNav.selectHighlighted(e);
+  }
+}}, 0, ["combobox", "combo"], ["field", "trigger", "combobox", "textfield", "pickerfield", "component", "combo", "box", "triggerfield"], {"field": true, "trigger": true, "combobox": true, "textfield": true, "pickerfield": true, "component": true, "combo": true, "box": true, "triggerfield": true}, ["widget.combo", "widget.combobox"], [['bindable', Ext.util.Bindable]], [Ext.form.field, 'ComboBox', Ext.form, 'ComboBox'], 0));
 ;
 
 (Ext.cmd.derive('Ext.form.field.Hidden', Ext.form.field.Base, {alternateClassName: 'Ext.form.Hidden', inputType: 'hidden', hideLabel: true, hidden: true, initComponent: function() {
@@ -56544,7 +58271,23 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 0, ["detailstatus"], ["component", "box", "dataview", "detailstatus"], {"component": true, "box": true, "dataview": true, "detailstatus": true}, ["widget.detailstatus"], 0, [Connector.view, 'DetailStatus'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.FilterSave', Ext.Component, {html: 'Hello, World!!'}, 0, 0, ["component", "box"], {"component": true, "box": true}, 0, 0, [Connector.view, 'FilterSave'], 0));
+(Ext.cmd.derive('Connector.view.FilterSave', Ext.panel.Panel, {initComponent: function() {
+  this.items = [{xtype: 'box', autoEl: {tag: 'div', cls: 'savetitle', html: 'Save filters'}}, this.getForm()];
+  this.callParent();
+  this.on('show', function() {
+  if (this.form) 
+  {
+    this.form.setDefaultFocus();
+  }
+}, this);
+}, getForm: function() {
+  if (this.form) 
+  return this.form;
+  this.form = Ext.create('Ext.form.Panel', {ui: 'custom', style: 'padding: 8px 0 0 27px', layout: {align: 'stretch'}, defaults: {labelAlign: 'top', validateOnBlur: false, validateOnChange: false, width: 225}, defaultType: 'textfield', items: [{fieldLabel: 'View name', name: 'viewname', componentCls: 'xyz', cls: 'abc', baseCls: 'cbs', plain: true, allowBlank: false, cls: 'grouptop', flex: 1}, {xtype: 'textareafield', name: 'viewdescription', emptyText: 'View description', allowBlank: false, flex: 1}], buttons: [{itemId: 'dosave', xtype: 'roundedbutton', cls: 'dark', text: 'Save'}, {itemId: 'cancelsave', xtype: 'roundedbutton', cls: 'dark', text: 'Cancel'}], buttonAlign: 'left', setDefaultFocus: function() {
+  this.getComponent(0).focus();
+}});
+  return this.form;
+}}, 0, ["filtersave"], ["panel", "component", "container", "filtersave", "box"], {"panel": true, "component": true, "container": true, "filtersave": true, "box": true}, ["widget.filtersave"], 0, [Connector.view, 'FilterSave'], 0));
 ;
 
 (Ext.cmd.derive('Connector.view.GroupSave', Ext.Panel, {initComponent: function() {
@@ -57194,13 +58937,154 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 0, 0, 0, 0, 0, 0, [Connector.controller, 'Navigation'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.RawData', Ext.Panel, {cls: 'rawdataview', grid: null, gridMargin: 20, flights: 0, foreignColumns: {}, constructor: function(config) {
+(Ext.cmd.derive('Connector.model.ColumnInfo', Ext.data.Model, {fields: [{name: 'shortCaption'}, {name: 'fieldKeyPath'}]}, 0, 0, 0, 0, 0, 0, [Connector.model, 'ColumnInfo'], 0));
+;
+
+(Ext.cmd.derive('Connector.window.Filter', Ext.window.Window, {ui: 'custom', cls: 'filterwindow', modal: true, width: 340, autoShow: true, draggable: false, closable: false, bodyStyle: 'margin: 8px;', initComponent: function() {
+  var box = Ext.get(this.triggerEl).getBox();
+  Ext.apply(this, {store: this.rawDataView.store, boundColumn: this.rawDataView.getColumnMetadata(this.col.dataIndex), x: box.x - 52, y: box.y + 35});
+  this.items = this.getItems();
+  this.buttons = [{xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'OK', width: 70, handler: this.applyFiltersAndColumns, scope: this}, {xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'Cancel', width: 70, handler: this.close, scope: this}, {xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'Clear Filters', width: 80, handler: function() {
+  var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
+  this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
+  this.store.load();
+  this.rawDataView.removeGridFilter(fieldKeyPath);
+  this.close();
+}, scope: this}, {xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'Clear All', width: 70, handler: function() {
+  this.clearAll();
+  this.close();
+}, scope: this}];
+  this.callParent(arguments);
+  this.addListener('afterrender', this.onAfterRender, this);
+}, onAfterRender: function() {
+  var keymap = new Ext.util.KeyMap(this.el, [{key: Ext.EventObject.ENTER, fn: this.applyFiltersAndColumns, scope: this}, {key: Ext.EventObject.ESC, fn: this.close, scope: this}]);
+}, clearAll: function() {
+  this.store.filterArray = [this.store.filterArray[0]];
+  this.store.load();
+  this.rawDataView.removeAllFilters();
+}, getItems: function() {
+  var items = [{xtype: 'box', autoEl: {tag: 'div', html: this.col.text, cls: 'filterheader'}}];
+  if (this.boundColumn.description) 
+  {
+    items.push({xtype: 'box', autoEl: {tag: 'div', cls: 'x-body', html: Ext.htmlEncode(this.boundColumn.description)}});
+  }
+  items.push({xtype: 'labkey-default-filterpanel', boundColumn: this.boundColumn, filterArray: this.store.filterArray, schemaName: this.rawDataView.queryMetadata.schemaName, queryName: this.rawDataView.queryMetadata.queryName});
+  if (null != this.boundColumn.lookup) 
+  {
+    items.push({xtype: 'grid', selType: 'checkboxmodel', title: 'Show Detail Columns', selModel: {mode: 'MULTI'}, store: this.getLookupColumnStore(), ui: 'custom', cls: 'lookupcols', columns: [{header: 'Detail Columns', dataIndex: 'shortCaption', width: 320}], height: 200, width: 320, style: 'padding-bottom:10px', hideHeaders: true, listeners: {viewready: function() {
+  var selectedCols = this.rawDataView.foreignColumns[this.boundColumn.name];
+  if (!selectedCols || selectedCols.length == 0) 
+  {
+    return;
+  }
+  this.getLookupGrid().getSelectionModel().select(selectedCols);
+}, scope: this}});
+  }
+  return items;
+}, getLookupGrid: function() {
+  return this.down('grid');
+}, getLookupColumnStore: function() {
+  if (!this.boundColumn.lookup) 
+  {
+    return null;
+  }
+  var storeId = "fkColumns-" + this.boundColumn.lookup.schemaName + "-" + this.boundColumn.lookup.queryName + "-" + this.boundColumn.fieldKey;
+  var store = Ext.getStore(storeId);
+  if (null != store) 
+  {
+    return store;
+  }
+  var url = LABKEY.ActionURL.buildURL("query", "getQueryDetails", null, {queryName: this.store.queryName, schemaName: this.store.schemaName, fk: this.boundColumn.fieldKey});
+  var displayColFieldKey = this.boundColumn.fieldKey + "/" + this.boundColumn.lookup.displayColumn;
+  return Ext.create('Ext.data.Store', {model: 'Connector.model.ColumnInfo', storeId: storeId, proxy: {type: 'ajax', url: url, reader: {type: 'json', root: 'columns'}}, filterOnLoad: true, filters: [function(item) {
+  return !item.raw.isHidden && item.raw.name != displayColFieldKey;
+}], autoLoad: true});
+}, applyColumns: function() {
+  if (!this.boundColumn.lookup) 
+  return false;
+  var lookupGrid = this.getLookupGrid(), selections = lookupGrid.getSelectionModel().selected, oldColumns = this.rawDataView.foreignColumns[this.boundColumn.name], newColumns = [];
+  selections.each(function(item, idx) {
+  newColumns.push(item);
+}, this);
+  var columnListChanged = !this.equalColumnLists(oldColumns, newColumns);
+  if (columnListChanged) 
+  {
+    this.rawDataView.foreignColumns[this.boundColumn.name] = newColumns;
+    this.rawDataView.updateAppliedColumns(newColumns, oldColumns);
+  }
+  return columnListChanged;
+}, applyFilters: function() {
+  var filterPanel = this.down('labkey-default-filterpanel');
+  if (filterPanel.isValid()) 
+  {
+    var colFilters = filterPanel.getFilters();
+    this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
+    return true;
+  } else {
+    Ext.window.Msg.alert("Please fix errors in filter.");
+    return false;
+  }
+}, applyFiltersAndColumns: function() {
+  if (this.applyFilters()) 
+  {
+    var columnListChanged = this.applyColumns();
+    if (columnListChanged) 
+    {
+      this.rawDataView.refreshGrid(this.rawDataView.queryMetadata, this.rawDataView.measures, this.rawDataView.queryPtids);
+    } else {
+      this.store.load();
+    }
+    this.rawDataView.translateGridFilter();
+    this.ppx = this.getPosition();
+    this.close();
+  }
+}, equalColumnLists: function(oldCols, newCols) {
+  oldCols = oldCols || [];
+  newCols = newCols || [];
+  if (oldCols.length != newCols.length) 
+  {
+    return false;
+  }
+  for (var i = 0; i < newCols.length; i++) 
+    {
+      if (newCols[i].get("fieldKeyPath") != oldCols[i].get("fieldKeyPath")) 
+      {
+        return false;
+      }
+    }
+  return true;
+}}, 0, ["rawdatafilterwin"], ["panel", "rawdatafilterwin", "window", "component", "container", "box"], {"panel": true, "rawdatafilterwin": true, "window": true, "component": true, "container": true, "box": true}, ["widget.rawdatafilterwin"], 0, [Connector.window, 'Filter'], 0));
+;
+
+(Ext.cmd.derive('Connector.view.RawData', Ext.panel.Panel, {cls: 'rawdataview', grid: null, gridMargin: 20, flights: 0, allowExport: true, axisSourceCls: 'rawdatasource', foreignColumns: {}, constructor: function(config) {
   this.callParent([config]);
   this.addEvents('measureselected');
 }, initComponent: function() {
   this.initialized = false;
-  this.items = [];
-  this.exportButton = Ext.create('Connector.button.RoundedButton', {text: 'Export', cls: 'dark', margin: '5 0 0 5', handler: function() {
+  this.getAxisPanel();
+  this.getMeasureWindow();
+  var subItems = [{xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: 'Data Grid'}}, {xtype: 'roundedbutton', id: 'choosecolumns', text: 'Choose Columns', cls: 'dark', margin: '5 0 0 5', handler: this.showMeasureSelection, scope: this}];
+  if (this.allowExport) 
+  {
+    subItems.push(this.getExportButton());
+  }
+  this.items = [{xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: subItems}];
+  this.resizeTask = new Ext.util.DelayedTask(this.handleResize, this);
+  this.callParent();
+  this.on('resize', function() {
+  this.resizeTask.delay(250);
+}, this);
+  this.on('afterlayout', this.showMeasureSelection, this, {single: true});
+}, getAxisPanel: function() {
+  if (!this.axisPanel) 
+  {
+    this.axisPanel = Ext.create('Connector.panel.AxisSelector', {flex: 1, ui: 'axispanel', bodyStyle: 'padding-left: 27px; padding-top: 15px;', measureConfig: {allColumns: true, sourceCls: this.axisSourceCls, filter: LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}), showHidden: this.canShowHidden, bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']}, displayConfig: {defaultHeader: 'Add Measures'}, disableScale: true});
+  }
+  return this.axisPanel;
+}, getExportButton: function() {
+  if (!this.exportButton) 
+  {
+    this.exportButton = Ext.create('Connector.button.RoundedButton', {text: 'Export', cls: 'dark', margin: '5 0 0 5', handler: function() {
   if (this.store) 
   {
     var filters = {filters: LABKEY.Filter.appendFilterParams({}, this.store.filterArray)};
@@ -57213,16 +59097,8 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }, scope: this});
   }
 }, hidden: true, scope: this});
-  this.items.push([{xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: 'Data Grid'}}, {xtype: 'roundedbutton', id: 'choosecolumns', text: 'Choose Columns', cls: 'dark', margin: '5 0 0 5', handler: this.showMeasureSelection, scope: this}, this.exportButton]}]);
-  this.axisSourceCls = 'rawdatasource';
-  this.axisPanel = Ext.create('Connector.panel.AxisSelector', {flex: 1, ui: 'axispanel', bodyStyle: 'padding-left: 27px; padding-top: 15px;', measureConfig: {allColumns: true, sourceCls: this.axisSourceCls, filter: LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}), showHidden: this.canShowHidden, bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']}, displayConfig: {defaultHeader: 'Add Measures'}, disableScale: true});
-  this.getMeasureWindow();
-  this.resizeTask = new Ext.util.DelayedTask(this.handleResize, this);
-  this.callParent();
-  this.on('resize', function() {
-  this.resizeTask.delay(250);
-}, this);
-  this.on('afterrender', this.showMeasureSelection, this, {single: true});
+  }
+  return this.exportButton;
 }, handleResize: function() {
   var viewbox = this.getBox();
   if (this.win) 
@@ -57331,15 +59207,14 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   } else {
     filterArray = [pFilter];
   }
-  this.store = Ext.create('Connector.store.CDSStore', {queryName: this.queryMetadata.queryName, schemaName: this.queryMetadata.schemaName, filterArray: filterArray, columns: columnList, pageSize: 100});
+  this.store = Ext.create('LABKEY.ext4.data.Store', {queryName: this.queryMetadata.queryName, schemaName: this.queryMetadata.schemaName, filterArray: filterArray, columns: columnList, pageSize: 100});
   this.translateGridFilter(this.queryMetadata.queryName, this.queryMetadata.schemaName, columnList[0]);
-  this.grid = Ext.create('LABKEY.Ext.GridPanel', {store: this.store, ui: 'custom', cls: 'iScroll', width: viewbox.width - (2 * this.gridMargin), height: viewbox.height - gridtop - this.gridMargin - 40, margin: '' + this.gridMargin, showPagingToolbar: true, containerPath: LABKEY.ActionURL.getContainer(), autoScroll: true, charWidth: 10, listeners: {columnmodelcustomize: onColumnModelCustomize, beforerender: onBeforeRender, scope: this}});
+  this.grid = Ext.create('LABKEY.ext4.GridPanel', {store: this.store, ui: 'custom', cls: 'iScroll', border: false, width: viewbox.width - (2 * this.gridMargin), height: viewbox.height - gridtop - this.gridMargin - 40, margin: '' + this.gridMargin, showPagingToolbar: true, containerPath: LABKEY.ActionURL.getContainer(), autoScroll: true, charWidth: 10, listeners: {columnmodelcustomize: onColumnModelCustomize, beforerender: onBeforeRender, scope: this}});
   this.bottomBar = Ext.create('Ext.Panel', {ui: 'custom', border: false, frame: false, items: [{id: 'gridsources', xtype: 'roundedbutton', text: 'Sources', ui: 'rounded-accent', handler: this.showSources, scope: this}]});
-  this.add(this.grid);
-  this.add(this.bottomBar);
-  if (this.exportButton) 
+  this.add(this.grid, this.bottomBar);
+  if (this.allowExport) 
   {
-    this.exportButton.show();
+    this.getExportButton().show();
   }
 }, translateGridFilter: function(query, schema, col) {
   if (col) 
@@ -57538,17 +59413,23 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   var fields;
   if (this.store && this.store.proxy) 
   {
-    fields = this.store.proxy.reader.fields;
+    fields = this.store.proxy.reader.getFields();
   } else {
     fields = this.queryMetadata.metaData.fields;
   }
-  for (var i = 0; i < fields.length; i++) 
-    {
-      if (fields[i].name == colName) 
+  var target;
+  if (fields) 
+  {
+    for (var i = 0; i < fields.length; i++) 
       {
-        return fields[i];
+        if (fields[i].name == colName) 
+        {
+          target = fields[i];
+          break;
+        }
       }
-    }
+  }
+  return target;
 }, onTriggerClick: function(headerCt, col, evt, el) {
   this.filterWin = Ext.create('Connector.window.Filter', {triggerEl: el, col: col, rawDataView: this});
   evt.stopEvent();
@@ -57612,123 +59493,6 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }, showSources: function() {
   this.fireEvent('sourcerequest', this.measures, this.queryMetadata);
 }}, 1, ["datagrid"], ["panel", "component", "container", "box", "datagrid"], {"panel": true, "component": true, "container": true, "box": true, "datagrid": true}, ["widget.datagrid"], 0, [Connector.view, 'RawData'], 0));
-;
-(Ext.cmd.derive('Connector.window.Filter', Ext.window.Window, {ui: 'custom', cls: 'filterwindow', modal: true, width: 340, autoShow: true, draggable: false, closable: false, bodyStyle: 'margin: 8px; background-color: white;', initComponent: function() {
-  var box = Ext.get(this.triggerEl).getBox();
-  Ext.apply(this, {store: this.rawDataView.store, boundColumn: this.rawDataView.getColumnMetadata(this.col.dataIndex), x: box.x - 52, y: box.y + 35});
-  this.items = this.getItems();
-  this.buttons = [{xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'OK', width: 70, handler: this.applyFiltersAndColumns, scope: this}, {xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'Cancel', width: 70, handler: this.close, scope: this}, {xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'Clear Filters', width: 80, handler: function() {
-  var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
-  this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
-  this.store.load();
-  this.rawDataView.removeGridFilter(fieldKeyPath);
-  this.close();
-}, scope: this}, {xtype: 'roundedbutton', ui: 'rounded-inverted-accent', text: 'Clear All', width: 70, handler: function() {
-  this.clearAll();
-  this.close();
-}, scope: this}];
-  this.callParent(arguments);
-  this.addListener('afterrender', this.onAfterRender, this);
-}, onAfterRender: function() {
-  var keymap = new Ext.util.KeyMap(this.el, [{key: Ext.EventObject.ENTER, fn: this.applyFiltersAndColumns, scope: this}, {key: Ext.EventObject.ESC, fn: this.close, scope: this}]);
-}, clearAll: function() {
-  this.store.filterArray = [this.store.filterArray[0]];
-  this.store.load();
-  this.rawDataView.removeAllFilters();
-}, getItems: function() {
-  var items = [{xtype: 'box', autoEl: {tag: 'div', html: this.col.text, cls: 'filterheader'}}];
-  if (this.boundColumn.description) 
-  {
-    items.push({xtype: 'box', autoEl: {tag: 'div', cls: 'x-body', html: Ext.htmlEncode(this.boundColumn.description)}});
-  }
-  items.push({itemId: 'mememe', xtype: 'labkey-default-filterpanel', boundColumn: this.boundColumn, title: 'Filter', ui: 'custom', filterArray: this.store.filterArray, style: 'padding-bottom: 8px', schemaName: this.rawDataView.queryMetadata.schemaName, queryName: this.rawDataView.queryMetadata.queryName});
-  if (null != this.boundColumn.lookup) 
-  {
-    items.push({xtype: 'grid', selType: 'checkboxmodel', title: 'Show Detail Columns', selModel: {mode: 'MULTI'}, store: this.getLookupColumnStore(), ui: 'custom', cls: 'lookupcols', columns: [{header: 'Detail Columns', dataIndex: 'shortCaption', width: 320}], height: 200, width: 320, style: 'padding-bottom:10px', hideHeaders: true, listeners: {viewready: function() {
-  var selectedCols = this.rawDataView.foreignColumns[this.boundColumn.name];
-  if (!selectedCols || selectedCols.length == 0) 
-  {
-    return;
-  }
-  this.getLookupGrid().getSelectionModel().select(selectedCols);
-}, scope: this}});
-  }
-  return items;
-}, getLookupGrid: function() {
-  return this.down('grid');
-}, getLookupColumnStore: function() {
-  if (!this.boundColumn.lookup) 
-  {
-    return null;
-  }
-  var storeId = "fkColumns-" + this.boundColumn.lookup.schemaName + "-" + this.boundColumn.lookup.queryName + "-" + this.boundColumn.fieldKey;
-  var store = Ext.getStore(storeId);
-  if (null != store) 
-  {
-    return store;
-  }
-  var url = LABKEY.ActionURL.buildURL("query", "getQueryDetails", null, {queryName: this.store.queryName, schemaName: this.store.schemaName, fk: this.boundColumn.fieldKey});
-  var displayColFieldKey = this.boundColumn.fieldKey + "/" + this.boundColumn.lookup.displayColumn;
-  return Ext.create('Ext.data.Store', {model: 'Connector.model.ColumnInfo', storeId: storeId, proxy: {type: 'ajax', url: url, reader: {type: 'json', root: 'columns'}}, filterOnLoad: true, filters: [function(item) {
-  return !item.raw.isHidden && item.raw.name != displayColFieldKey;
-}], autoLoad: true});
-}, applyColumns: function() {
-  if (!this.boundColumn.lookup) 
-  return false;
-  var lookupGrid = this.getLookupGrid(), selections = lookupGrid.getSelectionModel().selected, oldColumns = this.rawDataView.foreignColumns[this.boundColumn.name], newColumns = [];
-  selections.each(function(item, idx) {
-  newColumns.push(item);
-}, this);
-  var columnListChanged = !this.equalColumnLists(oldColumns, newColumns);
-  if (columnListChanged) 
-  {
-    this.rawDataView.foreignColumns[this.boundColumn.name] = newColumns;
-    this.rawDataView.updateAppliedColumns(newColumns, oldColumns);
-  }
-  return columnListChanged;
-}, applyFilters: function() {
-  var filterPanel = this.down('labkey-default-filterpanel');
-  if (filterPanel.isValid()) 
-  {
-    var colFilters = filterPanel.getFilters();
-    this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
-    return true;
-  } else {
-    Ext.window.Msg.alert("Please fix errors in filter.");
-    return false;
-  }
-}, applyFiltersAndColumns: function() {
-  if (this.applyFilters()) 
-  {
-    var columnListChanged = this.applyColumns();
-    if (columnListChanged) 
-    {
-      this.rawDataView.refreshGrid(this.rawDataView.queryMetadata, this.rawDataView.measures, this.rawDataView.queryPtids);
-    } else {
-      this.store.load();
-    }
-    this.rawDataView.translateGridFilter();
-    this.ppx = this.getPosition();
-    this.close();
-  }
-}, equalColumnLists: function(oldCols, newCols) {
-  oldCols = oldCols || [];
-  newCols = newCols || [];
-  if (oldCols.length != newCols.length) 
-  {
-    return false;
-  }
-  for (var i = 0; i < newCols.length; i++) 
-    {
-      if (newCols[i].get("fieldKeyPath") != oldCols[i].get("fieldKeyPath")) 
-      {
-        return false;
-      }
-    }
-  return true;
-}}, 0, ["rawdatafilterwin"], ["panel", "rawdatafilterwin", "window", "component", "container", "box"], {"panel": true, "rawdatafilterwin": true, "window": true, "component": true, "container": true, "box": true}, ["widget.rawdatafilterwin"], 0, [Connector.window, 'Filter'], 0));
-;
-(Ext.cmd.derive('Connector.model.ColumnInfo', Ext.data.Model, {fields: [{name: 'shortCaption'}, {name: 'fieldKeyPath'}]}, 0, 0, 0, 0, 0, 0, [Connector.model, 'ColumnInfo'], 0));
 ;
 
 (Ext.cmd.derive('Connector.controller.RawData', Connector.controller.AbstractViewController, {views: ['RawData'], rawDataView: null, measures: [], filterMap: {}, idMap: {}, subjectColumn: 'ParticipantId', subjectVisitColumn: 'ParticipantVisit', getParticipantIn: function(callback) {
