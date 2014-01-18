@@ -101,6 +101,11 @@ $window-header-color: $secondary-color;
   - Connector.view.search.Container
 */
 
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
+  margin: 0;
+  padding: 0
+}
+
 h1 {
   font-size: 26pt;
   @include header;
@@ -539,7 +544,7 @@ div.status-row.x-btn-rounded-inverted-accent-icon-small {
 
 .connectorheader .logo h2 {
   float: left;
-  padding: 27px 5px 0px 27px;
+  padding: 20px 5px 0px 27px !important;
   font-family: $bodycaps-font;
   font-weight: bold;
   font-size: 13pt;

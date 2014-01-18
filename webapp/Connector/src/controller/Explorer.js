@@ -121,8 +121,6 @@ Ext.define('Connector.controller.Explorer', {
                 selections : state.getSelections()
             });
 
-            this.loadExplorerView(context, v);
-
             this.on('dimension', v.onDimensionChange, v);
             this.on('hierarchy', v.onHierarchyChange, v);
             state.on('filterchange', v.onFilterChange,    v);
@@ -138,6 +136,8 @@ Ext.define('Connector.controller.Explorer', {
 
             // this allows whether mouse hover over explorer items will cause a request for selection
             this.allowHover = true;
+
+            Ext.defer(function() { this.loadExplorerView(context, v); }, 100, this);
 
             return v;
         }
@@ -214,7 +214,6 @@ Ext.define('Connector.controller.Explorer', {
 
     // fired when the dimension is changed via the menu
     onDimensionSelect : function(m, item) {
-        console.log('dimension selected');
         var state = this.getStateManager();
 
         state.onMDXReady(function(mdx) {

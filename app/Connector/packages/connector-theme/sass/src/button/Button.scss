@@ -27,7 +27,7 @@
   $font-family-pressed: $info-font,
   $font-family-disabled: $info-font,
 
-  $icon-size : 10px,
+  $icon-size : 15px,
   $glyph-color : #FFFFFF
 );
 
@@ -270,8 +270,11 @@
   height: 14px;
 }
 
+.x-btn-rounded-small-noicon .x-btn-inner {
+  height: 18px;
+}
+
 .x-btn-rounded-small-icon button,
-.x-btn-rounded-small-noicon .x-btn-inner,
 .x-btn-rounded-accent-small-icon button,
 .x-btn-rounded-accent-small-noicon .x-btn-inner {
   height : 13px;

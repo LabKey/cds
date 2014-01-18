@@ -57087,7 +57087,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 0, ["dropdownbutton"], ["button", "component", "dropdownbutton", "box"], {"button": true, "component": true, "dropdownbutton": true, "box": true}, ["widget.dropdownbutton"], 0, [Connector.button, 'DropDownButton'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.SingleAxisExplorer', Ext.Panel, {layout: {type: 'vbox', align: 'stretch'}, dimViewHeight: 170, initComponent: function() {
+(Ext.cmd.derive('Connector.view.SingleAxisExplorer', Ext.panel.Panel, {layout: {type: 'vbox', align: 'stretch'}, dimViewHeight: 170, initComponent: function() {
   Ext.applyIf(this, {showEmpty: true});
   this.items = [this.getDimensionView(), this.initExplorerView()];
   this.callParent();
@@ -57192,7 +57192,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   }
 }}, 0, ["dimensionview"], ["component", "container", "dimensionview", "box"], {"component": true, "container": true, "dimensionview": true, "box": true}, ["widget.dimensionview"], 0, [Connector.view, 'Dimension'], 0));
 ;
-(Ext.cmd.derive('Connector.view.DimensionSelector', Ext.Panel, {dimLabels: {'Antigen': 'Assay Antigens', 'Assay': 'Assays', 'Lab': 'Labs', 'Study': 'Studies', 'Vaccine': 'Regimen Components', 'Vaccine Component': 'Vaccine Immunogens', 'Participant': 'Subjects'}, titleComponentId: 'dimtitle', sortComponentId: 'dimsort', initComponent: function() {
+(Ext.cmd.derive('Connector.view.DimensionSelector', Ext.panel.Panel, {dimLabels: {'Antigen': 'Assay Antigens', 'Assay': 'Assays', 'Lab': 'Labs', 'Study': 'Studies', 'Vaccine': 'Regimen Components', 'Vaccine Component': 'Vaccine Immunogens', 'Participant': 'Subjects'}, titleComponentId: 'dimtitle', sortComponentId: 'dimsort', initComponent: function() {
   var btnId = Ext.id();
   this.items = [{itemId: this.titleComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'dimlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimgroup', html: this.getDimensionLabel()}}, {xtype: 'dropdownbutton', itemId: 'dimensionbtn', margin: '16 0 0 10', menu: {xtype: 'menu', ui: 'custom', itemId: 'dimensionmenu', margin: '0 0 10 0', showSeparator: false}}]}, {itemId: this.sortComponentId, xtype: 'panel', ui: 'custom', layout: {type: 'hbox'}, items: [{itemId: 'sortlabel', xtype: 'box', autoEl: {tag: 'div', cls: 'dimensionsort', html: 'Sorted by:  <span class="sorttype"></span>'}}, {id: btnId, xtype: 'dropdownbutton', ui: 'dropdown-alt', cls: 'sortDropdown', margin: '10 0 0 8', menu: {xtype: 'menu', autoShow: true, itemId: 'sortedmenu', margin: '0 0 0 0', showSeparator: false, ui: 'custom', btn: btnId}, listeners: {afterrender: function(b) {
   b.showMenu();
@@ -57891,7 +57891,6 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
     var s = this.getStore('Explorer');
     s.state = state;
     var v = Ext.create('Connector.view.SingleAxisExplorer', {flex: 3, ui: 'custom', width: '100%', store: s, selections: state.getSelections()});
-    this.loadExplorerView(context, v);
     this.on('dimension', v.onDimensionChange, v);
     this.on('hierarchy', v.onHierarchyChange, v);
     state.on('filterchange', v.onFilterChange, v);
@@ -57904,6 +57903,9 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
     state.on('selectionchange', v.onSelectionChange, v);
     this.getViewManager().on('afterchangeview', v.onViewChange, v);
     this.allowHover = true;
+    Ext.defer(function() {
+  this.loadExplorerView(context, v);
+}, 100, this);
     return v;
   }
 }, updateView: function(xtype, context) {
@@ -57962,7 +57964,6 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   }
 }, this);
 }, onDimensionSelect: function(m, item) {
-  console.log('dimension selected');
   var state = this.getStateManager();
   state.onMDXReady(function(mdx) {
   var context = {dimension: item.rec.data.hierarchy.split('.')[0]};
@@ -58523,7 +58524,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 (Ext.cmd.derive('Connector.model.Dimension', Ext.data.Model, {fields: [{name: 'name'}, {name: 'uniqueName'}, {name: 'singularName'}, {name: 'pluralName'}, {name: 'hidden', type: 'boolean'}, {name: 'priority', type: 'int'}, {name: 'supportsDetails', type: 'boolean'}, {name: 'detailModel'}, {name: 'detailView'}]}, 0, 0, 0, 0, 0, 0, [Connector.model, 'Dimension'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.Learn', Ext.container.Container, {layout: {type: 'hbox', align: 'stretch'}, cls: 'learnview', bubbleEvents: ['selectdimension'], initComponent: function() {
+(Ext.cmd.derive('Connector.view.Learn', Ext.container.Container, {cls: 'learnview', bubbleEvents: ['selectdimension'], initComponent: function() {
   this.columnPresent = true;
   this.items = [this.getHeader(), this.getLearnColumnHeaderView()];
   this.callParent();
@@ -58622,7 +58623,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined);
 }}, 0, ["learn"], ["component", "container", "learn", "box"], {"component": true, "container": true, "learn": true, "box": true}, ["widget.learn"], 0, [Connector.view, 'Learn'], 0));
 ;
-(Ext.cmd.derive('Connector.view.LearnHeader', Ext.container.Container, {height: 140, layout: {type: 'hbox', align: 'stretch'}, cls: 'learnheader', defaults: {ui: 'custom', flex: 1}, initComponent: function() {
+(Ext.cmd.derive('Connector.view.LearnHeader', Ext.container.Container, {height: 140, cls: 'learnheader', defaults: {ui: 'custom', flex: 1}, initComponent: function() {
   this.items = [{xtype: 'box', autoEl: {tag: 'div', cls: 'titlepanel', html: '<span>Learn About...</span>'}}, {xtype: 'container', itemId: 'dataviewcontainer', cls: 'learn-header-container', items: [{xtype: 'learnheaderdataview', itemId: 'headerdataview', dimensions: this.dimensions}]}];
   this.callParent();
   this.addEvents('selectdimension');
@@ -60603,11 +60604,11 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
 }}, 0, 0, 0, 0, 0, 0, [Connector.controller, 'Summary'], 0));
 ;
 
-(Ext.cmd.derive('Connector.view.Header', Ext.panel.Panel, {layout: 'hbox', height: 87, cls: 'connectorheader', expand: true, defaults: {ui: 'custom'}, constructor: function(config) {
+(Ext.cmd.derive('Connector.view.Header', Ext.panel.Panel, {layout: 'hbox', height: 87, cls: 'connectorheader', expand: true, collapseTime: 200, defaults: {ui: 'custom'}, constructor: function(config) {
   this.callParent([config]);
   this.addEvents('headerclick');
 }, initComponent: function() {
-  this.items = [{xtype: 'box', itemId: 'logo', cls: 'logo', autoEl: {tag: 'div', html: '<h2>hiv vaccine <br>' + '<span>collaborative dataspace</span>' + '</h2>' + '<img src="' + LABKEY.contextPath + '/cds/images/logo_0' + (Math.floor(Math.random() * 5) + 1) + '.png">'}, flex: 4, listeners: {afterrender: function(b) {
+  this.items = [{xtype: 'box', itemId: 'logo', cls: 'logo', autoEl: {tag: 'div', html: '<h2 style="padding-top: 200px;">hiv vaccine <br>' + '<span>collaborative dataspace</span>' + '</h2>' + '<img src="' + LABKEY.contextPath + '/cds/images/logo_0' + (Math.floor(Math.random() * 5) + 1) + '.png">'}, flex: 4, listeners: {afterrender: function(b) {
   b.getEl().on('click', function() {
   this.fireEvent('headerclick', this);
 }, this);
@@ -60615,11 +60616,6 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
   this.callParent();
   this.on('afterrender', function(p) {
   this.collapse(true);
-  var cmp = Ext.getCmp('search-container');
-  if (cmp && cmp.getEl()) 
-  {
-    Ext.create('Ext.tip.ToolTip', {target: cmp.getEl(), anchor: 'left', autoHide: true, contentEl: 'searchtip', maxWidth: 500, minWidth: 200, bodyPadding: 0, padding: 0});
-  }
 }, this, {single: true});
 }, expand: function() {
   if (!this.expanded) 
@@ -60640,7 +60636,7 @@ Ext.define('Ext.grid.plugin.BufferedRendererTableView', {override: 'Ext.view.Tab
     h2logo.dom.innerHTML = 'hiv vaccine <span>collaborative dataspace</span>';
     h2logo.animate({to: {fontSize: '11pt', paddingTop: 8}, duration: time});
     Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({to: {paddingTop: 11, width: 32}, duration: time});
-    Ext.get(this.getComponent('search').getEl().animate({to: {marginTop: -30}, duration: time}));
+    Ext.get(this.getComponent('search').getEl().animate({to: {marginTop: -3}, duration: time}));
     this.setHeight(53);
     this.expanded = false;
   }

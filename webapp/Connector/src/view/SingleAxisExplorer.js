@@ -1,6 +1,6 @@
 Ext.define('Connector.view.SingleAxisExplorer', {
 
-    extend: 'Ext.Panel',
+    extend: 'Ext.panel.Panel',
 
     requires: ['Connector.model.Explorer'],
 
@@ -182,22 +182,22 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
 Ext.define('Connector.view.Dimension', {
 
-    extend : 'Ext.container.Container',
+    extend: 'Ext.container.Container',
 
-    requires : ['Connector.button.DropDownButton'],
+    requires: ['Connector.button.DropDownButton'],
 
-    alias  : 'widget.dimensionview',
+    alias: 'widget.dimensionview',
 
-    layout : {
+    layout: {
         type : 'hbox',
         align: 'stretch'
     },
 
-    cls : 'dimensionview',
+    cls: 'dimensionview',
 
-    defaults : {
-        ui : 'custom',
-        flex : 1
+    defaults: {
+        ui: 'custom',
+        flex: 1
     },
 
     selectorId: 'dimselect',
@@ -233,7 +233,7 @@ Ext.define('Connector.view.Dimension', {
 
 Ext.define('Connector.view.DimensionSelector', {
 
-    extend : 'Ext.Panel',
+    extend : 'Ext.panel.Panel',
 
     dimLabels : {
         'Antigen' : 'Assay Antigens',

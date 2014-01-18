@@ -11,6 +11,8 @@ Ext.define("Connector.view.Header", {
 
     expand: true,
 
+    collapseTime : 200,
+
     defaults: {
         ui: 'custom'
     },
@@ -38,7 +40,7 @@ Ext.define("Connector.view.Header", {
             cls: 'logo',
             autoEl: {
                 tag: 'div',
-                html  : '<h2>hiv vaccine <br>' +
+                html  : '<h2 style="padding-top: 200px;">hiv vaccine <br>' +
                         '<span>collaborative dataspace</span>' +
                         '</h2>' +
                         '<img src="' + LABKEY.contextPath + '/cds/images/logo_0' + (Math.floor(Math.random()*5)+1) +'.png">' // TODO: Get rid of hard coded context
@@ -81,19 +83,19 @@ Ext.define("Connector.view.Header", {
 
             this.collapse(true);
 
-            var cmp = Ext.getCmp('search-container');
-            if (cmp && cmp.getEl()) {
-                Ext.create('Ext.tip.ToolTip', {
-                    target : cmp.getEl(),
-                    anchor : 'left',
-                    autoHide: true,
-                    contentEl : 'searchtip',
-                    maxWidth : 500,
-                    minWidth : 200,
-                    bodyPadding: 0,
-                    padding: 0
-                });
-            }
+//            var cmp = Ext.getCmp('search-container');
+//            if (cmp && cmp.getEl()) {
+//                Ext.create('Ext.tip.ToolTip', {
+//                    target : cmp.getEl(),
+//                    anchor : 'left',
+//                    autoHide: true,
+//                    contentEl : 'searchtip',
+//                    maxWidth : 500,
+//                    minWidth : 200,
+//                    bodyPadding: 0,
+//                    padding: 0
+//                });
+//            }
 
         }, this, {single: true});
     },
@@ -117,7 +119,7 @@ Ext.define("Connector.view.Header", {
             h2logo.dom.innerHTML = 'hiv vaccine <span>collaborative dataspace</span>';
             h2logo.animate({ to : { fontSize: '11pt', paddingTop: 8 }, duration: time });
             Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 11 , width : 32}, duration: time });
-            Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: -30}, duration : time }));
+            Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: -3}, duration : time }));
             this.setHeight(53);
             this.expanded = false;
         }

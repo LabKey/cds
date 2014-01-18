@@ -56,6 +56,7 @@
 <%=textLink("Update Participant Groups", CDSController.UpdateParticipantGroupsAction.class)%>
 <br>
 <%=textLink("Application", CDSController.AppAction.class)%>
+<%=textLink("Application (Development)", CDSController.ExtAppAction.class)%>
 <%
     }
     else

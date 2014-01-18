@@ -337,16 +337,17 @@ Ext.define('Connector.view.RawData', {
             }
         });
 
-        this.bottomBar = Ext.create('Ext.Panel', {
-            ui : 'custom',
-            border : false, frame : false,
-            items : [{
-                id    : 'gridsources',
-                xtype : 'roundedbutton',
-                text  : 'Sources',
-                ui    : 'rounded-accent',
-                handler : this.showSources,
-                scope : this
+        this.bottomBar = Ext.create('Ext.panel.Panel', {
+            ui: 'custom',
+            border: false,
+            frame: false,
+            items: [{
+                id: 'gridsources',
+                xtype: 'roundedbutton',
+                text: 'Sources',
+                ui: 'rounded-accent',
+                handler: this.showSources,
+                scope: this
             }]
         });
 

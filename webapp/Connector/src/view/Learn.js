@@ -6,11 +6,6 @@ Ext.define('Connector.view.Learn', {
 
     requires : ['Connector.model.Dimension'],
 
-    layout: {
-        type: 'hbox',
-        align: 'stretch'
-    },
-
     cls: 'learnview',
 
     bubbleEvents: ['selectdimension'],
@@ -169,11 +164,6 @@ Ext.define('Connector.view.LearnHeader', {
     extend : 'Ext.container.Container',
 
     height: 140,
-
-    layout: {
-        type: 'hbox',
-        align: 'stretch'
-    },
 
     cls: 'learnheader',
 
