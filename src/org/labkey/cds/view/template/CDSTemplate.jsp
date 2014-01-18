@@ -29,7 +29,6 @@
     PrintTemplate me   = (PrintTemplate) HttpView.currentView();
     PageConfig bean    = me.getModelBean();
     ActionURL url      = getActionURL();
-//    ViewContext ctx    = getViewContext();
     String contextPath = request.getContextPath();
     String serverHash   = PageFlowUtil.getServerSessionHash();
     String grayImagePath = "cds/lib/ext-4.0.7/resources/themes/images/gray";
@@ -92,7 +91,7 @@
         }
     </style>
 
-    <%=PageFlowUtil.getLabkeyJS(new LinkedHashSet<ClientDependency>())%>
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
     <script type="text/javascript" src="<%=contextPath%>/cds/lib/ext-4.0.7/ext-all-sandbox<%= devMode ? "-dev" : ""%>.js"></script>
     <script type="text/javascript" src="<%=contextPath%>/cds/lib/ext-4.0.7/ext-patches.js"></script>
     <script type="text/javascript" src="<%=contextPath%>/clientapi/core/ExtAdapter.js"></script>
