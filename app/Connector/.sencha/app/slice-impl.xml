@@ -87,7 +87,7 @@
             ]]>
         </x-sencha-command>
 
-        <echo>Slicing theme images to ${build.resources.dir} -- NOT REALLY NICK</echo>
+        <echo>Slicing theme images to ${build.resources.dir} -- NOT REALLY (NICK)</echo>
         <!--<x-sencha-command>-->
             <!--<![CDATA[-->
                 <!--fs-->
