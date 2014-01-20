@@ -886,7 +886,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         HOME("Home", Locator.xpath("Home nav link not yet implemented")),
         LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
-        SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("Find Subjects...")),
+        SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
         PLOT("Plot data", Locator.tagWithClass("div", "yaxisbutton")),
         GRID("View data grid", Locator.tagWithClass("div", "dimgroup").withText("Data Grid"));
 
