@@ -134,6 +134,11 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Proxy.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Store.js"></script>
 
+    <!-- App API Dependencies -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/Route.js"></script>
+
     <!-- Study Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
@@ -170,7 +175,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Dimension.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>
+    <%--<script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>--%>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
 
     <!-- Application source -->

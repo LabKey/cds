@@ -1,10 +1,12 @@
 Ext.define('Connector.store.Explorer', {
 
-    extend : 'Ext.data.Store',
+    extend: 'Ext.data.Store',
 
-    model : 'Connector.model.Explorer',
+    model: 'Connector.model.Explorer',
 
-//    buffered : true,
+    requires: 'Connector.model.Explorer',
+
+    enableSelection: true,
 
     constructor : function(config) {
 
@@ -17,7 +19,7 @@ Ext.define('Connector.store.Explorer', {
         this.addEvents('selectRequest', 'subselect', 'totalcount');
     },
 
-    load : function(dimension, hIndex, useSelection, showEmpty, barCache) {
+    load : function(dimension, hIndex, useSelection, showEmpty) {
 
         if (!this.state) {
             console.error('Explorer must initialize State object.');
@@ -25,11 +27,13 @@ Ext.define('Connector.store.Explorer', {
         }
 
         this.flight     = 0;
-        this.mflight    = 0;
         this.showEmpty  = (showEmpty ? true : false);
         this.hIndex     = hIndex || 0;
-        if (barCache) {
-            this.barCache = barCache;
+
+        if (this.enableSelection) {
+
+            // reset selection ignoring inflight requests
+            this.mflight = 0;
         }
 
         this.onDimensionReady(dimension, useSelection);
@@ -37,52 +41,47 @@ Ext.define('Connector.store.Explorer', {
 
     onDimensionReady : function(dim, useSelection) {
         this.dim = dim;
-        this.loadDimension(useSelection)
+        this.loadDimension(useSelection);
     },
 
-//    suspendEvents : function() {
-//        console.log('called suspend');
-//        this.callParent();
-//    },
-//
-//    resumeEvents : function() {
-//        console.log('called resume');
-//        this.callParent();
-//    },
-
     clearSelection : function() {
-        this.suspendEvents();
-        var recs = this.queryBy(function(rec, id){
-            rec.set('subcount', 0);
-            return true;
-        }, this);
-        this.resumeEvents();
-        this.fireEvent('subselect', recs.items);
+        if (this.enableSelection) {
+            this.suspendEvents();
+            var recs = this.queryBy(function(rec, id){
+                rec.set('subcount', 0);
+                return true;
+            }, this);
+            this.resumeEvents();
+            this.fireEvent('subselect', recs.items);
+        }
     },
 
     loadSelection : function(useLast) {
-        // asks for the subselected portion
-        var me = this;
+        if (this.enableSelection) {
+            // asks for the subselected portion
+            var me = this;
 
-        me.suspendEvents();
+            me.suspendEvents();
 
-        me.mflight++;
-        me.mdx.query({
-            onRows : [{
-                hierarchy : me.dim.getHierarchies()[this.hIndex].getName(),
-                members   : 'members'
-            }],
-            useNamedFilters : ['stateSelectionFilter', 'hoverSelectionFilter', 'statefilter'],
-            mflight : me.mflight,
-            showEmpty : me.showEmpty,
-            success: this.selectionSuccess,
-            scope : this
-        });
+            me.mflight++;
+            me.mdx.query({
+                onRows : [{
+                    hierarchy : me.dim.getHierarchies()[this.hIndex].getName(),
+                    members   : 'members'
+                }],
+                useNamedFilters : ['stateSelectionFilter', 'hoverSelectionFilter', 'statefilter'],
+                mflight : me.mflight,
+                showEmpty : me.showEmpty,
+                success: this.selectionSuccess,
+                scope : this
+            });
+        }
     },
 
     selectionSuccess : function(cellset, mdx, x) {
         var me = this;
         if (x.mflight != me.mflight) {
+            // There is a more recent selection request -- discard
             return;
         }
 
@@ -307,5 +306,9 @@ Ext.define('Connector.store.Explorer', {
 
     setCollapse : function(record, collapsed) {
         this.collapseTrack['' + record.data.hierarchy + '-' + record.data.level + '-' + record.data.value] = collapsed;
+    },
+
+    setEnableSelection : function(enableSelection) {
+        this.enableSelection = enableSelection;
     }
 });

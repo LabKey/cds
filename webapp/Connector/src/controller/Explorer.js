@@ -121,15 +121,24 @@ Ext.define('Connector.controller.Explorer', {
                 selections : state.getSelections()
             });
 
-            this.on('dimension', v.onDimensionChange, v);
-            this.on('hierarchy', v.onHierarchyChange, v);
-            state.on('filterchange', v.onFilterChange,    v);
-            state.on('privateselectionchange', function(sels, name) {
-                if (name == 'hoverSelectionFilter') {
-                    v.onSelectionChange.call(v, sels, true);
-                }
-            }, v);
-            state.on('selectionchange', v.onSelectionChange, v);
+            this.on({
+                dimension: v.onDimensionChange,
+                hierarchy: v.onHierarchyChange,
+                scope: v
+            });
+
+            state.on({
+                filterchange: v.onFilterChange,
+                selectionchange: v.onSelectionChange,
+                privateselectionchange: function(sels, name) {
+                    if (name == 'hoverSelectionFilter') {
+                        v.onSelectionChange.call(v, sels, true);
+                    }
+                },
+                scope: v
+            });
+
+            VV = v;
 
             // View listeners
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
@@ -195,7 +204,7 @@ Ext.define('Connector.controller.Explorer', {
                 }
 
                 // TODO: Remove this
-                if (idx == 0 && dim.name.toLowerCase() == 'partcipant') {
+                if (idx == 0 && dim.name.toLowerCase() == 'participant') {
                     idx = 1;
                 }
 

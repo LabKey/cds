@@ -593,19 +593,15 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     selectionChange : function(sel, isPrivate) {
         this.selections = sel;
-        if (this.dimension)
-        {
+        if (this.dimension) {
             if (sel.length > 0) {
                 this.selection(false, isPrivate);
             }
             else {
                 if (!isPrivate) {
                     this.getSelectionModel().deselectAll();
-                    this.store.clearSelection();
                 }
-                else {
-                    this.store.clearSelection();
-                }
+                this.store.clearSelection();
             }
         }
         else {
@@ -911,40 +907,31 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     loadStore : function() {
         this.loadLock = true;
-        this.store.load(this.dimension, this.hierarchyIndex, true, this.showEmpty, this.barCache);
+        this.store.load(this.dimension, this.hierarchyIndex, true, this.showEmpty);
         this.showLoad();
     },
 
     renderInfoButton : function(view, rec, element) {
-        if (rec && !rec.data.isGroup) {
+        if (rec && !rec.data.isGroup && this.dimension.supportsDetails) {
             var el = Ext.get(Ext.query(".info", element)[0]);
-            this.renderButton(el, rec);
-        }
-    },
 
-    renderButton : function(el, rec) {
+            var name = this.dimension.getName();
 
-        var name = this.dimension.getName();
-
-        // 16208 / 16487
-        if (name == 'Participant' || name == 'Vaccine Component' || name == 'Lab') {
-            return;
-        }
-
-        if (this.btnMap[rec.id]) {
-            this.btnMap[rec.id].show();
-        }
-        else {
-            this.btnMap[rec.id] = Ext.create('Connector.button.InfoButton', {
-                renderTo : el,
-                text : 'view info',
-                record : rec,
-                dimension : this.dimension,
-                handler : function(e) {
-                    this.btnclick = true;
-                },
-                scope   : this
-            });
+            if (this.btnMap[rec.id]) {
+                this.btnMap[rec.id].show();
+            }
+            else {
+                this.btnMap[rec.id] = Ext.create('Connector.button.InfoButton', {
+                    renderTo : el,
+                    text : 'view info',
+                    record : rec,
+                    dimension : this.dimension,
+                    handler : function(e) {
+                        this.btnclick = true;
+                    },
+                    scope   : this
+                });
+            }
         }
     },
 

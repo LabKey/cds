@@ -90,6 +90,10 @@ Ext.Loader.addClassPathMappings({
   "Ext.Msg": "ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "ext/src/rtl/EventObject.js",
   "Filter": "../../webapp/Connector/src/panel/FilterPanel.js",
+  "LABKEY.app.controller.Route": "../../../../internal/webapp/app/Route.js",
+  "LABKEY.app.controller.State": "../../../../internal/webapp/app/State.js",
+  "LABKEY.app.controller.View": "../../../../internal/webapp/app/View.js",
+  "LABKEY.app.model.State": "../../../../internal/webapp/app/State.js",
   "LABKEY.study.GroupCohort": "../../webapp/Connector/src/panel/GroupList.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
@@ -991,6 +995,10 @@ Ext.ClassManager.addNameAlternateMappings({
     "Ext.Window"
   ],
   "Filter": [],
+  "LABKEY.app.controller.Route": [],
+  "LABKEY.app.controller.State": [],
+  "LABKEY.app.controller.View": [],
+  "LABKEY.app.model.State": [],
   "LABKEY.study.GroupCohort": []
 });
 Ext.ClassManager.addNameAliasMappings({
@@ -2128,6 +2136,10 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.window"
   ],
   "Filter": [],
+  "LABKEY.app.controller.Route": [],
+  "LABKEY.app.controller.State": [],
+  "LABKEY.app.controller.View": [],
+  "LABKEY.app.model.State": [],
   "LABKEY.study.GroupCohort": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
