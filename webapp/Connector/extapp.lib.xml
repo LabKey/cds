@@ -53,7 +53,8 @@
         <script path="Connector/src/model/Dimension.js"/>
         <script path="Connector/src/model/Explorer.js"/>
         <script path="Connector/src/model/Filter.js"/>
-        <script path="Connector/src/model/State.js"/>
+        <script path="Connector/src/model/FilterGroup.js"/>
+        <!--<script path="Connector/src/model/State.js"/>-->
         <script path="Connector/src/model/Summary.js"/>
 
         <!-- Application Widgets -->

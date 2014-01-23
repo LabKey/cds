@@ -41,6 +41,7 @@ Ext4.define('Connector.view.Learn', {
                 // does not seem to respect bubbled events
                 listeners: {
                     selectdimension: function(model) {
+                        console.log('OLD: fire header selectdimenson');
                         this.fireEvent('selectdimension', model);
                     },
                     scope: this
@@ -161,6 +162,7 @@ Ext4.define('Connector.view.Learn', {
         }
         else {
             if (this.headerView) {
+                console.log('OLD: one time listen for header selectdimenson');
                 this.headerView.on('selectdimension', this.loadDataView, this, {single: true});
             }
         }
@@ -334,6 +336,7 @@ Ext4.define('Connector.view.LearnHeaderDataView', {
 
     _select : function(model) {
         this.getSelectionModel().select(model);
+        console.log('OLD: Firing itemclick');
         this.fireEvent('itemclick', this, model);
     }
 });

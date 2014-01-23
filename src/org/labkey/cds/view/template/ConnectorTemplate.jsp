@@ -175,6 +175,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Dimension.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
     <%--<script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>--%>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
 

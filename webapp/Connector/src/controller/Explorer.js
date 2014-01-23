@@ -34,6 +34,10 @@ Ext.define('Connector.controller.Explorer', {
             click : this.onDimensionSelect
         });
 
+        this.control('#sortdropdown', {
+            click: function(btn) { btn.showMenu(); }
+        });
+
         this.control('#sortedmenu', {
             afterrender: function(menu) {
                 var updateDimension = function(m, dim) {
@@ -138,8 +142,6 @@ Ext.define('Connector.controller.Explorer', {
                 scope: v
             });
 
-            VV = v;
-
             // View listeners
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
 
@@ -211,9 +213,7 @@ Ext.define('Connector.controller.Explorer', {
                 if (view) {
                     view.onDimensionChange.call(view, dim, idx);
                 }
-                else {
-                    this.fireEvent('dimension', dim, idx);
-                }
+                this.fireEvent('dimension', dim, idx);
             }
             else {
                 alert('Failed:' + context.dimension);

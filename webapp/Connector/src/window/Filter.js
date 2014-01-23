@@ -16,13 +16,26 @@ Ext.define('Connector.window.Filter', {
     bodyStyle: 'margin: 8px;',
 
     initComponent : function() {
-        var box = Ext.get(this.triggerEl).getBox();
+
+        if (!this.col) {
+            console.error('\'col\' value must be provided to instantiate a', this.$className);
+            return;
+        }
+
+        var trigger = Ext.get(this.col.triggerEl);
+        if (trigger) {
+            trigger.show();
+            var box = trigger.getBox();
+
+            Ext.apply(this, {
+                x: box.x - 52,
+                y: box.y + 35
+            });
+        }
 
         Ext.apply(this, {
             store       : this.rawDataView.store,
-            boundColumn : this.rawDataView.getColumnMetadata(this.col.dataIndex),
-            x : box.x - 52,
-            y : box.y + 35
+            boundColumn : this.rawDataView.getColumnMetadata(this.col.dataIndex)
         });
 
         this.items = this.getItems();

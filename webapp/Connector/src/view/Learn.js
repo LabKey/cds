@@ -206,6 +206,10 @@ Ext.define('Connector.view.LearnHeader', {
         this.getHeaderView().on('itemclick', function(view, model, el, idx) {
             this.fireEvent('selectdimension', model);
         }, this);
+        this.getHeaderView().on('fakeitemclick', function(view, model, el, idx) {
+            console.log('fired selectiondimension');
+            this.fireEvent('selectdimension', model);
+        }, this);
     },
 
     setDimensions : function(dimensions) {
@@ -239,7 +243,7 @@ Ext.define('Connector.view.LearnHeaderDataView', {
 
     loadMask: false,
 
-    selectInitialDimension: true,
+    selectInitialDimension: false,
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
@@ -270,24 +274,26 @@ Ext.define('Connector.view.LearnHeaderDataView', {
 
     setDimensions : function(dimensions) {
 
-        this.getStore().loadRawData(dimensions);
+        var store = this.getStore();
+
+        store.loadRawData(dimensions);
 
         //
         // Filter out hidden dimensions, and dimensions which do not support detail view
         //
-        this.getStore().filter('hidden', false);
-        this.getStore().filter('supportsDetails', true);
+        store.filter('hidden', false);
+        store.filter('supportsDetails', true);
 
         //
         // Sort dimensions by stated priority
         //
-        this.getStore().sort('priority', 'desc');
+        store.sort('priority', 'desc');
 
         //
         // Select the initial dimension
         //
-        if (this.selectInitialDimension && this.getStore().getCount() > 0) {
-            this.selectDimension(this.getStore().getAt(0).get('uniqueName'));
+        if (this.selectInitialDimension && store.getCount() > 0) {
+            this.selectDimension(store.getAt(0).get('uniqueName'));
         }
     },
 
@@ -297,11 +303,12 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     //
     selectDimension : function(dimUniqueName) {
         var uniqueName = dimUniqueName;
+        var store = this.getStore();
+
         if (!Ext.isDefined(uniqueName)) {
-            uniqueName = this.getStore().getAt(0).get('uniqueName');
+            uniqueName = store.getAt(0).get('uniqueName');
         }
 
-        var store = this.getStore();
         var idx = store.findExact('uniqueName', uniqueName);
         if (idx >= 0) {
             var model = store.getAt(idx);
@@ -318,8 +325,10 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     },
 
     _select : function(model) {
+        console.log('yup');
+        console.log(model);
         this.getSelectionModel().select(model);
-//        this.fireEvent('itemclick', this, model);
+        this.fireEvent('fakeitemclick', this, model);
     }
 });
 

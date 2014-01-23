@@ -174,11 +174,11 @@ Ext.define('Connector.panel.AxisSelector', {
         }
 
         Ext.applyIf(this.measureConfig, {
-            height : '52%',
-            width  : '95%',
-            allColumns : true,
-            showHidden : false,
-            multiSelect : true
+            height: '52%',
+            width: '95%',
+            allColumns: true,
+            showHidden: false,
+            multiSelect: true
         });
 
         Ext.apply(this.measureConfig, {

@@ -44,6 +44,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Dimension": "../../../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.Explorer": "../../../../webapp/Connector/src/model/Explorer.js",
   "Connector.model.Filter": "../../../../webapp/Connector/src/model/Filter.js",
+  "Connector.model.FilterGroup": "../../../../webapp/Connector/src/model/FilterGroup.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
   "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
@@ -136,6 +137,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Dimension": [],
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
+  "Connector.model.FilterGroup": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.panel.AxisSelector": [],
@@ -1047,6 +1049,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Dimension": [],
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
+  "Connector.model.FilterGroup": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.panel.AxisSelector": [

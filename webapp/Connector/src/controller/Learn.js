@@ -40,7 +40,7 @@ Ext.define('Connector.controller.Learn', {
         //
         // Hook into the primary controller hide/show actions for learn views
         //
-        this.getViewManager().registerShowAction('learn', this.showAction, this);
+//        this.getViewManager().registerShowAction('learn', this.showAction, this);
 
         this.callParent();
     },
@@ -89,7 +89,13 @@ Ext.define('Connector.controller.Learn', {
     createView : function(xtype, config, context) {
 
         var type = '';
-        var c = config || {};
+        var c;
+        if (Ext.isArray(config)) {
+            c = { ctx: config };
+        }
+        else {
+            c = config || {};
+        }
 
         if (xtype == 'learn') {
             type = 'Connector.view.Learn';
@@ -101,39 +107,55 @@ Ext.define('Connector.controller.Learn', {
 
             var v = Ext.create(type, c);
 
-            //
-            // Bind the dimensions to the view
-            //
-            this.getStateManager().onMDXReady(function(mdx) {
-
-                var dims = mdx.getDimensions();
-
-                v.setDimensions(dims);
-
-                //
-                // Set the active dimension
-                //
-                if (config && config.length > 0) {
-                    var dim = mdx.getDimension(config);
-                    if (dim) {
-                        for (var d=0; d < dims.length; d++) {
-                            if (dims[d].uniqueName == dim.uniqueName) {
-                                this.updateLock = true;
-                                v.selectDimension(dims[d]);
-                                this.updateLock = false;
-                                break;
-                            }
-                        }
-                    }
-                    // TODO: Resolve dimension selection even when dim is not found
-                }
-                else {
-                    v.selectDimension();
-                }
-            });
+            v.on('afterrender', function(v) { this.bindLearnView(v, c.ctx); }, this);
 
             return v;
         }
+    },
+
+    bindLearnView : function(v, context) {
+        //
+        // Bind the dimensions to the view
+        //
+        this.getStateManager().onMDXReady(function(mdx) {
+
+            var dims = mdx.getDimensions();
+
+            v.setDimensions(dims);
+
+            var select = function() {
+                var hh = v.getHeader().getHeaderView().selectDimension();
+            };
+
+            console.log('came through here');
+            var defer = false;
+            //
+            // Set the active dimension
+            //
+            if (context && context.length > 0) {
+                var dim = mdx.getDimension(context);
+                if (dim) {
+                    for (var d=0; d < dims.length; d++) {
+                        if (dims[d].uniqueName == dim.uniqueName) {
+                            this.updateLock = true;
+                            v.selectDimension(dims[d]);
+                            this.updateLock = false;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    defer = true;
+                }
+            }
+            else {
+                defer = true;
+            }
+
+            if (defer) {
+                Ext.defer(select, 200, this);
+            }
+        });
     },
 
     updateView : function(xtype, context) {
@@ -168,8 +190,9 @@ Ext.define('Connector.controller.Learn', {
     },
 
     onSelectDimension : function(dimension) {
-        if (!this.updateLock)
+        if (!this.updateLock) {
             this.getViewManager().changeView('learn', 'learn/' + dimension.get('name'), 'Learn About: ' + dimension.get('pluralName'));
+        }
     },
 
     /**

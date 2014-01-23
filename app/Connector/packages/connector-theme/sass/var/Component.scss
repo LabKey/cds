@@ -254,7 +254,6 @@ li.fadein {
       @include smallStandout;
     }
     background-color: $secondary-color;
-    /*border-bottom: 1px solid $heat-scale-3;*/
   }
 }
 
@@ -299,12 +298,10 @@ li.fadein {
     /*border-bottom-color: trans;*/
   }
 
-  .x-form-item {
-    span {
-      @include smallStandout;
-    }
+  .x-column-header {
+    @include smallStandout;
+    background-image: none;
     background-color: $secondary-color;
-    /*border-bottom: 1px solid $heat-scale-3;*/
   }
 }
 

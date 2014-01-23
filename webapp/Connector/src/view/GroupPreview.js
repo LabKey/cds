@@ -99,7 +99,7 @@ Ext.define('Connector.view.GroupPreview', {
                         }
                         h += '</li>';
                         return h;
-                    }
+                    };
 
                     var fs;
                     for (var f=0; f < filters.length; f++) {
@@ -144,12 +144,11 @@ Ext.define('Connector.view.GroupPreview', {
             var titleTpl = new Ext.XTemplate(
                     '<div class="title">{data.type:this.getPrefix}{data.label:htmlEncode}</div>'
             );
-            titleTpl.getPrefix = function(val)
-            {
+            titleTpl.getPrefix = function(val) {
                 if (val == 'activefilters')
                     return '';
                 return 'Group: ';
-            }
+            };
 
             this.titleDisplay = Ext.create('Ext.panel.Panel', {
                 height: 50,

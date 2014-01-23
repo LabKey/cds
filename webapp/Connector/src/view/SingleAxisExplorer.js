@@ -297,6 +297,7 @@ Ext.define('Connector.view.DimensionSelector', {
                 }
             },{
                 id    : btnId,
+                itemId: 'sortdropdown',
                 xtype : 'dropdownbutton',
                 ui    : 'dropdown-alt',
                 cls   : 'sortDropdown',

@@ -26,6 +26,8 @@ Ext.define('Connector.view.RawData', {
 
     constructor : function(config) {
 
+        RDV = this;
+
         this.callParent([config]);
 
         this.addEvents('measureselected');
@@ -82,23 +84,22 @@ Ext.define('Connector.view.RawData', {
     getAxisPanel : function() {
         if (!this.axisPanel) {
             this.axisPanel = Ext.create('Connector.panel.AxisSelector', {
-                flex      : 1,
-                ui        : 'axispanel',
-                bodyStyle : 'padding-left: 27px; padding-top: 15px;',
+                flex: 1,
+                ui: 'axispanel',
+                bodyStyle: 'padding-left: 27px; padding-top: 15px; padding-right: 27px;',
                 measureConfig : {
-                    allColumns : true,
-                    sourceCls  : this.axisSourceCls,
-                    filter     : LABKEY.Query.Visualization.Filter.create({
-                        schemaName : 'study',
-                        queryType  : LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    allColumns: true,
+                    sourceCls: this.axisSourceCls,
+                    filter: LABKEY.Query.Visualization.Filter.create({
+                        schemaName: 'study',
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
                     }),
-                    showHidden : this.canShowHidden,
-                    bubbleEvents : ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
+                    showHidden: this.canShowHidden
                 },
-                displayConfig : {
-                    defaultHeader : 'Add Measures'
+                displayConfig: {
+                    defaultHeader: 'Add Measures'
                 },
-                disableScale : true
+                disableScale: true
             });
         }
 
@@ -628,15 +629,41 @@ Ext.define('Connector.view.RawData', {
     },
 
     onTriggerClick : function (headerCt, col, evt, el) {
-
-        this.filterWin = Ext.create('Connector.window.Filter', {
-            triggerEl: el,
-            col: col,
-            rawDataView: this
-        });
+        this.openFilterWindow(col);
         evt.stopEvent(); // stop the default menu from appearing
         return false;
 
+    },
+
+    openFilterWindow : function(column) {
+
+        if (Ext.isString(column)) {
+
+            var _name = column;
+            column = null;
+
+            // lookup column by name
+            var grid = this.getGrid();
+            if (grid) {
+                var columns = grid.query('gridcolumn');
+                for (var c=0; c < columns.length; c++) {
+                    if (columns[c].text.indexOf(_name) >= 0) {
+                        column = columns[c];
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (column) {
+            this.filterWin = Ext.create('Connector.window.Filter', {
+                col: column,
+                rawDataView: this
+            });
+        }
+        else {
+            console.error('Unable to find column for filtering.');
+        }
     },
 
     onViewChange : function(xtype) {

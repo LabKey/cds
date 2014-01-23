@@ -709,6 +709,18 @@
         "name": "ColumnInfo",
         "fields": "shortCaption:string:null"
       }
+    },
+    "app/model/FilterGroup.js": {
+      "source": "{modelFileName}.js.tpl.merge",
+      "version": "31d5356142a167c72422f7902f19df3c583f3249",
+      "parameters": {
+        "appName": "Connector",
+        "modelNamespace": "Connector.model",
+        "baseClass": "Ext.data.Model",
+        "modelFileName": "FilterGroup",
+        "name": "FilterGroup",
+        "fields": "label:string:null"
+      }
     }
   }
 }
