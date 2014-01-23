@@ -196,7 +196,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void enterApplication()
     {
         clickProject(PROJECT_NAME);
-        clickAndWait(Locator.linkWithText("Application (Development)"));
+        clickAndWait(Locator.linkWithText("Application"));
         addUrlParameter("transition=false");
 
         assertElementNotPresent(Locator.linkWithText("Home"));

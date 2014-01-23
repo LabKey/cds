@@ -5,5 +5,13 @@ Ext.define('Connector.controller.State', {
 
     defaultView: 'summary',
 
-    appVersion: '0.5'
+    appVersion: '0.5',
+
+    getTitle : function(viewname) {
+        return 'Connector: ' + viewname;
+    },
+
+    getAction : function(appState) {
+        return 'app.view?' + this.getURLParams() + '#' + appState;
+    }
 });

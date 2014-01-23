@@ -41,7 +41,7 @@
         <script path="../../../query/explodedModule/web/query/olap.js"/>
 
         <!-- CDS Module Dependencies -->
-        <script path="cds/cube.js"/>
+        <script path="Connector/cube.js"/>
 
         <!-- Connector Application -->
         <script path="Connector/src/types/Filter.js"/>

@@ -47,7 +47,7 @@
     <meta http-equiv="x-ua-compatible" content="IE=9">
     <title>HIV Vaccine Connector</title>
     <%= bean.getMetaTags(url) %>
-    <link rel="icon" type="image/png" href="<%=text(contextPath)%>/cds/images/logo_02.png">
+    <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
     <!-- Context Path required for CSS -->
@@ -59,19 +59,19 @@
         }
 
         .x-btn-rounded-inverted-accent-icon-small .info {
-            background-image: url(<%=text(contextPath)%>/cds/images/info.png);
+            background-image: url(<%=text(appPath)%>/images/info.png);
         }
 
         .x-btn-rounded-inverted-accent-icon-small-over .info {
-            background-image: url(<%=text(contextPath)%>/cds/images/infoover.png);
+            background-image: url(<%=text(appPath)%>/images/infoover.png);
         }
 
         <%--.x-form-trigger {--%>
-            <%--background-image : url(<%=text(contextPath)%>/cds/images/combotrigger.gif);--%>
+            <%--background-image : url(<%=text(appPath)%>/images/combotrigger.gif);--%>
         <%--}--%>
 
         .x-column-header-trigger {
-            background-image: url(<%=text(contextPath)%>/cds/images/gridtrigger.gif) !important;
+            background-image: url(<%=text(appPath)%>/images/gridtrigger.gif) !important;
         }
 
         /* Paging Toolbar */
@@ -102,7 +102,7 @@
 
         /* Ext.Grid */
         .x-column-header-trigger {
-            background-image: url(<%=text(contextPath)%>/cds/images/gridtrigger.gif);
+            background-image: url(<%=text(appPath)%>/images/gridtrigger.gif);
             background-color: transparent;
         }
     </style>
@@ -164,7 +164,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/plot.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/cds/cube.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 

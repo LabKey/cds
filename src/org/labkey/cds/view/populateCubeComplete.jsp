@@ -29,21 +29,21 @@
     boolean isUpdateGroups = behavior.isUpdateParticipantGroups();
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
     Container c = getContainer();
-    String contextPath = request.getContextPath();
 %>
 <% if (isUpdateGroups) { %>
     <%--TODO: clean up these includes--%>
-    <script type="text/javascript" src="<%=contextPath%>/query/olap.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/controller/AbstractViewController.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/view/FilterSave.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/model/Detail.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/model/filter.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/panel/Feedback.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/view/GroupSave.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/view/FilterStatus.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/store/FilterStatus.js"></script>
-    <script type="text/javascript" src="<%=contextPath%>/cds/js/Connector/controller/FilterStatus.js"></script>
-    <script>
+    <script type="text/javascript" src="<%=getWebappURL("query/olap.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("app/View.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/controller/AbstractViewController.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/view/FilterSave.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/model/Detail.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/model/filter.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/panel/Feedback.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/view/GroupSave.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/view/FilterStatus.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/store/FilterStatus.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("Connector/src/controller/FilterStatus.js")%>"></script>
+    <script type="text/javascript">
         var init = function() {
             var cube = LABKEY.query.olap.CubeManager.getCube({
                 configId: 'CDS:/CDS',
@@ -81,7 +81,7 @@
 
                 htmlParticipantGroups.push("</h3>");
                 document.getElementById('updateParticipants').innerHTML = htmlParticipantGroups.join("");
-            }
+            };
 
             document.getElementById('updateParticipants').innerHTML = "<h3>Updating Participant Groups...</h3>";
             Ext4.Ajax.request({
