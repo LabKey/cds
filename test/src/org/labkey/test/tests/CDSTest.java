@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -27,6 +28,7 @@ import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
 import org.labkey.test.util.DataRegionTable;
+import org.labkey.test.util.Ext4HelperWD;
 import org.labkey.test.util.JSONHelper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
@@ -111,8 +113,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @Before
     public void preTest()
     {
-        _extHelper.setCssPrefix("x-");
-        _ext4Helper.setCssPrefix("x-");
+        Ext4HelperWD.setCssPrefix("x-");
 
         windowMaximize(); // Provides more useful screenshots on failure
         enterApplication();
@@ -127,6 +128,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             filterCloseButtons = Locator.css("div.filtermember img[alt=delete]").findElements(getDriver());
             assertEquals("Filter not deleted", filterCount - 1, filterCloseButtons.size());
         }
+    }
+
+    @AfterClass
+    public static void postTest()
+    {
+        Ext4HelperWD.resetCssPrefix();
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
