@@ -1,12 +1,3 @@
-Ext.define('Connector.Filter', {
-    statics : {
-        Operators : {
-            UNION : 'UNION',
-            INTERSECT : 'INTERSECT'
-        }
-    }
-});
-
 Ext.define('Connector.model.Filter', {
     extend : 'Ext.data.Model',
     fields : [
@@ -20,57 +11,11 @@ Ext.define('Connector.model.Filter', {
     ],
 
     lookupOperator : function() {
-
-        // This case is used when the user overrides the operator
-        if (this.data.operator) {
-            return this.data.operator;
-        }
-
-        var ops = Connector.Filter.Operators;
-
-        switch (this.data.hierarchy) {
-            case 'Study':
-                return ops.UNION;
-            case 'Participant.Race':
-                return ops.UNION;
-            case 'Participant.Country':
-                return ops.UNION;
-            case 'Participant.Sex':
-                return ops.UNION;
-            default:
-                return ops.INTERSECT;
-        }
+        return LABKEY.app.controller.Filter.lookupOperator(this.data);
     },
 
     getOlapFilter : function() {
-
-        var filter = {
-            operator : this.lookupOperator(),
-            arguments: []
-        };
-
-        if (this.data.hierarchy == 'Participant') {
-
-            filter.arguments.push({
-                hierarchy : 'Participant',
-                members  : this.data.members
-            });
-            return filter;
-        }
-
-        for (var m=0; m < this.data.members.length; m++) {
-
-            filter.arguments.push({
-                hierarchy : 'Participant',
-                membersQuery : {
-                    hierarchy : this.data.hierarchy,
-                    members   : [this.data.members[m]]
-                }
-            });
-
-        }
-
-        return filter;
+        return LABKEY.app.controller.Filter.getOlapFilter(this.data);
     },
 
     getDisplayHierarchy : function() {

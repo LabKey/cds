@@ -184,18 +184,6 @@ Ext.define('Connector.controller.FilterStatus', {
         this.getViewManager().showView('groupsave');
     },
 
-    filtersToJSON : function(filters, isLive) {
-        return Ext.encode({
-            isLive : isLive,
-            filters : Ext.Array.pluck(filters, 'data')
-        });
-    },
-
-    filtersFromJSON : function(jsonFilter) {
-        var filterWrapper = Ext.decode(jsonFilter);
-        return filterWrapper.filters;
-    },
-
     doGroupSave : function() {
         var view = this.getViewManager().getViewInstance('groupsave');
 
@@ -217,93 +205,40 @@ Ext.define('Connector.controller.FilterStatus', {
 
             state.onMDXReady(function(mdx){
 
-                mdx.queryParticipantList({
-                    useNamedFilters : ['statefilter'],
-                    success : function(cs) {
+                var saveSuccess = function(response) {
+                    var group = Ext.decode(response.responseText);
+                    view.requestGroupSave(group, state.getFilters(true));
+                    view.clearForm();
+                };
 
-                        var grpData = {
-                            label : values.groupname,
-                            participantIds : Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name'),
-                            description : values.groupdescription,
-                            shared : false,
-                            type : 'list',
-                            filters : me.filtersToJSON(state.getFilters(true), isLiveFilter)
-                        };
-
-                        Ext.Ajax.request({
-                            url : LABKEY.ActionURL.buildURL('participant-group', 'createParticipantCategory'),
-                            method: 'POST',
-                            success: function(response) {
-                                var group = Ext.decode(response.responseText);
-                                view.requestGroupSave(group, state.getFilters(true));
-                                view.clearForm();
-                            },
-                            failure : function(response) {
-                                var json = Ext.decode(response.responseText);
-                                if (json.exception)
-                                {
-                                    if (json.exception.indexOf('There is already a group named') > -1 ||
-                                            json.exception.indexOf('duplicate key value violates') > -1)
-                                    {
-                                        // custom error response for invalid name
-                                        view.showError('The name you have chosen is already in use; please choose a different name.');
-                                    }
-                                    else
-                                        view.showError(json.exception);
-                                }
-                                else
-                                {
-                                    Ext.Msg.alert('Failed to Save', response.responseText);
-                                }
-                            },
-                            jsonData: grpData,
-                            headers : {'Content-Type' : 'application/json'},
-                            scope   : me
-                        });
+                var saveFailure = function(response) {
+                    var json = Ext.decode(response.responseText);
+                    if (json.exception)
+                    {
+                        if (json.exception.indexOf('There is already a group named') > -1 ||
+                                json.exception.indexOf('duplicate key value violates') > -1)
+                        {
+                            // custom error response for invalid name
+                            view.showError('The name you have chosen is already in use; please choose a different name.');
+                        }
+                        else
+                            view.showError(json.exception);
                     }
+                    else
+                    {
+                        Ext.Msg.alert('Failed to Save', response.responseText);
+                    }
+                };
+
+                LABKEY.app.controller.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
+                    label : values.groupname,
+                    description : values.groupdescription,
+                    filters : state.getFilters(true),
+                    isLive : isLiveFilter
                 });
 
             }, this);
         }
-    },
-
-    /**
-     * Convert the persisted 'CDS' filter into the appropriate set of Olap filters.
-     * @param data - the persisted filter for this group as saved by doGroupSave
-     */
-    getOlapFilters : function(data) {
-        var olapFilters = [];
-        var cdsFilter = Ext.create('Connector.model.Filter');
-        for (var i = 0; i < data.length; i++) {
-            cdsFilter.data = data[i];
-            olapFilters.push(cdsFilter.getOlapFilter());
-        }
-        return olapFilters;
-    },
-
-    /**
-     * This function is called outside of the App from an admin jsp.
-     * @param mdx - from external cube
-     * @param grpData - config data that has been received from the server.  This is analagous to the grpData used
-     * to save the group
-     */
-    doGroupUpdate : function(mdx, grpData, onGroupUpdated) {
-        mdx.queryParticipantList({
-            filter : this.getOlapFilters(this.filtersFromJSON(grpData.filters)),
-            group : grpData,
-            success : function (cs, mdx, config) {
-                var group = config.group;
-                var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
-                LABKEY.ParticipantGroup.updateParticipantGroup({
-                    rowId : group.rowId,
-                    participantIds : ids,
-                    success : function(group, response) {
-                        if (onGroupUpdated)
-                            onGroupUpdated.call(this, group);
-                    }
-                });
-            }
-        });
     },
 
     onGroupSaved : function(grp, filters) {

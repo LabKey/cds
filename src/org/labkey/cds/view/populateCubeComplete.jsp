@@ -34,15 +34,7 @@
     <%--TODO: clean up these includes--%>
     <script type="text/javascript" src="<%=getWebappURL("query/olap.js")%>"></script>
     <script type="text/javascript" src="<%=getWebappURL("app/View.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/controller/AbstractViewController.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/view/FilterSave.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/model/Detail.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/model/filter.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/panel/Feedback.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/view/GroupSave.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/view/FilterStatus.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/store/FilterStatus.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("Connector/src/controller/FilterStatus.js")%>"></script>
+    <script type="text/javascript" src="<%=getWebappURL("app/Filter.js")%>"></script>
     <script type="text/javascript">
         var init = function() {
             var cube = LABKEY.query.olap.CubeManager.getCube({
@@ -100,9 +92,10 @@
                     {
                         cube.onReady(function(mdx)
                         {
-                            var filterStatus = Ext4.create('Connector.controller.FilterStatus');
+                            //var filterStatus = Ext.create('Connector.controller.FilterStatus');
                             for (var i = 0; i < groups.length; i++)
-                                filterStatus.doGroupUpdate(mdx, groups[i], onGroupUpdate);
+                                //filterStatus.doGroupUpdate(mdx, groups[i], onGroupUpdate);
+                                LABKEY.app.controller.Filter.doGroupUpdate(mdx, groups[i], onGroupUpdate);
                         }, this);
                     }
                 }

@@ -223,7 +223,7 @@ Ext.define('Connector.panel.HierarchyFilter', {
 
     getHierarchyLabel : function() {
 
-        var ops = Connector.Filter.Operators;
+        var ops = LABKEY.app.controller.Filter.Operators;
         var operator = ops.INTERSECT;
 
         if (!this.groupMode) {
