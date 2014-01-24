@@ -23,6 +23,7 @@
         <script path="../../../internal/explodedModule/web/app/State.js"/>
         <script path="../../../internal/explodedModule/web/app/View.js"/>
         <script path="../../../internal/explodedModule/web/app/Route.js"/>
+        <script path="../../../internal/explodedModule/web/app/Filter.js"/>
 
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
