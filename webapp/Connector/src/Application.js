@@ -24,8 +24,21 @@ Ext.define('Connector.Application', {
     ],
 
     views: [
+        'Citation',
+        'Compare',
+        'FilterSave',
+        'FilterStatus',
+        'GroupPreview',
+        'GroupSave',
         'Header',
+        'Learn',
         'Main',
+        'Navigation',
+        'RawData',
+        'Scatter',
+        'SingleAxisExplorer',
+        'Summary',
+        'Time',
         'Viewport'
     ],
 

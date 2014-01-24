@@ -27,7 +27,7 @@
 <div id="tip-content" style="display: none;">
     <div id="chartdemography" class="featuretip">
         <div style="float: left;">
-            <img src="<%=text(contextPath)%>/cds/images/compare.png" height="142px" width="156px" alt="Compare Demography"/>
+            <img src="<%=text(contextPath)%>/Connector/images/compare.png" height="142px" width="156px" alt="Compare Demography"/>
         </div>
         <div>
             <p style="padding-top: 20px;">Future Feature</p>

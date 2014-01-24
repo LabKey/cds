@@ -124,10 +124,9 @@ Ext.define('Connector.controller.Learn', {
             v.setDimensions(dims);
 
             var select = function() {
-                var hh = v.getHeader().getHeaderView().selectDimension();
+                v.getHeader().getHeaderView().selectDimension();
             };
 
-            console.log('came through here');
             var defer = false;
             //
             // Set the active dimension

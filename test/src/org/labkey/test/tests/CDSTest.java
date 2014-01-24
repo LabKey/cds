@@ -73,7 +73,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @Override
     public String getAssociatedModuleDirectory()
     {
-        return "server/modules/CDS";
+        return "server/customModules/CDS";
     }
 
     @Override

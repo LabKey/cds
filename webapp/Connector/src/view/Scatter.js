@@ -27,6 +27,8 @@ Ext.define('Connector.view.Scatter', {
             canShowHidden : false
         });
 
+        PLOT = this;
+
         this.callParent([config]);
     },
 
@@ -264,11 +266,12 @@ Ext.define('Connector.view.Scatter', {
                 labelY = (config.yaxis) ? config.yaxis.query + ': ' : '';
 
         var plotConfig = {
-            renderTo  : this.plotid,
-            throwErrors : true,
-            labels    : {
-                x      : {value: labelX + rows[0].xname.replace(/_/g, ' ')},
-                yLeft  : {value: labelY + rows[0].yname.replace(/_/g, ' ')}
+            renderTo: this.plotid,
+            rendererType: 'd3',
+            throwErrors: true,
+            labels: {
+                x: {value: labelX + rows[0].xname.replace(/_/g, ' ')},
+                yLeft: {value: labelY + rows[0].yname.replace(/_/g, ' ')}
             },
             width     : aspect,
             height    : aspect,
@@ -634,7 +637,7 @@ Ext.define('Connector.view.Scatter', {
 
     showYMeasureSelection : function(targetEl) {
 
-        var query = Ext.DomQuery.select('rect');
+        var query = Ext.DomQuery.select('.axis');
         var canvas = Ext.get(query[0]);
         var box = canvas.getBox();
 

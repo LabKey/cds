@@ -185,14 +185,14 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     filtersToJSON : function(filters, isLive) {
-        return Ext4.encode({
+        return Ext.encode({
             isLive : isLive,
-            filters : Ext4.Array.pluck(filters, 'data')
+            filters : Ext.Array.pluck(filters, 'data')
         });
     },
 
     filtersFromJSON : function(jsonFilter) {
-        var filterWrapper = Ext4.decode(jsonFilter);
+        var filterWrapper = Ext.decode(jsonFilter);
         return filterWrapper.filters;
     },
 
@@ -273,7 +273,7 @@ Ext.define('Connector.controller.FilterStatus', {
      */
     getOlapFilters : function(data) {
         var olapFilters = [];
-        var cdsFilter = Ext4.create('Connector.model.Filter');
+        var cdsFilter = Ext.create('Connector.model.Filter');
         for (var i = 0; i < data.length; i++) {
             cdsFilter.data = data[i];
             olapFilters.push(cdsFilter.getOlapFilter());
@@ -293,7 +293,7 @@ Ext.define('Connector.controller.FilterStatus', {
             group : grpData,
             success : function (cs, mdx, config) {
                 var group = config.group;
-                var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
+                var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
                 LABKEY.ParticipantGroup.updateParticipantGroup({
                     rowId : group.rowId,
                     participantIds : ids,

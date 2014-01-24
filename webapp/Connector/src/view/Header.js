@@ -43,7 +43,7 @@ Ext.define("Connector.view.Header", {
                 html  : '<h2 style="padding-top: 200px;">hiv vaccine <br>' +
                         '<span>collaborative dataspace</span>' +
                         '</h2>' +
-                        '<img src="' + LABKEY.contextPath + '/cds/images/logo_0' + (Math.floor(Math.random()*5)+1) +'.png">' // TODO: Get rid of hard coded context
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) +'.png">' // TODO: Get rid of hard coded context
             },
             flex: 4,
             listeners: {
