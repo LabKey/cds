@@ -507,7 +507,7 @@ div.status-row {
 div.status-row:hover {
   cursor: pointer;
   .x-btn-icon {
-    background-image: url(/labkey/cds/images/infoover.png);
+    background-image: url(/labkey/Connector/images/infoover.png);
     background-size: 17px 17px;
     width: 17px;
     height: 17px;
@@ -1103,15 +1103,6 @@ div.feedback {
   padding: 0;
 }
 
-.plotregion {
-  background-color: $secondary-color;
-}
-
-.plot {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .emptyplot svg {
   margin-left: auto;
   margin-right: auto;
@@ -1120,10 +1111,6 @@ div.feedback {
 
 .x-window-default, .x-window-header-default-top {
   background: $secondary-color !important;
-}
-
-.yaxisbutton {
-  position: absolute;
 }
 
 .xaxisbutton {

@@ -4,6 +4,29 @@ Ext.define('Connector.controller.Chart', {
 
     views  : ['Compare', 'Scatter', 'Time'],
 
+    init : function() {
+
+        this.control('plot > #yaxisbutton', {
+            click: function(b) {
+                var plot = b.up('plot');
+                if (plot) {
+                    plot.showYMeasureSelection(b.getEl());
+                }
+            }
+        });
+
+        this.control('plot > #xaxisbutton', {
+            click: function(b) {
+                var plot = b.up('plot');
+                if (plot) {
+                    plot.showXMeasureSelection(b.getEl());
+                }
+            }
+        });
+
+        this.callParent();
+    },
+
     createView : function(xtype, config, context) {
 
         if (xtype == 'plot')

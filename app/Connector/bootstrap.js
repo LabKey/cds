@@ -6,7 +6,6 @@
  */
 Ext.Loader.addClassPathMappings({
   "Connector.Application": "../../webapp/Connector/src/Application.js",
-  "Connector.Filter": "../../webapp/Connector/src/model/Filter.js",
   "Connector.app.model.Assay": "../../webapp/Connector/src/app/model/Assay.js",
   "Connector.app.model.Labs": "../../webapp/Connector/src/app/model/Labs.js",
   "Connector.app.model.Site": "../../webapp/Connector/src/app/model/Site.js",
@@ -99,7 +98,6 @@ Ext.Loader.addClassPathMappings({
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
-  "Connector.Filter": [],
   "Connector.app.model.Assay": [],
   "Connector.app.model.Labs": [],
   "Connector.app.model.Site": [],
@@ -1005,7 +1003,6 @@ Ext.ClassManager.addNameAlternateMappings({
 });
 Ext.ClassManager.addNameAliasMappings({
   "Connector.Application": [],
-  "Connector.Filter": [],
   "Connector.app.model.Assay": [],
   "Connector.app.model.Labs": [],
   "Connector.app.model.Site": [],

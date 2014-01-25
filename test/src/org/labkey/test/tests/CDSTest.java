@@ -614,12 +614,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     //getText(Locator.css("svg")) on Chrome
-    private static final String CD4_LYMPH = "Created with Rapha\u00ebl 2.1.0\n200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400\nLab Results: CD4\nLab Results: Lymphocytes";
-    private static final String HEMO_CD4_UNFILTERED = "Created with Rapha\u00ebl 2.1.0\n6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300\nLab Results: Hemoglobin\nLab Results: CD4";
-    private static final String WT_PLSE_LOG = "Created with Rapha\u00ebl 2.1.0\n1\n10\n100\n10\n100\nPhysical Exam: Pulse\nPhysical Exam: Weight Kg";
-    private static final String SCATTER_FEEDBACK_STATE = "{\"activeView\":\"scatterview\",\"appVersion\":\"0.5\",\"viewState\":{\"ydimension\":\"Study\"},\"views\":{},\"filters\":[],\"selections\":[],\"detail\":{\"hierarchy\":\"\",\"value\":31,\"highlight\":\"\",\"label\":\"Antigens\",\"valueLabel\":\"\",\"multi\":true},\"id\":206}";
+    private static final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400\nLab Results: CD4\nLab Results: Lymphocytes";
+    private static final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300\nLab Results: Hemoglobin\nLab Results: CD4";
+    private static final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100\nPhysical Exam: Pulse\nPhysical Exam: Weight Kg";
 
-//    @Test
+    @Test
     public void verifyScatterPlot()
     {
         clickBy("Studies");
@@ -668,14 +667,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         _ext4Helper.waitForMask();
         _extHelper.pickMeasure("yaxispicker", "Physical Exam", "Weight Kg");
         // set Y to log scale
-        click(Locator.xpath("//div[@id='plotymeasurewin']//div[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
+        click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
         click(cdsButtonLocator("Set Y-Axis"));
         waitForText("Points outside the plotting area have no match");
         xAxisButton.click();
         _ext4Helper.waitForMask();
         _extHelper.pickMeasure("xaxispicker", "Physical Exam", "Pulse");
         // set X to log scale
-        click(Locator.xpath("//div[@id='plotxmeasurewin']//div[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
+        click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
         click(cdsButtonLocator("Set X-Axis"));
         assertSVG(WT_PLSE_LOG);
 
@@ -899,7 +898,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         HOME("Home", Locator.xpath("Home nav link not yet implemented")),
         LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
         SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
-        PLOT("Plot data", Locator.tagWithClass("div", "yaxisbutton")),
+        PLOT("Plot data", Locator.tagWithClass("a", "yaxisbutton")),
         GRID("View data grid", Locator.tagWithClass("div", "dimgroup").withText("Data Grid"));
 
         private String _linkText;

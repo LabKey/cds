@@ -58,6 +58,11 @@
             opacity : 0.35;
         }
 
+        .yaxisbutton {
+            position: absolute;
+            top: 50%;
+        }
+
         .x-btn-rounded-inverted-accent-icon-small .info {
             background-image: url(<%=text(appPath)%>/images/info.png);
         }

@@ -1,44 +1,51 @@
 Ext.define('Connector.view.Scatter', {
 
-    extend : 'Ext.panel.Panel',
+    extend: 'Ext.panel.Panel',
 
-    requires : ['Connector.panel.AxisSelector'],
+    requires: ['Connector.panel.AxisSelector'],
 
-    alias  : 'widget.plot',
+    alias: 'widget.plot',
 
-    cls : 'scatterview',
+    cls: 'scatterview',
 
-    measures : [],
-    subjectColumn      : 'ParticipantId',
-    subjectVisitColumn : 'ParticipantVisit',
+    measures: [],
+    subjectColumn: 'ParticipantId',
+    subjectVisitColumn: 'ParticipantVisit',
+    allColumns: false,
+    canShowHidden: false,
 
-    isActiveView    : true,
-    refreshRequired : true,
-    initialized     : false,
-    showAxisButtons : true,
+    isActiveView: true,
+    refreshRequired: true,
+    initialized: false,
+    showAxisButtons: true,
 
-    plotHeightOffset : 48, // value in 'px' that the plot svg is offset for container region
-    rowlimit         : 5000,
-
-    constructor : function(config) {
-
-        Ext.applyIf(config, {
-            allColumns : false,
-            canShowHidden : false
-        });
-
-        PLOT = this;
-
-        this.callParent([config]);
-    },
+    plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
+    rowlimit: 5000,
 
     initComponent : function() {
 
         this.items = [
-            this.getPlotRegion()
+            this.getYAxisButton(),
+            this.getPlotDisplay(),
+            this.getXAxisButton(),
+            this.getSrcButton()
         ];
 
         this.callParent();
+
+        this.on('afterrender', function() {
+            Ext.create('Ext.Component', {
+                id: 'scatterloader',
+                renderTo: Ext.getBody(),
+                autoEl: {
+                    tag: 'img',
+                    src: LABKEY.contextPath + '/production/Connector/resources/images/grid/loading.gif',
+                    alt: 'loading',
+                    height: 25,
+                    width: 25
+                }
+            });
+        }, this, {single: true});
 
         this.attachInternalListeners();
     },
@@ -52,82 +59,96 @@ Ext.define('Connector.view.Scatter', {
         }, this);
     },
 
-    getPlotRegion : function() {
+    getPlotDisplay : function() {
 
-        if (this.plotRegion) {
-            return this.plotRegion;
+        if (!this.plotDisplay) {
+            this.plotDisplay = Ext.create('Ext.Component', {
+                autoEl: {
+                    tag: 'div',
+                    cls: 'emptyplot plot'
+                },
+                listeners: {
+                    afterrender: function(c) {
+                        this.plotid = Ext.get(Ext.DomQuery.select('.emptyplot')[0]).id;
+                    },
+                    scope: this
+                },
+                scope: this
+            });
         }
 
-        Ext.create('Ext.Component', {
-            id : 'scatterloader',
-            renderTo : Ext.getBody(),
-            autoEl : {
-                tag    : 'img',
-                src    : LABKEY.contextPath + '/cds/lib/ext-4.0.7/resources/themes/images/default/grid/loading.gif',
-                alt    : 'loading',
-                height : 25,
-                width  : 25
-            }
-        });
+        return this.plotDisplay;
+    },
 
-        this.plotDisplay = Ext.create('Ext.Component', {
-            autoEl: {
-                tag : 'div',
-                cls : 'emptyplot plot'
-            },
-            listeners : {
-                afterrender : function(c){
-                    this.plotid = Ext.get(Ext.DomQuery.select('.emptyplot')[0]).id;
-                    this.plotready = true;
+    getSrcButton : function() {
+        var btn = this.items ? this.query('#plotsourcesbutton') : null;
+        if (!btn) {
+            btn = Ext.create('Connector.button.RoundedButton', {
+                id: 'plotsources',
+                itemId: 'plotsourcesbutton',
+                text: 'Sources',
+                ui: 'rounded-accent',
+                hidden: true,
+                handler: function() {
+                    if (this.srcs && this.srcs.length > 0)
+                        this.fireEvent('sourcerequest', this.srcs, this.srcs[0]);
                 },
+                scope: this
+            });
+        }
+        else {
+            btn = btn[0];
+        }
+
+        return btn;
+    },
+
+    getXAxisButton : function() {
+        var btn = this.items ? this.query('#xaxisbutton') : null;
+        if (!btn) {
+            btn = Ext.create('Connector.button.DropDownButton', {
+                itemId: 'xaxisbutton',
+                cls: 'xaxisbutton',
+                text: '&#9650;', // up-arrow
+                hidden: this.showAxisButtons,
                 scope : this
-            },
-            scope : this
-        });
+            });
+        }
+        else {
+            btn = btn[0];
+        }
 
-        this.yAxisButton = Ext.create('Connector.button.DropDownButton', {
-            cls   : 'yaxisbutton',
-            text  : '&#9658;', // right-arrow
-            hidden : this.showAxisButtons,
-            handler : function(b) {
-                this.showYMeasureSelection(b.getEl());
-            },
-            scope : this
-        });
+        return btn;
+    },
 
-        this.xAxisButton = Ext.create('Connector.button.DropDownButton', {
-            cls   : 'xaxisbutton',
-            text  : '&#9650;', // up-arrow
-            hidden : this.showAxisButtons,
-            handler : function(b) {
-                this.showXMeasureSelection(b.getEl());
-            },
-            scope : this
-        });
+    getYAxisButton : function() {
+        var btn = this.items ? this.query('#yaxisbutton') : null;
+        if (!btn) {
+            btn = Ext.create('Connector.button.DropDownButton', {
+                itemId: 'yaxisbutton',
+                cls: 'yaxisbutton',
+                text: '&#9658;', // right-arrow
+                hidden: this.showAxisButtons,
+                scope: this
+            });
+        }
+        else {
+            btn = btn[0];
+        }
 
-        this.srcButton = Ext.create('Connector.button.RoundedButton', {
-            id : 'plotsources',
-            text : 'Sources',
-            ui : 'rounded-accent',
-            hidden : true,
-            handler : function() {
-                if (this.srcs && this.srcs.length > 0)
-                    this.fireEvent('sourcerequest', this.srcs, this.srcs[0]);
-            },
-            scope : this
-        });
+        return btn;
+    },
 
-        this.plotRegion = Ext.create('Ext.Panel', {
-            ui       : 'custom',
-            cls      : 'plotregion',
-            defaults : {
-                bodyCls : 'stdcolor',
-                ui      : 'custom'
-            },
-            items : [this.yAxisButton,this.plotDisplay,this.xAxisButton,this.srcButton]
-        });
+    getPlotElements : function() {
+        return Ext.DomQuery.select('.axis');
+    },
 
-        return this.plotRegion;
+    getPlotElement : function() {
+        var el = Ext.DomQuery.select('svg');
+        if (el.length > 0) {
+            el = el[0];
+        }
+        return el;
     },
 
     handleResize : function() {
@@ -136,32 +157,7 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        var viewbox    = this.getBox(),
-                plotRegion = this.getPlotRegion();
-
-        plotRegion.setSize(viewbox.width, viewbox.height);
-
-        if (this.plot) {
-            var plotbox = plotRegion.getBox();
-            var dim = Math.round(((plotbox.width-90) > plotbox.height ? plotbox.height : (plotbox.width-90)));
-            this.plot.setHeight((dim-this.plotHeightOffset), false);
-            this.plot.setWidth(dim);
-
-            if (this.yAxisButton) {
-                var query = Ext.DomQuery.select('rect');
-                if (query && query.length > 0) {
-                    var el = Ext.get(query[0]);
-                    var x = Math.floor(el.getBox().x-95);
-                    var y = Math.floor(el.dom.height.animVal.value/2)+50; // height not set correctly via Ext
-                    this.yAxisButton.setPosition(x,y);
-                    if (this.showAxisButtons) {
-                        this.yAxisButton.show();
-                        this.xAxisButton.show();
-                        this.showAxisButtons = false;
-                    }
-                }
-            }
-        }
+        var viewbox = this.getBox();
 
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
@@ -173,11 +169,39 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.ywin && this.ywin.isVisible()) {
-            this.resizeMeasureSelection(this.ywin, this.axisPanelY, false, true, false);
+            this.updateMeasureSelection(this.ywin);
+//            this.resizeMeasureSelection(this.ywin, this.axisPanelY, false, true, false);
         }
 
         if (this.xwin && this.xwin.isVisible()) {
-            this.resizeMeasureSelection(this.xwin, this.axisPanelX, true, false, false);
+            this.updateMeasureSelection(this.xwin);
+//            this.resizeMeasureSelection(this.xwin, this.axisPanelX, true, false, false);
+        }
+
+        if (this.plot) {
+            var plotbox = this.getBox();
+            var dim = Math.round(((plotbox.width-90) > plotbox.height ? plotbox.height : (plotbox.width-90)));
+
+            // TODO: Allow plot resizing once 19457 is fixed
+//            this.plot.setHeight((dim-this.plotHeightOffset), false);
+//            this.plot.setWidth(dim);
+//            this.plot.setSize(dim, dim, true);
+
+            if (this.showAxisButtons) {
+                var plotEl = this.getPlotElement();
+                if (plotEl) {
+                    var el = Ext.get(plotEl);
+                    var x = Math.floor(el.getBox().x - 25); // minus the buttons width
+                    var y = Math.floor(el.getBox().height/2); // height not set correctly via Ext
+
+                    var ybtn = this.getYAxisButton();
+                    var xbtn = this.getXAxisButton();
+
+                    ybtn.setPosition(x,y);
+                    ybtn.show();
+                    xbtn.show();
+                }
+            }
         }
     },
 
@@ -386,9 +410,9 @@ Ext.define('Connector.view.Scatter', {
         if (!this.isActiveView) {
             return;
         }
-        var query = Ext.DomQuery.select('rect');
-        if (query && query.length > 1) {
-            var box   = Ext.get(Ext.DomQuery.select('rect')[1]).getBox();
+        var plotEl = this.getPlotElement();
+        if (plotEl) {
+            var box = Ext.get(plotEl).getBox();
             var sload = Ext.get('scatterloader');
             sload.setLeft(box.x+10);
             sload.setTop(box.y+10);
@@ -434,10 +458,10 @@ Ext.define('Connector.view.Scatter', {
                         }
                     }
                     if (me.srcs.length == 0) {
-                        me.srcButton.hide();
+                        me.getSrcButton().hide();
                     }
                     else {
-                        me.srcButton.show();
+                        me.getSrcButton().show();
                     }
                 }
             });
@@ -597,49 +621,83 @@ Ext.define('Connector.view.Scatter', {
         };
     },
 
-    resizeMeasureSelection : function(win, axisPanel, setX, setY, doShow) {
-        var query = Ext.DomQuery.select('rect'), box;
-        var canvas = Ext.get(query[0]);
-
-        if (canvas) {
-            box = canvas.getBox();
-
-            win.getEl().setLeft(box.x+1);
-            win.getEl().setTop(box.y);
-
-            var h = parseInt(canvas.dom.attributes.height.value),
-                    w = parseInt(canvas.dom.attributes.width.value);
-
-            // set a minium height, width
-            var hh = (h < 450 ? 450 : h);
-            var ww = (w > 600 ? w : 600);
-
-            if (axisPanel.hasSelection()) {
-                if (setX) {
-                    this.activeXSelection = this.axisPanelX.getSelection()[0];
-                }
-                else if (setY) {
-                    this.activeYSelection = this.axisPanelY.getSelection()[0];
-                }
-            }
-
-            if (doShow) {
-                win.show(undefined, function() {
-                    win.setSize(ww, hh);
-                    this.runUniqueQuery(false, win.axisPanel, win.sourceCls);
-                }, this);
-                return;
-            }
-
-            win.setSize(ww, hh);
+    updateMeasureSelection : function(win) {
+        if (win) {
+            var pos = this.getPlotPosition();
+            win.setSize(pos.width, pos.height);
+            win.setPosition(pos.leftEdge, pos.topEdge, false);
+        }
+        else {
+            console.warn('Failed to updated measure selection');
         }
     },
 
-    showYMeasureSelection : function(targetEl) {
+//    resizeMeasureSelection : function(win, axisPanel, setX, setY, doShow) {
+//        var query = this.getPlotElements();
+//        var canvas = Ext.get(query[0]);
+//
+//        if (canvas) {
+//            var box = canvas.getBox();
+//            var bound = canvas.dom.getBoundingClientRect();
+//
+//            win.getEl().setLeft(box.x+1);
+//            win.getEl().setTop(box.y);
+//
+//            var h = bound.height;
+//            var w = bound.width;
+//
+//            // set a minium height, width
+//            var hh = (h < 450 ? 450 : h);
+//            var ww = (w > 600 ? w : 600);
+//
+//            if (axisPanel.hasSelection()) {
+//                if (setX) {
+//                    this.activeXSelection = this.axisPanelX.getSelection()[0];
+//                }
+//                else if (setY) {
+//                    this.activeYSelection = this.axisPanelY.getSelection()[0];
+//                }
+//            }
+//
+//            if (doShow) {
+//                win.show(undefined, function() {
+//                    win.setSize(ww, hh);
+//                    this.runUniqueQuery(false, win.axisPanel, win.sourceCls);
+//                }, this);
+//                return;
+//            }
+//
+//            win.setSize(ww, hh);
+//        }
+//    },
 
-        var query = Ext.DomQuery.select('.axis');
-        var canvas = Ext.get(query[0]);
-        var box = canvas.getBox();
+    //
+    // The intent of this method is to return the position of the plots contents as the user sees them
+    //
+    getPlotPosition : function() {
+        var pos = {
+            topEdge: 0,
+            leftEdge: 0,
+            width: 0,
+            height: 0
+        };
+
+        var plotEl = this.getPlotElement();
+        if (plotEl) {
+            plotEl = Ext.get(plotEl);
+            var box = plotEl.getBox();
+            var grid = this.plot.grid;
+
+            pos.topEdge = box.top + grid.topEdge;
+            pos.leftEdge = box.left + grid.leftEdge;
+            pos.width = grid.rightEdge - grid.leftEdge;
+            pos.height = grid.bottomEdge - grid.topEdge;
+        }
+
+        return pos;
+    },
+
+    showYMeasureSelection : function(targetEl) {
 
         if (!this.ywin) {
 
@@ -652,44 +710,47 @@ Ext.define('Connector.view.Scatter', {
                 open : function() {},
                 measureConfig: {
                     allColumns: this.allColumns,
-                    filter: LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}),
+                    filter: LABKEY.Query.Visualization.Filter.create({
+                        schemaName: 'study',
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    }),
                     showHidden: this.canShowHidden,
                     cls: 'yaxispicker',
                     sourceCls: sCls,
                     multiSelect: false
                 },
                 displayConfig: {
-                    defaultHeader : 'Choose Y Axis'
+                    defaultHeader: 'Choose Y Axis'
                 },
                 scalename: 'yscale'
             });
 
-            var w = parseInt(canvas.dom.attributes.width.value);
+            var pos = this.getPlotPosition();
 
             this.ywin = Ext.create('Ext.window.Window', {
                 id: 'plotymeasurewin',
                 ui: 'axiswindow',
                 cls: 'axiswindow',
-                animateTarget : targetEl,
-                sourceCls : sCls,
-                axisPanel : this.axisPanelY,
-                modal     : true,
-                draggable : false,
-                resizable : false,
-                minHeight : 450,
-                height    : query.length > 1 ? parseInt(canvas.dom.attributes.height.value) : 450,
-                width     : query.length > 1 ? (w > 600 ? w : 600) : 600,
-                x         : box ? (box.x+1) : null,
-                y         : box ? (box.y) : null,
-                layout : {
-                    type : 'vbox',
+                animateTarget: targetEl,
+                sourceCls: sCls,
+                axisPanel: this.axisPanelY,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                minHeight: 450,
+                height: pos.height,
+                width: pos.width,
+                x: pos.leftEdge,
+                y: pos.topEdge,
+                layout: {
+                    type: 'vbox',
                     align: 'stretch'
                 },
-                items   : [this.axisPanelY],
-                buttons : [{
-                    text  : 'Set Y-Axis',
-                    ui    : 'rounded-inverted-accent',
-                    handler : function() {
+                items: [this.axisPanelY],
+                buttons: [{
+                    text: 'Set Y-Axis',
+                    ui: 'rounded-inverted-accent',
+                    handler: function() {
                         if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
                             this.initialized = true;
                             this.onShowGraph();
@@ -697,15 +758,15 @@ Ext.define('Connector.view.Scatter', {
                         }
                         else if (this.axisPanelY.hasSelection()) {
                             this.ywin.hide(null, function(){
-                                this.showXMeasureSelection(this.xAxisButton.getEl());
+                                this.showXMeasureSelection(this.getXAxisButton().getEl());
                             }, this);
                         }
                     },
                     scope: this
                 },{
-                    text  : 'cancel',
-                    ui    : 'rounded-inverted-accent',
-                    handler : function() {
+                    text: 'cancel',
+                    ui: 'rounded-inverted-accent',
+                    handler: function() {
                         if (this.activeYSelection) {
                             this.axisPanelY.setSelection(this.activeYSelection);
                             this.activeYSelection = undefined;
@@ -718,9 +779,8 @@ Ext.define('Connector.view.Scatter', {
             });
 
         }
-        else if (box) {
-            this.resizeMeasureSelection(this.ywin, this.axisPanelY, false, true, true);
-            return;
+        else {
+            this.updateMeasureSelection(this.ywin);
         }
 
         if (this.axisPanelY.hasSelection()) {
@@ -733,10 +793,6 @@ Ext.define('Connector.view.Scatter', {
 
     showXMeasureSelection : function(targetEl) {
 
-        var query = Ext.DomQuery.select('rect'), box;
-        var canvas = Ext.get(query[0]);
-        box = canvas.getBox();
-
         if (!this.xwin) {
 
             var sCls = 'xaxissource';
@@ -748,7 +804,10 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle : 'padding-left: 27px; padding-top: 15px;',
                 measureConfig : {
                     allColumns : this.allColumns,
-                    filter     : LABKEY.Query.Visualization.Filter.create({schemaName: 'study', queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS}),
+                    filter     : LABKEY.Query.Visualization.Filter.create({
+                        schemaName: 'study',
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    }),
                     showHidden : this.canShowHidden,
                     cls        : 'xaxispicker',
                     sourceCls  : sCls,
@@ -760,7 +819,7 @@ Ext.define('Connector.view.Scatter', {
                 scalename : 'xscale'
             });
 
-            var w = parseInt(canvas.dom.attributes.width.value);
+            var pos = this.getPlotPosition();
 
             this.xwin = Ext.create('Ext.window.Window', {
                 id        : 'plotxmeasurewin',
@@ -772,15 +831,15 @@ Ext.define('Connector.view.Scatter', {
                 draggable : false,
                 resizable : false,
                 minHeight : 450,
-                height    : query.length > 1 ? parseInt(canvas.dom.attributes.height.value) : 450,
-                width     : query.length > 1 ? (w > 600 ? w : 600) : 600,
+                height: pos.height,
+                width: pos.width,
+                x: pos.leftEdge,
+                y: pos.topEdge,
                 layout : {
                     type : 'vbox',
                     align: 'stretch'
                 },
                 items   : [this.axisPanelX],
-                x         : box ? (box.x+1) : null,
-                y         : box ? (box.y) : null,
                 buttons : [{
                     text  : 'Set X-Axis',
                     ui    : 'rounded-inverted-accent',
@@ -792,7 +851,7 @@ Ext.define('Connector.view.Scatter', {
                         }
                         else if (this.axisPanelX.hasSelection()) {
                             this.xwin.hide(null, function(){
-                                this.showYMeasureSelection(this.yAxisButton.getEl());
+                                this.showYMeasureSelection(this.getYAxisButton().getEl());
                             }, this);
                         }
                     },
@@ -813,9 +872,8 @@ Ext.define('Connector.view.Scatter', {
             });
 
         }
-        else if (box) {
-            this.resizeMeasureSelection(this.xwin, this.axisPanelX, true, false, true);
-            return;
+        else {
+            this.updateMeasureSelection(this.xwin);
         }
 
         if (this.axisPanelX.hasSelection()) {
@@ -826,28 +884,31 @@ Ext.define('Connector.view.Scatter', {
         }, this);
     },
 
-    runUniqueQuery : function(force, target, cls) {
-        var store = target.getMeasurePicker().sourcesStore;
+    runUniqueQuery : function(force, axisSelector, cls) {
+        var picker = axisSelector.getMeasurePicker();
 
-        if (force) {
-            if (store.getCount() > 0) {
-                this._processQuery(store, cls);
+        if (picker) {
+            var store = picker.getSourceStore();
+            if (force) {
+                if (store.getCount() > 0) {
+                    this._processQuery(store, cls);
+                }
+                else {
+                    store.on('load', function(s) {
+                        this._processQuery(s, cls);
+                    }, this, {single: true});
+                }
             }
-            else {
-                store.on('load', function(s) {
-                    this._processQuery(s, cls);
-                }, this, {single: true});
-            }
-        }
-        else if (!force) {
-            if (this.control) {
-                var me = this;
-                this.control.getParticipantIn(function(ptids){
-                    if (!me.initialized) {
-                        me.queryPtids = ptids;
-                        me.runUniqueQuery(true, target, cls);
-                    }
-                });
+            else if (!force) {
+                if (this.control) {
+                    var me = this;
+                    this.control.getParticipantIn(function(ptids){
+                        if (!me.initialized) {
+                            me.queryPtids = ptids;
+                            me.runUniqueQuery(true, axisSelector, cls);
+                        }
+                    });
+                }
             }
         }
     },
