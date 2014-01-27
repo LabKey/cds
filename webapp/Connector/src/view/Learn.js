@@ -15,8 +15,7 @@ Ext.define('Connector.view.Learn', {
         this.columnPresent = true;
 
         this.items = [
-            this.getHeader(),
-            this.getLearnColumnHeaderView()
+            this.getHeader()
         ];
 
         this.callParent();
@@ -41,10 +40,11 @@ Ext.define('Connector.view.Learn', {
     },
 
     getLearnColumnHeaderView : function() {
-        if (!this.columnView) {
-            this.columnView = Ext.create('Connector.view.LearnColumnHeader', {});
-        }
-        return this.columnView;
+//        console.log('here');
+//        if (!this.columnView) {
+//            this.columnView = Ext.create('Connector.view.LearnColumnHeader', {});
+//        }
+//        return this.columnView;
     },
 
     onFilterChange : function(filters) {
@@ -98,10 +98,11 @@ Ext.define('Connector.view.Learn', {
     },
 
     completeLoad : function(dimension, animate) {
-        if (this.columnPresent) {
-            this.columnView.hide();
-            this.columnPresent = false;
-        }
+//        if (this.columnPresent) {
+//            console.log('hiding');
+//            this.getLearnColumnHeaderView().hide();
+//            this.columnPresent = false;
+//        }
 
         if (dimension && dimension.detailModel && dimension.detailView) {
 
@@ -127,12 +128,12 @@ Ext.define('Connector.view.Learn', {
                 }
             }
         }
-        else {
-            if (!this.columnPresent) {
-                this.columnPresent = true;
-                this.columnView.show();
-            }
-        }
+//        else {
+//            if (!this.columnPresent) {
+//                this.columnPresent = true;
+//                this.getLearnColumnHeaderView().show();
+//            }
+//        }
     },
 
     getDimensions : function() {
@@ -207,7 +208,6 @@ Ext.define('Connector.view.LearnHeader', {
             this.fireEvent('selectdimension', model);
         }, this);
         this.getHeaderView().on('fakeitemclick', function(view, model, el, idx) {
-            console.log('fired selectiondimension');
             this.fireEvent('selectdimension', model);
         }, this);
     },
@@ -325,8 +325,6 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     },
 
     _select : function(model) {
-        console.log('yup');
-        console.log(model);
         this.getSelectionModel().select(model);
         this.fireEvent('fakeitemclick', this, model);
     }

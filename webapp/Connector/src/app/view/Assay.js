@@ -31,7 +31,9 @@ Ext.define('Connector.app.view.Assay', {
     },
 
     tpl: new Ext.XTemplate(
-        '{[ Connector.app.view.Assay.columnHeaderTpl.apply(values) ]}',
+        '<tpl if="values.length &gt; 0">',
+            '{[ Connector.app.view.Assay.columnHeaderTpl.apply(values) ]}',
+        '</tpl>',
         '<tpl for=".">',
             '<div class="detail-wrapper">',
                 '<div class="detail-container study-detail">',

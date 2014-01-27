@@ -49,9 +49,9 @@ Ext.define('Connector.view.RawData', {
             }
         },{
             xtype: 'roundedbutton',
+            ui: 'darkrounded',
             id: 'choosecolumns',
             text: 'Choose Columns',
-            cls: 'dark',
             margin: '5 0 0 5',
             handler: this.showMeasureSelection,
             scope: this
@@ -111,7 +111,7 @@ Ext.define('Connector.view.RawData', {
         if (!this.exportButton) {
             this.exportButton = Ext.create('Connector.button.RoundedButton', {
                 text : 'Export',
-                cls    : 'dark',
+                ui: 'darkrounded',
                 margin : '5 0 0 5',
                 handler : function() {
                     if (this.store) {

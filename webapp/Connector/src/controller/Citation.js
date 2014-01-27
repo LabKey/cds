@@ -75,10 +75,11 @@ Ext.define('Connector.controller.Citation', {
     },
 
     createView : function(xtype, config) {
-
+        var v;
         if (xtype == 'citation') {
-            return Ext.create('Connector.view.Citation', {});
+            v = Ext.create('Connector.view.Citation', {});
         }
+        return v;
     },
 
     updateView : function(xtype, context) { },

@@ -18,7 +18,7 @@
   $text-padding: 5px,
 
   $color: $dark-color,
-  $color-disabled: $dark-color, /* HACK */
+  $color-disabled: $dark-color,
 
   $font-size : 10pt,
   $font-family: $info-font,
@@ -40,7 +40,7 @@
   $border-width : 0px,
   $text-padding: 5px,
   $color: $heat-scale-4,
-  $color-disabled: $heat-scale-4, /* HACK */
+  $color-disabled: $heat-scale-4,
 
   $font-size : 10pt,
   $font-family: $info-font,
@@ -52,6 +52,49 @@
   $icon-size : 10px,
   $glyph-color : #FFFFFF
 );
+
+@include extjs-button-ui (
+  $ui: 'darkrounded-small',
+
+  $border-radius : 15px,
+
+  $background-color: $secondary-color,
+  $background-color-focus: $dark-color,
+  $background-color-over: $dark-color,
+  $background-color-disabled: $secondary-color,
+
+  $border-width : 2px,
+  $border-color: $heat-scale-3,
+  $border-color-over: $heat-scale-3,
+  $border-color-focus: $heat-scale-3,
+  $border-color-pressed: $heat-scale-3,
+  $border-color-disabled: $heat-scale-3,
+
+  $text-padding: 5px,
+
+  $color: $dark-color,
+  $color-over: $light-color,
+  $color-disabled: $heat-scale-3,
+
+  $font-size : 10pt,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $icon-size : 15px,
+  $glyph-color : #FFFFFF
+);
+
+.x-btn-darkrounded-small {
+  padding: 3px 5px 4px 5px;
+  background-image: none;
+}
+
+.x-btn-darkrounded-small-disabled {
+  cursor: default;
+}
 
 /* Connector.button.DropDownButton */
 @include extjs-button-ui (
@@ -71,7 +114,7 @@
 
   $color: $light-color,
   $color-over : $interactive-color,
-  $color-disabled: $dark-color, /* HACK */
+  $color-disabled: $dark-color,
 
   $font-size : 11pt,
   $font-family: $info-font,
@@ -222,20 +265,20 @@
   border-width: 0px;
 }
 
-.x-btn-rounded-small.dark {
-  border: 2px solid $heat-scale-3;
-
-  &:hover, &:hover span {
-    background-color: $dark-color;
-    color: $light-color;
-  }
-}
-
-.x-btn-rounded-small-disabled.dark:hover,
-.x-btn-rounded-small-disabled.dark:hover span {
-  background-color: transparent;
-  color: $dark-color;
-}
+//.x-btn-rounded-small.dark {
+//  border: 2px solid $heat-scale-3;
+//
+//  &:hover, &:hover span {
+//    background-color: $dark-color;
+//    color: $light-color;
+//  }
+//}
+//
+//.x-btn-rounded-small-disabled.dark:hover,
+//.x-btn-rounded-small-disabled.dark:hover span {
+//  background-color: transparent;
+//  color: $dark-color;
+//}
 
 .x-btn-rounded-small.contrast {
   border: 2px solid black;
@@ -286,7 +329,7 @@
 }
 
 .x-btn-rounded-inverted-accent-small {
-  padding: 0px 1px 2px 2px;
+  padding: 2px 1px 2px 2px;
   background-image: none;
 }
 

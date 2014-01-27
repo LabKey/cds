@@ -82,12 +82,12 @@ Ext.define('Connector.view.FilterSave', {
             buttons : [{
                 itemId: 'dosave',
                 xtype : 'roundedbutton',
-                cls   : 'dark',
+                ui: 'darkrounded',
                 text  : 'Save'
             },{
                 itemId: 'cancelsave',
                 xtype : 'roundedbutton',
-                cls   : 'dark',
+                ui: 'darkrounded',
                 text  : 'Cancel'
             }],
             buttonAlign : 'left',

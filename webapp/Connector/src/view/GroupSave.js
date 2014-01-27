@@ -41,7 +41,7 @@ Ext.define('Connector.view.GroupSave', {
 
         var saveBtn = Ext.create('Connector.button.RoundedButton', {
             itemId: 'dogroupsave',
-            cls   : 'dark',
+            ui: 'darkrounded',
             text  : 'Save'
         });
 
@@ -115,7 +115,7 @@ Ext.define('Connector.view.GroupSave', {
             buttons : [saveBtn,{
                 itemId: 'cancelgroupsave',
                 xtype : 'roundedbutton',
-                cls   : 'dark',
+                ui: 'darkrounded',
                 text  : 'Cancel',
                 handler : this.clearForm,
                 scope : this

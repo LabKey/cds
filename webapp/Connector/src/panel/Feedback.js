@@ -76,7 +76,7 @@ Ext.define('Connector.panel.Feedback', {
 
         this.submit = Ext.create('Connector.button.RoundedButton', {
             itemId: 'sbmtfback',
-            cls   : 'dark',
+            ui: 'darkrounded',
             text  : 'Submit',
             hidden : true,
             handler : this.onSubmit,

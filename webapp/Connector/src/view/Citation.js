@@ -1,77 +1,71 @@
 Ext.define('Connector.view.Citation', {
 
-    extend : 'Ext.Panel',
+    extend: 'Ext.panel.Panel',
 
-    alias : 'widget.citation',
+    alias: 'widget.citation',
 
     layout : {
         type : 'vbox',
         align: 'stretch'
     },
 
-    cls : 'citationview',
+    cls: 'citationview',
+
+    defaultTitle: 'Citations',
 
     initComponent : function() {
 
-        this.store = Ext.create('Ext.data.Store', {
-            model : 'Connector.model.Citation',
-            proxy : {
-                type : 'memory',
-                reader : {
-                    type : 'json',
-                    root : 'citations'
-                }
-            }
-        });
-
         this.items = [
-            this.createNorthPanel(),
+            {
+                xtype: 'panel',
+                ui: 'custom',
+                cls: 'assayNorthDetails',
+                height: 170,
+                layout: {
+                    type: 'hbox',
+                    align: 'top'
+                },
+                items : [
+                    this.getTitleDisplay(),
+                    this.getCitationButton(),
+                    {
+                        margin  : '10 10 0 0',
+                        xtype   : 'roundedbutton',
+                        ui: 'darkrounded',
+                        text: 'Close',
+                        height: 30,
+                        handler : function() {
+                            this.fireEvent('closedetail', {dimension : this.dimension}, this.getXType());
+                            this.src = null;
+                            this.updateTitle(this.defaultTitle);
+                            this.fireEvent('destroycitation', this);
+                        },
+                        scope: this
+                    }
+                ]
+            },
             this.getCitationPanel()
         ];
 
         this.callParent();
     },
 
-    createNorthPanel : function() {
+    getCitationButton : function() {
 
-        this.citationBtn = Ext.create('Connector.button.RoundedButton', {
-            margin  : '10 5 0 0',
-            cls     : 'dark',
-            text    : 'Citations',
-            height  : 30,
-            scope   : this,
-            hidden  : true,
-            handler : function() {
-                this.fireEvent('citationrequest');
-            }
-        });
-
-        return Ext.create('Ext.Panel', {
-            ui  : 'custom',
-            cls : 'assayNorthDetails',
-            height : 150,
-            layout  : {
-                type : 'hbox',
-                align: 'top'
-            },
-            items : [this.getTitleDisplay(),
-                this.citationBtn, {
-                    margin  : '10 10 0 0',
-                    xtype   : 'roundedbutton',
-                    cls     : 'dark',
-                    text    : 'Close',
-                    height  : 30,
-                    scope   : this,
-                    handler : function() {
-                        this.fireEvent('closedetail', {dimension : this.dimension}, this.getXType());
-                        this.src = null;
-                        this.updateTitle('Citations');
-                        this.fireEvent('destroycitation', this);
-                    }
-                }
-            ]
-        });
-
+        if (!this.citationBtn) {
+            this.citationBtn = Ext.create('Connector.button.RoundedButton', {
+                margin: '10 5 0 0',
+                ui: 'darkrounded',
+                text: 'Citations',
+                height: 30,
+                hidden: true,
+                handler : function() {
+                    this.fireEvent('citationrequest');
+                },
+                scope: this
+            });
+        }
+        return this.citationBtn;
     },
 
     getCitationPanel : function() {
@@ -82,29 +76,28 @@ Ext.define('Connector.view.Citation', {
 
         var citationTpl = new Ext.XTemplate(
                 '<ol style="list-style-type:upper-roman;">',
-                '<tpl for=".">',
-                '<li>',
-                '<div class="cite-block">',
-                '<div class="inner">',
-                '<div class="cite-title">',
-                '<tpl if="link != null && link != undefined">',
-                '<a href="{link}" target="_blank">{title}</a>',
-                '</tpl>',
-                '<tpl if="link == null && link == undefined">',
-                '<span>{title}</span>',
-                '</tpl>',
-//                                        '<a href="{link}" target="_blank">{title}</a>',
-                '</div>',
-                '<div class="cite-authors">{authors:this.renderAuthors}</div>',
-                '<div class="cite-des">{description:this.renderDescription}</div>',
-                '<div class="cite-refer">',
-                '{references:this.renderReferences}',
-                '{dataSources:this.renderSources}',
-                '</div>',
-                '</div>',
-                '</div>',
-                '</li>',
-                '</tpl>',
+                    '<tpl for=".">',
+                        '<li>',
+                            '<div class="cite-block">',
+                                '<div class="inner">',
+                                    '<div class="cite-title">',
+                                        '<tpl if="link != null && link != undefined">',
+                                            '<a href="{link}" target="_blank">{title}</a>',
+                                        '</tpl>',
+                                        '<tpl if="link == null && link == undefined">',
+                                            '<span>{title}</span>',
+                                        '</tpl>',
+                                    '</div>',
+                                    '<div class="cite-authors">{authors:this.renderAuthors}</div>',
+                                    '<div class="cite-des">{description:this.renderDescription}</div>',
+                                    '<div class="cite-refer">',
+                                        '{references:this.renderReferences}',
+                                        '{dataSources:this.renderSources}',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                        '</li>',
+                    '</tpl>',
                 '</ol>'
         );
 
@@ -119,22 +112,26 @@ Ext.define('Connector.view.Citation', {
 
         citationTpl.renderDescription = function(val) {
             return Ext.String.ellipsis(val, 250, true);
-        }
+        };
 
         citationTpl.renderReferences = function(references) {
+            var render = '';
             if (references.length > 0) {
-                return '<a class="cite-ref" style="padding-right: 10px;">References</a>';
+                render = '<a class="cite-ref" style="padding-right: 10px;">References</a>';
             }
+            return render;
         };
 
         citationTpl.renderSources = function(sources) {
+            var render = '';
             if (sources.length > 0) {
-                return '<a class="cite-src">Sources</a>';
+                render = '<a class="cite-src">Sources</a>';
             }
-        }
+            return render;
+        };
 
         var dataView = Ext.create('Ext.view.View', {
-            store : this.store,
+            store : this.getStore(),
             flex : 1,
             ui : 'custom',
             tpl : citationTpl,
@@ -153,71 +150,88 @@ Ext.define('Connector.view.Citation', {
             scope : this
         });
 
-        this.citationPanel = Ext.create('Ext.Panel', {
-            flex        : 1,
-            bodyStyle   : 'overflow-y: auto; background-color: #F0F0F0;',
-            cls         : 'iScroll',
-            ui          : 'custom',
-            items       : [dataView]
+        this.citationPanel = Ext.create('Ext.panel.Panel', {
+            ui: 'custom',
+            flex: 1,
+            bodyStyle: 'overflow-y: auto; background-color: #F0F0F0;',
+            cls: 'iScroll',
+            items: [dataView]
 
         });
 
         return this.citationPanel;
     },
 
-    getTitleDisplay : function() {
+    getStore : function() {
+        if (!this.store) {
+            this.store = Ext.create('Ext.data.Store', {
+                model: 'Connector.model.Citation',
+                proxy: {
+                    type: 'memory',
+                    reader: {
+                        type: 'json',
+                        root: 'citations'
+                    }
+                }
+            });
+        }
 
-        var me = this;
+        return this.store;
+    },
+
+    getTitleDisplay : function() {
 
         if (!this.titleDisplay) {
 
+            var me = this;
+
             var bodyTpl = new Ext.XTemplate(
                     '<tpl>',
-                    '<div class="nav-label">',
-                    '<div class="savetitle assaytitle">{.:this.renderTitle}</div>',
-                    '<div class="cite-subtitle">{.:this.renderSrc}</div>',
-                    '</div>',
-                    '</tpl>'
+                        '<div class="nav-label">',
+                            '<div class="savetitle assaytitle">{.:this.renderTitle}</div>',
+                            '<div class="cite-subtitle">{.:this.renderSrc}</div>',
+                        '</div>',
+                    '</tpl>',
+                    {
+                        renderSrc : function() {
+                            var render = '';
+                            if (me.src) {
+                                if (Ext.isString(me.src)) {
+                                    render = Ext.htmlEncode(me.src);
+                                }
+                                else if (me.src.data) {
+                                    // Should be record of type 'Connector.model.Citation'
+                                    render = 'of \"' + me.src.get('title') + '\"';
+                                }
+                            }
+                            return render;
+                        },
+                        renderTitle : function() {
+                            return me.title || me.defaultTitle;
+                        }
+                    }
             );
 
-            bodyTpl.renderTitle = function() {
-                return me.title || 'Citations';
-            };
-
-            bodyTpl.renderSrc = function() {
-                if (me.src) {
-                    if (Ext.isString(me.src)) {
-                        return Ext.htmlEncode(me.src);
-                    }
-
-                    // Should be record of type 'Connector.model.Citation'
-                    if (me.src.data) {
-                        return 'of \"' + me.src.get('title') + '\"';
-                    }
-                }
-                return '';
-            }
-
             this.titleDisplay = Ext.create('Ext.view.View', {
-                ui   : 'custom',
-                flex : 1,
-                tpl  : bodyTpl,
-                store: this.store,
-                emptyText : '<div class="nav-label"><div class="savetitle assaytitle">Citations</div><div class="cite-subtitle">Not available for current selection.</div></div>',
-                itemSelector : 'div.nav-label'
+                ui: 'custom',
+                flex: 1,
+                tpl: bodyTpl,
+                store: this.getStore(),
+//                emptyText: '<div class="nav-label"><div class="savetitle assaytitle">' + this.defaultTitle + '</div><div class="cite-subtitle">Not available for current selection.</div></div>',
+                itemSelector: 'div.nav-label'
             });
         }
-        return this.titleDisplay;
 
+        return this.titleDisplay;
     },
 
     handleRequest : function(citations, title, src) {
 
         if (!citations.citations || citations.citations.length == 0) {
-            this.store.removeAll();
+            this.getStore().removeAll();
         }
         else {
-            this.store.loadRawData(citations);
+            this.getStore().loadRawData(citations);
         }
 
         if (src) {
@@ -231,12 +245,13 @@ Ext.define('Connector.view.Citation', {
 
     updateTitle : function(title) {
         this.title = title;
-        if (this.citationBtn) {
-            if (this.title == 'Citations') {
-                this.citationBtn.hide();
+        var btn = this.getCitationButton();
+        if (btn) {
+            if (this.title == this.defaultTitle) {
+                btn.hide();
             }
             else {
-                this.citationBtn.show();
+                btn.show();
             }
         }
         this.getTitleDisplay().refresh();

@@ -158,15 +158,15 @@ Ext.define('Connector.view.GroupPreview', {
 //                buttonAlign: 'center',
 //                buttons : [{
 //                    xtype : 'roundedbutton',
-//                    cls   : 'dark',
+//                    ui: 'darkrounded',
 //                    text : 'Save Group'
 //                },{
 //                    xtype : 'roundedbutton',
-//                    cls   : 'dark',
+//                    ui: 'darkrounded',
 //                    text : 'Share Group'
 //                },{
 //                    xtype : 'roundedbutton',
-//                    cls   : 'dark',
+//                    ui: 'darkrounded',
 //                    text : 'Delete Group'
 //                }]
             });
