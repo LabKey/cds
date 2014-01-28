@@ -962,7 +962,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         makeNavigationSelection(NavigationLink.LEARN);
 
-        WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(1).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
+        WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
         click(Locator.tag("div").withClass("learn-header-container").append(Locator.tag("h1").withClass("lhdv").withText(learnAxis)));
         shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
     }

@@ -26,8 +26,6 @@ Ext.define('Connector.view.RawData', {
 
     constructor : function(config) {
 
-        RDV = this;
-
         this.callParent([config]);
 
         this.addEvents('measureselected');
@@ -37,7 +35,6 @@ Ext.define('Connector.view.RawData', {
 
         this.initialized = false;
 
-        this.getAxisPanel();
         this.getMeasureWindow();
 
         var subItems = [{
@@ -84,7 +81,6 @@ Ext.define('Connector.view.RawData', {
     getAxisPanel : function() {
         if (!this.axisPanel) {
             this.axisPanel = Ext.create('Connector.panel.AxisSelector', {
-                flex: 1,
                 ui: 'axispanel',
                 bodyStyle: 'padding-left: 27px; padding-top: 15px; padding-right: 27px;',
                 measureConfig : {
@@ -168,33 +164,31 @@ Ext.define('Connector.view.RawData', {
         }
 
         this.win = Ext.create('Ext.window.Window', {
-            id    : 'gridmeasurewin',
-            ui    : 'custom',
-            cls   : 'measurewindow',
-            plain : true,
-            modal : this.initialized,
-            preventHeader : true,
-            draggable : false,
-            resizable : false,
-            closable  : false, // 15095
-            layout : {
-                type : 'vbox',
+            id: 'gridmeasurewin',
+            ui: 'custom',
+            cls: 'measurewindow',
+            plain: true,
+            modal: this.initialized,
+            preventHeader: true,
+            draggable: false,
+            resizable: false,
+            closable: false, // 15095
+            layout: {
+                type: 'vbox',
                 align: 'stretch'
             },
-            items : [
-                this.axisPanel
-            ],
+            items : [ this.getAxisPanel() ],
             buttons: [{
-                text  : 'select',
-                ui    : 'rounded-inverted-accent',
+                text: 'select',
+                ui: 'rounded-inverted-accent',
                 handler : function() {
-                    this.fireEvent('measureselected', this.axisPanel.getSelection());
+                    this.fireEvent('measureselected', this.getAxisPanel().getSelection());
                     this.win.hide();
                 },
                 scope : this
             },{
-                text  : 'cancel',
-                ui    : 'rounded-inverted-accent',
+                text: 'cancel',
+                ui: 'rounded-inverted-accent',
                 handler : function() {
                     this.win.hide();
                 },
@@ -681,14 +675,12 @@ Ext.define('Connector.view.RawData', {
         var box = this.getBox(),
                 measureWindow = this.getMeasureWindow();
         measureWindow.setSize(box.width-100, box.height-100);
-        measureWindow.show();
-        measureWindow.getEl().setLeft(47);
-        measureWindow.getEl().setTop(128);
+        measureWindow.showAt(47, 128);
         this.runUniqueQuery();
     },
 
     runUniqueQuery : function(force) {
-        var store = this.axisPanel.getMeasurePicker().sourcesStore;
+        var store = this.getAxisPanel().getMeasurePicker().sourcesStore;
 
         if (this.initialized || force) {
             if (store.getCount() > 0) {

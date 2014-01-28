@@ -110,6 +110,11 @@
             background-image: url(<%=text(appPath)%>/images/gridtrigger.gif);
             background-color: transparent;
         }
+
+        .headerlock {
+            position: absolute;
+            top: 0px;
+        }
     </style>
 
     <!-- Include base labkey.js -->

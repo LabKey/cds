@@ -68,6 +68,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Learn": "../../../../webapp/Connector/src/view/Learn.js",
+  "Connector.view.Learn.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../../../webapp/Connector/src/view/Learn.js",
@@ -160,6 +161,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSave": [],
   "Connector.view.Header": [],
   "Connector.view.Learn": [],
+  "Connector.view.Learn.plugin.HeaderLock": [],
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
@@ -1106,6 +1108,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Learn": [
     "widget.learn"
+  ],
+  "Connector.view.Learn.plugin.HeaderLock": [
+    "plugin.learnheaderlock"
   ],
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
