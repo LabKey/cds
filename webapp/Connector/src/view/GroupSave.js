@@ -86,6 +86,7 @@ Ext.define('Connector.view.GroupSave', {
                 itemId      : 'livefilter',
                 name        : 'livefilter',
                 fieldLabel  : 'Live filter',
+                cls         : 'liveFilterCheckbox',
                 vertical    : 'true'
             },{
                 itemId     : 'groupnamefield',

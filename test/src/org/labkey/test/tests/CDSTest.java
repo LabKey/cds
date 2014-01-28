@@ -63,6 +63,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String GROUP_NAME = "CDSTest_AGroup";
     private static final String GROUP_NAME2 = "CDSTest_BGroup";
     private static final String GROUP_NAME3 = "CDSTest_CGroup";
+    private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
+    private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " +LABS[1]+ " and " + LABS[2];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
@@ -189,6 +191,19 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertElementPresent(Locator.linkWithText("Lab Results"));
         assertElementPresent(Locator.linkWithText("MRNA"));
         assertElementPresent(Locator.linkWithText("ADCC"));
+    }
+
+    @LogMethod(quiet = true)
+    private void updateParticipantGroups(String... exclusions)
+    {
+        clickProject(PROJECT_NAME);
+        clickAndWait(Locator.linkWithText("Update Participant Groups"));
+        for (String s : exclusions)
+        {
+            uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", s));
+        }
+        submit();
+        waitForText("Fact Table");
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -1199,6 +1214,105 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertTextPresent(labels);
 
         closeInfoPage();
+    }
+
+    @Test
+    public void testLiveFilterGroups()
+    {
+        String[] liveGroupMembersBefore = new String[]{
+            "1",
+            "102", "103", "105",
+            "3006", "3007", "3008", "3009", "3012",
+            "249320489", "249325717"};
+
+        String[] liveGroupMembersAfter = new String[] {
+            "1",
+            "249320489", "249325717"};
+
+        String[] excludedMembers = new String[]{
+            "102", "103", "105",
+            "3006", "3007", "3008", "3009", "3012"};
+
+        int participantCount = liveGroupMembersBefore.length;
+
+        // exit the app and verify no live filter groups exist
+        beginAt("/cds/" + getProjectName() + "/begin.view?");
+        updateParticipantGroups();
+
+        // use this search method to only search body text instead of html source
+        assertTextPresentInThisOrder("No Participant Groups with Live Filters were defined.");
+
+        // create two groups one that is a live filter and one that is not
+        enterApplication();
+        goToAppHome();
+
+        // create live filter group
+        clickBy("Subjects");
+        pickCDSSort("Race");
+        selectBars("White");
+        click(cdsButtonLocator("use as filter"));
+        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'selectionpanel')]").notHidden());// wait for animation
+        click(cdsButtonLocator("save group"));
+        waitForText("Selection and Active Filters (" + String.valueOf(participantCount) + ")");
+        click(Locator.css(".liveFilterCheckbox input"));
+        setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
+        click(cdsButtonLocator("Save"));
+        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '"+ GROUP_LIVE_FILTER +"')]"), WAIT_FOR_JAVASCRIPT);
+
+        // create static filter group
+        click(cdsButtonLocator("save group"));
+        waitForText("Selection and Active Filters (" + String.valueOf(participantCount) + ")");
+        setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
+        click(cdsButtonLocator("Save"));
+        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '"+ GROUP_STATIC_FILTER +"')]"), WAIT_FOR_JAVASCRIPT);
+
+        // exit the app and verify
+        beginAt("/cds/" + getProjectName() + "/begin.view?");
+        updateParticipantGroups();
+        waitForText(GROUP_LIVE_FILTER + " now has participants:");
+        verifyParticipantIdsOnPage(liveGroupMembersBefore, null);
+        assertTextNotPresent(GROUP_STATIC_FILTER);
+
+        // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
+        updateParticipantGroups("NAb", "Lab Results", "ADCC");
+        waitForText(GROUP_LIVE_FILTER + " now has participants:");
+        assertTextNotPresent(GROUP_STATIC_FILTER);
+        verifyParticipantIdsOnPage(liveGroupMembersAfter, excludedMembers);
+
+        // verify that our static group still ha the original members in it now
+        verifyParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
+        verifyParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
+    }
+
+
+    @LogMethod
+    private void verifyParticipantIdsOnPage(String[] membersIncluded, String[] membersExcluded)
+    {
+        if (membersIncluded != null)
+            for (String member : membersIncluded)
+                assertElementPresent(Locator.linkContainingText(member));
+
+        if (membersExcluded != null)
+            for (String member : membersExcluded)
+                assertElementNotPresent(Locator.linkContainingText(member));
+    }
+
+    @LogMethod
+    private void verifyParticipantIds(String groupName, String[] membersIncluded, String[] membersExcluded)
+    {
+        clickTab("Manage");
+        clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
+        waitForText(GROUP_LIVE_FILTER);
+        waitForText(GROUP_STATIC_FILTER);
+
+        String ids = _studyHelper.getParticipantIds(groupName, "Participant");
+        if (membersIncluded != null)
+            for (String member : membersIncluded)
+                assertTrue(ids.contains(member));
+
+        if (membersExcluded != null)
+            for (String member : membersExcluded)
+                assertFalse(ids.contains(member));
     }
 
     @LogMethod(quiet = true)

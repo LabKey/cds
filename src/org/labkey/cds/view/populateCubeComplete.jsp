@@ -33,7 +33,6 @@
 <% if (isUpdateGroups) { %>
     <%--TODO: clean up these includes--%>
     <script type="text/javascript" src="<%=getWebappURL("query/olap.js")%>"></script>
-    <script type="text/javascript" src="<%=getWebappURL("app/View.js")%>"></script>
     <script type="text/javascript" src="<%=getWebappURL("app/Filter.js")%>"></script>
     <script type="text/javascript">
         var init = function() {
