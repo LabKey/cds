@@ -46,6 +46,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.FilterGroup": "../../webapp/Connector/src/model/FilterGroup.js",
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
+  "Connector.panel.AxisSelectDisplay": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.Feedback": "../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../webapp/Connector/src/panel/FilterPanel.js",
@@ -68,6 +69,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSave": "../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.Header": "../../webapp/Connector/src/view/Header.js",
   "Connector.view.Learn": "../../webapp/Connector/src/view/Learn.js",
+  "Connector.view.Learn.plugin.HeaderLock": "../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnColumnHeader": "../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeader": "../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../webapp/Connector/src/view/Learn.js",
@@ -138,6 +140,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
+  "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
@@ -160,6 +163,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSave": [],
   "Connector.view.Header": [],
   "Connector.view.Learn": [],
+  "Connector.view.Learn.plugin.HeaderLock": [],
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
@@ -1049,6 +1053,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
+  "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],
@@ -1106,6 +1111,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Learn": [
     "widget.learn"
+  ],
+  "Connector.view.Learn.plugin.HeaderLock": [
+    "plugin.learnheaderlock"
   ],
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],

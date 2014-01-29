@@ -12,11 +12,7 @@ Ext.define('Connector.view.Learn', {
 
     initComponent : function() {
 
-        this.columnPresent = true;
-
-        this.items = [
-            this.getHeader()
-        ];
+        this.items = [ this.getHeader() ];
 
         this.callParent();
     },
@@ -37,14 +33,6 @@ Ext.define('Connector.view.Learn', {
             });
         }
         return this.headerView;
-    },
-
-    getLearnColumnHeaderView : function() {
-//        console.log('here');
-//        if (!this.columnView) {
-//            this.columnView = Ext.create('Connector.view.LearnColumnHeader', {});
-//        }
-//        return this.columnView;
     },
 
     onFilterChange : function(filters) {
@@ -98,11 +86,6 @@ Ext.define('Connector.view.Learn', {
     },
 
     completeLoad : function(dimension, animate) {
-//        if (this.columnPresent) {
-//            console.log('hiding');
-//            this.getLearnColumnHeaderView().hide();
-//            this.columnPresent = false;
-//        }
 
         if (dimension && dimension.detailModel && dimension.detailView) {
 
@@ -110,7 +93,8 @@ Ext.define('Connector.view.Learn', {
                 dimension: dimension,
                 store: Ext.create(dimension.detailCollection, {
                     model: dimension.detailModel
-                })
+                }),
+                plugins: ['learnheaderlock']
             });
             this.add(this.dataView);
             this.loadData(this.dataView);
@@ -128,12 +112,6 @@ Ext.define('Connector.view.Learn', {
                 }
             }
         }
-//        else {
-//            if (!this.columnPresent) {
-//                this.columnPresent = true;
-//                this.getLearnColumnHeaderView().show();
-//            }
-//        }
     },
 
     getDimensions : function() {
@@ -361,5 +339,104 @@ Ext.define('Connector.view.LearnColumnHeader', {
         ];
 
         this.callParent();
+    }
+});
+
+Ext.define('Connector.view.Learn.plugin.HeaderLock', {
+    extend: 'Ext.AbstractPlugin',
+    alias: 'plugin.learnheaderlock',
+
+    lockCls: 'headerlock',
+
+    headerOffset: 53,
+
+    init : function(cmp) {
+
+        cmp.on('afterrender', function() {
+
+            // initialize constants
+            this.elements = {
+                view: this.selectUnique('.learnview')
+            };
+
+            // initialize listeners
+            var EM = Ext.EventManager;
+            EM.on(window, 'resize', this.onResize, this);
+            EM.on(this.elements.view, 'scroll', this.onScroll, this);
+
+        }, this, {single: true});
+
+        this.resizeTask = new Ext.util.DelayedTask(function(){
+            var hdr = this.getHeaderElement(),
+                    lock = this.getLockElement();
+
+            if (hdr && lock) {
+                lock.setWidth(hdr.getWidth());
+            }
+        }, this);
+    },
+
+    destroy : function() {
+        // stop
+        this.resizeTask.cancel();
+
+        // unregister
+        var EM = Ext.EventManager;
+        EM.un(window, 'resize', this.onResize, this);
+        EM.un(this.elements.view, 'scroll', this.onScroll, this);
+
+        // clear
+        this.elements.lock = null;
+        this.elements.header = null;
+        this.elements.view = null;
+    },
+
+    update : function() {
+
+        var hdr = this.getHeaderElement(),
+            lock = this.getLockElement();
+
+        if (hdr && lock) {
+            var box = hdr.getBox();
+            if (box.bottom > this.headerOffset) {
+                lock.removeCls(this.lockCls);
+            }
+            else {
+                lock.addCls(this.lockCls);
+            }
+        }
+    },
+
+    onResize : function() {
+        this.resizeTask.delay(100);
+    },
+
+    onScroll : function() {
+        this.update();
+    },
+
+    // Nullable
+    getHeaderElement : function() {
+        if (!this.elements.header) {
+            this.elements.header = this.selectUnique('.learnheader');
+        }
+        return this.elements.header;
+    },
+
+    // Nullable
+    getLockElement : function() {
+        if (!this.elements.lock) {
+            var lock = this.selectUnique('.learncolumnheader');
+            if (lock) {
+                lock.setWidth(lock.getWidth());
+                this.elements.lock = lock;
+            }
+        }
+        return this.elements.lock;
+    },
+
+    // Nullable
+    selectUnique : function(selector) {
+        return Ext.get(Ext.DomQuery.select(selector)[0])
     }
 });
