@@ -168,16 +168,13 @@ Ext.define('Connector.view.RawData', {
             ui: 'custom',
             cls: 'measurewindow',
             plain: true,
-            modal: this.initialized,
-            preventHeader: true,
+            modal: this.initialized ? true : false,
             draggable: false,
+            preventHeader: true,
             resizable: false,
-            closable: false, // 15095
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
-            items : [ this.getAxisPanel() ],
+            closable: false,
+            layout: 'fit',
+            items: [ this.getAxisPanel() ],
             buttons: [{
                 text: 'select',
                 ui: 'rounded-inverted-accent',
@@ -185,16 +182,13 @@ Ext.define('Connector.view.RawData', {
                     this.fireEvent('measureselected', this.getAxisPanel().getSelection());
                     this.win.hide();
                 },
-                scope : this
+                scope: this
             },{
                 text: 'cancel',
                 ui: 'rounded-inverted-accent',
-                handler : function() {
-                    this.win.hide();
-                },
-                scope : this
-            }],
-            scope : this
+                handler : function() { this.win.hide(); },
+                scope: this
+            }]
         });
 
         return this.win;

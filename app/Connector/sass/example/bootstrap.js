@@ -46,6 +46,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.FilterGroup": "../../../../webapp/Connector/src/model/FilterGroup.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
+  "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
@@ -139,6 +140,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
+  "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
@@ -1051,6 +1053,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
+  "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],

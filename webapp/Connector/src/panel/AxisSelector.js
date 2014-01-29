@@ -8,6 +8,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
     showDisplay: true,
 
+    preventHeader: true,
+
     displayConfig: {},
 
     measureConfig: {},
@@ -15,6 +17,11 @@ Ext.define('Connector.panel.AxisSelector', {
     scalename: 'scale',
 
     disableScale: false,
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
 
     initComponent : function() {
 
@@ -35,136 +42,32 @@ Ext.define('Connector.panel.AxisSelector', {
 
     getSelectionDisplay : function() {
 
-        if (this.selectDisplay) {
-            return this.selectDisplay;
+        if (!this.selectionDisplay) {
+            var displayCfg = this.displayConfig;
+
+            Ext.apply(displayCfg, {
+                flex: 2,
+                displayConfig: this.displayConfig,
+                disableScale: this.disableScale,
+                scalename: this.scalename
+            });
+
+            this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
         }
 
-        var displayConfig = this.displayConfig;
-
-        Ext.applyIf(displayConfig, {
-            height : 160,
-            width  : '95%',
-            ui     : 'custom',
-            defaultHeader : 'Choose Axis',
-            border : false, frame : false,
-            flex : 3
-        });
-
-        // May not be overriddden
-        Ext.apply(displayConfig, {
-            items  : [{
-                itemId : 'hdr',
-                xtype: 'box',
-                autoEl: {
-                    tag : 'div',
-                    cls : 'curselhdr',
-                    html: displayConfig.defaultHeader
-                }
-            },{
-                itemId : 'auth',
-                xtype: 'box',
-                autoEl: {
-                    tag : 'div',
-                    cls : 'curselauth',
-                    html: '&nbsp;'
-                }
-            },{
-                itemId : 'desc',
-                xtype: 'box',
-                autoEl: {
-                    tag : 'div',
-                    cls : 'curseldesc',
-                    html: '&nbsp;'
-                }
-            }],
-            setMeasureSelection : function(record) {
-                if (record) {
-                    if (record.get('label')) {
-                        this.getComponent('auth').update(record.get('label'));
-                    }
-                    else {
-                        this.getComponent('auth').update('&nbsp;');
-                    }
-
-                    if (record.get('description')) {
-                        this.getComponent('desc').update(record.get('description'));
-                    }
-                    else {
-                        this.getComponent('desc').update('&nbsp;');
-                    }
-                }
-
-                if (record) {
-
-                }
-                else {
-
-                }
-            },
-            setSourceSelection : function(record) {
-                if (record.get('queryLabel')) {
-                    this.getComponent('hdr').update(record.get('queryLabel'));
-                }
-                else if (record.get('queryName')) {
-                    this.getComponent('hdr').update(record.get('queryName'));
-                }
-
-                if (record.get('description')) {
-                    this.getComponent('desc').update(record.get('description'));
-                }
-                else {
-                    this.getComponent('desc').update('&nbsp;');
-                }
-
-                this.getComponent('auth').update('&nbsp');
-            },
-            scope : this
-        });
-
-        this.selectDisplay = Ext.create('Ext.Panel', displayConfig);
-
-        this.scaleForm = Ext.create('Ext.form.Panel', {
-            style  : 'margin-top: 75px;',
-            ui     : 'custom',
-            hidden : this.disableScale,
-            flex   : 1,
-            border : false, frame : false,
-            items  : [{
-                xtype : 'radiogroup',
-                ui     : 'custom',
-                border : false, frame : false,
-                vertical : true,
-                columns : 1,
-                fieldLabel : 'Scale',
-                labelAlign : 'top',
-                items : [{
-                    boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true
-                },{
-                    boxLabel: 'Log', name : this.scalename, inputValue: 'log'
-                }]
-            }]
-        });
-
-        return Ext.create('Ext.Panel', {
-            layout : 'hbox',
-            ui     : 'custom',
-            border : false, frame : false,
-            items  : [
-                this.selectDisplay, this.scaleForm
-            ]
-        });
+        return this.selectionDisplay;
     },
 
     hideScale : function() {
-        this.scaleForm.hide();
+        this.getSelectionDisplay().getScaleForm().hide();
     },
 
     showScale : function() {
-        this.scaleForm.show();
+        this.getSelectionDisplay().getScaleForm().show();
     },
 
     getScale : function() {
-        return this.scaleForm.getValues()[this.scalename];
+        return this.getSelectionDisplay().getScaleForm().getValues()[this.scalename];
     },
 
     getMeasurePicker : function() {
@@ -174,11 +77,10 @@ Ext.define('Connector.panel.AxisSelector', {
         }
 
         Ext.applyIf(this.measureConfig, {
-            height: '52%',
-            width: '95%',
             allColumns: true,
             showHidden: false,
-            multiSelect: true
+            multiSelect: true,
+            flex: 3
         });
 
         Ext.apply(this.measureConfig, {
@@ -218,5 +120,120 @@ Ext.define('Connector.panel.AxisSelector', {
         if (this.showDisplay) {
             this.getSelectionDisplay().setSourceSelection(records[0]);
         }
+    }
+});
+
+Ext.define('Connector.panel.AxisSelectDisplay', {
+    extend: 'Ext.panel.Panel',
+
+    ui: 'custom',
+
+    border: false,
+
+    frame: false,
+
+    defaultHeader: 'Choose Axis',
+
+    layout: {
+        type: 'vbox'
+    },
+
+    initComponent : function() {
+
+        this.items = [{
+            xtype: 'box',
+            itemId: 'hdr',
+            autoEl: {
+                tag : 'div',
+                cls : 'curselhdr',
+                html: this.defaultHeader
+            }
+        },{
+            itemId: 'auth',
+            xtype: 'box',
+            autoEl: {
+                tag: 'div',
+                cls: 'curselauth',
+                html: '&nbsp;'
+            }
+        },{
+            itemId: 'desc',
+            xtype: 'box',
+            autoEl: {
+                tag: 'div',
+                cls: 'curseldesc',
+                html: '&nbsp;'
+            }
+        },{
+            xtype: 'container',
+            layout: {
+                type: 'hbox'
+            },
+            items: [ this.getScaleForm() ]
+        }];
+
+        this.callParent();
+    },
+
+    getScaleForm : function() {
+        if (!this.scaleForm) {
+            this.scaleForm = Ext.create('Ext.form.Panel', {
+                ui: 'custom',
+                hidden: this.disableScale,
+                border: false, frame : false,
+                items: [{
+                    xtype: 'radiogroup',
+                    ui: 'custom',
+                    border: false, frame : false,
+                    vertical: true,
+                    columns: 1,
+                    fieldLabel: 'Scale',
+                    labelAlign: 'top',
+                    items: [{
+                        boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true
+                    },{
+                        boxLabel: 'Log', name : this.scalename, inputValue: 'log'
+                    }]
+                }]
+            });
+        }
+
+        return this.scaleForm;
+    },
+
+    setMeasureSelection : function(record) {
+        if (record) {
+            if (record.get('label')) {
+                this.getComponent('auth').update(record.get('label'));
+            }
+            else {
+                this.getComponent('auth').update('&nbsp;');
+            }
+
+            if (record.get('description')) {
+                this.getComponent('desc').update(record.get('description'));
+            }
+            else {
+                this.getComponent('desc').update('&nbsp;');
+            }
+        }
+    },
+
+    setSourceSelection : function(record) {
+        if (record.get('queryLabel')) {
+            this.getComponent('hdr').update(record.get('queryLabel'));
+        }
+        else if (record.get('queryName')) {
+            this.getComponent('hdr').update(record.get('queryName'));
+        }
+
+        if (record.get('description')) {
+            this.getComponent('desc').update(record.get('description'));
+        }
+        else {
+            this.getComponent('desc').update('&nbsp;');
+        }
+
+        this.getComponent('auth').update('&nbsp');
     }
 });
