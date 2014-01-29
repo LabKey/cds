@@ -262,6 +262,25 @@ public class CDSController extends SpringActionController
         }
     }
 
+
+    @RequiresPermissionClass(AdminPermission.class)
+    public class ResetAction extends SimpleViewAction
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            resetCube();
+            return new HtmlView("ok");
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return root;
+        }
+    }
+
+
     @RequiresPermissionClass(AdminPermission.class)
     public class UpdateParticipantGroupsAction extends PopulateCubeAction
     {
