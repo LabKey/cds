@@ -4,14 +4,7 @@ Ext.define('Connector.view.Navigation', {
 
     alias: 'widget.navigation',
 
-    constructor : function(config) {
-
-    Ext.applyIf(config, {
-            ui : 'navigation'
-        });
-
-        this.callParent([config]);
-    },
+    ui: 'navigation',
 
     initComponent : function() {
 

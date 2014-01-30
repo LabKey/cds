@@ -10,6 +10,12 @@ Ext.define('Connector.controller.FilterStatus', {
 
     init : function() {
 
+        this.control('app-main > #eastview > #navfilter', {
+            afterrender : function(navfilter) {
+                navfilter.add(this.createFilterStatus());
+            }
+        });
+
         this.control('selectionstatus > dataview', {
             itemclick : this.onSelectionClick
         });
@@ -59,6 +65,25 @@ Ext.define('Connector.controller.FilterStatus', {
         this.callParent();
     },
 
+    createFilterStatus : function() {
+        var store = this.getStore('FilterStatus');
+        var state = this.getStateManager();
+        store.state = state;
+        store.load();
+
+        var view = Ext.create('Connector.view.FilterStatus', {
+            store: store,
+            selections: state.getSelections(),
+            filters: state.getFilters()
+        });
+
+        state.on('filtercount', view.onFilterChange, view);
+        state.on('filterchange', view.onFilterChange, view);
+        state.on('selectionchange', view.onSelectionChange, view);
+
+        return view;
+    },
+
     runSelectToFilterAnimation : function(b) {
         var p = b.up('panel');
         var me = this;
@@ -87,57 +112,7 @@ Ext.define('Connector.controller.FilterStatus', {
         var v; // the view instance to be created
 
         if (xtype == 'filterstatus') {
-            var s = this.getStore('FilterStatus');
-            var state = this.getStateManager();
-            s.state = state;
-            s.load();
-
-            v = Ext.create('Connector.view.FilterStatus', {
-                ui : 'custom',
-                store : s,
-                selections : state.getSelections(),
-                filters : state.getFilters()
-            });
-
-            state.on('filtercount',     v.onFilterChange, v);
-            state.on('filterchange',    v.onFilterChange, v);
-            state.on('selectionchange', v.onSelectionChange, v);
-
-            // TODO: Should find a way to remove this wrapper panel and return an array of views to be injected
-            // TODO: Use the navigation controller to declare Navigation UI
-            var p = Ext.create('Ext.panel.Panel', {
-                ui: 'custom',
-                items: [{
-                    xtype: 'navigation',
-                    ui: 'navigation',
-                    itemId: 'primarynav',
-                    viewConfig: {
-                        height: 170,
-                        arrow: 'left',
-                        mapping: [{
-                            label: 'Home',
-                            disabled: true
-//                            value: 'singleaxis'
-                        },{
-                            label: 'Learn about studies, assays',
-                            value: 'learn'
-                        },{
-                            label: 'Find subjects',
-                            value: 'summary'
-                        },{
-                            label: 'Plot data',
-                            value: 'plot'
-                        },{
-                            label: 'View data grid',
-                            value: 'datagrid'
-                        }]
-                    }
-                }, v]
-            });
-
-            this.getViewManager().register(v);
-
-            return [p, false];
+            v = this.createFilterStatus();
         }
 
         if (xtype == 'filtersave') {
@@ -166,8 +141,7 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     onFilterClear : function() {
-        if (this.getStateManager().hasFilters())
-        {
+        if (this.getStateManager().hasFilters()) {
             this.getStateManager().clearFilters();
         }
     },

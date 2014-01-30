@@ -13,16 +13,9 @@ Ext.define('Connector.view.Main', {
 
     ui: 'custom',
 
-    defaults: {
-        ui: 'custom'
-    },
-
     items: [{
         xtype: 'connectorheader',
-        region: 'north',
-        defaults: {
-            ui: 'custom'
-        }
+        region: 'north'
     },{
         xtype: 'tabpanel',
         region: 'center',
@@ -30,12 +23,10 @@ Ext.define('Connector.view.Main', {
         plain: true,
         id: 'primarytabpanel',
         ui: 'primary-view',
-        defaults: {
-            ui: 'custom'
-        },
         minWidth: 734 // 1024 minus 'east' width
     },{
         xtype: 'tabpanel',
+        itemId: 'eastview',
         region: 'east',
         ui: 'east-view',
         width : 290,
@@ -45,6 +36,35 @@ Ext.define('Connector.view.Main', {
         hideCollapseTool : true,
         defaults: {
             ui: 'custom'
-        }
+        },
+        items: [{
+            xtype: 'panel',
+            itemId: 'navfilter',
+            items: [{
+                xtype: 'navigation',
+                ui: 'navigation',
+                itemId: 'primarynav',
+                viewConfig: {
+                    height: 170,
+                    arrow: 'left',
+                    mapping: [{
+                        label: 'Home',
+                        disabled: true
+                    },{
+                        label: 'Learn about studies, assays',
+                        value: 'learn'
+                    },{
+                        label: 'Find subjects',
+                        value: 'summary'
+                    },{
+                        label: 'Plot data',
+                        value: 'plot'
+                    },{
+                        label: 'View data grid',
+                        value: 'datagrid'
+                    }]
+                }
+            }]
+        }]
     }]
 });

@@ -5,6 +5,8 @@ Ext.define('Connector.view.FilterStatus', {
 
     alias  : 'widget.filterstatus',
 
+    ui: 'custom',
+
     padding: '27 0 0 27',
 
     initComponent : function() {

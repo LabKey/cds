@@ -13,6 +13,8 @@ Ext.define("Connector.view.Header", {
 
     collapseTime : 200,
 
+    ui: 'custom',
+
     defaults: {
         ui: 'custom'
     },

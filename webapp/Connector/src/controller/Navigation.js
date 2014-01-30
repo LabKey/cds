@@ -6,7 +6,7 @@ Ext.define('Connector.controller.Navigation', {
 
     init : function() {
 
-        this.control('app-main > tabpanel > panel > navigation > dataview', {
+        this.control('app-main > #eastview > #navfilter > navigation > dataview', {
             itemclick : function(v, rec) {
                 var xtype = rec.data.value;
                 if (this.getViewManager().isRegistered(xtype)) {
