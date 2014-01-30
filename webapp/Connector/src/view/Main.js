@@ -32,7 +32,8 @@ Ext.define('Connector.view.Main', {
         ui: 'primary-view',
         defaults: {
             ui: 'custom'
-        }
+        },
+        minWidth: 734 // 1024 minus 'east' width
     },{
         xtype: 'tabpanel',
         region: 'east',

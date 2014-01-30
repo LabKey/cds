@@ -119,8 +119,16 @@
 
     <style type="text/css">
         @media (max-width: 1200px) {
-            .detail-container h2 {
-                font-size: 19pt;
+            h1 {
+                font-size: 24pt;
+            }
+
+            h2 {
+                font-size: 20pt;
+            }
+
+            div.study-description .description-text {
+                font-size: 11pt;
             }
         }
     </style>

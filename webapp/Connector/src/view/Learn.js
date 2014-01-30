@@ -366,14 +366,14 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
 
         }, this, {single: true});
 
-        this.resizeTask = new Ext.util.DelayedTask(function(){
-            var hdr = this.getHeaderElement(),
-                    lock = this.getLockElement();
-
-            if (hdr && lock) {
-                lock.setWidth(hdr.getWidth());
-                if (this.elements.dupe)
-                    this.elements.dupe.setWidth(hdr.getWidth());
+        this.resizeTask = new Ext.util.DelayedTask(function() {
+            var w = this.getCalculatedWidth();
+            if (w > 0) {
+                var lock = this.getLockElement();
+                if (lock) {
+                    lock.setWidth(w);
+                    this.elements.dupe.setWidth(w);
+                }
             }
         }, this);
     },
@@ -419,6 +419,10 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
 
     onScroll : function() {
         this.update();
+    },
+
+    getCalculatedWidth : function() {
+        return (this.elements.view ? this.elements.view.getWidth() : 0);
     },
 
     // Nullable
