@@ -42,7 +42,7 @@ Ext.define('Connector.controller.Navigation', {
     markActiveSelection : function() {
         if (this.primaryNav) {
             if (this.active) {
-                this.primaryNav.getNavigationView().selectByView(this.active, 0);
+                this.primaryNav.getNavigationView().selectByView(this.active, 2);
                 return;
             }
             console.warn('Active view not available to navigation. Ensure that Connector.changeView is used to see view.');

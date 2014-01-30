@@ -372,6 +372,8 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
 
             if (hdr && lock) {
                 lock.setWidth(hdr.getWidth());
+                if (this.elements.dupe)
+                    this.elements.dupe.setWidth(hdr.getWidth());
             }
         }, this);
     },
@@ -400,9 +402,13 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
             var box = hdr.getBox();
             if (box.bottom > this.headerOffset) {
                 lock.removeCls(this.lockCls);
+                if (this.elements.dupe)
+                    this.elements.dupe.hide();
             }
             else {
                 lock.addCls(this.lockCls);
+                if (this.elements.dupe)
+                    this.elements.dupe.show();
             }
         }
     },
@@ -428,8 +434,29 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
         if (!this.elements.lock) {
             var lock = this.selectUnique('.learncolumnheader');
             if (lock) {
-                lock.setWidth(lock.getWidth());
+
+                var h = lock.getHeight();
+                var w = lock.getWidth();
+
+                lock.setWidth(w);
                 this.elements.lock = lock;
+
+                //
+                // Once we have the associated lock element,
+                // place an element next to it to fill its space
+                // when it unlocks. Prevents jumping.
+                //
+                var style = 'display: none; ';
+                style += 'height: ' + h + 'px; ';
+                style += 'width: ' + w + 'px; ';
+                style += 'background-color: transparent; ';
+
+                var dupe = document.createElement('div');
+                dupe.setAttribute('style', style);
+                dupe = Ext.get(dupe);
+                dupe.insertBefore(lock);
+                dupe.setVisibilityMode(2); // use 'display'
+                this.elements.dupe = dupe;
             }
         }
         return this.elements.lock;

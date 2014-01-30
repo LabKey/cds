@@ -117,6 +117,13 @@
         }
     </style>
 
+    <style type="text/css">
+        @media (max-width: 1200px) {
+            .detail-container h2 {
+                font-size: 19pt;
+            }
+        }
+    </style>
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
 
