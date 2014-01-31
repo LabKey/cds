@@ -102,12 +102,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
     }
@@ -1096,13 +1096,18 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(29, 3, 5, 3, 31);
     }
 
+    private Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural)
+    {
+        return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, 'status-count') and text()='" + count + "']");
+    }
+
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
     {
-        waitForElement(Locator.xpath("//div[@class='highlight-value' and text()='" + subjectCount + "']"), WAIT_FOR_JAVASCRIPT);
-        waitForElement(Locator.css("div.status-row").withText(studyCount + (studyCount != 1 ? " studies" : " study")));
-        waitForElement(Locator.css("div.status-row").withText(assayCount + (assayCount != 1 ? " assays" : " assay")));
-        waitForElement(Locator.css("div.status-row").withText(contributorCount + (contributorCount != 1 ? " labs" : " lab")));
-        waitForElement(Locator.css("div.status-row").withText(antigenCount + (antigenCount != 1 ? " antigens" : " antigen")));
+        waitForElement(Locator.xpath("//span[contains(@class, 'hl-status-count') and text()='" + subjectCount + "']"), WAIT_FOR_JAVASCRIPT);
+        waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies"));
+        waitForElement(getFilterStatusLocator(assayCount, "Assay", "Assays"));
+        waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
+        waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
     }
 
     @LogMethod

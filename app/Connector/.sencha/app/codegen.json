@@ -721,6 +721,16 @@
         "name": "FilterGroup",
         "fields": "label:string:null"
       }
+    },
+    "app/view/DetailStatus.js": {
+      "source": "{viewFileName}.js.tpl.merge",
+      "version": "acde5ea901286ca2f976bcddea23e159dbaa0e6f",
+      "parameters": {
+        "appName": "Connector",
+        "viewName": "DetailStatus",
+        "name": "DetailStatus",
+        "viewFileName": "DetailStatus"
+      }
     }
   }
 }

@@ -90,7 +90,7 @@ $window-header-color: $secondary-color;
   - Connector.view.Dimension
   - Connector.view.DimensionSelector
   - Connector.view.FilterSave
-  - Connector.view.FilterStatus
+  - Connector.view.DetailStatus
   - Connector.view.Header
   - Connector.view.GroupListView
   - Connector.view.GroupPreview
@@ -122,6 +122,10 @@ h2 {
 h3 {
   font-size: 20pt;
   @include header;
+}
+
+ul {
+  list-style: none;
 }
 
 li.fadein {
@@ -487,47 +491,83 @@ div.savetitle {
 
 /* -- END Connector.view.FilterSave */
 
-/* Connector.view.FilterStatus */
-div.highlight-value {
-  @include standout;
-}
-
-div.highlight-label {
-  @include smallStandout;
-  span {
-    color: black;
-  }
-}
-
+/* Connector.view.DetailStatus */
 div.status-row {
+  border: 1px solid transparent;
+  border-radius: 15px;
+  padding: 4px;
+  margin: 0 -5px 0 -5px; /* note if this changes, modify padding on ul.detailstatus li */
+}
+
+div.status-over {
+  background-color: #fff;
+  border: 1px solid #a9a9a9;
+  cursor: pointer;
+}
+
+ul.detailstatus {
+  font-family: $bodycaps-font;
+}
+
+span.statme {
+  display: inline-block;
+  padding: 0;
+  margin: 0 0 -2px 0;
+}
+
+ul.detailstatus li {
+  border-bottom: 2px dotted #ccc;
+  text-align: right;
+  clear: both;
+  margin: -6px 5px 0 5px;
+}
+
+span.status-label {
+  float: left;
   text-transform: lowercase;
-  font-family: $info-font;
-  font-size: 11pt;
-  padding-top: 5px;
+  background-color: #ebebeb;
+  position: relative;
+  top: 4px;
+  padding-right: 4px;
+  font-size: 12pt;
+}
+
+span.status-count {
+  background-color: #f0f0f0;
+  position: relative;
+  top: 4px;
+  padding-left: 4px;
+  font-size: 12pt;
+}
+
+span.hl-status-label {
+  float: left;
+  font-size: 13.5pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #ebebeb;
+  position: relative;
+  top: 4px;
+  padding-right: 4px;
+}
+
+span.hl-status-count {
+  font-size: 13.5pt;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  position: relative;
+  top: 4px;
   padding-left: 4px;
 }
 
-div.status-row:hover {
-  cursor: pointer;
-  .x-btn-icon {
-    background-image: url(/labkey/Connector/images/infoover.png);
-    background-size: 17px 17px;
-    width: 17px;
-    height: 17px;
-    position: absolute;
-    left: 98px;
-  }
+div.status-over span.status-label,
+div.status-over span.status-count,
+div.status-over span.hl-status-label,
+div.status-over span.hl-status-count {
+  background-color: #fff;
 }
 
-div.status-row.x-btn-rounded-inverted-accent-icon-small {
-  margin-top: 3px;
-  padding-top: 1px;
-  padding-left: 2px;
-  border-top-width: 0px;
-  border-bottom-width: 0px;
-}
-
-/* -- END Connector.view.FilterStatus */
+/* -- END Connector.view.DetailStatus */
 
 /* Connector.view.Header */
 .connectorheader, .connectorheader-collapse {
@@ -658,7 +698,7 @@ div.nav-label, div.dis-label {
   padding-top: 4px;
 
   span.right-label {
-    width: 262px;
+    width: 277px;
     float: right;
     @include unselectable;
   }

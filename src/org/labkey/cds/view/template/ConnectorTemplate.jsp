@@ -223,6 +223,7 @@
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Compare.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupPreview.js"></script>

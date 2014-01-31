@@ -59,7 +59,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.Citation": "../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../webapp/Connector/src/view/Compare.js",
-  "Connector.view.DetailStatus": "../../webapp/Connector/src/view/FilterStatus.js",
+  "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterSave": "../../webapp/Connector/src/view/FilterSave.js",

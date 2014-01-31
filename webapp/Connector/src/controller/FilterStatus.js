@@ -6,13 +6,13 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['FilterSave', 'FilterStatus', 'GroupSave'],
+    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'GroupSave'],
 
     init : function() {
 
         this.control('app-main > #eastview > #navfilter', {
             afterrender : function(navfilter) {
-                navfilter.add(this.createFilterStatus());
+                navfilter.add(this.createFilterStatus(), this.createFilterDetail());
             }
         });
 
@@ -65,10 +65,32 @@ Ext.define('Connector.controller.FilterStatus', {
         this.callParent();
     },
 
-    createFilterStatus : function() {
+    getStateStore : function() {
         var store = this.getStore('FilterStatus');
         var state = this.getStateManager();
         store.state = state;
+        return store;
+    },
+
+    createFilterDetail : function() {
+        var store = this.getStateStore();
+        store.load();
+
+        var view = Ext.create('Connector.view.DetailStatus', {
+            store : store
+        });
+
+        var state = this.getStateManager();
+        state.on('filtercount', view.onFilterChange, view);
+        state.on('filterchange', view.onFilterChange, view);
+        state.on('selectionchange', view.onFilterChange, view);
+
+        return view;
+    },
+
+    createFilterStatus : function() {
+        var store = this.getStateStore();
+        var state = this.getStateManager();
         store.load();
 
         var view = Ext.create('Connector.view.FilterStatus', {

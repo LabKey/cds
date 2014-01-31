@@ -23,14 +23,14 @@ Ext.define('Connector.view.Main', {
         plain: true,
         id: 'primarytabpanel',
         ui: 'primary-view',
-        minWidth: 734 // 1024 minus 'east' width
+        minWidth: 719 // 1024 minus 'east' width
     },{
         xtype: 'tabpanel',
         itemId: 'eastview',
         region: 'east',
         ui: 'east-view',
-        width : 290,
-        maxWidth : 290,
+        width : 305,
+        maxWidth : 305,
         hidden : false,
         plain : true,
         hideCollapseTool : true,
