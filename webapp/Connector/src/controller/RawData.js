@@ -458,7 +458,7 @@ Ext.define('Connector.controller.RawData', {
 
     runFilterAnimation : function(filterGroups, callback) {
 
-        var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[1]).getBox(); // filter panel on RHS
+        var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[0]).getBox(); // filter panel on RHS
         var cbox  = this.rawDataView.filterWin.ppx;
 
         if (cbox) {

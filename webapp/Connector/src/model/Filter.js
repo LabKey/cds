@@ -10,6 +10,64 @@ Ext.define('Connector.model.Filter', {
         {name : 'gridFilter'} // instance of LABKEY.Filter
     ],
 
+    statics : {
+        getGridHierarchy : function(data) {
+            if (data['gridFilter']) {
+                if (!Ext.isFunction(data['gridFilter'].getColumnName))
+                {
+                    console.warn('invalid filter object being processed.');
+                    return 'Unknown';
+                }
+                var label = data['gridFilter'].getColumnName().split('/');
+
+                // check lookups
+                if (label.length > 1) {
+                    label = label[label.length-2];
+                }
+                else {
+                    // non-lookup column
+                    label = label[0];
+                }
+
+                label = label.split('_');
+                return Ext.String.ellipsis(label[label.length-1], 9, false);
+            }
+            return 'Unknown';
+        },
+
+        getGridLabel : function(data) {
+            if (data['gridFilter']) {
+                var gf = data.gridFilter;
+                if (!Ext.isFunction(gf.getFilterType))
+                {
+                    console.warn('invalid label being processed');
+                    return 'Unknown';
+                }
+                return Connector.model.Filter.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + gf.getValue();
+            }
+            return 'Unknown';
+        },
+
+        getShortFilter : function(displayText) {
+            switch (displayText) {
+                case "Does Not Equal":
+                    return '!=';
+                case "Equals":
+                    return '=';
+                case "Is Greater Than":
+                    return '>';
+                case "Is Less Than":
+                    return '<';
+                case "Is Greater Than or Equal To":
+                    return '>=';
+                case "Is Less Than or Equal To":
+                    return '<=';
+                default:
+                    return displayText;
+            }
+        }
+    },
+
     lookupOperator : function() {
         return LABKEY.app.controller.Filter.lookupOperator(this.data);
     },
@@ -88,40 +146,11 @@ Ext.define('Connector.model.Filter', {
     },
 
     getGridHierarchy : function() {
-        if (this.data['gridFilter']) {
-            if (!Ext.isFunction(this.data['gridFilter'].getColumnName))
-            {
-                console.warn('invalid filter object being processed.');
-                return 'Unknown';
-            }
-            var label = this.data['gridFilter'].getColumnName().split('/');
-
-            // check lookups
-            if (label.length > 1) {
-                label = label[label.length-2];
-            }
-            else {
-                // non-lookup column
-                label = label[0];
-            }
-
-            label = label.split('_');
-            return Ext.String.ellipsis(label[label.length-1], 9, false);
-        }
-        return 'Unknown';
+        return Connector.model.Filter.getGridHierarchy(this.data);
     },
 
     getGridLabel : function() {
-        if (this.data['gridFilter']) {
-            var gf = this.data.gridFilter;
-            if (!Ext.isFunction(gf.getFilterType))
-            {
-                console.warn('invalid label being processed');
-                return 'Unknown';
-            }
-            return this.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + gf.getValue();
-        }
-        return 'Unknown';
+        return Connector.model.Filter.getGridLabel(this.data);
     },
 
     /**
@@ -129,23 +158,7 @@ Ext.define('Connector.model.Filter', {
      * @param displayText - display text from LABKEY.Filter.getFilterType().getDisplayText()
      */
     getShortFilter : function(displayText) {
-
-        switch (displayText) {
-            case "Does Not Equal":
-                return '!=';
-            case "Equals":
-                return '=';
-            case "Is Greater Than":
-                return '>';
-            case "Is Less Than":
-                return '<';
-            case "Is Greater Than or Equal To":
-                return '>=';
-            case "Is Less Than or Equal To":
-                return '<=';
-            default:
-                return displayText;
-        }
+        return Connector.model.Filter.getShortFilter(displayText);
     },
 
     isGroup : function() {

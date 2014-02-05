@@ -7,6 +7,12 @@ Ext.define('Connector.controller.State', {
 
     appVersion: '0.5',
 
+    init : function() {
+        this.callParent();
+
+        Connector.STATE = this;
+    },
+
     getTitle : function(viewname) {
         return 'Connector: ' + viewname;
     },

@@ -44,7 +44,7 @@
 <html>
 <head>
     <!-- Use Internet Explorer 9 Standards mode -->
-    <meta http-equiv="x-ua-compatible" content="IE=9">
+    <%--<meta http-equiv="x-ua-compatible" content="IE=9">--%>
     <title>HIV Vaccine Connector</title>
     <%= bean.getMetaTags(url) %>
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
@@ -114,6 +114,41 @@
         .headerlock {
             position: absolute;
             top: 0px;
+        }
+
+        div.selectionpanel .x-toolbar-footer {
+            padding: 0;
+            margin-left: 20px;
+        }
+
+        div.selectionpanel .x-btn-rounded-inverted-accent-small .x-btn-inner {
+            font-size: 7pt;
+        }
+
+        div.status-over {
+            border-radius: 15px;
+        }
+
+        .closeitem {
+            position: absolute;
+            opacity: 0;
+            right: 10px;
+            margin-top: 4px;
+            width: 8px;
+            height: 8px;
+            z-index: 5;
+            border: 0;
+            background: url(<%=text(appPath)%>/images/close.png);
+            background-size: 8px 8px;
+            background-repeat: no-repeat;
+        }
+
+        .memberitem:hover .closeitem {
+            opacity: 0.5;
+        }
+
+        .memberitem:hover .closeitem:hover {
+            opacity: 1;
         }
     </style>
 
@@ -213,6 +248,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
 
     <!-- Application Stores -->
@@ -223,6 +259,7 @@
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Compare.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>

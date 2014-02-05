@@ -20,21 +20,25 @@ Ext.define('Connector.controller.FilterStatus', {
             itemclick : this.onSelectionClick
         });
 
-        this.control('hierarchyfilter', {
+        this.control('selectionview', {
             operatorchange : function(config) {
                 this.getStateManager().setFilterOperator(config.filterId, config.value);
-            },
-            removefilter : function(filterId, hName, uname, selectionMode) {
-                if (selectionMode) {
-                    this.getStateManager().removeSelection(filterId, hName, uname);
-                }
-                else {
-                    this.getStateManager().removeFilter(filterId, hName, uname);
-                }
             }
         });
 
-        this.control('filterpanel > toolbar > #savegroup', {
+        this.control('selectionpanel > selectionview', {
+            removefilter : function(filterId, hName, uname) {
+                this.getStateManager().removeSelection(filterId, hName, uname);
+            }
+        });
+
+        this.control('filterpanel > selectionview', {
+            removefilter : function(filterId, hName, uname) {
+                this.getStateManager().removeFilter(filterId, hName, uname);
+            }
+        });
+
+        this.control('filterpanel > container > #savegroup', {
             click : this.onGroupSave
         });
 
@@ -50,7 +54,7 @@ Ext.define('Connector.controller.FilterStatus', {
             click : this.onGroupCancel
         });
 
-        this.control('filterpanel > toolbar > #clear', {
+        this.control('filterpanel > container > #clear', {
             click : this.onFilterClear
         });
 
@@ -190,8 +194,7 @@ Ext.define('Connector.controller.FilterStatus', {
         if (form && form.getForm().isValid()) {
 
             var values = form.getValues(),
-                    state = this.getStateManager(),
-                    me = this;
+                    state = this.getStateManager();
 
             if (values.groupselect) {
                 state.moveSelectionToFilter();

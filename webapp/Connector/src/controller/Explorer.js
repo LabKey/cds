@@ -231,9 +231,9 @@ Ext.define('Connector.controller.Explorer', {
             };
             this.loadExplorerView(context, null);
 
-            if (state.hasSelections()) {
-                state.moveSelectionToFilter();
-            }
+//            if (state.hasSelections()) {
+//                state.moveSelectionToFilter();
+//            }
         }, this);
 
         this.updateURL();
@@ -244,7 +244,7 @@ Ext.define('Connector.controller.Explorer', {
         this.hierarchy = this.dim.hierarchies[item.hierarchyIndex];
         this.updateURL();
         this.fireEvent('hierarchy', item.hierarchyIndex);
-        this.getStateManager().moveSelectionToFilter();
+//        this.getStateManager().moveSelectionToFilter();
     },
 
     onExplorerEnter : function(view, rec) {
@@ -274,7 +274,7 @@ Ext.define('Connector.controller.Explorer', {
     runSelectionAnimation : function(view, rec, node, callback) {
 
         this.allowHover = false;
-        var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[1]).getBox(),
+        var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[0]).getBox(),
                 child = Ext.get(node).child('span.barlabel'),
                 cbox  = child.getBox();
 

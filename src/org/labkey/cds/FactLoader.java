@@ -124,7 +124,7 @@ public class FactLoader
         _rowsInserted = new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(getPopulateSql());
 
         //Vacuum Analyze
-        new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("VACUUM ANALYZE cds.Facts; VACUUM ANALYZE cds.Antigens; VACUUM ANALYZE cds.People; VACUUM ANALYZE cds.Citations; VACUUM ANALYZE cds.Citable;");
+//        new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("VACUUM ANALYZE cds.Facts; VACUUM ANALYZE cds.Antigens; VACUUM ANALYZE cds.People; VACUUM ANALYZE cds.Citations; VACUUM ANALYZE cds.Citable;");
 
         return _rowsInserted;
     }

@@ -1,6 +1,7 @@
 /* Site wide coloring scheme */
 $select-color: #14C9CC;                       // Bright Blue
 $selectongrey-color: rgba(20, 201, 204, 0.2); // Light Blue
+/* read as 'select on grey' */
 
 $primary-color: #DCD8D8;           // Main Gray
 $secondary-color: #F0F0F0;         // Light Gray
@@ -331,12 +332,7 @@ li.fadein {
 /* Connector.panel.FilterPanel */
 div.filterpanel {
 
-  padding-top: 15px;
-
   .header {
-    /* small standout */
-    //text-transform: uppercase;
-    //font-weight: bold;
     font-size: 18pt;
     font-family: $data-font;
     span {
@@ -359,6 +355,29 @@ div.filterpanel {
       display: none;
     }
   }
+}
+
+div.selectionpanel {
+
+  .header {
+    @include smallStandout;
+  }
+
+//  div.opselect {
+//    display: none;
+//  }
+//  div.showopselect {
+//    display: block;
+//  }
+//
+//  &:hover {
+//    div.opselect {
+//      display: block !important;
+//    }
+//    div.showopselect {
+//      display: none;
+//    }
+//  }
 }
 
 /* -- END Connector.panel.FilterPanel */
@@ -698,7 +717,7 @@ div.nav-label, div.dis-label {
   padding-top: 4px;
 
   span.right-label {
-    width: 277px;
+    width: 284px;
     float: right;
     @include unselectable;
   }
@@ -1269,7 +1288,8 @@ div.measure-label {
   height:16px;
   display:block;
   @include border-radius(8px);
-  background-color: $selectongrey-color;
+  border: 1px solid $black;
+  background-color: $select-color;
   float: left;
   margin-top: 2px;
   margin-right: 4px;
