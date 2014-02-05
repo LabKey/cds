@@ -11,7 +11,7 @@ Ext.define('Connector.view.DetailStatus', {
 
     itemSelector: 'div.status-row',
 
-    padding: '27 20 0 20',
+    padding: '20 20 0 20',
 
     overItemCls: 'status-over',
 

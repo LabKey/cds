@@ -66,6 +66,7 @@
         <script path="Connector/src/panel/AxisSelector.js"/>
         <script path="Connector/src/panel/Feedback.js"/>
         <script path="Connector/src/panel/FilterPanel.js"/>
+        <script path="Connector/src/panel/Selection.js"/>
         <script path="Connector/src/panel/GroupList.js"/>
 
         <!-- Application Stores -->
@@ -76,6 +77,7 @@
         <!-- Application Views -->
         <script path="Connector/src/view/Citation.js"/>
         <script path="Connector/src/view/Compare.js"/>
+        <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterSave.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/GroupPreview.js"/>

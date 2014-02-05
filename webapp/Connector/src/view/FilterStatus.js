@@ -5,12 +5,12 @@ Ext.define('Connector.view.FilterStatus', {
 
     ui: 'custom',
 
-    padding: '27 0 0 27',
+    padding: '20 20 0 20',
 
     initComponent : function() {
         this.items = [
-            this.getSelectionPanel(),
-            this.getFilterPanel()
+            this.getFilterPanel(),
+            this.getSelectionPanel()
         ];
 
         this.callParent();
@@ -28,19 +28,13 @@ Ext.define('Connector.view.FilterStatus', {
         var hidden = !(this.filters && this.filters.length > 0);
 
         this.filterpanel = Ext.create('Connector.panel.FilterPanel', {
-            title : 'Active filters',
-            tbarButtons : [
-                { text: 'save group', ui: 'rounded-inverted-accent', width: 87, itemId: 'savegroup', hidden: hidden }
-                ,{ text: 'clear filters',  ui: 'rounded-inverted-accent', width: 87, itemId: 'clear', hidden: hidden }
-            ]
+            title: 'Active filters',
+            headerButtons: [
+                { xtype: 'button', flex: 1, text: 'save', ui: 'rounded-inverted-accent', itemId: 'savegroup', style: 'margin: 4px 2px 0 4px;' },
+                { xtype: 'button', flex: 1, text: 'clear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 4px;' }
+            ],
+            filters: this.filters
         });
-
-        this.saveBtn = this.filterpanel.down('toolbar > #savegroup');
-        this.clrBtn  = this.filterpanel.down('toolbar > #clear');
-
-        if (this.filters) {
-            this.filterpanel.loadFilters(this.filters);
-        }
 
         return this.filterpanel;
     },
@@ -49,16 +43,19 @@ Ext.define('Connector.view.FilterStatus', {
         if (this.selectionpanel)
             return this.selectionpanel;
 
-        this.selectionpanel = Ext.create('Connector.panel.SelectionPanel', {
-            title : 'Current Selection',
+        this.selectionpanel = Ext.create('Connector.panel.Selection', {
             tbarButtons : [
-                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent', width: 90 },
-                { text: 'clear selection', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 105 }
-            ]
+                // 8pt font sizes
+//                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent', width: 85 },
+//                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent', width: 123 },
+//                { text: 'clear', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 45 }
+                // 7pt font sizes
+                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent', width: 80 },
+                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent', width: 107 },
+                { text: 'clear', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 45 }
+            ],
+            filters: this.selections
         });
-
-        if (this.selections)
-            this.selectionpanel.loadFilters(this.selections);
 
         return this.selectionpanel;
     },
@@ -66,14 +63,14 @@ Ext.define('Connector.view.FilterStatus', {
     onFilterChange : function(filters) {
         if (this.filterpanel)
             this.filterpanel.loadFilters(filters);
-        if (filters.length == 0) {
-            this.saveBtn.hide();
-            this.clrBtn.hide();
-        }
-        else {
-            this.saveBtn.show();
-            this.clrBtn.show();
-        }
+//        if (filters.length == 0) {
+//            this.saveBtn.hide();
+//            this.clrBtn.hide();
+//        }
+//        else {
+//            this.saveBtn.show();
+//            this.clrBtn.show();
+//        }
     },
 
     onSelectionChange : function(selections, opChange) {

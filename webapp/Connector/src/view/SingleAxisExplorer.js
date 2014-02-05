@@ -595,15 +595,17 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     selectionChange : function(sel, isPrivate) {
         this.selections = sel;
         if (this.dimension) {
-            if (sel.length > 0) {
-                this.selection(false, isPrivate);
-            }
-            else {
-                if (!isPrivate) {
-                    this.getSelectionModel().deselectAll();
+            Ext.defer(function() {
+                if (sel.length > 0) {
+                    this.selection(false, isPrivate);
                 }
-                this.store.clearSelection();
-            }
+                else {
+                    if (!isPrivate) {
+                        this.getSelectionModel().deselectAll();
+                    }
+                    this.store.clearSelection();
+                }
+            }, 150, this);
         }
         else {
             console.error('Dimension must be loaded before selection change');

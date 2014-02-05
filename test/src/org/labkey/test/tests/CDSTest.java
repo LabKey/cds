@@ -69,9 +69,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String GROUP_DESC = "Intersection of " +LABS[1]+ " and " + LABS[2];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
-    /* Common Button texts */
-    private static final String APP_CLEAR_FILTER = "clear filters";
-
     public final static int CDS_WAIT = 5000;
 
     @Override
@@ -225,8 +222,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertElementNotPresent(Locator.linkWithText("Admin"));
     }
 
-    private static final String COUNTS_FEEDBACK_STATE = "{\"activeView\":\"singleaxis\",\"appVersion\":\"0.5\",\"viewState\":{\"ydimension\":\"Participant\",\"yHierarchyIdx\":2},\"views\":{},\"filters\":[],\"selections\":[{\"phantom\":true,\"internalId\":\"ext-record-589\",\"data\":{\"hierarchy\":\"Participant.Country\",\"members\":[{\"uname\":[\"Participant.Country\",\"Thailand\"]}],\"isGroup\":false,\"id\":\"\",\"operator\":\"UNION\"},\"modified\":{\"operator\":\"\"},\"events\":{},\"editing\":false,\"dirty\":true,\"id\":\"Connector.model.Filter-ext-record-589\"}],\"detail\":{},\"id\":60}";
-
     @Test
     public void verifyGrid()
     {
@@ -246,15 +241,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Studies");
         click(cdsButtonLocator("hide empty"));
         selectBars("Demo Study");
-        click(cdsButtonLocator("use as filter"));
-        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'selectionpanel')]").notHidden());// wait for animation
+        useSelectionAsFilter();
 
         waitForElementToDisappear(Locator.css("span.barlabel").withText("Not Actually CHAVI 001"), CDS_WAIT);
 
         //Check to see if grid is properly filtering based on explorer filter
         makeNavigationSelection(NavigationLink.GRID);
         waitForGridCount(437);
-        click(cdsButtonLocator(APP_CLEAR_FILTER));
+        clearFilter();
         waitForElement(Locator.tagWithText("span", "NotRV144"));
         waitForGridCount(668);
 
@@ -285,8 +279,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("OK"));
 
         log("Filter on a looked-up column");
-        waitForElement(Locator.tagWithText("span", "PI1"));
-        waitForElement(Locator.tagWithText("div", "Igra M"));
+        waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText("PI1"));
+        waitForElement(Locator.tagWithClass("div", "x-grid-cell-inner").withText("Igra M"));
         setRawDataFilter("PI1", "Igra");
         waitForGridCount(152);
 
@@ -364,8 +358,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // Verify multi-select tooltip -- this only shows the first time
         assertTextPresent(TOOLTIP);
 
-        click(cdsButtonLocator("use as filter"));
-        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'selectionpanel')]").notHidden());// wait for animation
+        useSelectionAsFilter();
         click(cdsButtonLocator("hide empty"));
         waitForElementToDisappear(Locator.css("span.barlabel").withText(STUDIES[1]), CDS_WAIT);
         assertFilterStatusCounts(6, 1, 3, 2, 20);
@@ -377,17 +370,17 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Studies");
         assertFilterStatusPanel(STUDIES[0], STUDIES[0], 6, 1, 3, 2, 20, 12);
         sleep(500);
-        click(cdsButtonLocator(APP_CLEAR_FILTER));
+        clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(STUDIES[2]), CDS_WAIT);
         goToAppHome();
         // end 14902
 
         clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[1], "Not Actually ...", 12, 1, 3, 2, 8, 12);
+        assertFilterStatusPanel(STUDIES[1], STUDIES[1], 12, 1, 3, 2, 8, 12);
         assertTextNotPresent(TOOLTIP);
         assertFilterStatusPanel(STUDIES[2], STUDIES[2], 11, 1, 3, 2, 3, 12);
         goToAppHome();
-        click(cdsButtonLocator("clear selection"));
+        clearSelection();
         clickBy("Assay Antigens");
         pickCDSSort("Tier", "1A");
         toggleExplorerBar("3");
@@ -400,26 +393,23 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Assays");
         assertFilterStatusPanel("Lab Results", "Lab Results", 23, 3, 5, 3, 31, 29);
         assertFilterStatusPanel("ADCC-Ferrari", "ADCC-Ferrari", 12, 1, 3, 2, 8, 29);
-        assertFilterStatusPanel("Luminex-Sample-LabKey", "Luminex-Sampl...", 6, 1, 3, 2, 20, 29);
-        assertFilterStatusPanel("NAb-Sample-LabKey", "NAb-Sample-La...", 29, 3, 5, 3, 31, 29);
+        assertFilterStatusPanel("Luminex-Sample-LabKey", "Luminex-Sample-LabKey", 6, 1, 3, 2, 20, 29);
+        assertFilterStatusPanel("NAb-Sample-LabKey", "NAb-Sample-LabKey", 29, 3, 5, 3, 31, 29);
         assertFilterStatusPanel("mRNA assay", "mRNA assay", 5, 1, 3, 1, 3, 0);
         goToAppHome();
         clickBy("Labs");
-        assertFilterStatusPanel(LABS[0], "Arnold/Bellew...", 6, 1, 3, 2, 20, 23);
-        assertFilterStatusPanel(LABS[1], "LabKey Lab", 23, 3, 5, 3, 31, 23);
-        assertFilterStatusPanel(LABS[2], "Piehler/Eckel...", 18, 2, 3, 2, 11, 23);
+        assertFilterStatusPanel(LABS[0], LABS[0], 6, 1, 3, 2, 20, 23);
+        assertFilterStatusPanel(LABS[1], LABS[1], 23, 3, 5, 3, 31, 23);
+        assertFilterStatusPanel(LABS[2], LABS[2], 18, 2, 3, 2, 11, 23);
         goToAppHome();
         clickBy("Subjects");
-        click(cdsButtonLocator("clear selection"));
+        clearSelection();
         assertDefaultFilterStatusCounts();
         pickCDSSort("Country");
         assertFilterStatusPanel("South Africa", "South Africa", 5, 1, 1, 1, 3, 18);
         assertFilterStatusPanel("USA", "USA", 19, 3, 4, 3, 31, 19);
         assertFilterStatusPanel("Thailand", "Thailand", 5, 1, 3, 1, 3, 18);
-//        addFeedback("verify counts", COUNTS_FEEDBACK_STATE);
     }
-
-    private static final String FILTERS_FEEDBACK_STATE = "{\"activeView\":\"singleaxis\",\"appVersion\":\"0.5\",\"viewState\":{\"ydimension\":\"Lab\"},\"views\":{},\"filters\":[{\"phantom\":true,\"internalId\":\"ext-record-3453\",\"data\":{\"name\":\"CDSTest_CGroup\",\"filters\":[{\"phantom\":true,\"internalId\":\"ext-record-3440\",\"data\":{\"hierarchy\":\"Lab\",\"members\":[{\"uname\":[\"Lab\",\"LabKey Lab\"]},{\"uname\":[\"Lab\",\"Piehler/Eckels Lab\"]}],\"isGroup\":false,\"id\":\"\",\"operator\":\"INTERSECT\",\"isGrid\":false,\"gridFilter\":\"\",\"groupLabel\":\"CDSTest_CGroup\"},\"modified\":{},\"events\":{},\"editing\":false,\"dirty\":false,\"id\":\"Connector.model.Filter-ext-record-3440\"},{\"phantom\":true,\"internalId\":\"ext-record-3441\",\"data\":{\"hierarchy\":\"Participant.Sex\",\"members\":[{\"uname\":[\"Participant.Sex\",\"f\"]}],\"isGroup\":false,\"id\":\"\",\"operator\":\"UNION\",\"isGrid\":false,\"gridFilter\":\"\",\"groupLabel\":\"CDSTest_CGroup\"},\"modified\":{},\"events\":{},\"editing\":false,\"dirty\":false,\"id\":\"Connector.model.Filter-ext-record-3441\"}],\"label\":\"\",\"participantIds\":\"\",\"description\":\"\",\"shared\":false,\"type\":\"\"},\"modified\":{},\"events\":{},\"editing\":false,\"dirty\":false,\"id\":\"Connector.model.FilterGroup-ext-record-3453\"}],\"selections\":[],\"detail\":{},\"id\":164}";
 
     @Test
     public void verifyFilters()
@@ -427,20 +417,19 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         log("Verify multi-select");
 
         // 14910
-        // TODO: Turn on once MDX query operator is fixed -- Nick 1.22.2014
         clickBy("Assay Antigens");
-//        waitForBarToAnimate("Unknown");
+        waitForBarToAnimate("Unknown");
         click(cdsButtonLocator("hide empty"));
-//        waitForBarToAnimate("Unknown");
-//        pickCDSSort("Tier", "1A");
-//        toggleExplorerBar("1A");
-//        toggleExplorerBar("1B");
-//        shiftSelectBars("MW965.26", "ZM197M.PB7");
-//        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), 'ZM197M.PB7')]"), WAIT_FOR_JAVASCRIPT);
-//        assertElementPresent(Locator.xpath("//div[@class='filtermember']"), 2);
-//        assertFilterStatusCounts(6, 1, 3, 2, 20);
-//        click(cdsButtonLocator("clear selection"));
-//        assertDefaultFilterStatusCounts();
+        waitForBarToAnimate("Unknown");
+        pickCDSSort("Tier", "1A");
+        toggleExplorerBar("1A");
+        toggleExplorerBar("1B");
+        shiftSelectBars("MW965.26", "ZM197M.PB7");
+        waitForElement(Locator.xpath("//div[contains(@class, 'memberitem') and contains(text(), 'ZM197M.PB7')]"), WAIT_FOR_JAVASCRIPT);
+        assertElementPresent(Locator.xpath("//div[contains(@class, 'memberitem')]"), 6);
+        assertFilterStatusCounts(6, 1, 3, 2, 20);
+        clearSelection();
+        assertDefaultFilterStatusCounts();
         goToAppHome();
         // end 14910
 
@@ -451,18 +440,17 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(0, 0, 0, 0, 0);
         selectBars(LABS[1], LABS[2]);
         assertFilterStatusCounts(12, 1, 3, 2, 8);
-        click(cdsButtonLocator("use as filter"));
-        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'selectionpanel')]").notHidden());// wait for animation
-        click(cdsButtonLocator("save group"));
+        useSelectionAsFilter();
+        click(cdsButtonLocator("save"));
         waitForText("Selection and Active Filters (12)");
         waitForText("Only Active Filters (12)");
         setFormElement(Locator.name("groupname"), GROUP_NAME);
         setFormElement(Locator.name("groupdescription"), GROUP_DESC);
         click(cdsButtonLocator("Save"));
         waitForElementToDisappear(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
-        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '"+ GROUP_NAME +"')]"), WAIT_FOR_JAVASCRIPT);
+        waitForElement(Locator.xpath("//div[contains(@class, 'memberitem') and contains(text(), '" + GROUP_NAME + "')]"), WAIT_FOR_JAVASCRIPT);
         assertFilterStatusCounts(12, 1, 3, 2, 8);
-        click(cdsButtonLocator(APP_CLEAR_FILTER));
+        clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
         assertFilterStatusCounts(29,3,5,3,31);
 
@@ -473,27 +461,26 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Studies");
         selectBars(STUDIES[0], STUDIES[1]);
         assertFilterStatusCounts(18, 2, 4, 3, 28);  // or
-        assertElementPresent(Locator.css("div.showopselect").withText("OR"));
-        mouseOver(Locator.css("div.showopselect").withText("OR"));
+        assertElementPresent(Locator.css("option").withText("OR"));
+        mouseOver(Locator.css("option").withText("OR"));
 
-        WebElement selector = Locator.css("div.opselect select").findElement(getDriver());
-        if (!selector.isDisplayed()) // Workaround for FirefoxDriver not working with :hover pseudoclass
-            executeScript("arguments[0].setAttribute('class', '');", Locator.css("div.opselect").findElement(getDriver()));
+        WebElement selector = Locator.css("select").findElement(getDriver());
+//        if (!selector.isDisplayed()) // Workaround for FirefoxDriver not working with :hover pseudoclass
+//            executeScript("arguments[0].setAttribute('class', '');", Locator.css("div.opselect").findElement(getDriver()));
 
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
         assertFilterStatusCounts(0, 0, 0, 0, 0); // and
-        click(cdsButtonLocator("use as filter"));
-        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'selectionpanel')]").notHidden());// wait for animation
+        useSelectionAsFilter();
         waitForElementToDisappear(Locator.css("span.barlabel"), CDS_WAIT);
         assertFilterStatusCounts(0, 0, 0, 0, 0); // and
 
-        selector = Locator.css("div.opselect select").findElement(getDriver());
-        mouseOver(Locator.css("body"));
-        waitForElement(Locator.css("div.showopselect").withText("AND"));
-        mouseOver(Locator.css("div.showopselect").withText("AND"));
-        if (!selector.isDisplayed()) // Workaround for FirefoxDriver not working with :hover pseudoclass
-            executeScript("arguments[0].setAttribute('class', '');", Locator.css("div.opselect").findElement(getDriver()));
+        selector = Locator.css("select").findElement(getDriver());
+//        mouseOver(Locator.css("body"));
+        waitForElement(Locator.css("option").withText("AND"));
+        mouseOver(Locator.css("option").withText("AND"));
+//        if (!selector.isDisplayed()) // Workaround for FirefoxDriver not working with :hover pseudoclass
+//            executeScript("arguments[0].setAttribute('class', '');", Locator.css("div.opselect").findElement(getDriver()));
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
@@ -502,10 +489,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
         waitForText(STUDIES[1], CDS_WAIT);
         clickBy("Labs");
-        assertElementPresent(Locator.css(".filtermember").withText(STUDIES[0]));
-        assertElementPresent(Locator.css("div.showopselect").withText("OR"));
+        assertElementPresent(Locator.css(".memberitem").withText(STUDIES[0]));
+        assertElementPresent(Locator.css("option").withText("OR"));
         assertFilterStatusCounts(18, 2, 4, 3, 28);  // and
-        click(cdsButtonLocator(APP_CLEAR_FILTER));
+        clearFilter();
         waitForText("All subjects");
         assertDefaultFilterStatusCounts();
         assertTextPresent("All subjects");
@@ -517,11 +504,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(0, 0, 0, 0, 0);
         pickCDSDimension("Studies");
         assertFilterStatusCounts(0, 0, 0, 0, 0);
-        click(cdsButtonLocator(APP_CLEAR_FILTER));
+        clearFilter();
         waitForText(STUDIES[2], CDS_WAIT);
         selectBars(STUDIES[0]);
         pickCDSDimension("Assays");
         assertFilterStatusCounts(6, 1, 3, 2, 20);
+        useSelectionAsFilter();
         goToAppHome();
 
         //test more group saving
@@ -529,7 +517,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         pickCDSSort("Sex");
         selectBars("f");
 
-        click(cdsButtonLocator("save group"));
+        click(cdsButtonLocator("save"));
         //        waitForText("Selection and Active Filters");
         waitForText("Selection and Active Filters (4)");
         assertTextPresent("Only Active Filters (6)");
@@ -539,22 +527,22 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
         selectBars("f");
-        click(cdsButtonLocator("save group"));
+        click(cdsButtonLocator("save"));
         waitForText("Selection and Active Filters (4)");
         assertTextPresent("Only Active Filters (6)");
         click(Locator.css(".filterOnlyRadio input"));
         setFormElement(Locator.name("groupname"), GROUP_NAME2);
         click(cdsButtonLocator("Save"));
-        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '"+ GROUP_NAME2 +"')]"), WAIT_FOR_JAVASCRIPT);
+        waitForElement(Locator.xpath("//div[contains(@class, 'memberitem') and contains(text(), '"+ GROUP_NAME2 +"')]"), WAIT_FOR_JAVASCRIPT);
 
         selectBars("f");
-        click(cdsButtonLocator("save group"));
+        click(cdsButtonLocator("save"));
         waitForText("Selection and Active Filters (4)");
         assertTextPresent("Only Active Filters (6)");
         click(Locator.css(".withSelectionRadio input"));
         setFormElement(Locator.name("groupname"), GROUP_NAME3);
         click(cdsButtonLocator("Save"));
-        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '"+ GROUP_NAME3 +"')]"), WAIT_FOR_JAVASCRIPT);
+        waitForElement(Locator.xpath("//div[contains(@class, 'memberitem') and contains(text(), '"+ GROUP_NAME3 +"')]"), WAIT_FOR_JAVASCRIPT);
 
         // saved filter without including current selection (should be the same as initial group)
         goToAppHome();
@@ -563,7 +551,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(4,1,3,2,20);
 
         // Group creation cancelled
-        click(cdsButtonLocator(APP_CLEAR_FILTER));
+        clearFilter();
         goToAppHome();
         assertTextNotPresent(GROUP_NULL);
     }
@@ -673,7 +661,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 //        makeNavigationSelection(NAV_PLOT);
 //        assertSVG(HEMO_CD4);
 //
-//        clickCDSButton(APP_CLEAR_FILTER);
+//        clearFilter();
 //        waitForTextToDisappear(HEMO_CD4);
         assertSVG(HEMO_CD4_UNFILTERED);
 
@@ -692,8 +680,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
         click(cdsButtonLocator("Set X-Axis"));
         assertSVG(WT_PLSE_LOG);
-
-//        addFeedback("verify scatter plot", SCATTER_FEEDBACK_STATE);
     }
 
     @Test
@@ -809,7 +795,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void pickCDSDimension(String dimension)
     {
         click(Locator.xpath("//a[contains(@class, 'dropdown')]"));
-        waitAndClick(Locator.xpath("//span[text()='" + dimension + "']"));
+        waitAndClick(Locator.xpath("//span[@class='x-menu-item-text' and text()='" + dimension + "']"));
     }
 
     private void waitForFilterAnimation()
@@ -844,7 +830,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             subselect = subselect.substring(0, 9);
         WebElement el = shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[0] + "']").toBy()));
         clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
-        waitForElement(Locator.css("div.filtermember").containing(subselect), CDS_WAIT);
+        waitForElement(Locator.css("div.memberitem").containing(subselect), CDS_WAIT);
         waitForFilterAnimation();
         if(bars.length > 1)
         {
@@ -862,7 +848,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
                 subselect = bars[i];
                 if (subselect.length() > 10)
                     subselect = subselect.substring(0, 9);
-                waitForElement(Locator.css("div.filtermember").containing(subselect));
+                waitForElement(Locator.css("div.memberitem").containing(subselect));
                 waitForFilterAnimation();
             }
 
@@ -887,6 +873,31 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
         waitForElement(getByLocator("Studies"));
+    }
+
+    private void clearFilter()
+    {
+        click(cdsButtonLocator("clear"));
+        waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
+    }
+
+    private void useSelectionAsFilter()
+    {
+        click(cdsButtonLocator("use as filter"));
+        waitForClearSelection(); // wait for animation
+    }
+      
+    private void clearSelection()
+    {
+        Locator.XPathLocator panel = Locator.tagWithClass("div", "selectionpanel");
+        click(panel.append(cdsButtonLocator("clear")));
+        waitForClearSelection();
+    }
+
+    private void waitForClearSelection()
+    {
+        Locator.XPathLocator panel = Locator.tagWithClass("div", "selectionpanel");
+        shortWait().until(ExpectedConditions.invisibilityOfElementLocated(panel.toBy()));
     }
 
     private Locator.XPathLocator getByLocator(String byNoun)
@@ -1026,7 +1037,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(Locator.id("value_1"));
         setFormElement(Locator.css("#value_1 input"), value);
         click(cdsButtonLocator("OK"));
-        waitForElement(Locator.css(".hierarchylabel")
+        waitForElement(Locator.css(".memberitem")
                 .containing(colName.length() > 9 ? colName.replace(" ", "").substring(0, 9) : colName.replace(" ", "")));
         waitForFilterAnimation();
     }
@@ -1088,7 +1099,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         selectBars(barLabel);
         assertFilterStatusCounts(subjectCount, studyCount, assayCount, contributorCount, antigenCount);
-        waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '" + filteredLabel + "')]"), WAIT_FOR_JAVASCRIPT);
+        waitForElement(Locator.xpath("//div[contains(@class, 'memberitem') and contains(text(), '" + filteredLabel + "')]"), WAIT_FOR_JAVASCRIPT);
     }
 
     private void assertDefaultFilterStatusCounts()
@@ -1255,9 +1266,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Subjects");
         pickCDSSort("Race");
         selectBars("White");
-        click(cdsButtonLocator("use as filter"));
-        waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'selectionpanel')]").notHidden());// wait for animation
-        click(cdsButtonLocator("save group"));
+        useSelectionAsFilter();
+        click(cdsButtonLocator("save"));
         waitForText("Selection and Active Filters (" + String.valueOf(participantCount) + ")");
         click(Locator.css(".liveFilterCheckbox input"));
         setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
@@ -1265,7 +1275,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(Locator.xpath("//div[@class='filtermember' and contains(text(), '"+ GROUP_LIVE_FILTER +"')]"), WAIT_FOR_JAVASCRIPT);
 
         // create static filter group
-        click(cdsButtonLocator("save group"));
+        click(cdsButtonLocator("save"));
         waitForText("Selection and Active Filters (" + String.valueOf(participantCount) + ")");
         setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
         click(cdsButtonLocator("Save"));
@@ -1353,6 +1363,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void toggleExplorerBar(String largeBarText)
     {
+        sleep(350);
         click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]"));
         sleep(350);
     }
