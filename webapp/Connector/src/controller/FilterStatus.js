@@ -154,7 +154,7 @@ Ext.define('Connector.controller.FilterStatus', {
             });
 
             this.getStateManager().on('selectionchange', v.onSelectionChange, v);
-            v.on('groupsaved', this.onGroupSaved, this);
+            this.application.on('groupsaved', this.onGroupSaved, this);
         }
 
         return v;
@@ -204,9 +204,11 @@ Ext.define('Connector.controller.FilterStatus', {
 
             state.onMDXReady(function(mdx){
 
+                var me = this;
+
                 var saveSuccess = function(response) {
                     var group = Ext.decode(response.responseText);
-                    view.requestGroupSave(group, state.getFilters(true));
+                    me.application.fireEvent('groupsaved', group, state.getFilters(true));
                     view.clearForm();
                 };
 
@@ -230,10 +232,10 @@ Ext.define('Connector.controller.FilterStatus', {
                 };
 
                 LABKEY.app.controller.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
-                    label : values.groupname,
-                    description : values.groupdescription,
-                    filters : Ext4.Array.pluck(state.getFilters(true), 'data'),
-                    isLive : isLiveFilter
+                    label: values.groupname,
+                    description: values.groupdescription,
+                    filters: state.getFilters(true),
+                    isLive: isLiveFilter
                 });
 
             }, this);

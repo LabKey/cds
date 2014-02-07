@@ -53,8 +53,7 @@ Ext.define('Connector.controller.Summary', {
         this.control('grouplistview', {
             render    : function(view) {
                 this.registerSelectGroup(view);
-            },
-            itemclick : this.onGroupSelect
+            }
         });
 
         this.control('groupsave', {
@@ -104,14 +103,12 @@ Ext.define('Connector.controller.Summary', {
 
             type = 'Connector.view.Summary';
             Ext.applyIf(c, {
-                store : this.getSummaryStore(),
-                ui    : 'custom'
+                store : this.getSummaryStore()
             });
         }
 
         var v = Ext.create(type, c);
 
-//        v.on('beforeshow', this.beforeSummaryShow, this);
         v.store.on('mdxerror', v.showMessage, v);
         v.store.on('beforeload', function(s) {
             this.displayLoad();
@@ -124,7 +121,14 @@ Ext.define('Connector.controller.Summary', {
         return v;
     },
 
-    updateView : function(xtype, context) {},
+    updateView : function(xtype, context) {
+        if (xtype == 'summary') {
+            var v = this.getViewManager().getViewInstance('summary');
+            if (v && v.refreshRequired) {
+                v.refresh();
+            }
+        }
+    },
 
     getSummaryStore : function() {
         if (!this.summaryStore) {
@@ -149,43 +153,6 @@ Ext.define('Connector.controller.Summary', {
             if (view) {
                 view.getStore().setFilterSet(['groupselection']);
                 view.getStore().load();
-            }
-        }
-    },
-
-    onGroupSelect : function(view, rec) {
-        this.populateActiveFilter(rec);
-    },
-
-    populateActiveFilter : function(rec) {
-        var summaryView = this.getViewManager().getViewInstance('summary');
-        if (summaryView) {
-            var r;
-            if (!rec) {
-                r = Ext.create('LABKEY.study.GroupCohort', {
-                    label   : 'Current Active Filters',
-                    filters : this.getStateManager().getFilters(),
-                    type    : 'activefilters',
-                    description : 'This is the set of filters that are currently applied.'
-                });
-            }
-            else {
-                r = rec;
-            }
-
-            summaryView.showPreview(r);
-            if (this._feedback) {
-                this._feedback.hide();
-            }
-        }
-    },
-
-    hideActiveFilter : function() {
-        var summaryView = this.getViewManager().getViewInstance('summary');
-        if (summaryView && summaryView.groupPreview) {
-            summaryView.groupPreview.hide();
-            if (this._feedback) {
-                this._feedback.show();
             }
         }
     },

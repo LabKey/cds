@@ -32,7 +32,6 @@ import org.labkey.test.util.Ext4HelperWD;
 import org.labkey.test.util.JSONHelper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
-import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ext4cmp.Ext4CmpRefWD;
 import org.openqa.selenium.Keys;
@@ -99,12 +98,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
     }
@@ -1242,6 +1241,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
+    @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
     {
         String[] liveGroupMembersBefore = new String[]{

@@ -6,6 +6,8 @@ Ext.define('Connector.view.Summary', {
 
     alias  : 'widget.summary',
 
+    ui: 'custom',
+
     cls : 'summaryview',
 
     layout : 'anchor',
