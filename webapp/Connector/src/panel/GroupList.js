@@ -1,21 +1,18 @@
 Ext.define('Connector.panel.GroupList', {
 
-    extend : 'Ext.Panel',
+    extend: 'Ext.panel.Panel',
 
-    alias  : 'widget.grouplist',
+    alias: 'widget.grouplist',
 
-    cls : 'grouplist',
+    cls: 'grouplist',
+
+    plain: true,
+
+    ui: 'custom',
 
     initComponent : function() {
 
-        this.defaults = {
-            plain  : true,
-            ui : 'custom'
-        };
-
-        this.items = [];
-
-        this.items.push(this.getGroupListView());
+        this.items = [this.getGroupListView()];
 
         this.callParent();
     },
@@ -24,7 +21,7 @@ Ext.define('Connector.panel.GroupList', {
         if (this.grouplist)
             return this.grouplist;
 
-        this.grouplist = Ext.create('Connector.view.GroupListView',{
+        this.grouplist = Ext.create('Connector.view.GroupListView', {
             arrow: this.arrow
         });
 
@@ -34,18 +31,22 @@ Ext.define('Connector.panel.GroupList', {
 
 Ext.define('Connector.view.GroupListView', {
 
-    extend : 'Ext.view.View',
+    extend: 'Ext.view.View',
 
-    alias : 'widget.grouplistview',
+    alias: 'widget.grouplistview',
 
-    trackOver : true,
+    trackOver: true,
 
-    emptyText : '<div class="emptytext"><span class="left-label">No groups defined</span>',
+    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span>',
+
+    cls: 'grouplist-view',
+
+    overItemCls: 'grouplist-label-over',
+
+    itemSelector: 'div.nav-label',
 
     initComponent : function() {
 
-        this.cls         = 'grouplist-view';
-        this.overItemCls = 'grouplist-label-over';
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
         this.tpl = new Ext.XTemplate(
@@ -56,21 +57,18 @@ Ext.define('Connector.view.GroupListView', {
             '</tpl>'
         );
 
-        var me = this;
-
         this.tpl.renderContent = function(val) {
-            var ret = '';
-            if (me.arrow == 'left'){
-                ret += '<span class="' + me.arrow +'-arrow"></span>';
-                ret += '<span class="right-label">' + Ext.String.ellipsis(Ext.htmlEncode(val), 20) + '</span>';
-            } else if (me.arrow == 'right'){
-                ret += '<span class="left-label">' + Ext.String.ellipsis(Ext.htmlEncode(val), 20) + '</span>';
-                ret += '<span class="' + me.arrow +'-arrow"></span>';
-            }
-            return ret;
+            return val;
+//            var ret = '';
+//            if (me.arrow == 'left'){
+//                ret += '<span class="' + me.arrow +'-arrow"></span>';
+//                ret += '<span class="right-label">' + Ext.String.ellipsis(Ext.htmlEncode(val), 20) + '</span>';
+//            } else if (me.arrow == 'right'){
+//                ret += '<span class="left-label">' + Ext.String.ellipsis(Ext.htmlEncode(val), 20) + '</span>';
+//                ret += '<span class="' + me.arrow +'-arrow"></span>';
+//            }
+//            return ret;
         };
-
-        this.itemSelector = 'div.nav-label';
 
         // models Participant Groups and Cohorts mixed
         Ext.define('LABKEY.study.GroupCohort', {

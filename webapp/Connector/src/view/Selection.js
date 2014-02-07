@@ -60,9 +60,9 @@ Ext.define('Connector.view.Selection', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="circle" style="float: left; margin-top: 6px;"></div>',
+                '<div class="circle"></div>',
                 '<tpl if="members.length &gt; 1">',
-                    '<div style="position: absolute; top: 55%;">',
+                    '<div style="position: absolute; top: 28px;">',
                         '<select>',
                             '<option value="' + LABKEY.app.controller.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
                             '<option value="' + LABKEY.app.controller.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
@@ -134,8 +134,8 @@ Ext.define('Connector.view.GroupSelection', {
 
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
-            '<div class="circle" style="float: left; margin-top: 6px;"></div>',
-            '<div class="selitem status-over memberitem" style="float: right; width: 92%; padding: 4px 6px;">',
+            '<div class="circle"></div>',
+            '<div class="selitem status-over memberitem" style="display: inline-block; width: 92%; padding: 4px 6px;">',
                 '<div class="closeitem"></div>',
                 '{name:this.renderName}',
             '</div>',
@@ -155,7 +155,7 @@ Ext.define('Connector.view.GridSelection', {
 
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
-            '<div class="circle" style="float: left; margin-top: 6px;"></div>',
+            '<div class="circle"></div>',
             '<div class="selitem status-over memberitem" style="float: right; width: 92%; padding: 4px 6px;">',
                 '<div class="closeitem"></div>',
                 '{[this.renderLabel(values)]}',

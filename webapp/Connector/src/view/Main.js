@@ -49,7 +49,7 @@ Ext.define('Connector.view.Main', {
                     arrow: 'left',
                     mapping: [{
                         label: 'Home',
-                        disabled: true
+                        value: 'home'
                     },{
                         label: 'Learn about studies, assays',
                         value: 'learn'

@@ -138,10 +138,6 @@ Ext.define('Connector.view.GroupSave', {
         }
     },
 
-    requestGroupSave : function(group, filters) {
-        this.fireEvent('groupsaved', group, filters);
-    },
-
     onSelectionChange : function() {
 
         var me = this;

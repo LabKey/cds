@@ -608,7 +608,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             }, 150, this);
         }
         else {
-            console.error('Dimension must be loaded before selection change');
+            console.warn('Dimension must be loaded before selection change');
         }
     },
 

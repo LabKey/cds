@@ -30,6 +30,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Connector": "../../../../webapp/Connector/src/controller/Connector.js",
   "Connector.controller.Explorer": "../../../../webapp/Connector/src/controller/Explorer.js",
   "Connector.controller.FilterStatus": "../../../../webapp/Connector/src/controller/FilterStatus.js",
+  "Connector.controller.Home": "../../../../webapp/Connector/src/controller/Home.js",
   "Connector.controller.Learn": "../../../../webapp/Connector/src/controller/Learn.js",
   "Connector.controller.Main": "../../../../webapp/Connector/src/controller/Main.js",
   "Connector.controller.Navigation": "../../../../webapp/Connector/src/controller/Navigation.js",
@@ -69,6 +70,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSelection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
+  "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
+  "Connector.view.HomeBody": "../../../../webapp/Connector/src/view/Home.js",
+  "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.Learn": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Learn.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
@@ -125,6 +129,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Connector": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
+  "Connector.controller.Home": [],
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
@@ -164,6 +169,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSelection": [],
   "Connector.view.Header": [],
+  "Connector.view.Home": [],
+  "Connector.view.HomeBody": [],
+  "Connector.view.HomeHeader": [],
   "Connector.view.Learn": [],
   "Connector.view.Learn.plugin.HeaderLock": [],
   "Connector.view.LearnColumnHeader": [],
@@ -1039,6 +1047,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Connector": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
+  "Connector.controller.Home": [],
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
@@ -1114,6 +1123,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
+  "Connector.view.Home": [
+    "widget.home"
+  ],
+  "Connector.view.HomeBody": [],
+  "Connector.view.HomeHeader": [],
   "Connector.view.Learn": [
     "widget.learn"
   ],

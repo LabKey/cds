@@ -109,44 +109,9 @@
             background-color: transparent;
         }
 
-        .headerlock {
-            position: absolute;
-            top: 0px;
-        }
-
-        div.selectionpanel .x-toolbar-footer {
-            padding: 0;
-            margin-left: 20px;
-        }
-
-        div.selectionpanel .x-btn-rounded-inverted-accent-small .x-btn-inner {
-            font-size: 7pt;
-        }
-
-        div.status-over {
-            border-radius: 15px;
-        }
-
         .closeitem {
-            position: absolute;
-            opacity: 0;
-            right: 10px;
-            margin-top: 4px;
-            width: 8px;
-            height: 8px;
-            z-index: 5;
-            border: 0;
             background: url(<%=text(appPath)%>/images/close.png);
             background-size: 8px 8px;
-            background-repeat: no-repeat;
-        }
-
-        .memberitem:hover .closeitem {
-            opacity: 0.5;
-        }
-
-        .memberitem:hover .closeitem:hover {
-            opacity: 1;
         }
     </style>
 
@@ -262,6 +227,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupPreview.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Home.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
@@ -275,6 +241,7 @@
 
     <!-- Application Controllers -->
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Home.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
