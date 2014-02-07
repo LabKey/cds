@@ -22,7 +22,6 @@
 <%@ page import="org.labkey.api.view.template.ClientDependency" %>
 <%@ page import="org.labkey.api.view.template.PageConfig" %>
 <%@ page import="org.labkey.api.view.template.PrintTemplate" %>
-<%@ page import="org.labkey.cds.CDSManager" %>
 <%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
@@ -32,7 +31,6 @@
     String contextPath = request.getContextPath();
     String serverHash   = PageFlowUtil.getServerSessionHash();
     Boolean devMode = AppProps.getInstance().isDevMode();
-    boolean tutorialAvailable = CDSManager.get().isTutorialAvailable(getContainer(), getUser());
 
     String appPath = contextPath + "/Connector";
     String sdkPath = contextPath + "/ext-4.2.1";
@@ -171,8 +169,6 @@
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
 
     <script type="text/javascript">
-        LABKEY.contextPath = <%=PageFlowUtil.jsString(contextPath)%>;
-        tutorialAvailable = <%=tutorialAvailable%>;
         Ext = {}; Ext4 = Ext;
     </script>
 

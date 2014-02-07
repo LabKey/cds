@@ -110,7 +110,7 @@ Ext.define('Connector.view.Scatter', {
                 itemId: 'xaxisbutton',
                 cls: 'xaxisbutton',
                 text: '&#9650;', // up-arrow
-                hidden: this.showAxisButtons,
+                hidden: !this.showAxisButtons,
                 scope : this
             });
         }
@@ -128,7 +128,7 @@ Ext.define('Connector.view.Scatter', {
                 itemId: 'yaxisbutton',
                 cls: 'yaxisbutton',
                 text: '&#9658;', // right-arrow
-                hidden: this.showAxisButtons,
+                hidden: !this.showAxisButtons,
                 scope: this
             });
         }
@@ -157,7 +157,7 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        var viewbox = this.getBox();
+        var plotbox = this.getBox();
 
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
@@ -165,48 +165,44 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.msg) {
-            this.msg.getEl().setLeft(Math.floor(viewbox.width/2 - Math.floor(this.getEl().getTextWidth(this.msg.msg)/2)));
+            this.msg.getEl().setLeft(Math.floor(plotbox.width/2 - Math.floor(this.getEl().getTextWidth(this.msg.msg)/2)));
         }
 
         if (this.ywin && this.ywin.isVisible()) {
             this.updateMeasureSelection(this.ywin);
-//            this.resizeMeasureSelection(this.ywin, this.axisPanelY, false, true, false);
         }
 
         if (this.xwin && this.xwin.isVisible()) {
             this.updateMeasureSelection(this.xwin);
-//            this.resizeMeasureSelection(this.xwin, this.axisPanelX, true, false, false);
         }
 
         if (this.plot) {
-            var plotbox = this.getBox();
-            var dim = Math.round(((plotbox.width-90) > plotbox.height ? plotbox.height : (plotbox.width-90)));
-
-            // TODO: Allow plot resizing once 19457 is fixed
-//            this.plot.setHeight((dim-this.plotHeightOffset), false);
-//            this.plot.setWidth(dim);
-//            this.plot.setSize(dim, dim, true);
+            var dim = this.getAspect(plotbox.width, plotbox.height);
+            this.plot.setSize(dim, dim, true);
 
             if (this.showAxisButtons) {
                 var plotEl = this.getPlotElement();
                 if (plotEl) {
-                    var el = Ext.get(plotEl);
-                    var x = Math.floor(el.getBox().x - 25); // minus the buttons width
-                    var y = Math.floor(el.getBox().height/2); // height not set correctly via Ext
-
-                    var ybtn = this.getYAxisButton();
-                    var xbtn = this.getXAxisButton();
-
-                    ybtn.setPosition(x,y);
-                    ybtn.show();
-                    xbtn.show();
+                    var box = Ext.get(plotEl).getBox();
+                    var x = Math.floor(box.x - 25); // minus the buttons width
+                    var y = Math.floor((box.height/2) - 10); // line up with label
+                    this.getYAxisButton().setPosition(x,y);
                 }
             }
         }
     },
 
-    initPlot : function(w, h, config, noplot) {
+    getAspect : function(w, h) {
+        // maintain ratio 1:1
+        var aspect = Math.round((w > h ? h : w));
+        if (aspect <= 0) {
+            aspect = this.getHeight();
+        }
+        aspect = Math.floor(aspect * 0.95);
+        return aspect;
+    },
 
+    initPlot : function(config, noplot) {
         var rows = config.rows;
 
         if (!rows || !rows.length) {
@@ -242,10 +238,8 @@ Ext.define('Connector.view.Scatter', {
         });
 
         // maintain ratio 1:1
-        var aspect = Math.round((w > h ? h : w));
-        if (aspect < 0) {
-            aspect = Math.floor(this.getHeight()*.95);
-        }
+        var box = Ext.get(this.plotid).getSize();
+        var aspect = this.getAspect(box.width, box.height);
 
         var tickFormat = function(val) {
 
@@ -275,10 +269,7 @@ Ext.define('Connector.view.Scatter', {
             };
         }
         else {
-            scales.x = {
-                scaleType: 'continuous'
-            };
-            scales.yLeft = {
+            scales.x = scales.yLeft = {
                 scaleType: 'continuous'
             };
         }
@@ -478,23 +469,20 @@ Ext.define('Connector.view.Scatter', {
         // preprocess decoded data shape
         var config = this._preprocessData(Ext.decode(response.responseText));
 
-        // call for sizing and render
-        var size = Ext.get(this.plotid).getSize();
-        this.initPlot(size.width, size.height, config, false);
+        // call render
+        this.initPlot(config, false);
     },
 
     noPlot : function() {
 
-        var _h = this.plotHeightOffset,
-                size = Ext.get(this.plotid).getSize(),
-                map = [{
-                    x : null,
-                    xname : 'X-Axis',
-                    y : null,
-                    yname : 'Y-Axis'
-                }];
+        var map = [{
+            x : null,
+            xname : 'X-Axis',
+            y : null,
+            yname : 'Y-Axis'
+        }];
 
-        this.initPlot((size.width), (size.height-_h), {rows:map}, true);
+        this.initPlot({rows:map}, true);
         this.resizeTask.delay(300);
     },
 
@@ -632,45 +620,6 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-//    resizeMeasureSelection : function(win, axisPanel, setX, setY, doShow) {
-//        var query = this.getPlotElements();
-//        var canvas = Ext.get(query[0]);
-//
-//        if (canvas) {
-//            var box = canvas.getBox();
-//            var bound = canvas.dom.getBoundingClientRect();
-//
-//            win.getEl().setLeft(box.x+1);
-//            win.getEl().setTop(box.y);
-//
-//            var h = bound.height;
-//            var w = bound.width;
-//
-//            // set a minium height, width
-//            var hh = (h < 450 ? 450 : h);
-//            var ww = (w > 600 ? w : 600);
-//
-//            if (axisPanel.hasSelection()) {
-//                if (setX) {
-//                    this.activeXSelection = this.axisPanelX.getSelection()[0];
-//                }
-//                else if (setY) {
-//                    this.activeYSelection = this.axisPanelY.getSelection()[0];
-//                }
-//            }
-//
-//            if (doShow) {
-//                win.show(undefined, function() {
-//                    win.setSize(ww, hh);
-//                    this.runUniqueQuery(false, win.axisPanel, win.sourceCls);
-//                }, this);
-//                return;
-//            }
-//
-//            win.setSize(ww, hh);
-//        }
-//    },
-
     //
     // The intent of this method is to return the position of the plots contents as the user sees them
     //
@@ -683,7 +632,7 @@ Ext.define('Connector.view.Scatter', {
         };
 
         var plotEl = this.getPlotElement();
-        if (plotEl) {
+        if (plotEl && this.plot) {
             plotEl = Ext.get(plotEl);
             var box = plotEl.getBox();
             var grid = this.plot.grid;

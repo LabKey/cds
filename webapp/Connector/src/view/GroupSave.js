@@ -5,7 +5,7 @@
  */
 Ext.define('Connector.view.GroupSave', {
 
-    extend : 'Ext.Panel',
+    extend : 'Ext.panel.Panel',
 
     alias  : 'widget.groupsave',
 

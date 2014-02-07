@@ -232,7 +232,7 @@ Ext.define('Connector.controller.FilterStatus', {
                 LABKEY.app.controller.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
                     label : values.groupname,
                     description : values.groupdescription,
-                    filters : state.getFilters(true),
+                    filters : Ext4.Array.pluck(state.getFilters(true), 'data'),
                     isLive : isLiveFilter
                 });
 

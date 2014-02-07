@@ -131,6 +131,10 @@
   height: 24px;
   width: 24px;
   padding: 3px 0px 0px 1px;
+
+  .x-btn-arrow {
+    background-image: none;
+  }
 }
 
 .x-btn-dropdown-small-icon button,
@@ -182,6 +186,10 @@
   height: 17px;
   width: 17px;
   padding: 1px;
+
+  .x-btn-arrow {
+    background-image: none;
+  }
 }
 
 .x-btn-dropdown-alt-small-icon button,
