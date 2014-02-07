@@ -68,10 +68,6 @@ Ext.define('Connector.model.Filter', {
         }
     },
 
-    lookupOperator : function() {
-        return LABKEY.app.controller.Filter.lookupOperator(this.data);
-    },
-
     getOlapFilter : function() {
         return LABKEY.app.controller.Filter.getOlapFilter(this.data);
     },
@@ -96,11 +92,11 @@ Ext.define('Connector.model.Filter', {
     },
 
     getHierarchy : function() {
-        return this.data.hierarchy;
+        return this.get('hierarchy');
     },
 
     getMembers : function() {
-        return this.data.members;
+        return this.get('members');
     },
 
     removeMember : function(memberUname) {
@@ -118,10 +114,6 @@ Ext.define('Connector.model.Filter', {
             }
         }
         return newMembers;
-    },
-
-    getOperator : function() {
-        return this.lookupOperator();
     },
 
     /**
@@ -142,7 +134,7 @@ Ext.define('Connector.model.Filter', {
     },
 
     isGrid : function() {
-        return this.data['isGrid'];
+        return this.get('isGrid');
     },
 
     getGridHierarchy : function() {

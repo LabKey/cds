@@ -42,7 +42,7 @@
 <html>
 <head>
     <!-- Use Internet Explorer 9 Standards mode -->
-    <%--<meta http-equiv="x-ua-compatible" content="IE=9">--%>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>HIV Vaccine Connector</title>
     <%= bean.getMetaTags(url) %>
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">

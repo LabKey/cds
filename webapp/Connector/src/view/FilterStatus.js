@@ -30,8 +30,8 @@ Ext.define('Connector.view.FilterStatus', {
         this.filterpanel = Ext.create('Connector.panel.FilterPanel', {
             title: 'Active filters',
             headerButtons: [
-                { xtype: 'button', flex: 1, text: 'save', ui: 'rounded-inverted-accent', itemId: 'savegroup', style: 'margin: 4px 2px 0 4px;' },
-                { xtype: 'button', flex: 1, text: 'clear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 4px;' }
+                { xtype: 'button', text: 'save', ui: 'rounded-inverted-accent', itemId: 'savegroup', style: 'margin: 4px 2px 0 35px;', hidden: hidden},
+                { xtype: 'button', text: 'clear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
             ],
             filters: this.filters
         });
@@ -61,16 +61,21 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     onFilterChange : function(filters) {
-        if (this.filterpanel)
+        if (this.filterpanel) {
             this.filterpanel.loadFilters(filters);
-//        if (filters.length == 0) {
-//            this.saveBtn.hide();
-//            this.clrBtn.hide();
-//        }
-//        else {
-//            this.saveBtn.show();
-//            this.clrBtn.show();
-//        }
+
+            var saveBtn = this.filterpanel.query('container > #savegroup')[0];
+            var clrBtn = this.filterpanel.query('container > #clear')[0];
+
+            if (filters.length == 0) {
+                saveBtn.hide();
+                clrBtn.hide();
+            }
+            else {
+                saveBtn.show();
+                clrBtn.show();
+            }
+        }
     },
 
     onSelectionChange : function(selections, opChange) {

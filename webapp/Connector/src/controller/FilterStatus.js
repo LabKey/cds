@@ -71,8 +71,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
     getStateStore : function() {
         var store = this.getStore('FilterStatus');
-        var state = this.getStateManager();
-        store.state = state;
+        store.state = this.getStateManager();
         return store;
     },
 
