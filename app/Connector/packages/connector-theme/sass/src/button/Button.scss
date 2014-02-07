@@ -211,7 +211,7 @@
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-small',
 
-  $border-radius : 15px,
+  $border-radius : 8px,
   $border-width : 1px,
   $border-color: #CC87C9,
   $border-color-over: $interactive-color,
@@ -315,8 +315,12 @@
 }
 
 .x-btn-rounded-inverted-accent-small {
-  padding: 2px 1px 3px 2px;
+  padding: 2px 0;
   background-image: none;
+
+  .x-btn-wrap {
+    margin: 0 7px;
+  }
 }
 
 .x-btn-rounded-inverted-accent-small-over {

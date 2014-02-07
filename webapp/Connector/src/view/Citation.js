@@ -20,7 +20,7 @@ Ext.define('Connector.view.Citation', {
                 xtype: 'panel',
                 ui: 'custom',
                 cls: 'assayNorthDetails',
-                height: 170,
+                height: 161,
                 layout: {
                     type: 'hbox',
                     align: 'top'

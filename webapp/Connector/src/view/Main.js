@@ -45,7 +45,6 @@ Ext.define('Connector.view.Main', {
                 ui: 'navigation',
                 itemId: 'primarynav',
                 viewConfig: {
-                    height: 170,
                     arrow: 'left',
                     mapping: [{
                         label: 'Home',

@@ -43,8 +43,8 @@ Ext.define('Connector.panel.FilterPanel', {
         var items = [{
             xtype: 'box',
             autoEl: {
-                tag: 'div',
-                cls: 'header',
+                tag: 'h2',
+                style: 'font-size: 17pt;',
                 html: this.title
             }
         }];
@@ -55,6 +55,8 @@ Ext.define('Connector.panel.FilterPanel', {
 
         return {
             xtype: 'container',
+            ui: 'custom',
+            style: 'margin-bottom: 10px;',
             layout: {
                 type: 'hbox'
             },
@@ -70,7 +72,6 @@ Ext.define('Connector.panel.FilterPanel', {
 
     createHierarchyFilter : function(filterset) {
         var view;
-        FF = filterset;
         if (filterset.isGroup()) {
             view = Ext.create('Connector.view.GroupSelection', {
                 store: {

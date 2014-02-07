@@ -11,7 +11,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
         align: 'stretch'
     },
 
-    dimViewHeight: 170,
+    dimViewHeight: 161,
 
     initComponent : function() {
 

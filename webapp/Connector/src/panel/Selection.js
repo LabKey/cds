@@ -11,5 +11,30 @@ Ext.define('Connector.panel.Selection', {
 
     padding: '20 0 0 0',
 
-    title: 'Current Selection'
+    title: 'Current Selection',
+
+    initHeader : function() {
+
+        // title
+        var items = [{
+            xtype: 'box',
+            autoEl: {
+                tag: 'div',
+                cls: 'header',
+                html: this.title
+            }
+        }];
+
+        for (var i=0; i < this.headerButtons.length; i++) {
+            items.push(this.headerButtons[i]);
+        }
+
+        return {
+            xtype: 'container',
+            layout: {
+                type: 'hbox'
+            },
+            items: items
+        };
+    }
 });

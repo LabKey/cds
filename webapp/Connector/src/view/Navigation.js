@@ -33,9 +33,17 @@ Ext.define('Connector.view.NavigationView', {
 
     trackOver : true,
 
+    tpl: new Ext.XTemplate(
+        '<tpl for=".">',
+            '<div class="{basecls} {cls}">',
+                '{label:this.renderContent}',
+            '</div>',
+        '</tpl>'
+    ),
+
     initComponent : function() {
 
-        this.cls         = 'navigation-view';
+        this.cls = 'navigation-view';
         this.overItemCls = 'nav-label-over';
         this.selectedItemCls = 'nav-label-selected '+ this.arrow;
 
@@ -51,14 +59,6 @@ Ext.define('Connector.view.NavigationView', {
             },
             scope  : this
         });
-
-        this.tpl = new Ext.XTemplate(
-                '<tpl for=".">',
-                '<div class="{basecls} {cls}">',
-                '{label:this.renderContent}',
-                '</div>',
-                '</tpl>'
-        );
 
         var me = this;
         this.tpl.renderContent = function(val) {
