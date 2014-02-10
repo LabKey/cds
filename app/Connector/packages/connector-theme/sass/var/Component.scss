@@ -357,10 +357,17 @@ div.filterpanel {
   }
 }
 
+div.selitem {
+  font-family: $bodycaps-font;
+  width: 92%;
+  padding: 4px 6px;
+}
+
 div.selectionpanel {
 
   .header {
     @include smallStandout;
+    font-size: 13.5pt;
   }
 
   .x-toolbar-footer {
@@ -368,9 +375,9 @@ div.selectionpanel {
     margin-left: 20px;
   }
 
-//  .x-btn-rounded-inverted-accent-small .x-btn-inner {
-//    font-size: 7pt;
-//  }
+  .x-btn-rounded-inverted-accent-small .x-btn-inner {
+    font-size: 7pt;
+  }
 }
 
 div.selectionfilter {
@@ -378,7 +385,7 @@ div.selectionfilter {
 }
 
 div.status-over {
-  border-radius: 15px;
+  @include border-radius(15px);
 }
 
 .closeitem {
@@ -402,6 +409,26 @@ div.status-over {
     &:hover {
       opacity: 1;
     }
+  }
+}
+
+div.activefilter {
+  position: relative;
+  background-color: $light-color;
+  border: 1px solid #a9a9a9;
+  @include border-radius(12px);
+  display: inline-block;
+  width: 100%;
+  padding: 3px 7px;
+
+  div.selitem {
+    border: 1px solid transparent;
+    /*padding-top: 5px;*/
+    padding: 2px 6px;
+  }
+
+  div.status-over {
+    border-color: transparent;
   }
 }
 
@@ -1017,7 +1044,7 @@ div.row:hover {
 
   background-color: $select-color;
   @include single-box-shadow($heat-scale-2, -2px, 2px, 2px);
-  @include border-radius(2);
+  @include border-radius(2px);
   cursor : pointer;
 
   span.pp {

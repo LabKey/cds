@@ -63,6 +63,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterSave": "../../webapp/Connector/src/view/FilterSave.js",
+  "Connector.view.FilterSelection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.FilterStatus": "../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.GridSelection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.GroupListView": "../../webapp/Connector/src/panel/GroupList.js",
@@ -162,6 +163,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
   "Connector.view.FilterSave": [],
+  "Connector.view.FilterSelection": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.GridSelection": [],
   "Connector.view.GroupListView": [],
@@ -1101,6 +1103,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.DimensionSelector": [],
   "Connector.view.FilterSave": [
     "widget.filtersave"
+  ],
+  "Connector.view.FilterSelection": [
+    "widget.filterselection"
   ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"

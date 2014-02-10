@@ -98,12 +98,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
     }
@@ -502,7 +502,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(0, 0, 0, 0, 0);
         pickCDSDimension("Studies");
         assertFilterStatusCounts(0, 0, 0, 0, 0);
-        clearFilter();
+        clearSelection();
         waitForText(STUDIES[2], CDS_WAIT);
         selectBars(STUDIES[0]);
         pickCDSDimension("Assays");
@@ -905,7 +905,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private Locator.XPathLocator cdsButtonLocator(String text)
     {
-        return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn') and text()='" + text + "']"));
+        return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
     }
 
     private Locator.XPathLocator filterMemberLocator()

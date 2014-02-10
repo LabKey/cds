@@ -36,5 +36,55 @@ Ext.define('Connector.panel.Selection', {
             },
             items: items
         };
+    },
+
+    createHierarchyFilter : function(filterset) {
+        var view;
+        if (filterset.isGroup()) {
+            view = Ext.create('Connector.view.GroupSelection', {
+                store: {
+                    model: 'Connector.model.FilterGroup',
+                    data: [filterset]
+                }
+            });
+        }
+        else if (filterset.isGrid()) {
+            view = Ext.create('Connector.view.GridSelection', {
+                store: {
+                    model: 'Connector.model.Filter',
+                    data: [filterset]
+                }
+            });
+        }
+        else {
+            view = Ext.create('Connector.view.Selection', {
+                store: {
+                    model: 'Connector.model.Filter',
+                    data: [filterset]
+                }
+            });
+        }
+        return view;
+    },
+
+    displayFilters : function(filters) {
+        this.removeAll();
+        this.add(this.initHeader());
+        var panels = [];
+
+        for (var f=0; f < filters.length; f++) {
+            panels.push(this.createHierarchyFilter(filters[f]));
+        }
+
+        if (panels.length > 0)
+        {
+            if (this.hideOnEmpty)
+                this.show();
+            this.add(panels);
+        }
+        else if (this.hideOnEmpty)
+            this.hide();
+        else
+            this.add(this.createEmptyPanel());
     }
 });

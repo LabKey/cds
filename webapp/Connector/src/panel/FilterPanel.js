@@ -89,7 +89,7 @@ Ext.define('Connector.panel.FilterPanel', {
             });
         }
         else {
-            view = Ext.create('Connector.view.Selection', {
+            view = Ext.create('Connector.view.FilterSelection', {
                 store: {
                     model: 'Connector.model.Filter',
                     data: [filterset]
