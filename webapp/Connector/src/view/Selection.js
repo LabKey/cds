@@ -77,7 +77,7 @@ Ext.define('Connector.view.Selection', {
                     '</tpl>',
                 '</tpl>',
                 '<tpl if="members.length == 1">',
-                    '<div class="selitem status-over memberitem" style="float: right; width: 92%; padding: 4px 6px;">',
+                    '<div class="selitem status-over memberitem" style="float: right;">',
                         '<div class="closeitem"></div>',
                         '{members:this.renderMember}',
                     '</div>',
@@ -135,7 +135,7 @@ Ext.define('Connector.view.GroupSelection', {
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
             '<div class="circle"></div>',
-            '<div class="selitem status-over memberitem" style="display: inline-block; width: 92%; padding: 4px 6px;">',
+            '<div class="selitem status-over memberitem" style="display: inline-block;">',
                 '<div class="closeitem"></div>',
                 '{name:this.renderName}',
             '</div>',
@@ -156,7 +156,7 @@ Ext.define('Connector.view.GridSelection', {
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
             '<div class="circle"></div>',
-            '<div class="selitem status-over memberitem" style="float: right; width: 92%; padding: 4px 6px;">',
+            '<div class="selitem status-over memberitem" style="float: right;">',
                 '<div class="closeitem"></div>',
                 '{[this.renderLabel(values)]}',
             '</div>',
@@ -167,5 +167,66 @@ Ext.define('Connector.view.GridSelection', {
                 return type + ": " + Connector.model.Filter.getGridLabel(values);
             }
         }
+    )
+});
+
+Ext.define('Connector.view.FilterSelection', {
+    extend: 'Connector.view.Selection',
+
+    alias: 'widget.filterselection',
+
+    ui: 'custom',
+
+    cls: 'activefilter',
+
+    itemSelector: 'div.selitem',
+
+    tpl: new Ext.XTemplate(
+            '<tpl for=".">',
+                '<tpl if="members.length &gt; 1">',
+                    '<div style="position: absolute; top: 36px;">',
+                        '<select>',
+                            '<option value="' + LABKEY.app.controller.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
+                            '<option value="' + LABKEY.app.controller.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
+                        '</select>',
+                    '</div>',
+                    '<div class="selitem" style="padding: 5px 0; font-family: Arial; font-size: 12pt;">{hierarchy:this.renderType}</div>',
+                    '<tpl for="members">',
+                        '<div class="status-over memberitem" style="float: right; width: 78%; padding: 0px 6px;">',
+                        '<div class="closeitem"></div>',
+                        '{uname:this.renderUname}',
+                        '</div>',
+                    '</tpl>',
+                '</tpl>',
+                '<tpl if="members.length == 1">',
+                    '<div class="selitem status-over memberitem">',
+                    '<div class="closeitem"></div>',
+                    '{members:this.renderMember}',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            {
+                selectIntersect : function(op) {
+                    return op == LABKEY.app.controller.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
+                },
+                selectUnion : function(op) {
+                    return op == LABKEY.app.controller.Filter.Operators.UNION ? 'selected="selected"' : '';
+                },
+                renderType : function(type) {
+                    var t = type.split('.');
+                    return Ext.htmlEncode(t[t.length-1]);
+                },
+                renderUname : function(uname) {
+                    return Ext.htmlEncode(uname[uname.length-1]);
+                },
+                renderMember: function(members) {
+                    var uname = members[0]['uname'];
+
+                    var type = uname[0].split('.');
+                    type = type[type.length-1];
+
+                    return Ext.htmlEncode(type + ': ' + uname[uname.length-1]);
+                }
+            }
     )
 });

@@ -32,7 +32,7 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('filterpanel > selectionview', {
+        this.control('filterpanel > filterselection', {
             removefilter : function(filterId, hName, uname) {
                 this.getStateManager().removeFilter(filterId, hName, uname);
             }
