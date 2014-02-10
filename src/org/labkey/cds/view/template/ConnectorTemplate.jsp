@@ -165,7 +165,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
     <!-- Ext Widget Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4Helper.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4GridPanel.js"></script>
 

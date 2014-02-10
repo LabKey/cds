@@ -29,7 +29,6 @@
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
 
         <!-- Ext Widget Dependencies -->
-        <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4Helper.js"/>
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4GridPanel.js"/>
 
