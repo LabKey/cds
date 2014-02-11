@@ -113,6 +113,31 @@
             background: url(<%=text(appPath)%>/images/close.png);
             background-size: 8px 8px;
         }
+
+        div.memberitem {
+            float: right;
+        }
+
+        div.collapsed-member {
+            width: 78%;
+            padding: 4px 6px;
+            float: right;
+        }
+
+        .sel-listing {
+            padding: 5px 0 5px 30px;
+            font-family: Arial;
+            font-size: 12pt;
+        }
+
+        .activefilter div.circle {
+            display: none;
+        }
+
+        .activefilter div.collapsed-member {
+            padding: 0 6px;
+        }
+
     </style>
 
     <style type="text/css">

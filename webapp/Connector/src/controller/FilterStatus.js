@@ -32,7 +32,7 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('filterpanel > filterselection', {
+        this.control('filterpanel > selectionview', {
             removefilter : function(filterId, hName, uname) {
                 this.getStateManager().removeFilter(filterId, hName, uname);
             }
@@ -233,7 +233,7 @@ Ext.define('Connector.controller.FilterStatus', {
                 LABKEY.app.controller.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
                     label: values.groupname,
                     description: values.groupdescription,
-                    filters: state.getFilters(true),
+                    filters: state.getFlatFilters(),
                     isLive: isLiveFilter
                 });
 
