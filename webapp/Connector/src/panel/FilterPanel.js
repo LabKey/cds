@@ -71,32 +71,22 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     createHierarchyFilter : function(filterset) {
-        var view;
-        if (filterset.isGroup()) {
-            view = Ext.create('Connector.view.GroupSelection', {
-                store: {
-                    model: 'Connector.model.FilterGroup',
-                    data: [filterset]
-                }
-            });
-        }
-        else if (filterset.isGrid()) {
-            view = Ext.create('Connector.view.GridSelection', {
-                store: {
-                    model: 'Connector.model.Filter',
-                    data: [filterset]
-                }
-            });
-        }
-        else {
-            view = Ext.create('Connector.view.FilterSelection', {
-                store: {
-                    model: 'Connector.model.Filter',
-                    data: [filterset]
-                }
-            });
-        }
+        var view = Ext.create('Connector.view.Selection', {
+            cls: 'activefilter',
+            store: {
+                model: this.getModelClass(filterset),
+                data: [filterset]
+            }
+        });
         return view;
+    },
+
+    getModelClass : function(filterset) {
+        var model = 'Connector.model.Filter';
+        if (filterset.isGroup()) {
+            model = 'Connector.model.FilterGroup';
+        }
+        return model;
     },
 
     // entry point to load raw OLAP Filters
@@ -110,6 +100,8 @@ Ext.define('Connector.panel.FilterPanel', {
         var panels = [];
 
         for (var f=0; f < filters.length; f++) {
+            // add filter ids
+            filters[f].data.id = filters[f].id;
             panels.push(this.createHierarchyFilter(filters[f]));
         }
 
