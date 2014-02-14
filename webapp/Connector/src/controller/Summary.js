@@ -4,7 +4,7 @@ Ext.define('Connector.controller.Summary', {
 
     stores : ['Summary'],
 
-    views : ['GroupPreview', 'Summary'],
+    views : ['Summary'],
 
     init : function() {
 
@@ -65,10 +65,6 @@ Ext.define('Connector.controller.Summary', {
                     }
                 }
             }
-        });
-
-        this.control('grouppreview', {
-            groupchange : this.onGroupChange
         });
 
         /* Refresh event gets fired often on views so a delay is put in to prevent unncessary link registrations */
@@ -143,17 +139,6 @@ Ext.define('Connector.controller.Summary', {
         if (!this.selected[v.id]) {
             this.selected[v.id] = v;
             v.on('selectionchange', this.onSelectGroup, this);
-        }
-    },
-
-    onGroupChange : function(preview, grp) {
-        if (Ext.isArray(grp.data.filters)) {
-            this.getStateManager().addGroup(grp);
-            var view = this.getViewManager().getViewInstance('summary').getSummaryDataView();
-            if (view) {
-                view.getStore().setFilterSet(['groupselection']);
-                view.getStore().load();
-            }
         }
     },
 

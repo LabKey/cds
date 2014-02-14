@@ -196,7 +196,6 @@
     <!-- Visualization Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.3.9.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/raphael-min-2.1.0.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/SVGConverter.js"></script>
 
     <!-- LabKey Visualization Library -->
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/patches.js"></script>
@@ -248,7 +247,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupPreview.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Home.js"></script>

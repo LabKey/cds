@@ -28,7 +28,6 @@ Ext.define('Connector.Application', {
         'Compare',
         'FilterSave',
         'FilterStatus',
-        'GroupPreview',
         'GroupSave',
         'Header',
         'Home',

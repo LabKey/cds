@@ -32,10 +32,19 @@
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4GridPanel.js"/>
 
-        <!-- Internal Module Dependencies -->
-        <script path="../../../internal/explodedModule/web/vis/lib/patches.js"/>
+        <!-- Visualization Dependencies -->
         <script path="../../../internal/explodedModule/web/vis/lib/d3-3.3.9.min.js"/>
         <script path="../../../internal/explodedModule/web/vis/lib/raphael-min-2.1.0.js"/>
+
+        <script path="../../../internal/explodedModule/web/vis/lib/patches.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/utils.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/geom.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/stat.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/scale.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/layer.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/internal/RaphaelRenderer.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/internal/D3Renderer.js"/>
+        <script path="../../../internal/explodedModule/web/vis/src/plot.js"/>
 
         <!-- Query Module Dependencies -->
         <script path="../../../query/explodedModule/web/query/olap.js"/>
@@ -80,7 +89,6 @@
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterSave.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
-        <script path="Connector/src/view/GroupPreview.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/Header.js"/>
         <script path="Connector/src/view/Home.js"/>

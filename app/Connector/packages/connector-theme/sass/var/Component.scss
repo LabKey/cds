@@ -94,7 +94,6 @@ $window-header-color: $secondary-color;
   - Connector.view.DetailStatus
   - Connector.view.Header
   - Connector.view.GroupListView
-  - Connector.view.GroupPreview
   - Connector.view.Navigation
   - Connector.view.SelectionStatus
   - Connector.view.SingleAxisExplorer
@@ -728,35 +727,6 @@ div.grouplist {
 }
 
 /* -- END Connector.view.GroupListView */
-
-/* Connector.view.GroupPreview */
-.grouppreview {
-  background-color: $primary-color;
-  padding-top: 10px;
-  padding-left: $pageLeftPadding;
-  padding-bottom: 5px;
-}
-
-.grouppreview div.title {
-  @include standout;
-}
-
-.grouppreview div.subtitle {
-  @include smallStandout;
-}
-
-.grouppreview div.previewleft {
-  padding: 5px;
-  float : left;
-  width : 50%;
-  height: 100px;
-}
-
-.grouppreview div.previewright {
-  padding: 5px;
-  height: 100px;
-}
-/* -- END Connector.view.GroupPreview */
 
 /* Connector.view.Navigation */
 .navigation-view {
