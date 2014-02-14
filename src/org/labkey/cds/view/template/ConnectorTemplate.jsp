@@ -138,6 +138,22 @@
             padding: 0 6px;
         }
 
+        .save-label {
+            font-family: Arial;
+            padding: 4px 9px;
+            font-size: 11pt;
+        }
+
+        .save-label-over {
+            /* select color */
+            background-color: rgba(20, 201, 204, 0.2);
+            cursor: pointer;
+        }
+
+        .save-label-selected {
+            background-color: #14C9CC;
+            color: #FFF;
+        }
     </style>
 
     <style type="text/css">

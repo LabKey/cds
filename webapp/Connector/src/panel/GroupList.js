@@ -45,42 +45,29 @@ Ext.define('Connector.view.GroupListView', {
 
     itemSelector: 'div.nav-label',
 
+    tpl: new Ext.XTemplate(
+            '<tpl for=".">',
+                '<div class="nav-label">{label}</div>',
+            '</tpl>'
+    ),
+
     initComponent : function() {
 
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
-        this.tpl = new Ext.XTemplate(
-            '<tpl for=".">',
-                '<div class="nav-label">',
-                    '{label:this.renderContent}',
-                '</div>',
-            '</tpl>'
-        );
-
-        this.tpl.renderContent = function(val) {
-            return val;
-//            var ret = '';
-//            if (me.arrow == 'left'){
-//                ret += '<span class="' + me.arrow +'-arrow"></span>';
-//                ret += '<span class="right-label">' + Ext.String.ellipsis(Ext.htmlEncode(val), 20) + '</span>';
-//            } else if (me.arrow == 'right'){
-//                ret += '<span class="left-label">' + Ext.String.ellipsis(Ext.htmlEncode(val), 20) + '</span>';
-//                ret += '<span class="' + me.arrow +'-arrow"></span>';
-//            }
-//            return ret;
-        };
-
         // models Participant Groups and Cohorts mixed
-        Ext.define('LABKEY.study.GroupCohort', {
-            extend : 'Ext.data.Model',
-            fields : [
-                {name : 'id'},
-                {name : 'label'},
-                {name : 'description'},
-                {name : 'filters'},
-                {name : 'type'}
-            ]
-        });
+        if (!Ext4.ModelManager.isRegistered('LABKEY.study.GroupCohort')) {
+            Ext.define('LABKEY.study.GroupCohort', {
+                extend : 'Ext.data.Model',
+                fields : [
+                    {name : 'id'},
+                    {name : 'label'},
+                    {name : 'description'},
+                    {name : 'filters'},
+                    {name : 'type'}
+                ]
+            });
+        }
 
         var storeConfig = {
             pageSize : 100,
