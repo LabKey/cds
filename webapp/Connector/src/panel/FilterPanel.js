@@ -14,13 +14,22 @@ Ext.define('Connector.panel.FilterPanel', {
 
     hideOnEmpty: false,
 
+    showEmptyText: true,
+
     headerButtons: [],
 
     filters: [],
 
     initComponent : function() {
 
-        this.items = [this.initHeader()];
+        this.items = [
+            this.initHeader(),
+            this.initContent()
+        ];
+
+        if (this.showEmptyText) {
+            this.items.push(this.createEmptyPanel());
+        }
 
         this.dockedItems = [{
             xtype: 'toolbar',
@@ -64,8 +73,17 @@ Ext.define('Connector.panel.FilterPanel', {
         };
     },
 
+    initContent : function() {
+        if (!this.content) {
+            this.content = Ext.create('Ext.Container', {});
+        }
+
+        return this.content;
+    },
+
     createEmptyPanel : function() {
         return Ext.create('Ext.container.Container', {
+            itemId: 'emptypanel',
             html : '<div class="emptytext">All subjects</div>'
         });
     },
@@ -95,8 +113,7 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     displayFilters : function(filters) {
-        this.removeAll();
-        this.add(this.initHeader());
+        this.content.removeAll();
         var panels = [];
 
         for (var f=0; f < filters.length; f++) {
@@ -105,16 +122,26 @@ Ext.define('Connector.panel.FilterPanel', {
             panels.push(this.createHierarchyFilter(filters[f]));
         }
 
-        if (panels.length > 0)
-        {
-            if (this.hideOnEmpty)
-                this.show();
-            this.add(panels);
+        var isEmpty = (panels.length == 0);
+
+        if (!isEmpty) {
+            this.content.add(panels);
+            if (this.showEmptyText) {
+                this.getComponent('emptypanel').hide();
+            }
         }
-        else if (this.hideOnEmpty)
+        else {
+            if (this.showEmptyText) {
+                this.getComponent('emptypanel').show();
+            }
+        }
+
+        if (this.hideOnEmpty && isEmpty) {
             this.hide();
-        else
-            this.add(this.createEmptyPanel());
+        }
+        else {
+            this.show();
+        }
     }
 });
 

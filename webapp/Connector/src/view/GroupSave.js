@@ -9,126 +9,320 @@ Ext.define('Connector.view.GroupSave', {
 
     alias  : 'widget.groupsave',
 
-    initComponent : function() {
+    ui: 'custom',
 
-        this.items = [];
-
-        // title
-        this.items.push({
-            xtype : 'box',
-            autoEl: {
-                tag : 'div',
-                cls : 'savetitle',
-                html: 'Save group'
-            }
-        });
-
-        this.items.push(this.getForm());
-
-        this.callParent();
-
-        this.on('show', function() {
-            if (this.form) {
-                this.form.setDefaultFocus();
-                this.onSelectionChange();
-            }
-        }, this);
+    statics: {
+        modes: {
+            CREATE: 'CREATE',
+            REPLACE: 'REPLACE'
+        }
     },
 
-    getForm : function() {
-        if (this.form)
-            return this.form;
+    layout: {
+        type: 'anchor'
+    },
 
-        var saveBtn = Ext.create('Connector.button.RoundedButton', {
-            itemId: 'dogroupsave',
-            ui: 'darkrounded',
-            text  : 'Save'
+    constructor : function(config) {
+
+        Ext.applyIf(config, {
+            mode: Connector.view.GroupSave.modes.CREATE
         });
 
-        this.selectText = 'Selection and Active Filters';
-        this.filterText = 'Only Active Filters';
+        this.callParent([config]);
+    },
 
-        this.form = Ext.create('Ext.form.Panel', {
+    initComponent : function() {
 
-            ui : 'custom',
+        this.items = [{
+            xtype: 'container',
+            itemId: 'content',
+            style: 'margin: 10px; background-color: #fff; border: 1px solid lightgrey; padding: 10px',
+            anchor: '100%',
+            items: [
+                {
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'h2',
+                        html: 'Save group'
+                    }
+                },
+                {
+                    xtype: 'box',
+                    itemId: 'error',
+                    hidden: true,
+                    autoEl: {
+                        tag: 'div',
+                        cls: 'errormsg'
+                    }
+                },
+                this.getCreateGroup(),
+                this.getReplaceGroup()
+            ]
+        }];
 
-            style : 'padding: 8px 0 0 27px',
+        this.callParent();
+    },
 
-            layout: {
-                align : 'stretch'
-            },
-            defaults : {
-                labelAlign : 'top',
-                validateOnBlur   : false,
-                validateOnChange : false,
-                width : 225
-            },
+    getCreateGroup : function() {
+        if (!this.createGroup) {
+            this.createGroup = Ext.create('Ext.Container', {
+                hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
+                activeMode: Connector.view.GroupSave.modes.CREATE,
+                items: [
+                    {
+                        itemId: 'creategroupform',
+                        xtype: 'form',
+                        ui: 'custom',
+                        width: '100%',
+                        defaults: {
+                            width: '100%'
+                        },
+                        items: [{
+                            xtype: 'textfield',
+                            name: 'groupname',
+                            emptyText: 'Enter a group name',
+                            height: 30,
+                            allowBlank: false
+                        },{
+                            xtype: 'textareafield',
+                            name: 'groupdescription',
+                            emptyText: 'Group description'
+                        },{
+                            xtype: 'radiogroup',
+                            columns: 1,
+                            allowBlank: false,
+                            items: [
+                                { boxLabel: 'Live Filters: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
+                                { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
+                            ]
+                        }]
+                    },
+//                    {
+//                        xtype: 'box',
+//                        itemId: 'create-form',
+//                        id: 'creategroupform', // used to identify this form for validation
+//                        autoEl: {
+//                            tag: 'form',
+//                            children: [{
+//                                tag: 'input',
+//                                cls: 'group-groupname',
+//                                id: 'groupname',
+//                                name: 'groupname',
+//                                type: 'text',
+//                                placeholder: 'Enter a group name',
+//                                style: 'height: 30px; font-size: 11pt; border: 2px solid lightgrey; font-family: Arial; padding: 0 5px; width: 100%; margin-top: 4px;'
+//                            },{
+//                                tag: 'textarea',
+//                                id: 'groupdescription',
+//                                name: 'groupdescription',
+//                                placeholder: 'Group description',
+//                                style: 'height: 90px; font-size: 11pt; border: 2px solid lightgrey; font-family: Arial; padding: 3px 5px; width: 100%; border-image: none; margin-top: 4px;'
+//                            },{
+//                                tag: 'table',
+//                                cls: 'group-filtertype',
+//                                style: 'margin-top: 4px;',
+//                                children: [{
+//                                    tag: 'tr',
+//                                    children: [{
+//                                        tag: 'td',
+//                                        children: [{
+//                                            tag: 'input',
+////                                        id: 'livefilter',
+//                                            type: 'radio',
+//                                            name: 'groupselect',
+//                                            value: 'live',
+//                                            style: 'vertical-align: middle;'
+//                                        },{
+//                                            tag: 'label',
+//                                            style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
+//                                            'for': 'livefilter',
+//                                            html: 'Live Filters: Update group with new data'
+//                                        }]
+//                                    }]
+//                                },{
+//                                    tag: 'tr',
+//                                    children: [{
+//                                        tag: 'td',
+//                                        children: [{
+//                                            tag: 'input',
+////                                        id: 'staticfilter',
+//                                            type: 'radio',
+//                                            name: 'groupselect',
+//                                            value: 'static',
+//                                            style: 'vertical-align: middle;'
+//                                        },{
+//                                            tag: 'label',
+//                                            style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
+//                                            'for': 'staticfilter',
+//                                            html: 'Snapshot: Keep this group static'
+//                                        }]
+//                                    }]
+//                                }]
+//                            }]
+//                        }
+//                    }
+                {
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'div',
+                        style: 'margin-top: 15px;',
+                        html: 'Or...'
+                    }
+                },{
+                    xtype: 'button',
+                    itemId: 'replace-grp-button',
+                    style: 'margin-top: 15px;',
+                    ui: 'rounded-inverted-accent',
+                    text: 'replace an existing group',
+                    handler: function() { this.changeMode(Connector.view.GroupSave.modes.REPLACE); },
+                    scope: this
+                },{
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    ui: 'footer',
+                    style: 'padding-top: 60px',
+                    items: ['->',{
+                        text: 'save',
+                        itemId: 'groupcreatesave',
+                        cls: 'groupcreatesave', // tests
+                        ui: 'rounded-inverted-accent'
+                    },{
+                        text: 'cancel',
+                        itemId: 'cancelgroupsave',
+                        cls: 'cancelgroupsave', // tests
+                        ui: 'rounded-inverted-accent'
+                    }]
+                }],
+                scope: this
+            });
+        }
 
-            // fields
-            defaultType : 'textfield',
-            items : [{
-                itemId     : 'groupselection',
-                xtype      : 'radiogroup',
-                fieldLabel : 'Group selection',
-                vertical   : true,
-                columns    : 1,
-                items      : [
-                    {boxLabel : this.selectText, cls: 'withSelectionRadio' , width: 200, name : 'groupselect', inputValue: true, checked : true},
-                    {boxLabel : this.filterText, cls: 'filterOnlyRadio', width: 200, name : 'groupselect', inputValue: false}
-                ],
-                name       : 'groupselect',
-                plain      : true,
-                allowBlank : false,
-                cls        : 'grouptop',
-                flex : 1
-            },{
-                xtype       : 'checkbox',
-                itemId      : 'livefilter',
-                name        : 'livefilter',
-                fieldLabel  : 'Live filter',
-                cls         : 'liveFilterCheckbox',
-                vertical    : 'true'
-            },{
-                itemId     : 'groupnamefield',
-                fieldLabel : 'Subject group name',
-                name       : 'groupname',
-                plain      : true,
-                allowBlank : false,
-                cls        : 'grouptop',
-                flex : 1
-            },{
-                xtype      : 'textareafield',
-                name       : 'groupdescription',
-                hideLabel  : true,
-                emptyText  : 'Group description',
-                flex : 1
-            },{
-                xtype : 'box',
-                hidden : true,
-                itemId : 'error',
-                autoEl : {
-                    tag : 'div',
-                    cls : 'errormsg'
+        return this.createGroup;
+    },
+
+    getReplaceGroup : function() {
+        if (!this.replaceGroup) {
+            this.replaceGroup = Ext.create('Ext.Container', {
+                hidden: this.mode !== Connector.view.GroupSave.modes.REPLACE,
+                activeMode: Connector.view.GroupSave.modes.REPLACE,
+                items: [{
+                    xtype : 'box',
+                    autoEl: {
+                        tag: 'div',
+                        style: 'color: red; text-transform: uppercase;',
+                        html: 'Replace Group is Not Yet Implemented'
+                    }
+                },{
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'form',
+                        children: [{
+                            tag: 'textarea',
+                            name: 'groupdescription',
+                            placeholder: 'Group description',
+                            style: 'height: 90px; font-size: 11pt; border: 2px solid lightgrey; font-family: Arial; padding: 3px 5px; width: 100%; border-image: none; margin-top: 4px;'
+                        },{
+                            tag: 'table',
+                            cls: 'group-filtertype',
+                            style: 'margin-top: 4px;',
+                            children: [{
+                                tag: 'tr',
+                                children: [{
+                                    tag: 'td',
+                                    children: [{
+                                        tag: 'input',
+                                        id: 'livefilter',
+                                        type: 'radio',
+                                        name: 'groupselect',
+                                        value: 'live',
+                                        style: 'vertical-align: middle;'
+                                    },{
+                                        tag: 'label',
+                                        style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
+                                        'for': 'livefilter',
+                                        html: 'Live Filters: Update group with new data'
+                                    }]
+                                }]
+                            },{
+                                tag: 'tr',
+                                children: [{
+                                    tag: 'td',
+                                    children: [{
+                                        tag: 'input',
+                                        id: 'staticfilter',
+                                        type: 'radio',
+                                        name: 'groupselect',
+                                        value: 'static',
+                                        style: 'vertical-align: middle;'
+                                    },{
+                                        tag: 'label',
+                                        style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
+                                        'for': 'staticfilter',
+                                        html: 'Snapshot: Keep this group static'
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }
+                },{
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'div',
+                        style: 'margin-top: 15px;',
+                        html: 'Or...'
+                    }
+                },{
+                    xtype: 'button',
+                    itemId: 'create-grp-button',
+                    style: 'margin-top: 15px;',
+                    ui: 'rounded-inverted-accent',
+                    text: 'create a new group',
+                    handler: function() { this.changeMode(Connector.view.GroupSave.modes.CREATE); },
+                    scope: this
                 }
-            }],
+//                    ,{
+//                        xtype: 'toolbar',
+//                        dock: 'bottom',
+//                        ui: 'footer',
+//                        style: 'padding-top: 60px',
+//                        items: ['->',{
+//                            text: 'save',
+//                            itemId: 'dogroupsave',
+//                            ui: 'rounded-inverted-accent'
+//                        },{
+//                            text: 'cancel',
+//                            itemId: 'cancelgroupsave',
+//                            ui: 'rounded-inverted-accent'
+//                        }]
+//                    }
+                ],
+                scope: this
+            });
+        }
 
-            // Save and Cancel Buttons
-            buttons : [saveBtn,{
-                itemId: 'cancelgroupsave',
-                xtype : 'roundedbutton',
-                ui: 'darkrounded',
-                text  : 'Cancel',
-                handler : this.clearForm,
-                scope : this
-            }],
-            buttonAlign : 'left',
+        return this.replaceGroup;
+    },
 
-            setDefaultFocus : function() {
-                this.getComponent(1).focus();
+    changeMode : function(mode) {
+        var content = this.getComponent('content');
+        if (content) {
+            var contentComponents = content.items.items;
+            for (var i=0; i < contentComponents.length; i++) {
+                if (Ext.isDefined(contentComponents[i].activeMode)) {
+                    if (contentComponents[i].activeMode === mode) {
+                        contentComponents[i].show();
+                    }
+                    else {
+                        contentComponents[i].hide();
+                    }
+                }
             }
-        });
+            this.hideError();
+        }
+    },
 
-        return this.form
+    getMode : function() {
+        return this.mode;
     },
 
     clearForm : function() {
@@ -138,40 +332,12 @@ Ext.define('Connector.view.GroupSave', {
         }
     },
 
-    onSelectionChange : function() {
-
-        var me = this;
-        this.state.onMDXReady(function(mdx){
-
-            mdx.queryMultiple([
-                {
-                    onRows : [ { hierarchy : 'Study', lnum : 0 } ],
-                    useNamedFilters : ['stateSelectionFilter', 'statefilter'],
-                    label     : {
-                        singular : 'Subject',
-                        plural   : 'Subjects'
-                    }
-                },{
-                    onRows : [ { hierarchy : 'Study', lnum : 0 } ],
-                    useNamedFilters : ['statefilter'],
-                    label     : {
-                        singular : 'Subject',
-                        plural   : 'Subjects'
-                    }
-                }
-            ], function(qrArray) {
-                var items = me.form.getForm().findField('groupselect').items.items;
-
-                items[0].boxLabelEl.update(me.selectText + ' (' + qrArray[0].cells[0][0].value + ')');
-                items[1].boxLabelEl.update(me.filterText + ' (' + qrArray[1].cells[0][0].value + ')');
-            });
-
-        }, this);
-
+    getError : function() {
+        return this.getComponent('content').getComponent('error');
     },
 
     showError : function(error) {
-        var errorEl = this.form.getComponent('error');
+        var errorEl = this.getError();
         if (errorEl) {
             errorEl.update(error);
             errorEl.show();
@@ -179,7 +345,7 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     hideError : function() {
-        var errorEl = this.form.getComponent('error');
+        var errorEl = this.getError();
         if (errorEl) {
             errorEl.hide();
         }

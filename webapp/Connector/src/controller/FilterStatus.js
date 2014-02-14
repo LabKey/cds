@@ -6,7 +6,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'GroupSave'],
+    views: ['DetailStatus', 'FilterSave', 'FilterStatus'],
 
     init : function() {
 
@@ -26,32 +26,20 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('selectionpanel > selectionview', {
+        this.control('selectionpanel > container > selectionview', {
             removefilter : function(filterId, hName, uname) {
                 this.getStateManager().removeSelection(filterId, hName, uname);
             }
         });
 
-        this.control('filterpanel > selectionview', {
+        this.control('filterpanel > container > selectionview', {
             removefilter : function(filterId, hName, uname) {
                 this.getStateManager().removeFilter(filterId, hName, uname);
             }
         });
 
-        this.control('filterpanel > container > #savegroup', {
-            click : this.onGroupSave
-        });
-
-        this.control('groupsave > form > toolbar > #dogroupsave', {
-            click : this.doGroupSave
-        });
-
         this.control('filtersave > form > toolbar > #cancelsave', {
             click : this.onFilterCancel
-        });
-
-        this.control('groupsave > form > toolbar > #cancelgroupsave', {
-            click : this.onGroupCancel
         });
 
         this.control('filterpanel > container > #clear', {
@@ -110,26 +98,27 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     runSelectToFilterAnimation : function(b) {
-        var p = b.up('panel');
-        var me = this;
-        p.dockedItems.items[0].getEl().fadeOut();
-        Ext.get(Ext.query('.header', p.getEl().id)[0]).fadeOut({
-            listeners : {
-                afteranimate : function(){
-                    p.getEl().slideOut('t', {
-                        duration  : 250,
-                        listeners : {
-                            afteranimate : function() {
-                                p.dockedItems.items[0].getEl().fadeIn();
-                                me.getStateManager().moveSelectionToFilter();
-                            },
-                            scope : p
-                        }
-                    });
-                },
-                scope: p
-            }
-        });
+        this.getStateManager().moveSelectionToFilter();
+//        var p = b.up('panel');
+//        var me = this;
+//        p.dockedItems.items[0].getEl().fadeOut();
+//        Ext.get(Ext.query('.header', p.getEl().id)[0]).fadeOut({
+//            listeners : {
+//                afteranimate : function(){
+//                    p.getEl().slideOut('t', {
+//                        duration  : 250,
+//                        listeners : {
+//                            afteranimate : function() {
+//                                p.dockedItems.items[0].getEl().fadeIn();
+//                                me.getStateManager().moveSelectionToFilter();
+//                            },
+//                            scope : p
+//                        }
+//                    });
+//                },
+//                scope: p
+//            }
+//        });
     },
 
     createView : function(xtype, context) {
@@ -146,16 +135,6 @@ Ext.define('Connector.controller.FilterStatus', {
             });
         }
 
-        if (xtype == 'groupsave') {
-            v = Ext.create('Connector.view.GroupSave', {
-                state : this.getStateManager(),
-                flex  : 1
-            });
-
-            this.getStateManager().on('selectionchange', v.onSelectionChange, v);
-            this.application.on('groupsaved', this.onGroupSaved, this);
-        }
-
         return v;
     },
 
@@ -166,79 +145,14 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     onFilterClear : function() {
-        if (this.getStateManager().hasFilters()) {
-            this.getStateManager().clearFilters();
+        var state = this.getStateManager();
+        if (state.hasFilters()) {
+            state.clearFilters();
         }
     },
 
     onFilterSave : function() {
         this.getViewManager().showView('filtersave');
-    },
-
-    onGroupCancel : function() {
-        this.getViewManager().hideView('groupsave');
-    },
-
-    onGroupSave : function() {
-        this.getViewManager().showView('groupsave');
-    },
-
-    doGroupSave : function() {
-        var view = this.getViewManager().getViewInstance('groupsave');
-
-        var form = view.getForm();
-
-        view.hideError();
-
-        if (form && form.getForm().isValid()) {
-
-            var values = form.getValues(),
-                    state = this.getStateManager();
-
-            if (values.groupselect) {
-                state.moveSelectionToFilter();
-            }
-
-            var isLiveFilter = values.livefilter ? true : false;
-
-            state.onMDXReady(function(mdx){
-
-                var me = this;
-
-                var saveSuccess = function(response) {
-                    var group = Ext.decode(response.responseText);
-                    me.application.fireEvent('groupsaved', group, state.getFilters(true));
-                    view.clearForm();
-                };
-
-                var saveFailure = function(response) {
-                    var json = Ext.decode(response.responseText);
-                    if (json.exception)
-                    {
-                        if (json.exception.indexOf('There is already a group named') > -1 ||
-                                json.exception.indexOf('duplicate key value violates') > -1)
-                        {
-                            // custom error response for invalid name
-                            view.showError('The name you have chosen is already in use; please choose a different name.');
-                        }
-                        else
-                            view.showError(json.exception);
-                    }
-                    else
-                    {
-                        Ext.Msg.alert('Failed to Save', response.responseText);
-                    }
-                };
-
-                LABKEY.app.controller.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
-                    label: values.groupname,
-                    description: values.groupdescription,
-                    filters: state.getFlatFilters(),
-                    isLive: isLiveFilter
-                });
-
-            }, this);
-        }
     },
 
     onGroupSaved : function(grp, filters) {

@@ -25,6 +25,7 @@ Ext.define('Connector.view.Selection', {
             //
             // hook events for item close
             //
+            XX = v;
             var closes = v.getEl().select('.closeitem');
             if (closes && Ext.isArray(closes.elements)) {
                 closes = closes.elements;

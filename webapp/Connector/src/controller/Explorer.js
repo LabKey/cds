@@ -80,7 +80,7 @@ Ext.define('Connector.controller.Explorer', {
                 return;
             }
 
-            this.runSelectionAnimation(view, rec, node, this.afterSelectionAnimation);
+            this.runSelectionAnimation(view, rec, node, this.afterSelectionAnimation, this);
         }, this);
 
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
@@ -271,7 +271,7 @@ Ext.define('Connector.controller.Explorer', {
         }
     },
 
-    runSelectionAnimation : function(view, rec, node, callback) {
+    runSelectionAnimation : function(view, rec, node, callback, scope) {
 
         this.allowHover = false;
         var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[0]).getBox(),
@@ -311,7 +311,7 @@ Ext.define('Connector.controller.Explorer', {
         });
 
         if (callback) {
-            var task = new Ext.util.DelayedTask(callback, this, [view, rec, node]);
+            var task = new Ext.util.DelayedTask(callback, scope, [view, rec, node]);
             task.delay(500);
         }
     },

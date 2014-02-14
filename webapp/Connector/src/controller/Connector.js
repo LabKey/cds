@@ -82,8 +82,9 @@ Ext.define('Connector.controller.Connector', {
             this.viewMap[xtype] = this.createView(xtype, context);
         }
 
-        this.getEast().add(this.viewMap[xtype]);
-        this.getEast().setActiveTab(this.viewMap[xtype]);
+        var p = this.viewMap[xtype];
+        this.getEast().add(p);
+        this.getEast().setActiveTab(p);
     },
 
     showNotFound : function() {

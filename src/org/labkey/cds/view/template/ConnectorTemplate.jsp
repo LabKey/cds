@@ -271,6 +271,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
