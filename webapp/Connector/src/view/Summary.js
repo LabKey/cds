@@ -92,26 +92,9 @@ Ext.define('Connector.view.Summary', {
 
         if (this.isVisible()) {
             this.refresh();
-            if (this.groupPreview && f.length == 0) {
-                this.groupPreview.hide();
-            }
         }
         else {
             this.refreshRequired = true;
-        }
-    },
-
-    showPreview : function(groupRecord) {
-        if (!this.groupPreview) {
-            this.groupPreview = Ext.create('Connector.view.GroupPreview', {
-                group : groupRecord,
-                ui    : 'custom'
-            });
-            this.insert(0, this.groupPreview);
-        }
-        else {
-            this.groupPreview.setGroup(groupRecord);
-            this.groupPreview.show();
         }
     },
 

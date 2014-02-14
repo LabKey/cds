@@ -66,7 +66,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.FilterSave": "../../../../webapp/Connector/src/view/FilterSave.js",
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
-  "Connector.view.GroupPreview": "../../../../webapp/Connector/src/view/GroupPreview.js",
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
@@ -164,7 +163,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.FilterSave": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.GroupListView": [],
-  "Connector.view.GroupPreview": [],
   "Connector.view.GroupSave": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
@@ -1106,9 +1104,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
-  ],
-  "Connector.view.GroupPreview": [
-    "widget.grouppreview"
   ],
   "Connector.view.GroupSave": [
     "widget.groupsave"

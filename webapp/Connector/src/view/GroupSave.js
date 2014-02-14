@@ -68,100 +68,34 @@ Ext.define('Connector.view.GroupSave', {
             this.createGroup = Ext.create('Ext.Container', {
                 hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
                 activeMode: Connector.view.GroupSave.modes.CREATE,
-                items: [
-                    {
-                        itemId: 'creategroupform',
-                        xtype: 'form',
-                        ui: 'custom',
-                        width: '100%',
-                        defaults: {
-                            width: '100%'
-                        },
-                        items: [{
-                            xtype: 'textfield',
-                            name: 'groupname',
-                            emptyText: 'Enter a group name',
-                            height: 30,
-                            allowBlank: false
-                        },{
-                            xtype: 'textareafield',
-                            name: 'groupdescription',
-                            emptyText: 'Group description'
-                        },{
-                            xtype: 'radiogroup',
-                            columns: 1,
-                            allowBlank: false,
-                            items: [
-                                { boxLabel: 'Live Filters: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
-                                { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
-                            ]
-                        }]
+                items: [{
+                    itemId: 'creategroupform',
+                    xtype: 'form',
+                    ui: 'custom',
+                    width: '100%',
+                    defaults: {
+                        width: '100%'
                     },
-//                    {
-//                        xtype: 'box',
-//                        itemId: 'create-form',
-//                        id: 'creategroupform', // used to identify this form for validation
-//                        autoEl: {
-//                            tag: 'form',
-//                            children: [{
-//                                tag: 'input',
-//                                cls: 'group-groupname',
-//                                id: 'groupname',
-//                                name: 'groupname',
-//                                type: 'text',
-//                                placeholder: 'Enter a group name',
-//                                style: 'height: 30px; font-size: 11pt; border: 2px solid lightgrey; font-family: Arial; padding: 0 5px; width: 100%; margin-top: 4px;'
-//                            },{
-//                                tag: 'textarea',
-//                                id: 'groupdescription',
-//                                name: 'groupdescription',
-//                                placeholder: 'Group description',
-//                                style: 'height: 90px; font-size: 11pt; border: 2px solid lightgrey; font-family: Arial; padding: 3px 5px; width: 100%; border-image: none; margin-top: 4px;'
-//                            },{
-//                                tag: 'table',
-//                                cls: 'group-filtertype',
-//                                style: 'margin-top: 4px;',
-//                                children: [{
-//                                    tag: 'tr',
-//                                    children: [{
-//                                        tag: 'td',
-//                                        children: [{
-//                                            tag: 'input',
-////                                        id: 'livefilter',
-//                                            type: 'radio',
-//                                            name: 'groupselect',
-//                                            value: 'live',
-//                                            style: 'vertical-align: middle;'
-//                                        },{
-//                                            tag: 'label',
-//                                            style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
-//                                            'for': 'livefilter',
-//                                            html: 'Live Filters: Update group with new data'
-//                                        }]
-//                                    }]
-//                                },{
-//                                    tag: 'tr',
-//                                    children: [{
-//                                        tag: 'td',
-//                                        children: [{
-//                                            tag: 'input',
-////                                        id: 'staticfilter',
-//                                            type: 'radio',
-//                                            name: 'groupselect',
-//                                            value: 'static',
-//                                            style: 'vertical-align: middle;'
-//                                        },{
-//                                            tag: 'label',
-//                                            style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
-//                                            'for': 'staticfilter',
-//                                            html: 'Snapshot: Keep this group static'
-//                                        }]
-//                                    }]
-//                                }]
-//                            }]
-//                        }
-//                    }
-                {
+                    items: [{
+                        xtype: 'textfield',
+                        name: 'groupname',
+                        emptyText: 'Enter a group name',
+                        height: 30,
+                        allowBlank: false
+                    },{
+                        xtype: 'textareafield',
+                        name: 'groupdescription',
+                        emptyText: 'Group description'
+                    },{
+                        xtype: 'radiogroup',
+                        columns: 1,
+                        allowBlank: false,
+                        items: [
+                            { boxLabel: 'Live Filters: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
+                            { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
+                        ]
+                    }]
+                },{
                     xtype: 'box',
                     autoEl: {
                         tag: 'div',
@@ -206,64 +140,26 @@ Ext.define('Connector.view.GroupSave', {
                 hidden: this.mode !== Connector.view.GroupSave.modes.REPLACE,
                 activeMode: Connector.view.GroupSave.modes.REPLACE,
                 items: [{
-                    xtype : 'box',
-                    autoEl: {
-                        tag: 'div',
-                        style: 'color: red; text-transform: uppercase;',
-                        html: 'Replace Group is Not Yet Implemented'
-                    }
-                },{
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'form',
-                        children: [{
-                            tag: 'textarea',
-                            name: 'groupdescription',
-                            placeholder: 'Group description',
-                            style: 'height: 90px; font-size: 11pt; border: 2px solid lightgrey; font-family: Arial; padding: 3px 5px; width: 100%; border-image: none; margin-top: 4px;'
-                        },{
-                            tag: 'table',
-                            cls: 'group-filtertype',
-                            style: 'margin-top: 4px;',
-                            children: [{
-                                tag: 'tr',
-                                children: [{
-                                    tag: 'td',
-                                    children: [{
-                                        tag: 'input',
-                                        id: 'livefilter',
-                                        type: 'radio',
-                                        name: 'groupselect',
-                                        value: 'live',
-                                        style: 'vertical-align: middle;'
-                                    },{
-                                        tag: 'label',
-                                        style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
-                                        'for': 'livefilter',
-                                        html: 'Live Filters: Update group with new data'
-                                    }]
-                                }]
-                            },{
-                                tag: 'tr',
-                                children: [{
-                                    tag: 'td',
-                                    children: [{
-                                        tag: 'input',
-                                        id: 'staticfilter',
-                                        type: 'radio',
-                                        name: 'groupselect',
-                                        value: 'static',
-                                        style: 'vertical-align: middle;'
-                                    },{
-                                        tag: 'label',
-                                        style: 'font-family: Arial; font-size: 10pt; padding-left: 4px;',
-                                        'for': 'staticfilter',
-                                        html: 'Snapshot: Keep this group static'
-                                    }]
-                                }]
-                            }]
-                        }]
-                    }
+                    itemId: 'creategroupform',
+                    xtype: 'form',
+                    ui: 'custom',
+                    width: '100%',
+                    defaults: {
+                        width: '100%'
+                    },
+                    items: [{
+                        xtype: 'textareafield',
+                        name: 'groupdescription',
+                        emptyText: 'Group description'
+                    },{
+                        xtype: 'radiogroup',
+                        columns: 1,
+                        allowBlank: false,
+                        items: [
+                            { boxLabel: 'Live Filters: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
+                            { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
+                        ]
+                    }]
                 },{
                     xtype: 'box',
                     autoEl: {
@@ -279,23 +175,23 @@ Ext.define('Connector.view.GroupSave', {
                     text: 'create a new group',
                     handler: function() { this.changeMode(Connector.view.GroupSave.modes.CREATE); },
                     scope: this
-                }
-//                    ,{
-//                        xtype: 'toolbar',
-//                        dock: 'bottom',
-//                        ui: 'footer',
-//                        style: 'padding-top: 60px',
-//                        items: ['->',{
-//                            text: 'save',
-//                            itemId: 'dogroupsave',
-//                            ui: 'rounded-inverted-accent'
-//                        },{
-//                            text: 'cancel',
-//                            itemId: 'cancelgroupsave',
-//                            ui: 'rounded-inverted-accent'
-//                        }]
-//                    }
-                ],
+                },{
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    ui: 'footer',
+                    style: 'padding-top: 60px',
+                    items: ['->',{
+                        text: 'save',
+                        itemId: 'dogroupsave',
+                        cls: 'groupupdatesave', // tests
+                        ui: 'rounded-inverted-accent'
+                    },{
+                        text: 'cancel',
+                        itemId: 'cancelgroupsave',
+                        cls: 'groupupdatecancel', // tests
+                        ui: 'rounded-inverted-accent'
+                    }]
+                }],
                 scope: this
             });
         }
