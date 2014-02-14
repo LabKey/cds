@@ -204,6 +204,8 @@ Ext.define('Connector.view.Scatter', {
 
     initPlot : function(config, noplot) {
         var rows = config.rows;
+        // Below vars needed for brush and mouse event handlers.
+        var isBrushed = false, plot;
 
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
@@ -232,7 +234,74 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 yLeft: function(row){return row.y},
                 hoverText : function(row) {
+                    // TODO: figure out how to display subject id.
                     return '' + row.xname + ': ' + row.x + ', ' + row.yname + ': ' + row.y;
+                },
+                mouseOverFn: function(event, pointData, layerSel){
+                    if (!isBrushed) {
+                        var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+
+                        if (plot.scales.color && plot.scales.color.scale) {
+                            colorScale = plot.scales.color.scale;
+                            colorAcc = plot.aes.color;
+                        }
+
+                        colorFn = function(d) {
+                            if (d.subjectId.value === pointData.subjectId.value) {
+                                return '#01BFC2';
+                            } else {
+                                if (colorScale && colorAcc) {
+                                    return colorScale(colorAcc.getValue(d));
+                                }
+
+                                return '#000000';
+                            }
+                        };
+
+                        strokeFn = function(d) {
+                            if (d.subjectId.value === pointData.subjectId.value) {
+                                return '#01BFC2';
+                            } else {
+                                if (colorScale && colorAcc) {
+                                    return colorScale(colorAcc.getValue(d));
+                                }
+
+                                return '#000000';
+                            }
+                        };
+
+                        opacityFn = function(d) {
+                            return  d.subjectId.value === pointData.subjectId.value ? 1 : .5;
+                        };
+
+                        layerSel.selectAll('.point path').attr('fill', colorFn)
+                                .attr('stroke', strokeFn)
+                                .attr('fill-opacity', opacityFn)
+                                .attr('stroke-opacity', opacityFn);
+                    }
+                },
+                mouseOutFn: function(event, pointData, layerSel){
+                    if (!isBrushed) {
+                        var colorFn, colorScale = null, colorAcc = null;
+
+                        if (plot.scales.color && plot.scales.color.scale) {
+                            colorScale = plot.scales.color.scale;
+                            colorAcc = plot.aes.color;
+                        }
+
+                        colorFn = function(d) {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        };
+
+                        layerSel.selectAll('.point path').attr('fill', colorFn)
+                                .attr('stroke', colorFn)
+                                .attr('fill-opacity', .5)
+                                .attr('stroke-opacity', .5);
+                    }
                 }
             }
         });
@@ -264,8 +333,8 @@ Ext.define('Connector.view.Scatter', {
         var scales = {};
         if (noplot) {
             scales.x = scales.yLeft = {
-                scaleType: 'discrete',
-                domain: ['10', '20', '30', '40', '50', '60', '70', '80', '90']
+                scaleType: 'continuous',
+                domain: [0, 100]
             };
         }
         else {
@@ -295,6 +364,58 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 x: function(row){return row.x;}
             },
+            brushing: {
+                brushstart: function(event, data, extent, layerSelections){
+                    isBrushed = true;
+                },
+                brush: function(event, layerData, extent, layerSelections){
+                    var sel = layerSelections[0]; // We only have one layer, so grab the first one.
+                    var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+
+                    if (plot.scales.color && plot.scales.color.scale) {
+                        colorScale = plot.scales.color.scale;
+                        colorAcc = plot.aes.color;
+                    }
+
+                    colorFn = function(d) {
+                        var x = d.x, y = d.y;
+                        d.isSelected = (x > extent[0][0] && x < extent[1][0] && y > extent[0][1] && y < extent[1][1]);
+                        if (d.isSelected) {
+                            return '#14C9CC';
+                        } else {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        }
+                    };
+
+                    strokeFn = function(d) {
+                        if (d.isSelected) {
+                            return '#00393A';
+                        } else {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        }
+                    };
+
+                    opacityFn = function(d) {
+                        return d.isSelected ? 1 : .5;
+                    };
+
+                    sel.selectAll('.point path').attr('fill', colorFn)
+                            .attr('stroke', strokeFn)
+                            .attr('fill-opacity', opacityFn)
+                            .attr('stroke-opacity', opacityFn);
+                },
+                brushclear: function(event, data, layerSelections){
+                    isBrushed = false;
+                }
+            },
             bgColor   : '#F0F0F0', // see $light-color in connector.scss
             gridColor : '#FFFFFF',
             gridLineColor : '#FFFFFF',
@@ -307,6 +428,8 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
+        plot = this.plot;
+
         if (this.plot) {
             this.plot.addLayer(pointLayer);
             try
@@ -479,7 +602,8 @@ Ext.define('Connector.view.Scatter', {
             x : null,
             xname : 'X-Axis',
             y : null,
-            yname : 'Y-Axis'
+            yname : 'Y-Axis',
+            subjectId: null
         }];
 
         this.initPlot({rows:map}, true);
@@ -499,6 +623,11 @@ Ext.define('Connector.view.Scatter', {
 
         var x = this.measures[0], y = this.measures[1];
 
+        // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
+        // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
+        // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
+        var subjectNoun = LABKEY.moduleContext.study.subject.columnName;
+        var subjectColumn = data.measureToColumn[subjectNoun];
         var xa = {
             schema : x.schemaName,
             query  : x.queryName,
@@ -554,6 +683,7 @@ Ext.define('Connector.view.Scatter', {
                 map.push({
                     x : x,
                     y : y,
+                    subjectId: rows[r][subjectColumn],
                     xname : xa.label,
                     yname : ya.label
                 });
