@@ -13,6 +13,8 @@ Ext.define('Connector.panel.Selection', {
 
     title: 'Current Selection',
 
+    showEmptyText: false,
+
     initHeader : function() {
 
         // title

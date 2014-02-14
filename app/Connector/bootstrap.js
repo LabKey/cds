@@ -30,6 +30,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Connector": "../../webapp/Connector/src/controller/Connector.js",
   "Connector.controller.Explorer": "../../webapp/Connector/src/controller/Explorer.js",
   "Connector.controller.FilterStatus": "../../webapp/Connector/src/controller/FilterStatus.js",
+  "Connector.controller.Group": "../../webapp/Connector/src/controller/Group.js",
   "Connector.controller.Home": "../../webapp/Connector/src/controller/Home.js",
   "Connector.controller.Learn": "../../webapp/Connector/src/controller/Learn.js",
   "Connector.controller.Main": "../../webapp/Connector/src/controller/Main.js",
@@ -63,13 +64,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterSave": "../../webapp/Connector/src/view/FilterSave.js",
-  "Connector.view.FilterSelection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.FilterStatus": "../../webapp/Connector/src/view/FilterStatus.js",
-  "Connector.view.GridSelection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.GroupListView": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupPreview": "../../webapp/Connector/src/view/GroupPreview.js",
   "Connector.view.GroupSave": "../../webapp/Connector/src/view/GroupSave.js",
-  "Connector.view.GroupSelection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.Header": "../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeBody": "../../webapp/Connector/src/view/Home.js",
@@ -130,6 +128,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Connector": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
+  "Connector.controller.Group": [],
   "Connector.controller.Home": [],
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
@@ -163,13 +162,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
   "Connector.view.FilterSave": [],
-  "Connector.view.FilterSelection": [],
   "Connector.view.FilterStatus": [],
-  "Connector.view.GridSelection": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupPreview": [],
   "Connector.view.GroupSave": [],
-  "Connector.view.GroupSelection": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
   "Connector.view.HomeBody": [],
@@ -1049,6 +1045,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Connector": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
+  "Connector.controller.Group": [],
   "Connector.controller.Home": [],
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
@@ -1104,14 +1101,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.FilterSave": [
     "widget.filtersave"
   ],
-  "Connector.view.FilterSelection": [
-    "widget.filterselection"
-  ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"
-  ],
-  "Connector.view.GridSelection": [
-    "widget.grpselectionview"
   ],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
@@ -1121,9 +1112,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.GroupSave": [
     "widget.groupsave"
-  ],
-  "Connector.view.GroupSelection": [
-    "widget.grpselectionview"
   ],
   "Connector.view.Header": [
     "widget.connectorheader"

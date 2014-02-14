@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,9 +28,7 @@ import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
-import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4HelperWD;
-import org.labkey.test.util.JSONHelper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PostgresOnlyTest;
@@ -40,13 +39,13 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * User: t.chadick
@@ -439,12 +438,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         selectBars(LABS[1], LABS[2]);
         assertFilterStatusCounts(12, 1, 3, 2, 8);
         useSelectionAsFilter();
-        click(cdsButtonLocator("save"));
-        waitForText("Selection and Active Filters (12)");
-        waitForText("Only Active Filters (12)");
-        setFormElement(Locator.name("groupname"), GROUP_NAME);
-        setFormElement(Locator.name("groupdescription"), GROUP_DESC);
-        click(cdsButtonLocator("Save"));
+        saveGroup(GROUP_NAME, GROUP_DESC);
         waitForElementToDisappear(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
         waitForElement(filterMemberLocator(GROUP_NAME), WAIT_FOR_JAVASCRIPT);
         assertFilterStatusCounts(12, 1, 3, 2, 8);
@@ -463,9 +457,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         mouseOver(Locator.css("option").withText("OR"));
 
         WebElement selector = Locator.css("select").findElement(getDriver());
-//        if (!selector.isDisplayed()) // Workaround for FirefoxDriver not working with :hover pseudoclass
-//            executeScript("arguments[0].setAttribute('class', '');", Locator.css("div.opselect").findElement(getDriver()));
-
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
         assertFilterStatusCounts(0, 0, 0, 0, 0); // and
@@ -474,11 +465,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(0, 0, 0, 0, 0); // and
 
         selector = Locator.css("select").findElement(getDriver());
-//        mouseOver(Locator.css("body"));
         waitForElement(Locator.css("option").withText("AND"));
         mouseOver(Locator.css("option").withText("AND"));
-//        if (!selector.isDisplayed()) // Workaround for FirefoxDriver not working with :hover pseudoclass
-//            executeScript("arguments[0].setAttribute('class', '');", Locator.css("div.opselect").findElement(getDriver()));
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
@@ -515,31 +503,25 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         pickCDSSort("Sex");
         selectBars("f");
 
-        click(cdsButtonLocator("save"));
-        //        waitForText("Selection and Active Filters");
-        waitForText("Selection and Active Filters (4)");
-        assertTextPresent("Only Active Filters (6)");
-        click(Locator.css(".withSelectionRadio input"));
+        // save the group and request cancel
+        click(cdsButtonLocator("save", "filtersave"));
+        waitForText("Live Filters: Update group with new data");
+        waitForText("replace an existing group");
+//        click(Locator.css(".withSelectionRadio input"));
         setFormElement(Locator.name("groupname"), GROUP_NULL);
-        click(cdsButtonLocator("Cancel"));
+        click(cdsButtonLocator("cancel", "cancelgroupsave"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
         selectBars("f");
-        click(cdsButtonLocator("save"));
-        waitForText("Selection and Active Filters (4)");
-        assertTextPresent("Only Active Filters (6)");
-        click(Locator.css(".filterOnlyRadio input"));
-        setFormElement(Locator.name("groupname"), GROUP_NAME2);
-        click(cdsButtonLocator("Save"));
+
+        // save the group and request save
+        saveGroup(GROUP_NAME2, null);
         waitForElement(filterMemberLocator(GROUP_NAME2), WAIT_FOR_JAVASCRIPT);
 
         selectBars("f");
-        click(cdsButtonLocator("save"));
-        waitForText("Selection and Active Filters (4)");
-        assertTextPresent("Only Active Filters (6)");
-        click(Locator.css(".withSelectionRadio input"));
-        setFormElement(Locator.name("groupname"), GROUP_NAME3);
-        click(cdsButtonLocator("Save"));
+
+        // save a group with an interior group
+        saveGroup(GROUP_NAME3, null);
         waitForElement(filterMemberLocator(GROUP_NAME3), WAIT_FOR_JAVASCRIPT);
 
         // saved filter without including current selection (should be the same as initial group)
@@ -607,21 +589,59 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertVaccineTypeInfoPage("VRC-HIVDNA016-00-VP", "VRC-HIVDNA016-00-VP is manufactured by Vical Incorporated");
     }
 
-    private void verifyAssayInfo(AssayDetailsPage assay)
+    @Test
+    public void testLearnAboutStudies()
     {
-        viewInfo(assay.getAssayName());
-        assay.assertAssayInfoPage();
-        closeInfoPage();
+        viewLearnAboutPage("Studies");
+
+        List<String> studies = Arrays.asList("Demo Study", "Not Actually CHAVI 001", "NotRV144");
+        verifyLearnAboutPage(studies);
     }
 
-    //getText(Locator.css("svg")) on Chrome
-    private static final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400\nLab Results: CD4\nLab Results: Lymphocytes";
-    private static final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300\nLab Results: Hemoglobin\nLab Results: CD4";
-    private static final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100\nPhysical Exam: Pulse\nPhysical Exam: Weight Kg";
+    @Test
+    public void testLearnAboutAssays()
+    {
+        viewLearnAboutPage("Assays");
+
+        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
+        verifyLearnAboutPage(assays);
+    }
+
+    @Test
+    public void testLearnAboutStudyProducts()
+    {
+        viewLearnAboutPage("Study Products");
+
+        List<String> studyProducts = Arrays.asList("VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
+        verifyLearnAboutPage(studyProducts);
+    }
+
+    @Test
+    public void testLearnAboutLabs()
+    {
+        viewLearnAboutPage("Labs");
+
+        List<String> labs = Arrays.asList("Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab");
+        verifyLearnAboutPage(labs);
+    }
+
+    @Test
+    public void testLearnAboutSites()
+    {
+        viewLearnAboutPage("Sites");
+
+        List<String> sites = Collections.emptyList();
+        verifyLearnAboutPage(sites);
+    }
 
     @Test
     public void verifyScatterPlot()
     {
+        //getText(Locator.css("svg")) on Chrome
+        final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400\nLab Results: CD4\nLab Results: Lymphocytes";
+        final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300\nLab Results: Hemoglobin\nLab Results: CD4";
+        final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100\nPhysical Exam: Pulse\nPhysical Exam: Weight Kg";
+
         clickBy("Studies");
 
         String X_AXIS_BUTTON_TEXT = "\u25b2";
@@ -741,40 +761,118 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
     }
 
-    private List<String> _descriptions = new ArrayList<>();
-    private List<String> _states = new ArrayList<>();
-
-    @LogMethod
-    public void verifyFeedback()
+    @Test
+    @Ignore("Multi-noun details for antigens NYI")
+    public void testMultiAntigenInfoPage()
     {
-        JSONHelper stateChecker = new JSONHelper(this, new Pattern[]{Pattern.compile("internalId", Pattern.CASE_INSENSITIVE),Pattern.compile("appVersion", Pattern.CASE_INSENSITIVE)});
-        goToHome();
-        goToProjectHome();
-        goToSchemaBrowser();
-        selectQuery("CDS", "feedback");
-        waitAndClick(Locator.linkWithText("view data"));
+        viewLearnAboutPage("Antigens");
 
-        waitForElement(Locator.id("dataregion_query"));
-        DataRegionTable feedbackTable = new DataRegionTable("query", this, true, true);
-        assertEquals("Unexpected number of rows", _states.size(), feedbackTable.getDataRowCount());
+        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
+        assertElementPresent(Locator.tagWithClass("div", "detail-container"), assays.size());
+
+        for (String assay : assays)
+        {
+            assertElementPresent(Locator.tagWithClass("div", "study-description").append(Locator.tag("h2").withText(assay)));
+        }
+
+        // just do simple checks for the placeholder noun pages for now, layout will change so there is no use
+        // investing too much automation right now.
+        List<String> labels = Arrays.asList("96ZM651.02", "CAP210.2.00.E8", "BaL.01",
+                "Zambia", "S. Africa", "USA",
+                "AF286224", "DQ435683", "AF063223");
+        waitForText(labels.get(0));
+        assertTextPresent(labels);
+
+        closeInfoPage();
     }
 
-    @LogMethod
-    private void addFeedback(String feedback, String stateJSON)
+    @Test
+    @Ignore("Needs to be implemented without side-effects")
+    public void verifyLiveFilterGroups()
     {
-        String description = "Test feedback - " + feedback;
-        click(Locator.name("description"));
-        waitForElement(Locator.xpath("//textarea[@name='description']")); //expand
-        setFormElement(Locator.name("description"), description, false); // setFormElement fires events that throw off the flow.
-        if (findButton("Thank You!") != null)
-            fireEvent(findButton("Thank You!"), SeleniumEvent.mouseout);
-        waitForText("Submit");
-        clickButton("Submit", 0);
-        fireEvent(Locator.name("description"), SeleniumEvent.blur);
-        waitForElement(Locator.xpath("//textarea[@name='description' and contains(@class, 'x-form-empty-field')]")); //shrink
+        String[] liveGroupMembersBefore = new String[]{
+                "1",
+                "102", "103", "105",
+                "3006", "3007", "3008", "3009", "3012",
+                "249320489", "249325717"};
 
-        _descriptions.add(description);
-        _states.add(stateJSON);
+        String[] liveGroupMembersAfter = new String[] {
+                "1",
+                "249320489", "249325717"};
+
+        String[] excludedMembers = new String[]{
+                "102", "103", "105",
+                "3006", "3007", "3008", "3009", "3012"};
+
+        int participantCount = liveGroupMembersBefore.length;
+
+        // exit the app and verify no live filter groups exist
+        beginAt("/cds/" + getProjectName() + "/begin.view?");
+        updateParticipantGroups();
+
+        // use this search method to only search body text instead of html source
+        assertTextPresentInThisOrder("No Participant Groups with Live Filters were defined.");
+
+        // create two groups one that is a live filter and one that is not
+        enterApplication();
+        goToAppHome();
+
+        // create live filter group
+        clickBy("Subjects");
+        pickCDSSort("Race");
+        selectBars("White");
+        useSelectionAsFilter();
+        click(cdsButtonLocator("save", "filtersave"));
+        waitForText("Live Filters: Update group with new data");
+        waitForText("replace an existing group");
+        setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
+        click(Locator.radioButtonByNameAndValue("groupselect", "live"));
+        click(cdsButtonLocator("save", "groupcreatesave"));
+        waitForElement(filterMemberLocator(GROUP_LIVE_FILTER), WAIT_FOR_JAVASCRIPT);
+
+        // create static filter group
+        click(cdsButtonLocator("save", "filtersave"));
+        waitForText("Live Filters: Update group with new data");
+        waitForText("replace an existing group");
+        setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
+        click(Locator.radioButtonByNameAndValue("groupselect", "live"));
+        click(cdsButtonLocator("save", "groupcreatesave"));
+        waitForElement(filterMemberLocator(GROUP_STATIC_FILTER), WAIT_FOR_JAVASCRIPT);
+
+        // exit the app and verify
+        beginAt("/cds/" + getProjectName() + "/begin.view?");
+        updateParticipantGroups();
+        waitForText(GROUP_LIVE_FILTER + " now has participants:");
+        verifyParticipantIdsOnPage(liveGroupMembersBefore, null);
+        assertTextNotPresent(GROUP_STATIC_FILTER);
+
+        // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
+        updateParticipantGroups("NAb", "Lab Results", "ADCC");
+        waitForText(GROUP_LIVE_FILTER + " now has participants:");
+        assertTextNotPresent(GROUP_STATIC_FILTER);
+        verifyParticipantIdsOnPage(liveGroupMembersAfter, excludedMembers);
+
+        // verify that our static group still ha the original members in it now
+        clickTab("Manage");
+        clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
+        verifyParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
+        verifyParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
+    }
+
+    private void verifyAssayInfo(AssayDetailsPage assay)
+    {
+        viewInfo(assay.getAssayName());
+        assay.assertAssayInfoPage();
+        closeInfoPage();
+    }
+
+    private void verifyLearnAboutPage(List<String> axisItems)
+    {
+        for (String item : axisItems)
+        {
+            waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+        }
+        assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
     }
 
     @LogMethod(quiet = true)
@@ -817,6 +915,17 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
                 return !"0px".equals(width1) && width1.equals(width2);
             }
         }, "Bar didn't stop animating: " + barLabel, WAIT_FOR_JAVASCRIPT);
+    }
+
+    private void saveGroup(String name, @Nullable String description)
+    {
+        click(cdsButtonLocator("save", "filtersave"));
+        waitForText("Live Filters: Update group with new data");
+        waitForText("replace an existing group");
+        setFormElement(Locator.name("groupname"), name);
+        if (null != description)
+            setFormElement(Locator.name("groupdescription"), description);
+        click(cdsButtonLocator("save", "groupcreatesave"));
     }
 
     private void selectBarsHelper(boolean isShift, String...bars)
@@ -875,7 +984,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void clearFilter()
     {
-        click(cdsButtonLocator("clear"));
+        click(cdsButtonLocator("clear", "filterclear"));
         waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
 
@@ -887,8 +996,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void clearSelection()
     {
-        Locator.XPathLocator panel = Locator.tagWithClass("div", "selectionpanel");
-        click(panel.append(cdsButtonLocator("clear")));
+        click(cdsButtonLocator("clear", "selectionclear"));
         waitForClearSelection();
     }
 
@@ -906,6 +1014,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private Locator.XPathLocator cdsButtonLocator(String text)
     {
         return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+    }
+
+    private Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
+    {
+        return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
     }
 
     private Locator.XPathLocator filterMemberLocator()
@@ -1160,156 +1273,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         closeInfoPage();
         waitForBarToAnimate(noun);
     }
-
-    @Test
-    public void testLearnAboutStudies()
-    {
-        viewLearnAboutPage("Studies");
-
-        List<String> studies = Arrays.asList("Demo Study", "Not Actually CHAVI 001", "NotRV144");
-        verifyLearnAboutPage(studies);
-    }
-
-    @Test
-    public void testLearnAboutAssays()
-    {
-        viewLearnAboutPage("Assays");
-
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
-        verifyLearnAboutPage(assays);
-    }
-
-    @Test
-    public void testLearnAboutStudyProducts()
-    {
-        viewLearnAboutPage("Study Products");
-
-        List<String> studyProducts = Arrays.asList("VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
-        verifyLearnAboutPage(studyProducts);
-    }
-
-    @Test
-    public void testLearnAboutLabs()
-    {
-        viewLearnAboutPage("Labs");
-
-        List<String> labs = Arrays.asList("Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab");
-        verifyLearnAboutPage(labs);
-    }
-
-    @Test
-    public void testLearnAboutSites()
-    {
-        viewLearnAboutPage("Sites");
-
-        List<String> sites = Collections.emptyList();
-        verifyLearnAboutPage(sites);
-    }
-
-    private void verifyLearnAboutPage(List<String> axisItems)
-    {
-        for (String item : axisItems)
-        {
-            waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
-        }
-        assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
-    }
-
-    @Test
-    @Ignore("Multi-noun details for antigens NYI")
-    public void testMultiAntigenInfoPage()
-    {
-        viewLearnAboutPage("Antigens");
-
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
-        assertElementPresent(Locator.tagWithClass("div", "detail-container"), assays.size());
-
-        for (String assay : assays)
-        {
-            assertElementPresent(Locator.tagWithClass("div", "study-description").append(Locator.tag("h2").withText(assay)));
-        }
-
-        // just do simple checks for the placeholder noun pages for now, layout will change so there is no use
-        // investing too much automation right now.
-        List<String> labels = Arrays.asList("96ZM651.02", "CAP210.2.00.E8", "BaL.01",
-                "Zambia", "S. Africa", "USA",
-                "AF286224", "DQ435683", "AF063223");
-        waitForText(labels.get(0));
-        assertTextPresent(labels);
-
-        closeInfoPage();
-    }
-
-    @Test
-    @Ignore("Needs to be implemented without side-effects")
-    public void verifyLiveFilterGroups()
-    {
-        String[] liveGroupMembersBefore = new String[]{
-            "1",
-            "102", "103", "105",
-            "3006", "3007", "3008", "3009", "3012",
-            "249320489", "249325717"};
-
-        String[] liveGroupMembersAfter = new String[] {
-            "1",
-            "249320489", "249325717"};
-
-        String[] excludedMembers = new String[]{
-            "102", "103", "105",
-            "3006", "3007", "3008", "3009", "3012"};
-
-        int participantCount = liveGroupMembersBefore.length;
-
-        // exit the app and verify no live filter groups exist
-        beginAt("/cds/" + getProjectName() + "/begin.view?");
-        updateParticipantGroups();
-
-        // use this search method to only search body text instead of html source
-        assertTextPresentInThisOrder("No Participant Groups with Live Filters were defined.");
-
-        // create two groups one that is a live filter and one that is not
-        enterApplication();
-        goToAppHome();
-
-        // create live filter group
-        clickBy("Subjects");
-        pickCDSSort("Race");
-        selectBars("White");
-        useSelectionAsFilter();
-        click(cdsButtonLocator("save"));
-        waitForText("Selection and Active Filters (" + String.valueOf(participantCount) + ")");
-        click(Locator.css(".liveFilterCheckbox input"));
-        setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
-        click(cdsButtonLocator("Save"));
-        waitForElement(filterMemberLocator(GROUP_LIVE_FILTER), WAIT_FOR_JAVASCRIPT);
-
-        // create static filter group
-        click(cdsButtonLocator("save"));
-        waitForText("Selection and Active Filters (" + String.valueOf(participantCount) + ")");
-        setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
-        click(cdsButtonLocator("Save"));
-        waitForElement(filterMemberLocator(GROUP_STATIC_FILTER), WAIT_FOR_JAVASCRIPT);
-
-        // exit the app and verify
-        beginAt("/cds/" + getProjectName() + "/begin.view?");
-        updateParticipantGroups();
-        waitForText(GROUP_LIVE_FILTER + " now has participants:");
-        verifyParticipantIdsOnPage(liveGroupMembersBefore, null);
-        assertTextNotPresent(GROUP_STATIC_FILTER);
-
-        // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
-        updateParticipantGroups("NAb", "Lab Results", "ADCC");
-        waitForText(GROUP_LIVE_FILTER + " now has participants:");
-        assertTextNotPresent(GROUP_STATIC_FILTER);
-        verifyParticipantIdsOnPage(liveGroupMembersAfter, excludedMembers);
-
-        // verify that our static group still ha the original members in it now
-        clickTab("Manage");
-        clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
-        verifyParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
-        verifyParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
-    }
-
 
     @LogMethod
     private void verifyParticipantIdsOnPage(String[] membersIncluded, String[] membersExcluded)

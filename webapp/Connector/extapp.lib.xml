@@ -76,12 +76,14 @@
         <!-- Application Views -->
         <script path="Connector/src/view/Citation.js"/>
         <script path="Connector/src/view/Compare.js"/>
+        <script path="Connector/src/view/DetailStatus.js"/>
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterSave.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/GroupPreview.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/Header.js"/>
+        <script path="Connector/src/view/Home.js"/>
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
@@ -100,6 +102,8 @@
         <script path="Connector/src/controller/Connector.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>
+        <script path="Connector/src/controller/Group.js"/>
+        <script path="Connector/src/controller/Home.js"/>
         <script path="Connector/src/controller/Learn.js"/>
         <script path="Connector/src/controller/Main.js"/>
         <script path="Connector/src/controller/Navigation.js"/>
