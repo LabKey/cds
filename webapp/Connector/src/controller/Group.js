@@ -95,7 +95,55 @@ Ext.define('Connector.controller.Group', {
 
         if (view.isValid()) {
             var values = view.getValues();
-            console.log(values);
+            var targetGroup = view.getSelectedGroup();
+
+            if (targetGroup) {
+
+                // Ensure that the filter set is up to date
+                var state = this.getStateManager();
+                state.moveSelectionToFilter();
+
+                // Update the target group
+                targetGroup.set('description', values['groupdescription']);
+                targetGroup.set('isLive', values['groupselect'] == 'live');
+
+                state.onMDXReady(function(mdx) {
+
+                    var me = this;
+
+                    //
+                    // Retrieve the listing of participants matching the current filters
+                    //
+                    mdx.queryParticipantList({
+                        useNamedFilters: ['statefilter'],
+                        success: function(cs) {
+
+                            var updateSuccess = function(group) {
+                                me.application.fireEvent('groupsaved', group, state.getFilters(true));
+                                view.reset();
+                            };
+
+                            var updateFailure = function() {
+                                alert('Failed to update Group');
+                            };
+
+                            var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
+                            var filters = targetGroup.get('filters');
+                            var description = targetGroup.get('description');
+                            var isLive = targetGroup.get('isLive');
+
+                            LABKEY.ParticipantGroup.updateParticipantGroup({
+                                rowId: targetGroup.get('id'),
+                                participantIds: ids,
+                                description: description,
+                                filters: LABKEY.app.controller.Filter.filtersToJSON(filters, isLive),
+                                success: updateSuccess,
+                                failure: updateFailure
+                            });
+                        }
+                    });
+                }, this);
+            }
         }
     },
 
@@ -109,8 +157,10 @@ Ext.define('Connector.controller.Group', {
 
     onGroupSaved : function(grp, filters) {
 
+        var name = grp.label ? grp.label : grp.category.label;
+
         var group = Ext.create('Connector.model.FilterGroup', {
-            name : grp.category.label,
+            name : name,
             filters : filters
         });
 
