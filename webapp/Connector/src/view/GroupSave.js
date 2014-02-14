@@ -257,11 +257,7 @@ Ext.define('Connector.view.GroupSave', {
                     }]
                 }],
                 listeners : {
-                    show: function(rp) {
-                        if (this.grouplist) {
-                            this.grouplist.getStore().load();
-                        }
-                    },
+                    show: this.refresh,
                     scope: this
                 },
                 scope: this
@@ -320,7 +316,25 @@ Ext.define('Connector.view.GroupSave', {
         return active.getComponent('creategroupform');
     },
 
-    reset : function() {
+    refresh : function() {
+        if (this.grouplist) {
+            this.grouplist.getSelectionModel().deselectAll();
+            this.grouplist.getStore().load();
+        }
+    },
+
+    getSelectedGroup : function() {
+        var grp;
+        if (this.grouplist) {
+            var selections = this.grouplist.getSelectionModel().getSelection();
+            if (Ext.isArray(selections) && selections.length > 0) {
+                grp = Connector.model.FilterGroup.fromCohortGroup(selections[0]);
+            }
+        }
+        return grp;
+    },
+
+    clear : function() {
         var form = this.getCreateGroup().getComponent('creategroupform');
         if (form) {
             form.getForm().reset();
@@ -329,6 +343,10 @@ Ext.define('Connector.view.GroupSave', {
         if (form) {
             form.getForm().reset();
         }
+    },
+
+    reset : function() {
+        this.clear();
         this.changeMode(Connector.view.GroupSave.modes.CREATE);
     },
 

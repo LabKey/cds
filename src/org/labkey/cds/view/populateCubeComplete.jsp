@@ -91,10 +91,9 @@
                     {
                         cube.onReady(function(mdx)
                         {
-                            //var filterStatus = Ext.create('Connector.controller.FilterStatus');
-                            for (var i = 0; i < groups.length; i++)
-                                //filterStatus.doGroupUpdate(mdx, groups[i], onGroupUpdate);
-                                LABKEY.app.controller.Filter.doGroupUpdate(mdx, groups[i], onGroupUpdate);
+                            for (var i = 0; i < groups.length; i++) {
+                                LABKEY.app.controller.Filter.doGroupUpdate(mdx, onGroupUpdate, null, groups[i]);
+                            }
                         }, this);
                     }
                 }
