@@ -20,7 +20,9 @@ Ext.define('Connector.controller.Home', {
                     filters: filters
                 });
 
-                this.getStateManager().addFilters([group]);
+                var pruned = this.getStateManager().pruneFilters([group], this.getStateManager().getFilters());
+                if (pruned.length > 0)
+                    this.getStateManager().addFilters(pruned);
             }
         });
 

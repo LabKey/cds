@@ -97,12 +97,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
     }
@@ -505,7 +505,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // save the group and request cancel
         click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live Filters: Update group with new data");
+        waitForText("Live Filters: Keep group updated");
         waitForText("replace an existing group");
 //        click(Locator.css(".withSelectionRadio input"));
         setFormElement(Locator.name("groupname"), GROUP_NULL);
@@ -827,7 +827,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         selectBars("White");
         useSelectionAsFilter();
         click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live Filters: Update group with new data");
+        waitForText("Live Filters: Keep group updated");
         waitForText("replace an existing group");
         setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
         click(Locator.radioButtonByNameAndValue("groupselect", "live"));
@@ -836,7 +836,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // create static filter group
         click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live Filters: Update group with new data");
+        waitForText("Live Filters: Keep group updated");
         waitForText("replace an existing group");
         setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
         click(Locator.radioButtonByNameAndValue("groupselect", "live"));
@@ -924,7 +924,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void saveGroup(String name, @Nullable String description)
     {
         click(cdsButtonLocator("save", "filtersave"));
-        waitForText("Live Filters: Update group with new data");
+        waitForText("Live Filters: Keep group updated");
         waitForText("replace an existing group");
         setFormElement(Locator.name("groupname"), name);
         if (null != description)

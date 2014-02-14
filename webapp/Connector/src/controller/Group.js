@@ -13,7 +13,11 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
-        this.control('#cancelgroupsave', {
+        this.control('#groupupdatesave', {
+            click : this.doGroupUpdate
+        });
+
+        this.control('#cancelgroupsave, #groupupdatecancel', {
             click : this.onGroupCancel
         });
 
@@ -40,13 +44,11 @@ Ext.define('Connector.controller.Group', {
     doGroupSave : function() {
         var view = this.getViewManager().getViewInstance('groupsave');
 
-        var form = view.getCreateGroup().getComponent('creategroupform');
-
-        if (form && form.isValid()) {
-            var values = form.getValues();
+        if (view.isValid()) {
+            var values = view.getValues();
             var state = this.getStateManager();
 
-            var isLiveFilter = values['livefilter'] == 'live';
+            var isLiveFilter = values['groupselect'] == 'live';
 
             state.moveSelectionToFilter();
 
@@ -57,7 +59,7 @@ Ext.define('Connector.controller.Group', {
                 var saveSuccess = function(response) {
                     var group = Ext.decode(response.responseText);
                     me.application.fireEvent('groupsaved', group, state.getFilters(true));
-                    view.clearForm();
+                    view.reset();
                 };
 
                 var saveFailure = function(response) {
@@ -85,6 +87,15 @@ Ext.define('Connector.controller.Group', {
                     isLive: isLiveFilter
                 });
             }, this);
+        }
+    },
+
+    doGroupUpdate : function() {
+        var view = this.getViewManager().getViewInstance('groupsave');
+
+        if (view.isValid()) {
+            var values = view.getValues();
+            console.log(values);
         }
     },
 
