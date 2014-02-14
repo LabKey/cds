@@ -8,15 +8,19 @@ Ext.define('Connector.store.Explorer', {
 
     enableSelection: true,
 
+    collapseTrack: {},
+
+    totals: {},
+
+    groupField: 'level',
+
     constructor : function(config) {
 
-        this.collapseTrack = {};
-        this.totals = {};
-        this.groupField = 'level';
+        this.locked = false;
 
         this.callParent([config]);
 
-        this.addEvents('selectRequest', 'subselect', 'totalcount');
+        this.addEvents('selectrequest', 'subselect', 'totalcount');
     },
 
     load : function(dimension, hIndex, useSelection, showEmpty) {
@@ -26,22 +30,30 @@ Ext.define('Connector.store.Explorer', {
             return;
         }
 
-        this.flight     = 0;
-        this.showEmpty  = (showEmpty ? true : false);
-        this.hIndex     = hIndex || 0;
+        if (!this.locked) {
+            this.locked = true;
+            this.stale = undefined;
 
-        if (this.enableSelection) {
+            this.dim = dimension;
+            this.flight = 0;
+            this.showEmpty = (showEmpty ? true : false);
+            this.hIndex = hIndex || 0;
 
-            // reset selection ignoring inflight requests
-            this.mflight = 0;
+            if (this.enableSelection) {
+                // reset selection ignoring inflight requests
+                this.mflight = 0;
+            }
+            this.loadDimension(useSelection);
         }
-
-        this.onDimensionReady(dimension, useSelection);
-    },
-
-    onDimensionReady : function(dim, useSelection) {
-        this.dim = dim;
-        this.loadDimension(useSelection);
+        else {
+            // mark as stale, processed once previous request is unlocked
+            this.stale = {
+                dimension: dimension,
+                hIndex: hIndex,
+                useSelection: useSelection,
+                showEmpty: showEmpty
+            };
+        }
     },
 
     clearSelection : function() {
@@ -123,19 +135,19 @@ Ext.define('Connector.store.Explorer', {
     },
 
     loadDimension : function(useSelection) {
-        if (this.dim.getHierarchies().length > 0) {
-            var hierarchy = this.dim.getHierarchies()[this.hIndex];
+        var hierarchies = this.dim.getHierarchies();
+        if (hierarchies.length > 0) {
+            var hierarchy = hierarchies[this.hIndex];
             var me = this;
 
             if (!this.totals[hierarchy.getName()]) {
                 // Asks for Total Count
-                this.state.onMDXReady(function(mdx){
-
+                this.state.onMDXReady(function(mdx) {
                     me.mdx = mdx;
                     mdx.query({
-                        onRows    : [{hierarchy: hierarchy.getName(), members:'members'}],
-                        showEmpty : me.showEmpty,
-                        success   : function(qr) {
+                        onRows: [{hierarchy: hierarchy.getName(), members:'members'}],
+                        showEmpty: me.showEmpty,
+                        success: function(qr) {
                             me.totals[hierarchy.getName()] = me.processTotalCount.call(me, qr);
                             me.requestDimension(hierarchy, useSelection);
                         }
@@ -150,12 +162,10 @@ Ext.define('Connector.store.Explorer', {
     },
 
     requestDimension : function(hierarchy, useSelection) {
-
-        var me = this;
-
         // Asks for the Gray area
-        me.flight++;
-        me.state.onMDXReady(function(mdx){
+        this.flight++;
+        this.state.onMDXReady(function(mdx){
+            var me = this;
             mdx.query({
                 onRows : [{hierarchy: hierarchy.getName(), members:'members'}],
                 useNamedFilters : ['statefilter'],
@@ -165,7 +175,7 @@ Ext.define('Connector.store.Explorer', {
                     me.requestsComplete(useSelection);
                 }
             });
-        }, me);
+        }, this);
     },
 
     processTotalCount : function(qr) {
@@ -180,10 +190,19 @@ Ext.define('Connector.store.Explorer', {
 
     requestsComplete : function(useSelection) {
         this.flight--;
-        if (this.flight == 0)
-        {
+        if (this.flight == 0) {
+
+            // unlock for requests for other dimensions
+            this.locked = false;
+
+            // first check for 'stale'
+            if (Ext.isObject(this.stale)) {
+                this.load(this.stale.dimension, this.stale.hIndex, this.stale.useSelection, this.stale.showEmpty);
+                return;
+            }
+
             var hierarchy = this.dim.getHierarchies()[this.hIndex];
-            var set       = this.baseResult;
+            var set = this.baseResult;
 
             var targetLevels = set.metadata.cube.dimensions[1].hierarchies[0].levels;
 
@@ -217,14 +236,14 @@ Ext.define('Connector.store.Explorer', {
                 }
 
                 target = {
-                    label : pos[x][0].name == '#null' ? 'Unknown' : pos[x][0].name,
-                    count : set.cells[x][0].value,
-                    value : pos[x][0].name,
-                    hierarchy : hierarchy.getName(),
-                    isGroup : isGroup,
-                    level : pos[x][0].name,
-                    collapsed : activeGroup && pos.length > 15 ? true : false,
-                    btnShown : false
+                    label: pos[x][0].name == '#null' ? 'Unknown' : pos[x][0].name,
+                    count: set.cells[x][0].value,
+                    value: pos[x][0].name,
+                    hierarchy: hierarchy.getName(),
+                    isGroup: isGroup,
+                    level: pos[x][0].name,
+                    collapsed: activeGroup && pos.length > 15 ? true : false,
+                    btnShown: false
                 };
 
                 if (!target.isGroup) {
@@ -266,33 +285,28 @@ Ext.define('Connector.store.Explorer', {
             this.fireEvent('totalcount', totalCount);
 
             if (useSelection) {
-                this.fireEvent('selectRequest');
+                this.fireEvent('selectrequest');
             }
         }
     },
 
     loadRecords: function(records, options) {
-
-        var me     = this,
-                i      = 0,
-                length = records.length;
-
         options = options || {};
 
 
         if (!options.addRecords) {
-            delete me.snapshot;
-            me.clearData();
+            delete this.snapshot;
+            this.clearData();
         }
 
-        me.data.addAll(records);
+        this.data.addAll(records);
 
-        for (; i < length; i++) {
+        for (var i=0; i < records.length; i++) {
             if (options.start !== undefined) {
                 records[i].index = options.start + i;
 
             }
-            records[i].join(me);
+            records[i].join(this);
         }
     },
 

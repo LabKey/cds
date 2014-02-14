@@ -612,7 +612,7 @@ Ext.define('Connector.controller.RawData', {
             this.rawDataView.on('filtertranslate', this.onFilterTranslate,  this);
             this.rawDataView.on('lookupcolumnchange', this.onLookupColumnChange, this);
             this.rawDataView.on('measureselected', this.onMeasuresSelected, this);
-            this.rawDataView.on('removefilter',    this.onRemoveGridFilter, this);
+            this.rawDataView.on('removefilter', this.onRemoveGridFilter, this);
 
             this.getStateManager().on('filterchange', this.onFilterChange, this);
 

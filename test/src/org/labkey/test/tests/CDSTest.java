@@ -421,8 +421,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         pickCDSSort("Tier", "1A");
         toggleExplorerBar("1A");
         toggleExplorerBar("1B");
-        shiftSelectBars("MW965.26", "ZM197M.PB7");
-        waitForElement(filterMemberLocator("ZM197M.PB7"), WAIT_FOR_JAVASCRIPT);
+        shiftSelectBars("DJ263.8", "SF162.LS");
+        waitForElement(filterMemberLocator("SF162.LS"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(filterMemberLocator(), 6);
         assertFilterStatusCounts(6, 1, 3, 2, 20);
         clearSelection();
@@ -739,21 +739,25 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(dimensionGroup.withText("Subjects"));
         waitForElement(dimensionSort.withText("SORTED BY: RACE"));
         goToAppHome();
+        sleep(250);
 
         waitAndClick(Locator.linkWithText("3 locations"));
         waitForElement(dimensionGroup.withText("Subjects"));
         waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
         goToAppHome();
+        sleep(250);
 
         waitAndClick(Locator.linkWithText("5 clades"));
         waitForElement(dimensionGroup.withText("Assay Antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: CLADE"));
         goToAppHome();
+        sleep(250);
 
         waitAndClick(Locator.linkWithText("5 tiers"));
         waitForElement(dimensionGroup.withText("Assay Antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: TIER"));
         goToAppHome();
+        sleep(250);
 
         waitAndClick(Locator.linkWithText("5 sample types"));
         waitForElement(dimensionGroup.withText("Assay Antigens"));

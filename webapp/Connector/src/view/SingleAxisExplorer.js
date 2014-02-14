@@ -456,7 +456,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             this.btnMap = {};
 
         }, this);
-        this.store.on('selectRequest', function() { this.selectRequest = true; },   this);
+        this.store.on('selectrequest', function() { this.selectRequest = true; },   this);
 
         this.on('itemmouseenter', this.renderInfoButton, this);
     },
@@ -621,7 +621,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     selection : function(useLast) {
         if (this.selectRequest && this.selections && this.selections.length > 0) {
-            this.syncSelectionModel();
+//            this.syncSelectionModel();
             this.store.loadSelection(useLast);
         }
         else {
@@ -818,7 +818,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
                 label,
                 numpercent,
                 percent,
-                sets = [],
+                sets = [], _set,
                 t;
 
         for (i=0; i < bars.length; i++) {
@@ -835,7 +835,8 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         this.suspendLayout = true;
         for (i=0; i < sets.length; i++) {
 
-            label = sets[i].label;
+            _set = sets[i];
+            label = _set.label;
             if (this.textCache[label]) {
                 t = this.textCache[label];
             }
@@ -844,31 +845,32 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             }
 
             // optimization for 0 case
-            if (sets[i].barCount.dom.innerHTML == '0') {
-                sets[i].bar.setWidth('0%');
-                sets[i].barCount.setLeft(t + 15);
-                if (sets[i].info)
-                    sets[i].info.setLeft(t + 60);
+            if (_set.barCount.dom.innerHTML == '0') {
+                _set.bar.setWidth('0%');
+                _set.barCount.setLeft(t + 15);
+                if (_set.info)
+                    _set.info.setLeft(t + 60);
                 continue;
             }
 
-            numpercent = (sets[i].barCount.dom.innerHTML / this.totalCount) * 100;  // barCount.dom.innerText is a number like '100'
+            // barCount.dom.innerText is a number like '100'
+            numpercent = (_set.barCount.dom.innerHTML / this.totalCount) * 100;
             percent = '' + numpercent + '%';
 
-            sets[i].bar.setWidth(percent);
-            bWidth = sets[i].bar.getWidth(); // returns width in pixels
+            _set.bar.setWidth(percent);
+            bWidth = _set.bar.getWidth(); // returns width in pixels
             if (bWidth > t) {
                 t = bWidth;
             }
 
-            sets[i].barCount.setLeft(t + 15);
-            if (sets[i].info) {
-                sets[i].info.setLeft(t + 60);
+            _set.barCount.setLeft(t + 15);
+            if (_set.info) {
+                _set.info.setLeft(t + 60);
             }
 
             if (this.animate) {
-                sets[i].bar.setWidth("0%");
-                sets[i].bar.setWidth(percent, {
+                _set.bar.setWidth("0%");
+                _set.bar.setWidth(percent, {
                     duration: 300,
                     easing: 'linear',
                     callback: this.positionHelper,
