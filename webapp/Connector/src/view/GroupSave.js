@@ -95,7 +95,7 @@ Ext.define('Connector.view.GroupSave', {
                         allowBlank: false,
                         validateOnBlur: false,
                         items: [
-                            { boxLabel: 'Live Filters: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
+                            { boxLabel: 'Live Filters: Keep group updated', name: 'groupselect', inputValue: 'live', checked: true},
                             { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
                         ]
                     }]
@@ -138,6 +138,12 @@ Ext.define('Connector.view.GroupSave', {
                         },
                         single: true,
                         scope: this
+                    },
+                    show : {
+                        fn: function(c) {
+                            c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                        },
+                        scope: this
                     }
                 },
                 scope: this
@@ -148,18 +154,6 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     getReplaceGroup : function() {
-
-        // models Participant Groups and Cohorts mixed
-        Ext.define('LABKEY.study.GroupCohort', {
-            extend : 'Ext.data.Model',
-            fields : [
-                {name : 'id'},
-                {name : 'label'},
-                {name : 'description'},
-                {name : 'filters'},
-                {name : 'type'}
-            ]
-        });
 
         if (!this.replaceGroup) {
             this.replaceGroup = Ext.create('Ext.Container', {
@@ -175,14 +169,24 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },{
                     xtype: 'container',
-                    height: 70,
+                    height: 250,
                     overflowY: 'auto',
                     style: 'border: 1px solid lightgrey;',
                     items: [{
                         xtype: 'groupsavelistview',
                         listeners: {
+                            render: function(v) {
+                                this.grouplist = v;
+                            },
                             select: function(sm, group) {
                                 this.setActive(group);
+                            },
+                            viewready: function(v) {
+                                var group = v.getStore().getAt(0);
+                                if (group) {
+                                    v.getSelectionModel().select(0);
+                                    this.setActive(group);
+                                }
                             },
                             scope: this
                         },
@@ -197,6 +201,7 @@ Ext.define('Connector.view.GroupSave', {
                     defaults: {
                         width: '100%'
                     },
+                    flex: 10,
                     items: [{
                         xtype: 'box',
                         autoEl: {
@@ -207,13 +212,15 @@ Ext.define('Connector.view.GroupSave', {
                     },{
                         xtype: 'textareafield',
                         itemId: 'groupdescription',
-                        name: 'groupdescription'
+                        name: 'groupdescription',
+                        emptyText: 'no description provided'
                     },{
                         xtype: 'radiogroup',
+                        itemId: 'groupselect',
                         columns: 1,
                         allowBlank: false,
                         items: [
-                            { boxLabel: 'Live Filters: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
+                            { boxLabel: 'Live Filters: Keep group updated', name: 'groupselect', inputValue: 'live', checked: true},
                             { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
                         ]
                     }]
@@ -239,16 +246,24 @@ Ext.define('Connector.view.GroupSave', {
                     style: 'padding-top: 60px',
                     items: ['->',{
                         text: 'save',
-                        itemId: 'dogroupsave',
+                        itemId: 'groupupdatesave',
                         cls: 'groupupdatesave', // tests
                         ui: 'rounded-inverted-accent'
                     },{
                         text: 'cancel',
-                        itemId: 'cancelgroupsave',
+                        itemId: 'groupupdatecancel',
                         cls: 'groupupdatecancel', // tests
                         ui: 'rounded-inverted-accent'
                     }]
                 }],
+                listeners : {
+                    show: function(rp) {
+                        if (this.grouplist) {
+                            this.grouplist.getStore().load();
+                        }
+                    },
+                    scope: this
+                },
                 scope: this
             });
         }
@@ -257,16 +272,17 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     changeMode : function(mode) {
+        this.mode = mode;
         var content = this.getComponent('content');
         if (content) {
-            var contentComponents = content.items.items;
-            for (var i=0; i < contentComponents.length; i++) {
-                if (Ext.isDefined(contentComponents[i].activeMode)) {
-                    if (contentComponents[i].activeMode === mode) {
-                        contentComponents[i].show();
+            var cc = content.items.items;
+            for (var i=0; i < cc.length; i++) {
+                if (Ext.isDefined(cc[i].activeMode)) {
+                    if (cc[i].activeMode === mode) {
+                        cc[i].show();
                     }
                     else {
-                        contentComponents[i].hide();
+                        cc[i].hide();
                     }
                 }
             }
@@ -281,19 +297,47 @@ Ext.define('Connector.view.GroupSave', {
     setActive : function(groupModel) {
         var form = this.replaceGroup.getComponent('creategroupform');
         if (form) {
-            var description = form.getComponent('groupdescription');
-            var d = groupModel.get('description');
-            console.log(groupModel.get('label'));
-            console.log(d);
-            description.setValue(d);
+            var filterGroupModel = Connector.model.FilterGroup.fromCohortGroup(groupModel);
+
+            // set description
+            var field = form.getComponent('groupdescription');
+            field.setValue(filterGroupModel.get('description'));
+
+            // set filter state
+            field = form.getComponent('groupselect');
+            field.setValue({groupselect: filterGroupModel.get('isLive') ? 'live' : 'static'});
         }
     },
 
-    clearForm : function() {
-        if (this.form) {
-            this.form.getForm().reset();
-            this.hideError();
+    getActiveForm : function() {
+        var active;
+        if (this.getMode() === Connector.view.GroupSave.modes.CREATE) {
+            active = this.getCreateGroup();
         }
+        else {
+            active = this.getReplaceGroup();
+        }
+        return active.getComponent('creategroupform');
+    },
+
+    reset : function() {
+        var form = this.getCreateGroup().getComponent('creategroupform');
+        if (form) {
+            form.getForm().reset();
+        }
+        form = this.getReplaceGroup().getComponent('creategroupform');
+        if (form) {
+            form.getForm().reset();
+        }
+        this.changeMode(Connector.view.GroupSave.modes.CREATE);
+    },
+
+    getValues : function() {
+        return this.getActiveForm().getValues();
+    },
+
+    isValid : function() {
+        return this.getActiveForm().isValid();
     },
 
     getError : function() {
@@ -340,27 +384,15 @@ Ext.define('Connector.view.GroupSaveList', {
 
     initComponent : function() {
 
-        // models Participant Groups and Cohorts mixed
-        if (!Ext4.ModelManager.isRegistered('LABKEY.study.GroupCohort')) {
-            Ext.define('LABKEY.study.GroupCohort', {
-                extend : 'Ext.data.Model',
-                fields : [
-                    {name : 'id'},
-                    {name : 'label'},
-                    {name : 'description'},
-                    {name : 'filters'},
-                    {name : 'type'}
-                ]
-            });
-        }
-
         var storeConfig = {
             pageSize : 100,
             model    : 'LABKEY.study.GroupCohort',
             autoLoad : true,
             proxy    : {
                 type   : 'ajax',
-                url    : LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api'),
+                url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
+                    includeParticipantIds: true
+                }),
                 reader : {
                     type : 'json',
                     root : 'groups'

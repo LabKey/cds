@@ -194,6 +194,10 @@ Ext.define('Connector.store.Explorer', {
 
             // unlock for requests for other dimensions
             this.locked = false;
+            if (this.eventsSuspended) {
+                console.warn('Resuming events...');
+                this.resumeEvents();
+            }
 
             // first check for 'stale'
             if (Ext.isObject(this.stale)) {

@@ -55,30 +55,18 @@ Ext.define('Connector.view.GroupListView', {
 
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
-        // models Participant Groups and Cohorts mixed
-        if (!Ext4.ModelManager.isRegistered('LABKEY.study.GroupCohort')) {
-            Ext.define('LABKEY.study.GroupCohort', {
-                extend : 'Ext.data.Model',
-                fields : [
-                    {name : 'id'},
-                    {name : 'label'},
-                    {name : 'description'},
-                    {name : 'filters'},
-                    {name : 'type'}
-                ]
-            });
-        }
-
         var storeConfig = {
             pageSize : 100,
             model    : 'LABKEY.study.GroupCohort',
             autoLoad : true,
-            proxy    : {
-                type   : 'ajax',
-                url    : LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api'),
-                reader : {
-                    type : 'json',
-                    root : 'groups'
+            proxy: {
+                type: 'ajax',
+                url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
+                    includeParticipantIds: true
+                }),
+                reader: {
+                    type: 'json',
+                    root: 'groups'
                 }
             },
             listeners : {

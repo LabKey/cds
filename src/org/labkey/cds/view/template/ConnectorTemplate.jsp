@@ -116,6 +116,7 @@
 
         div.memberitem {
             float: right;
+            font-family: Arial;
         }
 
         div.collapsed-member {
@@ -139,7 +140,7 @@
         }
 
         .save-label {
-            font-family: Arial;
+            font-family: Verdana, sans-serif;
             padding: 4px 9px;
             font-size: 11pt;
         }
@@ -153,6 +154,32 @@
         .save-label-selected {
             background-color: #14C9CC;
             color: #FFF;
+        }
+
+        .x-body {
+            font-family: Verdana, sans-serif;
+        }
+
+        .x-form-text,
+        .x-form-textarea {
+            background-image: none;
+            border-color: rgb(211, 211, 211);
+        }
+
+        .x-border-box textarea.x-form-field {
+            padding: 4px 3px;
+        }
+
+        .x-form-item, .x-form-field {
+            font: normal 10pt Verdana, sans-serif;
+        }
+
+        .x-form-cb-label {
+            font: normal 11pt Arial;
+        }
+
+        .x-form-focus {
+            border-color: #333333;
         }
     </style>
 
