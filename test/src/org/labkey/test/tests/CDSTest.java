@@ -440,7 +440,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         useSelectionAsFilter();
         saveGroup(GROUP_NAME, GROUP_DESC);
         waitForElementToDisappear(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
-        waitForElement(filterMemberLocator(GROUP_NAME), WAIT_FOR_JAVASCRIPT);
+//        waitForElement(filterMemberLocator(GROUP_NAME), WAIT_FOR_JAVASCRIPT);
         assertFilterStatusCounts(12, 1, 3, 2, 8);
         clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
@@ -516,13 +516,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // save the group and request save
         saveGroup(GROUP_NAME2, null);
-        waitForElement(filterMemberLocator(GROUP_NAME2), WAIT_FOR_JAVASCRIPT);
+//        waitForElement(filterMemberLocator(GROUP_NAME2), WAIT_FOR_JAVASCRIPT);
 
         selectBars("f");
 
         // save a group with an interior group
         saveGroup(GROUP_NAME3, null);
-        waitForElement(filterMemberLocator(GROUP_NAME3), WAIT_FOR_JAVASCRIPT);
+//        waitForElement(filterMemberLocator(GROUP_NAME3), WAIT_FOR_JAVASCRIPT);
 
         // saved filter without including current selection (should be the same as initial group)
         goToAppHome();
@@ -533,7 +533,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // Group creation cancelled
         clearFilter();
         goToAppHome();
-        assertTextNotPresent(GROUP_NULL);
+//        assertTextNotPresent(GROUP_NULL);
     }
 
     @Test
@@ -671,16 +671,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         _extHelper.pickMeasure("xaxispicker", "Lab Results", "Hemoglobin");
         click(cdsButtonLocator("Set X-Axis"));
         _ext4Helper.waitForMaskToDisappear();
-//        assertSVG(HEMO_CD4); // svg to text
-//
-//        makeNavigationSelection(NAV_SUMMARY);
-//        waitForTextToDisappear(HEMO_CD4);
-//
-//        makeNavigationSelection(NAV_PLOT);
-//        assertSVG(HEMO_CD4);
-//
-//        clearFilter();
-//        waitForTextToDisappear(HEMO_CD4);
         assertSVG(HEMO_CD4_UNFILTERED);
 
         // Test log scales

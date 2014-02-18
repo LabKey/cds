@@ -157,12 +157,12 @@ Ext.define('Connector.controller.FilterStatus', {
 
     onGroupSaved : function(grp, filters) {
 
-        var group = Ext.create('Connector.model.FilterGroup', {
-            name : grp.category.label,
-            filters : filters
-        });
+//        var group = Ext.create('Connector.model.FilterGroup', {
+//            name : grp.category.label,
+//            filters : filters
+//        });
 
-        this.getStateManager().setFilters([group]);
+        this.getStateManager().setFilters(filters);
         this.getViewManager().hideView('groupsave');
     },
 

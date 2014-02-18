@@ -76,14 +76,14 @@ Ext.define('Connector.view.Selection', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<tpl if="this.isGroup(values) == true">',
-                    // Group Filter
-                    '<div class="circle"></div>',
-                    '<div class="selitem status-over memberitem" style="display: inline-block;">',
-                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                        '{name:this.renderName}',
-                    '</div>',
-                '</tpl>',
+//                '<tpl if="this.isGroup(values) == true">',
+//                    // Group Filter
+//                    '<div class="circle"></div>',
+//                    '<div class="selitem status-over memberitem" style="display: inline-block;">',
+//                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+//                        '{name:this.renderName}',
+//                    '</div>',
+//                '</tpl>',
                 '<tpl if="this.isGrid(values) == true">',
                     // Grid Filter
                     '<div class="circle"></div>',
@@ -100,8 +100,8 @@ Ext.define('Connector.view.Selection', {
                         '{[this.renderMeasures(values)]}',
                     '</div>',
                 '</tpl>',
-                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false && this.isGroup(values) == false">',
-                    // Normal Filter
+                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false">',
+                    // Normal Filter (and Group Filters)
                     '<div class="circle"></div>',
                     '<tpl if="members.length &gt; 1">',
                         '<div style="position: absolute; top: 28px;">',
@@ -160,9 +160,9 @@ Ext.define('Connector.view.Selection', {
 
                     return Ext.htmlEncode(type + ': ' + uname[uname.length-1]);
                 },
-                renderName : function(n) {
-                    return Ext.htmlEncode('Group: ' + n);
-                },
+//                renderName : function(n) {
+//                    return Ext.htmlEncode('Group: ' + n);
+//                },
                 renderMeasures : function(values) {
                     var label = 'In the plot: ';
                     var measures = values.plotMeasures, sep = '';
