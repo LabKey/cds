@@ -1097,7 +1097,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Dimension": [
     "widget.dimensionview"
   ],
-  "Connector.view.DimensionSelector": [],
+  "Connector.view.DimensionSelector": [
+    "widget.dimselectorview"
+  ],
   "Connector.view.FilterSave": [
     "widget.filtersave"
   ],

@@ -198,14 +198,13 @@ Ext.define('Connector.view.Dimension', {
 
     initComponent : function() {
 
-        this.items = [
-            Ext.create('Connector.view.DimensionSelector', {
-                itemId: this.selectorId,
-                ui: 'custom',
-                dim: this.ydim,
-                hidx: 0
-            })
-        ];
+        this.items = [{
+            xtype: 'dimselectorview',
+            itemId: this.selectorId,
+            ui: 'custom',
+            dim: this.ydim,
+            hidx: 0
+        }];
 
         this.callParent();
 
@@ -228,6 +227,8 @@ Ext.define('Connector.view.Dimension', {
 Ext.define('Connector.view.DimensionSelector', {
 
     extend : 'Ext.panel.Panel',
+
+    alias: 'widget.dimselectorview',
 
     dimLabels : {
         'Antigen' : 'Assay antigens',

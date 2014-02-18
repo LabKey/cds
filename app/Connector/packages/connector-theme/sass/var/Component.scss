@@ -625,8 +625,7 @@ ul.detailstatus {
   li {
     border-bottom: 2px dotted #ccc;
     text-align: right;
-    clear: both;
-    margin: -6px 5px 0 5px; /* note if this changes, modify marign on div.status-row */
+    margin: -6px 4px 0 4px; /* note if this changes, modify marign on div.status-row */
   }
 }
 
@@ -634,7 +633,7 @@ div.status-row {
   border: 1px solid transparent;
   border-radius: 15px;
   padding: 4px;
-  margin: 0 -5px 0 -5px; /* note if this changes, modify margin on ul.detailstatus li */
+  margin: 0 -10px 0 -10px; /* note if this changes, modify margin on ul.detailstatus li */
 }
 
 div.status-over {

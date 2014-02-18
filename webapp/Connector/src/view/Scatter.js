@@ -448,9 +448,20 @@ Ext.define('Connector.view.Scatter', {
         this.hideLoad();
     },
 
+    getScale : function(axis) {
+        var scale = 'linear';
+        if (axis == 'y' && this.axisPanelY) {
+            scale = this.axisPanelY.getScale();
+        }
+        else if (axis == 'x' && this.axisPanelX) {
+            scale = this.axisPanelX.getScale();
+        }
+
+        return scale;
+    },
+
     setScale : function(scale, axis, config) {
-        var axisValue = (axis == 'y') ? this.axisPanelY.getScale() : this.axisPanelX.getScale(),
-                allowLog = (axis == 'y') ? !config.setYLinear : !config.setXLinear;
+        var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !config.setYLinear : !config.setXLinear;
 
         if (!allowLog && axisValue == 'log') {
             this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.');
@@ -465,33 +476,71 @@ Ext.define('Connector.view.Scatter', {
         return scale;
     },
 
+    getActiveMeasures : function() {
+        this.fromFilter = false;
+        var measures = {
+            x: null,
+            y: null
+        };
+
+        // first check the measure selections
+        if (this.axisPanelX) {
+            var sel = this.axisPanelX.getSelection();
+            if (sel && sel.length > 0) {
+                measures.x = sel[0].data;
+            }
+        }
+        if (this.axisPanelY) {
+            var sel = this.axisPanelY.getSelection();
+            if (sel && sel.length > 0) {
+                measures.y = sel[0].data;
+            }
+        }
+
+        // second, check the set of active filters
+        if (!measures.x && !measures.y) {
+            var filters = this.state.getFilters();
+            for (var f=0; f < filters.length; f++) {
+                if (filters[f].get('isPlot') == true) {
+                    var m = filters[f].get('plotMeasures');
+                    measures.x = m[0].measure;
+                    measures.y = m[1].measure;
+                    this.fromFilter = true;
+                    break;
+                }
+            }
+        }
+
+        return measures;
+    },
+
     onShowGraph : function() {
 
         this.hideMessage();
         this.refreshRequired = false;
 
-        var xrec = this.axisPanelX ? this.axisPanelX.getSelection() : [];
-        var yrec = this.axisPanelY ? this.axisPanelY.getSelection() : [];
+        var activeMeasures = this.getActiveMeasures();
 
-        if (xrec.length == 0 || yrec.length == 0) {
+        if (!activeMeasures.x || !activeMeasures.y) {
             return;
         }
 
-        var allMeasures = [], wrappedMeasures = [];
-
-        allMeasures.push(xrec[0].data);
-        allMeasures.push(yrec[0].data);
-
-        wrappedMeasures.push({measure : xrec[0].data, time: 'visit'});
-        wrappedMeasures.push({measure : yrec[0].data, time: 'visit'});
-
-        this.measures = allMeasures;
+        this.measures = [ activeMeasures.x, activeMeasures.y ];
 
         this.showLoad();
 
-        if (allMeasures.length > 0)
-        {
+        if (this.measures.length > 0) {
+
             var sorts = this.getSorts();
+
+            var wrappedMeasures = [
+                {measure : this.measures[0], time: 'visit'},
+                {measure : this.measures[1], time: 'visit'}
+            ];
+
+            if (!this.fromFilter) {
+                this.updatePlotBasedFilter(wrappedMeasures);
+            }
 
             // Request Participant List
             this.getParticipantIn(function(ptidList) {
@@ -503,16 +552,16 @@ Ext.define('Connector.view.Scatter', {
 
                 // Request Chart Data
                 Ext.Ajax.request({
-                    url     : LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-                    method  : 'POST',
+                    url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
+                    method: 'POST',
                     jsonData: {
-                        measures : wrappedMeasures,
-                        sorts    : sorts,
-                        limit    : (this.rowlimit+1)
+                        measures: wrappedMeasures,
+                        sorts: sorts,
+                        limit: (this.rowlimit+1)
                     },
-                    success : this.onChartDataSuccess,
-                    failure : this.onFailure,
-                    scope   : this
+                    success: this.onChartDataSuccess,
+                    failure: this.onFailure,
+                    scope: this
                 });
 
                 this.requestCitations();
@@ -541,15 +590,15 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestCitations : function() {
-        var x = this.axisPanelX.getSelection()[0],
-                y = this.axisPanelY.getSelection()[0];
+        var measures = this.getActiveMeasures();
+        var x = measures.x, y = measures.y;
 
         var xy = [{
-            s : x.data.schemaName,
-            q : x.data.queryName
+            s : x.schemaName,
+            q : x.queryName
         },{
-            s : y.data.schemaName,
-            q : y.data.queryName
+            s : y.schemaName,
+            q : y.queryName
         }];
 
         this.srcs = [];
@@ -566,7 +615,7 @@ Ext.define('Connector.view.Scatter', {
                                 isSourceURI : true,
                                 schemaName  : d.schemaName,
                                 queryName   : d.queryName || d.name,
-                                alias       : src.fieldKeyPath //LABKEY.MeasureUtil.getAlias(src, true)
+                                alias       : src.fieldKeyPath
                             });
                             me.srcs.push(src);
                         }
@@ -594,6 +643,63 @@ Ext.define('Connector.view.Scatter', {
 
         // call render
         this.initPlot(config, false);
+    },
+
+    updatePlotBasedFilter : function(measures) {
+        // Request Distinct Participants
+        Ext.Ajax.request({
+            url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
+            method: 'POST',
+            jsonData: {
+                measures: measures,
+                sorts: this.getSorts(),
+                limit: (this.rowlimit+1)
+            },
+            success: function(response) {
+                this.onFilterDataSuccess(Ext.decode(response.responseText), measures);
+            },
+            failure: this.onFailure,
+            scope: this
+        });
+    },
+
+    onFilterDataSuccess : function(r, measures) {
+        LABKEY.Query.selectDistinctRows({
+            schemaName: r.schemaName,
+            queryName: r.queryName,
+            column: r.measureToColumn[this.subjectColumn],
+            success: function(data) {
+
+                var filter = {
+                    hierarchy: 'Participant',
+                    isPlot: true,
+                    plotMeasures: measures,
+                    plotScales: [this.getScale('x'), this.getScale('y')],
+                    members: []
+                };
+
+                for (var i=0; i < data.values.length; i++) {
+                    filter.members.push({
+                        uname: ['Participant', data.values[i]]
+                    });
+                }
+
+                this.plotLock = true;
+                var filters = this.state.getFilters(), found = false;
+                for (var f=0; f < filters.length; f++) {
+                    if (filters[f].get('isPlot') == true) {
+                        found = true;
+                        filters[f].set('plotMeasures', measures);
+                        this.state.updateFilterMembers(filters[f].get('id'), filter.members);
+                        break;
+                    }
+                }
+                if (!found) {
+                    this.state.addFilters([filter]);
+                }
+            },
+            scope: this
+        });
     },
 
     noPlot : function() {
@@ -1051,11 +1157,22 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    onFilterChange : function() {
-        if (this.isActiveView)
-            this.onShowGraph();
-        else if (this.initialized)
-        {
+    onFilterChange : function(filters) {
+        // plot lock prevents from listening to plots own changes to state filters
+        if (this.plotLock) {
+            this.plotLock = false;
+            return;
+        }
+
+        if (filters.length == 0) {
+            if (this.initialized) {
+                Ext.defer(this.noPlot, 300, this);
+            }
+        }
+        else if (this.isActiveView) {
+            Ext.defer(this.onShowGraph, 300, this);
+        }
+        else if (this.initialized) {
             this.refreshRequired = true;
         }
     },
