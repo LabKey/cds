@@ -72,11 +72,11 @@ Ext.define('Connector.view.Summary', {
         this.summaryPanel = Ext.create('Connector.view.SummaryDataView', {
             anchor : '100% 50%',
             ui     : 'custom',
-            store  : this.store,
-            listeners : {
-                refresh : refreshHandler,
-                resize  : refreshHandler
-            }
+            store  : this.store
+//            listeners : {
+//                refresh : refreshHandler,
+//                resize  : refreshHandler
+//            }
         });
 
         return this.summaryPanel;
@@ -143,7 +143,7 @@ Ext.define('Connector.view.SummaryDataView', {
                             parent.sep = ', ';
                         }
                         var nav = (values.nav ? ' class="nav" nav="' + values.nav + '"' : '');
-                        return parent.sep + '<a' + nav + '>' + values.text + '</a>';
+                        return parent.sep + values.counter + ' <a' + nav + '>' + values.text + '</a>';
                     },
                     clearSep: function(p) {
                         p.sep = undefined;

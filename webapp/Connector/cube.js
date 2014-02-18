@@ -32,7 +32,7 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Vaccine]',
-                pluralName: 'Study Products',
+                pluralName: 'Study products',
                 priority: 8,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.StudyProducts',

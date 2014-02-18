@@ -67,6 +67,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
+  "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeBody": "../../../../webapp/Connector/src/view/Home.js",
@@ -99,7 +100,7 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.controller.State": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.View": "../../../../../../internal/webapp/app/View.js",
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
-  "LABKEY.study.GroupCohort": "../../../../webapp/Connector/src/panel/GroupList.js"
+  "LABKEY.study.GroupCohort": "../../../../webapp/Connector/src/model/FilterGroup.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
@@ -164,6 +165,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.FilterStatus": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
+  "Connector.view.GroupSaveList": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
   "Connector.view.HomeBody": [],
@@ -1107,6 +1109,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.GroupSave": [
     "widget.groupsave"
+  ],
+  "Connector.view.GroupSaveList": [
+    "widget.groupsavelistview"
   ],
   "Connector.view.Header": [
     "widget.connectorheader"

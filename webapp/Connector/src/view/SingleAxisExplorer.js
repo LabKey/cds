@@ -78,12 +78,6 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                     text: (this.showEmpty ? 'hide empty' : 'show empty'),
                     handler: this.onEmptySelection,
                     scope: this
-                },{
-                    xtype: 'roundedbutton',
-                    ui: 'darkrounded',
-                    margin: '0 0 10 8',
-                    text: 'export',
-                    disabled: true
                 }]
             },this.getSingleAxisView(resizeTask)],
             listeners : {
@@ -236,13 +230,13 @@ Ext.define('Connector.view.DimensionSelector', {
     extend : 'Ext.panel.Panel',
 
     dimLabels : {
-        'Antigen' : 'Assay Antigens',
+        'Antigen' : 'Assay antigens',
         'Assay'   : 'Assays',
         'Lab'     : 'Labs',
         'Study'   : 'Studies',
-        'Vaccine' : 'Study Products',
-        'Vaccine Component' : 'Vaccine Immunogens',
-        'Participant' : 'Subjects'
+        'Vaccine' : 'Study products',
+        'Vaccine Component' : 'Vaccine immunogens',
+        'Participant' : 'Subject characteristics'
     },
 
     titleComponentId: 'dimtitle',
