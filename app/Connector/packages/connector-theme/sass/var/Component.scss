@@ -29,6 +29,22 @@ $bodycaps-font : Arial;
 $info-font : Verdana, sans-serif;
 $data-font : Georgia, serif;
 
+// General
+$font-family: $info-font;
+
+// form/field/Base.scss
+$form-label-font: normal 11pt $bodycaps-font;
+$form-toolbar-field-font: normal 10pt $info-font;
+
+// form/field/Text.scss
+$form-field-background-image: none;
+$form-field-border-color: rgb(211, 211, 211);
+$form-field-focus-border-color: $dark-color;
+
+// load mask
+$loadmask-background-color: $dark-color;
+$loadmask-opacity: 0.35;
+
 // Calendar
 $datepicker-base-color: $light-color;
 
@@ -157,17 +173,16 @@ li.fadein {
   padding-top: 25px;
   padding-bottom: 7px;
   @include pagePaddingLeft;
-}
 
-.titlepanel span {
-  @include bodycaps;
+  span {
+    @include bodycaps;
+  }
 }
 
 /* Windows */
 .axiswindow {
   width: 100px;
   height: 100px;
-  background-color: $light-color;
   position: relative;
   border: none;
   overflow: inherit !important;
@@ -202,9 +217,9 @@ li.fadein {
     border-right-color: $secondary-color;
   }
 
-  &:before {
+  /*&:before {*/
     /*border-bottom-color: trans;*/
-  }
+  /*}*/
 
   .x-form-item {
     span {
@@ -218,7 +233,6 @@ li.fadein {
 .filterwindow {
   width: 100px;
   height: 100px;
-  background-color: $light-color;
   position: relative;
   border: none;
   overflow: inherit !important;
@@ -252,9 +266,9 @@ li.fadein {
     border-bottom-color: $secondary-color;
   }
 
-  &:before {
+  /*&:before {*/
     /*border-bottom-color: trans;*/
-  }
+  /*}*/
 
   .x-form-item {
     span {
@@ -267,7 +281,6 @@ li.fadein {
 .measurewindow {
   width: 100px;
   height: 100px;
-  background-color: $light-color;
   position: relative;
   border: none;
   overflow: inherit !important;
@@ -383,10 +396,6 @@ div.selectionfilter {
   position: relative;
 }
 
-div.status-over {
-  @include border-radius(15px);
-}
-
 .closeitem {
   position: absolute;
   opacity: 0;
@@ -396,17 +405,21 @@ div.status-over {
   height: 8px;
   z-index: 5;
   border: 0;
-//  background: url(<%=text(appPath)%>/images/close.png);
-  background-size: 8px 8px;
   background-repeat: no-repeat;
 }
 
-.memberitem:hover {
-  .closeitem {
-    opacity: 0.5;
+.memberitem {
 
-    &:hover {
-      opacity: 1;
+  float: right;
+  font-family: $bodycaps-font;
+
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
@@ -420,10 +433,14 @@ div.activefilter {
   width: 100%;
   padding: 3px 7px;
 
+  .circle {
+    display: none;
+  }
+
   div.selitem {
     border: 1px solid transparent;
-    /*padding-top: 5px;*/
     padding: 2px 6px;
+    width: 100%;
   }
 
   div.status-over {
@@ -475,10 +492,6 @@ div.showopselect {
 
 /* Connector.view.Dimension */
 .dimensionview {
-  background-color : $primary-color;
-}
-
-.summaryview {
   background-color : $secondary-color;
 }
 
@@ -562,34 +575,10 @@ div.savetitle {
 /* -- END Connector.view.FilterSave */
 
 /* Connector.view.DetailStatus */
-div.status-row {
-  border: 1px solid transparent;
-  border-radius: 15px;
-  padding: 4px;
-  margin: 0 -5px 0 -5px; /* note if this changes, modify padding on ul.detailstatus li */
-}
-
-div.status-over {
-  background-color: #fff;
-  border: 1px solid #a9a9a9;
-  cursor: pointer;
-}
-
-ul.detailstatus {
-  font-family: $bodycaps-font;
-}
-
 span.statme {
   display: inline-block;
   padding: 0;
   margin: 0 0 -2px 0;
-}
-
-ul.detailstatus li {
-  border-bottom: 2px dotted #ccc;
-  text-align: right;
-  clear: both;
-  margin: -6px 5px 0 5px;
 }
 
 span.status-label {
@@ -630,47 +619,85 @@ span.hl-status-count {
   padding-left: 4px;
 }
 
-div.status-over span.status-label,
-div.status-over span.status-count,
-div.status-over span.hl-status-label,
-div.status-over span.hl-status-count {
-  background-color: #fff;
+ul.detailstatus {
+  font-family: $bodycaps-font;
+
+  li {
+    border-bottom: 2px dotted #ccc;
+    text-align: right;
+    clear: both;
+    margin: -6px 5px 0 5px; /* note if this changes, modify marign on div.status-row */
+  }
+}
+
+div.status-row {
+  border: 1px solid transparent;
+  border-radius: 15px;
+  padding: 4px;
+  margin: 0 -5px 0 -5px; /* note if this changes, modify margin on ul.detailstatus li */
+}
+
+div.status-over {
+  @include border-radius(15px);
+  background-color: $light-color;
+  border: 1px solid #a9a9a9;
+  cursor: pointer;
+
+  span {
+    &.status-label,
+    &.status-count,
+    &.hl-status-label,
+    &.hl-status-count {
+      background-color: $light-color;
+    }
+  }
+
+  &:hover li {
+    /* Artefact: desire is to have '...' not appear when highlighted */
+    border-bottom: 2px solid transparent;
+  }
 }
 
 /* -- END Connector.view.DetailStatus */
 
 /* Connector.view.Header */
+.connectorheader {
+
+  .logo {
+    @include headline;
+
+    h2 {
+      float: left;
+      padding: 20px 5px 0px 27px !important;
+      font-family: $bodycaps-font;
+      font-weight: bold;
+      font-size: 13pt;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    span {
+      color : $select-color;
+    }
+
+    img {
+      padding-top: 23px;
+    }
+  }
+}
+
+.connectorheader-collapse .logo span {
+  color : $select-color;
+}
+
 .connectorheader, .connectorheader-collapse {
   background-color: $black;
   color : $light-color;
   background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from($black), to($dark-color)); // TODO: Change to compass
   background: -moz-linear-gradient(left, $black,  $dark-color);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
-}
-
-.connectorheader .logo {
-  @include headline;
-}
-
-.connectorheader .logo h2 {
-  float: left;
-  padding: 20px 5px 0px 27px !important;
-  font-family: $bodycaps-font;
-  font-weight: bold;
-  font-size: 13pt;
-}
-
-.connectorheader .logo h2:hover {
-  cursor: pointer;
-}
-
-.connectorheader .logo span,
-.connectorheader-collapse .logo span {
-  color : $select-color;
-}
-
-.connectorheader .logo img {
-  padding-top: 23px;
 }
 
 /* Logout Link */
@@ -726,6 +753,22 @@ div.grouplist {
   }
 }
 
+.save-label {
+  font-family: $info-font;
+  padding: 4px 9px;
+  font-size: 11pt;
+}
+
+.save-label-over {
+  background-color: $selectongrey-color;
+  cursor: pointer;
+}
+
+.save-label-selected {
+  background-color: $select-color;
+  color: $light-color;
+}
+
 /* -- END Connector.view.GroupListView */
 
 /* Connector.view.Navigation */
@@ -777,23 +820,14 @@ div.grouplist-label-selected, div.nav-label-selected {
   span {
     font-weight: bold;
 
-    &.left-arrow, &.right-arrow {
+    &.left-arrow {
       position: relative;
+      float: left;
+      left: 0;
       top: 0;
       border-top: 11px solid transparent;
       border-bottom: 11px solid transparent;
-    }
-
-    &.left-arrow {
-      float: left;
-      left: 0;
-      border-left: 11px solid $primary-color;
-    }
-
-    &.right-arrow {
-      float: right;
-      right: 0;
-      border-right: 11px solid $primary-color;
+      border-left: 11px solid $light-color;
     }
   }
 }
@@ -991,7 +1025,7 @@ div.saeempty {
 /* -- END Connector.view.SingleAxisExplorer */
 
 /* Connector.view.Summary */
-div.line {
+.line {
   margin-left: $pageLeftPadding;
   height: 1px;
   background: $primary-color;
@@ -999,34 +1033,22 @@ div.line {
   background: -moz-linear-gradient(45deg, $heat-scale-2, $primary-color);
 }
 
-div.row {
+.row {
   height: 19%;
   min-height: 50px;
   white-space: nowrap;
   min-width: 800px;
-}
 
-div.row:hover {
-  transition: background-color .2s ease-out;
-  -moz-transition: background-color .2s ease-out;
-  -webkit-transition: background-color .2s ease-out;
-  -o-transition: background-color .2s ease-out;
+  &:hover {
+    @include transition(background-color 0.2s ease-out);
+    @include single-box-shadow($heat-scale-2, -2px, 2px, 2px);
+    @include border-radius(2px);
+    background-color: $selectongrey-color;
+    cursor: pointer;
 
-  background-color: $select-color;
-  @include single-box-shadow($heat-scale-2, -2px, 2px, 2px);
-  @include border-radius(2px);
-  cursor : pointer;
-
-  span.pp {
-    color: $heat-scale-3;
-  }
-
-  span.label {
-    color: $light-color;
-  }
-
-  .line {
-    background-color: transparent;
+    .line {
+      background-color: transparent;
+    }
   }
 }
 
@@ -1039,67 +1061,40 @@ div.endcolumn {
 }
 
 /* By column is the 'by Column' you see in Summary Display */
-div.bycolumn, div.med-bycolumn, div.small-bycolumn {
+div.bycolumn {
   width : 43%;
   @include pagePaddingLeft;
   @include standout;
 
-  span.pp {
+  .pp {
     color: $heat-scale-2;
   }
 }
 
-div.med-bycolumn {
-  font-size: 21pt;
+@media (max-width: 1500px) {
+  div.bycolumn {
+    font-size: 24pt;
+  }
 }
 
-div.small-bycolumn {
-  font-size: 18pt;
+@media (max-width: 1200px) {
+  div.bycolumn {
+    font-size: 20pt;
+  }
 }
 
 /* Detail column is the middle column of the Summary Display */
-div.detailcolumn, div.med-detailcolumn, div.small-detailcolumn {
+div.detailcolumn {
+  font-size: 10pt;
   width : 28%;
   white-space: pre-wrap;
   padding-top: 4px;
-}
-
-div.detailcolumn {
-  font-size: 10pt;
 
   a {
-    color: $black;
+    color: $select-color;
 
     &.nav:hover {
-      color: $heat-scale-4;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  }
-}
-
-div.med-detailcolumn {
-  font-size: 9pt;
-
-  a {
-    color: $black;
-
-    &.nav:hover {
-      color: $heat-scale-4;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  }
-}
-
-div.small-detailcolumn {
-  font-size: 8pt;
-
-  a {
-    color: $black;
-
-    &.nav:hover {
-      color: $heat-scale-4;
+      color: $select-color;
       cursor: pointer;
       text-decoration: underline;
     }
@@ -1128,6 +1123,10 @@ div.totalcolumn {
   display: none;
 }
 
+li.activefilter {
+  margin: 5px 0;
+}
+
 li.selection,
 li.activefilter {
   font-size: 11pt;
@@ -1146,19 +1145,10 @@ li.activefilter:hover {
   }
 }
 
-li.activefilter {
-  margin: 5px 0;
-}
-
 div.emptytext {
   font-size: 11pt;
   font-family: $info-font;
   color: $heat-scale-2;
-}
-
-/* Connector.panel.Feedback */
-div.feedback {
-  /*position: absolute;*/
 }
 
 /* Connector.view.Scatter */
@@ -1589,8 +1579,13 @@ div.learnview {
   overflow-x: hidden;
 }
 
-div.learnheader {
-  background-color: $primary-color;
+div.learnheader,
+div.learncolumnheader {
+  background-color: $secondary-color;
+}
+
+div.learncolumnheader {
+  height: 30px;
 }
 
 div.learn-header-container {
@@ -1612,11 +1607,6 @@ h1.lhdv {
   }
 }
 
-div.learncolumnheader {
-  background-color: $primary-color;
-  height: 30px;
-}
-
 .headerlock {
   position: absolute;
   top: 0px;
@@ -1624,13 +1614,8 @@ div.learncolumnheader {
 
 /* Connector.app.view.Study */
 div.detail-wrapper:hover {
-  transition: background-color .2s ease-out;
-  -moz-transition: background-color .2s ease-out;
-  -webkit-transition: background-color .2s ease-out;
-  -o-transition: background-color .2s ease-out;
-
+  @include transition(background-color 0.2s ease-out);
   background-color: $selectongrey-color;
-
   cursor: pointer;
 }
 

@@ -124,7 +124,7 @@ Ext.define('Connector.store.Summary', {
                         flight : this.flight
                     }
                 ],
-                success : this.byVaccine,
+                success : this.byProduct,
                 scope   : this
             }
             ,{
@@ -206,17 +206,12 @@ Ext.define('Connector.store.Summary', {
             }
         }
 
-        var val;
         for (x in types) {
             if (types.hasOwnProperty(x)) {
-                val = types[x] + ' ' + x;
-                if (!skipConcat) {
-                    details += sep + val;
-                    sep = ', ';
-                }
-                else {
-                    details.push({text: val});
-                }
+                details.push({
+                    counter: types[x],
+                    text: x
+                });
                 total++;
             }
         }
@@ -241,16 +236,6 @@ Ext.define('Connector.store.Summary', {
     },
 
     _listNames : function(cellset) {
-//        var d = '', sep = '', val, r;
-//        for (r=0; r < cellset.axes[1].positions.length; r++) {
-//            if (cellset.cells[r][0].value > 0)
-//            {
-//                val = cellset.axes[1].positions[r][0].name;
-//                val = (val == '#null') ? 'Unknown' : val;
-//                d += sep + val;
-//                sep = ', ';
-//            }
-//        }
         var d = this._getNames(cellset), list = '', sep = '';
         for (var i=0; i < d.length; d++) {
             list += sep + d[i];
@@ -281,17 +266,18 @@ Ext.define('Connector.store.Summary', {
             return;
         }
 
-        var studyNames = this._getNames(cellset);
-        var d = [];
-        for (var s=0; s < studyNames.length; s++) {
-            d.push({text: studyNames[s], nav: 'details/study/' + studyNames[s]});
-        }
+//        var studyNames = this._getNames(cellset);
+//        var d = [];
+//        for (var s=0; s < studyNames.length; s++) {
+//            d.push({text: studyNames[s], nav: 'details/study/' + studyNames[s]});
+//        }
+
         var rec = {
             total     : this._aggregate(cellset),
             label     : 'Studies',
             subject   : 'studies',
             hierarchy : cellset.axes[1].positions[0][0].level.hierarchy.name,
-            details   : d, //Ext.String.ellipsis(this._listNames(cellset), 100, true),
+            details   : [], //d,
             sort      : 0
         };
 
@@ -317,7 +303,7 @@ Ext.define('Connector.store.Summary', {
 
         var rec = {
             total     : this._aggregate(clade2),
-            label     : 'Assay Antigens',
+            label     : 'Assay antigens',
             subject   : 'antigens',
             hierarchy : tier1.axes[1].positions[0][0].level.hierarchy.name,
             details   : [],
@@ -332,18 +318,12 @@ Ext.define('Connector.store.Summary', {
 
         for (var a=0; a < agg.length; a++) {
             rec.details.push({
-                text: this._aggregate(agg[a].aggregate) + ' ' + agg[a].name,
+                counter: this._aggregate(agg[a].aggregate),
+                text: agg[a].name,
                 nav: 'singleaxis/antigen/' + agg[a].hierarchy
             });
         }
 
-        var splice = this._listNames(source1);
-
-        // dont show empty ()
-//        if (splice != '')
-//            rec.details += '\n(' + splice + ')';
-//
-//        rec.details = Ext.String.ellipsis(rec.details, 100, true);
         this.subAdd(rec, configArray[0].flight);
         this.done();
     },
@@ -366,20 +346,20 @@ Ext.define('Connector.store.Summary', {
             label     : 'Assays',
             subject   : 'assays',
             hierarchy : cellset.axes[1].positions[0][0].level.hierarchy.name,
-            details   : [], //Ext.String.ellipsis(this._listNames(cellset), 100, true),
+            details   : [],
             sort      : 4
         };
 
-        var names = this._getNames(cellset);
-        for (var d=0; d < names.length; d++) {
-            rec.details.push({
-                text: names[d],
-                nav: 'details/assay/' + names[d]
-            });
-        }
-
-        if (rec.details.length == 0)
-            rec.details.push({text: 'No Matching Assays Found.'});
+//        var names = this._getNames(cellset);
+//        for (var d=0; d < names.length; d++) {
+//            rec.details.push({
+//                text: names[d],
+//                nav: 'details/assay/' + names[d]
+//            });
+//        }
+//
+//        if (rec.details.length == 0)
+//            rec.details.push({text: 'No Matching Assays Found.'});
 
         this.subAdd(rec, configArray[0].flight);
         this.done();
@@ -407,16 +387,16 @@ Ext.define('Connector.store.Summary', {
             sort      : 6
         };
 
-        var names = this._getNames(labCS);
-        for (var d=0; d < names.length; d++) {
-            rec.details.push({
-                text: names[d]
-//                nav: 'labsdetailpanel/' + names[d] // labs dont currently provide a detail page
-            });
-        }
-
-        if (rec.details.length == 0)
-            rec.details.push({text: 'No Matching Assays Found.'});
+//        var names = this._getNames(labCS);
+//        for (var d=0; d < names.length; d++) {
+//            rec.details.push({
+//                text: names[d]
+////                nav: 'labsdetailpanel/' + names[d] // labs dont currently provide a detail page
+//            });
+//        }
+//
+//        if (rec.details.length == 0)
+//            rec.details.push({text: 'No Matching Assays Found.'});
 
         this.subAdd(rec, configArray[0].flight);
         this.done();
@@ -456,7 +436,7 @@ Ext.define('Connector.store.Summary', {
 
         var rec = {
             total     : total,
-            label     : 'Subjects',
+            label     : 'Subject characteristics',
             subject   : 'subjects',
             hierarchy : ethnicityCS.axes[1].positions[0][0].level.hierarchy.name,
             details   : [],
@@ -471,7 +451,8 @@ Ext.define('Connector.store.Summary', {
         for (var a=0; a < agg.length; a++) {
             nav = 'singleaxis/participant/' + (agg[a].name == 'races' ? 'race' : 'country');
             rec.details.push({
-                text: this._aggregate(agg[a].aggregate) + ' ' + agg[a].name,
+                counter: this._aggregate(agg[a].aggregate),
+                text: agg[a].name,
                 nav: nav
             });
         }
@@ -482,7 +463,8 @@ Ext.define('Connector.store.Summary', {
         for (a in agg.types) {
             if (agg.types.hasOwnProperty(a)) {
                 rec.details.push({
-                    text: agg.types[a] + ' ' + this._genderHelper(a)
+                    counter: agg.types[a],
+                    text: this._genderHelper(a)
                 });
             }
         }
@@ -491,7 +473,7 @@ Ext.define('Connector.store.Summary', {
         this.done();
     },
 
-    byVaccine : function(qrArray, configArray) {
+    byProduct : function(qrArray, configArray) {
 
         if (this.error) {
             return;
@@ -507,10 +489,10 @@ Ext.define('Connector.store.Summary', {
 
         var rec = {
             total     : agg.total,
-            label     : 'Study Products',
+            label     : 'Study products',
             subject   : 'products',
             hierarchy : vaccineCS.axes[1].positions[0][0].level.hierarchy.name,
-            details   : agg.details, //Ext.String.ellipsis(agg.details, 100, true),
+            details   : agg.details,
             sort      : 2
         };
 
@@ -534,7 +516,7 @@ Ext.define('Connector.store.Summary', {
 
         var rec = {
             total     : agg.total,
-            label     : 'Vaccine Immunogens',
+            label     : 'Vaccine immunogens',
             subject   : 'immunogens',
             hierarchy : vaccineCS.axes[1].positions[0][0].level.hierarchy.name,
             details   : agg.details, //Ext.String.ellipsis(agg.details, 100, true),

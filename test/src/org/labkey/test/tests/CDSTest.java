@@ -378,7 +378,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusPanel(STUDIES[2], STUDIES[2], 11, 1, 3, 2, 3, 12);
         goToAppHome();
         clearSelection();
-        clickBy("Assay Antigens");
+        clickBy("Assay antigens");
         pickCDSSort("Tier", "1A");
         toggleExplorerBar("3");
         assertFilterStatusPanel("H061.14", "H061.14", 12, 1, 3, 2, 8, 12);
@@ -399,7 +399,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusPanel(LABS[1], LABS[1], 23, 3, 5, 3, 31, 23);
         assertFilterStatusPanel(LABS[2], LABS[2], 18, 2, 3, 2, 11, 23);
         goToAppHome();
-        clickBy("Subjects");
+        clickBy("Subject characteristics");
         clearSelection();
         assertDefaultFilterStatusCounts();
         pickCDSSort("Country");
@@ -414,7 +414,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         log("Verify multi-select");
 
         // 14910
-        clickBy("Assay Antigens");
+        clickBy("Assay antigens");
         waitForBarToAnimate("Unknown");
         click(cdsButtonLocator("hide empty"));
         waitForBarToAnimate("Unknown");
@@ -499,7 +499,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
 
         //test more group saving
-        clickBy("Subjects");
+        clickBy("Subject characteristics");
         pickCDSSort("Sex");
         selectBars("f");
 
@@ -541,7 +541,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public void verifyNounPages()
     {
         // placeholder pages
-        clickBy("Assay Antigens");
+        clickBy("Assay antigens");
         waitForBarToAnimate("Unknown");
         pickCDSSort("Tier", "1A");
         toggleExplorerBar("1A");
@@ -583,7 +583,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
 
         makeNavigationSelection(NavigationLink.SUMMARY);
-        clickBy("Study Products");
+        clickBy("Study products");
 
         assertVaccineTypeInfoPage("VRC-HIVADV014-00-VP", "The recombinant adenoviral vector product VRC-HIVADV014-00-VP (Ad5)");
         assertVaccineTypeInfoPage("VRC-HIVDNA016-00-VP", "VRC-HIVDNA016-00-VP is manufactured by Vical Incorporated");
@@ -610,7 +610,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @Test
     public void testLearnAboutStudyProducts()
     {
-        viewLearnAboutPage("Study Products");
+        viewLearnAboutPage("Study products");
 
         List<String> studyProducts = Arrays.asList("VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
         verifyLearnAboutPage(studyProducts);
@@ -735,32 +735,32 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         Locator dimensionGroup = Locator.css("div.dimgroup");
         Locator dimensionSort = Locator.css("div.dimensionsort");
 
-        waitAndClick(Locator.linkWithText("6 races"));
-        waitForElement(dimensionGroup.withText("Subjects"));
+        waitAndClick(Locator.linkWithText("races"));
+        waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: RACE"));
         goToAppHome();
         sleep(250);
 
-        waitAndClick(Locator.linkWithText("3 locations"));
-        waitForElement(dimensionGroup.withText("Subjects"));
+        waitAndClick(Locator.linkWithText("locations"));
+        waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
         goToAppHome();
         sleep(250);
 
-        waitAndClick(Locator.linkWithText("5 clades"));
-        waitForElement(dimensionGroup.withText("Assay Antigens"));
+        waitAndClick(Locator.linkWithText("clades"));
+        waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: CLADE"));
         goToAppHome();
         sleep(250);
 
-        waitAndClick(Locator.linkWithText("5 tiers"));
-        waitForElement(dimensionGroup.withText("Assay Antigens"));
+        waitAndClick(Locator.linkWithText("tiers"));
+        waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: TIER"));
         goToAppHome();
         sleep(250);
 
-        waitAndClick(Locator.linkWithText("5 sample types"));
-        waitForElement(dimensionGroup.withText("Assay Antigens"));
+        waitAndClick(Locator.linkWithText("sample types"));
+        waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: SAMPLE TYPE"));
         goToAppHome();
     }
@@ -822,7 +822,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
 
         // create live filter group
-        clickBy("Subjects");
+        clickBy("Subject characteristics");
         pickCDSSort("Race");
         selectBars("White");
         useSelectionAsFilter();
@@ -1197,11 +1197,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Studies", STUDIES[0] + ", " + STUDIES[1] + ", " + STUDIES[2], "3 studies");
-        assertCDSPortalRow("Assay Antigens", "5 clades, 5 tiers, 5 sample types", "31 antigens");
-        assertCDSPortalRow("Assays", "Lab Results, ADCC-Ferrari, Luminex-Sample-LabKey, NAb-Sample-LabKey, mRNA assay", "5 assays");
-        assertCDSPortalRow("Labs", "Arnold/Bellew Lab, LabKey Lab, Piehler/Eckels Lab", "3 labs");
-        assertCDSPortalRow("Subjects", "6 races, 3 locations, 18 female, 11 male", "29 subjects");
+        assertCDSPortalRow("Studies", "", "3 studies");
+        assertCDSPortalRow("Assay antigens", "5 clades, 5 tiers, 5 sample types", "31 antigens");
+        assertCDSPortalRow("Assays", "", "5 assays");
+        assertCDSPortalRow("Labs", "", "3 labs");
+        assertCDSPortalRow("Subject characteristics", "6 races, 3 locations, 18 female, 11 male", "29 subjects");
     }
 
     private void assertCDSPortalRow(String byNoun, String expectedDetail, String expectedTotal)

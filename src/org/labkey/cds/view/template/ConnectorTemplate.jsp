@@ -17,17 +17,13 @@
 %>
 <%@ page import="org.labkey.api.settings.AppProps" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="org.labkey.api.view.ActionURL" %>
 <%@ page import="org.labkey.api.view.HttpView" %>
 <%@ page import="org.labkey.api.view.template.ClientDependency" %>
-<%@ page import="org.labkey.api.view.template.PageConfig" %>
 <%@ page import="org.labkey.api.view.template.PrintTemplate" %>
 <%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     PrintTemplate me   = (PrintTemplate) HttpView.currentView();
-    PageConfig bean    = me.getModelBean();
-    ActionURL url      = getActionURL();
     String contextPath = request.getContextPath();
     String serverHash   = PageFlowUtil.getServerSessionHash();
     Boolean devMode = AppProps.getInstance().isDevMode();
@@ -41,24 +37,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Use Internet Explorer 9 Standards mode -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
     <title>HIV Vaccine Connector</title>
-    <%= bean.getMetaTags(url) %>
+
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
     <!-- Context Path required for CSS -->
     <style type="text/css">
-
-        .x-mask {
-            background: #333;
-            opacity : 0.35;
-        }
-
         .yaxisbutton {
             position: absolute;
-            top: 50%;
         }
 
         .x-btn-rounded-inverted-accent-icon-small .info {
@@ -68,10 +57,6 @@
         .x-btn-rounded-inverted-accent-icon-small-over .info {
             background-image: url(<%=text(appPath)%>/images/infoover.png);
         }
-
-        <%--.x-form-trigger {--%>
-            <%--background-image : url(<%=text(appPath)%>/images/combotrigger.gif);--%>
-        <%--}--%>
 
         .x-column-header-trigger {
             background-image: url(<%=text(appPath)%>/images/gridtrigger.gif) !important;
@@ -114,11 +99,6 @@
             background-size: 8px 8px;
         }
 
-        div.memberitem {
-            float: right;
-            font-family: Arial;
-        }
-
         div.collapsed-member {
             width: 78%;
             padding: 4px 6px;
@@ -139,47 +119,8 @@
             padding: 0 6px;
         }
 
-        .save-label {
-            font-family: Verdana, sans-serif;
-            padding: 4px 9px;
-            font-size: 11pt;
-        }
-
-        .save-label-over {
-            /* select color */
-            background-color: rgba(20, 201, 204, 0.2);
-            cursor: pointer;
-        }
-
-        .save-label-selected {
-            background-color: #14C9CC;
-            color: #FFF;
-        }
-
-        .x-body {
-            font-family: Verdana, sans-serif;
-        }
-
-        .x-form-text,
-        .x-form-textarea {
-            background-image: none;
-            border-color: rgb(211, 211, 211);
-        }
-
         .x-border-box textarea.x-form-field {
             padding: 4px 3px;
-        }
-
-        .x-form-item, .x-form-field {
-            font: normal 10pt Verdana, sans-serif;
-        }
-
-        .x-form-cb-label {
-            font: normal 11pt Arial;
-        }
-
-        .x-form-focus {
-            border-color: #333333;
         }
     </style>
 
