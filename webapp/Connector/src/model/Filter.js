@@ -7,7 +7,10 @@ Ext.define('Connector.model.Filter', {
         {name : 'operator'},
         {name : 'isGroup', type: 'boolean'},
         {name : 'isGrid', type: 'boolean'},
-        {name : 'gridFilter'} // instance of LABKEY.Filter
+        {name : 'isPlot', type: 'boolean'},
+        {name : 'gridFilter'}, // instance of LABKEY.Filter
+        {name : 'plotMeasures'}, // array of measures
+        {name : 'plotScales'} // array of scales
     ],
 
     statics : {
@@ -135,6 +138,10 @@ Ext.define('Connector.model.Filter', {
 
     isGrid : function() {
         return this.get('isGrid');
+    },
+
+    isPlot : function() {
+        return this.get('isPlot');
     },
 
     getGridHierarchy : function() {

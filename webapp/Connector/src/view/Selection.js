@@ -92,7 +92,15 @@ Ext.define('Connector.view.Selection', {
                         '{[this.renderLabel(values)]}',
                     '</div>',
                 '</tpl>',
-                '<tpl if="this.isGrid(values) == false && this.isGroup(values) == false">',
+                '<tpl if="this.isPlot(values) == true">',
+                    // Plot Filter
+                    '<div class="circle"></div>',
+                    '<div class="selitem status-over memberitem">',
+                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                        '{[this.renderMeasures(values)]}',
+                    '</div>',
+                '</tpl>',
+                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false && this.isGroup(values) == false">',
                     // Normal Filter
                     '<div class="circle"></div>',
                     '<tpl if="members.length &gt; 1">',
@@ -128,6 +136,9 @@ Ext.define('Connector.view.Selection', {
                 isGroup : function(values) {
                     return (Ext.isArray(values.filters) ? true : false);
                 },
+                isPlot : function(values) {
+                    return (values.isPlot ? true : false);
+                },
                 selectIntersect : function(op) {
                     return op == LABKEY.app.controller.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
                 },
@@ -151,6 +162,15 @@ Ext.define('Connector.view.Selection', {
                 },
                 renderName : function(n) {
                     return Ext.htmlEncode('Group: ' + n);
+                },
+                renderMeasures : function(values) {
+                    var label = 'In the plot: ';
+                    var measures = values.plotMeasures, sep = '';
+                    for (var i=0; i < measures.length; i++) {
+                        label += sep + /*'(' + measures[i].measure.queryLabel + ') ' + */ measures[i].measure.label;
+                        sep = ', ';
+                    }
+                    return label;
                 },
                 renderLabel : function(values) {
                     var type = Connector.model.Filter.getGridHierarchy(values);
