@@ -11,16 +11,14 @@ Ext.define('Connector.controller.Home', {
         this.control('grouplistview', {
             itemclick: function(v, grp) {
                 var filters = grp.get('filters');
-                if (Ext.isString(filters))
+                if (Ext.isString(filters)) {
                     filters = LABKEY.app.controller.Filter.filtersFromJSON(filters);
-                else
+                }
+                else {
                     filters = filters.filters;
-                var group = Ext.create('Connector.model.FilterGroup', {
-                    name: grp.get('label'),
-                    filters: filters
-                });
-
-                var pruned = this.getStateManager().pruneFilters([group], this.getStateManager().getFilters());
+                }
+//
+                var pruned = this.getStateManager().pruneFilters(filters, this.getStateManager().getFilters());
                 if (pruned.length > 0)
                     this.getStateManager().addFilters(pruned);
             }
