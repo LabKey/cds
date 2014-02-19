@@ -157,7 +157,7 @@ Ext.define('Connector.controller.Group', {
 
     onGroupSaved : function(grp, filters) {
 
-//        var name = grp.label ? grp.label : grp.category.label;
+        var name = grp.label ? grp.label : grp.category.label;
 //
 //        var group = Ext.create('Connector.model.FilterGroup', {
 //            name : name,
@@ -166,5 +166,13 @@ Ext.define('Connector.controller.Group', {
 
         this.getStateManager().setFilters(filters);
         this.getViewManager().hideView('groupsave');
-    },
+
+        var fsview = this.getViewManager().getViewInstance('filterstatus');
+        if (fsview) {
+            fsview.showMessage('Group \"' + name + '\" saved.', true);
+        }
+        else {
+            console.warn('no filterstatus view available');
+        }
+    }
 });

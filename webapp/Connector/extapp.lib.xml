@@ -78,6 +78,9 @@
         <script path="Connector/src/panel/Selection.js"/>
         <script path="Connector/src/panel/GroupList.js"/>
 
+        <!-- Application plugins -->
+        <script path="Connector/src/plugin/Messaging.js"/>
+
         <!-- Application Stores -->
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
