@@ -22,6 +22,8 @@ Ext.define('Connector.view.GroupSave', {
         type: 'anchor'
     },
 
+    hideSelectionWarning: true,
+
     constructor : function(config) {
 
         Ext.applyIf(config, {
@@ -44,6 +46,25 @@ Ext.define('Connector.view.GroupSave', {
                     autoEl: {
                         tag: 'h2',
                         html: 'Save group'
+                    }
+                },
+                {
+                    xtype: 'box',
+                    hidden: this.hideSelectionWarning,
+                    itemId: 'selectionwarning',
+                    autoEl: {
+                        tag: 'div',
+                        style: 'padding-top: 5px;',
+                        children: [{
+                            tag: 'img',
+                            src: LABKEY.contextPath + '/Connector/images/warn.png',
+                            height: '13px',
+                            width: '13px',
+                            style: 'vertical-align: middle; margin-right: 8px;'
+                        },{
+                            tag: 'span',
+                            html: 'Current Selection will be applied'
+                        }]
                     }
                 },
                 {
@@ -290,6 +311,14 @@ Ext.define('Connector.view.GroupSave', {
         return this.mode;
     },
 
+    onSelectionChange : function(selections) {
+        // update warning
+        var sw = this.getComponent('content').getComponent('selectionwarning');
+        if (sw) {
+            sw.setVisible(selections.length != 0);
+        }
+    },
+
     setActive : function(groupModel) {
         var form = this.replaceGroup.getComponent('creategroupform');
         if (form) {
@@ -346,8 +375,10 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     reset : function() {
-        this.clear();
-        this.changeMode(Connector.view.GroupSave.modes.CREATE);
+        // only rest in 'create' mode
+        if (this.getMode() == Connector.view.GroupSave.modes.CREATE) {
+            this.clear();
+        }
     },
 
     getValues : function() {
