@@ -52,6 +52,7 @@ Ext.define('Connector.view.Scatter', {
 
     attachInternalListeners : function() {
 
+        this.showTask = new Ext.util.DelayedTask(this.onShowGraph, this);
         this.resizeTask = new Ext.util.DelayedTask(this.handleResize, this);
 
         this.on('resize', function() {
@@ -428,7 +429,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
-        plot = this.plot;
+        plot = this.plot; // hoisted for brushing events
 
         if (this.plot) {
             this.plot.addLayer(pointLayer);
@@ -521,7 +522,9 @@ Ext.define('Connector.view.Scatter', {
 
         var activeMeasures = this.getActiveMeasures();
 
-        if (!activeMeasures.x || !activeMeasures.y) {
+        if (this.filterClear || !activeMeasures.x || !activeMeasures.y) {
+            this.filterClear = false;
+            this.noPlot();
             return;
         }
 
@@ -540,6 +543,9 @@ Ext.define('Connector.view.Scatter', {
 
             if (!this.fromFilter) {
                 this.updatePlotBasedFilter(wrappedMeasures);
+            }
+            else {
+                this.initialized = true;
             }
 
             // Request Participant List
@@ -634,7 +640,7 @@ Ext.define('Connector.view.Scatter', {
     onChartDataSuccess : function(response) {
 
         if (!this.isActiveView) {
-            this.priorResponse = response;
+//            this.priorResponse = response;
             return;
         }
 
@@ -697,6 +703,7 @@ Ext.define('Connector.view.Scatter', {
                 if (!found) {
                     this.state.addFilters([filter]);
                 }
+                this.plotLock = false;
             },
             scope: this
         });
@@ -938,7 +945,7 @@ Ext.define('Connector.view.Scatter', {
                     handler: function() {
                         if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
                             this.initialized = true;
-                            this.onShowGraph();
+                            this.showTask.delay(300);
                             this.ywin.hide();
                         }
                         else if (this.axisPanelY.hasSelection()) {
@@ -1031,7 +1038,7 @@ Ext.define('Connector.view.Scatter', {
                     handler : function() {
                         if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
                             this.initialized = true;
-                            this.onShowGraph();
+                            this.showTask.delay(300);
                             this.xwin.hide();
                         }
                         else if (this.axisPanelX.hasSelection()) {
@@ -1164,13 +1171,10 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        if (filters.length == 0) {
-            if (this.initialized) {
-                Ext.defer(this.noPlot, 300, this);
-            }
-        }
-        else if (this.isActiveView) {
-            Ext.defer(this.onShowGraph, 300, this);
+        this.filterClear = filters.length == 0;
+
+        if (this.isActiveView) {
+            this.showTask.delay(300);
         }
         else if (this.initialized) {
             this.refreshRequired = true;
@@ -1180,35 +1184,24 @@ Ext.define('Connector.view.Scatter', {
     onViewChange : function(xtype) {
         this.isActiveView = (xtype == 'plot');
 
-        if (!this.isActiveView) {
-            this.hideLoad();
-        }
-        //Note: When this event fires, animation still seems to be in play and grid doesn't render properly
-        //Deferring seems to fix it, but perhaps event should fire later.
-        if (this.isActiveView && this.initialized && this.refreshRequired) {
-            Ext.defer(this.onShowGraph, 300, this);
-            if (this.msg)
+        if (this.isActiveView) {
+
+            if (this.refreshRequired) {
+                this.showTask.delay(300);
+            }
+
+            if (this.msg) {
                 this.msg.show();
-            return;
-        }
-        else if (this.isActiveView && !this.refreshRequired) {
-            // a response has been cached to load
-            if (this.priorResponse) {
-                this.showLoad();
-                Ext.defer(this.onChartDataSuccess, 300, this, [this.priorResponse]);
-                this.priorResponse = undefined;
-            }
-            else {
-                this.resizeTask.delay(300);
             }
         }
+        else {
+            this.hideLoad();
 
-        if (this.msg) {
-            this.isActiveView ? this.msg.show() : this.msg.hide();
-        }
+            if (this.msg) {
+                this.msg.hide();
+            }
 
-        if (this.win) {
-            if (!this.isActiveView) {
+            if (this.win) {
                 this.win.hide();
             }
         }
