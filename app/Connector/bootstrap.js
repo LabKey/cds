@@ -54,6 +54,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.FilterPanel": "../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.panel.Selection": "../../webapp/Connector/src/panel/Selection.js",
+  "Connector.plugin.Messaging": "../../webapp/Connector/src/plugin/Messaging.js",
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
   "Connector.store.Summary": "../../webapp/Connector/src/store/Summary.js",
@@ -152,6 +153,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
   "Connector.panel.Selection": [],
+  "Connector.plugin.Messaging": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
   "Connector.store.Summary": [],
@@ -1078,6 +1080,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
+  ],
+  "Connector.plugin.Messaging": [
+    "plugin.messaging"
   ],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],

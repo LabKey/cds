@@ -220,6 +220,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
 
+    <!-- Application plugins -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
+
     <!-- Application Stores -->
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>

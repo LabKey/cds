@@ -3,6 +3,8 @@ Ext.define('Connector.view.FilterStatus', {
 
     alias  : 'widget.filterstatus',
 
+    plugins: ['messaging'],
+
     ui: 'custom',
 
     padding: '20 20 0 20',
@@ -61,6 +63,7 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     onFilterChange : function(filters) {
+        this.hideMessage(true);
         if (this.filterpanel) {
             this.filterpanel.loadFilters(filters);
 
@@ -78,9 +81,23 @@ Ext.define('Connector.view.FilterStatus', {
         }
     },
 
+    onFilterRemove : function(filters) {
+        var id = Ext.id();
+        this.showMessage('Filter removed. <a id="' + id + '">Undo</a>', true, true);
+        var undo = Ext.get(id);
+        if (undo) {
+            undo.on('click', this.onUndo, this, {single: true});
+        }
+    },
+
     onSelectionChange : function(selections, opChange) {
         this.selections = selections;
         if (!opChange && this.selectionpanel)
             this.selectionpanel.loadFilters(selections);
+    },
+
+    onUndo : function() {
+        this.fireEvent('requestundo');
+        this.hideMessage(true);
     }
 });

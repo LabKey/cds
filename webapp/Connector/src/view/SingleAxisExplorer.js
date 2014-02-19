@@ -359,6 +359,13 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     alias : 'widget.singleaxisview',
 
+    plugins : [{
+        ptype: 'messaging',
+        calculateY : function(cmp, box, msg) {
+            return box.y - 70;
+        }
+    }],
+
     itemSelector : 'div.bar',
 
     multiSelect : true,
@@ -723,78 +730,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         node.on('click', function() {
             this.groupClickTask.delay(100, null, null, [rec]);
         }, this);
-    },
-
-    hideMessage : function(withFade) {
-        if (this.msg && this.msg.isVisible()) {
-            if (withFade) {
-                if (!this.msgfade) {
-
-                    this.msgfade = true;
-                    this.msg.getEl().fadeOut({
-                        listeners : {
-                            afteranimate : function() {
-                                this.clearMessage();
-                                this.msgfade = false;
-                            },
-                            scope : this
-                        },
-                        scope : this
-                    });
-                }
-            }
-            else {
-                this.clearMessage();
-            }
-            this.loadMsg = false;
-        }
-    },
-
-    clearMessage : function() {
-        if (this.msg) {
-            this.msg.hide();
-            this.msg.destroy();
-            this.msg = null;
-        }
-    },
-
-    deferMessage : function() {
-        Ext.defer(function() {
-            if (this.msg && !this.msg.keep) {
-                this.hideMessage(true);
-            }
-        }, 8000, this);
-    },
-
-    showMessage : function(msg, force, keep) {
-
-        if (this.showmsg || force)
-        {
-            this.clearMessage();
-
-            if (!force) {
-                this.showmsg = false;
-            }
-
-            var box = this.getBox();
-
-            var listeners = {};
-            if (!keep) {
-                listeners = {
-                    afterrender : this.deferMessage,
-                    scope: this
-                };
-            }
-
-            this.msg = Ext.create('Connector.window.SystemMessage', {
-                msg : msg,
-                x   : Math.floor(box.width/2 - Math.floor(this.getEl().getTextWidth(msg)/2) ),
-                y   : (box.y-70), // height of message window
-                listeners : listeners,
-                keep : keep,
-                scope : this
-            });
-        }
     },
 
     positionHelper : function() {

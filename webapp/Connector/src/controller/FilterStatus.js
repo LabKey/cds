@@ -38,6 +38,19 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
+        this.control('filterstatus', {
+            requestundo : function() {
+                var state = this.getStateManager();
+                var index = state.getPreviousState();
+                if (index > -1) {
+                    state.loadFilters(index);
+                }
+                else {
+                    console.warn('FAILED TO UNDO. NOT ABLE TO FIND STATE');
+                }
+            }
+        });
+
         this.control('filtersave > form > toolbar > #cancelsave', {
             click : this.onFilterCancel
         });
@@ -92,7 +105,12 @@ Ext.define('Connector.controller.FilterStatus', {
 
         state.on('filtercount', view.onFilterChange, view);
         state.on('filterchange', view.onFilterChange, view);
+        state.on('filterremove', view.onFilterRemove, view);
         state.on('selectionchange', view.onSelectionChange, view);
+
+        this.getViewManager().register(view);
+        this.getViewManager().getEast().on('tabchange', function() { view.hideMessage(false); }, this);
+        this.getViewManager().on('afterchangeview', function() { view.hideMessage(false); }, this);
 
         return view;
     },
@@ -153,17 +171,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
     onFilterSave : function() {
         this.getViewManager().showView('filtersave');
-    },
-
-    onGroupSaved : function(grp, filters) {
-
-//        var group = Ext.create('Connector.model.FilterGroup', {
-//            name : grp.category.label,
-//            filters : filters
-//        });
-
-        this.getStateManager().setFilters(filters);
-        this.getViewManager().hideView('groupsave');
     },
 
     onSelectionClick : function() {
