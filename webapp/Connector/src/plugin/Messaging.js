@@ -24,7 +24,7 @@ Ext.define('Connector.plugin.Messaging', {
 
     calculateX : function(cmp, box, msg) {
         var el = cmp.getEl();
-        return Math.floor(box.x  + (box.width/2 - Math.floor(el.getTextWidth(msg)/2) ));
+        return Math.floor(box.x  + (box.width/2 - Math.floor(el.getTextWidth(msg)/2) - 12));
     },
 
     calculateY : function(cmp, box, msg) {

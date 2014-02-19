@@ -30,9 +30,10 @@ Ext.define('Connector.controller.Group', {
 
         if (xtype == 'groupsave') {
             v = Ext.create('Connector.view.GroupSave', {
-                state : this.getStateManager()
+                hideSelectionWarning: this.getStateManager().getSelections().length == 0
             });
 
+            this.getStateManager().on('selectionchange', v.onSelectionChange, v);
             this.application.on('groupsaved', this.onGroupSaved, this);
         }
 
@@ -107,6 +108,9 @@ Ext.define('Connector.controller.Group', {
                 targetGroup.set('description', values['groupdescription']);
                 targetGroup.set('isLive', values['groupselect'] == 'live');
 
+                // Request filters directly from state
+                var filters = state.getFilters(true);
+
                 state.onMDXReady(function(mdx) {
 
                     var me = this;
@@ -128,7 +132,6 @@ Ext.define('Connector.controller.Group', {
                             };
 
                             var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
-                            var filters = targetGroup.get('filters');
                             var description = targetGroup.get('description');
                             var isLive = targetGroup.get('isLive');
 
@@ -169,7 +172,7 @@ Ext.define('Connector.controller.Group', {
 
         var fsview = this.getViewManager().getViewInstance('filterstatus');
         if (fsview) {
-            fsview.showMessage('Group \"' + name + '\" saved.', true);
+            fsview.showMessage('Group \"' + Ext.String.ellipsis(name, 15, true) + '\" saved.', true);
         }
         else {
             console.warn('no filterstatus view available');
