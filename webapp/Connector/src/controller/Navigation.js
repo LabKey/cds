@@ -45,7 +45,7 @@ Ext.define('Connector.controller.Navigation', {
                 this.primaryNav.getNavigationView().selectByView(this.active, 2);
                 return;
             }
-            console.warn('Active view not available to navigation. Ensure that Connector.changeView is used to see view.');
+//            console.warn('Active view not available to navigation. Ensure that Connector.changeView is used to see view.');
         }
     },
 
