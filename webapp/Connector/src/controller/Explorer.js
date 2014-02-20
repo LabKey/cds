@@ -274,45 +274,75 @@ Ext.define('Connector.controller.Explorer', {
     runSelectionAnimation : function(view, rec, node, callback, scope) {
 
         this.allowHover = false;
-        var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[0]).getBox(),
-                child = Ext.get(node).child('span.barlabel'),
-                cbox  = child.getBox();
 
-        // Create DOM Element replicate
-        var dom = document.createElement('span');
-        dom.innerHTML = child.dom.innerHTML;
-        dom.setAttribute('class', 'barlabel selected');
-        dom.setAttribute('style', 'width: ' + (child.getTextWidth()+10) + 'px; left: ' + cbox[0] + 'px; top: ' + cbox[1] + 'px;');
+        // Determine which animation end point is best
+        var target = Ext.DomQuery.select('.selectionpanel'), targetTop = false, found = false, box;
+        if (Ext.isArray(target) && target.length > 0) {
+            var el = Ext.get(target[0]);
+            if (el.isVisible()) {
+                // use the selection panel
+                targetTop = true;
+                found = true;
+                box = el.getBox();
+            }
+        }
 
-        // check if selection is visible
-        var yoffset = 50;
-        if (this.getStateManager().getSelections().length == 0)
-            yoffset = 0;
-
-        // Append to Body
-        var xdom = Ext.get(dom);
-        xdom.appendTo(Ext.getBody());
-
-        var me = this;
-
-        xdom.animate({
-            to : {
-                x: box.x,
-                y: (box.y-yoffset),
-                opacity: 0.2
-            },
-            duration: 1000, // Issue: 15220
-            listeners : {
-                afteranimate : function() {
-                    Ext.removeNode(xdom.dom);
-                    me.allowHover = true;
+        if (!found) {
+            target = Ext.DomQuery.select('.filterpanel');
+            if (Ext.isArray(target) && target.length > 0) {
+                var el = Ext.get(target[0]);
+                if (el.isVisible()) {
+                    // use the filter panel
+                    found = true;
+                    box = el.getBox();
                 }
             }
-        });
+        }
+
+        // Visibile doesn't necessarily work...
+        if (found && (box.x == 0 || box.y == 0)) {
+            found = false;
+        }
+
+        if (found) {
+            var child = Ext.get(node).child('span.barlabel'), cbox = child.getBox();
+
+            // Create DOM Element replicate
+            var dom = document.createElement('span');
+            dom.innerHTML = child.dom.innerHTML;
+            dom.setAttribute('class', 'barlabel selected');
+            dom.setAttribute('style', 'width: ' + (child.getTextWidth()+20) + 'px; left: ' + cbox[0] + 'px; top: ' + cbox[1] + 'px;');
+
+            // Append to Body
+            var xdom = Ext.get(dom);
+            xdom.appendTo(Ext.getBody());
+
+            var y = box.y + 30;
+            if (!targetTop) {
+                y += box.height;
+            }
+
+            xdom.animate({
+                to : {
+                    x: box.x,
+                    y: y,
+                    opacity: 0.2
+                },
+                duration: 1000, // Issue: 15220
+                listeners : {
+                    afteranimate : function() {
+                        Ext.removeNode(xdom.dom);
+                        this.allowHover = true;
+                    },
+                    scope: this
+                },
+                scope: this
+            });
+        }
 
         if (callback) {
             var task = new Ext.util.DelayedTask(callback, scope, [view, rec, node]);
-            task.delay(500);
+            task.delay(found ? 500 : 0);
         }
     },
 
