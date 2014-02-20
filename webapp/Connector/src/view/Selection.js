@@ -95,8 +95,8 @@ Ext.define('Connector.view.Selection', {
                 '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false">',
                     // Normal Filter (and Group Filters)
                     '<div class="circle"></div>',
-                    '<div class="closeitem wholeitem" data-id="{id}"></div>',
                     '<tpl if="members.length &gt; 1">',
+                        '<div class="closeitem wholeitem" data-id="{id}"></div>',
                         '<div class="opselect">',
                             '<select>',
                                 '<option value="' + LABKEY.app.controller.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
