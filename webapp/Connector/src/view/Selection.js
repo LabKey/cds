@@ -76,14 +76,6 @@ Ext.define('Connector.view.Selection', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-//                '<tpl if="this.isGroup(values) == true">',
-//                    // Group Filter
-//                    '<div class="circle"></div>',
-//                    '<div class="selitem status-over memberitem" style="display: inline-block;">',
-//                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-//                        '{name:this.renderName}',
-//                    '</div>',
-//                '</tpl>',
                 '<tpl if="this.isGrid(values) == true">',
                     // Grid Filter
                     '<div class="circle"></div>',
@@ -104,7 +96,7 @@ Ext.define('Connector.view.Selection', {
                     // Normal Filter (and Group Filters)
                     '<div class="circle"></div>',
                     '<tpl if="members.length &gt; 1">',
-                        '<div style="position: absolute; top: 28px;">',
+                        '<div class="opselect">',
                             '<select>',
                                 '<option value="' + LABKEY.app.controller.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
                                 '<option value="' + LABKEY.app.controller.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
@@ -119,7 +111,7 @@ Ext.define('Connector.view.Selection', {
                         '</tpl>',
                     '</tpl>',
                     '<tpl if="members.length == 1">',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem" title="{members:this.renderMember}">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{members:this.renderMember}',
                         '</div>',
@@ -146,28 +138,75 @@ Ext.define('Connector.view.Selection', {
                     return op == LABKEY.app.controller.Filter.Operators.UNION ? 'selected="selected"' : '';
                 },
                 renderType : function(type) {
-                    var t = type.split('.');
-                    return Ext.htmlEncode(t[t.length-1]);
+                    console.log('BOOM');
+                    var area = '';
+
+                    // Determine if zero level
+                    if (type.indexOf('.') == -1) {
+                        area = type;
+                    }
+                    else {
+                        var areas = type.split('.');
+
+                        if (areas.length == 1) {
+                            area = areas[0];
+                        }
+                        else {
+                            area = areas[0] + ' (' + areas[1] + ')';
+                        }
+                    }
+                    return Ext.htmlEncode(area);
                 },
                 renderUname : function(uname) {
                     return Ext.htmlEncode(uname[uname.length-1]);
                 },
+                /**
+                 * Example of zero-level:
+                 * ["Study", "Not Actually CHAVI 001"]
+                 *
+                 * Example of single-level:
+                 * ["Assay.Methodology", "ICS"]
+                 *
+                 * Example of multi-level:
+                 * ["Assay.Methodology", "NAb", "NAb-Sample-LabKey"]
+                 *
+                 *
+                 */
                 renderMember: function(members) {
-                    var uname = members[0]['uname'];
+                    var member = '', area = '';
+                    var levels = members[0]['uname'];
 
-                    var type = uname[0].split('.');
-                    type = type[type.length-1];
+                    // Determine if zero level
+                    if (levels[0].indexOf('.') == -1) {
+                        area = levels[0];
+                        member = levels[1];
+                    }
+                    else {
+                        var areas = levels[0].split('.');
 
-                    return Ext.htmlEncode(type + ': ' + uname[uname.length-1]);
+                        // multi-level
+                        if (levels.length > 2) {
+                            area = areas[0];
+                        }
+                        else {
+                            // single level
+                            area = areas[0] + ' (' + areas[1] + ')';
+                        }
+
+                        member = levels[levels.length-1];
+                    }
+
+                    if (member == '#null') {
+                        member = 'Unknown';
+                    }
+
+                    return Ext.htmlEncode(area + ': ' + member);
                 },
-//                renderName : function(n) {
-//                    return Ext.htmlEncode('Group: ' + n);
-//                },
                 renderMeasures : function(values) {
                     var label = 'In the plot: ';
                     var measures = values.plotMeasures, sep = '';
                     for (var i=0; i < measures.length; i++) {
-                        label += sep + /*'(' + measures[i].measure.queryLabel + ') ' + */ measures[i].measure.label;
+                        label += sep + measures[i].measure.label;
                         sep = ', ';
                     }
                     return label;

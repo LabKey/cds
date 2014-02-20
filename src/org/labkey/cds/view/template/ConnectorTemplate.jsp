@@ -99,28 +99,16 @@
             background-size: 8px 8px;
         }
 
-        div.collapsed-member {
-            width: 78%;
-            padding: 4px 6px;
-            float: right;
-        }
-
         .sel-listing {
             padding: 5px 0 5px 30px;
-            font-family: Arial;
-            font-size: 12pt;
-        }
-
-        .activefilter div.circle {
-            display: none;
-        }
-
-        .activefilter div.collapsed-member {
-            padding: 0 6px;
         }
 
         .x-border-box textarea.x-form-field {
             padding: 4px 3px;
+        }
+
+        .x-panel-east-view {
+            z-index: 10000;
         }
     </style>
 

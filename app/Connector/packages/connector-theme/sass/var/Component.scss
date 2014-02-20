@@ -33,7 +33,7 @@ $data-font : Georgia, serif;
 $font-family: $info-font;
 
 // form/field/Base.scss
-$form-label-font: normal 11pt $bodycaps-font;
+$form-label-font: normal 10pt $info-font;
 $form-toolbar-field-font: normal 10pt $info-font;
 
 // form/field/Text.scss
@@ -342,7 +342,20 @@ li.fadein {
 /* -- END Windows */
 
 /* Connector.panel.FilterPanel */
+div.selitem {
+  width: 245px;
+  padding: 4px 6px;
+}
+
+div.opselect {
+  position: absolute;
+  top: 25px;
+}
+
 div.filterpanel {
+
+  font-family: $info-font;
+  font-size: 10pt;
 
   .header {
     font-size: 18pt;
@@ -351,31 +364,12 @@ div.filterpanel {
       color: $dark-color;
     }
   }
-
-  div.opselect {
-    display: none;
-  }
-  div.showopselect {
-    display: block;
-  }
-
-  &:hover {
-    div.opselect {
-      display: block !important;
-    }
-    div.showopselect {
-      display: none;
-    }
-  }
-}
-
-div.selitem {
-  font-family: $bodycaps-font;
-  width: 92%;
-  padding: 4px 6px;
 }
 
 div.selectionpanel {
+
+  font-family: $info-font;
+  font-size: 10pt;
 
   .header {
     @include smallStandout;
@@ -394,6 +388,7 @@ div.selectionpanel {
 
 div.selectionfilter {
   position: relative;
+  display: inline-block;
 }
 
 .closeitem {
@@ -411,7 +406,7 @@ div.selectionfilter {
 .memberitem {
 
   float: right;
-  font-family: $bodycaps-font;
+  white-space: nowrap;
 
   &:hover {
     .closeitem {
@@ -422,6 +417,12 @@ div.selectionfilter {
       }
     }
   }
+}
+
+div.collapsed-member {
+  width: 200px;
+  padding: 4px 8px;
+  font-size: 10pt;
 }
 
 div.activefilter {
@@ -437,9 +438,13 @@ div.activefilter {
     display: none;
   }
 
+  div.collapsed-member {
+    padding: 0 10px;
+  }
+
   div.selitem {
     border: 1px solid transparent;
-    padding: 2px 6px;
+    padding: 2px 0;
     width: 100%;
   }
 
@@ -471,21 +476,6 @@ div.filtermember, span.hierarchylabel {
     position: relative;
     top: 3px;
   }
-}
-
-div.opselect {
-  position: absolute;
-  top: 19px;
-  left: 18px;
-  select {
-    font-size: 9pt;
-  }
-}
-
-div.showopselect {
-  position: absolute;
-  top: 23px;
-  left: 25px;
 }
 
 /* -- END Connector.panel.HierarchyFilter */
@@ -755,7 +745,7 @@ div.grouplist {
 .save-label {
   font-family: $info-font;
   padding: 4px 9px;
-  font-size: 11pt;
+  font-size: 10pt;
 }
 
 .save-label-over {
@@ -887,13 +877,13 @@ div.activefilterstatus {
 
 .bar.large .barlabel {
   font-size: 14pt;
-  z-index: 18002;
+  z-index: 5002;
 }
 
 .bar.small .barlabel {
   font-size: 12pt;
   font-weight: bold;
-  z-index: 18002;
+  z-index: 5002;
   border-left: 1px solid $primary-color;
 }
 
@@ -911,7 +901,7 @@ span.info {
   width: 200px;
   height: 25px;
   top: 5px;
-  z-index: 18005;
+  z-index: 5005;
 }
 
 .bar.large:hover,
@@ -924,7 +914,7 @@ span.info {
   }
 
   .index {
-    z-index: 18001;
+    z-index: 5001;
     background-color: $select-color;
   }
 }
@@ -1299,8 +1289,8 @@ div.measure-label {
 }
 
 .circle {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   @include border-radius(8px);
   border: 1px solid $black;
   background-color: $select-color;

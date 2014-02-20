@@ -54,7 +54,7 @@ Ext.define('Connector.view.GroupSave', {
                     itemId: 'selectionwarning',
                     autoEl: {
                         tag: 'div',
-                        style: 'padding-top: 5px;',
+                        style: 'padding-top: 10px;',
                         children: [{
                             tag: 'img',
                             src: LABKEY.contextPath + '/Connector/images/warn.png',
@@ -116,7 +116,7 @@ Ext.define('Connector.view.GroupSave', {
                         allowBlank: false,
                         validateOnBlur: false,
                         items: [
-                            { boxLabel: 'Live Filters: Keep group updated', name: 'groupselect', inputValue: 'live', checked: true},
+                            { boxLabel: 'Live: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
                             { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
                         ]
                     }]
@@ -185,7 +185,7 @@ Ext.define('Connector.view.GroupSave', {
                     xtype: 'box',
                     autoEl: {
                         tag: 'div',
-                        style: 'padding: 5px 0; font-family: Arial; font-size: 11pt;',
+                        style: 'padding: 5px 0; font-family: Verdana, sans-serif; font-size: 10pt;',
                         html: 'My groups:'
                     }
                 },{
@@ -227,7 +227,7 @@ Ext.define('Connector.view.GroupSave', {
                         xtype: 'box',
                         autoEl: {
                             tag: 'div',
-                            style: 'padding: 5px 0; font-family: Arial; font-size: 11pt;',
+                            style: 'padding: 5px 0; font-family: Verdana, sans-serif; font-size: 10pt;',
                             html: 'Description:'
                         }
                     },{
@@ -241,7 +241,7 @@ Ext.define('Connector.view.GroupSave', {
                         columns: 1,
                         allowBlank: false,
                         items: [
-                            { boxLabel: 'Live Filters: Keep group updated', name: 'groupselect', inputValue: 'live', checked: true},
+                            { boxLabel: 'Live: Update group with new data', name: 'groupselect', inputValue: 'live', checked: true},
                             { boxLabel: 'Snapshot: Keep this group static', name: 'groupselect', inputValue: 'static' }
                         ]
                     }]
