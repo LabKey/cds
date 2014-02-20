@@ -21,10 +21,8 @@ Ext.define('Connector.controller.Home', {
                 else {
                     filters = filters.filters;
                 }
-//
-                var pruned = this.getStateManager().pruneFilters(filters, this.getStateManager().getFilters());
-                if (pruned.length > 0)
-                    this.getStateManager().addFilters(pruned);
+
+                this.getStateManager().setFilters(filters);
             }
         });
 
