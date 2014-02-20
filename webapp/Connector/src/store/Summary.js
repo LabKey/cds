@@ -96,20 +96,20 @@ Ext.define('Connector.store.Summary', {
             ,{
                 configs : [
                     {
-                        onRows : [ { hierarchy : 'Participant.Race', lnum : 0 } ],
+                        onRows : [ { hierarchy : 'Subject.Race', lnum : 0 } ],
                         useNamedFilters : this.getFilterSet(),
                         flight : this.flight
                     },
                     {
-                        onRows : [ { hierarchy : 'Participant.Race', lnum : 1 } ],
+                        onRows : [ { hierarchy : 'Subject.Race', lnum : 1 } ],
                         useNamedFilters : this.getFilterSet()
                     },
                     {
-                        onRows : [ { hierarchy : 'Participant.Country', lnum : 1 } ],
+                        onRows : [ { hierarchy : 'Subject.Country', lnum : 1 } ],
                         useNamedFilters : this.getFilterSet()
                     },
                     {
-                        onRows : [ { level : '[Participant.Sex].[Sex]' } ],
+                        onRows : [ { level : '[Subject.Sex].[Sex]' } ],
                         useNamedFilters : this.getFilterSet()
                     }
                 ],
@@ -420,11 +420,11 @@ Ext.define('Connector.store.Summary', {
             return;
         }
 
-        var participantCS = qrArray[0],
+        var subjectCS = qrArray[0],
                 ethnicityCS   = qrArray[1],
                 locationCS    = qrArray[2],
                 genderCS      = qrArray[3],
-                total         = participantCS.cells.length;
+                total         = subjectCS.cells.length;
 
         if (!ethnicityCS.axes[1].positions || ethnicityCS.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Demographic Information.');
@@ -432,7 +432,7 @@ Ext.define('Connector.store.Summary', {
         }
 
         if (total != 0)
-            total = participantCS.cells[0][0].value;
+            total = subjectCS.cells[0][0].value;
 
         var rec = {
             total     : total,
@@ -449,7 +449,7 @@ Ext.define('Connector.store.Summary', {
         ], nav;
 
         for (var a=0; a < agg.length; a++) {
-            nav = 'singleaxis/participant/' + (agg[a].name == 'races' ? 'race' : 'country');
+            nav = 'singleaxis/subject/' + (agg[a].name == 'races' ? 'race' : 'country');
             rec.details.push({
                 counter: this._aggregate(agg[a].aggregate),
                 text: agg[a].name,

@@ -237,7 +237,7 @@ Ext.define('Connector.view.DimensionSelector', {
         'Study'   : 'Studies',
         'Vaccine' : 'Study products',
         'Vaccine Component' : 'Vaccine immunogens',
-        'Participant' : 'Subject characteristics'
+        'Subject' : 'Subject characteristics'
     },
 
     titleComponentId: 'dimtitle',
@@ -426,7 +426,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             '</div>'
     ),
 
-    emptyText : '<div class="saeempty">None of the selected participants have data for this category.</div>',
+    emptyText : '<div class="saeempty">None of the selected subjects have data for this category.</div>',
 
     initComponent : function() {
 

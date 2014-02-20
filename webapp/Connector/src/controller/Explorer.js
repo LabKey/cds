@@ -206,7 +206,7 @@ Ext.define('Connector.controller.Explorer', {
                 }
 
                 // TODO: Remove this
-                if (idx == 0 && dim.name.toLowerCase() == 'participant') {
+                if (idx == 0 && dim.name.toLowerCase() == 'subject') {
                     idx = 1;
                 }
 

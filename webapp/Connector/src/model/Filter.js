@@ -88,7 +88,7 @@ Ext.define('Connector.model.Filter', {
         }
 
         // Issue 15380
-        if (h[0] == 'Participant') {
+        if (h[0] == 'Subject') {
             return h[1];
         }
         return h[0];

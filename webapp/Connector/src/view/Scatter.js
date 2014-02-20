@@ -677,7 +677,7 @@ Ext.define('Connector.view.Scatter', {
             success: function(data) {
 
                 var filter = {
-                    hierarchy: 'Participant',
+                    hierarchy: 'Subject',
                     isPlot: true,
                     plotMeasures: measures,
                     plotScales: [this.getScale('x'), this.getScale('y')],
@@ -686,7 +686,7 @@ Ext.define('Connector.view.Scatter', {
 
                 for (var i=0; i < data.values.length; i++) {
                     filter.members.push({
-                        uname: ['Participant', data.values[i]]
+                        uname: ['Subject', data.values[i]]
                     });
                 }
 

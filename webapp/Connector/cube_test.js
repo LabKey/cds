@@ -157,7 +157,7 @@ function testQueries()
         onRows: [ {hierarchy : 'Assay', lnum : 1} ],
         filter:
         [{
-            hierarchy : 'Participant',
+            hierarchy : 'Subject',
             membersQuery:{hierarchy : 'Assay', members:{uname:['HIV Test Results']}}
         }],
         useNamedFilters : ['filter']

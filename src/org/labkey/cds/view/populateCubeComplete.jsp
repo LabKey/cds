@@ -39,7 +39,7 @@
             var cube = LABKEY.query.olap.CubeManager.getCube({
                 configId: 'CDS:/CDS',
                 schemaName: 'CDS',
-                name: 'ParticipantCube'
+                name: 'DataspaceCube'
             });
 
             var getParticipantUrl = function(participantId)

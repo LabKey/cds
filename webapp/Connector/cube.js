@@ -24,10 +24,10 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Measures]',
                 hidden: true
             },{
-                uniqueName: '[Participant]',
+                uniqueName: '[Subject]',
                 supportsDetails: false,
                 hierarchies: [{
-                    uniqueName: '[Participant]',
+                    uniqueName: '[Subject]',
                     hidden: true
                 }]
             },{

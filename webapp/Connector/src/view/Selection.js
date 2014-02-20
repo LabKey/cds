@@ -138,7 +138,6 @@ Ext.define('Connector.view.Selection', {
                     return op == LABKEY.app.controller.Filter.Operators.UNION ? 'selected="selected"' : '';
                 },
                 renderType : function(type) {
-                    console.log('BOOM');
                     var area = '';
 
                     // Determine if zero level

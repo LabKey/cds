@@ -395,7 +395,7 @@ Ext.define('Connector.controller.RawData', {
                     var members = [];
                     for (var g=0; g < groups[r].length; g++) {
                         members.push({
-                            uname : ['Participant', groups[r][g]]
+                            uname : ['Subject', groups[r][g]]
                         });
                     }
                     this.getStateManager().updateFilterMembers(this.filterMap[this.getFilterId(fa[f])], members);
@@ -438,7 +438,7 @@ Ext.define('Connector.controller.RawData', {
             this.filterMap = {};
 
             for (var n=0; n < names.length; n++) {
-                this.getStateManager().removeFilter(names[n], 'Participant');
+                this.getStateManager().removeFilter(names[n], 'Subject');
             }
         }
         else {
@@ -448,7 +448,7 @@ Ext.define('Connector.controller.RawData', {
                     if (urlParam.indexOf(fieldKey) > -1) {
                         var id = this.filterMap[urlParam];
                         this.clearFilter(urlParam);
-                        this.getStateManager().removeFilter(id, 'Participant');
+                        this.getStateManager().removeFilter(id, 'Subject');
                     }
                 }
             }
@@ -509,7 +509,7 @@ Ext.define('Connector.controller.RawData', {
             for (i=0; i < filterGroups[f].filters.length; i++) {
 
                 filter = {
-                    hierarchy  : 'Participant',
+                    hierarchy  : 'Subject',
                     isGrid     : true,
                     gridFilter : filterGroups[f].filters[i],
                     members    : []
@@ -518,7 +518,7 @@ Ext.define('Connector.controller.RawData', {
                 for (g=0; g < filterGroups[f].group.length; g++) {
 
                     filter.members.push({
-                        uname : ['Participant', filterGroups[f].group[g]]
+                        uname : ['Subject', filterGroups[f].group[g]]
                     });
 
                 }
