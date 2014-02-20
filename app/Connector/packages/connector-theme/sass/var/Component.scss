@@ -451,6 +451,16 @@ div.activefilter {
   div.status-over {
     border-color: transparent;
   }
+
+  &:hover {
+    .wholeitem {
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 /* -- END Connector.panel.FilterPanel */
