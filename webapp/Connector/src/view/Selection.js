@@ -158,7 +158,11 @@ Ext.define('Connector.view.Selection', {
                     return Ext.htmlEncode(area);
                 },
                 renderUname : function(uname) {
-                    return Ext.htmlEncode(uname[uname.length-1]);
+                    var member = uname[uname.length-1];
+                    if (member == '#null') {
+                        member = 'Unknown';
+                    }
+                    return Ext.htmlEncode(member);
                 },
                 /**
                  * Example of zero-level:

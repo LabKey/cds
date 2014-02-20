@@ -75,25 +75,6 @@ Ext.define('Connector.model.Filter', {
         return LABKEY.app.controller.Filter.getOlapFilter(this.data);
     },
 
-    getDisplayHierarchy : function() {
-        var h = this.getHierarchy().split('.');
-
-        // Simple hierarchy (e.g. 'Study')
-        if (h.length == 1) {
-            return h[0];
-        }
-
-        if (this.data.isGroup) {
-            return h[1];
-        }
-
-        // Issue 15380
-        if (h[0] == 'Subject') {
-            return h[1];
-        }
-        return h[0];
-    },
-
     getHierarchy : function() {
         return this.get('hierarchy');
     },
@@ -120,20 +101,48 @@ Ext.define('Connector.model.Filter', {
     },
 
     /**
-     * Simple comparator that says two filters are equal if they share the same hierarchy, have only 1 member, and the member
-     * is equivalent
+     * Complex comparator that says two filters are equal if and only if they match on the following:
+     * - isGroup, isGrid, isPlot, hierarchy, member length, and member set (member order insensitive)
      * @param f - Filter to compare this object against.
      */
-    isEqualAsFilter : function(f) {
-        var d = this.data;
-        if ((d && f.data) && (d.hierarchy == f.data.hierarchy)) {
-            if (d.members.length == 1 && f.data.members.length == 1) {
-                if (d.members[0].uname[d.members[0].uname.length-1] == f.data.members[0].uname[f.data.members[0].uname.length-1]) {
-                    return true;
+    isEqual : function(f) {
+        var eq = false;
+
+        if (Ext.isDefined(f) && Ext.isDefined(f.data)) {
+            var d = this.data;
+            var fd = f.data;
+
+            eq = (d.isGroup == fd.isGroup) && (d.isGrid == fd.isGrid) &&
+                 (d.isPlot == fd.isPlot) && (d.hierarchy == fd.hierarchy) &&
+                 (d.members.length == fd.members.length);
+
+            if (eq) {
+                // member set equivalency
+                var keys = {}, uname, key, sep, m, u;
+                for (m=0; m < d.members.length; m++) {
+                    uname = d.members[m].uname; key = ''; sep = '';
+                    for (u=0; u < uname.length; u++) {
+                        key += sep + uname[u];
+                        sep = ':::';
+                    }
+                    keys[key] = true;
+                }
+
+                for (m=0; m < fd.members.length; m++) {
+                    uname = fd.members[m].uname; key = ''; sep = '';
+                    for (u=0; u < uname.length; u++) {
+                        key += sep + uname[u];
+                        sep = ':::';
+                    }
+                    if (!Ext.isDefined(keys[key])) {
+                        eq = false;
+                        break;
+                    }
                 }
             }
         }
-        return false;
+
+        return eq;
     },
 
     isGrid : function() {
