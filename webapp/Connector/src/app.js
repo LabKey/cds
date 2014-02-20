@@ -24,7 +24,7 @@ var launchApp = function(cube) {
 var cube = LABKEY.query.olap.CubeManager.getCube({
     configId: 'CDS:/CDS',
     schemaName: 'CDS',
-    name: 'ParticipantCube',
+    name: 'DataspaceCube',
     deferLoad: true,
     applyContext: Connector.cube.Configuration.applyContext
 });

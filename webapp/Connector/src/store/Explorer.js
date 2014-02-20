@@ -226,7 +226,7 @@ Ext.define('Connector.store.Explorer', {
                 }
 
                 // Subjects should not be listed so do not roll up
-                if (hierarchy.getName().indexOf('Participant.') != -1)
+                if (hierarchy.getName().indexOf('Subject.') != -1)
                 {
                     activeGroup = '';
                     isGroup = false;

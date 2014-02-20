@@ -10,11 +10,6 @@ var launchApp = function(cube) {
             name: 'Connector',
             extend: 'Connector.Application',
             autoCreateViewport: true,
-
-            launch : function() {
-                console.log('TODO: Check IE');
-            },
-
             olap: cube
         });
 
@@ -24,7 +19,7 @@ var launchApp = function(cube) {
 var cube = LABKEY.query.olap.CubeManager.getCube({
     configId: 'CDS:/CDS',
     schemaName: 'CDS',
-    name: 'ParticipantCube',
+    name: 'DataspaceCube',
     deferLoad: true,
     applyContext: Connector.cube.Configuration.applyContext
 });

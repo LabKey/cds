@@ -48,7 +48,7 @@ Ext.define('Connector.model.FilterGroup', {
     }
 });
 
-// models Participant Groups and Cohorts mixed
+// models Subject Groups and Cohorts mixed
 Ext.define('LABKEY.study.GroupCohort', {
     extend : 'Ext.data.Model',
     fields : [
