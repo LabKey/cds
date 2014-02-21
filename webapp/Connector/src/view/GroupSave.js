@@ -105,11 +105,13 @@ Ext.define('Connector.view.GroupSave', {
                         emptyText: 'Enter a group name',
                         height: 30,
                         allowBlank: false,
-                        validateOnBlur: false
+                        validateOnBlur: false,
+                        maxLength: 100
                     },{
                         xtype: 'textareafield',
                         name: 'groupdescription',
-                        emptyText: 'Group description'
+                        emptyText: 'Group description',
+                        maxLength: 200
                     },{
                         xtype: 'radiogroup',
                         columns: 1,
@@ -234,7 +236,8 @@ Ext.define('Connector.view.GroupSave', {
                         xtype: 'textareafield',
                         itemId: 'groupdescription',
                         name: 'groupdescription',
-                        emptyText: 'no description provided'
+                        emptyText: 'no description provided',
+                        maxLength: 200
                     },{
                         xtype: 'radiogroup',
                         itemId: 'groupselect',
@@ -427,9 +430,15 @@ Ext.define('Connector.view.GroupSaveList', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="save-label">{label}</div>',
+                '<div class="save-label" title="{label:htmlEncode}">{label:htmlEncode}</div>',
             '</tpl>'
     ),
+
+    loadMask: false,
+
+    viewConfig: {
+        loadMask: false
+    },
 
     initComponent : function() {
 

@@ -212,11 +212,11 @@ Ext.define('Connector.view.Selection', {
                         label += sep + measures[i].measure.label;
                         sep = ', ';
                     }
-                    return label;
+                    return Ext.htmlEncode(label);
                 },
                 renderLabel : function(values) {
                     var type = Connector.model.Filter.getGridHierarchy(values);
-                    return type + ": " + Connector.model.Filter.getGridLabel(values);
+                    return Ext.htmlEncode(type + ": " + Connector.model.Filter.getGridLabel(values));
                 }
             }
     ),
