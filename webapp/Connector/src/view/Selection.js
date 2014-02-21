@@ -103,7 +103,7 @@ Ext.define('Connector.view.Selection', {
                                 '<option value="' + LABKEY.app.controller.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
                             '</select>',
                         '</div>',
-                        '<div class="selitem sel-listing">{hierarchy:this.renderType}</div>',
+                        '<div class="selitem sel-listing">{[this.renderType(values.members[0])]}</div>',
                         '<tpl for="members">',
                             '<div class="status-over memberitem collapsed-member">',
                                 '<div class="closeitem" data-id="{parent.id}" member-index="{[xindex-1]}"></div>',
@@ -120,9 +120,6 @@ Ext.define('Connector.view.Selection', {
                 '</tpl>',
             '</tpl>',
             {
-                showMe : function(values) {
-                    console.log(values);
-                },
                 isGrid : function(values) {
                     return (values.isGrid ? true : false);
                 },
@@ -138,24 +135,23 @@ Ext.define('Connector.view.Selection', {
                 selectUnion : function(op) {
                     return op == LABKEY.app.controller.Filter.Operators.UNION ? 'selected="selected"' : '';
                 },
-                renderType : function(type) {
-                    var area = '';
+                renderType : function(member) {
+                    var u = member['uname'];
+                    var area = u[0], type = '';
 
                     // Determine if zero level
-                    if (type.indexOf('.') == -1) {
-                        area = type;
+                    if (area.indexOf('.') == -1) {
+                        type = area;
                     }
                     else {
-                        var areas = type.split('.');
-
-                        if (areas.length == 1) {
-                            area = areas[0];
-                        }
-                        else {
-                            area = areas[0] + ' (' + areas[1] + ')';
+                        var areas = area.split('.');
+                        type = areas[0];
+                        if (u.length <= 2) {
+                            type += ' (' + areas[1] + ')';
                         }
                     }
-                    return Ext.htmlEncode(area);
+
+                    return Ext.htmlEncode(type);
                 },
                 renderUname : function(uname) {
                     var member = uname[uname.length-1];
@@ -173,10 +169,8 @@ Ext.define('Connector.view.Selection', {
                  *
                  * Example of multi-level:
                  * ["Assay.Methodology", "NAb", "NAb-Sample-LabKey"]
-                 *
-                 *
                  */
-                renderMember: function(members) {
+                renderMember : function(members) {
                     var member = '', area = '';
                     var levels = members[0]['uname'];
 
