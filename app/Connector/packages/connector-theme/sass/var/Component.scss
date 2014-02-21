@@ -1584,7 +1584,7 @@ div.learncolumnheader {
 }
 
 div.learncolumnheader {
-  height: 30px;
+  height: 25px;
 }
 
 div.learn-header-container {
@@ -1624,9 +1624,10 @@ div.detail-container {
   margin-right: auto;
 
   div.detail-header {
-    font-size: 14pt;
+    font-size: 12pt;
     color: $dark-color;
-    font-family: $info-font;
+    font-family: $bodycaps-font;
+    font-weight: bold;
   }
 }
 
