@@ -24,11 +24,20 @@ Ext.define('Connector.view.GroupSave', {
 
     hideSelectionWarning: true,
 
+    minRecordsHeight: 4,
+
+    maxRecordsHeight: 13,
+
     constructor : function(config) {
 
         Ext.applyIf(config, {
             mode: Connector.view.GroupSave.modes.CREATE
         });
+
+        var borderOffset = 2;
+        this.listRecordHeight = 24; // number in 'px' for height of a record display
+        this.listMaxHeight = (this.listRecordHeight * this.maxRecordsHeight) + borderOffset;
+        this.listMinHeight = (this.listRecordHeight * this.minRecordsHeight) + borderOffset;
 
         this.callParent([config]);
     },
@@ -82,6 +91,8 @@ Ext.define('Connector.view.GroupSave', {
         }];
 
         this.callParent();
+
+        Ext.EventManager.onWindowResize(this.onWindowResize, this);
     },
 
     getCreateGroup : function() {
@@ -133,7 +144,7 @@ Ext.define('Connector.view.GroupSave', {
                     xtype: 'button',
                     itemId: 'replace-grp-button',
                     style: 'margin-top: 15px;',
-                    ui: 'rounded-inverted-accent',
+                    ui: 'linked',
                     text: 'replace an existing group',
                     handler: function() { this.changeMode(Connector.view.GroupSave.modes.REPLACE); },
                     scope: this
@@ -192,8 +203,10 @@ Ext.define('Connector.view.GroupSave', {
                     }
                 },{
                     xtype: 'container',
-                    height: 250,
                     overflowY: 'auto',
+                    overflowX: 'hidden',
+                    minHeight: this.listMinHeight,
+                    maxHeight: this.listMaxHeight,
                     style: 'border: 1px solid lightgrey;',
                     items: [{
                         xtype: 'groupsavelistview',
@@ -210,6 +223,8 @@ Ext.define('Connector.view.GroupSave', {
                                     v.getSelectionModel().select(0);
                                     this.setActive(group);
                                 }
+                                var bodyBox = Ext.getBody().getBox();
+                                this.onWindowResize(bodyBox.width, bodyBox.height);
                             },
                             scope: this
                         },
@@ -224,7 +239,7 @@ Ext.define('Connector.view.GroupSave', {
                     defaults: {
                         width: '100%'
                     },
-                    flex: 10,
+                    flex: 1,
                     items: [{
                         xtype: 'box',
                         autoEl: {
@@ -259,7 +274,7 @@ Ext.define('Connector.view.GroupSave', {
                     xtype: 'button',
                     itemId: 'create-grp-button',
                     style: 'margin-top: 15px;',
-                    ui: 'rounded-inverted-accent',
+                    ui: 'linked',
                     text: 'create a new group',
                     handler: function() { this.changeMode(Connector.view.GroupSave.modes.CREATE); },
                     scope: this
@@ -408,6 +423,31 @@ Ext.define('Connector.view.GroupSave', {
         var errorEl = this.getError();
         if (errorEl) {
             errorEl.hide();
+        }
+    },
+
+    onWindowResize : function(width, height) {
+        if (this.getMode() == Connector.view.GroupSave.modes.REPLACE) {
+
+            var hdrHeight = 53;
+            var paddingOffset = 20; // [10, 0, 10, 0]
+            var trueHeight = height - hdrHeight - paddingOffset;
+            var contentHeight = this.getComponent('content').getBox().height;
+            var listHeight = this.grouplist.getBox().height;
+            var h = listHeight;
+
+            if (trueHeight < contentHeight) {
+                h = listHeight - (contentHeight - trueHeight);
+            }
+            else {
+                // window height allow for more space, see if group list can expand
+                var lh = this.grouplist.getStore().getCount() * this.listRecordHeight;
+                var maxHeight = Math.min(this.listMaxHeight, lh);
+                var diff = trueHeight - contentHeight;
+                h = Math.min(maxHeight, listHeight + diff);
+            }
+
+            this.grouplist.setHeight(h);
         }
     }
 });
