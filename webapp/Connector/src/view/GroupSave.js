@@ -120,6 +120,7 @@ Ext.define('Connector.view.GroupSave', {
                         maxLength: 100
                     },{
                         xtype: 'textareafield',
+                        id: 'creategroupdescription', // tests
                         name: 'groupdescription',
                         emptyText: 'Group description',
                         maxLength: 200
@@ -249,6 +250,7 @@ Ext.define('Connector.view.GroupSave', {
                         }
                     },{
                         xtype: 'textareafield',
+                        id: 'updategroupdescription',
                         itemId: 'groupdescription',
                         name: 'groupdescription',
                         emptyText: 'no description provided',
