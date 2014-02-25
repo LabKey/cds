@@ -39,9 +39,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -217,6 +220,102 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         assertElementNotPresent(Locator.linkWithText("Home"));
         assertElementNotPresent(Locator.linkWithText("Admin"));
+    }
+
+    @Test
+    public void verifyGroups()
+    {
+        log("Verify Groups");
+
+        //
+        // Define Group Names
+        //
+        String studyGroup = "Study Group Verify";
+        String studyGroupDesc = "A set of defined studies.";
+        String assayGroup = "Assay Group Verify";
+        String subjectGroup = "Study Characteristics Race Group";
+
+        Set<String> groups = new HashSet<>();
+        groups.add(studyGroup);
+        groups.add(assayGroup);
+        groups.add(subjectGroup);
+
+        //
+        // Ensure that none of the Group names already exist
+        //
+        List<String> deletable = new ArrayList<>();
+        makeNavigationSelection(NavigationLink.HOME);
+        sleep(500); // let the group display load
+        for (String group : groups)
+        {
+            if (isTextPresent(group))
+                deletable.add(group);
+        }
+
+        ensureGroupsDeleted(deletable);
+
+        //
+        // Compose Groups
+        //
+        goToAppHome();
+        clickBy("Studies");
+        selectBars(STUDIES[0], STUDIES[1]);
+        useSelectionAsFilter();
+        saveGroup(studyGroup, studyGroupDesc);
+
+        // verify group save messaging
+        waitForText("Group \"Study Group...\" saved.");
+
+        // verify filter is still applied
+        assertElementPresent(filterMemberLocator(STUDIES[0]));
+        assertElementPresent(filterMemberLocator(STUDIES[1]));
+
+        // verify group can be updated
+        click(cdsButtonLocator("save", "filtersave"));
+        waitForText("replace an existing group");
+        click(cdsButtonLocator("replace an existing group"));
+
+        Locator.XPathLocator listGroup = Locator.tagWithClass("div", "save-label");
+        waitAndClick(listGroup.withText(studyGroup));
+
+        //
+        // TODO: Would be best if we could somehow verify that the description is updated,
+        // however, I see no way to tell the current value of a 'textarea'.
+        //
+//        waitForText(studyGroupDesc);
+
+        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDesc + " More info added.");
+        click(cdsButtonLocator("save", "groupupdatesave"));
+
+        // verify group save messaging
+        waitForText("Group \"Study Group...\" saved.");
+        assertFilterStatusCounts(18, 2, 4, 3, 28);
+
+        // verify 'whoops' case
+        click(cdsButtonLocator("save", "filtersave"));
+        waitForText("create a new group");
+        click(cdsButtonLocator("cancel", "groupupdatecancel"));
+        clearFilter();
+
+        refresh(); // refresh due to home page not updating currently
+
+        // add a filter, which should be blown away when a group filter is selected
+        makeNavigationSelection(NavigationLink.SUMMARY);
+        clickBy("Assays");
+        selectBars("Luminex-Sample-LabKey");
+        useSelectionAsFilter();
+        assertFilterStatusCounts(6, 1, 3, 2, 20);
+
+        makeNavigationSelection(NavigationLink.HOME);
+        sleep(500); // let the group display load
+        click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
+
+        waitForElement(filterMemberLocator(STUDIES[0]));
+        assertElementPresent(filterMemberLocator(STUDIES[1]));
+        assertFilterStatusCounts(18, 2, 4, 3, 28);
+
+        clearFilter();
+        makeNavigationSelection(NavigationLink.SUMMARY);
     }
 
     @Test
@@ -1036,7 +1135,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private enum NavigationLink
     {
-        HOME("Home", Locator.xpath("Home nav link not yet implemented")),
+        HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
         LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
         SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbutton")),
@@ -1181,6 +1280,24 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         waitForFilterAnimation();
         waitForElement(Locator.tagContainingText("div", displayText));
+    }
+
+    private void ensureGroupsDeleted(List<String> groups)
+    {
+        if (groups.size() > 0)
+        {
+            Ext4HelperWD.setCssPrefix("x4-");
+
+            // leave the app
+            beginAt("/cds/" + getProjectName() + "/begin.view?");
+            for (String g : groups)
+            {
+                _studyHelper.deleteCustomParticipantGroup(g, "Participant");
+            }
+
+            Ext4HelperWD.setCssPrefix("x-");
+            enterApplication();
+        }
     }
 
 /// CDS App asserts
