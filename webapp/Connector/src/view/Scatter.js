@@ -266,7 +266,7 @@ Ext.define('Connector.view.Scatter', {
 
                         strokeFn = function(d) {
                             if (d.subjectId.value === pointData.subjectId.value) {
-                                return '#01BFC2';
+                                return '#00EAFF';
                             } else {
                                 if (colorScale && colorAcc) {
                                     return colorScale(colorAcc.getValue(d));
