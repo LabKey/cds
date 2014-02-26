@@ -319,6 +319,75 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
+    public void verifyFilterDisplays()
+    {
+        log("verify filter displays");
+
+        goToAppHome();
+        clickBy("Studies");
+        selectBars(STUDIES[0]);
+
+        // verify "Study: Demo Study" selection
+        waitForElement(filterMemberLocator("Study: " + STUDIES[0]));
+
+        // verify buttons available
+        assertElementPresent(cdsButtonLocator("use as filter"));
+        assertElementPresent(cdsButtonLocator("label as subgroup"));
+        assertElementPresent(cdsButtonLocator("clear"));
+
+        // verify split display
+        clearSelection();
+        goToAppHome();
+        clickBy("Studies");
+        selectBars(STUDIES[0], STUDIES[1]);
+        waitForElement(filterMemberLocator(STUDIES[0]));
+        assertElementPresent(filterMemberLocator(STUDIES[1]));
+        assertElementPresent(Locator.tagWithClass("div", "selitem").withText("Study"));
+        assertFilterStatusCounts(18, 2, 4, 3, 28);
+
+        // clear by selection
+        selectBars(STUDIES[1]);
+        waitForElement(filterMemberLocator("Study: " + STUDIES[1]));
+        assertFilterStatusCounts(12, 1, 3, 2, 8);
+
+        // verify multi-level filtering
+        goToAppHome();
+        clickBy("Assays");
+        selectBars("ADCC-Ferrari", "Innate");
+        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
+        assertElementPresent(filterMemberLocator("Assay (Target Area): Innate"));
+
+        useSelectionAsFilter();
+        assertElementPresent(filterMemberLocator("Assay: ADCC-Ferrari"), 1);
+        assertElementPresent(filterMemberLocator("Assay (Target Area): Innate"), 1);
+        assertFilterStatusCounts(0, 0, 0, 0, 0);
+
+        // remove a subfilter
+        click(filterMemberLocator("Assay: ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        waitForText("Filter removed.");
+        assertFilterStatusCounts(5, 1, 3, 1, 3);
+        assertElementNotPresent(filterMemberLocator("Assay: ADCC-Ferrari"));
+
+        // verify undo
+        click(Locator.linkWithText("Undo"));
+        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
+        assertFilterStatusCounts(0, 0, 0, 0, 0);
+
+        // remove a subfilter
+        click(filterMemberLocator("Assay: ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        waitForText("Filter removed.");
+        assertFilterStatusCounts(5, 1, 3, 1, 3);
+        assertElementNotPresent(filterMemberLocator("Assay: ADCC-Ferrari"));
+
+        // verify undo
+        click(Locator.linkWithText("Undo"));
+        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
+        assertFilterStatusCounts(0, 0, 0, 0, 0);
+
+        clearFilter();
+    }
+
+    @Test
     public void verifyGrid()
     {
         log("Verify Grid");
@@ -507,7 +576,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusPanel("Thailand", "Thailand", 5, 1, 3, 1, 3, 18);
     }
 
-    @Test
+    //@Test
     public void verifyFilters()
     {
         log("Verify multi-select");
