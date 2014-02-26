@@ -802,6 +802,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         verifyLearnAboutPage(sites);
     }
 
+    protected static final String MOUSEOVER_FILL = "#01BFC2";
+    protected static final String MOUSEOVER_STROKE = "#00EAFF";
+    protected static final String BRUSHED_FILL = "#14C9CC";
+    protected static final String BRUSHED_STROKE = "#00393A";
+    protected static final String NORMAL_COLOR = "#000000";
+
     @Test
     public void verifyScatterPlot()
     {
@@ -856,6 +862,47 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
         click(cdsButtonLocator("Set X-Axis"));
         assertSVG(WT_PLSE_LOG);
+
+        Actions builder = new Actions(getDriver());
+        List<WebElement> points;
+        points = Locator.css("svg g a.point path").findElements(getDriver());
+
+        // Test hover events
+        builder.moveToElement(points.get(33)).perform();
+
+        // Check that related points are colored appropriately.
+        for (int i = 33; i < 38; i++)
+        {
+            assertEquals("Related point had an unexpected fill color", MOUSEOVER_FILL, points.get(i).getAttribute("fill"));
+            assertEquals("Related point had an unexpected stroke color", MOUSEOVER_STROKE, points.get(i).getAttribute("stroke"));
+        }
+
+        builder.moveToElement(points.get(33)).moveByOffset(10, 10).perform();
+
+        // Check that the points are no longer highlighted.
+        for (int i = 33; i < 38; i++)
+        {
+            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
+            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+        }
+
+        // Test brush events.
+        builder.moveToElement(points.get(10)).moveByOffset(-5, -5).clickAndHold().moveByOffset(20, 25).release().perform();
+
+        for (int i = 10; i < 15; i++)
+        {
+            assertEquals("Brushed point had an unexpected fill color", BRUSHED_FILL, points.get(i).getAttribute("fill"));
+            assertEquals("Brushed point had an unexpected stroke color", BRUSHED_STROKE, points.get(i).getAttribute("stroke"));
+        }
+
+        builder.moveToElement(points.get(37)).moveByOffset(-25, 0).clickAndHold().release().perform();
+
+        // Check that the points are no longer brushed.
+        for (int i = 10; i < 15; i++)
+        {
+            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
+            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+        }
     }
 
     @Test
