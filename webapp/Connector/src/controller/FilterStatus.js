@@ -171,6 +171,12 @@ Ext.define('Connector.controller.FilterStatus', {
         var state = this.getStateManager();
         if (state.hasFilters()) {
             state.clearFilters();
+
+            // want to show the message on the view
+            var view = this.getViewManager().getViewInstance('filterstatus');
+            if (view) {
+                view.showUndoMessage();
+            }
         }
     },
 
