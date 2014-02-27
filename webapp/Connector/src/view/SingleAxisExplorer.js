@@ -637,19 +637,22 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         }
     },
 
-    _renderHasAdd : function(sel, bar, width, cls, remove) {
+    _renderHasAdd : function(sel, countNode, width, remove, trueCount, subCount) {
+        var cls = 'inactive';
         if (sel) {
             sel.setWidth('' + width + 'px');
         }
         if (remove) {
-            if (bar.hasCls(cls)) {
-                bar.removeCls(cls);
+            if (countNode.hasCls(cls)) {
+                countNode.removeCls(cls);
             }
+            countNode.update(trueCount);
         }
         else {
-            if (!bar.hasCls(cls)) {
-                bar.addCls(cls);
+            if (!countNode.hasCls(cls)) {
+                countNode.addCls(cls);
             }
+            countNode.update(subCount);
         }
     },
 
@@ -658,24 +661,26 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         var node;
         for (var i=0; i < r.length; i++) {
             node = this.getNode(r[i]);
-            if (node)
-            {
+            if (node) {
+
                 var selBar = Ext.query('.index-selected', node);
-                var barCount = Ext.get(Ext.query('.count', node)[0]);
-                var bar = Ext.get(Ext.query(".index", node)[0]);
-                if (selBar)
-                {
+
+                if (selBar) {
+                    var countNode = Ext.get(Ext.query('.count', node)[0]);
+                    var bar = Ext.get(Ext.query(".index", node)[0]);
+
                     var _w = parseFloat(bar.getStyle('width'));
-                    var _c = r[i].data.subcount / r[i].data.count;
+                    var sub = r[i].data.subcount; var count = r[i].data.count;
+                    var _c = sub / count;
                     var sel = Ext.get(selBar[0]);
-                    if (_c == 0 || isNaN(_c)){
-                        this._renderHasAdd(sel, barCount, 0, 'inactive', true);
+                    if (_c == 0 || isNaN(_c)) {
+                        this._renderHasAdd(sel, countNode, 0, true, count, sub);
                     }
                     else if (_c >= 1) {
-                        this._renderHasAdd(sel, barCount, _w, 'inactive', false);
+                        this._renderHasAdd(sel, countNode, _w, false, count, sub);
                     }
                     else {
-                        this._renderHasAdd(sel, barCount, (_c * _w), 'inactive', false);
+                        this._renderHasAdd(sel, countNode, (_c * _w), false, count, sub);
                     }
                 }
             }
