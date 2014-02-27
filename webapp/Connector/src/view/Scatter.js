@@ -705,7 +705,7 @@ Ext.define('Connector.view.Scatter', {
                     }
                 }
                 if (!found) {
-                    this.state.addFilters([filter]);
+                    this.state.prependFilter(filter);
                 }
                 this.plotLock = false;
             },
@@ -1175,7 +1175,14 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        this.filterClear = filters.length == 0;
+        // mark as clear when there are no plot filters
+        this.filterClear = true;
+        for (var f=0; f < filters.length; f++) {
+            if (filters[f].isPlot()) {
+                this.filterClear = false;
+                break;
+            }
+        }
 
         if (this.isActiveView) {
             this.showTask.delay(300);
