@@ -105,11 +105,7 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     getModelClass : function(filterset) {
-        var model = 'Connector.model.Filter';
-//        if (filterset.isGroup()) {
-//            model = 'Connector.model.FilterGroup';
-//        }
-        return model;
+        return 'Connector.model.Filter';
     },
 
     // entry point to load raw OLAP Filters

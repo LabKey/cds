@@ -169,7 +169,7 @@
 
   $color: $light-color,
   $color-over : $interactive-color,
-  $color-disabled: $dark-color, /* HACK */
+  $color-disabled: $dark-color,
 
   $font-size : 9pt,
   $font-family: $info-font,
@@ -209,6 +209,40 @@
 }
 
 @include extjs-button-ui (
+  $ui: 'linked-small',
+
+  $border-radius : 0px,
+  $border-width : 0px,
+  $border-color: transparent,
+  $border-color-over: transparent,
+
+  $background-color: transparent,
+  $background-color-over: transparent,
+
+  $text-padding: 0px,
+
+  $color: $interactive-color,
+  $color-over: $interactive-color,
+  $color-disabled: $heat-scale-4,
+
+  $font-weight: bold,
+
+  $font-size : 8pt,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $icon-size : 12px,
+  $glyph-color : #FFFFFF
+);
+
+.x-btn-linked-small .x-btn-inner {
+  text-decoration: underline;
+}
+
+@include extjs-button-ui (
   $ui: 'rounded-inverted-accent-small',
 
   $border-radius : 8px,
@@ -223,7 +257,7 @@
 
   $color: $interactive-color,
   $color-over: $light-color,
-  $color-disabled: $heat-scale-4, /* HACK */
+  $color-disabled: $heat-scale-4,
 
   $font-weight: bold,
 
@@ -253,7 +287,7 @@
 
   $color: $info-color,
   $color-over: $light-color,
-  $color-disabled: $heat-scale-4, /* HACK */
+  $color-disabled: $heat-scale-4,
 
   $font-size : 11pt,
   $font-family: $info-font,

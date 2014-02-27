@@ -266,7 +266,7 @@ Ext.define('Connector.view.Scatter', {
 
                         strokeFn = function(d) {
                             if (d.subjectId.value === pointData.subjectId.value) {
-                                return '#01BFC2';
+                                return '#00EAFF';
                             } else {
                                 if (colorScale && colorAcc) {
                                     return colorScale(colorAcc.getValue(d));
@@ -344,9 +344,8 @@ Ext.define('Connector.view.Scatter', {
             };
         }
         else {
-            scales.x = scales.yLeft = {
-                scaleType: 'continuous'
-            };
+            scales.x = {scaleType: 'continuous'};
+            scales.yLeft = {scaleType: 'continuous'};
         }
 
         scales.x.tickFormat     = tickFormat;
@@ -476,7 +475,7 @@ Ext.define('Connector.view.Scatter', {
 
         Ext.apply(scale, {
             trans : axisValue,
-            min   : axisValue == 'log' ? 1 : undefined // allow negative values in linear plots
+            domain: [axisValue == 'log' ? 1 : null, null] // allow negative values in linear plots
         });
 
         return scale;
