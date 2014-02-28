@@ -87,6 +87,10 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     onFilterRemove : function(filters) {
+        this.showUndoMessage();
+    },
+
+    showUndoMessage : function() {
         var id = Ext.id();
         this.showMessage('Filter removed. <a id="' + id + '">Undo</a>', true, true);
         var undo = Ext.get(id);

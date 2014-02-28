@@ -28,6 +28,10 @@ Ext.define('Connector.controller.Connector', {
 
     init : function() {
 
+        if (LABKEY.devMode) {
+            VIEW = this;
+        }
+
         // Listen for when views are added to the center view and register that components xtype
         this.control('app-main > #primarytabpanel', {
             // See http://docs.sencha.com/ext-js/4-0/#!/api/Ext.tab.Panel-method-add
