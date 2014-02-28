@@ -280,10 +280,21 @@ Ext.define('Connector.view.Scatter', {
                             return  d.subjectId.value === pointData.subjectId.value ? 1 : .5;
                         };
 
-                        layerSel.selectAll('.point path').attr('fill', colorFn)
+                        var points = layerSel.selectAll('.point path');
+
+                        points.attr('fill', colorFn)
                                 .attr('stroke', strokeFn)
                                 .attr('fill-opacity', opacityFn)
                                 .attr('stroke-opacity', opacityFn);
+
+                        points.each(function(d){
+                            // Re-append the node so it is on top of all the other nodes, this way highlighted points
+                            // are always visible.
+                            var node = this.parentNode;
+                            if (d.subjectId.value === pointData.subjectId.value) {
+                                node.parentNode.appendChild(node);
+                            }
+                        });
                     }
                 },
                 mouseOutFn: function(event, pointData, layerSel){
