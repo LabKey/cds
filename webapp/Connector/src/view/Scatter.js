@@ -381,12 +381,14 @@ Ext.define('Connector.view.Scatter', {
                 x: function(row){return row.x;}
             },
             brushing: {
-                brushstart: function(event, data, extent, layerSelections){
+                brushstart: function(){
                     isBrushed = true;
                 },
                 brush: function(event, layerData, extent, layerSelections){
                     var sel = layerSelections[0]; // We only have one layer, so grab the first one.
+                    var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
                     var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+                    var assocColorFn, assocOpacityFn, assocStrokeFn;
 
                     if (plot.scales.color && plot.scales.color.scale) {
                         colorScale = plot.scales.color.scale;
@@ -397,6 +399,7 @@ Ext.define('Connector.view.Scatter', {
                         var x = d.x, y = d.y;
                         d.isSelected = (x > extent[0][0] && x < extent[1][0] && y > extent[0][1] && y < extent[1][1]);
                         if (d.isSelected) {
+                            subjects[d.subjectId.value] = true;
                             return '#14C9CC';
                         } else {
                             if (colorScale && colorAcc) {
@@ -427,8 +430,37 @@ Ext.define('Connector.view.Scatter', {
                             .attr('stroke', strokeFn)
                             .attr('fill-opacity', opacityFn)
                             .attr('stroke-opacity', opacityFn);
+
+                    assocColorFn = function(d) {
+                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                            return '#01BFC2';
+                        } else{
+                            return this.getAttribute('fill');
+                        }
+                    };
+
+                    assocStrokeFn = function(d) {
+                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                            return '#00EAFF';
+                        } else {
+                            return this.getAttribute('stroke');
+                        }
+                    };
+
+                    assocOpacityFn = function(d) {
+                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                            return 1;
+                        } else {
+                            return this.getAttribute('fill-opacity');
+                        }
+                    };
+
+                    sel.selectAll('.point path').attr('fill', assocColorFn)
+                            .attr('stroke', assocStrokeFn)
+                            .attr('fill-opacity', assocOpacityFn)
+                            .attr('stroke-opacity', assocOpacityFn);
                 },
-                brushclear: function(event, data, layerSelections){
+                brushclear: function(){
                     isBrushed = false;
                 }
             },
