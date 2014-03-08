@@ -11,7 +11,7 @@ Ext.define('Connector.controller.Chart', {
 
     init : function() {
 
-        this.control('plot > #yaxisbutton', {
+        this.control('#yaxisbutton', {
             click: function(b) {
                 var plot = b.up('plot');
                 if (plot) {
@@ -20,7 +20,7 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
-        this.control('plot > #xaxisbutton', {
+        this.control('#xaxisbutton', {
             click: function(b) {
                 var plot = b.up('plot');
                 if (plot) {

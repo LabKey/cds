@@ -1174,6 +1174,10 @@ div.emptytext {
 .scatterview {
   background-color : $secondary-color;
   padding: 0;
+
+  .x-panel-body {
+    background-color : $light-color;
+  }
 }
 
 .emptyplot svg {

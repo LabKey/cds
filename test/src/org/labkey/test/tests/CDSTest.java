@@ -812,9 +812,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
-        final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400\nLab Results: CD4\nLab Results: Lymphocytes";
-        final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300\nLab Results: Hemoglobin\nLab Results: CD4";
-        final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100\nPhysical Exam: Pulse\nPhysical Exam: Weight Kg";
+        final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400";
+        final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
+        final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100";
 
         clickBy("Studies");
 
@@ -887,7 +887,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         }
 
         // Test brush events.
-        builder.moveToElement(points.get(10)).moveByOffset(-5, -5).clickAndHold().moveByOffset(20, 25).release().perform();
+        builder.moveToElement(points.get(10)).moveByOffset(-10, -5).clickAndHold().moveByOffset(35, 30).release().perform();
 
         for (int i = 10; i < 15; i++)
         {

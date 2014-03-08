@@ -27,13 +27,14 @@ Ext.define('Connector.view.Scatter', {
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
     rowlimit: 5000,
 
+    layout: 'border',
+
     initComponent : function() {
 
         this.items = [
-            this.getYAxisButton(),
-            this.getPlotDisplay(),
-            this.getXAxisButton(),
-            this.getSrcButton()
+            this.getNorth(),
+            this.getCenter(),
+            this.getSouth()
         ];
 
         this.callParent();
@@ -50,9 +51,58 @@ Ext.define('Connector.view.Scatter', {
                     width: 25
                 }
             });
+            this.loader = Ext.get('scatterloader');
         }, this, {single: true});
 
         this.attachInternalListeners();
+    },
+
+    getNorth : function() {
+        return {
+            xtype: 'panel',
+            region: 'north',
+            height: 50,
+            border: false, frame: false,
+            html: '',
+            bodyStyle: 'background-color: #F0F0F0;',
+            items: [ this.getYAxisButton() ]
+        };
+    },
+
+    getCenter : function() {
+        return {
+            itemId: 'plotdisplay',
+            xtype: 'box',
+            region: 'center',
+            border: false, frame: false,
+            id: Ext.id(),
+            autoEl : {
+                tag: 'div',
+                cls: 'emptyplot plot',
+                html: 'center'
+            },
+            listeners: {
+                afterrender: {
+                    fn: function(box) {
+                        this.plotEl = box.getEl();
+                    },
+                    single: true,
+                    scope: this
+                }
+            }
+        };
+    },
+
+    getSouth : function() {
+        return {
+            xtype: 'panel',
+            region: 'south',
+            height: 50,
+            border: false, frame: false,
+            html: '',
+            bodyStyle: 'background-color: #F0F0F0;',
+            items: [ this.getXAxisButton() ]
+        };
     },
 
     attachInternalListeners : function() {
@@ -63,27 +113,6 @@ Ext.define('Connector.view.Scatter', {
         this.on('resize', function() {
             this.resizeTask.delay(150);
         }, this);
-    },
-
-    getPlotDisplay : function() {
-
-        if (!this.plotDisplay) {
-            this.plotDisplay = Ext.create('Ext.Component', {
-                autoEl: {
-                    tag: 'div',
-                    cls: 'emptyplot plot'
-                },
-                listeners: {
-                    afterrender: function(c) {
-                        this.plotid = Ext.get(Ext.DomQuery.select('.emptyplot')[0]).id;
-                    },
-                    scope: this
-                },
-                scope: this
-            });
-        }
-
-        return this.plotDisplay;
     },
 
     getSrcButton : function() {
@@ -163,7 +192,7 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        var plotbox = this.getBox();
+        var plotbox = this.plotEl.getBox();
 
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
@@ -183,29 +212,8 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.plot) {
-            var dim = this.getAspect(plotbox.width, plotbox.height);
-            this.plot.setSize(dim, dim, true);
-
-            if (this.showAxisButtons) {
-                var plotEl = this.getPlotElement();
-                if (plotEl) {
-                    var box = Ext.get(plotEl).getBox();
-                    var x = Math.floor(box.x - 25); // minus the buttons width
-                    var y = Math.floor((box.height/2) - 10); // line up with label
-                    this.getYAxisButton().setPosition(x,y);
-                }
-            }
+            this.plot.setSize(plotbox.width, plotbox.height, true);
         }
-    },
-
-    getAspect : function(w, h) {
-        // maintain ratio 1:1
-        var aspect = Math.round((w > h ? h : w));
-        if (aspect <= 0) {
-            aspect = this.getHeight();
-        }
-        aspect = Math.floor(aspect * 0.95);
-        return aspect;
     },
 
     initPlot : function(config, noplot) {
@@ -217,7 +225,7 @@ Ext.define('Connector.view.Scatter', {
             this.showMessage('No information available to plot.');
             this.hideLoad();
             this.plot = null;
-            Ext.get(this.plotid).update('');
+            this.plotEl.update('');
             this.noPlot();
             return;
         }
@@ -227,7 +235,7 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.clearGrid();
-            Ext.get(this.plotid).update('');
+            this.plotEl.update('');
             this.plot = null;
         }
 
@@ -324,8 +332,7 @@ Ext.define('Connector.view.Scatter', {
         });
 
         // maintain ratio 1:1
-        var box = Ext.get(this.plotid).getSize();
-        var aspect = this.getAspect(box.width, box.height);
+        var box = this.plotEl.getSize();
 
         var tickFormat = function(val) {
 
@@ -351,7 +358,7 @@ Ext.define('Connector.view.Scatter', {
         if (noplot) {
             scales.x = scales.yLeft = {
                 scaleType: 'continuous',
-                domain: [0, 100]
+                domain: [0, 0]
             };
         }
         else {
@@ -359,32 +366,45 @@ Ext.define('Connector.view.Scatter', {
             scales.yLeft = {scaleType: 'continuous'};
         }
 
-        scales.x.tickFormat     = tickFormat;
+        scales.x.tickFormat = tickFormat;
         scales.yLeft.tickFormat = tickFormat;
 
-        var labelX = (config.xaxis) ? config.xaxis.query + ': ' : '',
-                labelY = (config.yaxis) ? config.yaxis.query + ': ' : '';
+//        var labelX = (config.xaxis) ? config.xaxis.query + ': ' : '',
+//                labelY = (config.yaxis) ? config.yaxis.query + ': ' : '';
 
         var plotConfig = {
-            renderTo: this.plotid,
+            renderTo: this.plotEl.id,
             rendererType: 'd3',
             throwErrors: true,
-            labels: {
-                x: {value: labelX + rows[0].xname.replace(/_/g, ' ')},
-                yLeft: {value: labelY + rows[0].yname.replace(/_/g, ' ')}
-            },
-            width     : aspect,
-            height    : aspect,
+            clipRect: false,
+            margins: {top: 25, left: 25+43, right: 25+10, bottom: 25+43},
+//            labels: {
+//                x: {value: labelX + rows[0].xname.replace(/_/g, ' ')},
+//                yLeft: {value: labelY + rows[0].yname.replace(/_/g, ' ')}
+//            },
+            width     : box.width,
+            height    : box.height,
             data      : rows,
             legendPos : 'none',
             aes: {
                 x: function(row){return row.x;}
             },
-            brushing: {
-                brushstart: function(){
+            bgColor   : '#FFFFFF', // see $light-color in connector.scss
+            gridColor : '#FFFFFF',
+            gridLineColor : '#FFFFFF',
+            scales: scales
+        };
+
+        if (!noplot) {
+            this.setScale(plotConfig.scales.x, 'x', config);
+            this.setScale(plotConfig.scales.yLeft, 'y', config);
+
+            // add brush handling
+            plotConfig.brushing = {
+                brushstart : function() {
                     isBrushed = true;
                 },
-                brush: function(event, layerData, extent, layerSelections){
+                brush : function(event, layerData, extent, layerSelections) {
                     var sel = layerSelections[0]; // We only have one layer, so grab the first one.
                     var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
                     var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
@@ -460,19 +480,10 @@ Ext.define('Connector.view.Scatter', {
                             .attr('fill-opacity', assocOpacityFn)
                             .attr('stroke-opacity', assocOpacityFn);
                 },
-                brushclear: function(){
+                brushclear : function() {
                     isBrushed = false;
                 }
-            },
-            bgColor   : '#F0F0F0', // see $light-color in connector.scss
-            gridColor : '#FFFFFF',
-            gridLineColor : '#FFFFFF',
-            scales: scales
-        };
-
-        if (!noplot) {
-            this.setScale(plotConfig.scales.x, 'x', config);
-            this.setScale(plotConfig.scales.yLeft, 'y', config);
+            };
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
@@ -488,7 +499,7 @@ Ext.define('Connector.view.Scatter', {
                 this.showMessage(err.message);
                 this.hideLoad();
                 this.plot = null;
-                Ext.get(this.plotid).update('');
+                this.plotEl.update('');
                 this.noPlot();
                 return;
             }
@@ -629,17 +640,16 @@ Ext.define('Connector.view.Scatter', {
         var plotEl = this.getPlotElement();
         if (plotEl) {
             var box = Ext.get(plotEl).getBox();
-            var sload = Ext.get('scatterloader');
-            sload.setLeft(box.x+10);
-            sload.setTop(box.y+10);
+            this.loader.setLeft(box.x+10);
+            this.loader.setTop(box.y+10);
             if (this.isActiveView) {
-                sload.setStyle('visibility', 'visible');
+                this.loader.setStyle('visibility', 'visible');
             }
         }
     },
 
     hideLoad : function() {
-        Ext.get('scatterloader').setStyle('visibility', 'hidden');
+        this.loader.setStyle('visibility', 'hidden');
     },
 
     requestCitations : function() {
@@ -673,12 +683,12 @@ Ext.define('Connector.view.Scatter', {
                             me.srcs.push(src);
                         }
                     }
-                    if (me.srcs.length == 0) {
-                        me.getSrcButton().hide();
-                    }
-                    else {
-                        me.getSrcButton().show();
-                    }
+//                    if (me.srcs.length == 0) {
+//                        me.getSrcButton().hide();
+//                    }
+//                    else {
+//                        me.getSrcButton().show();
+//                    }
                 }
             });
         }
