@@ -404,7 +404,7 @@ Ext.define('Connector.view.Scatter', {
                 brushstart : function() {
                     isBrushed = true;
                 },
-                brush : function(event, layerData, extent, layerSelections) {
+                brush : function(event, layerData, extent, plot, layerSelections) {
                     var sel = layerSelections[0]; // We only have one layer, so grab the first one.
                     var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
                     var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
@@ -487,7 +487,6 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
-        plot = this.plot; // hoisted for brushing events
 
         if (this.plot) {
             this.plot.addLayer(pointLayer);
