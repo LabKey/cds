@@ -92,7 +92,7 @@
                         cube.onReady(function(mdx)
                         {
                             for (var i = 0; i < groups.length; i++) {
-                                LABKEY.app.controller.Filter.doGroupUpdate(mdx, onGroupUpdate, null, groups[i]);
+                                LABKEY.app.model.Filter.doGroupUpdate(mdx, onGroupUpdate, null, groups[i]);
                             }
                         }, this);
                     }

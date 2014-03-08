@@ -17,7 +17,7 @@ Ext.define('Connector.controller.Home', {
             itemclick: function(v, grp) {
                 var filters = grp.get('filters');
                 if (Ext.isString(filters)) {
-                    var strFilterArray = LABKEY.app.controller.Filter.filtersFromJSON(filters);
+                    var strFilterArray = LABKEY.app.model.Filter.fromJSON(filters);
                     filters = [];
                     for (var f=0; f < strFilterArray.length; f++) {
                         filters.push(Ext.create('Connector.model.Filter', strFilterArray[f]));

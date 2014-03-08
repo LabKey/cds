@@ -452,7 +452,6 @@ Ext.define('Connector.controller.RawData', {
                 if (this.filterMap.hasOwnProperty(urlParam)) {
                     if (urlParam.indexOf(fieldKey) > -1) {
                         var id = this.filterMap[urlParam];
-                        this.clearFilter(urlParam);
                         this.getStateManager().removeFilter(id, 'Subject');
                     }
                 }

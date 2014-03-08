@@ -64,7 +64,7 @@ Ext.define('Connector.view.Selection', {
                 var memberIdx = parseInt(element.memberIndex);
                 if (Ext.isNumber(memberIdx)) {
                     var members = rec.get('members');
-                    this.fireEvent('removefilter', rec.id, rec.get('hierarchy'), members[memberIdx].uname);
+                    this.fireEvent('removefilter', rec.id, rec.get('hierarchy'), members[memberIdx] ? members[memberIdx].uname : undefined);
                 }
                 else {
                     this.fireEvent('removefilter', rec.id);
@@ -104,8 +104,8 @@ Ext.define('Connector.view.Selection', {
                         '<div class="closeitem wholeitem" data-id="{id}"></div>',
                         '<div class="opselect">',
                             '<select>',
-                                '<option value="' + LABKEY.app.controller.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
-                                '<option value="' + LABKEY.app.controller.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
+                                '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
+                                '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
                             '</select>',
                         '</div>',
                         '<div class="selitem sel-listing">{[this.renderType(values.members[0])]}</div>',
@@ -135,10 +135,10 @@ Ext.define('Connector.view.Selection', {
                     return (values.isPlot ? true : false);
                 },
                 selectIntersect : function(op) {
-                    return op == LABKEY.app.controller.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
+                    return op == LABKEY.app.model.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
                 },
                 selectUnion : function(op) {
-                    return op == LABKEY.app.controller.Filter.Operators.UNION ? 'selected="selected"' : '';
+                    return op == LABKEY.app.model.Filter.Operators.UNION ? 'selected="selected"' : '';
                 },
                 renderType : function(member) {
                     var u = member['uname'];
@@ -215,8 +215,8 @@ Ext.define('Connector.view.Selection', {
                     return Ext.htmlEncode(label);
                 },
                 renderLabel : function(values) {
-                    var type = Connector.model.Filter.getGridHierarchy(values);
-                    return Ext.htmlEncode(type + ": " + Connector.model.Filter.getGridLabel(values));
+                    var type = LABKEY.app.model.Filter.getGridHierarchy(values);
+                    return Ext.htmlEncode(type + ": " + LABKEY.app.model.Filter.getGridLabel(values));
                 }
             }
     ),

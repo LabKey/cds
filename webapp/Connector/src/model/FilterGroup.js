@@ -38,10 +38,6 @@ Ext.define('Connector.model.FilterGroup', {
         }
     },
 
-    addFilter : function(filter) {},
-
-    removeFilter : function(id) {},
-
     getName : function() {
         if (this.data.label)
             return this.data.label;

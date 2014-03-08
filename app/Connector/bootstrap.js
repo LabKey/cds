@@ -100,6 +100,7 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.controller.Route": "../../../../internal/webapp/app/Route.js",
   "LABKEY.app.controller.State": "../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.View": "../../../../internal/webapp/app/View.js",
+  "LABKEY.app.model.Filter": "../../../../internal/webapp/app/Filter.js",
   "LABKEY.app.model.State": "../../../../internal/webapp/app/State.js",
   "LABKEY.study.GroupCohort": "../../webapp/Connector/src/model/FilterGroup.js"
 });
@@ -1012,6 +1013,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
   "LABKEY.app.controller.View": [],
+  "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.State": [],
   "LABKEY.study.GroupCohort": []
 });
@@ -2168,6 +2170,7 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
   "LABKEY.app.controller.View": [],
+  "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.State": [],
   "LABKEY.study.GroupCohort": []
 });

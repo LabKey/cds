@@ -86,7 +86,7 @@ Ext.define('Connector.controller.Group', {
                 };
 
 
-                LABKEY.app.controller.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
+                LABKEY.app.model.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
                     label: values['groupname'],
                     description: values['groupdescription'],
                     filters: state.getFlatFilters(),
@@ -144,7 +144,7 @@ Ext.define('Connector.controller.Group', {
                                 rowId: targetGroup.get('id'),
                                 participantIds: ids,
                                 description: description,
-                                filters: LABKEY.app.controller.Filter.filtersToJSON(filters, isLive),
+                                filters: LABKEY.app.model.Filter.toJSON(filters, isLive),
                                 success: updateSuccess,
                                 failure: updateFailure
                             });

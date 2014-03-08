@@ -292,7 +292,7 @@ Ext.define('Connector.view.RawData', {
                 columnList  = this.getColumnList(),
                 filterArray = this.reapplyFilters(oldFilters, columnList),
 
-        // add Participant Filter due to application filters
+                // add Participant Filter due to application filters
                 pFilter     = LABKEY.Filter.create(columnList[0], ptids.join(';'), LABKEY.Filter.Types.IN);
 
         if (filterArray) {
