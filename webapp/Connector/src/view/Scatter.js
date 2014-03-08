@@ -487,6 +487,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
+        var plot = this.plot; // hoisted for event listeners
 
         if (this.plot) {
             this.plot.addLayer(pointLayer);
