@@ -24,5 +24,9 @@ Ext.define('Connector.controller.State', {
 
     getAction : function(appState) {
         return 'app.view?' + this.getURLParams() + '#' + appState;
+    },
+
+    _getViewController : function() {
+        return this.application.getController('Connector');
     }
 });
