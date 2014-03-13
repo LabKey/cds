@@ -67,6 +67,7 @@
         <script path="Connector/src/model/FilterGroup.js"/>
         <!--<script path="Connector/src/model/State.js"/>-->
         <script path="Connector/src/model/Summary.js"/>
+        <script path="Connector/src/model/Group.js"/>
 
         <!-- Application Widgets -->
         <script path="Connector/src/button/DropDownButton.js"/>
@@ -95,6 +96,7 @@
         <script path="Connector/src/view/FilterSave.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
+        <script path="Connector/src/view/GroupSummary.js"/>
         <script path="Connector/src/view/Header.js"/>
         <script path="Connector/src/view/Home.js"/>
         <script path="Connector/src/view/Learn.js"/>

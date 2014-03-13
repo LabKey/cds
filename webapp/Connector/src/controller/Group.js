@@ -6,7 +6,7 @@
 Ext.define('Connector.controller.Group', {
     extend: 'Connector.controller.AbstractViewController',
 
-    views: ['GroupSave'],
+    views: ['GroupSave', 'GroupSummary'],
 
     init : function() {
 
@@ -29,8 +29,15 @@ Ext.define('Connector.controller.Group', {
         this.callParent();
     },
 
-    createView : function(xtype, context) {
+    parseContext : function(urlContext) {
+        if (urlContext && urlContext.length > 0) {
+            return {groupId: urlContext[0]};
+        }
 
+        return {groupId: null};
+    },
+
+    createView : function(xtype, context) {
         var v; // the view instance to be created
 
         if (xtype == 'groupsave') {
@@ -42,10 +49,72 @@ Ext.define('Connector.controller.Group', {
             this.application.on('groupsaved', this.onGroupSaved, this);
         }
 
+        if (xtype == 'groupsummary') {
+            var store = Connector.model.Group.getGroupStore();
+
+            v = Ext.create('Connector.view.GroupSummary', {
+                store: store,
+                groupId: context.groupId
+            });
+
+            if (store.getCount() === 0) {
+                store.on('load', function() {
+                    v.updateView();
+                    this.loadGroupFilters();
+                }, this, {single: true});
+            }
+        }
+
         return v;
     },
 
-    updateView : function(xtype, context) { },
+    updateView : function(xtype, context) {
+        // Check if xtype is groupsummary
+        // use viewManager to get viewinstance of 'groupsummary'
+        // call update view method (need to create this).
+        if (xtype == 'groupsummary') {
+            var v = this.getViewManager().getViewInstance('groupsummary');
+            v.updateView(context.groupId);
+            this.loadGroupFilters();
+        }
+    },
+
+    loadGroupFilters : function() {
+        var v = this.getViewManager().getViewInstance('groupsummary'),
+            store = Connector.model.Group.getGroupStore(),
+            recIdx = store.find('id', v.groupId, false, true, true),
+            rec = store.getAt(recIdx),
+            filters = rec.get('filters');
+
+        if (Ext.isString(filters)) {
+            var strFilterArray = LABKEY.app.model.Filter.fromJSON(filters);
+            filters = [];
+            for (var f=0; f < strFilterArray.length; f++) {
+                filters.push(Ext.create('Connector.model.Filter', strFilterArray[f]));
+            }
+        }
+        else {
+            filters = filters.filters;
+        }
+
+        this.getStateManager().setFilters(filters, true);
+        this.showFiltersChangedMessage();
+    },
+
+    showFiltersChangedMessage : function() {
+        var v = this.getViewManager().getViewInstance('groupsummary'),
+            id = Ext.id();
+
+        v.showMessage('Your filters have been replaced by this saved group. <a id="' + id + '">Undo</a>', true);
+
+        var undo = Ext.get(id);
+        if (undo) {
+            undo.on('click', function(){
+                this.getStateManager().requestFilterUndo();
+                v.hideMessage(true);
+            }, this, {single: true});
+        }
+    },
 
     doGroupSave : function() {
         var view = this.getViewManager().getViewInstance('groupsave');
