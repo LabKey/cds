@@ -54,15 +54,17 @@ Ext.define('Connector.controller.Group', {
 
             v = Ext.create('Connector.view.GroupSummary', {
                 store: store,
-                groupId: context.groupId
+                groupId: context.groupId,
+                listeners: {
+                    scope: this,
+                    loadgroupfilters: function() {
+                        this.loadGroupFilters();
+                    },
+                    requestfilterundo: function() {
+                        this.undoFilter();
+                    }
+                }
             });
-
-            if (store.getCount() === 0) {
-                store.on('load', function() {
-                    v.updateView();
-                    this.loadGroupFilters();
-                }, this, {single: true});
-            }
         }
 
         return v;
@@ -75,8 +77,11 @@ Ext.define('Connector.controller.Group', {
         if (xtype == 'groupsummary') {
             var v = this.getViewManager().getViewInstance('groupsummary');
             v.updateView(context.groupId);
-            this.loadGroupFilters();
         }
+    },
+
+    undoFilter: function() {
+        this.getStateManager().requestFilterUndo();
     },
 
     loadGroupFilters : function() {
@@ -98,22 +103,6 @@ Ext.define('Connector.controller.Group', {
         }
 
         this.getStateManager().setFilters(filters, true);
-        this.showFiltersChangedMessage();
-    },
-
-    showFiltersChangedMessage : function() {
-        var v = this.getViewManager().getViewInstance('groupsummary'),
-            id = Ext.id();
-
-        v.showMessage('Your filters have been replaced by this saved group. <a id="' + id + '">Undo</a>', true);
-
-        var undo = Ext.get(id);
-        if (undo) {
-            undo.on('click', function(){
-                this.getStateManager().requestFilterUndo();
-                v.hideMessage(true);
-            }, this, {single: true});
-        }
     },
 
     doGroupSave : function() {

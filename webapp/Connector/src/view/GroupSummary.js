@@ -20,13 +20,19 @@ Ext.define('Connector.view.GroupSummary', {
 
     initComponent : function(){
         this.group = null;
+
         if (!this.groupId) {
             console.log("No id, throw not found error.");
-        } else {
+        }
+
+        if (this.store.getCount() > 0) {
             var recIdx = this.store.find('id', this.groupId, false, true, true);
-            if (recIdx > 0) {
+            if (recIdx > -1) {
                 this.group = this.store.getAt(recIdx);
+                this.requestFilterChange();
             }
+        } else {
+            this.store.on('load', this.onStoreLoad, this, {single: true});
         }
 
         this.items = [
@@ -35,6 +41,38 @@ Ext.define('Connector.view.GroupSummary', {
         ];
 
         this.callParent();
+    },
+
+    onStoreLoad: function() {
+        this.updateView();
+    },
+
+    showFiltersMessage: function() {
+        var id = Ext.id();
+
+        this.showMessage('Your filters have been replaced by this saved group. <a id="' + id + '">Undo</a>', true);
+
+        var undo = Ext.get(id);
+
+        if (undo) {
+            undo.on('click', function(){
+                this.fireEvent('requestfilterundo');
+                this.hideMessage(true);
+            }, this, {single: true});
+        }
+    },
+
+    filterChange: function() {
+        this.fireEvent('loadgroupfilters');
+        this.showFiltersMessage();
+    },
+
+    requestFilterChange: function() {
+        if (this.showMessage) {
+            this.filterChange();
+        } else {
+            this.on('boxready', this.filterChange, this, {single: true});
+        }
     },
 
     getHeader : function(){
@@ -65,6 +103,7 @@ Ext.define('Connector.view.GroupSummary', {
 
         if (idx > -1) {
             this.group = this.store.getAt(idx);
+            this.requestFilterChange();
             this.summaryHeader.updateView(this.group);
             this.summaryBody.updateView(this.group);
         } else {
