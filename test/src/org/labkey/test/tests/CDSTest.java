@@ -313,6 +313,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
         assertFilterStatusCounts(18, 2, 4, 3, 28);
+        assertTextPresent("Study Group Verify", "DESCRIPTION", "UPDATES", "A set of defined studies. More info added.");
 
         clearFilter();
         makeNavigationSelection(NavigationLink.SUMMARY);

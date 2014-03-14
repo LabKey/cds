@@ -45,14 +45,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
         this.control('filterstatus', {
             requestundo : function() {
-                var state = this.getStateManager();
-                var index = state.getPreviousState();
-                if (index > -1) {
-                    state.loadFilters(index);
-                }
-                else {
-                    console.warn('FAILED TO UNDO. NOT ABLE TO FIND STATE');
-                }
+                this.getStateManager().requestFilterUndo();
             }
         });
 

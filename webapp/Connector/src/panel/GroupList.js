@@ -42,7 +42,7 @@ Ext.define('Connector.view.GroupListView', {
 
     trackOver: true,
 
-    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span>',
+    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span></div>',
 
     cls: 'grouplist-view',
 
@@ -60,37 +60,7 @@ Ext.define('Connector.view.GroupListView', {
 
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
-        var storeConfig = {
-            pageSize : 100,
-            model    : 'LABKEY.study.GroupCohort',
-            autoLoad : true,
-            proxy: {
-                type: 'ajax',
-                url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {
-                    includeParticipantIds: true
-                }),
-                reader: {
-                    type: 'json',
-                    root: 'groups'
-                }
-            },
-            listeners : {
-                load : function(s, recs) {
-                    for (var i=0; i < recs.length; i++)
-                    {
-                        if (recs[i].data.id < 0)
-                            s.remove(recs[i]);
-                    }
-                }
-            }
-        };
-
-        var groupConfig = Ext.clone(storeConfig);
-        Ext.apply(groupConfig.proxy, {
-            extraParams : { type : 'participantGroup'}
-        });
-
-        this.store = Ext.create('Ext.data.Store', groupConfig);
+        this.store = Connector.model.Group.getGroupStore();
 
         this.callParent();
     }

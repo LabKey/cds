@@ -120,7 +120,7 @@ Ext.define('Connector.controller.Explorer', {
         if (xtype == 'singleaxis') {
             var state = this.getStateManager();
             var s = this.getStore('Explorer');
-            s.state = state;
+            s.olapProvider = state;
 
             var v = Ext.create('Connector.view.SingleAxisExplorer',{
                 flex : 3,

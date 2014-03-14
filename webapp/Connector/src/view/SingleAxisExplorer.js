@@ -119,11 +119,10 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
         var config = {
             padding: '0 0 0 48',
-            store : this.store,
-            flex  : 1,
-            totalCount : -1,
-            resizeTask : task,
-            showEmpty : this.showEmpty
+            store: this.store,
+            flex: 1,
+            resizeTask: task,
+            showEmpty: this.showEmpty
         };
 
         if (this.selections) {
@@ -360,7 +359,7 @@ Ext.define('Connector.view.DimensionSelector', {
 
 Ext.define('Connector.view.SingleAxisExplorerView', {
 
-    extend : 'Ext.view.View',
+    extend : 'LABKEY.app.view.OlapExplorer',
 
     alias : 'widget.singleaxisview',
 
@@ -371,98 +370,25 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         }
     }],
 
-    itemSelector : 'div.bar',
-
-    multiSelect : true,
-
-    tpl : new Ext.XTemplate(
-            '<div class="barchart">',
-            '<div class="bargroup">',
-
-            '<tpl for=".">',
-
-            '<tpl if="isGroup === true && collapsed == true">',
-            '<div>',
-            '<div class="saecollapse {#}-collapse" id="{#}-collapse">',
-            '<p>+</p>',
-            '</div>',
-            '<div class="bar large">',
-            '<span class="barlabel">{label:htmlEncode}</span>',
-            '<span class="count">{count}</span>',
-            '<span class="index"></span>',
-            '<span class="index-selected inactive"></span>',
-            '</div>',
-            '</div>',
-            '</tpl>',
-            '<tpl if="isGroup === true && collapsed == false">',
-            '<div>',
-            '<div class="saecollapse {#}-collapse" id="{#}-collapse">',
-            '<p>-</p>',
-            '</div>',
-            '<div class="bar large">',
-            '<span class="barlabel">{label:htmlEncode}</span>',
-            '<span class="count">{count}</span>',
-            '<span class="index"></span>',
-            '<span class="index-selected inactive"></span>',
-            '</div>',
-            '</div>',
-            '</tpl>',
-            '<tpl if="isGroup === false && collapsed == true">',
-            '<div class="bar small barcollapse">',
-            '<span class="barlabel">{label:htmlEncode}</span>',
-            '<span class="count">{count}</span>',
-            '<span class="info"></span>',
-            '<span class="index"></span>',
-            '<span class="index-selected inactive"></span>',
-            '</div>',
-            '</tpl>',
-            '<tpl if="isGroup === false && collapsed == false">',
-            '<div class="bar small">',
-            '<span class="barlabel">{label:htmlEncode}</span>',
-            '<span class="count">{count}</span>',
-            '<span class="info"></span>',
-            '<span class="index"></span>',
-            '<span class="index-selected inactive"></span>',
-            '</div>',
-            '</tpl>',
-            '</tpl>',
-
-            '</div>',
-            '</div>'
-    ),
-
     emptyText : '<div class="saeempty">None of the selected subjects have data for this category.</div>',
+
+    btnclick: false,
+
+    showmsg: true,
+
+    msgfade: false,
+
+    btnMap: {},
 
     initComponent : function() {
 
-        Ext.applyIf(this, {
-            btnclick : false,
-            showmsg  : true,
-            msgfade  : false,
-            btnMap   : {},
-            textCache: {}
-        });
-
-        this.positionTask   = new Ext.util.DelayedTask(this.positionText, this);
-        this.groupClickTask = new Ext.util.DelayedTask(this.groupClick, this);
-        this.selectionTask  = new Ext.util.DelayedTask(this.selection, this);
-        this.msgTask        = new Ext.util.DelayedTask(this._loadMsg, this);
-
         this.callParent();
 
+        this.groupClickTask = new Ext.util.DelayedTask(this.groupClick, this);
+        this.selectionTask = new Ext.util.DelayedTask(this.selection, this);
+        this.msgTask = new Ext.util.DelayedTask(this._loadMsg, this);
+
         this.store.on('subselect', this.renderSelection, this);
-        this.store.on('totalcount', function(count) {
-            this.cancelShowLoad();
-
-            this.loadLock = false; this.totalCount = count;
-
-            // clean-up buttons
-            for (var btn in this.btnMap) {
-                this.btnMap[btn].destroy();
-            }
-            this.btnMap = {};
-
-        }, this);
         this.store.on('selectrequest', function() { this.selectRequest = true; },   this);
 
         this.on('itemmouseenter', this.renderInfoButton, this);
@@ -588,17 +514,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         this.store.resumeEvents();
     },
 
-    setDimension : function(dim, hierarchyIndex) {
-        this.dimension = dim;
-        this.setHierarchy(hierarchyIndex);
-    },
-
-    setHierarchy : function(index) {
-        this.animate = true;
-        this.hierarchyIndex = index;
-        this.loadStore();
-    },
-
     selectionChange : function(sel, isPrivate) {
         this.selections = sel;
         if (this.dimension) {
@@ -626,9 +541,21 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         }
     },
 
+    onMaxCount : function(count) {
+        this.callParent();
+        this.cancelShowLoad();
+
+        // clean-up buttons
+        for (var btn in this.btnMap) {
+            if (this.btnMap.hasOwnProperty(btn)) {
+                this.btnMap[btn].destroy();
+            }
+        }
+        this.btnMap = {};
+    },
+
     selection : function(useLast) {
         if (this.selectRequest && this.selections && this.selections.length > 0) {
-//            this.syncSelectionModel();
             this.store.loadSelection(useLast);
         }
         else {
@@ -687,55 +614,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         }
     },
 
-    /**
-     * This ensures that the selection model selected records (i.e. the ones a user clicked on)
-     * stays in sync with the set of CDS selections (i.e. current selections).
-     * Issue:
-     */
-    syncSelectionModel : function() {
-
-        if (!this.selections || this.selections.length == 0) {
-            this.getSelectionModel().deselectAll();
-            return;
-        }
-
-        if (this.selections.length > 1) {
-            console.warn('Multiple Selections are not synced properly with selection model.');
-            return;
-        }
-
-        var members, m, remove = [], match;
-        var selected = this.getSelectionModel().getSelection();
-        for (var s=0; s < selected.length; s++) {
-
-            match = false;
-
-            if (!this.selections[0] || !this.selections[0].data || !this.selections[0].data.members) {
-                continue;
-            }
-
-            for (m=0; m < this.selections[0].data.members.length; m++) {
-
-                // ensure match of hierarchies
-                if (selected[s].data.hierarchy == this.selections[0].getHierarchy()) {
-
-                    members = this.selections[0].data.members[m];
-                    if (selected[s].data.value == members.uname[members.uname.length-1]) {
-                        match = true;
-                    }
-                }
-            }
-
-            if (!match) {
-                remove.push(selected[s]);
-            }
-        }
-
-        if (remove.length > 0) {
-            this.getSelectionModel().deselect(remove, true);
-        }
-    },
-
     registerGroupClick : function(node, rec) {
         node.on('click', function() {
             this.groupClickTask.delay(100, null, null, [rec]);
@@ -747,91 +625,8 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         this.selectionTask.delay(100);
     },
 
-    positionText : function(collapseMode){
-
-        var bar,
-                bars = Ext.query(".barchart .bar"),
-                grps = this.store.getGroups(),
-                i, g=0,
-                bWidth,
-                info,
-                label,
-                numpercent,
-                percent,
-                sets = [], _set,
-                t;
-
-        for (i=0; i < bars.length; i++) {
-            t = Ext.get(Ext.query(".barlabel", bars[i])[0]);
-            sets.push({
-                bar : Ext.get(Ext.query(".index", bars[i])[0]),
-                barLabel : t,
-                barCount : Ext.get(Ext.query(".count", bars[i])[0]),
-                info : Ext.get(Ext.query(".info", bars[i])[0]),
-                label : t.dom.innerHTML
-            });
-        }
-
-        this.suspendLayout = true;
-        for (i=0; i < sets.length; i++) {
-
-            _set = sets[i];
-            label = _set.label;
-            if (this.textCache[label]) {
-                t = this.textCache[label];
-            }
-            else {
-                t = this.textCache[label] = sets[i].barLabel.getTextWidth();
-            }
-
-            // optimization for 0 case
-            if (_set.barCount.dom.innerHTML == '0') {
-                _set.bar.setWidth('0%');
-                _set.barCount.setLeft(t + 15);
-                if (_set.info)
-                    _set.info.setLeft(t + 60);
-                continue;
-            }
-
-            // barCount.dom.innerText is a number like '100'
-            numpercent = (_set.barCount.dom.innerHTML / this.totalCount) * 100;
-            percent = '' + numpercent + '%';
-
-            _set.bar.setWidth(percent);
-            bWidth = _set.bar.getWidth(); // returns width in pixels
-            if (bWidth > t) {
-                t = bWidth;
-            }
-
-            _set.barCount.setLeft(t + 15);
-            if (_set.info) {
-                _set.info.setLeft(t + 60);
-            }
-
-            if (this.animate) {
-                _set.bar.setWidth("0%");
-                _set.bar.setWidth(percent, {
-                    duration: 300,
-                    easing: 'linear',
-                    callback: this.positionHelper,
-                    scope: this
-                });
-            } else {
-                this.positionHelper.call(this);
-            }
-        }
-        this.suspendLayout = false;
-
-        if (!collapseMode) {
-            for (; g < grps.length; g++) {
-                bar = Ext.get(Ext.query('.saecollapse')[g]);
-                if (bar) {
-                    i = bar.dom.id.split('-collapse')[0]-1;
-                    this.registerGroupClick(bar, this.store.getAt(i));
-                }
-            }
-        }
-
+    positionText : function(collapseMode) {
+        this.callParent();
         this.cancelShowLoad();
     },
 
@@ -851,7 +646,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     },
 
     loadStore : function() {
-        this.loadLock = true;
         this.store.load(this.dimension, this.hierarchyIndex, true, this.showEmpty);
         this.showLoad();
     },

@@ -158,6 +158,8 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Route.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
 
     <!-- Study Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
@@ -196,6 +198,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
     <%--<script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>--%>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/DropDownButton.js"></script>
@@ -224,6 +227,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Home.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
