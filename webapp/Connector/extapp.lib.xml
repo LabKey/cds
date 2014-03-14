@@ -26,6 +26,7 @@
         <script path="../../../internal/explodedModule/web/app/Route.js"/>
         <script path="../../../internal/explodedModule/web/app/Filter.js"/>
         <script path="../../../internal/explodedModule/web/app/AbstractViewController.js"/>
+        <script path="../../../internal/explodedModule/web/app/OlapExplorer.js"/>
 
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
