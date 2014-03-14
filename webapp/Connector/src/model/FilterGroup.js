@@ -48,16 +48,3 @@ Ext.define('Connector.model.FilterGroup', {
         return true;
     }
 });
-
-// models Subject Groups and Cohorts mixed
-Ext.define('LABKEY.study.GroupCohort', {
-    extend : 'Ext.data.Model',
-    fields : [
-        {name : 'id'},
-        {name : 'label'},
-        {name : 'description'},
-        {name : 'filters'},
-        {name : 'type'},
-        {name : 'participantIds'} // array
-    ]
-});

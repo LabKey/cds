@@ -15,19 +15,7 @@ Ext.define('Connector.controller.Home', {
 
         this.control('grouplistview', {
             itemclick: function(v, grp) {
-                var filters = grp.get('filters');
-                if (Ext.isString(filters)) {
-                    var strFilterArray = LABKEY.app.model.Filter.fromJSON(filters);
-                    filters = [];
-                    for (var f=0; f < strFilterArray.length; f++) {
-                        filters.push(Ext.create('Connector.model.Filter', strFilterArray[f]));
-                    }
-                }
-                else {
-                    filters = filters.filters;
-                }
-
-                this.getStateManager().setFilters(filters);
+                this.getViewManager().changeView('groupsummary', ['groupsummary', grp.get('id')]);
             }
         });
 
