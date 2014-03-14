@@ -28,18 +28,6 @@ Ext.define('Connector.controller.Connector', {
 
     init : function() {
 
-        if (LABKEY.devMode) {
-            VIEW = this;
-        }
-
-        // Listen for when views are added to the center view and register that components xtype
-        this.control('app-main > #primarytabpanel', {
-            // See http://docs.sencha.com/ext-js/4-0/#!/api/Ext.tab.Panel-method-add
-            add : function (tp, comp) {
-                this._addTab(comp.xtype);
-            }
-        });
-
         // Since the Connector.panel.Header does not have its own controller this controller is provided.
         // this.requestCollapse = false;
         this.control('connectorheader', {
@@ -58,27 +46,13 @@ Ext.define('Connector.controller.Connector', {
          * the associated functions for either showing or hiding that view 'type'. If these are not provided then a
          * default show/hide method is provided.
          */
-        this.actions = {
-            hide : {
-                'filtersave' : {fn: this.hideFilterSaveView, scope: this},
-                'groupsave'  : {fn: this.hideGroupSaveView, scope: this}
-            },
-            show : {
-                'filtersave' : {fn: this.showFilterSaveView, scope: this},
-                'groupsave'  : {fn: this.showGroupSaveView, scope: this}
-            }
-        };
+        this.actions.hide['filtersave'] = {fn: this.hideFilterSaveView, scope: this};
+        this.actions.show['filtersave'] = {fn: this.showFilterSaveView, scope: this};
+
+        this.actions.hide['groupsave'] = {fn: this.hideGroupSaveView, scope: this};
+        this.actions.show['groupsave'] = {fn: this.showGroupSaveView, scope: this};
 
         this.callParent();
-    },
-
-    /**
-     * @private
-     * Adds a tab to the tab mapping for the center region.
-     * @param xtype
-     */
-    _addTab : function(xtype) {
-        this.tabMap[xtype] = this.getCenter().items.length;
     },
 
     /**
