@@ -18,7 +18,13 @@ Ext.define('Connector.view.GroupSummary', {
         }
     }],
 
-    initComponent : function(){
+    constructor : function(config) {
+        this.callParent([config]);
+
+        this.addEvents('requestfilterundo', 'loadgroupfilters', 'requestgroupupdate', 'requestgroupdelete', 'requestback');
+    },
+
+    initComponent : function() {
         this.group = null;
 
         if (!this.groupId) {
@@ -79,7 +85,19 @@ Ext.define('Connector.view.GroupSummary', {
         if (!this.summaryHeader) {
             this.summaryHeader = Ext.create('Connector.view.GroupSummaryHeader', {
                 group: this.group,
-                padding : '15 0 0 0'
+                padding : '15 0 0 0',
+                listeners: {
+                    scope: this,
+                    requestgroupdelete: function(id) {
+                        this.fireEvent('requestgroupdelete', id);
+                    },
+                    loadgroupfilters: function() {
+                        this.requestFilterChange();
+                    },
+                    requestback: function(){
+                        this.fireEvent('requestback');
+                    }
+                }
             });
         }
         return this.summaryHeader;
@@ -87,7 +105,15 @@ Ext.define('Connector.view.GroupSummary', {
 
     getBody : function(){
         if (!this.summaryBody) {
-            this.summaryBody = Ext.create('Connector.view.GroupSummaryBody', {group: this.group});
+            this.summaryBody = Ext.create('Connector.view.GroupSummaryBody', {
+                group: this.group,
+                listeners: {
+                    scope: this,
+                    requestgroupupdate : function(group) {
+                        this.fireEvent('requestgroupupdate', group);
+                    }
+                }
+            });
         }
         return this.summaryBody;
     },
@@ -128,6 +154,12 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         ui: 'custom'
     },
 
+    constructor : function(config) {
+        this.callParent([config]);
+
+        this.addEvents('loadgroupfilters', 'requestgroupdelete', 'requestback');
+    },
+
     initComponent: function(){
         if (this.group) {
             this.groupLabel = this.group.get('label');
@@ -150,13 +182,22 @@ Ext.define('Connector.view.GroupSummaryHeader', {
                 xtype: 'button',
                 ui : 'rounded-inverted-accent',
                 text: 'back',
-                handler: this.back
-            },{
+                handler: this.back,
+                scope: this
+            }, {
+                xtype: 'button',
+                ui: 'rounded-inverted-accent',
+                text: 'apply filters',
+                margin: '0 0 0 10',
+                handler: this.applyFilters,
+                scope: this
+            }, {
                 xtype: 'button',
                 ui : 'rounded-inverted-accent',
                 text: 'delete',
                 margin: '0 0 0 10',
-                handler: this.deleteGroup
+                handler: this.deleteGroup,
+                scope: this
             }]
         }];
 
@@ -166,11 +207,20 @@ Ext.define('Connector.view.GroupSummaryHeader', {
     },
 
     back: function(){
-        console.log("back clicked");
+        this.fireEvent('requestback');
+    },
+
+    applyFilters: function() {
+        this.fireEvent('loadgroupfilters');
     },
 
     deleteGroup: function(){
-        console.log("delete clicked");
+        Ext.MessageBox.confirm(
+                'Delete Group?',
+                'Are you sure you want to delete "' + this.group.get('label') + '"?',
+                function(ans){ if (ans === 'yes') { this.fireEvent('requestgroupdelete', this.group.data.id); }},
+                this
+        );
     },
 
     updateView: function(group) {
@@ -187,6 +237,12 @@ Ext.define('Connector.view.GroupSummaryBody', {
     alias : 'widget.groupsummarybody',
 
     margin: '25 0 0 25',
+
+    constructor : function(config) {
+        this.callParent([config]);
+
+        this.addEvents('requestgroupupdate');
+    },
 
     initComponent: function() {
         var desc = '', isLive = false;
@@ -211,6 +267,16 @@ Ext.define('Connector.view.GroupSummaryBody', {
             margin: '10 0 0 0',
             vertical: true,
             columns: 1,
+            listeners: {
+                scope: this,
+                change: function(rg, newValue, oldValue) {
+                    var isLive = newValue.updates;
+                    var group = Ext.clone(this.group.data);
+                    var filters = Ext.JSON.decode(group.filters).filters;
+                    group.filters = LABKEY.app.model.Filter.toJSON(filters, isLive);
+                    this.fireEvent('requestgroupupdate', group);
+                }
+            },
             items: [{
                 boxLabel: 'Live: Update group with new data',
                 name: 'updates',
@@ -240,7 +306,10 @@ Ext.define('Connector.view.GroupSummaryBody', {
             desc = 'No description given.';
         }
         this.descDisplay.setValue(desc);
+        // Temporarily suspend events because we don't want to trigger a group save when we're loading a group.
+        this.radioGroup.suspendEvents(false);
         this.radioGroup.setValue({updates: JSON.parse(group.get('filters')).isLive});
+        this.radioGroup.resumeEvents();
         this.doLayout();
     }
 });

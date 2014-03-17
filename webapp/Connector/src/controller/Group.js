@@ -19,7 +19,7 @@ Ext.define('Connector.controller.Group', {
         });
 
         this.control('#groupupdatesave', {
-            click : this.doGroupUpdate
+            click : this.doGroupUpdateFromSavePanel
         });
 
         this.control('#cancelgroupsave, #groupupdatecancel', {
@@ -57,12 +57,11 @@ Ext.define('Connector.controller.Group', {
                 groupId: context.groupId,
                 listeners: {
                     scope: this,
-                    loadgroupfilters: function() {
-                        this.loadGroupFilters();
-                    },
-                    requestfilterundo: function() {
-                        this.undoFilter();
-                    }
+                    loadgroupfilters: this.loadGroupFilters,
+                    requestfilterundo: this.undoFilter,
+                    requestgroupupdate: this.doGroupUpdateFromSummary,
+                    requestgroupdelete: this.doGroupDeleteFromSummary,
+                    requestback: this.doBack
                 }
             });
         }
@@ -124,6 +123,7 @@ Ext.define('Connector.controller.Group', {
                     var group = Ext.decode(response.responseText);
                     me.application.fireEvent('groupsaved', group, state.getFilters(true));
                     view.reset();
+                    Connector.model.Group.getGroupStore().load();
                 };
 
                 var saveFailure = function(response) {
@@ -154,7 +154,7 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    doGroupUpdate : function() {
+    doGroupUpdateFromSavePanel : function() {
         var view = this.getViewManager().getViewInstance('groupsave');
 
         if (view.isValid()) {
@@ -188,6 +188,7 @@ Ext.define('Connector.controller.Group', {
                             var updateSuccess = function(group) {
                                 me.application.fireEvent('groupsaved', group, state.getFilters(true));
                                 view.reset();
+                                Connector.model.Group.getGroupStore().load();
                             };
 
                             var updateFailure = function() {
@@ -198,9 +199,9 @@ Ext.define('Connector.controller.Group', {
                             var description = targetGroup.get('description');
                             var isLive = targetGroup.get('isLive');
 
-                            LABKEY.ParticipantGroup.updateParticipantGroup({
-                                rowId: targetGroup.get('id'),
-                                participantIds: ids,
+                            me.doGroupUpdate({
+                                id: targetGroup.get('id'),
+                                ids: ids,
                                 description: description,
                                 filters: LABKEY.app.model.Filter.toJSON(filters, isLive),
                                 success: updateSuccess,
@@ -211,6 +212,56 @@ Ext.define('Connector.controller.Group', {
                 }, this);
             }
         }
+    },
+
+    doGroupUpdateFromSummary : function(group) {
+        var state = this.getStateManager();
+        var me = this;
+        state.onMDXReady(function(mdx) {
+            //
+            // Retrieve the listing of participants matching group filters
+            //
+            var filters = LABKEY.app.model.Filter.fromJSON(group.filters);
+            filters = LABKEY.app.model.Filter.getOlapFilters(filters);
+            mdx.setNamedFilter('groupfilter', filters);
+            mdx.queryParticipantList({
+                useNamedFilters: ['groupfilter'],
+                success: function(cs) {
+                    var updateSuccess = function(group) {
+                        mdx.clearNamedFilter('groupfilter');
+                        if (LABKEY.app.model.Filter) {
+
+                        }
+                        Connector.model.Group.getGroupStore().load();
+                    };
+
+                    var updateFailure = function() {
+                        alert('Failed to update Group');
+                    };
+
+                    var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
+                    me.doGroupUpdate({
+                        id: group.id,
+                        ids: ids,
+                        description: group.description,
+                        filters: group.filters,
+                        success: updateSuccess,
+                        failure: updateFailure
+                    });
+                }
+            });
+        });
+    },
+
+    doGroupUpdate : function(config) {
+        LABKEY.ParticipantGroup.updateParticipantGroup({
+            rowId: config.id,
+            participantIds: config.ids,
+            description: config.description,
+            filters: config.filters,
+            success: config.success,
+            failure: config.failure
+        });
     },
 
     onGroupCancel : function() {
@@ -240,5 +291,34 @@ Ext.define('Connector.controller.Group', {
         else {
             console.warn('no filterstatus view available');
         }
+    },
+
+    doGroupDelete : function(config) {
+        Ext.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("participant-group", "deleteParticipantGroup", config.containerPath),
+            method: 'POST',
+            jsonData: {rowId: config.id},
+            success: config.success,
+            failure: config.failure,
+            scope: config.scope
+        });
+    },
+
+    doGroupDeleteFromSummary : function(id) {
+        this.doGroupDelete({
+            id: id,
+            scope: this,
+            success: function(){
+                Connector.model.Group.getGroupStore().load();
+                this.getViewManager().changeView('home', ['home']);
+            },
+            failure: function(){
+                console.error('Delete group failed.');
+            }
+        });
+    },
+
+    doBack : function() {
+        console.log('doback');
     }
 });
