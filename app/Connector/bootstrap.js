@@ -46,8 +46,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Explorer": "../../webapp/Connector/src/model/Explorer.js",
   "Connector.model.Filter": "../../webapp/Connector/src/model/Filter.js",
   "Connector.model.FilterGroup": "../../webapp/Connector/src/model/FilterGroup.js",
+  "Connector.model.Group": "../../webapp/Connector/src/model/Group.js",
+  "Connector.model.Plot": "../../webapp/Connector/src/model/Plot.js",
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
+  "Connector.model.Variable": "../../webapp/Connector/src/model/Variable.js",
   "Connector.panel.AxisSelectDisplay": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.Feedback": "../../webapp/Connector/src/panel/Feedback.js",
@@ -69,6 +72,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupListView": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSaveList": "../../webapp/Connector/src/view/GroupSave.js",
+  "Connector.view.GroupSummary": "../../webapp/Connector/src/view/GroupSummary.js",
+  "Connector.view.GroupSummaryBody": "../../webapp/Connector/src/view/GroupSummary.js",
+  "Connector.view.GroupSummaryHeader": "../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeBody": "../../webapp/Connector/src/view/Home.js",
@@ -90,6 +96,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Summary": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.Time": "../../webapp/Connector/src/view/Time.js",
+  "Connector.view.Variable": "../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.search.Container": "../../webapp/Connector/src/view/search/Container.js",
   "Connector.window.Filter": "../../webapp/Connector/src/window/Filter.js",
@@ -97,12 +104,15 @@ Ext.Loader.addClassPathMappings({
   "Ext": "ext/src",
   "Ext.Msg": "ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "ext/src/rtl/EventObject.js",
+  "LABKEY.app.controller.AbstractViewController": "../../../../internal/webapp/app/AbstractViewController.js",
   "LABKEY.app.controller.Route": "../../../../internal/webapp/app/Route.js",
   "LABKEY.app.controller.State": "../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.View": "../../../../internal/webapp/app/View.js",
   "LABKEY.app.model.Filter": "../../../../internal/webapp/app/Filter.js",
+  "LABKEY.app.model.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.model.State": "../../../../internal/webapp/app/State.js",
-  "LABKEY.study.GroupCohort": "../../webapp/Connector/src/model/FilterGroup.js"
+  "LABKEY.app.store.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.view.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
@@ -146,8 +156,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Group": [],
+  "Connector.model.Plot": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
+  "Connector.model.Variable": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.Feedback": [],
@@ -169,6 +182,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSaveList": [],
+  "Connector.view.GroupSummary": [],
+  "Connector.view.GroupSummaryBody": [],
+  "Connector.view.GroupSummaryHeader": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
   "Connector.view.HomeBody": [],
@@ -190,6 +206,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
   "Connector.view.Time": [],
+  "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.search.Container": [],
   "Connector.window.Filter": [],
@@ -1010,12 +1027,15 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.window.Window": [
     "Ext.Window"
   ],
+  "LABKEY.app.controller.AbstractViewController": [],
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
   "LABKEY.app.controller.View": [],
   "LABKEY.app.model.Filter": [],
+  "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
-  "LABKEY.study.GroupCohort": []
+  "LABKEY.app.store.OlapExplorer": [],
+  "LABKEY.app.view.OlapExplorer": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Connector.Application": [],
@@ -1065,8 +1085,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Group": [],
+  "Connector.model.Plot": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
+  "Connector.model.Variable": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
@@ -1122,6 +1145,15 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.GroupSaveList": [
     "widget.groupsavelistview"
   ],
+  "Connector.view.GroupSummary": [
+    "widget.groupsummary"
+  ],
+  "Connector.view.GroupSummaryBody": [
+    "widget.groupsummarybody"
+  ],
+  "Connector.view.GroupSummaryHeader": [
+    "widget.groupsummaryheader"
+  ],
   "Connector.view.Header": [
     "widget.connectorheader"
   ],
@@ -1174,6 +1206,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Time": [
     "widget.timeview"
+  ],
+  "Connector.view.Variable": [
+    "widget.variableselector"
   ],
   "Connector.view.Viewport": [],
   "Connector.view.search.Container": [
@@ -2167,12 +2202,17 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "widget.window"
   ],
+  "LABKEY.app.controller.AbstractViewController": [],
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
   "LABKEY.app.controller.View": [],
   "LABKEY.app.model.Filter": [],
+  "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
-  "LABKEY.study.GroupCohort": []
+  "LABKEY.app.store.OlapExplorer": [],
+  "LABKEY.app.view.OlapExplorer": [
+    "widget.olapexplorerview"
+  ]
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");
