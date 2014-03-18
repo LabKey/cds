@@ -113,13 +113,27 @@
     </style>
 
     <style type="text/css">
-        @media (max-width: 1200px) {
+        @media (max-width: 1300px) {
             h1 {
                 font-size: 24pt;
             }
 
             h2 {
                 font-size: 20pt;
+            }
+
+            div.study-description .description-text {
+                font-size: 11pt;
+            }
+        }
+
+        @media (max-width: 1250px) {
+            h1 {
+                font-size: 22pt;
+            }
+
+            h2 {
+                font-size: 18pt;
             }
 
             div.study-description .description-text {

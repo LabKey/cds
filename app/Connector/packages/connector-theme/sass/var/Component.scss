@@ -1134,9 +1134,12 @@ div.totalcolumn {
   }
 
   .primary {
+    display: inline-block;
+    margin: 4px 0 0 10px;
     font-family: $bodycaps-font;
     font-size: 12pt;
-    margin-left: 10px;
+    max-width: 300px;
+    vertical-align: top;
   }
 
   h1 {

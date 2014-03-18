@@ -52,6 +52,35 @@ Ext.define('Connector.view.Scatter', {
                 }
             });
             this.loader = Ext.get('scatterloader');
+
+            Ext.create('Ext.Component', {
+                id: 'noplotmessage',
+                renderTo: this.body,
+                cls: 'noplotmsg',
+                hidden: true,
+                autoEl: {
+                    tag: 'div',
+                    style: 'position: relative; width: 895px; margin-right: auto; margin-left: auto;',
+                    children: [{
+                        tag: 'h1',
+                        html: 'Choose a "y" variable and up to two more to plot at a time.'
+                    },{
+                        tag: 'h1',
+                        html: 'Make selections on the plot to subgroup and filter.',
+                        style: 'color: #7a7a7a;'
+                    },{
+                        tag: 'h1',
+                        html: 'Use subgroups for further comparision.',
+                        style: 'color: #b5b5b5;'
+                    }]
+                },
+                listeners: {
+                    afterrender : function(c) {
+                        this.noplotmsg = c;
+                    },
+                    scope: this
+                }
+            });
         }, this, {single: true});
 
         this.attachInternalListeners();
@@ -219,6 +248,21 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.setSize(plotbox.width, plotbox.height, true);
+        }
+
+        var plotMsg = this.noplotmsg;
+        if (plotMsg) {
+            var b = plotMsg.getBox();
+            var top = (plotbox.height / 2) - 53;
+            var el = plotMsg.getEl();
+            el.setStyle('margin-top', top + 'px');
+            var estMarginRight = plotbox.width - 100 - 895;
+            if (b.x < 101 && estMarginRight < 101) {
+                el.setStyle('margin-left', '100px');
+            }
+            else {
+                el.setStyle('margin-left', 'auto');
+            }
         }
     },
 
@@ -497,8 +541,8 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.addLayer(pointLayer);
-            try
-            {
+            try {
+                this.noplotmsg.hide();
                 this.plot.render();
             }
             catch(err) {
@@ -784,6 +828,7 @@ Ext.define('Connector.view.Scatter', {
 
         this.initPlot({rows:map}, true);
         this.resizeTask.delay(300);
+        this.noplotmsg.show();
     },
 
     onFailure : function(response) {
