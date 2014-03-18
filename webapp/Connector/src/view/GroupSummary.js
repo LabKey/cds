@@ -184,7 +184,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             items: [{
                 xtype: 'button',
                 ui : 'rounded-inverted-accent',
-                text: 'back',
+                text: '&#9668;&nbsp;back',
                 handler: this.back,
                 scope: this
             }, {
