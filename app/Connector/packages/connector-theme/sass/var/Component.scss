@@ -688,6 +688,12 @@ div.status-over {
   }
 }
 
+.headline {
+  text-transform: uppercase;
+  font-family: $bodycaps-font;
+  font-size: 13.5pt;
+}
+
 .connectorheader-collapse .logo span {
   color : $select-color;
 }
