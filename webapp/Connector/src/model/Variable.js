@@ -17,9 +17,18 @@ Ext.define('Connector.model.Variable', {
             sel = selections;
         }
 
-        if (sel && sel.$className === 'Measure') {
-            this.set('primaryLabel', sel.get('queryLabel') + ': ' + sel.get('label'));
-            this.fireEvent('updatevariable', this);
+        var label = '';
+        if (sel) {
+            if (sel.$className === 'Measure') {
+                label = sel.get('queryLabel') + ': ' + sel.get('label');
+            }
+            else {
+                // assume an object with measure 'properties'
+                label = sel['queryLabel'] + ': ' + sel['label'];
+            }
         }
+
+        this.set('primaryLabel', label);
+        this.fireEvent('updatevariable', this);
     }
 });

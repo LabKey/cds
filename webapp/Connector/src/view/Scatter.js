@@ -166,7 +166,6 @@ Ext.define('Connector.view.Scatter', {
                 items: [{
                     id: 'xaxisselector',
                     xtype: 'variableselector',
-//                    disabled: true,
                     btnCls: 'xaxisbtn',
                     model: new Ext.create('Connector.model.Variable', {
                         typeLabel: 'x'
@@ -633,54 +632,57 @@ Ext.define('Connector.view.Scatter', {
         if (this.filterClear || !activeMeasures.x || !activeMeasures.y) {
             this.filterClear = false;
             this.noPlot();
+
+            this.fireEvent('axisselect', this, 'y', []);
+            this.fireEvent('axisselect', this, 'x', []);
+
             return;
         }
 
         this.measures = [ activeMeasures.x, activeMeasures.y ];
+        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
+        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
 
         this.showLoad();
 
-        if (this.measures.length > 0) {
+        var sorts = this.getSorts();
 
-            var sorts = this.getSorts();
+        var wrappedMeasures = [
+            {measure : this.measures[0], time: 'visit'},
+            {measure : this.measures[1], time: 'visit'}
+        ];
 
-            var wrappedMeasures = [
-                {measure : this.measures[0], time: 'visit'},
-                {measure : this.measures[1], time: 'visit'}
-            ];
-
-            if (!this.fromFilter) {
-                this.updatePlotBasedFilter(wrappedMeasures);
-            }
-            else {
-                this.initialized = true;
-            }
-
-            // Request Participant List
-            this.getParticipantIn(function(ptidList) {
-
-                if (ptidList)
-                {
-                    this.applyFiltersToSorts(sorts, ptidList);
-                }
-
-                // Request Chart Data
-                Ext.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-                    method: 'POST',
-                    jsonData: {
-                        measures: wrappedMeasures,
-                        sorts: sorts,
-                        limit: (this.rowlimit+1)
-                    },
-                    success: this.onChartDataSuccess,
-                    failure: this.onFailure,
-                    scope: this
-                });
-
-                this.requestCitations();
-            });
+        if (!this.fromFilter) {
+            this.updatePlotBasedFilter(wrappedMeasures);
         }
+        else {
+            this.initialized = true;
+        }
+
+        // Request Participant List
+        this.getParticipantIn(function(ptidList) {
+
+            if (ptidList)
+            {
+                this.applyFiltersToSorts(sorts, ptidList);
+            }
+
+            // Request Chart Data
+            Ext.Ajax.request({
+                url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
+                method: 'POST',
+                jsonData: {
+                    measures: wrappedMeasures,
+                    sorts: sorts,
+                    limit: (this.rowlimit+1)
+                },
+                success: this.onChartDataSuccess,
+                failure: this.onFailure,
+                scope: this
+            });
+
+            this.requestCitations();
+        });
     },
 
     showLoad : function() {
@@ -1055,6 +1057,7 @@ Ext.define('Connector.view.Scatter', {
                     ui: 'rounded-inverted-accent',
                     handler: function() {
                         var yselect = this.axisPanelY.getSelection();
+                        YY = yselect;
                         if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
                             this.initialized = true;
                             this.showTask.delay(300);
