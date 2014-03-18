@@ -13,6 +13,8 @@ Ext.define('Connector.view.Variable', {
 
     btnCls: 'varselectbtn',
 
+    layout: { type: 'fit' },
+
     constructor : function(config) {
 
         this.callParent([config]);
@@ -26,7 +28,13 @@ Ext.define('Connector.view.Variable', {
             itemId: 'modelcomponent',
             xtype: 'box',
             cls: 'variable',
-            tpl: new Ext.XTemplate('<h1>{typeLabel} =</h1><span class="primary">{primaryLabel}</span>')
+            tpl: new Ext.XTemplate(
+                    '<h1>{typeLabel} =</h1><span class="primary" style="vertical-align: {primaryLabel:this.align}">{primaryLabel}</span>',
+                    {
+                        align: function(pl) {
+                            return (pl.length > 46 ? 'sub' : 'super') + ';';
+                        }
+                    })
         };
 
         if (this.model) {
@@ -49,7 +57,7 @@ Ext.define('Connector.view.Variable', {
             hidden: true,
             xtype: 'dropdownbutton',
             cls: this.btnCls,
-            margin: '-13 0 0 8',
+            margin: '-10 0 0 10',
             handler: this.onBtnClick,
             scope: this
         }];
