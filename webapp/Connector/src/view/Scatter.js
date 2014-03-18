@@ -63,9 +63,37 @@ Ext.define('Connector.view.Scatter', {
             region: 'north',
             height: 50,
             border: false, frame: false,
-            html: '',
+            layout: {
+                type: 'hbox'
+            },
             bodyStyle: 'background-color: #F0F0F0;',
-            items: [ this.getYAxisButton() ]
+            defaults: {
+                xtype: 'container',
+                width: '50%',
+                layout: {
+                    type: 'hbox',
+                    pack: 'center'
+                }
+            },
+            items: [{
+                items: [{
+                    id: 'yaxisselector',
+                    xtype: 'variableselector',
+                    btnCls: 'yaxisbtn',
+                    model: new Ext.create('Connector.model.Variable', {
+                        typeLabel: 'y'
+                    })
+                }]
+            },{
+                items: [{
+                    id: 'colorselector',
+                    xtype: 'variableselector',
+                    disabled: true,
+                    model: new Ext.create('Connector.model.Variable', {
+                        typeLabel: 'color'
+                    })
+                }]
+            }]
         };
     },
 
@@ -78,8 +106,7 @@ Ext.define('Connector.view.Scatter', {
             id: Ext.id(),
             autoEl : {
                 tag: 'div',
-                cls: 'emptyplot plot',
-                html: 'center'
+                cls: 'emptyplot plot'
             },
             listeners: {
                 afterrender: {
@@ -99,9 +126,24 @@ Ext.define('Connector.view.Scatter', {
             region: 'south',
             height: 50,
             border: false, frame: false,
-            html: '',
             bodyStyle: 'background-color: #F0F0F0;',
-            items: [ this.getXAxisButton() ]
+            items: [{
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    pack: 'center'
+                },
+                width: '100%',
+                items: [{
+                    id: 'xaxisselector',
+                    xtype: 'variableselector',
+//                    disabled: true,
+                    btnCls: 'xaxisbtn',
+                    model: new Ext.create('Connector.model.Variable', {
+                        typeLabel: 'x'
+                    })
+                }]
+            }]
         };
     },
 
@@ -128,42 +170,6 @@ Ext.define('Connector.view.Scatter', {
                     if (this.srcs && this.srcs.length > 0)
                         this.fireEvent('sourcerequest', this.srcs, this.srcs[0]);
                 },
-                scope: this
-            });
-        }
-        else {
-            btn = btn[0];
-        }
-
-        return btn;
-    },
-
-    getXAxisButton : function() {
-        var btn = this.items ? this.query('#xaxisbutton') : null;
-        if (!btn) {
-            btn = Ext.create('Connector.button.DropDownButton', {
-                itemId: 'xaxisbutton',
-                cls: 'xaxisbutton',
-                text: '&#9650;', // up-arrow
-                hidden: !this.showAxisButtons,
-                scope : this
-            });
-        }
-        else {
-            btn = btn[0];
-        }
-
-        return btn;
-    },
-
-    getYAxisButton : function() {
-        var btn = this.items ? this.query('#yaxisbutton') : null;
-        if (!btn) {
-            btn = Ext.create('Connector.button.DropDownButton', {
-                itemId: 'yaxisbutton',
-                cls: 'yaxisbutton',
-                text: '&#9658;', // right-arrow
-                hidden: !this.showAxisButtons,
                 scope: this
             });
         }
@@ -868,8 +874,9 @@ Ext.define('Connector.view.Scatter', {
 
         if(this.percentOverlap < 1){
             var id = Ext.id();
+            var id2 = Ext.id();
             var msg = 'Points outside the plotting area have no match on the other axis.';
-            msg += '&nbsp;<a id="' + id +'">Details</a>';
+            msg += '&nbsp;<a id="' + id2 +'">Got it</a>&nbsp;<a id="' + id +'">Details</a>';
             this.showMessage(msg, true);
 
             var tpl = new Ext.XTemplate(
@@ -898,6 +905,8 @@ Ext.define('Connector.view.Scatter', {
                     padding: 0
                 });
             }
+            el = Ext.get(id2);
+            el.on('click', function() { this.hideMessage(); }, this);
         }
 
         return {
@@ -1000,14 +1009,18 @@ Ext.define('Connector.view.Scatter', {
                     text: 'Set Y-Axis',
                     ui: 'rounded-inverted-accent',
                     handler: function() {
+                        var yselect = this.axisPanelY.getSelection();
                         if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
                             this.initialized = true;
                             this.showTask.delay(300);
-                            this.ywin.hide();
+                            this.ywin.hide(null, function() {
+                                this.fireEvent('axisselect', this, 'y', yselect);
+                            }, this);
                         }
                         else if (this.axisPanelY.hasSelection()) {
-                            this.ywin.hide(null, function(){
-                                this.showXMeasureSelection(this.getXAxisButton().getEl());
+                            this.ywin.hide(null, function() {
+                                this.showXMeasureSelection(Ext.getCmp('xaxisselector').getEl());
+                                this.fireEvent('axisselect', this, 'y', yselect);
                             }, this);
                         }
                     },
@@ -1093,14 +1106,18 @@ Ext.define('Connector.view.Scatter', {
                     text  : 'Set X-Axis',
                     ui    : 'rounded-inverted-accent',
                     handler : function() {
+                        var xselect = this.axisPanelX.getSelection();
                         if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
                             this.initialized = true;
                             this.showTask.delay(300);
-                            this.xwin.hide();
+                            this.xwin.hide(null, function() {
+                                this.fireEvent('axisselect', this, 'x', xselect);
+                            }, this);
                         }
                         else if (this.axisPanelX.hasSelection()) {
-                            this.xwin.hide(null, function(){
-                                this.showYMeasureSelection(this.getYAxisButton().getEl());
+                            this.xwin.hide(null, function() {
+                                this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
+                                this.fireEvent('axisselect', this, 'x', xselect);
                             }, this);
                         }
                     },
@@ -1208,7 +1225,7 @@ Ext.define('Connector.view.Scatter', {
         this.msg = Ext.create('Connector.window.SystemMessage', {
             msg : msg,
             x   : Math.floor(box.width/2 - Math.floor(this.getEl().getTextWidth(msg)/2)) - 20,
-            y   : (box.y+20), // height of message window,
+            y   : (box.y+40), // height of message window,
             autoShow : this.isActiveView
         });
     },

@@ -66,9 +66,9 @@
         <script path="Connector/src/model/Explorer.js"/>
         <script path="Connector/src/model/Filter.js"/>
         <script path="Connector/src/model/FilterGroup.js"/>
-        <!--<script path="Connector/src/model/State.js"/>-->
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
+        <script path="Connector/src/model/Variable.js"/>
 
         <!-- Application Widgets -->
         <script path="Connector/src/button/DropDownButton.js"/>
@@ -104,6 +104,7 @@
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
         <script path="Connector/src/view/RawData.js"/>
+        <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
         <script path="Connector/src/view/Summary.js"/>

@@ -115,6 +115,7 @@ $window-header-color: $secondary-color;
   - Connector.view.SingleAxisExplorer
   - Connector.view.Summary
   - Connector.view.search.Container
+  - Connector.view.Variable
 */
 
 html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
@@ -1117,6 +1118,38 @@ div.totalcolumn {
 }
 
 /* -- END Connector.view.search.Container */
+
+/* Connector.view.Variable */
+.varselect .variable {
+  display: inline-block;
+}
+
+.vardisable {
+  opacity: 0.4 !important;
+}
+
+.varselect {
+  .variable {
+    display: inline-block;
+  }
+
+  .primary {
+    font-family: $bodycaps-font;
+    font-size: 12pt;
+    margin-left: 10px;
+  }
+
+  h1 {
+    display: inline-block;
+    color: $interactive-color;
+  }
+
+  .x-btn {
+//    vertical-align: super;
+  }
+}
+
+/* -- END Connector.view.Variable */
 
 /* --- --- */
 .close {
