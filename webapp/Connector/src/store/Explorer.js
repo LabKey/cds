@@ -7,6 +7,8 @@ Ext.define('Connector.store.Explorer', {
 
     extend: 'LABKEY.app.store.OlapExplorer',
 
+    subjectName: 'Subject',
+
     constructor : function(config) {
 
         this.callParent([config]);
