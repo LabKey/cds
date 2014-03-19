@@ -26,44 +26,53 @@ Ext.define('Connector.controller.Group', {
             click : this.onGroupCancel
         });
 
+        this.control('groupsummary', {
+            loadgroupfilters: this.loadGroupFilters,
+            requestfilterundo: this.undoFilter,
+            requestgroupupdate: this.doGroupUpdateFromSummary,
+            requestgroupdelete: this.doGroupDeleteFromSummary,
+            requestback: this.doBack
+        });
+
         this.callParent();
     },
 
     parseContext : function(urlContext) {
+        var ctx = {groupId: null};
         if (urlContext && urlContext.length > 0) {
-            return {groupId: urlContext[0]};
+            ctx.groupId = urlContext[0];
         }
 
-        return {groupId: null};
+        return ctx;
     },
 
     createView : function(xtype, context) {
         var v; // the view instance to be created
 
         if (xtype == 'groupsave') {
+
+            var state = this.getStateManager();
+
             v = Ext.create('Connector.view.GroupSave', {
-                hideSelectionWarning: this.getStateManager().getSelections().length == 0
+                hideSelectionWarning: state.hasSelections()
             });
 
-            this.getStateManager().on('selectionchange', v.onSelectionChange, v);
+            state.on('selectionchange', v.onSelectionChange, v);
+
             this.application.on('groupsaved', this.onGroupSaved, this);
         }
-
-        if (xtype == 'groupsummary') {
-            var store = Connector.model.Group.getGroupStore();
+        else if (xtype == 'groupsummary') {
 
             v = Ext.create('Connector.view.GroupSummary', {
-                store: store,
-                groupId: context.groupId,
-                listeners: {
-                    scope: this,
-                    loadgroupfilters: this.loadGroupFilters,
-                    requestfilterundo: this.undoFilter,
-                    requestgroupupdate: this.doGroupUpdateFromSummary,
-                    requestgroupdelete: this.doGroupDeleteFromSummary,
-                    requestback: this.doBack
-                }
+                store: Connector.model.Group.getGroupStore(),
+                groupId: context.groupId
             });
+
+            this.getViewManager().on('afterchangeview', function(controller, view) {
+                if (view != 'groupsummary') {
+                    v.hideMessage();
+                }
+            }, v);
         }
 
         return v;
@@ -79,7 +88,11 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    undoFilter: function() {
+    getDefaultView : function() {
+        return 'groupsummary';
+    },
+
+    undoFilter : function() {
         this.getStateManager().requestFilterUndo();
     },
 
@@ -310,7 +323,7 @@ Ext.define('Connector.controller.Group', {
             scope: this,
             success: function(){
                 Connector.model.Group.getGroupStore().load();
-                this.getViewManager().changeView('home', ['home']);
+                this.getViewManager()._changeView('home');
             },
             failure: function(){
                 console.error('Delete group failed.');
@@ -319,6 +332,6 @@ Ext.define('Connector.controller.Group', {
     },
 
     doBack : function() {
-        console.log('doback');
+        window.history.back();
     }
 });

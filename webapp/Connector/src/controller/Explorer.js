@@ -163,6 +163,10 @@ Ext.define('Connector.controller.Explorer', {
         this.loadExplorerView(context, null);
     },
 
+    getDefaultView : function() {
+        return 'singleaxis';
+    },
+
     parseContext : function(urlContext) {
         var context = {
             dimension: urlContext.length > 0 ? urlContext[0] : 'Study' // make the default the first hierarchy listed
@@ -179,15 +183,20 @@ Ext.define('Connector.controller.Explorer', {
      * used. This will avoid history stacking (i.e. browser back doing nothing)
      */
     updateURL : function() {
-        var ctx = ['singleaxis'];
+        var vm = this.getViewManager();
+        var control = 'explorer';
+        var view = 'singleaxis';
+        var viewContext = [];
+
         if (this.dim) {
-            ctx.push(this.dim.name);
+            viewContext.push(this.dim.name);
             if (this.hierarchy) {
                 var name = this.hierarchy.name.split('.');
-                ctx.push(name[name.length-1]);
+                viewContext.push(name[name.length-1]);
             }
-            this.getStateManager().updateView('singleaxis', ctx, 'Explorer: ' + ctx[1], true);
         }
+
+        vm.updateHistory(control, view, viewContext);
     },
 
     loadExplorerView : function(context, view) {
@@ -208,6 +217,9 @@ Ext.define('Connector.controller.Explorer', {
                             break;
                         }
                     }
+                }
+                else {
+                    this.hierarchy = null;
                 }
 
                 // TODO: Remove this
@@ -235,10 +247,6 @@ Ext.define('Connector.controller.Explorer', {
                 dimension: item.rec.data.hierarchy.split('.')[0]
             };
             this.loadExplorerView(context, null);
-
-//            if (state.hasSelections()) {
-//                state.moveSelectionToFilter();
-//            }
         }, this);
 
         this.updateURL();
@@ -249,7 +257,6 @@ Ext.define('Connector.controller.Explorer', {
         this.hierarchy = this.dim.hierarchies[item.hierarchyIndex];
         this.updateURL();
         this.fireEvent('hierarchy', item.hierarchyIndex);
-//        this.getStateManager().moveSelectionToFilter();
     },
 
     onExplorerEnter : function(view, rec) {

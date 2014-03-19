@@ -320,7 +320,7 @@ Ext.define('Connector.store.Summary', {
             rec.details.push({
                 counter: this._aggregate(agg[a].aggregate),
                 text: agg[a].name,
-                nav: 'singleaxis/antigen/' + agg[a].hierarchy
+                nav: 'explorer/singleaxis/antigen/' + agg[a].hierarchy
             });
         }
 
@@ -350,17 +350,6 @@ Ext.define('Connector.store.Summary', {
             sort      : 4
         };
 
-//        var names = this._getNames(cellset);
-//        for (var d=0; d < names.length; d++) {
-//            rec.details.push({
-//                text: names[d],
-//                nav: 'details/assay/' + names[d]
-//            });
-//        }
-//
-//        if (rec.details.length == 0)
-//            rec.details.push({text: 'No Matching Assays Found.'});
-
         this.subAdd(rec, configArray[0].flight);
         this.done();
     },
@@ -386,17 +375,6 @@ Ext.define('Connector.store.Summary', {
             details   : [],
             sort      : 6
         };
-
-//        var names = this._getNames(labCS);
-//        for (var d=0; d < names.length; d++) {
-//            rec.details.push({
-//                text: names[d]
-////                nav: 'labsdetailpanel/' + names[d] // labs dont currently provide a detail page
-//            });
-//        }
-//
-//        if (rec.details.length == 0)
-//            rec.details.push({text: 'No Matching Assays Found.'});
 
         this.subAdd(rec, configArray[0].flight);
         this.done();
@@ -449,7 +427,7 @@ Ext.define('Connector.store.Summary', {
         ], nav;
 
         for (var a=0; a < agg.length; a++) {
-            nav = 'singleaxis/subject/' + (agg[a].name == 'races' ? 'race' : 'country');
+            nav = 'explorer/singleaxis/subject/' + (agg[a].name == 'races' ? 'race' : 'country');
             rec.details.push({
                 counter: this._aggregate(agg[a].aggregate),
                 text: agg[a].name,

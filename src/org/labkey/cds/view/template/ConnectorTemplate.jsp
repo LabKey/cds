@@ -113,7 +113,7 @@
     </style>
 
     <style type="text/css">
-        @media (max-width: 1200px) {
+        @media (max-width: 1300px) {
             h1 {
                 font-size: 24pt;
             }
@@ -124,6 +124,26 @@
 
             div.study-description .description-text {
                 font-size: 11pt;
+            }
+        }
+
+        @media (max-width: 1250px) {
+            h1 {
+                font-size: 22pt;
+            }
+
+            h2 {
+                font-size: 18pt;
+            }
+
+            div.study-description .description-text {
+                font-size: 11pt;
+            }
+        }
+
+        @media (max-width: 1175px) {
+            .noplotmsg h1 {
+                font-size: 18pt;
             }
         }
     </style>
@@ -196,9 +216,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
-    <%--<script type="text/javascript" src="<%=text(srcPath)%>/model/State.js"></script>--%>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/DropDownButton.js"></script>
@@ -234,6 +254,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>

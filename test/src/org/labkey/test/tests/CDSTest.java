@@ -819,14 +819,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         clickBy("Studies");
 
-        String X_AXIS_BUTTON_TEXT = "\u25b2";
-        String Y_AXIS_BUTTON_TEXT = "\u25ba";
+        String AXIS_BUTTON_TEXT = "\u25bc";
 
         makeNavigationSelection(NavigationLink.PLOT);
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(X_AXIS_BUTTON_TEXT).toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(Y_AXIS_BUTTON_TEXT).toBy()));
+        WebElement xAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "xaxisbtn").toBy()));
+        WebElement yAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "yaxisbtn").toBy()));
 
-        xAxisButton.click();
+        xAxisChooseButton.click();
         waitForElement(Locator.css(".xaxispicker tr.x-grid-row").withText("Physical Exam (6)"));
         _extHelper.pickMeasure("xaxispicker", "Lab Results", "CD4");
         click(cdsButtonLocator("Set X-Axis"));
@@ -835,6 +834,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("Set Y-Axis"));
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
+
+        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(AXIS_BUTTON_TEXT, "xaxisbtn").toBy()));
+        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(AXIS_BUTTON_TEXT, "yaxisbtn").toBy()));
 
         yAxisButton.click();
         _ext4Helper.waitForMask();
@@ -1255,7 +1257,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
         LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
         SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
-        PLOT("Plot data", Locator.tagWithClass("a", "yaxisbutton")),
+        PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", Locator.tagWithClass("div", "dimgroup").withText("Data Grid"));
 
         private String _linkText;

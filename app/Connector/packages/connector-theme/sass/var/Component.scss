@@ -115,6 +115,7 @@ $window-header-color: $secondary-color;
   - Connector.view.SingleAxisExplorer
   - Connector.view.Summary
   - Connector.view.search.Container
+  - Connector.view.Variable
 */
 
 html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
@@ -687,6 +688,12 @@ div.status-over {
   }
 }
 
+.headline {
+  text-transform: uppercase;
+  font-family: $bodycaps-font;
+  font-size: 13.5pt;
+}
+
 .connectorheader-collapse .logo span {
   color : $select-color;
 }
@@ -1117,6 +1124,51 @@ div.totalcolumn {
 }
 
 /* -- END Connector.view.search.Container */
+
+/* Connector.view.Variable */
+.varselect .variable {
+  display: inline-block;
+}
+
+.vardisable {
+  opacity: 0.4 !important;
+}
+
+.varselect {
+
+  margin-top: 4px;
+
+  .variable {
+    display: inline-block;
+
+    h1 {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select:none;
+      user-select:none;
+      cursor: default;
+    }
+  }
+
+  .primary {
+    display: inline-block;
+    font-family: $bodycaps-font;
+    font-size: 10pt;
+    padding-left: 10px;
+    max-width: 300px;
+  }
+
+  h1 {
+    display: inline-block;
+    color: $interactive-color;
+  }
+
+  .x-btn {
+//    vertical-align: super;
+  }
+}
+
+/* -- END Connector.view.Variable */
 
 /* --- --- */
 .close {

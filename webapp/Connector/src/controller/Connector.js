@@ -28,19 +28,6 @@ Ext.define('Connector.controller.Connector', {
 
     init : function() {
 
-        // Since the Connector.panel.Header does not have its own controller this controller is provided.
-        // this.requestCollapse = false;
-        this.control('connectorheader', {
-            // See http://docs.sencha.com/ext-js/4-0/#!/api/Ext.tab.Panel-event-afterrender
-            afterrender : function(c) {
-                this.hdr = c;
-            },
-            // See Connector.panel.Header event 'headerclick'.
-            headerclick : function() {
-                this.changeView('summary');
-            }
-        });
-
         /**
          * This map keys of known 'xtype's of views that will be managed by the application. The map values are
          * the associated functions for either showing or hiding that view 'type'. If these are not provided then a
@@ -70,12 +57,13 @@ Ext.define('Connector.controller.Connector', {
         this.getEast().setActiveTab(p);
     },
 
-    showNotFound : function() {
+    showNotFound : function(controller, view, viewContext, title) {
         if (!this.viewMap['notfound']) {
             this.viewMap['notfound'] = Ext.create('Connector.view.NotFound', {});
             this.getCenter().add(this.viewMap['notfound']); // adds to tab map
         }
         this.showView('notfound');
+        this.updateHistory(controller, view, viewContext, title);
     },
 
     showFilterSaveView : function(xtype, cb) {

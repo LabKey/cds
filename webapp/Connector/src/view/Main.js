@@ -53,19 +53,19 @@ Ext.define('Connector.view.Main', {
                     arrow: 'left',
                     mapping: [{
                         label: 'Home',
-                        value: 'home'
+                        controller: 'home'
                     },{
                         label: 'Learn about studies, assays',
-                        value: 'learn'
+                        controller: 'learn'
                     },{
                         label: 'Find subjects',
-                        value: 'summary'
+                        controller: 'summary'
                     },{
                         label: 'Plot data',
-                        value: 'plot'
+                        controller: 'chart'
                     },{
                         label: 'View data grid',
-                        value: 'datagrid'
+                        controller: 'rawdata'
                     }]
                 }
             }]

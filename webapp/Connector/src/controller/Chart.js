@@ -11,20 +11,33 @@ Ext.define('Connector.controller.Chart', {
 
     init : function() {
 
-        this.control('#yaxisbutton', {
-            click: function(b) {
-                var plot = b.up('plot');
+        this.control('#yaxisselector', {
+            requestvariable: function(view, model) {
+                var plot = view.up('plot');
                 if (plot) {
-                    plot.showYMeasureSelection(b.getEl());
+                    plot.showYMeasureSelection(view.getEl());
                 }
             }
         });
 
-        this.control('#xaxisbutton', {
-            click: function(b) {
-                var plot = b.up('plot');
+        this.control('#xaxisselector', {
+            requestvariable: function(view, model) {
+                var plot = view.up('plot');
                 if (plot) {
-                    plot.showXMeasureSelection(b.getEl());
+                    plot.showXMeasureSelection(view.getEl());
+                }
+            }
+        });
+
+        this.control('plot', {
+            axisselect: function(plot, axis, selection) {
+                if (axis === 'y') {
+                    Ext.getCmp('yaxisselector').getModel().updateVariable(selection);
+                    Ext.getCmp('xaxisselector').enable();
+                }
+                else if (axis === 'x') {
+                    Ext.getCmp('xaxisselector').getModel().updateVariable(selection);
+                    Ext.getCmp('yaxisselector').enable();
                 }
             }
         });
@@ -70,5 +83,9 @@ Ext.define('Connector.controller.Chart', {
         }
     },
 
-    updateView : function(xtype, context) {}
+    updateView : function(xtype, context) {},
+
+    getDefaultView : function() {
+        return 'plot';
+    }
 });
