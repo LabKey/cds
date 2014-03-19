@@ -1307,8 +1307,8 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    onViewChange : function(xtype) {
-        this.isActiveView = (xtype == 'plot');
+    onViewChange : function(controller, view) {
+        this.isActiveView = (view == 'plot');
 
         if (this.isActiveView) {
 

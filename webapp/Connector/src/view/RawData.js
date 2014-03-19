@@ -659,8 +659,8 @@ Ext.define('Connector.view.RawData', {
         }
     },
 
-    onViewChange : function(xtype) {
-        this.isActiveView = xtype == 'datagrid';
+    onViewChange : function(controller, view) {
+        this.isActiveView = view == 'datagrid';
 
         if (this.win) {
             if (!this.isActiveView)

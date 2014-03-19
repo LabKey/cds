@@ -68,8 +68,8 @@ Ext.define('Connector.controller.Group', {
                 groupId: context.groupId
             });
 
-            this.getViewManager().on('afterchangeview', function(xt) {
-                if (xt != 'groupsummary') {
+            this.getViewManager().on('afterchangeview', function(controller, view) {
+                if (view != 'groupsummary') {
                     v.hideMessage();
                 }
             }, v);
@@ -86,6 +86,10 @@ Ext.define('Connector.controller.Group', {
             var v = this.getViewManager().getViewInstance('groupsummary');
             v.updateView(context.groupId);
         }
+    },
+
+    getDefaultView : function() {
+        return 'groupsummary';
     },
 
     undoFilter : function() {
@@ -319,7 +323,7 @@ Ext.define('Connector.controller.Group', {
             scope: this,
             success: function(){
                 Connector.model.Group.getGroupStore().load();
-                this.getViewManager().changeView('home', ['home']);
+                this.getViewManager()._changeView('home');
             },
             failure: function(){
                 console.error('Delete group failed.');

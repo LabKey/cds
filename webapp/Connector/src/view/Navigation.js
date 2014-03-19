@@ -53,7 +53,7 @@ Ext.define('Connector.view.NavigationView', {
         this.selectedItemCls = 'nav-label-selected '+ this.arrow;
 
         this.store = Ext.create('Ext.data.Store', {
-            fields : ['label', 'value', 'disabled', 'basecls', 'cls'],
+            fields : ['label', 'controller', 'value', 'disabled', 'basecls', 'cls'],
             data   : {'items' : this.mapping},
             proxy  : {
                 type : 'memory',
@@ -118,7 +118,7 @@ Ext.define('Connector.view.NavigationView', {
     },
 
     selectByView : function(xtype, defaultSelect) {
-        var rec = this.store.find('value', xtype, null, null, true, true);
+        var rec = this.store.find('controller', xtype, null, null, true, true);
         if (rec > -1)
             this.select(rec);
         else if (Ext.isNumber(defaultSelect))

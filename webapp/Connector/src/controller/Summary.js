@@ -131,6 +131,10 @@ Ext.define('Connector.controller.Summary', {
         }
     },
 
+    getDefaultView : function() {
+        return 'summary';
+    },
+
     getSummaryStore : function() {
         if (!this.summaryStore) {
             this.summaryStore = this.getStore('Summary');
@@ -170,12 +174,12 @@ Ext.define('Connector.controller.Summary', {
             this.linkNavigate = false;
         }
         else {
-            this.getViewManager().changeView('singleaxis', 'singleaxis/' + hierarchy.replace(/\./g, '/'));
+            var context = hierarchy.split('.');
+            this.getViewManager()._changeView('explorer', 'singleaxis', context);
         }
 
         // Copy the group filter to the state filter
-        if (state.getPrivateSelection('groupselection'))
-        {
+        if (state.getPrivateSelection('groupselection')) {
             var filters = state.getPrivateSelection('groupselection');
 
             if (filters.length > 0 && filters[0].groupLabel != 'Current Active Filters') {

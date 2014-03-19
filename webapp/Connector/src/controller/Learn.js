@@ -188,9 +188,13 @@ Ext.define('Connector.controller.Learn', {
         }, this);
     },
 
+    getDefaultView : function() {
+        return 'learn';
+    },
+
     onSelectDimension : function(dimension) {
         if (!this.updateLock) {
-            this.getViewManager().changeView('learn', 'learn/' + dimension.get('name'), 'Learn About: ' + dimension.get('pluralName'));
+            this.getViewManager()._changeView('learn', 'learn', dimension.get('name'), 'Learn About: ' + dimension.get('pluralName'));
         }
     },
 
@@ -206,6 +210,6 @@ Ext.define('Connector.controller.Learn', {
             context += '/' + detail.value;
         }
 
-        this.getViewManager().changeView(action, action + '/' + context);
+        this.getViewManager()._changeView(action, 'learn', context.split('/'));
     }
 });

@@ -8,7 +8,7 @@ Ext.define('Connector.controller.State', {
 
     defaultTitle: 'HIV Vaccine Collaborative Dataspace',
 
-    defaultView: 'summary',
+    defaultController: 'summary',
 
     appVersion: '0.5',
 
@@ -20,10 +20,6 @@ Ext.define('Connector.controller.State', {
 
     getTitle : function(viewname) {
         return 'Connector: ' + viewname;
-    },
-
-    getAction : function(appState) {
-        return 'app.view?' + this.getURLParams() + '#' + appState;
     },
 
     _getViewController : function() {

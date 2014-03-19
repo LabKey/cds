@@ -83,5 +83,9 @@ Ext.define('Connector.controller.Chart', {
         }
     },
 
-    updateView : function(xtype, context) {}
+    updateView : function(xtype, context) {},
+
+    getDefaultView : function() {
+        return 'plot';
+    }
 });
