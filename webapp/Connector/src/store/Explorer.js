@@ -42,12 +42,12 @@ Ext.define('Connector.store.Explorer', {
             me.mflight++;
             me.mdx.query({
                 onRows : [{
-                    hierarchy : me.dim.getHierarchies()[this.hIndex].getName(),
-                    members   : 'members'
+                    hierarchy: me.dim.getHierarchies()[this.hIndex].getName(),
+                    members: 'members'
                 }],
-                useNamedFilters : ['stateSelectionFilter', 'hoverSelectionFilter', 'statefilter'],
-                mflight : me.mflight,
-                showEmpty : me.showEmpty,
+                useNamedFilters: ['stateSelectionFilter', 'hoverSelectionFilter', 'statefilter'],
+                mflight: me.mflight,
+                showEmpty: me.showEmpty,
                 success: this.selectionSuccess,
                 scope : this
             });

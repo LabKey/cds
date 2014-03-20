@@ -91,18 +91,18 @@ Ext.define('Connector.controller.Explorer', {
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
 
-                var uname = [rec.data.hierarchy];
-
-                if (rec.data.level)
-                    uname.push(rec.data.level);
-                uname.push(rec.data.value);
-
-                if (rec.data.isGroup)
-                    uname = uname.slice(0,uname.length-1);
+                // unfortuntately, we cannot hand back the same uniqueName the cube gives us
+                // it needs to be stripped of the [ ] and . notations
+                var _uname = rec.get('uniqueName');
+                _uname = _uname.split('].');
+                for (var u=0; u < _uname.length; u++) {
+                    _uname[u] = _uname[u].replace("[", "");
+                    _uname[u] = _uname[u].replace("]", "");
+                }
 
                 this.getStateManager().addPrivateSelection({
-                    hierarchy : rec.data.hierarchy,
-                    members : [{uname:uname}]
+                    hierarchy: rec.get('hierarchy'),
+                    members: [{uname: _uname }]
                 }, 'hoverSelectionFilter');
             }
             else {
@@ -153,7 +153,7 @@ Ext.define('Connector.controller.Explorer', {
             // this allows whether mouse hover over explorer items will cause a request for selection
             this.allowHover = true;
 
-            Ext.defer(function() { this.loadExplorerView(context, v); }, 100, this);
+            v.on('boxready', function() { this.loadExplorerView(context, v); }, this, {single: true});
 
             return v;
         }
