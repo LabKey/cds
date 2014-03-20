@@ -229,6 +229,18 @@ li.fadein {
     background-color: $secondary-color;
     /*border-bottom: 1px solid $heat-scale-3;*/
   }
+
+  .x-panel-header {
+    .x-header-text {
+      color: $dark-color;
+      font-weight: bold;
+      font-size: 14.5pt;
+      font-family: $data-font;
+    }
+
+    background-image: none;
+    background-color: $secondary-color;
+  }
 }
 
 .filterwindow {
@@ -319,10 +331,28 @@ li.fadein {
     /*border-bottom-color: trans;*/
   }
 
-  .x-column-header {
-    @include smallStandout;
+  .x-panel-header {
+    .x-header-text {
+      color: $dark-color;
+      font-weight: bold;
+      font-size: 14.5pt;
+      font-family: $data-font;
+    }
+
     background-image: none;
     background-color: $secondary-color;
+  }
+
+  .x-column-header-text {
+    font-size: 11px;
+  }
+
+  .x-column-header-over {
+    background-color: $select-color
+  }
+
+  .definitionpanel {
+    height: 175px;
   }
 }
 
@@ -1343,6 +1373,15 @@ div.measure-label {
   background-color: $select-color !important;
   color: $light-color;
   background-image: none !important;
+}
+
+.sourcepanel {
+  .x-grid-row-selected .x-grid-cell, .x-grid-row-selected .x-grid-rowwrap-div {
+    border-color: $primary-color;
+    background-color: $primary-color !important;
+    color: black;
+    background-image: none !important;
+  }
 }
 
 /* Ext Mask */
