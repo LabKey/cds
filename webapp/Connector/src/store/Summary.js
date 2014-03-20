@@ -266,12 +266,6 @@ Ext.define('Connector.store.Summary', {
             return;
         }
 
-//        var studyNames = this._getNames(cellset);
-//        var d = [];
-//        for (var s=0; s < studyNames.length; s++) {
-//            d.push({text: studyNames[s], nav: 'details/study/' + studyNames[s]});
-//        }
-
         var rec = {
             total     : this._aggregate(cellset),
             label     : 'Studies',
