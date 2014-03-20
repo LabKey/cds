@@ -75,7 +75,7 @@
     <ns:columns>
       <ns:column columnName="ParticipantId">
           <ns:fk>
-            <ns:fkColumnName>ParticipantId</ns:fkColumnName>
+            <ns:fkColumnName>SubjectId</ns:fkColumnName>
             <ns:fkTable>Demographics</ns:fkTable>
             <ns:fkDbSchema>study</ns:fkDbSchema>
           </ns:fk>

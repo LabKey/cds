@@ -23,7 +23,7 @@ UNION
 
 SELECT Container, 'FAILED - missing ptid' as qc, Facts.ParticipantId as value
 FROM Facts
-WHERE Facts.ParticipantId.ParticipantId IS NULL
+WHERE Facts.ParticipantId.SubjectId IS NULL
 
 UNION
 

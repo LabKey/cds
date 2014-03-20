@@ -63,7 +63,7 @@ public class FactLoader
          * tables in the star schema.
          */
         _colsToMap = new ColumnMapper[] {
-            new ColumnMapper("ParticipantId", null, null, "ParticipantId"),
+            new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
             new ColumnMapper("Study", cdsSchema.getTable("Studies"), null, "Study", "StudyName"),
             new ColumnMapper("Assay", cdsSchema.getTable("Assays"), _sourceTableInfo.getName(), "Assay"),
             new ColumnMapper("Lab", cdsSchema.getTable("Labs"), null, "Lab"),
@@ -181,7 +181,7 @@ public class FactLoader
                 {
                     TableInfo colTarget = col.getFkTableInfo();
                     //Not sure -- does TableInfo.equals work??
-                    if (colTarget.getSchema().getName().equalsIgnoreCase(targetSchemaName) && colTarget.getName().equalsIgnoreCase(targetTableName))
+                    if (null != colTarget && colTarget.getSchema().getName().equalsIgnoreCase(targetSchemaName) && colTarget.getName().equalsIgnoreCase(targetTableName))
                         return col;
                 }
             }
