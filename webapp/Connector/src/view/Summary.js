@@ -37,52 +37,13 @@ Ext.define('Connector.view.Summary', {
         if (this.summaryPanel)
             return this.summaryPanel;
 
-        var resizer = function(cmp, w) {
-
-            var roots = ['bycolumn', 'detailcolumn'], root,
-                    elArray, el, e, targets, result, r;
-
-            for (r=0; r < roots.length; r++) {
-
-                root = roots[r];
-                if (w < 850) {
-                    elArray = Ext.select('.' + root + ', .med-' + root).elements;
-                    targets = [root, 'med-' + root];
-                    result  = 'small-' + root;
-                }
-                else if (850 <= w && w < 1075) {
-                    elArray = Ext.select('.' + root + ', .small-' + root).elements;
-                    targets = [root, 'small-' + root];
-                    result  = 'med-' + root;
-                }
-                else {
-                    elArray = Ext.select('.small-' + root + ', .med-' + root).elements;
-                    targets = ['small-' + root, 'med-' + root];
-                    result  = root;
-                }
-
-                for (e=0; e < elArray.length; e++) {
-                    el = Ext.get(elArray[e]);
-                    el.replaceCls(targets[0], result);
-                    el.replaceCls(targets[1], result);
-                }
-
-            }
-        };
-
-        var refreshHandler = function(view) {
-            resizer(view, view.getBox().width);
-        };
-
         this.summaryPanel = Ext.create('Connector.view.SummaryDataView', {
             anchor : '100% 50%',
             ui     : 'custom',
             store  : this.store
-//            listeners : {
-//                refresh : refreshHandler,
-//                resize  : refreshHandler
-//            }
         });
+
+        XX = this.store;
 
         return this.summaryPanel;
     },

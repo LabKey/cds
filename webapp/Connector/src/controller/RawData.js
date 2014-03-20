@@ -594,8 +594,8 @@ Ext.define('Connector.controller.RawData', {
         }
     },
 
-    onViewChange : function (xtype)  {
-        this.isActiveView = xtype == 'datagrid';
+    onViewChange : function (controller, view)  {
+        this.isActiveView = view == 'datagrid';
         //Note: When this event fires, animation still seems to be in play and grid doesn't render properly
         //Deferring seems to fix it, but perhaps event should fire later.
         if (this.isActiveView && this.refreshRequired) {
@@ -627,5 +627,9 @@ Ext.define('Connector.controller.RawData', {
         }
     },
 
-    updateView : function(xtype, context) { }
+    updateView : function(xtype, context) { },
+
+    getDefaultView : function() {
+        return 'datagrid';
+    }
 });

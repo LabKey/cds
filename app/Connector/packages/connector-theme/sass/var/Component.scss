@@ -688,6 +688,12 @@ div.status-over {
   }
 }
 
+.headline {
+  text-transform: uppercase;
+  font-family: $bodycaps-font;
+  font-size: 13.5pt;
+}
+
 .connectorheader-collapse .logo span {
   color : $select-color;
 }
@@ -1134,6 +1140,14 @@ div.totalcolumn {
 
   .variable {
     display: inline-block;
+
+    h1 {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select:none;
+      user-select:none;
+      cursor: default;
+    }
   }
 
   .primary {

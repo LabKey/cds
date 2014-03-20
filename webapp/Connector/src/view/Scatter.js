@@ -629,19 +629,16 @@ Ext.define('Connector.view.Scatter', {
 
         var activeMeasures = this.getActiveMeasures();
 
+        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
+        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
+
         if (this.filterClear || !activeMeasures.x || !activeMeasures.y) {
             this.filterClear = false;
             this.noPlot();
-
-            this.fireEvent('axisselect', this, 'y', []);
-            this.fireEvent('axisselect', this, 'x', []);
-
             return;
         }
 
         this.measures = [ activeMeasures.x, activeMeasures.y ];
-        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
-        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
 
         this.showLoad();
 
@@ -1310,8 +1307,8 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    onViewChange : function(xtype) {
-        this.isActiveView = (xtype == 'plot');
+    onViewChange : function(controller, view) {
+        this.isActiveView = (view == 'plot');
 
         if (this.isActiveView) {
 

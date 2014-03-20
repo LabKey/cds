@@ -140,6 +140,12 @@
                 font-size: 11pt;
             }
         }
+
+        @media (max-width: 1175px) {
+            .noplotmsg h1 {
+                font-size: 18pt;
+            }
+        }
     </style>
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>

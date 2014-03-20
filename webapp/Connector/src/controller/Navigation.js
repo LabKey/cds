@@ -11,11 +11,19 @@ Ext.define('Connector.controller.Navigation', {
 
     init : function() {
 
+        // Since the Connector.panel.Header does not have its own controller this controller is provided.
+        this.control('connectorheader', {
+            // See Connector.panel.Header event 'headerclick'.
+            headerclick : function() {
+                this.getViewManager()._changeView('summary');
+            }
+        });
+
         this.control('app-main > #eastview > #navfilter > navigation > dataview', {
             itemclick : function(v, rec) {
-                var xtype = rec.data.value;
-                if (this.getViewManager().isRegistered(xtype)) {
-                    this.getViewManager().changeView(xtype);
+                var controller = rec.get('controller');
+                if (controller) {
+                    this.getViewManager()._changeView(controller);
                 }
             }
         });
@@ -48,9 +56,7 @@ Ext.define('Connector.controller.Navigation', {
         if (this.primaryNav) {
             if (this.active) {
                 this.primaryNav.getNavigationView().selectByView(this.active, 2);
-                return;
             }
-//            console.warn('Active view not available to navigation. Ensure that Connector.changeView is used to see view.');
         }
     },
 
@@ -88,8 +94,8 @@ Ext.define('Connector.controller.Navigation', {
         }
     },
 
-    onViewChange : function(xtype) {
-        this.active = xtype;
+    onViewChange : function(controller, view, viewContext, title, skipState) {
+        this.active = controller;
         this.markActiveSelection();
     }
 });

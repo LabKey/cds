@@ -29,7 +29,7 @@ Ext.define('Connector.view.Variable', {
             xtype: 'box',
             cls: 'variable',
             tpl: new Ext.XTemplate(
-                    '<h1>{typeLabel} =</h1><span class="primary" style="vertical-align: {primaryLabel:this.align}">{primaryLabel}</span>',
+                    '<h1 unselectable="on">{typeLabel} =</h1><span class="primary" style="vertical-align: {primaryLabel:this.align}">{primaryLabel}</span>',
                     {
                         align: function(pl) {
                             return (pl.length > 46 ? 'sub' : 'super') + ';';

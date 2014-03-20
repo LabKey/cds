@@ -160,7 +160,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         this.addEvents('loadgroupfilters', 'requestgroupdelete', 'requestback');
     },
 
-    initComponent: function(){
+    initComponent : function() {
         if (this.group) {
             this.groupLabel = this.group.get('label');
         } else {
@@ -172,8 +172,11 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             xtype: 'box',
             autoEl: {
                 tag: 'div',
-                cls: 'dimgroup',
-                html: this.groupLabel
+                cls: 'titlepanel',
+                children: [{
+                    tag: 'h1',
+                    html: this.groupLabel
+                }]
             }
         },{
             xtype: 'container',
@@ -181,7 +184,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             items: [{
                 xtype: 'button',
                 ui : 'rounded-inverted-accent',
-                text: 'back',
+                text: '&#9668;&nbsp;back',
                 handler: this.back,
                 scope: this
             }, {
@@ -206,15 +209,15 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         this.callParent();
     },
 
-    back: function(){
+    back : function() {
         this.fireEvent('requestback');
     },
 
-    applyFilters: function() {
+    applyFilters : function() {
         this.fireEvent('loadgroupfilters');
     },
 
-    deleteGroup: function(){
+    deleteGroup : function() {
         Ext.MessageBox.confirm(
                 'Delete Group?',
                 'Are you sure you want to delete "' + this.group.get('label') + '"?',
@@ -223,10 +226,10 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         );
     },
 
-    updateView: function(group) {
+    updateView : function(group) {
         this.group = group;
         this.groupLabel = group.get('label');
-        this.getComponent('grouplabel').update(this.groupLabel);
+        this.getComponent('grouplabel').update('<h1>' + this.groupLabel + '</h1>');
         this.doLayout();
     }
 });
@@ -259,6 +262,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
             xtype: 'displayfield',
             margin: '10 0 20 0',
             bodyPadding: 10,
+            width: '50%',
             value: desc
         });
 
@@ -291,9 +295,9 @@ Ext.define('Connector.view.GroupSummaryBody', {
         });
 
         this.items = [
-            {xtype: 'box', html: '<h3>DESCRIPTION</h3>'},
+            {xtype: 'box', cls: 'headline', autoEl: { tag: 'h3', html: 'Description' }},
             this.descDisplay,
-            {xtype: 'box', html: '<h3>UPDATES</h3>'},
+            {xtype: 'box', cls: 'headline', autoEl: { tag: 'h3', html: 'Updates' }},
             this.radioGroup
         ];
         this.callParent();

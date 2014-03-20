@@ -91,18 +91,18 @@ Ext.define('Connector.controller.Explorer', {
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
 
-                var uname = [rec.data.hierarchy];
-
-                if (rec.data.level)
-                    uname.push(rec.data.level);
-                uname.push(rec.data.value);
-
-                if (rec.data.isGroup)
-                    uname = uname.slice(0,uname.length-1);
+                // unfortuntately, we cannot hand back the same uniqueName the cube gives us
+                // it needs to be stripped of the [ ] and . notations
+                var _uname = rec.get('uniqueName');
+                _uname = _uname.split('].');
+                for (var u=0; u < _uname.length; u++) {
+                    _uname[u] = _uname[u].replace("[", "");
+                    _uname[u] = _uname[u].replace("]", "");
+                }
 
                 this.getStateManager().addPrivateSelection({
-                    hierarchy : rec.data.hierarchy,
-                    members : [{uname:uname}]
+                    hierarchy: rec.get('hierarchy'),
+                    members: [{uname: _uname }]
                 }, 'hoverSelectionFilter');
             }
             else {
@@ -153,7 +153,7 @@ Ext.define('Connector.controller.Explorer', {
             // this allows whether mouse hover over explorer items will cause a request for selection
             this.allowHover = true;
 
-            Ext.defer(function() { this.loadExplorerView(context, v); }, 100, this);
+            v.on('boxready', function() { this.loadExplorerView(context, v); }, this, {single: true});
 
             return v;
         }
@@ -161,6 +161,10 @@ Ext.define('Connector.controller.Explorer', {
 
     updateView : function(xtype, context) {
         this.loadExplorerView(context, null);
+    },
+
+    getDefaultView : function() {
+        return 'singleaxis';
     },
 
     parseContext : function(urlContext) {
@@ -179,15 +183,20 @@ Ext.define('Connector.controller.Explorer', {
      * used. This will avoid history stacking (i.e. browser back doing nothing)
      */
     updateURL : function() {
-        var ctx = ['singleaxis'];
+        var vm = this.getViewManager();
+        var control = 'explorer';
+        var view = 'singleaxis';
+        var viewContext = [];
+
         if (this.dim) {
-            ctx.push(this.dim.name);
+            viewContext.push(this.dim.name);
             if (this.hierarchy) {
                 var name = this.hierarchy.name.split('.');
-                ctx.push(name[name.length-1]);
+                viewContext.push(name[name.length-1]);
             }
-            this.getStateManager().updateView('singleaxis', ctx, 'Explorer: ' + ctx[1], true);
         }
+
+        vm.updateHistory(control, view, viewContext);
     },
 
     loadExplorerView : function(context, view) {
@@ -208,6 +217,9 @@ Ext.define('Connector.controller.Explorer', {
                             break;
                         }
                     }
+                }
+                else {
+                    this.hierarchy = null;
                 }
 
                 // TODO: Remove this
@@ -235,10 +247,6 @@ Ext.define('Connector.controller.Explorer', {
                 dimension: item.rec.data.hierarchy.split('.')[0]
             };
             this.loadExplorerView(context, null);
-
-//            if (state.hasSelections()) {
-//                state.moveSelectionToFilter();
-//            }
         }, this);
 
         this.updateURL();
@@ -249,7 +257,6 @@ Ext.define('Connector.controller.Explorer', {
         this.hierarchy = this.dim.hierarchies[item.hierarchyIndex];
         this.updateURL();
         this.fireEvent('hierarchy', item.hierarchyIndex);
-//        this.getStateManager().moveSelectionToFilter();
     },
 
     onExplorerEnter : function(view, rec) {

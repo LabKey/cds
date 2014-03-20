@@ -12,8 +12,10 @@ Ext.define('Connector.controller.AbstractViewController', {
      */
     getViewManager : function() {
 
-        if (!this.viewManager)
+        if (!this.viewManager) {
             this.viewManager = this.application.getController('Connector');
+            this.viewManager.setAppActionName('app.view');
+        }
 
         return this.viewManager;
     },
