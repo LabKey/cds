@@ -826,7 +826,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         WebElement yAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "yaxisbtn").toBy()));
 
         xAxisChooseButton.click();
-        waitForElement(Locator.css(".xaxispicker tr.x-grid-row").withText("Physical Exam (6)"));
+        waitForElement(Locator.css(".xaxispicker div.itemrow").withText("Physical Exam (6)"));
         _extHelper.pickMeasure("xaxispicker", "Lab Results", "CD4");
         click(cdsButtonLocator("set x axis"));
         waitForElement(Locator.css(".curseltitle").containing("Y AXIS"));
@@ -1328,7 +1328,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             waitForElement(Locator.id("gridmeasurewin").notHidden());
         }
 
-        _extHelper.pickMeasure(source, measure, keepSelection);
+        _extHelper.pickMeasure("gridcolumnpicker", source, measure, true, keepSelection);
 
         if (!keepOpen)
         {
@@ -1347,7 +1347,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             waitForElement(Locator.id("gridmeasurewin").notHidden());
         }
 
-        _extHelper.pickMeasure(source, measure, true); // Just get the right source selected
+        _extHelper.pickMeasure("gridcolumnpicker", source, measure, true, true); // Just get the right source selected
         _ext4Helper.uncheckGridRowCheckbox(measure);
 
         if (!keepOpen)
