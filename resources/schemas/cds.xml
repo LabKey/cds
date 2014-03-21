@@ -104,9 +104,9 @@
 
       <ns:column columnName="Study">
         <ns:fk>
-          <ns:fkColumnName>StudyName</ns:fkColumnName>
-          <ns:fkTable>Studies</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
+          <ns:fkColumnName>Container</ns:fkColumnName>
+          <ns:fkTable>StudyProperties</ns:fkTable>
+          <ns:fkDbSchema>study</ns:fkDbSchema>
         </ns:fk>
       </ns:column>
       <ns:column columnName="Container">

@@ -27,6 +27,7 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.query.SchemaKey;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.study.DataSet;
@@ -56,6 +57,7 @@ public class FactLoader
         _container = c;
         _user = user;
         CDSUserSchema cdsSchema = new CDSUserSchema(user, c);
+        UserSchema studySchema = QueryService.get().getUserSchema(user, c, "study");
 
         /*
          * ColumnMappers find the correct columns in the dataset to map into cube columns and can map a const if not found.
@@ -64,7 +66,7 @@ public class FactLoader
          */
         _colsToMap = new ColumnMapper[] {
             new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
-            new ColumnMapper("Study", cdsSchema.getTable("Studies"), null, "Study", "StudyName"),
+            new ColumnMapper("Study", studySchema.getTable("StudyProperties"), null, "Folder", "Study"),
             new ColumnMapper("Assay", cdsSchema.getTable("Assays"), _sourceTableInfo.getName(), "Assay"),
             new ColumnMapper("Lab", cdsSchema.getTable("Labs"), null, "Lab"),
             new ColumnMapper("Antigen", cdsSchema.getTable("Antigens"), null, "Antigen", "VirusName", "Virus"),
