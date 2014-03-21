@@ -23,6 +23,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
     disableScale: false,
 
+    disableVariableOptions: false,
+
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -32,17 +34,30 @@ Ext.define('Connector.panel.AxisSelector', {
 
         this.items = [];
 
-        if (this.showDisplay) {
-            this.items.push(this.getSelectionDisplay());
-        }
+        this.items.push(this.getMainTitleDisplay());
 
         var picker = this.getMeasurePicker();
         this.items.push(picker);
+
+        if (this.showDisplay) {
+            this.items.push(this.getSelectionDisplay());
+        }
 
         this.callParent();
 
         picker.sourcesGrid.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
         picker.measuresGrid.getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
+    },
+
+    getMainTitleDisplay : function() {
+        return {
+            xtype: 'box',
+            autoEl: {
+                tag : 'div',
+                cls : 'curseltitle',
+                html: this.displayConfig.mainTitle
+            }
+        };
     },
 
     getSelectionDisplay : function() {
@@ -51,9 +66,11 @@ Ext.define('Connector.panel.AxisSelector', {
             var displayCfg = this.displayConfig;
 
             Ext.apply(displayCfg, {
-                flex: 2,
+                height: 210,
+                hidden: true,
                 displayConfig: this.displayConfig,
                 disableScale: this.disableScale,
+                disableVariableOptions: this.disableVariableOptions,
                 scalename: this.scalename
             });
 
@@ -85,7 +102,7 @@ Ext.define('Connector.panel.AxisSelector', {
             allColumns: true,
             showHidden: false,
             multiSelect: true,
-            flex: 3
+            flex: 1
         });
 
         Ext.apply(this.measureConfig, {
@@ -118,13 +135,14 @@ Ext.define('Connector.panel.AxisSelector', {
     onMeasureSelect : function(selModel, records) {
         if (this.showDisplay) {
             this.getSelectionDisplay().setMeasureSelection(records[0]);
+            this.getSelectionDisplay().show();
         }
     },
 
     onSourceSelect : function(selModel, records) {
-        if (this.showDisplay) {
-            this.getSelectionDisplay().setSourceSelection(records[0]);
-        }
+        //select first variable in the list on source selection change, for singleSelect grid
+        if (!this.getMeasurePicker().measuresGrid.multiSelect)
+            this.getMeasurePicker().measuresGrid.getSelectionModel().select(0);
     }
 });
 
@@ -137,8 +155,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
     frame: false,
 
-    defaultHeader: 'Choose Axis',
-
     layout: {
         type: 'vbox'
     },
@@ -146,38 +162,62 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     initComponent : function() {
 
         this.items = [{
-            xtype: 'box',
-            itemId: 'hdr',
-            autoEl: {
-                tag : 'div',
-                cls : 'curselhdr',
-                html: this.defaultHeader
-            }
-        },{
-            itemId: 'auth',
-            xtype: 'box',
-            autoEl: {
-                tag: 'div',
-                cls: 'curselauth',
-                html: '&nbsp;'
-            }
-        },{
-            itemId: 'desc',
-            xtype: 'box',
-            autoEl: {
-                tag: 'div',
-                cls: 'curseldesc',
-                html: '&nbsp;'
-            }
-        },{
-            xtype: 'container',
-            layout: {
-                type: 'hbox'
-            },
-            items: [ this.getScaleForm() ]
+            xtype: 'panel',
+            layout: 'hbox',
+            width: '100%',
+            border: false,
+            bodyStyle: 'background-color: transparent;',
+            items: [{
+                xtype: 'panel',
+                width: this.disableVariableOptions ? '100%' : '50%',
+                bodyStyle: 'background-color: transparent;',
+                border: false,
+                items: [
+                    this.getDefinitionPanel(),
+                    {
+                        xtype: 'container',
+                        height: 75,
+                        layout: { type: 'hbox' },
+                        items: [ this.getScaleForm() ]
+                    }
+                ]
+            },{
+                xtype: 'panel',
+                hidden: this.disableVariableOptions,
+                width: this.disableVariableOptions ? 0 : '50%',
+                bodyStyle: 'background-color: transparent;',
+                padding: '10px 0 0 0',
+                border: false,
+                items: [{
+                    xtype: 'box'
+                    // TODO
+                }]
+            }]
         }];
 
         this.callParent();
+    },
+
+    getDefinitionPanel : function() {
+        if (!this.definitionPanel)
+        {
+            this.definitionPanel = Ext.create('Ext.panel.Panel', {
+                border: false,
+                autoScroll: true,
+                ui: 'custom',
+                cls: 'definitionpanel iScroll',
+                height: !this.disableScale ? 140 : undefined,
+                bodyStyle: 'background-color: transparent;',
+                padding: '10px 0 0 0',
+                data: {},
+                tpl: new Ext.XTemplate(
+                        '<div class="curselauth" style="width: 100%;">Definition: {label}</div>',
+                        '<div class="curseldesc" style="width: 100%;">{description}</div>'
+                )
+            });
+        }
+
+        return this.definitionPanel;
     },
 
     getScaleForm : function() {
@@ -186,8 +226,10 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 ui: 'custom',
                 hidden: this.disableScale,
                 border: false, frame : false,
+                width: '100%',
                 items: [{
                     xtype: 'radiogroup',
+                    itemId: 'scale',
                     ui: 'custom',
                     border: false, frame : false,
                     vertical: true,
@@ -195,9 +237,9 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     fieldLabel: 'Scale',
                     labelAlign: 'top',
                     items: [{
-                        boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true
-                    },{
                         boxLabel: 'Log', name : this.scalename, inputValue: 'log'
+                    },{
+                        boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true
                     }]
                 }]
             });
@@ -208,37 +250,14 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
     setMeasureSelection : function(record) {
         if (record) {
-            if (record.get('label')) {
-                this.getComponent('auth').update(record.get('label'));
-            }
-            else {
-                this.getComponent('auth').update('&nbsp;');
-            }
-
-            if (record.get('description')) {
-                this.getComponent('desc').update(record.get('description'));
-            }
-            else {
-                this.getComponent('desc').update('&nbsp;');
-            }
+            this.getDefinitionPanel().update(record.data);
+            this.setDefaultScale(record);
         }
     },
 
-    setSourceSelection : function(record) {
-        if (record.get('queryLabel')) {
-            this.getComponent('hdr').update(record.get('queryLabel'));
-        }
-        else if (record.get('queryName')) {
-            this.getComponent('hdr').update(record.get('queryName'));
-        }
-
-        if (record.get('description')) {
-            this.getComponent('desc').update(record.get('description'));
-        }
-        else {
-            this.getComponent('desc').update('&nbsp;');
-        }
-
-        this.getComponent('auth').update('&nbsp');
+    setDefaultScale : function(record) {
+        var value = {};
+        value[this.scalename] = record.get('defaultScale').toLowerCase();
+        this.getScaleForm().getComponent('scale').setValue(value);
     }
 });

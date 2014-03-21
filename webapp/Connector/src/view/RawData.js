@@ -87,7 +87,7 @@ Ext.define('Connector.view.RawData', {
         if (!this.axisPanel) {
             this.axisPanel = Ext.create('Connector.panel.AxisSelector', {
                 ui: 'axispanel',
-                bodyStyle: 'padding-left: 27px; padding-top: 15px; padding-right: 27px;',
+                bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
                     allColumns: true,
                     sourceCls: this.axisSourceCls,
@@ -98,9 +98,10 @@ Ext.define('Connector.view.RawData', {
                     showHidden: this.canShowHidden
                 },
                 displayConfig: {
-                    defaultHeader: 'Add Measures'
+                    mainTitle: 'Choose Measures for the Data Grid...'
                 },
-                disableScale: true
+                disableScale: true,
+                disableVariableOptions: true
             });
         }
 

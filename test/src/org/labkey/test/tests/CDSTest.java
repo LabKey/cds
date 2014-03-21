@@ -28,11 +28,11 @@ import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
-import org.labkey.test.util.Ext4HelperWD;
+import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ext4cmp.Ext4CmpRefWD;
+import org.labkey.test.util.ext4cmp.Ext4CmpRef;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -113,7 +113,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @Before
     public void preTest()
     {
-        Ext4HelperWD.setCssPrefix("x-");
+        Ext4Helper.setCssPrefix("x-");
 
         windowMaximize(); // Provides more useful screenshots on failure
         enterApplication();
@@ -133,7 +133,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @AfterClass
     public static void postTest()
     {
-        Ext4HelperWD.resetCssPrefix();
+        Ext4Helper.resetCssPrefix();
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -313,7 +313,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
         assertFilterStatusCounts(18, 2, 4, 3, 28);
-        assertTextPresent("Study Group Verify", "DESCRIPTION", "UPDATES", "A set of defined studies. More info added.");
+        assertTextPresent("Study Group Verify", "Description", "Updates", "A set of defined studies. More info added.");
 
         clearFilter();
         makeNavigationSelection(NavigationLink.SUMMARY);
@@ -828,10 +828,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         xAxisChooseButton.click();
         waitForElement(Locator.css(".xaxispicker tr.x-grid-row").withText("Physical Exam (6)"));
         _extHelper.pickMeasure("xaxispicker", "Lab Results", "CD4");
-        click(cdsButtonLocator("Set X-Axis"));
-        waitForElement(Locator.css(".curselhdr").withText("Choose Y Axis"));
+        click(cdsButtonLocator("set x axis"));
+        waitForElement(Locator.css(".curseltitle").containing("Y AXIS"));
         _extHelper.pickMeasure("yaxispicker", "Lab Results", "Lymphocytes");
-        click(cdsButtonLocator("Set Y-Axis"));
+        click(cdsButtonLocator("set y axis"));
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
 
@@ -841,12 +841,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         yAxisButton.click();
         _ext4Helper.waitForMask();
         _extHelper.pickMeasure("yaxispicker", "Lab Results", "CD4");
-        click(cdsButtonLocator("Set Y-Axis"));
+        click(cdsButtonLocator("set y axis"));
         _ext4Helper.waitForMaskToDisappear();
         xAxisButton.click();
         _ext4Helper.waitForMask();
         _extHelper.pickMeasure("xaxispicker", "Lab Results", "Hemoglobin");
-        click(cdsButtonLocator("Set X-Axis"));
+        click(cdsButtonLocator("set x axis"));
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(HEMO_CD4_UNFILTERED);
 
@@ -856,14 +856,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         _extHelper.pickMeasure("yaxispicker", "Physical Exam", "Weight Kg");
         // set Y to log scale
         click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(cdsButtonLocator("Set Y-Axis"));
+        click(cdsButtonLocator("set y axis"));
         waitForText("Points outside the plotting area have no match");
         xAxisButton.click();
         _ext4Helper.waitForMask();
         _extHelper.pickMeasure("xaxispicker", "Physical Exam", "Pulse");
         // set X to log scale
         click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(cdsButtonLocator("Set X-Axis"));
+        click(cdsButtonLocator("set x axis"));
         assertSVG(WT_PLSE_LOG);
 
         Actions builder = new Actions(getDriver());
@@ -1379,8 +1379,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         waitForElement(Locator.tag("span").withText(colHeader));
 
-        List<Ext4CmpRefWD> dataViews = _ext4Helper.componentQuery("#raw-data-view", Ext4CmpRefWD.class);
-        Ext4CmpRefWD dataView = dataViews.get(0);
+        List<Ext4CmpRef> dataViews = _ext4Helper.componentQuery("#raw-data-view", Ext4CmpRef.class);
+        Ext4CmpRef dataView = dataViews.get(0);
 
         log("openFilterWindow: " + colHeader);
         dataView.eval("openFilterWindow(\'" + colHeader + "\');");
@@ -1405,7 +1405,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         if (groups.size() > 0)
         {
-            Ext4HelperWD.setCssPrefix("x4-");
+            Ext4Helper.setCssPrefix("x4-");
 
             // leave the app
             beginAt("/cds/" + getProjectName() + "/begin.view?");
@@ -1414,7 +1414,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
                 _studyHelper.deleteCustomParticipantGroup(g, "Participant");
             }
 
-            Ext4HelperWD.setCssPrefix("x-");
+            Ext4Helper.setCssPrefix("x-");
             enterApplication();
         }
     }
