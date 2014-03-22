@@ -618,6 +618,18 @@ span.hl-status-count {
   padding-left: 4px;
 }
 
+span.hideit {
+  display: none !important;
+}
+
+span.status-subcount {
+  color: $select-color;
+}
+
+span.status-of {
+  color: #ccc;
+}
+
 ul.detailstatus {
   font-family: $bodycaps-font;
 

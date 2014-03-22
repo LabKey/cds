@@ -10,7 +10,8 @@ Ext.define('Connector.model.Detail', {
     fields : [
         {name: 'label'},
         {name: 'value'},
-        {name: 'count',     type: 'int'},
+        {name: 'count', type: 'int'},
+        {name: 'subcount', type: 'int'}, // a value of -1 determines that the subcount is not provided
         {name: 'valueLabel'},
         {name: 'highlight'},
         {name: 'hierarchy'}

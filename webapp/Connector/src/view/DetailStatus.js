@@ -26,14 +26,18 @@ Ext.define('Connector.view.DetailStatus', {
                     '<div class="status-row {highlight:this.isHighlight}">',
                         '<tpl if="highlight != undefined && highlight == true">',
                                 '<li>',
-                                      '<span class="statme hl-status-label">{label}</span>',
+                                      '<span class="statme hl-status-label">{label:htmlEncode}</span>',
+                                      '<span class="statme hl-status-count status-subcount {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
+                                      '<span class="statme hl-status-count status-of {subcount:this.subFormat}">of</span>',
                                       '<span class="statme hl-status-count">{count:this.commaFormat}</span>',
                                 '</li>',
                             '</div>',
                         '</tpl>',
                         '<tpl if="highlight == undefined || !highlight">',
                             '<li>',
-                                '<span class="statme status-label">{label}</span>',
+                                '<span class="statme status-label">{label:htmlEncode}</span>',
+                                '<span class="statme status-count status-subcount {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
+                                '<span class="statme status-count status-of {subcount:this.subFormat}">of</span>',
                                 '<span class="statme status-count">{count:this.commaFormat}</span>',
                             '</li>',
                         '</tpl>',
@@ -46,6 +50,9 @@ Ext.define('Connector.view.DetailStatus', {
                 },
                 commaFormat : function(v) {
                     return Ext.util.Format.number(v, '0,000');
+                },
+                subFormat : function(subcount) {
+                    return subcount === -1 ? 'hideit' : '';
                 }
             }
     ),

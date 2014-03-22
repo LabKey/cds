@@ -344,12 +344,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
         assertElementPresent(Locator.tagWithClass("div", "selitem").withText("Study"));
-        assertFilterStatusCounts(18, 2, 4, 3, 28);
+        assertSelectionStatusCounts(18, 2, 4, 3, 28);
 
         // clear by selection
         selectBars(STUDIES[1]);
         waitForElement(filterMemberLocator("Study: " + STUDIES[1]));
-        assertFilterStatusCounts(12, 1, 3, 2, 8);
+        assertSelectionStatusCounts(12, 1, 3, 2, 8);
 
         // verify multi-level filtering
         goToAppHome();
@@ -519,7 +519,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // 14902
         clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[0], STUDIES[0], 6, 1, 3, 2, 20, 12);
+        applySelection(STUDIES[0]);
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
 
         // Verify multi-select tooltip -- this only shows the first time
         assertTextPresent(TOOLTIP);
@@ -534,7 +535,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertTextNotPresent(TOOLTIP);
 
         clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[0], STUDIES[0], 6, 1, 3, 2, 20, 12);
+        applySelection(STUDIES[0]);
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
         sleep(500);
         clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(STUDIES[2]), CDS_WAIT);
@@ -542,42 +544,58 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // end 14902
 
         clickBy("Studies");
-        assertFilterStatusPanel(STUDIES[1], STUDIES[1], 12, 1, 3, 2, 8, 12);
+        applySelection(STUDIES[1]);
+        assertSelectionStatusCounts(12, 1, 3, 2, 8);
         assertTextNotPresent(TOOLTIP);
-        assertFilterStatusPanel(STUDIES[2], STUDIES[2], 11, 1, 3, 2, 3, 12);
+        applySelection(STUDIES[2]);
+        assertSelectionStatusCounts(11, 1, 3, 2, 3);
         goToAppHome();
         clearSelection();
         clickBy("Assay antigens");
         pickCDSSort("Tier", "1A");
         toggleExplorerBar("3");
-        assertFilterStatusPanel("H061.14", "H061.14", 12, 1, 3, 2, 8, 12);
+        applySelection("H061.14");
+        assertSelectionStatusCounts(12, 1, 3, 2, 8);
         toggleExplorerBar("1A");
-        assertFilterStatusPanel("SF162.LS", "SF162.LS", 6, 1, 3, 2, 20, 12);
+        applySelection("SF162.LS");
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
         toggleExplorerBar("1B");
-        assertFilterStatusPanel("ZM109F.PB4", "ZM109F.PB4", 6, 1, 3, 2, 20, 6);
+        applySelection("ZM109F.PB4");
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
         goToAppHome();
         clickBy("Assays");
-        assertFilterStatusPanel("Lab Results", "Lab Results", 23, 3, 5, 3, 31, 29);
-        assertFilterStatusPanel("ADCC-Ferrari", "ADCC-Ferrari", 12, 1, 3, 2, 8, 29);
-        assertFilterStatusPanel("Luminex-Sample-LabKey", "Luminex-Sample-LabKey", 6, 1, 3, 2, 20, 29);
-        assertFilterStatusPanel("NAb-Sample-LabKey", "NAb-Sample-LabKey", 29, 3, 5, 3, 31, 29);
-        assertFilterStatusPanel("mRNA assay", "mRNA assay", 5, 1, 3, 1, 3, 0);
+        applySelection("Lab Results");
+        assertSelectionStatusCounts(23, 3, 5, 3, 31);
+        applySelection("ADCC-Ferrari");
+        assertSelectionStatusCounts(12, 1, 3, 2, 8);
+        applySelection("Luminex-Sample-LabKey");
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
+        applySelection("NAb-Sample-LabKey");
+        assertSelectionStatusCounts(29, 3, 5, 3, 31);
+        applySelection("mRNA assay");
+        assertSelectionStatusCounts(5, 1, 3, 1, 3);
         goToAppHome();
         clickBy("Labs");
-        assertFilterStatusPanel(LABS[0], LABS[0], 6, 1, 3, 2, 20, 23);
-        assertFilterStatusPanel(LABS[1], LABS[1], 23, 3, 5, 3, 31, 23);
-        assertFilterStatusPanel(LABS[2], LABS[2], 18, 2, 3, 2, 11, 23);
+        applySelection(LABS[0]);
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
+        applySelection(LABS[1]);
+        assertSelectionStatusCounts(23, 3, 5, 3, 31);
+        applySelection(LABS[2]);
+        assertSelectionStatusCounts(18, 2, 3, 2, 11);
         goToAppHome();
         clickBy("Subject characteristics");
         clearSelection();
         assertDefaultFilterStatusCounts();
         pickCDSSort("Country");
-        assertFilterStatusPanel("South Africa", "South Africa", 5, 1, 1, 1, 3, 18);
-        assertFilterStatusPanel("USA", "USA", 19, 3, 4, 3, 31, 19);
-        assertFilterStatusPanel("Thailand", "Thailand", 5, 1, 3, 1, 3, 18);
+        applySelection("South Africa");
+        assertSelectionStatusCounts(5, 1, 1, 1, 3);
+        applySelection("USA");
+        assertSelectionStatusCounts(19, 3, 4, 3, 31);
+        applySelection("Thailand");
+        assertSelectionStatusCounts(5, 1, 3, 1, 3);
     }
 
-    //@Test
+    @Test
     public void verifyFilters()
     {
         log("Verify multi-select");
@@ -590,10 +608,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         pickCDSSort("Tier", "1A");
         toggleExplorerBar("1A");
         toggleExplorerBar("1B");
-        shiftSelectBars("DJ263.8", "SF162.LS");
-        waitForElement(filterMemberLocator("SF162.LS"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(filterMemberLocator(), 6);
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
+        shiftSelectBars("SF162.LS", "DJ263.8");
+        waitForElement(filterMemberLocator("DJ263.8"), WAIT_FOR_JAVASCRIPT);
+        assertElementPresent(filterMemberLocator(), 3);
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
         clearSelection();
         assertDefaultFilterStatusCounts();
         goToAppHome();
@@ -601,19 +619,18 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         clickBy("Labs");
         selectBars(LABS[0], LABS[1]);
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
         selectBars(LABS[0], LABS[2]);
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
+        assertSelectionStatusCounts(0, 0, 0, 0, 0);
         selectBars(LABS[1], LABS[2]);
-        assertFilterStatusCounts(12, 1, 3, 2, 8);
+        assertSelectionStatusCounts(12, 1, 3, 2, 8);
         useSelectionAsFilter();
         saveGroup(GROUP_NAME, GROUP_DESC);
         waitForElementToDisappear(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
-//        waitForElement(filterMemberLocator(GROUP_NAME), WAIT_FOR_JAVASCRIPT);
         assertFilterStatusCounts(12, 1, 3, 2, 8);
         clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(LABS[0]), CDS_WAIT);
-        assertFilterStatusCounts(29,3,5,3,31);
+        assertDefaultFilterStatusCounts();
 
         goToAppHome();
         assertAllSubjectsPortalPage();
@@ -621,14 +638,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         log("Verify operator filtering");
         clickBy("Studies");
         selectBars(STUDIES[0], STUDIES[1]);
-        assertFilterStatusCounts(18, 2, 4, 3, 28);  // or
+        assertSelectionStatusCounts(18, 2, 4, 3, 28);  // or
         assertElementPresent(Locator.css("option").withText("OR"));
         mouseOver(Locator.css("option").withText("OR"));
 
         WebElement selector = Locator.css("select").findElement(getDriver());
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
-        assertFilterStatusCounts(0, 0, 0, 0, 0); // and
+        assertSelectionStatusCounts(0, 0, 0, 0, 0); // and
         useSelectionAsFilter();
         waitForElementToDisappear(Locator.css("span.barlabel"), CDS_WAIT);
         assertFilterStatusCounts(0, 0, 0, 0, 0); // and
@@ -656,14 +673,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         log("Verify selection messaging");
         clickBy("Assays");
         selectBars("ADCC-Ferrari", "Luminex-Sample-LabKey");
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
+        assertSelectionStatusCounts(0, 0, 0, 0, 0);
         pickCDSDimension("Studies");
-        assertFilterStatusCounts(0, 0, 0, 0, 0);
+        assertSelectionStatusCounts(0, 0, 0, 0, 0);
         clearSelection();
         waitForText(STUDIES[2], CDS_WAIT);
         selectBars(STUDIES[0]);
         pickCDSDimension("Assays");
-        assertFilterStatusCounts(6, 1, 3, 2, 20);
+        assertSelectionStatusCounts(6, 1, 3, 2, 20);
         useSelectionAsFilter();
         goToAppHome();
 
@@ -676,7 +693,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("save", "filtersave"));
         waitForText("Live: Update group with new data");
         waitForText("replace an existing group");
-//        click(Locator.css(".withSelectionRadio input"));
         setFormElement(Locator.name("groupname"), GROUP_NULL);
         click(cdsButtonLocator("cancel", "cancelgroupsave"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
@@ -685,24 +701,21 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // save the group and request save
         saveGroup(GROUP_NAME2, null);
-//        waitForElement(filterMemberLocator(GROUP_NAME2), WAIT_FOR_JAVASCRIPT);
 
         selectBars("f");
 
         // save a group with an interior group
         saveGroup(GROUP_NAME3, null);
-//        waitForElement(filterMemberLocator(GROUP_NAME3), WAIT_FOR_JAVASCRIPT);
 
         // saved filter without including current selection (should be the same as initial group)
         goToAppHome();
 
         clickBy("Labs");
-        assertFilterStatusCounts(4,1,3,2,20);
+        assertFilterStatusCounts(4, 1, 3, 2, 20);
 
         // Group creation cancelled
         clearFilter();
         goToAppHome();
-//        assertTextNotPresent(GROUP_NULL);
     }
 
     @Test
@@ -1178,6 +1191,17 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         }
     }
 
+    private void applySelection(String barLabel)
+    {
+        applySelection(barLabel, barLabel);
+    }
+
+    private void applySelection(String barLabel, String filteredLabel)
+    {
+        selectBars(barLabel);
+        waitForElement(filterMemberLocator(filteredLabel), WAIT_FOR_JAVASCRIPT);
+    }
+
     private void selectBars(String... bars)
     {
         selectBarsHelper(false, bars);
@@ -1196,7 +1220,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void clearFilter()
     {
-        click(cdsButtonLocator("clear", "filterclear"));
+        waitAndClick(cdsButtonLocator("clear", "filterclear"));
         waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
 
@@ -1445,6 +1469,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertEquals("Wrong total for search by " + byNoun + ".", expectedTotal, actualTotal);
     }
 
+    private void assertSelectionStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
+    {
+        selectBars(barLabel);
+        assertFilterStatusCounts(subjectCount, studyCount, assayCount, contributorCount, antigenCount);
+        waitForElement(filterMemberLocator(filteredLabel), WAIT_FOR_JAVASCRIPT);
+    }
+
     // Sequential calls to this should have different subject counts.
     private void assertFilterStatusPanel(String barLabel, String filteredLabel, int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount, int maxCount)
     {
@@ -1466,6 +1497,20 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural, boolean highlight)
     {
         return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + count + "']");
+    }
+
+    private Locator.XPathLocator getSelectionStatusLocator(int count, String match)
+    {
+        return Locator.xpath("//li//span[contains(text(), '" + match + "')]/../span[contains(@class, 'status-subcount') and text()='" + count + "']");
+    }
+
+    private void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
+    {
+        waitForElement(getSelectionStatusLocator(subjectCount, "Subject"));
+        waitForElement(getSelectionStatusLocator(studyCount, "Stud"));
+        waitForElement(getSelectionStatusLocator(assayCount, "Assay"));
+        waitForElement(getSelectionStatusLocator(contributorCount, "Lab"));
+        waitForElement(getSelectionStatusLocator(antigenCount, "Antigen"));
     }
 
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)

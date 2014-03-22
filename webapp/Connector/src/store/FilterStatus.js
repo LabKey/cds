@@ -43,11 +43,13 @@ Ext.define('Connector.store.FilterStatus', {
             scope: this
         };
 
+        this.sels = {};
+
         if (mdx) {
             //
             // Binds cube metadata on a per level basis
             //
-            var dims = mdx.getDimensions();
+            var dims = mdx.getDimensions(), requestId = 0;
             for (var d=0; d < dims.length; d++) {
                 var hiers = dims[d].getHierarchies();
                 for (var h=0; h < hiers.length; h++) {
@@ -56,9 +58,15 @@ Ext.define('Connector.store.FilterStatus', {
                         lvl = lvls[l];
                         if (lvl.activeCount) {
 
+                            requestId++;
+
+                            //
+                            // Filter based request
+                            //
                             request.configs.push({
+                                requestId: requestId,
                                 onRows: [ { level: lvl.uniqueName } ],
-                                useNamedFilters: ['stateSelectionFilter', 'statefilter'],
+                                useNamedFilters: ['statefilter'],
                                 label: {
                                     singular: lvl.countSingular,
                                     plural: lvl.countPlural
@@ -67,6 +75,17 @@ Ext.define('Connector.store.FilterStatus', {
                                 cellbased: lvl.cellbased,
                                 priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
                             });
+
+                            //
+                            // Selection based request
+                            //
+                            this.sels[requestId] = {
+                                requestId: requestId,
+                                selectionBased: true,
+                                onRows: [ { level: lvl.uniqueName } ],
+                                useNamedFilters: ['stateSelectionFilter', 'statefilter'],
+                                cellbased: lvl.cellbased
+                            };
                         }
                     }
                 }
@@ -76,6 +95,14 @@ Ext.define('Connector.store.FilterStatus', {
             request.configs.sort(function(a,b) {
                 return a.priority - b.priority;
             });
+
+            // tack on selections
+            for (var s in this.sels) {
+                if (this.sels.hasOwnProperty(s)) {
+                    request.configs.push(this.sels[s]);
+                    this.sels[s] = request.configs[request.configs.length-1];
+                }
+            }
         }
 
         return request;
@@ -96,25 +123,48 @@ Ext.define('Connector.store.FilterStatus', {
             return;
         }
 
-        var recs = [], rec = {}, count;
-        for (var i=0; i < qrArray.length; i++) {
+        var recs = [], rec = {}, count, subcount, qrSels = {};
 
-            count = 0;
+        // pick out selections
+        for (var i=0; i < qrArray.length; i++) {
+            if (configArray[i]['selectionBased'] === true) {
+                qrSels[configArray[i].requestId] = qrArray[i];
+            }
+        }
+
+        var hasSelections = this.state.hasSelections();
+        for (i=0; i < qrArray.length; i++) {
+
+            if (configArray[i]['selectionBased'] === true) {
+                continue;
+            }
+
+            count = 0; subcount = 0;
             if (configArray[i].cellbased) {
 
-                for (var c=0; c < qrArray[i].cells.length; c++) {
+                var t = qrArray[i];
+                for (var c=0; c < t.cells.length; c++) {
 
-                    if (qrArray[i].cells[c][0].value > 0)
+                    if (t.cells[c][0].value > 0)
                         count++;
+                }
+
+                t = qrSels[configArray[i].requestId];
+                for (c=0; c < t.cells.length; c++) {
+
+                    if (t.cells[c][0].value > 0)
+                        subcount++;
                 }
             }
             else {
                 count = qrArray[i].cells[0][0].value;
+                subcount = qrSels[configArray[i].requestId].cells[0][0].value;
             }
 
             rec = {
                 hierarchy: configArray[i].label.singular,
                 count: count,
+                subcount: hasSelections ? subcount : -1,
                 highlight: configArray[i].highlight
             };
 
