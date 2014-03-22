@@ -79,7 +79,7 @@ Ext.define('Connector.controller.FilterStatus', {
         store.load();
 
         var view = Ext.create('Connector.view.DetailStatus', {
-            store : store
+            store: store
         });
 
         var state = this.getStateManager();

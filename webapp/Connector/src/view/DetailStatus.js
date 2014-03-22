@@ -16,14 +16,14 @@ Ext.define('Connector.view.DetailStatus', {
 
     itemSelector: 'div.status-row',
 
-    padding: '20 20 0 20',
+    padding: '0 20 0 20',
 
     overItemCls: 'status-over',
 
     tpl: new Ext.XTemplate(
             '<ul class="detailstatus">',
                 '<tpl for=".">',
-                    '<div class="status-row">',
+                    '<div class="status-row {highlight:this.isHighlight}">',
                         '<tpl if="highlight != undefined && highlight == true">',
                                 '<li>',
                                       '<span class="statme hl-status-label">{label}</span>',
@@ -41,6 +41,9 @@ Ext.define('Connector.view.DetailStatus', {
                 '</tpl>',
             '<ul>',
             {
+                isHighlight : function(highlight) {
+                    return (highlight === true ? 'hl-status-row' : '');
+                },
                 commaFormat : function(v) {
                     return Ext.util.Format.number(v, '0,000');
                 }

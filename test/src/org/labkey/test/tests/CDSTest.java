@@ -1460,14 +1460,19 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural)
     {
-        return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, 'status-count') and text()='" + count + "']");
+        return getFilterStatusLocator(count, singular, plural, false);
+    }
+
+    private Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural, boolean highlight)
+    {
+        return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + count + "']");
     }
 
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
     {
-        waitForElement(Locator.xpath("//span[contains(@class, 'hl-status-count') and text()='" + subjectCount + "']"), WAIT_FOR_JAVASCRIPT);
-        waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies"));
-        waitForElement(getFilterStatusLocator(assayCount, "Assay", "Assays"));
+        waitForElement(getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
+        waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies", true));
+        waitForElement(getFilterStatusLocator(assayCount, "Assay", "Assays", true));
         waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
         waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
     }
@@ -1564,8 +1569,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void toggleExplorerBar(String largeBarText)
     {
-        sleep(350);
+        sleep(500);
         click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]"));
-        sleep(350);
+        sleep(500);
     }
 }

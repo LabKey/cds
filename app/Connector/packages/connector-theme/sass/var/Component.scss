@@ -635,6 +635,10 @@ div.status-row {
   margin: 0 -10px 0 -10px; /* note if this changes, modify margin on ul.detailstatus li */
 }
 
+div.hl-status-row {
+  margin-top: 20px;
+}
+
 div.status-over {
   @include border-radius(15px);
   background-color: $light-color;

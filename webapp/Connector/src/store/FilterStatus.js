@@ -12,77 +12,89 @@ Ext.define('Connector.store.FilterStatus', {
     constructor : function(config) {
 
         this.flight = 0;
+        this.loadTask = new Ext.util.DelayedTask(this._load, this);
 
         this.callParent([config]);
     },
 
     load : function() {
-        this.loadGroups();
+        this.loadTask.delay(50);
+    },
+
+    _load : function() {
+        if (!this.state) {
+            console.error('Connector.store.FilterStatus requires a state olap provider');
+        }
+        else {
+            this.state.onMDXReady(function(mdx) {
+                if (!this.requests) {
+                    this.requests = this.bindRequestConfigs(mdx);
+                }
+                this.loadGroups();
+            }, this);
+        }
+    },
+
+    bindRequestConfigs : function(mdx) {
+
+        var request = {
+            configs: [],
+            success: this.loadResults,
+            scope: this
+        };
+
+        if (mdx) {
+            //
+            // Binds cube metadata on a per level basis
+            //
+            var dims = mdx.getDimensions();
+            for (var d=0; d < dims.length; d++) {
+                var hiers = dims[d].getHierarchies();
+                for (var h=0; h < hiers.length; h++) {
+                    var lvls = hiers[h].levels, lvl;
+                    for (var l=0; l < lvls.length; l++) {
+                        lvl = lvls[l];
+                        if (lvl.activeCount) {
+
+                            request.configs.push({
+                                onRows: [ { level: lvl.uniqueName } ],
+                                useNamedFilters: ['stateSelectionFilter', 'statefilter'],
+                                label: {
+                                    singular: lvl.countSingular,
+                                    plural: lvl.countPlural
+                                },
+                                highlight: lvl.activeCount === 'highlight',
+                                cellbased: lvl.cellbased,
+                                priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
+                            });
+                        }
+                    }
+                }
+            }
+
+            // sort according to priority
+            request.configs.sort(function(a,b) {
+                return a.priority - b.priority;
+            });
+        }
+
+        return request;
     },
 
     loadGroups : function() {
         this.flight++;
-        var request = {
-            configs : [
-                {
-                    onRows : [ { hierarchy : 'Study', lnum: 0 } ],
-                    useNamedFilters : ['stateSelectionFilter', 'statefilter'],
-                    label     : {
-                        singular : 'Subject',
-                        plural   : 'Subjects'
-                    },
-                    highlight : true,
-                    flight    : this.flight
-                },
-                {
-                    onRows : [ { level : '[Study].[Study]'} ],
-                    useNamedFilters : ['stateSelectionFilter', 'statefilter'],
-                    label     : {
-                        singular : 'Study',
-                        plural   : 'Studies'
-                    },
-                    cellbased : true
-                },
-                {
-                    onRows : [ { level : '[Assay.Target Area].[Name]'} ],
-                    useNamedFilters : ['stateSelectionFilter', 'statefilter'],
-                    label     : {
-                        singular : 'Assay',
-                        plural   : 'Assays'
-                    },
-                    cellbased : true
-                },
-                {
-                    onRows : [ { level : '[Lab].[Lab]'} ],
-                    useNamedFilters : ['stateSelectionFilter', 'statefilter'],
-                    label     : {
-                        singular : 'Lab',
-                        plural   : 'Labs'
-                    },
-                    cellbased : true
-                },
-                {
-                    onRows : [ { level : '[Antigen.Tier].[Name]'} ],
-                    useNamedFilters : ['stateSelectionFilter', 'statefilter'],
-                    label     : {
-                        singular : 'Antigen',
-                        plural   : 'Antigens'
-                    },
-                    cellbased : true
-                }
-            ],
-            success : this.loadResults,
-            scope   : this
-        };
+        var requests = this.requests;
+        requests.configs[0].flight = this.flight;
 
-        this.state.onMDXReady(function(mdx){
-            mdx.queryMultiple(request.configs, request.success, request.failure, request.scope);
+        this.state.onMDXReady(function(mdx) {
+            mdx.queryMultiple(requests.configs, requests.success, requests.failure, requests.scope);
         }, this);
     },
 
     loadResults : function(qrArray, configArray) {
-        if (configArray[0].flight != this.flight)
+        if (configArray[0].flight != this.flight) {
             return;
+        }
 
         var recs = [], rec = {}, count;
         for (var i=0; i < qrArray.length; i++) {
@@ -101,9 +113,9 @@ Ext.define('Connector.store.FilterStatus', {
             }
 
             rec = {
-                hierarchy : configArray[i].label.singular,
+                hierarchy: configArray[i].label.singular,
                 count: count,
-                highlight : configArray[i].highlight
+                highlight: configArray[i].highlight
             };
 
             rec.label = rec.count != 1 ? configArray[i].label.plural : configArray[i].label.singular;
