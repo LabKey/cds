@@ -95,7 +95,8 @@ Ext.define('Connector.view.RawData', {
                         schemaName: 'study',
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
                     }),
-                    showHidden: this.canShowHidden
+                    showHidden: this.canShowHidden,
+                    cls: 'gridcolumnpicker'
                 },
                 displayConfig: {
                     mainTitle: 'Choose Measures for the Data Grid...'
@@ -171,14 +172,14 @@ Ext.define('Connector.view.RawData', {
 
         this.win = Ext.create('Ext.window.Window', {
             id: 'gridmeasurewin',
-            ui: 'custom',
+            ui: 'axiswindow',
             cls: 'measurewindow',
             plain: true,
             modal: this.initialized ? true : false,
             draggable: false,
             preventHeader: true,
             resizable: false,
-            closable: false,
+            closeAction: 'hide',
             layout: 'fit',
             items: [ this.getAxisPanel() ],
             buttons: [{

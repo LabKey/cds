@@ -45,8 +45,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
         this.callParent();
 
-        picker.sourcesGrid.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
-        picker.measuresGrid.getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
+        picker.getSourcesView().getSelectionModel().on('selectionchange', this.onSourceSelect, this);
+        picker.getMeasuresGrid().getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
     },
 
     getMainTitleDisplay : function() {
@@ -113,8 +113,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
         // allows for a class to be added to the source selection panel
         if (this.measureConfig.sourceCls) {
-            this.measurePicker.sourcesGrid.on('afterrender', function(p) {
-                p.addCls(this.measureConfig.sourceCls);
+            this.measurePicker.getSourcesView().on('afterrender', function(p) {
+                p.addCls(this.measureConfig.sourceCls);       // TODO: check that this still works with a dataview
             }, this, {single: true});
         }
         return this.measurePicker;
@@ -141,8 +141,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
     onSourceSelect : function(selModel, records) {
         //select first variable in the list on source selection change, for singleSelect grid
-        if (!this.getMeasurePicker().measuresGrid.multiSelect)
-            this.getMeasurePicker().measuresGrid.getSelectionModel().select(0);
+        if (!this.getMeasurePicker().getMeasuresGrid().multiSelect)
+            this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(0);
     }
 });
 

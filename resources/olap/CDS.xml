@@ -61,42 +61,27 @@
         <Dimension visible="true" highCardinality="false" name="Subject" foreignKey="participantid">
             <Hierarchy visible="true" hasAll="true" uniqueKeyLevelName="Name">
                 <Table name="demographics" schema="study"/>
-                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                    <Property name="Status" column="status" type="String" dependsOnLevelValue="true"/>
-                    <Property name="Height" column="height" type="Numeric" dependsOnLevelValue="true"/>
-                </Level>
+                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" uniqueKeyLevelName="Name">
                 <Table name="demographics" schema="study"/>
                 <Level name="Race" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                    <Property name="Status" column="status" type="String" dependsOnLevelValue="true"/>
-                    <Property name="Height" column="height" type="Numeric" dependsOnLevelValue="true"/>
-                </Level>
+                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" uniqueKeyLevelName="Name">
                 <Table name="demographics" schema="study"/>
                 <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                    <Property name="Status" column="status" type="String" dependsOnLevelValue="true"/>
-                    <Property name="Height" column="height" type="Numeric" dependsOnLevelValue="true"/>
-                </Level>
+                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
             <!--<Hierarchy name="Treatment" visible="true" hasAll="true" uniqueKeyLevelName="Name">-->
                 <!--<Table name="demographics" schema="study"/>-->
                 <!--<Level name="Treatment" visible="true" column="TreatmentID" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
-                <!--<Level name="Subject" visible="true" column="participantid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">-->
-                    <!--<Property name="Status" column="status" type="String" dependsOnLevelValue="true"/>-->
-                    <!--<Property name="Height" column="height" type="Numeric" dependsOnLevelValue="true"/>-->
-                <!--</Level>-->
+                <!--<Level name="Subject" visible="true" column="participantid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
             <!--</Hierarchy>-->
             <Hierarchy name="Sex" visible="true" hasAll="true" uniqueKeyLevelName="Name">
                 <Table name="demographics" schema="study"/>
                 <Level name="Sex" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                    <Property name="Status" column="status" type="String" dependsOnLevelValue="true"/>
-                    <Property name="Height" column="height" type="Numeric" dependsOnLevelValue="true"/>
-                </Level>
+                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
         </Dimension>
 

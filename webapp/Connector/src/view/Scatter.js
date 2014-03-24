@@ -95,7 +95,7 @@ Ext.define('Connector.view.Scatter', {
             layout: {
                 type: 'hbox'
             },
-            bodyStyle: 'background-color: #F0F0F0;',
+            bodyStyle: 'background: linear-gradient(#f0f0f0, #ebebeb) !important;',
             defaults: {
                 xtype: 'container',
                 width: '50%',
@@ -155,7 +155,7 @@ Ext.define('Connector.view.Scatter', {
             region: 'south',
             height: 50,
             border: false, frame: false,
-            bodyStyle: 'background-color: #F0F0F0;',
+            bodyStyle: 'background: linear-gradient(#ebebeb, #f0f0f0) !important;',
             items: [{
                 xtype: 'container',
                 layout: {
@@ -438,9 +438,13 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 x: function(row){return row.x;}
             },
-            bgColor   : '#FFFFFF', // see $light-color in connector.scss
-            gridColor : '#FFFFFF',
-            gridLineColor : '#FFFFFF',
+            bgColor: '#FFFFFF', // $light-color
+            gridColor: '#FFFFFF',
+            gridLineColor: '#FFFFFF',
+//            tickLength: 0,
+            borderWidth: 2,
+            tickColor: '#FFFFFF',
+            tickTextColor: '#333333', // $dark-color
             scales: scales
         };
 
@@ -1039,6 +1043,7 @@ Ext.define('Connector.view.Scatter', {
                 modal: true,
                 draggable: false,
                 header: false,
+                closeAction: 'hide',
                 resizable: false,
                 minHeight: 500,
                 height: pos.height + 100,
@@ -1138,6 +1143,7 @@ Ext.define('Connector.view.Scatter', {
                 modal     : true,
                 draggable : false,
                 header : false,
+                closeAction: 'hide',
                 resizable : false,
                 minHeight : 450,
                 height: pos.height + 100,

@@ -255,14 +255,11 @@ Ext.define('Connector.store.Summary', {
 
     byStudy : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var cellset = qrArray[0];
 
         if (!cellset.axes[1].positions || cellset.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Study Information.');
+            this.done();
             return;
         }
 
@@ -281,10 +278,6 @@ Ext.define('Connector.store.Summary', {
 
     byAntigens : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var clade1  = qrArray[0],
                 source1 = qrArray[1],
                 tier1   = qrArray[2],
@@ -292,6 +285,7 @@ Ext.define('Connector.store.Summary', {
 
         if (!tier1.axes[1].positions || tier1.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Antigen Information.');
+            this.done();
             return;
         }
 
@@ -324,14 +318,11 @@ Ext.define('Connector.store.Summary', {
 
     byAssay : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var cellset = qrArray[0];
 
         if (!cellset.axes[1].positions || cellset.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Assay Information.');
+            this.done();
             return;
         }
 
@@ -350,14 +341,11 @@ Ext.define('Connector.store.Summary', {
 
     byLab : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var labCS = qrArray[0];
 
         if (!labCS.axes[1].positions || labCS.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Assay Information.');
+            this.raiseError('Unable to locate Lab Information.');
+            this.done();
             return;
         }
 
@@ -388,10 +376,6 @@ Ext.define('Connector.store.Summary', {
 
     byDemographic : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var subjectCS = qrArray[0],
                 ethnicityCS   = qrArray[1],
                 locationCS    = qrArray[2],
@@ -400,6 +384,7 @@ Ext.define('Connector.store.Summary', {
 
         if (!ethnicityCS.axes[1].positions || ethnicityCS.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Demographic Information.');
+            this.done();
             return;
         }
 
@@ -447,15 +432,12 @@ Ext.define('Connector.store.Summary', {
 
     byProduct : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var vaccineCS = qrArray[0],
                 agg = this._aggregateByGroup(vaccineCS, true);
 
         if (!vaccineCS.axes[1].positions || vaccineCS.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Vaccine Information.');
+            this.done();
             return;
         }
 
@@ -474,15 +456,12 @@ Ext.define('Connector.store.Summary', {
 
     byVaccineComponent : function(qrArray, configArray) {
 
-        if (this.error) {
-            return;
-        }
-
         var vaccineCS = qrArray[0],
                 agg = this._aggregateByGroup(vaccineCS, true);
 
         if (!vaccineCS.axes[1].positions || vaccineCS.axes[1].positions.length == 0) {
             this.raiseError('Unable to locate Immunogen Information.');
+            this.done();
             return;
         }
 
@@ -500,7 +479,6 @@ Ext.define('Connector.store.Summary', {
     },
 
     raiseError : function(msg) {
-        this.error = true;
         this.fireEvent('mdxerror', msg);
     }
 });
