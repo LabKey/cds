@@ -78,20 +78,15 @@ Ext.define('Connector.controller.RawData', {
         var rjson = Ext.decode(response.responseText);
 
         if (rjson && rjson.counts) {
-            var cell, counts = rjson.counts, style;
+            var cell, counts = rjson.counts;
             for (var source in counts) {
                 if (counts.hasOwnProperty(source)) {
-                    cell = Ext.DomQuery.select('.' + sourceCls + ' .x-grid-cell-inner:nodeValue(' + source + ')');
-                    style = (counts[source] > 0 ? '': 'style="color: #d3d3d3"');
+                    cell = Ext.DomQuery.select('.' + sourceCls + ' .itemrow:nodeValue(' + source + ')');
                     if (cell.length > 0) {
-                        Ext.get(cell).update('<span class="upct" ' + style + '><span class="val">' + source + '</span>&nbsp;(' + counts[source] + ')</span>');
-                    }
-                    else {
-                        cell = Ext.DomQuery.select('.' + sourceCls + ' .x-grid-cell-inner span.val:nodeValue(' + source + ')');
-                        if (cell.length > 0) {
-                            cell = Ext.get(cell[0]).parent('div.x-grid-cell-inner');
-                            cell.update('<span class="upct" ' + style + '><span class="val">' + source + '</span>&nbsp;(' + counts[source] + ')</span>');
-                        }
+                        if (counts[source] == 0)
+                            Ext.get(cell).addCls('itemdisabled');
+
+                        Ext.get(cell).update('<span class="upct"><span class="val">' + source + '</span>&nbsp;(' + counts[source] + ')</span>');
                     }
                 }
             }

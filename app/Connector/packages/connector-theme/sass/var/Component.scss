@@ -181,7 +181,7 @@ li.fadein {
 }
 
 /* Windows */
-.axiswindow {
+.axiswindow, .measurewindow {
   width: 100px;
   height: 100px;
   position: relative;
@@ -203,6 +203,35 @@ li.fadein {
     background-color: $secondary-color;
   }
 
+  .x-panel-body {
+    background-color: transparent;
+    border: none;
+  }
+
+  .x-panel-header {
+    padding-left: 0px;
+    background-image: none;
+    background-color: $secondary-color;
+    box-shadow: none;
+
+    .x-header-text {
+      color: $dark-color;
+      font-weight: normal;
+      font-size: 16pt;
+      font-family: $data-font;
+    }
+  }
+
+  &:after {
+    border-bottom-color: $secondary-color;
+  }
+
+  &:before {
+    /*border-bottom-color: trans;*/
+  }
+}
+
+.axiswindow {
   &:after, &:before {
     border: 12px solid transparent;
     content: ' ';
@@ -214,20 +243,36 @@ li.fadein {
     top: 46%;
   }
 
-  &:after {
-    border-right-color: $secondary-color;
-  }
-
-  /*&:before {*/
-    /*border-bottom-color: trans;*/
-  /*}*/
-
   .x-form-item {
     span {
       @include smallStandout;
     }
     background-color: $secondary-color;
     /*border-bottom: 1px solid $heat-scale-3;*/
+  }
+}
+
+.measurewindow {
+  &:after, &:before {
+    border: 12px solid transparent;
+    content: ' ';
+    height: 0;
+    bottom: 100%;
+    position: absolute;
+    width: 0;
+    left: 215px;
+  }
+
+  .x-column-header-text {
+    font-size: 11px;
+  }
+
+  .x-column-header-over {
+    background-color: $select-color
+  }
+
+  .definitionpanel {
+    height: 175px;
   }
 }
 
@@ -275,53 +320,6 @@ li.fadein {
     span {
       @include smallStandout;
     }
-    background-color: $secondary-color;
-  }
-}
-
-.measurewindow {
-  width: 100px;
-  height: 100px;
-  position: relative;
-  border: none;
-  overflow: inherit !important;
-  background-color: $secondary-color;
-  border-bottom: 1px solid $heat-scale-3;
-
-  .x-window-header {
-    display: none;
-  }
-
-  .x-window-body {
-    border-style: none;
-    background-color: $secondary-color;
-  }
-
-  .x-toolbar-footer {
-    background-color: $secondary-color;
-  }
-
-  &:after, &:before {
-    border: 12px solid transparent;
-    content: ' ';
-    height: 0;
-    bottom: 100%;
-    position: absolute;
-    width: 0;
-    left: 215px;
-  }
-
-  &:after {
-    border-bottom-color: $secondary-color;
-  }
-
-  &:before {
-    /*border-bottom-color: trans;*/
-  }
-
-  .x-column-header {
-    @include smallStandout;
-    background-image: none;
     background-color: $secondary-color;
   }
 }
@@ -620,6 +618,18 @@ span.hl-status-count {
   padding-left: 4px;
 }
 
+span.hideit {
+  display: none !important;
+}
+
+span.status-subcount {
+  color: $select-color;
+}
+
+span.status-of {
+  color: #ccc;
+}
+
 ul.detailstatus {
   font-family: $bodycaps-font;
 
@@ -635,6 +645,10 @@ div.status-row {
   border-radius: 15px;
   padding: 4px;
   margin: 0 -10px 0 -10px; /* note if this changes, modify margin on ul.detailstatus li */
+}
+
+div.hl-status-row {
+  margin-top: 20px;
 }
 
 div.status-over {
@@ -1326,15 +1340,57 @@ div.filterheader {
 }
 
 /* Measure Picker */
-.sourcepanel .x-panel-body .x-box-inner,
-.measurepanel .x-panel-body .x-box-inner {
-  border: 1px solid $heat-scale-3;
+.sourcepanel, .measurepanel {
+  .x-panel-body .x-box-inner {
+    background-color: $light-color;
+    border: none;
+    font-size: 11px;
+  }
+
+  .groupheader {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-family: $bodycaps-font;
+  }
+
+  .itemrow {
+    color: $dark-color;
+  }
+
+  .itemdisabled {
+    color: $primary-color;
+  }
 }
 
-div.measure-label {
-  @include standout;
-  padding-left: 15px;
-  padding-top: 7px;
+.sourcepanel {
+  margin-right: 5px;
+
+  .itemrow:hover {
+    border-color: $secondary-color;
+    background-color: $secondary-color;
+  }
+
+  .itemselected {
+    border-color: $primary-color;
+    background-color: $primary-color;
+    color: $dark-color !important;
+  }
+}
+
+.measurepanel {
+  margin-left: 5px;
+
+  .itemrow:hover {
+    border-color: $selectongrey-color;
+    background-color: $selectongrey-color;
+    color: $dark-color !important;
+  }
+
+  .itemselected {
+    border-color: $select-color;
+    background-color: $select-color;
+    color: $light-color !important;
+  }
 }
 
 /* Selection Highlight*/

@@ -95,7 +95,7 @@ Ext.define('Connector.view.Scatter', {
             layout: {
                 type: 'hbox'
             },
-            bodyStyle: 'background-color: #F0F0F0;',
+            bodyStyle: 'background: linear-gradient(#f0f0f0, #ebebeb) !important;',
             defaults: {
                 xtype: 'container',
                 width: '50%',
@@ -155,7 +155,7 @@ Ext.define('Connector.view.Scatter', {
             region: 'south',
             height: 50,
             border: false, frame: false,
-            bodyStyle: 'background-color: #F0F0F0;',
+            bodyStyle: 'background: linear-gradient(#ebebeb, #f0f0f0) !important;',
             items: [{
                 xtype: 'container',
                 layout: {
@@ -438,9 +438,13 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 x: function(row){return row.x;}
             },
-            bgColor   : '#FFFFFF', // see $light-color in connector.scss
-            gridColor : '#FFFFFF',
-            gridLineColor : '#FFFFFF',
+            bgColor: '#FFFFFF', // $light-color
+            gridColor: '#FFFFFF',
+            gridLineColor: '#FFFFFF',
+//            tickLength: 0,
+            borderWidth: 2,
+            tickColor: '#FFFFFF',
+            tickTextColor: '#333333', // $dark-color
             scales: scales
         };
 
@@ -1008,7 +1012,7 @@ Ext.define('Connector.view.Scatter', {
             this.axisPanelY = Ext.create('Connector.panel.AxisSelector', {
                 flex: 1,
                 title: 'Y Axis',
-                bodyStyle: 'padding-left: 27px; padding-top: 15px;',
+                bodyStyle: 'padding: 15px 27px 0 27px;',
                 open : function() {},
                 measureConfig: {
                     allColumns: this.allColumns,
@@ -1022,7 +1026,7 @@ Ext.define('Connector.view.Scatter', {
                     multiSelect: false
                 },
                 displayConfig: {
-                    defaultHeader: 'Choose Y Axis'
+                    mainTitle : 'Choose a Variable for the Y Axis...'
                 },
                 scalename: 'yscale'
             });
@@ -1038,19 +1042,21 @@ Ext.define('Connector.view.Scatter', {
                 axisPanel: this.axisPanelY,
                 modal: true,
                 draggable: false,
+                header: false,
+                closeAction: 'hide',
                 resizable: false,
-                minHeight: 450,
-                height: pos.height,
+                minHeight: 500,
+                height: pos.height + 100,
                 width: pos.width,
                 x: pos.leftEdge,
-                y: pos.topEdge,
+                y: pos.topEdge - 50,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
                 },
                 items: [this.axisPanelY],
                 buttons: [{
-                    text: 'Set Y-Axis',
+                    text: 'set y axis',
                     ui: 'rounded-inverted-accent',
                     handler: function() {
                         var yselect = this.axisPanelY.getSelection();
@@ -1108,7 +1114,7 @@ Ext.define('Connector.view.Scatter', {
                 flex      : 1,
                 ui        : 'axispanel',
                 title     : 'X Axis',
-                bodyStyle : 'padding-left: 27px; padding-top: 15px;',
+                bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
                     allColumns : this.allColumns,
                     filter     : LABKEY.Query.Visualization.Filter.create({
@@ -1121,7 +1127,7 @@ Ext.define('Connector.view.Scatter', {
                     multiSelect: false
                 },
                 displayConfig : {
-                    defaultHeader : 'Choose X Axis'
+                    mainTitle : 'Choose a Variable for the X Axis...'
                 },
                 scalename : 'xscale'
             });
@@ -1136,19 +1142,21 @@ Ext.define('Connector.view.Scatter', {
                 axisPanel : this.axisPanelX,
                 modal     : true,
                 draggable : false,
+                header : false,
+                closeAction: 'hide',
                 resizable : false,
                 minHeight : 450,
-                height: pos.height,
+                height: pos.height + 100,
                 width: pos.width,
                 x: pos.leftEdge,
-                y: pos.topEdge,
+                y: pos.topEdge - 50,
                 layout : {
                     type : 'vbox',
                     align: 'stretch'
                 },
                 items   : [this.axisPanelX],
                 buttons : [{
-                    text  : 'Set X-Axis',
+                    text  : 'set x axis',
                     ui    : 'rounded-inverted-accent',
                     handler : function() {
                         var xselect = this.axisPanelX.getSelection();

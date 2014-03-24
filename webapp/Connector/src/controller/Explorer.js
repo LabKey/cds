@@ -90,19 +90,9 @@ Ext.define('Connector.controller.Explorer', {
 
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
-
-                // unfortuntately, we cannot hand back the same uniqueName the cube gives us
-                // it needs to be stripped of the [ ] and . notations
-                var _uname = rec.get('uniqueName');
-                _uname = _uname.split('].');
-                for (var u=0; u < _uname.length; u++) {
-                    _uname[u] = _uname[u].replace("[", "");
-                    _uname[u] = _uname[u].replace("]", "");
-                }
-
                 this.getStateManager().addPrivateSelection({
                     hierarchy: rec.get('hierarchy'),
-                    members: [{uname: _uname }]
+                    members: [{ uniqueName: rec.get('uniqueName') }]
                 }, 'hoverSelectionFilter');
             }
             else {
@@ -372,6 +362,7 @@ Ext.define('Connector.controller.Explorer', {
             if (recs[i].data.isGroup) {
                 uname = uname.slice(0,uname.length-1);
             }
+            // TODO: Convert this to using uniqueName -- currently displays parse this to find unique info
 
             selections.push({
                 hierarchy : recs[i].data.hierarchy,
