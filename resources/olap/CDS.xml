@@ -33,20 +33,16 @@
 
 
     <Dimension visible="true" highCardinality="false" name="Assay">
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Target Area">
-            <Table schema="cds" name="assays" />
-            <Level name="Target Area" visible="true" column="targetarea" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                <Property name="Description" column="description" type="String" dependsOnLevelValue="true"/>
-                <Property name="DatasetId" column="datasetid" type="Numeric" dependsOnLevelValue="true"/>
+        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Target Area">
+            <Table schema="study" name="StudyDesignAssays" />
+            <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
+            <Level name="Name" visible="true" column="name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
             </Level>
         </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Methodology">
-            <Table schema="cds" name="assays" />
+        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Methodology">
+            <Table schema="study" name="StudyDesignAssays" />
             <Level name="Methodology" visible="true" column="methodology" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                <Property name="Description" column="description" type="String" dependsOnLevelValue="true"/>
-                <Property name="DatasetId" column="datasetid" type="Numeric" dependsOnLevelValue="true"/>
+            <Level name="Name" visible="true" column="name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
             </Level>
         </Hierarchy>
     </Dimension>
@@ -127,8 +123,8 @@
 
         <Dimension visible="true" highCardinality="false" name="Lab" foreignKey="lab">
             <Hierarchy visible="true" hasAll="true">
-                <Table schema="cds" name="labs" />
-                <Level name="Lab" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+                <Table schema="study" name="StudyDesignLabs" />
+                <Level name="Lab" visible="true" column="Name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
                 </Level>
             </Hierarchy>
         </Dimension>

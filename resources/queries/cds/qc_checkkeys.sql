@@ -35,11 +35,11 @@ UNION
 
 SELECT Container, 'FAILED - missing assay' as qc, Facts.Assay as value
 FROM Facts
-WHERE Facts.Assay IS NOT NULL AND Facts.Assay.Id IS NULL
+WHERE Facts.Assay IS NOT NULL AND Facts.Assay.Name IS NULL
 
 UNION
 
 SELECT Container, 'FAILED - missing lab' as qc, Facts.Lab as value
 FROM Facts
-WHERE Facts.Lab IS NOT NULL AND Facts.Lab.Id IS NULL
+WHERE Facts.Lab IS NOT NULL AND Facts.Lab.Name IS NULL
 

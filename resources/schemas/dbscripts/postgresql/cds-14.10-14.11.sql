@@ -1,3 +1,5 @@
---ALTER TABLE cds.Facts DROP CONSTRAINT fk_fact_study;
---ALTER TABLE cds.Facts DROP COLUMN study;
---ALTER TABLE cds.Facts ADD COLUMN study ENTITYID;
+ALTER TABLE cds.Facts DROP CONSTRAINT fk_fact_study;
+ALTER TABLE cds.Facts DROP COLUMN study;
+ALTER TABLE cds.Facts ADD COLUMN study ENTITYID;
+ALTER TABLE cds.Facts DROP CONSTRAINT fk_fact_assay;
+ALTER TABLE cds.Facts DROP CONSTRAINT fk_fact_lab;
