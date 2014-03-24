@@ -17,7 +17,7 @@
 
 SELECT Container, 'FAILED - missing study' as qc, Facts.Study as value
 FROM Facts
-WHERE Facts.Study.StudyName IS NULL
+WHERE Facts.Study.Label IS NULL
 
 UNION
 

@@ -50,14 +50,13 @@ public class FactLoader
     private ColumnMapper[] _colsToMap;
     private int _rowsInserted = -1;
 
-    public FactLoader(DataSet sourceDataset, User user, Container c)
+    public FactLoader(UserSchema studySchema, DataSet sourceDataset, User user, Container c)
     {
         _sourceDataset = sourceDataset;
-        _sourceTableInfo = sourceDataset.getTableInfo(user);
+        _sourceTableInfo = studySchema.getTable(sourceDataset.getName());
         _container = c;
         _user = user;
         CDSUserSchema cdsSchema = new CDSUserSchema(user, c);
-        UserSchema studySchema = QueryService.get().getUserSchema(user, c, "study");
 
         /*
          * ColumnMappers find the correct columns in the dataset to map into cube columns and can map a const if not found.
@@ -256,7 +255,7 @@ public class FactLoader
 
                 return sqlFragment;
             }
-            else if (null != _sourceColumn)
+            else if (null != _sourceColumn && _lookupTarget.getSchema().getName().equalsIgnoreCase("cds")) //TODO: Fix up missing keys in study schema
             {
                 /*
                 INSERT INTO cds.Assays ( container, id)

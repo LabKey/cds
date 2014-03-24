@@ -25,6 +25,8 @@
 <%@ page import="org.labkey.cds.FactLoader" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.labkey.cds.PopulateBehavior" %>
+<%@ page import="org.labkey.api.query.UserSchema" %>
+<%@ page import="org.labkey.api.query.QueryService" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     ViewContext context = getViewContext();
@@ -35,6 +37,7 @@
     List<String> selectedDatasets = context.getList("dataset");
     boolean selected = null != selectedDatasets && selectedDatasets.size() > 0;
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
+    UserSchema studySchema = QueryService.get().getUserSchema(getUser(), c, "study");
 
 %>
 This action deletes all rows from the fact table and populates it with data from the datasets in the study.
@@ -58,7 +61,7 @@ to be filled in by another mechanism.<br>
     <h3><input type='checkbox' name='dataset'<%=checked(!selected || selectedDatasets.contains(ds.getName()))%> value='<%=h(ds.getName())%>'>
         <a href="<%=studyUrls.getDatasetURL(c, ds.getDataSetId())%>"><%=h(ds.getName())%></a></h3>
     <%
-    FactLoader mapper = new FactLoader(ds, getUser(), c);
+    FactLoader mapper = new FactLoader(studySchema, ds, getUser(), c);
         for (FactLoader.ColumnMapper colMapper : mapper.getMappings())
         {
             if (colMapper.getSelectName().equalsIgnoreCase("container"))

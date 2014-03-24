@@ -31,6 +31,7 @@ import org.labkey.test.pages.StudyDetailsPage;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
+import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ext4cmp.Ext4CmpRef;
 import org.openqa.selenium.Keys;
@@ -58,7 +59,7 @@ import static org.junit.Assert.assertTrue;
 public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTest
 {
     private static final String PROJECT_NAME = "CDSTest Project";
-    private static final File FOLDER_ZIP = new File(getSampledataPath(), "CDS/Dataspace.folder.zip");
+    private static final File FOLDER_ZIP = new File(getCDSSampleDataPath(), "Dataspace.folder.zip");
     private static final String STUDIES[] = {"Demo Study", "Not Actually CHAVI 001", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     private static final String GROUP_NAME = "CDSTest_AGroup";
@@ -71,6 +72,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     public final static int CDS_WAIT = 5000;
+
+    public static String getCDSSampleDataPath()
+    {
+        File path = new File(getLabKeyRoot(), "server/customModules/cds/test/sampledata");
+        return path.toString();
+    }
 
     @Override
     public String getAssociatedModuleDirectory()
@@ -139,19 +146,27 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @LogMethod(category = LogMethod.MethodType.SETUP)
     private void setupProject()
     {
-        _containerHelper.createProject(PROJECT_NAME, "Study");
+        _containerHelper.createProject(PROJECT_NAME, "Dataspace");
         enableModule(PROJECT_NAME, "CDS");
-        importFolderFromZip(FOLDER_ZIP);
         goToProjectHome();
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
     private void importData()
     {
+        importComponentStudy("DemoSubset");
+        importComponentStudy("NotCHAVI001");
+        importComponentStudy("NotCHAVI008");
+        importComponentStudy("NotRV144");
+
+        //Can't add web part until we actually have the datasets imported above
+        clickProject(PROJECT_NAME);
+        PortalHelper portalHelper = new PortalHelper(this);
+        portalHelper.addWebPart("CDS Management");
+
         importCDSData("Antigens",          "antigens.tsv");
         importCDSData("Sites",             "sites.tsv");
         importCDSData("Assays",            "assays.tsv");
-        importCDSData("Studies",           "studies.tsv");
         importCDSData("Labs",              "labs.tsv");
         importCDSData("People",            "people.tsv");
         importCDSData("Citable",           "citable.tsv");
@@ -162,6 +177,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
+    private void importComponentStudy(String studyName)
+    {
+        _containerHelper.createSubfolder(getProjectName(), studyName, "Study");
+        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true);
+    }
+
+    @LogMethod(category = LogMethod.MethodType.SETUP)
     private void importCDSData(String query, String dataFilePath)
     {
         clickProject(PROJECT_NAME);
@@ -169,7 +191,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText(query));
         _listHelper.clickImportData();
 
-        setFormElementJS(Locator.id("tsv3"), getFileContents(new File(getSampledataPath(), "CDS/" + dataFilePath)));
+        setFormElementJS(Locator.id("tsv3"), getFileContents(new File(getCDSSampleDataPath(), dataFilePath)));
         clickButton("Submit");
     }
 
