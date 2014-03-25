@@ -345,7 +345,7 @@ li.fadein {
 
 /* Connector.panel.FilterPanel */
 div.selitem {
-  width: 245px;
+  width: 90%; /* remaining space for .circle */
   padding: 4px 6px;
 }
 
@@ -391,6 +391,7 @@ div.selectionpanel {
 div.selectionfilter {
   position: relative;
   display: inline-block;
+  width: 100%;
 }
 
 .closeitem {
@@ -422,7 +423,7 @@ div.selectionfilter {
 }
 
 div.collapsed-member {
-  width: 200px;
+  width: 77%;
   padding: 4px 8px;
   font-size: 10pt;
 }
