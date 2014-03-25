@@ -67,14 +67,14 @@ public class CDSCitableQueryUpdateService extends CDSSimpleQueryUpdateService
         return super.deleteRow(user, container, oldRowMap);
     }
 
-    private void deleteCitableAuthors(User user, Container container, Map<String, Object> row) throws SQLException
+    private void deleteCitableAuthors(User user, Container container, Map<String, Object> row)
     {
         SimpleFilter filter = SimpleFilter.createContainerFilter(container);
         filter.addCondition(FieldKey.fromParts("CitableURI"), row.get("URI"));
         Table.delete(CDSSchema.getTableInfoCitableAuthors(), filter);
     }
 
-    private void insertCitableAuthors(User user, Container container, Map<String, Object> row) throws SQLException
+    private void insertCitableAuthors(User user, Container container, Map<String, Object> row)
     {
         if (null != row.get("Authors"))
         {
