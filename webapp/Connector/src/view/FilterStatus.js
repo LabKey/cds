@@ -37,7 +37,7 @@ Ext.define('Connector.view.FilterStatus', {
         this.filterpanel = Ext.create('Connector.panel.FilterPanel', {
             title: 'Active filters',
             headerButtons: [
-                { xtype: 'button', text: 'save', cls: 'filtersave',  ui: 'rounded-inverted-accent', itemId: 'savegroup', style: 'margin: 4px 2px 0 35px;', hidden: hidden},
+                { xtype: 'button', text: 'save', cls: 'filtersave',  ui: 'rounded-inverted-accent', itemId: 'savegroup', style: 'margin: 4px 2px 0 23px;', hidden: hidden},
                 { xtype: 'button', text: 'clear', cls: 'filterclear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
             ],
             filters: this.filters
@@ -57,9 +57,9 @@ Ext.define('Connector.view.FilterStatus', {
 //                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent', width: 123 },
 //                { text: 'clear', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 45 }
                 // 7pt font sizes
-                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent', width: 80 },
-                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent', width: 107 },
-                { text: 'clear', cls: 'selectionclear', itemId: 'sClear', ui : 'rounded-inverted-accent', width: 45 }
+                { text: 'use as filter', itemId: 'overlap', ui : 'rounded-inverted-accent' },
+                { text: 'label as subgroup', itemId: 'subgroup', ui : 'rounded-inverted-accent' },
+                { text: 'clear', cls: 'selectionclear', itemId: 'sClear', ui : 'rounded-inverted-accent' }
             ],
             filters: this.selections
         });
