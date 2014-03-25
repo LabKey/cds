@@ -17,7 +17,15 @@ Ext.define('Connector.controller.FilterStatus', {
 
         this.control('app-main > #eastview > #navfilter', {
             afterrender : function(navfilter) {
-                navfilter.add(this.createFilterStatus(), this.createFilterDetail());
+                var container = Ext.create('Ext.container.Container', {
+                    style: 'overflow-y: auto; overflow-x: hidden;',
+                    flex: 1,
+                    items: [
+                        this.createFilterStatus(),
+                        this.createFilterDetail()
+                    ]
+                });
+                navfilter.add(container);
             }
         });
 

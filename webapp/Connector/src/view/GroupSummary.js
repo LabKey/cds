@@ -99,8 +99,28 @@ Ext.define('Connector.view.GroupSummary', {
                     }
                 }
             });
+
+            this.summaryHeader.on('deletegroup', this.onDelete, this);
         }
         return this.summaryHeader;
+    },
+
+    onDelete : function(group) {
+        if (this.showMessage) {
+            this.hideMessage(true);
+            var id = Ext.id();
+            var cancelId = Ext.id();
+            this.showMessage('Are you sure you want to delete "' + group.get('label') + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
+            var deleteLink = Ext.get(id);
+            if (deleteLink) {
+//                this.fireEvent('requestgroupdelete', this.group.data.id);
+                deleteLink.on('click', function() { this.fireEvent('requestgroupdelete', group.get('id')); }, this, {single: true});
+            }
+            var cancelLink = Ext.get(cancelId);
+            if (cancelLink) {
+                cancelLink.on('click', function() { this.hideMessage(true); }, this, {single: true});
+            }
+        }
     },
 
     getBody : function(){
@@ -218,12 +238,13 @@ Ext.define('Connector.view.GroupSummaryHeader', {
     },
 
     deleteGroup : function() {
-        Ext.MessageBox.confirm(
-                'Delete Group?',
-                'Are you sure you want to delete "' + this.group.get('label') + '"?',
-                function(ans){ if (ans === 'yes') { this.fireEvent('requestgroupdelete', this.group.data.id); }},
-                this
-        );
+        this.fireEvent('deletegroup', this.group);
+//        Ext.MessageBox.confirm(
+//                'Delete Group?',
+//                'Are you sure you want to delete "' + this.group.get('label') + '"?',
+//                function(ans){ if (ans === 'yes') { this.fireEvent('requestgroupdelete', this.group.data.id); }},
+//                this
+//        );
     },
 
     updateView : function(group) {

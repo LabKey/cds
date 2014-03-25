@@ -74,7 +74,7 @@ Ext.define('Connector.plugin.Messaging', {
         }
     },
 
-    showMessage : function(msg, force, keep) {
+    showMessage : function(msg, force, keep, modal) {
         if (this.showmsg || force) {
             this.clearMessage();
 
@@ -98,6 +98,7 @@ Ext.define('Connector.plugin.Messaging', {
                 y: this.calculateY(this, box, msg),
                 listeners: listeners,
                 keep: keep,
+                modal: modal === true,
                 scope: this
             });
         }
