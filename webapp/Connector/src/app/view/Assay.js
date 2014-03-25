@@ -38,7 +38,7 @@ Ext.define('Connector.app.view.Assay', {
             '<div class="detail-wrapper">',
                 '<div class="detail-container study-detail">',
                     '<div class="study-description">',
-                        '<h2>{Id}</h2>',
+                        '<h2>{Name}</h2>',
                         '<div class="description-text">{Description}</div>',
                     '</div>',
                     '<div class="study-date">',
