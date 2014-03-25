@@ -42,6 +42,12 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
+        this.control('', {
+            gotoassaypage: function() {
+                this.getViewManager()._changeView('learn', 'learn', ['assay']);
+            }
+        });
+
         this.callParent();
     },
 
