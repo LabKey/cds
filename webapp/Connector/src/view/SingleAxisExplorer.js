@@ -384,27 +384,9 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
         this.callParent();
 
-        this.groupClickTask = new Ext.util.DelayedTask(this.groupClick, this);
-        this.selectionTask = new Ext.util.DelayedTask(this.selection, this);
         this.msgTask = new Ext.util.DelayedTask(this._loadMsg, this);
 
-        this.store.on('subselect', this.renderSelection, this);
-        this.store.on('selectrequest', function() { this.selectRequest = true; },   this);
-
         this.on('itemmouseenter', this.renderInfoButton, this);
-    },
-
-    groupClick : function(rec, node) {
-        var grps = this.store.getGroups(),
-                field = this.store.groupField, g;
-        for (g=0; g < grps.length; g++) {
-            if (grps[g].name == rec.data[field]) {
-                this.toggleGroup(grps[g], false, true);
-                if (this.resizeTask)
-                    this.resizeTask.delay(100);
-                return;
-            }
-        }
     },
 
     _loadMsg : function() {
@@ -425,236 +407,14 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         }
     },
 
-    toggleGroup : function(grp, force, animate) {
-        var animConfig, current, ext,
-                first = true,
-                listeners,
-                node,
-                me = this, c;
-        this.store.suspendEvents();
-        for (c=0; c < grp.children.length; c++) {
-
-            if (!grp.children[c].data.isGroup) {
-
-                node = this.getNodeByRecord(grp.children[c]);
-                ext = Ext.get(node);
-                current = ext.getActiveAnimation();
-                if (current && !force)
-                    ext.stopAnimation();
-                animConfig = {};
-                listeners  = {};
-
-                if (!grp.children[c].data.collapsed) // collapse
-                {
-                    animConfig = {
-                        to : {opacity: 0, height: 0},
-                        setDisplay : 'none',
-                        collapsed : true,
-                        sign  : '+',
-                        scope : this
-                    };
-                }
-                else // expand
-                {
-                    animConfig = {
-                        to : {opacity: 1, height: 27},
-                        setDisplay : 'block',
-                        collapsed : false,
-                        sign  : '-',
-                        scope : this
-                    };
-                }
-
-                if (c == grp.children.length-1)
-                {
-                    listeners.beforeanimate = function(anim) {
-                        anim.target.target.dom.style.display=animConfig.setDisplay;
-                        me.animate = false;
-                        me.positionTask.delay(0, null, null, [true]);
-                    }
-                }
-                else
-                {
-                    listeners.beforeanimate = function(anim) {
-                        anim.target.target.dom.style.display=animConfig.setDisplay;
-                    }
-                }
-                animConfig.listeners = listeners;
-
-                if (animate)
-                    ext.animate(animConfig);
-                else
-                {
-                    animConfig.to.display = animConfig.setDisplay;
-                    ext.setStyle(animConfig.to);
-                }
-
-                if (first)
-                {
-                    var prev = ext.prev().child('.saecollapse');
-                    prev.update('<p unselectable="on">' + animConfig.sign + '</p>');
-                    first = false;
-                }
-
-                grp.children[c].set('collapsed', animConfig.collapsed);
-                me.store.setCollapse(grp.children[c], animConfig.collapsed);
-            }
-            else if (grp.children[c+1] && !grp.children[c+1].data.isGroup)
-            {
-                var rec = grp.children[c+1];
-                node    = this.getNodeByRecord(rec);
-                ext     = Ext.get(node);
-
-                var prev = ext.prev().child('.saecollapse');
-                if (prev) {
-                    prev.update('<p unselectable="on">' + (rec.data.collapsed ? '+' : '-') + '</p>');
-                }
-            }
-        }
-        this.store.resumeEvents();
-    },
-
-    selectionChange : function(sel, isPrivate) {
-        this.selections = sel;
-        if (this.dimension) {
-            Ext.defer(function() {
-                if (sel.length > 0) {
-                    this.selection(false, isPrivate);
-                }
-                else {
-                    if (!isPrivate) {
-                        this.getSelectionModel().deselectAll();
-                    }
-                    this.store.clearSelection();
-                }
-            }, 150, this);
-        }
-        else {
-            console.warn('Dimension must be loaded before selection change');
-        }
-    },
-
-    filterChange : function() {
-        if (this.dimension) {
-            this.animate = false;
-            this.loadStore();
-        }
-    },
-
-    onMaxCount : function(count) {
-        this.callParent();
-        this.cancelShowLoad();
-
-        // clean-up buttons
-        for (var btn in this.btnMap) {
-            if (this.btnMap.hasOwnProperty(btn)) {
-                this.btnMap[btn].destroy();
-            }
-        }
-        this.btnMap = {};
-    },
-
-    selection : function(useLast) {
-        if (this.selectRequest && this.selections && this.selections.length > 0) {
-            this.store.loadSelection(useLast);
-        }
-        else {
-            this.getSelectionModel().deselectAll();
-            this.store.clearSelection();
-        }
-    },
-
-    _renderHasAdd : function(sel, countNode, width, remove, trueCount, subCount) {
-        var cls = 'inactive';
-        if (sel) {
-            sel.setWidth('' + width + 'px');
-        }
-        if (remove) {
-            if (countNode.hasCls(cls)) {
-                countNode.removeCls(cls);
-            }
-            countNode.update(trueCount);
-        }
-        else {
-            if (!countNode.hasCls(cls)) {
-                countNode.addCls(cls);
-            }
-            countNode.update(subCount);
-        }
-    },
-
-    renderSelection : function(r) {
-
-        var node;
-        for (var i=0; i < r.length; i++) {
-            node = this.getNode(r[i]);
-            if (node) {
-
-                var selBar = Ext.query('.index-selected', node);
-
-                if (selBar) {
-                    var countNode = Ext.get(Ext.query('.count', node)[0]);
-                    var bar = Ext.get(Ext.query(".index", node)[0]);
-
-                    var _w = parseFloat(bar.getStyle('width'));
-                    var sub = r[i].data.subcount; var count = r[i].data.count;
-                    var _c = sub / count;
-                    var sel = Ext.get(selBar[0]);
-                    if (_c == 0 || isNaN(_c)) {
-                        this._renderHasAdd(sel, countNode, 0, true, count, sub);
-                    }
-                    else if (_c >= 1) {
-                        this._renderHasAdd(sel, countNode, _w, false, count, sub);
-                    }
-                    else {
-                        this._renderHasAdd(sel, countNode, (_c * _w), false, count, sub);
-                    }
-                }
-            }
-        }
-    },
-
-    registerGroupClick : function(node, rec) {
-        node.on('click', function() {
-            this.groupClickTask.delay(100, null, null, [rec]);
-        }, this);
-    },
-
-    positionHelper : function() {
-        this.selectRequest = true;
-        this.selectionTask.delay(100);
-    },
-
     positionText : function(collapseMode) {
         this.callParent();
         this.cancelShowLoad();
     },
 
-    toggleCollapse : function(animate) {
-        var grps = this.store.getGroups();
-        for (var g=0; g < grps.length; g++)
-            this.toggleGroup(grps[g], true, animate);
-        if (this.resizeTask) {
-            this.resizeTask.delay(100);
-        }
-    },
-
-    toggleEmpty : function() {
-        this.showEmpty = !this.showEmpty;
-        this.loadStore();
-        return this.showEmpty;
-    },
-
-    loadStore : function() {
-        this.store.load(this.dimension, this.hierarchyIndex, true, this.showEmpty);
-        this.showLoad();
-    },
-
     renderInfoButton : function(view, rec, element) {
         if (rec && !rec.data.isGroup && this.dimension.supportsDetails) {
             var el = Ext.get(Ext.query(".info", element)[0]);
-
-            var name = this.dimension.getName();
 
             if (this.btnMap[rec.id]) {
                 this.btnMap[rec.id].show();
@@ -678,5 +438,23 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     // for skipping of click events on individual bars.
     resetButtonClick : function() {
         this.btnclick = false;
+    },
+
+    loadStore : function() {
+        this.callParent();
+        this.showLoad();
+    },
+
+    onMaxCount : function(count) {
+        this.callParent();
+        this.cancelShowLoad();
+
+        // clean-up buttons
+        for (var btn in this.btnMap) {
+            if (this.btnMap.hasOwnProperty(btn)) {
+                this.btnMap[btn].destroy();
+            }
+        }
+        this.btnMap = {};
     }
 });

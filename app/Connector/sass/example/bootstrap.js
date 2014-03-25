@@ -111,7 +111,8 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
-  "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js"
+  "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
+  "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
@@ -1033,7 +1034,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.store.OlapExplorer": [],
-  "LABKEY.app.view.OlapExplorer": []
+  "LABKEY.app.view.OlapExplorer": [],
+  "LABKEY.app.view.Selection": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Connector.Application": [],
@@ -2209,7 +2211,8 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"
-  ]
+  ],
+  "LABKEY.app.view.Selection": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");
