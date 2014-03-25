@@ -103,7 +103,14 @@ public class CDSManager
         Person p = new TableSelector(CDSSchema.getTableInfoPeople()).getObject(person.getContainer(), filter, Person.class);
         if (null == p)
         {
-            p = Table.insert(u, CDSSchema.getTableInfoPeople(), person);
+            try
+            {
+                p = Table.insert(u, CDSSchema.getTableInfoPeople(), person);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeSQLException(e);
+            }
         }
 
         return p;
@@ -124,7 +131,14 @@ public class CDSManager
         Citable citable = new TableSelector(CDSSchema.getTableInfoPeople()).getObject(cited.getContainer(), cited.getURI(), Citable.class);
         if (null == citable)
         {
-            citable = Table.insert(u, CDSSchema.getTableInfoCitable(), cited);
+            try
+            {
+                citable = Table.insert(u, CDSSchema.getTableInfoCitable(), cited);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeSQLException(e);
+            }
         }
 
         return citable;
