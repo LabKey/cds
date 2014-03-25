@@ -41,6 +41,9 @@ $form-field-background-image: none;
 $form-field-border-color: rgb(211, 211, 211);
 $form-field-focus-border-color: $dark-color;
 
+// form/field/Display.scss
+$form-display-field-font: normal 10pt $info-font;
+
 // load mask
 $loadmask-background-color: $dark-color;
 $loadmask-opacity: 0.35;
@@ -342,7 +345,7 @@ li.fadein {
 
 /* Connector.panel.FilterPanel */
 div.selitem {
-  width: 245px;
+  width: 90%; /* remaining space for .circle */
   padding: 4px 6px;
 }
 
@@ -388,6 +391,7 @@ div.selectionpanel {
 div.selectionfilter {
   position: relative;
   display: inline-block;
+  width: 100%;
 }
 
 .closeitem {
@@ -419,7 +423,7 @@ div.selectionfilter {
 }
 
 div.collapsed-member {
-  width: 200px;
+  width: 77%;
   padding: 4px 8px;
   font-size: 10pt;
 }
@@ -899,7 +903,7 @@ div.activefilterstatus {
 }
 
 .bar .barlabel {
-  font-family: Georgia, sans-serif;
+  font-family: $data-font;
   display: block;
   padding: 5px 5px;
   position: relative;

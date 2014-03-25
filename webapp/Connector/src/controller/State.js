@@ -10,6 +10,8 @@ Ext.define('Connector.controller.State', {
 
     defaultController: 'summary',
 
+    subjectName: 'Subject',
+
     appVersion: '0.5',
 
     init : function() {
@@ -34,5 +36,13 @@ Ext.define('Connector.controller.State', {
         else {
             console.warn('FAILED TO UNDO. NOT ABLE TO FIND STATE');
         }
+    },
+
+    getFilterGroupModelName : function() {
+        return 'Connector.model.FilterGroup';
+    },
+
+    getFilterModelName : function() {
+        return 'Connector.model.Filter';
     }
 });

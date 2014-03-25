@@ -35,7 +35,6 @@ Ext.define('Connector.view.Main', {
         region: 'east',
         ui: 'east-view',
         width : 305,
-        maxWidth : 305,
         hidden : false,
         plain : true,
         hideCollapseTool : true,
@@ -45,6 +44,10 @@ Ext.define('Connector.view.Main', {
         items: [{
             xtype: 'panel',
             itemId: 'navfilter',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
             items: [{
                 xtype: 'navigation',
                 ui: 'navigation',
