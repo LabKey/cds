@@ -369,9 +369,9 @@
         <ns:column columnName="AssayID">
             <ns:dimension>false</ns:dimension>
             <ns:fk>
-              <ns:fkColumnName>Id</ns:fkColumnName>
-              <ns:fkTable>Assays</ns:fkTable>
-              <ns:fkDbSchema>cds</ns:fkDbSchema>
+              <ns:fkColumnName>Name</ns:fkColumnName>
+              <ns:fkTable>StudyDesignAssays</ns:fkTable>
+              <ns:fkDbSchema>study</ns:fkDbSchema>
             </ns:fk>
           </ns:column>
         <ns:column columnName="PubMedID"/>

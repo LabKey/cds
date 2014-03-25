@@ -148,6 +148,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         _containerHelper.createProject(PROJECT_NAME, "Dataspace");
         enableModule(PROJECT_NAME, "CDS");
+        goToManageStudy();
+        clickAndWait(Locator.linkWithText("Change Study Properties"));
+        waitForElement(Ext4Helper.Locators.radiobutton(this, "DATE"));
+        _ext4Helper.selectRadioButton("DATE");
+        clickButton("Submit");
+
         goToProjectHome();
     }
 
@@ -166,8 +172,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         importCDSData("Antigens",          "antigens.tsv");
         importCDSData("Sites",             "sites.tsv");
-        importCDSData("Assays",            "assays.tsv");
-        importCDSData("Labs",              "labs.tsv");
         importCDSData("People",            "people.tsv");
         importCDSData("Citable",           "citable.tsv");
         importCDSData("Citations",         "citations.tsv");
@@ -202,12 +206,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText("Populate Fact Table"));
         uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "HIV Test Results"));
         uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Physical Exam"));
+        uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Lab Results"));
         uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "ParticipantVaccines"));
         submit();
 
         assertElementPresent(Locator.linkWithText("NAb"));
         assertElementPresent(Locator.linkWithText("Luminex"));
-        assertElementPresent(Locator.linkWithText("Lab Results"));
         assertElementPresent(Locator.linkWithText("MRNA"));
         assertElementPresent(Locator.linkWithText("ADCC"));
     }
