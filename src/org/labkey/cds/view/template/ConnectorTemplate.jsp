@@ -178,6 +178,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Route.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
 
