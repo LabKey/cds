@@ -232,6 +232,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         //
         String studyGroup = "Study Group Verify";
         String studyGroupDesc = "A set of defined studies.";
+        String studyGroupDescModified = "A set of defined studies. More info added.";
         String assayGroup = "Assay Group Verify";
         String subjectGroup = "Study Characteristics Race Group";
 
@@ -278,26 +279,25 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "save-label");
         waitAndClick(listGroup.withText(studyGroup));
 
-        //
-        // TODO: Would be best if we could somehow verify that the description is updated,
-        // however, I see no way to tell the current value of a 'textarea'.
-        //
-//        waitForText(studyGroupDesc);
-
-        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDesc + " More info added.");
+        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDescModified);
         click(cdsButtonLocator("save", "groupupdatesave"));
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
         assertFilterStatusCounts(18, 2, 4, 3, 28);
 
+        makeNavigationSelection(NavigationLink.HOME);
+        waitForText(studyGroup);
+        click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
+
+        // Verify that the description has changed.
+        waitForText(studyGroupDescModified);
+
         // verify 'whoops' case
         click(cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
         click(cdsButtonLocator("cancel", "groupupdatecancel"));
         clearFilter();
-
-        refresh(); // refresh due to home page not updating currently
 
         // add a filter, which should be blown away when a group filter is selected
         makeNavigationSelection(NavigationLink.SUMMARY);
@@ -307,13 +307,39 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(6, 1, 3, 2, 20);
 
         makeNavigationSelection(NavigationLink.HOME);
-        sleep(500); // let the group display load
+        waitForText(studyGroup);
         click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
 
+        // Verify that filters get replaced when viewing group.
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
         assertFilterStatusCounts(18, 2, 4, 3, 28);
-        assertTextPresent("Study Group Verify", "Description", "Updates", "A set of defined studies. More info added.");
+        assertTextPresent("Study Group Verify", "Description", "Updates", studyGroupDescModified);
+
+        // Change from live to snapshot, verify choice remains after navigating away.
+        click(Locator.tagWithText("label", "Snapshot: Keep this group static"));
+        makeNavigationSelection(NavigationLink.HOME);
+        waitForText(studyGroup);
+        click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
+        waitForText(studyGroupDescModified);
+        Locator selectedRadio = Ext4Helper.Locators.radiobutton(this, "Snapshot: Keep this group static")
+                .withPredicate(Locator.xpath("ancestor-or-self::table").withClass("x-form-cb-checked"));
+        assertElementPresent(selectedRadio);
+
+        // Verify that you can cancel delete
+        click(cdsButtonLocator("delete"));
+        waitForText("Are you sure you want to delete");
+        click(Locator.linkContainingText("Cancel"));
+        waitForTextToDisappear("Are you sure you want to delete");
+        assertTextPresent(studyGroupDescModified);
+
+        // Verify back button works
+        click(cdsButtonLocatorContainingText("back"));
+        waitForText("Welcome to the HIV Vaccine Data Connector.");
+        waitForText(studyGroup);
+
+        // Verify delete works.
+        deleteGroupFromSummaryPage(studyGroup);
 
         clearFilter();
         makeNavigationSelection(NavigationLink.SUMMARY);
@@ -1257,6 +1283,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
     }
 
+    private Locator.XPathLocator cdsButtonLocatorContainingText(String text)
+    {
+        return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]"));
+    }
+
     private Locator.XPathLocator filterMemberLocator()
     {
         return Locator.tagWithClass("div", "memberitem");
@@ -1429,18 +1460,23 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         if (groups.size() > 0)
         {
-            Ext4Helper.setCssPrefix("x4-");
-
-            // leave the app
-            beginAt("/cds/" + getProjectName() + "/begin.view?");
+            makeNavigationSelection(NavigationLink.HOME);
             for (String g : groups)
             {
-                _studyHelper.deleteCustomParticipantGroup(g, "Participant");
+                deleteGroupFromSummaryPage(g);
             }
-
-            Ext4Helper.setCssPrefix("x-");
-            enterApplication();
         }
+    }
+
+    private void deleteGroupFromSummaryPage(String name)
+    {
+        click(Locator.tagWithClass("div", "nav-label").withText(name));
+        waitForText(name);
+        click(cdsButtonLocator("delete"));
+        waitForText("Are you sure you want to delete");
+        click(Locator.linkContainingText("Delete"));
+        waitForText("Welcome to the HIV Vaccine Data Connector.");
+        assertElementNotPresent(Locator.tagWithClass("div", "nav-label").withText(name));
     }
 
 /// CDS App asserts
