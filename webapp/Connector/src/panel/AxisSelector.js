@@ -150,6 +150,8 @@ Ext.define('Connector.panel.AxisSelector', {
 Ext.define('Connector.panel.AxisSelectDisplay', {
     extend: 'Ext.panel.Panel',
 
+    alias: 'widget.axisselectdisplay',
+
     ui: 'custom',
 
     border: false,

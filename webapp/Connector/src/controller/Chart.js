@@ -42,7 +42,7 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
-        this.control('', {
+        this.control('axisselectdisplay', {
             gotoassaypage: function() {
                 this.getViewManager()._changeView('learn', 'learn', ['assay']);
             }
