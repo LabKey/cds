@@ -56,12 +56,12 @@ public class CDSManager
         return _instance;
     }
 
-    public void deleteFacts(Container c) throws SQLException
+    public void deleteFacts(Container c)
     {
         new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("DELETE FROM cds.Facts WHERE Container = ?", c);
     }
 
-    public SourceQuery getSourceQuery(Container c, int rowId) throws SQLException
+    public SourceQuery getSourceQuery(Container c, int rowId)
     {
         return new TableSelector(CDSSchema.getTableInfoSourceQuery()).getObject(c, rowId, SourceQuery.class);
     }
@@ -82,7 +82,7 @@ public class CDSManager
         return Table.update(user, CDSSchema.getTableInfoSourceQuery(), sourceQuery, sourceQuery.getRowId());
     }
 
-    public SourceQuery[] getSourceQueries(Container c) throws SQLException
+    public SourceQuery[] getSourceQueries(Container c)
     {
         return new TableSelector(CDSSchema.getTableInfoSourceQuery(), SimpleFilter.createContainerFilter(c), new Sort("RowId")).getArray(SourceQuery.class);
     }

@@ -74,7 +74,7 @@ Ext.define('Connector.store.Summary', {
             ,{
                 configs : [
                     {
-                        onRows : [ { hierarchy : 'Assay.Target Area', lnum : 2 } ],
+                        onRows : [ { level : '[Assay.Target Area].[Name]' } ],
                         useNamedFilters : this.getFilterSet(),
                         flight : this.flight
                     }
@@ -85,7 +85,7 @@ Ext.define('Connector.store.Summary', {
             ,{
                 configs : [
                     {
-                        onRows : [ { hierarchy : 'Lab', lnum : 1 } ],
+                        onRows : [ { level : '[Lab].[Lab]' } ],
                         useNamedFilters : this.getFilterSet(),
                         flight : this.flight
                     }
@@ -96,16 +96,16 @@ Ext.define('Connector.store.Summary', {
             ,{
                 configs : [
                     {
-                        onRows : [ { hierarchy : 'Subject.Race', lnum : 0 } ],
+                        onRows : [ { level : '[Subject.Race].[(All)]' } ],
                         useNamedFilters : this.getFilterSet(),
                         flight : this.flight
                     },
                     {
-                        onRows : [ { hierarchy : 'Subject.Race', lnum : 1 } ],
+                        onRows : [ { level : '[Subject.Race].[Race]' } ],
                         useNamedFilters : this.getFilterSet()
                     },
                     {
-                        onRows : [ { hierarchy : 'Subject.Country', lnum : 1 } ],
+                        onRows : [ { level : '[Subject.Country].[Country]' } ],
                         useNamedFilters : this.getFilterSet()
                     },
                     {
