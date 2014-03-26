@@ -72,6 +72,7 @@ Ext.define('Connector.store.FilterStatus', {
                                     plural: lvl.countPlural
                                 },
                                 highlight: lvl.activeCount === 'highlight',
+                                dataBasedCount: lvl.dataBasedCount,
                                 cellbased: lvl.cellbased,
                                 priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
                             });
@@ -165,7 +166,8 @@ Ext.define('Connector.store.FilterStatus', {
                 hierarchy: configArray[i].label.singular,
                 count: count,
                 subcount: hasSelections ? subcount : -1,
-                highlight: configArray[i].highlight
+                highlight: configArray[i].highlight,
+                dataBasedCount: configArray[i].dataBasedCount
             };
 
             rec.label = rec.count != 1 ? configArray[i].label.plural : configArray[i].label.singular;
