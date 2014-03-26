@@ -71,7 +71,8 @@ Ext.define('Connector.panel.AxisSelector', {
                 displayConfig: this.displayConfig,
                 disableScale: this.disableScale,
                 disableVariableOptions: this.disableVariableOptions,
-                scalename: this.scalename
+                scalename: this.scalename,
+                bubbleEvents: ['gotoassaypage']
             });
 
             this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
@@ -149,6 +150,8 @@ Ext.define('Connector.panel.AxisSelector', {
 Ext.define('Connector.panel.AxisSelectDisplay', {
     extend: 'Ext.panel.Panel',
 
+    alias: 'widget.axisselectdisplay',
+
     ui: 'custom',
 
     border: false,
@@ -175,6 +178,15 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 items: [
                     this.getDefinitionPanel(),
                     {
+                        xtype: 'button',
+                        ui: 'rounded-inverted-accent',
+                        text: 'go to assay page',
+                        handler: function() {
+                            this.fireEvent('gotoassaypage');
+                        },
+                        scope: this
+                    },
+                    {
                         xtype: 'container',
                         height: 75,
                         layout: { type: 'hbox' },
@@ -196,6 +208,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         }];
 
         this.callParent();
+
+        this.addEvents('gotoassaypage');
     },
 
     getDefinitionPanel : function() {
@@ -206,9 +220,9 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 autoScroll: true,
                 ui: 'custom',
                 cls: 'definitionpanel iScroll',
-                height: !this.disableScale ? 140 : undefined,
+                height: !this.disableScale ? 125 : 180,
                 bodyStyle: 'background-color: transparent;',
-                padding: '10px 0 0 0',
+                padding: '10px 0 5px 0',
                 data: {},
                 tpl: new Ext.XTemplate(
                         '<div class="curselauth" style="width: 100%;">Definition: {label}</div>',
