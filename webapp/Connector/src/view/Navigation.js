@@ -117,11 +117,9 @@ Ext.define('Connector.view.NavigationView', {
         }
     },
 
-    selectByView : function(xtype, defaultSelect) {
+    selectByView : function(xtype) {
         var rec = this.store.find('controller', xtype, null, null, true, true);
         if (rec > -1)
             this.select(rec);
-        else if (Ext.isNumber(defaultSelect))
-            this.select(defaultSelect);
     }
 });

@@ -55,7 +55,7 @@ Ext.define('Connector.controller.Navigation', {
     markActiveSelection : function() {
         if (this.primaryNav) {
             if (this.active) {
-                this.primaryNav.getNavigationView().selectByView(this.active, 2);
+                this.primaryNav.getNavigationView().selectByView(this.active);
             }
         }
     },

@@ -28,14 +28,14 @@ Ext.define('Connector.controller.Learn', {
             }
         });
 
-        this.control('detailstatus', {
-            itemclick : function(view, rec, node, idx) {
-                var r = view.getStore().getAt(idx+1);
-                var detail = r.data;
-                var key = detail.hierarchy.split('.')[0];
-                this.onDetail(key, detail);
-            }
-        });
+//        this.control('detailstatus', {
+//            itemclick : function(view, rec, node, idx) {
+//                var r = view.getStore().getAt(idx+1);
+//                var detail = r.data;
+//                var key = detail.hierarchy.split('.')[0];
+//                this.onDetail(key, detail);
+//            }
+//        });
 
         //
         // Hook into the primary controller hide/show actions for learn views
