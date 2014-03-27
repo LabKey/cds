@@ -249,7 +249,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertElementNotPresent(Locator.linkWithText("Admin"));
     }
 
-    @Test
+    //@Test
     public void verifyGroups()
     {
         log("Verify Groups");
@@ -372,7 +372,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         makeNavigationSelection(NavigationLink.SUMMARY);
     }
 
-    @Test
+    //@Test
     public void verifyFilterDisplays()
     {
         log("verify filter displays");
@@ -565,7 +565,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator(GRID_CLEAR_FILTER));
     }
 
-    @Test
+    //@Test
     public void verifyCounts()
     {
         assertAllSubjectsPortalPage();
@@ -648,7 +648,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertSelectionStatusCounts(5, 1, 3, 1, 3);
     }
 
-    @Test
+    //@Test
     public void verifyFilters()
     {
         log("Verify multi-select");
@@ -771,7 +771,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
     }
 
-    @Test
+    //@Test
     @Ignore("Single Noun Pages NYI")
     public void verifyNounPages()
     {
@@ -824,7 +824,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertVaccineTypeInfoPage("VRC-HIVDNA016-00-VP", "VRC-HIVDNA016-00-VP is manufactured by Vical Incorporated");
     }
 
-    @Test
+    //@Test
     public void testLearnAboutStudies()
     {
         viewLearnAboutPage("Studies");
@@ -833,7 +833,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         verifyLearnAboutPage(studies);
     }
 
-    @Test
+    //@Test
     public void testLearnAboutAssays()
     {
         viewLearnAboutPage("Assays");
@@ -842,7 +842,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         verifyLearnAboutPage(assays);
     }
 
-    @Test
+    //@Test
     public void testLearnAboutStudyProducts()
     {
         viewLearnAboutPage("Study products");
@@ -851,7 +851,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         verifyLearnAboutPage(studyProducts);
     }
 
-    @Test
+    //@Test
     public void testLearnAboutLabs()
     {
         viewLearnAboutPage("Labs");
@@ -861,7 +861,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     // Sites have been disabled until it is no longer dependent on the demographics dataset
-    // @Test
+    //@Test
     public void testLearnAboutSites()
     {
         viewLearnAboutPage("Sites");
@@ -876,7 +876,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    @Test
+    //@Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -975,7 +975,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         }
     }
 
-    @Test
+    //@Test
     @Ignore("Individual noun detail pages NYI")
     public void testSummaryPageDetailsLinks()
     {
@@ -1004,7 +1004,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         verifyAssayDetailsFromSummary(nabSampleLabKey);
     }
 
-    @Test
+    //@Test
     public void testSummaryPageSingleAxisLinks()
     {
         Locator dimensionGroup = Locator.css("div.dimgroup");
@@ -1040,7 +1040,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
     }
 
-    @Test
+    //@Test
     @Ignore("Multi-noun details for antigens NYI")
     public void testMultiAntigenInfoPage()
     {
@@ -1065,7 +1065,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         closeInfoPage();
     }
 
-    @Test
+    //@Test
     @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
     {
