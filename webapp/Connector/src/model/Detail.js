@@ -12,6 +12,7 @@ Ext.define('Connector.model.Detail', {
         {name: 'value'},
         {name: 'count', type: 'int'},
         {name: 'subcount', type: 'int'}, // a value of -1 determines that the subcount is not provided
+        {name: 'dataBasedCount', type: 'boolean'},
         {name: 'valueLabel'},
         {name: 'highlight'},
         {name: 'hierarchy'}

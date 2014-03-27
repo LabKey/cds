@@ -95,6 +95,14 @@ Ext.define('Connector.controller.FilterStatus', {
         state.on('filterchange', view.onFilterChange, view);
         state.on('selectionchange', view.onFilterChange, view);
 
+        var vm = this.getViewManager();
+        vm.on('afterchangeview', function(controller, view) {
+            store.clearFilter();
+            if (view !== 'plot' && view !== 'datagrid') {
+                store.filter('dataBasedCount', false);
+            }
+        }, this);
+
         return view;
     },
 

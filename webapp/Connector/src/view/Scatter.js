@@ -439,12 +439,13 @@ Ext.define('Connector.view.Scatter', {
                 x: function(row){return row.x;}
             },
             bgColor: '#FFFFFF', // $light-color
-            gridColor: '#FFFFFF',
-            gridLineColor: '#FFFFFF',
-//            tickLength: 0,
+            gridColor: '#FFFFFF', // $light-color
+            gridLineColor: '#F0F0F0', // $secondary-color
+            gridLineWidth: 1.25,
             borderWidth: 2,
-            tickColor: '#FFFFFF',
-            tickTextColor: '#333333', // $dark-color
+            borderColor: '#CCC8C8', // $heat-scale-3
+            tickColor: '#FFFFFF', // $light-color
+            tickTextColor: '#666363', // $heat-scale-1
             scales: scales
         };
 

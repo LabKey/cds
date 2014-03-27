@@ -1246,6 +1246,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void clearFilter()
     {
+        waitForElement(cdsButtonLocator("clear", "filterclear"));
         waitAndClick(cdsButtonLocator("clear", "filterclear"));
         waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
@@ -1545,8 +1546,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(getSelectionStatusLocator(subjectCount, "Subject"));
         waitForElement(getSelectionStatusLocator(studyCount, "Stud"));
         waitForElement(getSelectionStatusLocator(assayCount, "Assay"));
-        waitForElement(getSelectionStatusLocator(contributorCount, "Lab"));
-        waitForElement(getSelectionStatusLocator(antigenCount, "Antigen"));
+//        waitForElement(getSelectionStatusLocator(contributorCount, "Lab"));
+//        waitForElement(getSelectionStatusLocator(antigenCount, "Antigen"));
     }
 
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
@@ -1554,8 +1555,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
         waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies", true));
         waitForElement(getFilterStatusLocator(assayCount, "Assay", "Assays", true));
-        waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
-        waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
+//        waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
+//        waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
     }
 
     @LogMethod

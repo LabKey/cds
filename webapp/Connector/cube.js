@@ -21,6 +21,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      hidden          - declare whether a hierarchy is hidden. Defaults to false.
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
+        //      dataBasedCount  - false/true. Default is false.
         //      countPriority   - Default is 0.
         //      countSingular   - Default is undefined.
         //      countPlural     - Default is undefined.
@@ -132,6 +133,7 @@ Ext4.define('Connector.cube.Configuration', {
                     levels: [{
                         uniqueName: '[Antigen.Tier].[Name]',
                         activeCount: true,
+                        dataBasedCount: true,
                         countPriority: 60,
                         countSingular: 'Antigen',
                         countPlural: 'Antigens'
@@ -150,6 +152,7 @@ Ext4.define('Connector.cube.Configuration', {
                     levels: [{
                         uniqueName: '[Lab].[Lab]',
                         activeCount: true,
+                        dataBasedCount: true,
                         countPriority: 70,
                         countSingular: 'Lab',
                         countPlural: 'Labs'
@@ -191,6 +194,7 @@ Ext4.define('Connector.cube.Configuration', {
 
             var ll = {
                 activeCount: false,
+                dataBasedCount: false,
                 countPriority: 0,
                 countSingular: undefined,
                 countPlural: undefined,
@@ -296,6 +300,7 @@ Ext4.define('Connector.cube.Configuration', {
                             ctx = {};
                             Ext.apply(ctx, {
                                 activeCount: Ext.isDefined(lvl.activeCount) ? lvl.activeCount : defaults.activeCount,
+                                dataBasedCount: Ext.isDefined(lvl.dataBasedCount) ? lvl.dataBasedCount : defaults.dataBasedCount,
                                 countPriority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : defaults.countPriority,
                                 countSingular: Ext.isDefined(lvl.countSingular) ? lvl.countSingular : defaults.countSingular,
                                 countPlural: Ext.isDefined(lvl.countPlural) ? lvl.countPlural : defaults.countPlural,
