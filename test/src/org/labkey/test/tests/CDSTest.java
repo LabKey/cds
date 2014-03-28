@@ -60,7 +60,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 {
     private static final String PROJECT_NAME = "CDSTest Project";
     private static final File FOLDER_ZIP = new File(getCDSSampleDataPath(), "Dataspace.folder.zip");
-    private static final String STUDIES[] = {"Demo Study", "Not Actually CHAVI 001", "NotRV144"};
+    private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     private static final String GROUP_NAME = "CDSTest_AGroup";
     private static final String GROUP_NAME2 = "CDSTest_BGroup";
@@ -372,7 +372,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         makeNavigationSelection(NavigationLink.SUMMARY);
     }
 
-    //@Test
+    @Test
     public void verifyFilterDisplays()
     {
         log("verify filter displays");
@@ -397,51 +397,51 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
         assertElementPresent(Locator.tagWithClass("div", "selitem").withText("Study"));
-        assertSelectionStatusCounts(18, 2, 4, 3, 28);
+        assertSelectionStatusCounts(18, 2, 3, 3, 28);
 
         // clear by selection
         selectBars(STUDIES[1]);
         waitForElement(filterMemberLocator("Study: " + STUDIES[1]));
-        assertSelectionStatusCounts(12, 1, 3, 2, 8);
+        assertSelectionStatusCounts(12, 1, 2, 2, 8);
 
         // verify multi-level filtering
         goToAppHome();
         clickBy("Assays");
-        selectBars("ADCC-Ferrari", "Innate");
-        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
-        assertElementPresent(filterMemberLocator("Assay (Target Area): Innate"));
+        selectBars("ADCC-Ferrari", "mRNA assay");
+        waitForElement(filterMemberLocator("ADCC-Ferrari"));
+        assertElementPresent(filterMemberLocator("mRNA assay"));
 
         useSelectionAsFilter();
-        assertElementPresent(filterMemberLocator("Assay: ADCC-Ferrari"), 1);
-        assertElementPresent(filterMemberLocator("Assay (Target Area): Innate"), 1);
+        assertElementPresent(filterMemberLocator("ADCC-Ferrari"), 1);
+        assertElementPresent(filterMemberLocator("mRNA assay"), 1);
         assertFilterStatusCounts(0, 0, 0, 0, 0);
 
         // remove a subfilter
-        click(filterMemberLocator("Assay: ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        click(filterMemberLocator("ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
         waitForText("Filter removed.");
         assertFilterStatusCounts(5, 1, 3, 1, 3);
-        assertElementNotPresent(filterMemberLocator("Assay: ADCC-Ferrari"));
+        assertElementNotPresent(filterMemberLocator("ADCC-Ferrari"));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
+        waitForElement(filterMemberLocator("ADCC-Ferrari"));
         assertFilterStatusCounts(0, 0, 0, 0, 0);
 
         // remove a subfilter
-        click(filterMemberLocator("Assay: ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        click(filterMemberLocator("ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
         waitForText("Filter removed.");
         assertFilterStatusCounts(5, 1, 3, 1, 3);
-        assertElementNotPresent(filterMemberLocator("Assay: ADCC-Ferrari"));
+        assertElementNotPresent(filterMemberLocator("ADCC-Ferrari"));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(filterMemberLocator("Assay: ADCC-Ferrari"));
+        waitForElement(filterMemberLocator("ADCC-Ferrari"));
         assertFilterStatusCounts(0, 0, 0, 0, 0);
 
         clearFilter();
     }
 
-    @Test
+    //@Test
     public void verifyGrid()
     {
         log("Verify Grid");
@@ -1193,7 +1193,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
                 String width2 = barLocator.findElement(getDriver()).getCssValue("width");
                 return !"0px".equals(width1) && width1.equals(width2);
             }
-        }, "Bar didn't stop animating: " + barLabel, WAIT_FOR_JAVASCRIPT);
+        }, "Bar didn't stop animating: " + barLabel, CDS_WAIT * 10);
     }
 
     private void saveGroup(String name, @Nullable String description)
@@ -1320,6 +1320,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private Locator.XPathLocator filterMemberLocator()
     {
         return Locator.tagWithClass("div", "memberitem");
+        //return Locator.tagWithClass("div", "bar small");
     }
 
     private Locator.XPathLocator filterMemberLocator(String filterText)
@@ -1569,7 +1570,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         return Locator.xpath("//li//span[contains(text(), '" + match + "')]/../span[contains(@class, 'status-subcount') and text()='" + count + "']");
     }
 
-    private void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
+    private void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount, int labCount, int antigenCount)
     {
         waitForElement(getSelectionStatusLocator(subjectCount, "Subject"));
         waitForElement(getSelectionStatusLocator(studyCount, "Stud"));

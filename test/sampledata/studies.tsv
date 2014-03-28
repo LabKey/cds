@@ -1,9 +1,0 @@
-container	studyName	description	startDate	endDate	PI1	PI2	contact	type	network	phase	treatments
-CDSTest Project	Demo Study	A Clinical Phase I trial. This trial combines the use of demnostration data and false analytics to provide relavant example information. Each piece of information is generated and not related to any real-world data.	1/21/1991	7/18/1991	Igra M		Fitzsimmons K	Trial	LabKey	I	1. vCP999 vaccine + rgp654 vaccine with DF90 adjuvant simultaneously given at two injection points intramuscularly.<br/>
-CDSTest Project	LabKeyViz	Visualization Based Study	11/2/2013	11/5/2013	Fitzsimmons K	Arnold N	Piehler B	Observational	LabKey	II	
-CDSTest Project	Not Actually CHAVI 001				Bellew M		Arnold N	Observational	CHAVI	III	
-CDSTest Project	NotCHAVI002				Arnold N		Fitzsimmons K	Observational	CHAVI	I	
-CDSTest Project	NotCHAVI008				Igra M		Arnold N	Observational	CHAVI	II	
-CDSTest Project	NotHVTN068				Arnold N		Lum K	Trial	HVTN	III	
-CDSTest Project	NotHVTN204				Bellew M		Arnold N	Trial	HVTN	II	
-CDSTest Project	NotRV144				Piehler B		Lum K	Trial	USMHRP	I	
