@@ -182,19 +182,25 @@ Ext.define('Connector.view.RawData', {
             closeAction: 'hide',
             layout: 'fit',
             items: [ this.getAxisPanel() ],
-            buttons: [{
-                text: 'select',
-                ui: 'rounded-inverted-accent',
-                handler : function() {
-                    this.fireEvent('measureselected', this.getAxisPanel().getSelection());
-                    this.win.hide();
-                },
-                scope: this
-            },{
-                text: 'cancel',
-                ui: 'rounded-inverted-accent',
-                handler : function() { this.win.hide(); },
-                scope: this
+            dockedItems : [{
+                xtype : 'toolbar',
+                dock : 'bottom',
+                ui : 'footer',
+                padding : 15,
+                items : ['->',{
+                    text: 'select',
+                    ui: 'rounded-inverted-accent',
+                    handler : function() {
+                        this.fireEvent('measureselected', this.getAxisPanel().getSelection());
+                        this.win.hide();
+                    },
+                    scope: this
+                },{
+                    text: 'cancel',
+                    ui: 'rounded-inverted-accent',
+                    handler : function() { this.win.hide(); },
+                    scope: this
+                }]
             }]
         });
 

@@ -1056,38 +1056,44 @@ Ext.define('Connector.view.Scatter', {
                     align: 'stretch'
                 },
                 items: [this.axisPanelY],
-                buttons: [{
-                    text: 'set y axis',
-                    ui: 'rounded-inverted-accent',
-                    handler: function() {
-                        var yselect = this.axisPanelY.getSelection();
-                        YY = yselect;
-                        if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
-                            this.initialized = true;
-                            this.showTask.delay(300);
-                            this.ywin.hide(null, function() {
-                                this.fireEvent('axisselect', this, 'y', yselect);
-                            }, this);
-                        }
-                        else if (this.axisPanelY.hasSelection()) {
-                            this.ywin.hide(null, function() {
-                                this.showXMeasureSelection(Ext.getCmp('xaxisselector').getEl());
-                                this.fireEvent('axisselect', this, 'y', yselect);
-                            }, this);
-                        }
-                    },
-                    scope: this
-                },{
-                    text: 'cancel',
-                    ui: 'rounded-inverted-accent',
-                    handler: function() {
-                        if (this.activeYSelection) {
-                            this.axisPanelY.setSelection(this.activeYSelection);
-                            this.activeYSelection = undefined;
-                        }
-                        this.ywin.hide();
-                    },
-                    scope : this
+                dockedItems : [{
+                    xtype : 'toolbar',
+                    dock : 'bottom',
+                    ui : 'footer',
+                    padding : 15,
+                    items : ['->',{
+                        text: 'set y axis',
+                        ui: 'rounded-inverted-accent',
+                        handler: function() {
+                            var yselect = this.axisPanelY.getSelection();
+                            YY = yselect;
+                            if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
+                                this.initialized = true;
+                                this.showTask.delay(300);
+                                this.ywin.hide(null, function() {
+                                    this.fireEvent('axisselect', this, 'y', yselect);
+                                }, this);
+                            }
+                            else if (this.axisPanelY.hasSelection()) {
+                                this.ywin.hide(null, function() {
+                                    this.showXMeasureSelection(Ext.getCmp('xaxisselector').getEl());
+                                    this.fireEvent('axisselect', this, 'y', yselect);
+                                }, this);
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: 'cancel',
+                        ui: 'rounded-inverted-accent',
+                        handler: function() {
+                            if (this.activeYSelection) {
+                                this.axisPanelY.setSelection(this.activeYSelection);
+                                this.activeYSelection = undefined;
+                            }
+                            this.ywin.hide();
+                        },
+                        scope : this
+                    }]
                 }],
                 scope : this
             });
@@ -1157,37 +1163,43 @@ Ext.define('Connector.view.Scatter', {
                     align: 'stretch'
                 },
                 items   : [this.axisPanelX],
-                buttons : [{
-                    text  : 'set x axis',
-                    ui    : 'rounded-inverted-accent',
-                    handler : function() {
-                        var xselect = this.axisPanelX.getSelection();
-                        if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
-                            this.initialized = true;
-                            this.showTask.delay(300);
-                            this.xwin.hide(null, function() {
-                                this.fireEvent('axisselect', this, 'x', xselect);
-                            }, this);
-                        }
-                        else if (this.axisPanelX.hasSelection()) {
-                            this.xwin.hide(null, function() {
-                                this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
-                                this.fireEvent('axisselect', this, 'x', xselect);
-                            }, this);
-                        }
-                    },
-                    scope: this
-                },{
-                    text  : 'cancel',
-                    ui    : 'rounded-inverted-accent',
-                    handler : function() {
-                        if (this.activeXSelection) {
-                            this.axisPanelX.setSelection(this.activeXSelection);
-                            this.activeXSelection = undefined;
-                        }
-                        this.xwin.hide();
-                    },
-                    scope : this
+                dockedItems : [{
+                    xtype : 'toolbar',
+                    dock : 'bottom',
+                    ui : 'footer',
+                    padding : 15,
+                    items : ['->',{
+                        text  : 'set x axis',
+                        ui    : 'rounded-inverted-accent',
+                        handler : function() {
+                            var xselect = this.axisPanelX.getSelection();
+                            if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
+                                this.initialized = true;
+                                this.showTask.delay(300);
+                                this.xwin.hide(null, function() {
+                                    this.fireEvent('axisselect', this, 'x', xselect);
+                                }, this);
+                            }
+                            else if (this.axisPanelX.hasSelection()) {
+                                this.xwin.hide(null, function() {
+                                    this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
+                                    this.fireEvent('axisselect', this, 'x', xselect);
+                                }, this);
+                            }
+                        },
+                        scope: this
+                    },{
+                        text  : 'cancel',
+                        ui    : 'rounded-inverted-accent',
+                        handler : function() {
+                            if (this.activeXSelection) {
+                                this.axisPanelX.setSelection(this.activeXSelection);
+                                this.activeXSelection = undefined;
+                            }
+                            this.xwin.hide();
+                        },
+                        scope : this
+                    }]
                 }],
                 scope : this
             });
