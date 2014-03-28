@@ -14,8 +14,6 @@ Ext.define('Connector.view.Scatter', {
     cls: 'scatterview',
 
     measures: [],
-    subjectColumn: 'ParticipantId',
-    subjectVisitColumn: 'ParticipantVisit',
     allColumns: false,
     canShowHidden: false,
 
@@ -784,7 +782,7 @@ Ext.define('Connector.view.Scatter', {
         LABKEY.Query.selectDistinctRows({
             schemaName: r.schemaName,
             queryName: r.queryName,
-            column: r.measureToColumn[this.subjectColumn],
+            column: r.measureToColumn[Connector.studyContext.subjectColumn],
             success: function(data) {
 
                 var filter = {
@@ -852,7 +850,7 @@ Ext.define('Connector.view.Scatter', {
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
         // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
         var subjectNoun = LABKEY.moduleContext.study.subject.columnName;
-        var subjectColumn = data.measureToColumn[subjectNoun];
+        var subjectCol = data.measureToColumn[subjectNoun];
         var xa = {
             schema : x.schemaName,
             query  : x.queryName,
@@ -908,7 +906,7 @@ Ext.define('Connector.view.Scatter', {
                 map.push({
                     x : x,
                     y : y,
-                    subjectId: rows[r][subjectColumn],
+                    subjectId: rows[r][subjectCol],
                     xname : xa.label,
                     yname : ya.label
                 });
@@ -1386,7 +1384,7 @@ Ext.define('Connector.view.Scatter', {
         var ptidSort;
         for (var i = 0; i < sorts.length; i++)
         {
-            if (sorts[i].name == this.subjectColumn) {
+            if (sorts[i].name == Connector.studyContext.subjectColumn) {
                 ptidSort = sorts[i];
                 break;
             }
@@ -1408,8 +1406,15 @@ Ext.define('Connector.view.Scatter', {
         }
 
         return [
-            {name : this.subjectColumn,                     queryName : firstMeasure.queryName,  schemaName : firstMeasure.schemaName},
-            {name : this.subjectVisitColumn + '/VisitDate', queryName : firstMeasure.queryName,  schemaName : firstMeasure.schemaName}
+            {
+                name: Connector.studyContext.subjectColumn,
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            },{
+                name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            }
         ];
     }
 });

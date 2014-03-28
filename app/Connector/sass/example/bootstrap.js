@@ -1089,7 +1089,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
-  "Connector.panel.AxisSelectDisplay": [],
+  "Connector.panel.AxisSelectDisplay": [
+    "widget.axisselectdisplay"
+  ],
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],

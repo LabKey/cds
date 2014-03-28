@@ -265,9 +265,9 @@ Ext.define('Connector.view.RawData', {
             for (var i=0; i < measures.length; i++) {
                 colToMeasure[measures[i].alias] = measures[i];
             }
-            //Add columns for implicitly selected ParticipantId && ParticipantVisit/VisitDate
-            colToMeasure[this.queryMetadata.measureToColumn["ParticipantId"]] = {label: "Participant ID"};
-            colToMeasure[this.queryMetadata.measureToColumn["ParticipantVisit/VisitDate"]] = {label : "Visit Date"};
+
+            colToMeasure[this.queryMetadata.measureToColumn[Connector.studyContext.subjectColumn]] = {label: "Subject ID"};
+            colToMeasure[this.queryMetadata.measureToColumn[Connector.studyContext.subjectVisitColumn + "/VisitDate"]] = {label : "Visit Date"};
 
             this.colToMeasure = colToMeasure;
         }
