@@ -217,14 +217,10 @@ li.fadein {
     background-color: $secondary-color;
     box-shadow: none;
 
-    .x-panel-header-body {
-      padding-top: 5px;
-    }
-
     .x-header-text {
       color: $dark-color;
       font-weight: normal;
-      font-size: 16pt;
+      font-size: 15pt;
       font-family: $data-font;
     }
   }
