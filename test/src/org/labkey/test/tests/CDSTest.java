@@ -107,12 +107,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
     }
@@ -249,7 +249,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertElementNotPresent(Locator.linkWithText("Admin"));
     }
 
-    //@Test
+    @Test
     public void verifyGroups()
     {
         log("Verify Groups");
@@ -372,7 +372,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         makeNavigationSelection(NavigationLink.SUMMARY);
     }
 
-    @Test
+    //@Test
     public void verifyFilterDisplays()
     {
         log("verify filter displays");
@@ -419,7 +419,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // remove a subfilter
         click(filterMemberLocator("ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
         waitForText("Filter removed.");
-        assertFilterStatusCounts(5, 1, 3, 1, 3);
+        assertFilterStatusCounts(5, 1, 2, 1, 3);
         assertElementNotPresent(filterMemberLocator("ADCC-Ferrari"));
 
         // verify undo
@@ -430,7 +430,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // remove a subfilter
         click(filterMemberLocator("ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
         waitForText("Filter removed.");
-        assertFilterStatusCounts(5, 1, 3, 1, 3);
+        assertFilterStatusCounts(5, 1, 2, 1, 3);
         assertElementNotPresent(filterMemberLocator("ADCC-Ferrari"));
 
         // verify undo
@@ -1579,7 +1579,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 //        waitForElement(getSelectionStatusLocator(antigenCount, "Antigen"));
     }
 
-    private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
+    private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int labCount, int antigenCount)
     {
         waitForElement(getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
         waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies", true));
