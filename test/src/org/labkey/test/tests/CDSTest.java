@@ -124,6 +124,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         windowMaximize(); // Provides more useful screenshots on failure
         enterApplication();
+        sleep(10000); // wait for cube caching to take effect
 
         List<WebElement> filterCloseButtons = Locator.css("div.filtermember img[alt=delete]").findElements(getDriver());
         while (filterCloseButtons.size() > 0)
@@ -258,6 +259,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         //
         String studyGroup = "Study Group Verify";
         String studyGroupDesc = "A set of defined studies.";
+        String studyGroupDescModified = "A set of defined studies. More info added.";
         String assayGroup = "Assay Group Verify";
         String subjectGroup = "Study Characteristics Race Group";
 
@@ -304,26 +306,25 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "save-label");
         waitAndClick(listGroup.withText(studyGroup));
 
-        //
-        // TODO: Would be best if we could somehow verify that the description is updated,
-        // however, I see no way to tell the current value of a 'textarea'.
-        //
-//        waitForText(studyGroupDesc);
-
-        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDesc + " More info added.");
+        setFormElement(Locator.id("updategroupdescription-inputEl"), studyGroupDescModified);
         click(cdsButtonLocator("save", "groupupdatesave"));
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
         assertFilterStatusCounts(18, 2, 4, 3, 28);
 
+        makeNavigationSelection(NavigationLink.HOME);
+        waitForText(studyGroup);
+        click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
+
+        // Verify that the description has changed.
+        waitForText(studyGroupDescModified);
+
         // verify 'whoops' case
         click(cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
         click(cdsButtonLocator("cancel", "groupupdatecancel"));
         clearFilter();
-
-        refresh(); // refresh due to home page not updating currently
 
         // add a filter, which should be blown away when a group filter is selected
         makeNavigationSelection(NavigationLink.SUMMARY);
@@ -333,13 +334,39 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(6, 1, 3, 2, 20);
 
         makeNavigationSelection(NavigationLink.HOME);
-        sleep(500); // let the group display load
+        waitForText(studyGroup);
         click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
 
+        // Verify that filters get replaced when viewing group.
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
         assertFilterStatusCounts(18, 2, 4, 3, 28);
-        assertTextPresent("Study Group Verify", "Description", "Updates", "A set of defined studies. More info added.");
+        assertTextPresent("Study Group Verify", "Description", "Updates", studyGroupDescModified);
+
+        // Change from live to snapshot, verify choice remains after navigating away.
+        click(Locator.tagWithText("label", "Snapshot: Keep this group static"));
+        makeNavigationSelection(NavigationLink.HOME);
+        waitForText(studyGroup);
+        click(Locator.tagWithClass("div", "nav-label").withText(studyGroup));
+        waitForText(studyGroupDescModified);
+        Locator selectedRadio = Ext4Helper.Locators.radiobutton(this, "Snapshot: Keep this group static")
+                .withPredicate(Locator.xpath("ancestor-or-self::table").withClass("x-form-cb-checked"));
+        assertElementPresent(selectedRadio);
+
+        // Verify that you can cancel delete
+        click(cdsButtonLocator("delete"));
+        waitForText("Are you sure you want to delete");
+        click(Locator.linkContainingText("Cancel"));
+        waitForTextToDisappear("Are you sure you want to delete");
+        assertTextPresent(studyGroupDescModified);
+
+        // Verify back button works
+        click(cdsButtonLocatorContainingText("back"));
+        waitForText("Welcome to the HIV Vaccine Data Connector.");
+        waitForText(studyGroup);
+
+        // Verify delete works.
+        deleteGroupFromSummaryPage(studyGroup);
 
         clearFilter();
         makeNavigationSelection(NavigationLink.SUMMARY);
@@ -833,7 +860,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         verifyLearnAboutPage(labs);
     }
 
-    @Test
+    // Sites have been disabled until it is no longer dependent on the demographics dataset
+    // @Test
     public void testLearnAboutSites()
     {
         viewLearnAboutPage("Sites");
@@ -982,13 +1010,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         Locator dimensionGroup = Locator.css("div.dimgroup");
         Locator dimensionSort = Locator.css("div.dimensionsort");
 
-        waitAndClick(Locator.linkWithText("races"));
+        waitAndClick(Locator.linkWithText("races & subtypes"));
         waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: RACE"));
         goToAppHome();
         sleep(250);
 
-        waitAndClick(Locator.linkWithText("locations"));
+        waitAndClick(Locator.linkWithText("countries"));
         waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
         goToAppHome();
@@ -1246,6 +1274,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void clearFilter()
     {
+        waitForElement(cdsButtonLocator("clear", "filterclear"));
         waitAndClick(cdsButtonLocator("clear", "filterclear"));
         waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
@@ -1281,6 +1310,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
     {
         return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+    }
+
+    private Locator.XPathLocator cdsButtonLocatorContainingText(String text)
+    {
+        return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]"));
     }
 
     private Locator.XPathLocator filterMemberLocator()
@@ -1455,18 +1489,23 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         if (groups.size() > 0)
         {
-            Ext4Helper.setCssPrefix("x4-");
-
-            // leave the app
-            beginAt("/cds/" + getProjectName() + "/begin.view?");
+            makeNavigationSelection(NavigationLink.HOME);
             for (String g : groups)
             {
-                _studyHelper.deleteCustomParticipantGroup(g, "Participant");
+                deleteGroupFromSummaryPage(g);
             }
-
-            Ext4Helper.setCssPrefix("x-");
-            enterApplication();
         }
+    }
+
+    private void deleteGroupFromSummaryPage(String name)
+    {
+        click(Locator.tagWithClass("div", "nav-label").withText(name));
+        waitForText(name);
+        click(cdsButtonLocator("delete"));
+        waitForText("Are you sure you want to delete");
+        click(Locator.linkContainingText("Delete"));
+        waitForText("Welcome to the HIV Vaccine Data Connector.");
+        assertElementNotPresent(Locator.tagWithClass("div", "nav-label").withText(name));
     }
 
 /// CDS App asserts
@@ -1474,10 +1513,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void assertAllSubjectsPortalPage()
     {
         assertCDSPortalRow("Studies", "", "3 studies");
-        assertCDSPortalRow("Assay antigens", "5 clades, 5 tiers, 5 sample types", "31 antigens");
-        assertCDSPortalRow("Assays", "", "5 assays");
+        assertCDSPortalRow("Subject characteristics", "3 countries, 2 genders, 6 races & subtypes", "29 subject characteristics");
+        assertCDSPortalRow("Assays", "3 target areas, 4 methodologies", "5 assays");
+        assertCDSPortalRow("Assay antigens", "5 clades, 5 sample types, 5 tiers", "31 assay antigens");
         assertCDSPortalRow("Labs", "", "3 labs");
-        assertCDSPortalRow("Subject characteristics", "6 races, 3 locations, 18 female, 11 male", "29 subjects");
     }
 
     private void assertCDSPortalRow(String byNoun, String expectedDetail, String expectedTotal)
@@ -1535,8 +1574,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(getSelectionStatusLocator(subjectCount, "Subject"));
         waitForElement(getSelectionStatusLocator(studyCount, "Stud"));
         waitForElement(getSelectionStatusLocator(assayCount, "Assay"));
-        waitForElement(getSelectionStatusLocator(contributorCount, "Lab"));
-        waitForElement(getSelectionStatusLocator(antigenCount, "Antigen"));
+//        waitForElement(getSelectionStatusLocator(contributorCount, "Lab"));
+//        waitForElement(getSelectionStatusLocator(antigenCount, "Antigen"));
     }
 
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount, int contributorCount, int antigenCount)
@@ -1544,8 +1583,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
         waitForElement(getFilterStatusLocator(studyCount, "Study", "Studies", true));
         waitForElement(getFilterStatusLocator(assayCount, "Assay", "Assays", true));
-        waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
-        waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
+//        waitForElement(getFilterStatusLocator(contributorCount, "Lab", "Labs"));
+//        waitForElement(getFilterStatusLocator(antigenCount, "Antigen", "Antigens"));
     }
 
     @LogMethod

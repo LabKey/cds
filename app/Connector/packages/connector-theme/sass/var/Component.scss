@@ -220,7 +220,7 @@ li.fadein {
     .x-header-text {
       color: $dark-color;
       font-weight: normal;
-      font-size: 16pt;
+      font-size: 15pt;
       font-family: $data-font;
     }
   }
@@ -1800,4 +1800,17 @@ div.study-treatments {
   font-family: $info-font;
   font-size: 12pt;
   color: $heat-scale-1;
+}
+
+div.definition-overflow
+{
+  display:inline-block;
+  -ms-filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0,startColor=0,endColoStr=$secondary-color);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to($secondary-color));
+  background-image: -moz-linear-gradient(top center,rgba(255, 255, 255, 0) 20%,$secondary-color 95%);
+  bottom: 0;
+  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0,startColor=0,endColorStr=$secondary-color);
+  height: 40px;
+  position: absolute;
+  width: 100%;
 }

@@ -23,6 +23,10 @@ var launchApp = function(cube) {
             olap: cube
         });
 
+        Connector.studyContext = {
+            subjectColumn: 'ParticipantId',
+            subjectVisitColumn: 'ParticipantVisit'
+        };
     });
 };
 

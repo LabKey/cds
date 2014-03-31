@@ -14,8 +14,6 @@ Ext.define('Connector.controller.RawData', {
     measures : [],
     filterMap : {}, // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance.
     idMap : {},     // inverse of the filterMap
-    subjectColumn : 'ParticipantId',
-    subjectVisitColumn : 'ParticipantVisit',
 
     /**
      * Return a filter object that can be used on the grid
@@ -153,7 +151,7 @@ Ext.define('Connector.controller.RawData', {
                 success : function(response){
                     var result = Ext.decode(response.responseText);
                     this.getParticipantIn(function(ptids) {
-                        this.rawDataView.refreshGrid(result, this.measures, ptids, this.subjectColumn);
+                        this.rawDataView.refreshGrid(result, this.measures, ptids, Connector.studyContext.subjectColumn);
                     });
                 },
                 failure : this.onFailure,
@@ -198,11 +196,11 @@ Ext.define('Connector.controller.RawData', {
         }
 
         return [{
-            name       : this.subjectColumn,
+            name       : Connector.studyContext.subjectColumn,
             queryName  : first.queryName,
             schemaName : first.schemaName
         },{
-            name       : this.subjectVisitColumn + '/VisitDate',
+            name       : Connector.studyContext.subjectVisitColumn + '/VisitDate',
             queryName  : first.queryName,
             schemaName : first.schemaName
         }];

@@ -16,14 +16,20 @@ Ext4.define('Connector.cube.Configuration', {
         //      priority        - relative priority to be shown in displays. Default is 0.
         //      querySchema     - metadata member query schema. Defaults to undefined.
         //      supportsDetails - multinoun views are supported for this dimension. defaults to false.
+        //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
+        //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
         //
         // Hierarchies:
         //      hidden          - declare whether a hierarchy is hidden. Defaults to false.
+        //      supportsSummary - summary views are supported for this hierarchy. defaults to true but respects hidden.
+        //
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
+        //      dataBasedCount  - false/true. Default is false.
         //      countPriority   - Default is 0.
         //      countSingular   - Default is undefined.
         //      countPlural     - Default is undefined.
+        //
         context: {
             dimensions: [{
                 uniqueName: '[Measures]',
@@ -31,6 +37,9 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Subject]',
                 supportsDetails: false,
+                pluralName: 'Subject characteristics',
+//                summaryTargetLevel: '[Subject].[Subject]',
+                priority: 10,
                 hierarchies: [{
                     uniqueName: '[Subject]',
                     hidden: true
@@ -55,12 +64,17 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 },{
                     uniqueName: '[Subject.Country]',
-                    sortable: true
+                    sortable: true,
+                    levels: [{
+                        uniqueName: '[Subject.Country].[Country]',
+                        countSingular: 'Country',
+                        countPlural: 'Countries'
+                    }]
                 }]
             },{
                 uniqueName: '[Vaccine]',
                 pluralName: 'Study products',
-                priority: 8,
+                priority: 20,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
@@ -77,10 +91,15 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 }]
             },{
+                uniqueName: '[Vaccine Component]',
+                pluralName: 'Vaccine immunogens',
+                hidden: true
+            },{
                 uniqueName: '[Assay]',
                 pluralName: 'Assays',
-                priority: 9,
+                priority: 40,
                 supportsDetails: true,
+                summaryTargetLevel: '[Assay.Target Area].[Name]',
                 detailCollection: 'Connector.app.store.Assay',
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
@@ -88,17 +107,28 @@ Ext4.define('Connector.cube.Configuration', {
                 hierarchies: [{
                     uniqueName: '[Assay.Target Area]',
                     levels: [{
+                        uniqueName: '[Assay.Target Area].[Target Area]',
+                        countSingular: 'Target Area',
+                        countPlural: 'Target Areas'
+                    },{
                         uniqueName: '[Assay.Target Area].[Name]',
                         activeCount: 'highlight',
                         countPriority: 50,
                         countSingular: 'Assay',
                         countPlural: 'Assays'
                     }]
+                },{
+                    uniqueName: '[Assay.Methodology]',
+                    levels: [{
+                        uniqueName: '[Assay.Methodology].[Methodology]',
+                        countSingular: 'Methodology',
+                        countPlural: 'Methodologies'
+                    }]
                 }]
             },{
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
-                priority: 10,
+                priority: 1,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
@@ -123,23 +153,44 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Antigen]',
-                pluralName: 'Antigens',
-                priority: 7,
+                pluralName: 'Assay antigens',
+                priority: 50,
                 supportsDetails: false,
+                summaryTargetLevel: '[Antigen.Clade].[Name]',
 
                 hierarchies: [{
+                    uniqueName: '[Antigen.Clade]',
+                    levels: [{
+                        uniqueName: '[Antigen.Clade].[Clade]',
+                        countSingular: 'Clade',
+                        countPlural: 'Clades'
+                    }]
+                },{
                     uniqueName: '[Antigen.Tier]',
                     levels: [{
+                        uniqueName: '[Antigen.Tier].[Tier]',
+                        countSingular: 'Tier',
+                        countPlural: 'Tiers'
+                    },{
                         uniqueName: '[Antigen.Tier].[Name]',
                         activeCount: true,
+                        dataBasedCount: true,
                         countPriority: 60,
                         countSingular: 'Antigen',
                         countPlural: 'Antigens'
+                    }]
+                },{
+                    uniqueName: '[Antigen.Sample Type]',
+                    levels: [{
+                        uniqueName: '[Antigen.Sample Type].[Sample Type]',
+                        countSingular: 'Sample Type',
+                        countPlural: 'Sample Types'
                     }]
                 }]
             },{
                 uniqueName: '[Lab]',
                 pluralName: 'Labs',
+                priority: 60,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Labs',
                 detailModel: 'Connector.app.model.Labs',
@@ -150,19 +201,23 @@ Ext4.define('Connector.cube.Configuration', {
                     levels: [{
                         uniqueName: '[Lab].[Lab]',
                         activeCount: true,
+                        dataBasedCount: true,
                         countPriority: 70,
                         countSingular: 'Lab',
                         countPlural: 'Labs'
                     }]
                 }]
-            },{
-                uniqueName: '[Site]',
-                pluralName: 'Sites',
-                supportsDetails: true,
-                detailCollection: 'Connector.app.store.Site',
-                detailModel: 'Connector.app.model.Site',
-                detailView: 'Connector.app.view.Site'
             }]
+            // Sites have been disabled until it is no longer dependent on the demographics dataset
+//            },{
+//                uniqueName: '[Site]',
+//                pluralName: 'Sites',
+//                supportsSummary: false,
+//                supportsDetails: true,
+//                detailCollection: 'Connector.app.store.Site',
+//                detailModel: 'Connector.app.model.Site',
+//                detailView: 'Connector.app.view.Site'
+//            }]
         },
 
         /**
@@ -180,17 +235,20 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 0,
                 querySchema: undefined,
                 supportsDetails: false,
+                supportsSummary: true,
                 detailCollection: undefined,
                 detailModel: undefined,
                 detailView: undefined
             };
 
             var hh = {
-                hidden: false
+                hidden: false,
+                supportsSummary: true
             };
 
             var ll = {
                 activeCount: false,
+                dataBasedCount: false,
                 countPriority: 0,
                 countSingular: undefined,
                 countPlural: undefined,
@@ -215,6 +273,14 @@ Ext4.define('Connector.cube.Configuration', {
                     if (dims[d].uniqueName == cd.uniqueName) {
 
                         _dim = dims[d];
+                        _hier = _dim.getHierarchies();
+
+                        var defaultTargetLevel = '';
+                        if (_hier.length > 0) {
+                            if (_hier[0].levels.length > 1) {
+                                defaultTargetLevel = _hier[0].levels[1].uniqueName;
+                            }
+                        }
 
                         //
                         // Overlay the metadata for the given dimension configuration
@@ -226,6 +292,8 @@ Ext4.define('Connector.cube.Configuration', {
                             priority: Ext.isDefined(cd.priority) ? cd.priority : dd.priority,
                             querySchema: Ext.isDefined(cd.querySchema) ? cd.querySchema : dd.querySchema,
                             supportsDetails: Ext.isDefined(cd.supportsDetails) ? cd.supportsDetails : dd.supportsDetails,
+                            supportsSummary: Ext.isDefined(cd.supportsSummary) ? cd.supportsSummary : dd.supportsSummary,
+                            summaryTargetLevel: Ext.isDefined(cd.summaryTargetLevel) ? cd.summaryTargetLevel : defaultTargetLevel,
                             detailCollection: Ext.isDefined(cd.detailCollection) ? cd.detailCollection : dd.detailCollection,
                             detailModel: Ext.isDefined(cd.detailModel) ? cd.detailModel : dd.detailModel,
                             detailView: Ext.isDefined(cd.detailView) ? cd.detailView : dd.detailView
@@ -234,7 +302,6 @@ Ext4.define('Connector.cube.Configuration', {
                         //
                         // Iterate over the set of cube hierarchies applying context
                         //
-                        _hier = _dim.getHierarchies();
                         ch = cd.hierarchies;
 
                         for (_h=0; _h < _hier.length; _h++) {
@@ -255,12 +322,13 @@ Ext4.define('Connector.cube.Configuration', {
                                     ctx = {};
 
                                     Ext.apply(ctx, {
-                                        hidden: Ext.isDefined(ch.hidden) ? ch.hidden === true : hh.hidden
+                                        hidden: Ext.isDefined(contextHierarchy.hidden) ? contextHierarchy.hidden === true : hh.hidden,
+                                        supportsSummary: Ext.isDefined(contextHierarchy.supportsSummary) ? contextHierarchy.supportsSummary === true : hh.supportsSummary
                                     });
                                 }
                             }
 
-                            Ext.apply(_hier[h], ctx);
+                            Ext.apply(_hier[_h], ctx);
 
                             //
                             // Apply hierarchy level context
@@ -296,11 +364,13 @@ Ext4.define('Connector.cube.Configuration', {
                             ctx = {};
                             Ext.apply(ctx, {
                                 activeCount: Ext.isDefined(lvl.activeCount) ? lvl.activeCount : defaults.activeCount,
+                                dataBasedCount: Ext.isDefined(lvl.dataBasedCount) ? lvl.dataBasedCount : defaults.dataBasedCount,
                                 countPriority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : defaults.countPriority,
                                 countSingular: Ext.isDefined(lvl.countSingular) ? lvl.countSingular : defaults.countSingular,
                                 countPlural: Ext.isDefined(lvl.countPlural) ? lvl.countPlural : defaults.countPlural,
                                 cellbased: Ext.isDefined(lvl.cellbased) ? lvl.cellbased : defaults.cellbased
                             });
+                            break;
                         }
                     }
                 }
