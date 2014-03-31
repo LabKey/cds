@@ -26,14 +26,15 @@ Ext.define('Connector.app.store.StudyProducts', {
 
         if (productSet.length > 0) {
             var queryConfig = {
-                schemaName: 'CDS',
-                queryName: 'vaccines',
+                schemaName: 'study',
+                queryName: 'Product',
+                columns: Ext.Array.pluck(Connector.app.model.StudyProducts.getFields(), "name"),
                 success: this.onLoadQuery,
                 scope: this
             };
 
             if (products.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('VaccineName', products, LABKEY.Filter.Types.IN) ]
+                queryConfig.filterArray = [ LABKEY.Filter.create('Label', products, LABKEY.Filter.Types.IN) ]
             }
 
             LABKEY.Query.selectRows(queryConfig);

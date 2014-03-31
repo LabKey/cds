@@ -208,7 +208,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "HIV Test Results"));
         uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Physical Exam"));
         uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Lab Results"));
-        uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "ParticipantVaccines"));
+        uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "ParticipantTreatments"));
         submit();
 
         assertElementPresent(Locator.linkWithText("NAb"));

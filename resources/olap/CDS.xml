@@ -82,17 +82,14 @@
         </Dimension>
 
         <Dimension visible="true" highCardinality="false" name="Vaccine" foreignKey="participantid">
-            <Hierarchy name="Type" hasAll="true" primaryKey="participantid" primaryKeyTable="ParticipantVaccines">
-                <Join leftKey="vaccinename" rightKey="vaccinename">
-                    <Table name="ParticipantVaccines" schema="study"/>
-                    <Table name="Vaccines" schema="CDS"/>
-                </Join>
-                <Level name="Type" table="Vaccines" visible="true" column="type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Name" table="Vaccines" visible="true" column="vaccinename" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            <Hierarchy name="Type" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantProducts">
+                <Table name="ParticipantProducts" schema="CDS"/>
+                <Level name="Type" table="ParticipantProducts" visible="true" column="type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Name" table="ParticipantProducts" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
         </Dimension>
 
-        <!-- Can't put this in the vaccine hierarchy because we don't want this to appear when viewing data by vaccine -->
+        <!-- Can't put this in the vaccine hierarchy because we don't want this to appear when viewing data by vaccine
         <Dimension visible="true" highCardinality="false" name="Vaccine Component" foreignKey="participantid">
             <Hierarchy name="Vaccine Insert" hasAll="true" primaryKey="participantid" primaryKeyTable="ParticipantVaccines">
                 <Join leftKey="vaccinename" rightKey="vaccinename">
@@ -103,7 +100,7 @@
                 <Level name="Name" table="VaccineComponents" visible="true" column="vaccinecomponent" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
         </Dimension>
-
+         -->
         <DimensionUsage source="Antigen" name="Antigen" visible="true" foreignKey="antigen" highCardinality="false">
         </DimensionUsage>
 
