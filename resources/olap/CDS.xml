@@ -82,10 +82,16 @@
         </Dimension>
 
         <Dimension visible="true" highCardinality="false" name="Vaccine" foreignKey="participantid">
-            <Hierarchy name="Type" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantProducts">
-                <Table name="ParticipantProducts" schema="CDS"/>
-                <Level name="Type" table="ParticipantProducts" visible="true" column="type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Name" table="ParticipantProducts" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            <Hierarchy name="Type" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantTreatments">
+                <Join leftKey="treatmentid" rightKey="treatmentid">
+                    <Table name="ParticipantTreatments" schema="study"/>
+                    <Join leftKey="productid" rightKey="rowid">
+                        <Table name="TreatmentProductMap" schema="study"/>
+                        <Table name="Product" schema="study"/>
+                    </Join>
+                </Join>
+                <Level name="Type" table="Product" visible="true" column="type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
         </Dimension>
 
