@@ -19,133 +19,182 @@ Ext.define('Connector.store.Summary', {
 
     load : function() {
         this.fireEvent('beforeload', this);
-        this.loadGroups();
+
+        this.state.onMDXReady(function(mdx) {
+            if (!this.requests) {
+                this.requests = this.bindRequestConfigs(mdx);
+            }
+            this.loadGroups();
+        }, this);
     },
 
     setFilterSet : function(filterSet) {
         this.filterSet = filterSet;
     },
 
-    getFilterSet : function() {
-        if (!this.filterSet)
-            this.filterSet = ['statefilter'];
-        return this.filterSet;
+    bindRequestConfigs : function(mdx) {
+
+        var request = {
+            configs: [],
+            success: this.loadResults,
+            scope: this
+        };
+
+        if (mdx) {
+
+            var dims = mdx.getDimensions(), requestId = 0;
+            for (var d=0; d < dims.length; d++) {
+                if (!dims[d].hidden && dims[d].supportsSummary) {
+
+                    requestId++;
+
+                    var targetLevel = dims[d].summaryTargetLevel;
+                    if (targetLevel) {
+
+                        //
+                        // Dimension requests
+                        //
+                        request.configs.push({
+                            requestId: requestId,
+                            dimName: dims[d].name,
+                            useNamedFilters: ['statefilter'],
+                            onRows: [ { level: targetLevel } ],
+                            priority: dims[d].priority
+                        });
+
+                        //
+                        // Hierarchy requests
+                        //
+                        var hiers = dims[d].getHierarchies();
+                        for (var h=0; h < hiers.length; h++) {
+                            if (!hiers[h].hidden && hiers[h].supportsSummary) {
+
+                                var targetHierLevel = hiers[h].levels[1];
+
+                                request.configs.push({
+                                    requestId: requestId,
+                                    dimName: dims[d].name,
+                                    useNamedFilters: ['statefilter'],
+                                    hierarchyIndex: h,
+                                    targetLevel: targetHierLevel,
+                                    label: targetHierLevel.countPlural || targetHierLevel.name,
+                                    onRows: [ { level: targetHierLevel.uniqueName } ],
+                                    priority: dims[d].priority
+                                });
+                            }
+                        }
+                    }
+                    else {
+                        console.warn('Dimension did not provide summaryTargetLevel:', dims[d].name);
+                    }
+                }
+            }
+        }
+
+        // sort according to priority
+        request.configs.sort(function(a, b) {
+            return a.priority - b.priority;
+        });
+
+        return request;
     },
 
     loadGroups : function() {
-
         this.flight++;
+        var requests = this.requests;
+        requests.configs[0].flight = this.flight;
 
-        var order = [
-            {
-                configs : [
-                    {
-                        onRows : [ { level : '[Study].[Study]'} ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    }
-                ],
-                success : this.byStudy,
-                scope   : this
-            }
-            ,{
-                configs : [
-                    {
-                        onRows : [ { level : '[Antigen.Clade].[Clade]'} ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    },
-                    {
-                        onRows : [ { level : '[Antigen.Sample Type].[Sample Type]'} ],
-                        useNamedFilters : this.getFilterSet()
-                    },
-                    {
-                        onRows : [ { level : '[Antigen.Tier].[Tier]'} ],
-                        useNamedFilters : this.getFilterSet()
-                    },
-                    {
-                        onRows : [ { level : '[Antigen.Clade].[Name]'} ],
-                        useNamedFilters : this.getFilterSet()
-                    }
-                ],
-                success : this.byAntigens,
-                scope   : this
-            }
-            ,{
-                configs : [
-                    {
-                        onRows : [ { level : '[Assay.Target Area].[Name]' } ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    }
-                ],
-                success : this.byAssay,
-                scope   : this
-            }
-            ,{
-                configs : [
-                    {
-                        onRows : [ { level : '[Lab].[Lab]' } ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    }
-                ],
-                success : this.byLab,
-                scope   : this
-            }
-            ,{
-                configs : [
-                    {
-                        onRows : [ { level : '[Subject.Race].[(All)]' } ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    },
-                    {
-                        onRows : [ { level : '[Subject.Race].[Race]' } ],
-                        useNamedFilters : this.getFilterSet()
-                    },
-                    {
-                        onRows : [ { level : '[Subject.Country].[Country]' } ],
-                        useNamedFilters : this.getFilterSet()
-                    },
-                    {
-                        onRows : [ { level : '[Subject.Sex].[Sex]' } ],
-                        useNamedFilters : this.getFilterSet()
-                    }
-                ],
-                success : this.byDemographic,
-                scope   : this
-            }
-            ,{
-                configs : [
-                    {
-                        onRows : [ { hierarchy : '[Vaccine.Type]', members:'members' } ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    }
-                ],
-                success : this.byProduct,
-                scope   : this
-            }
-            ,{
-                configs : [
-                    {
-                        onRows : [ { hierarchy : '[Vaccine Component.Vaccine Insert]', members:'members'} ],
-                        useNamedFilters : this.getFilterSet(),
-                        flight : this.flight
-                    }
-                ],
-                success : this.byVaccineComponent,
-                scope   : this
-            }
-        ];
+        this.state.onMDXReady(function(mdx) {
+            mdx.queryMultiple(requests.configs, requests.success, requests.failure, requests.scope);
+        }, this);
+    },
 
-        this.count = this.count + order.length;
-        this.state.onMDXReady(function(mdx){
-            for (var i=0; i < order.length; i++)
-            {
-                mdx.queryMultiple(order[i].configs, order[i].success, order[i].failure, order[i].scope);
+    loadResults : function(qrArray, configArray) {
+
+        if (configArray[0].flight != this.flight) {
+            return;
+        }
+
+        this.state.onMDXReady(function(mdx) {
+
+            var recs = [], dim, ca;
+
+            //
+            // Process dimensions
+            //
+            for (var i=0; i < configArray.length; i++) {
+
+                if (Ext.isDefined(configArray[i].hierarchyIndex)) {
+                    continue;
+                }
+
+                ca = configArray[i];
+
+                dim = mdx.getDimension(ca.dimName);
+                if (dim) {
+                    var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name;
+                    var cellset = qrArray[i];
+
+                    var rec = {
+                        dimName: ca.dimName,
+                        total: this._aggregate(cellset),
+                        label: label,
+                        subject: label.toLowerCase(),
+                        hierarchy: cellset.axes[1].positions[0][0].level.hierarchy.name,
+                        details: [],
+                        sort: i
+                    };
+
+                    recs.push(rec);
+                }
+                else {
+                    console.error('unable to locate dimension:', ca.dimName);
+                }
             }
+
+            //
+            // Process hierarchies
+            //
+            for (i=0; i < configArray.length; i++) {
+                if (Ext.isDefined(configArray[i].hierarchyIndex)) {
+
+                    ca = configArray[i];
+
+                    dim = mdx.getDimension(ca.dimName);
+                    if (dim) {
+                        // var hierarchy = dim.getHierarchies()[ca.hierarchyIndex];
+
+                        //
+                        // Iterate over processed dimensions adding on hierarchy based information
+                        //
+                        for (var r=0; r < recs.length; r++) {
+                            if (recs[r].dimName === ca.dimName) {
+
+                                var agg = {
+                                    name: ca.label,
+                                    aggregate: qrArray[i]
+                                };
+
+                                recs[r].details.push({
+                                    counter: this._aggregate(agg.aggregate),
+                                    text: agg.name.toLowerCase(),
+                                    nav: 'explorer/singleaxis/' + dim.name + '/' + ca.targetLevel.name
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (i=0; i < recs.length; i++) {
+                if (recs[i].details.length == 1) {
+                    recs[i].details = [];
+                }
+            }
+
+            this.loadData(recs);
+            this.fireEvent('load', this);
+
         }, this);
     },
 
@@ -242,240 +291,6 @@ Ext.define('Connector.store.Summary', {
             sep = ',';
         }
         return list;
-    },
-
-    subAdd : function(config, flight) {
-
-        this.cache.push({
-            config : config,
-            flight : flight
-        });
-
-    },
-
-    byStudy : function(qrArray, configArray) {
-
-        var cellset = qrArray[0];
-
-        if (!cellset.axes[1].positions || cellset.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Study Information.');
-            this.done();
-            return;
-        }
-
-        var rec = {
-            total     : this._aggregate(cellset),
-            label     : 'Studies',
-            subject   : 'studies',
-            hierarchy : cellset.axes[1].positions[0][0].level.hierarchy.name,
-            details   : [], //d,
-            sort      : 0
-        };
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
-    },
-
-    byAntigens : function(qrArray, configArray) {
-
-        var clade1  = qrArray[0],
-                source1 = qrArray[1],
-                tier1   = qrArray[2],
-                clade2  = qrArray[3];
-
-        if (!tier1.axes[1].positions || tier1.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Antigen Information.');
-            this.done();
-            return;
-        }
-
-        var rec = {
-            total     : this._aggregate(clade2),
-            label     : 'Assay antigens',
-            subject   : 'antigens',
-            hierarchy : tier1.axes[1].positions[0][0].level.hierarchy.name,
-            details   : [],
-            sort      : 5
-        };
-
-        var agg = [
-            {name : 'clades', hierarchy: 'clade', aggregate : clade1},
-            {name : 'tiers', hierarchy: 'tier', aggregate : tier1},
-            {name : 'sample types', hierarchy: 'sample type', aggregate : source1}
-        ];
-
-        for (var a=0; a < agg.length; a++) {
-            rec.details.push({
-                counter: this._aggregate(agg[a].aggregate),
-                text: agg[a].name,
-                nav: 'explorer/singleaxis/antigen/' + agg[a].hierarchy
-            });
-        }
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
-    },
-
-    byAssay : function(qrArray, configArray) {
-
-        var cellset = qrArray[0];
-
-        if (!cellset.axes[1].positions || cellset.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Assay Information.');
-            this.done();
-            return;
-        }
-
-        var rec = {
-            total     : this._aggregate(cellset),
-            label     : 'Assays',
-            subject   : 'assays',
-            hierarchy : cellset.axes[1].positions[0][0].level.hierarchy.name,
-            details   : [],
-            sort      : 4
-        };
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
-    },
-
-    byLab : function(qrArray, configArray) {
-
-        var labCS = qrArray[0];
-
-        if (!labCS.axes[1].positions || labCS.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Lab Information.');
-            this.done();
-            return;
-        }
-
-        var rec = {
-            total     : this._aggregate(labCS),
-            label     : 'Labs',
-            subject   : 'labs',
-            hierarchy : labCS.axes[1].positions[0][0].level.hierarchy.name,
-            details   : [],
-            sort      : 6
-        };
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
-    },
-
-    _genderHelper : function(g) {
-        switch (g)
-        {
-            case 'm':
-                return 'male';
-            case 'f':
-                return 'female';
-            default :
-                return g;
-        }
-    },
-
-    byDemographic : function(qrArray, configArray) {
-
-        var subjectCS = qrArray[0],
-                ethnicityCS   = qrArray[1],
-                locationCS    = qrArray[2],
-                genderCS      = qrArray[3],
-                total         = subjectCS.cells.length;
-
-        if (!ethnicityCS.axes[1].positions || ethnicityCS.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Demographic Information.');
-            this.done();
-            return;
-        }
-
-        if (total != 0)
-            total = subjectCS.cells[0][0].value;
-
-        var rec = {
-            total     : total,
-            label     : 'Subject characteristics',
-            subject   : 'subjects',
-            hierarchy : ethnicityCS.axes[1].positions[0][0].level.hierarchy.name,
-            details   : [],
-            sort      : 1
-        };
-
-        var agg = [
-            {name : 'races',     aggregate : ethnicityCS},
-            {name : 'locations', aggregate : locationCS}
-        ], nav;
-
-        for (var a=0; a < agg.length; a++) {
-            nav = 'explorer/singleaxis/subject/' + (agg[a].name == 'races' ? 'race' : 'country');
-            rec.details.push({
-                counter: this._aggregate(agg[a].aggregate),
-                text: agg[a].name,
-                nav: nav
-            });
-        }
-
-        /* Render by gender */
-        agg = this._aggregateByGroup(genderCS, true);
-
-        for (a in agg.types) {
-            if (agg.types.hasOwnProperty(a)) {
-                rec.details.push({
-                    counter: agg.types[a],
-                    text: this._genderHelper(a)
-                });
-            }
-        }
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
-    },
-
-    byProduct : function(qrArray, configArray) {
-
-        var vaccineCS = qrArray[0],
-                agg = this._aggregateByGroup(vaccineCS, true);
-
-        if (!vaccineCS.axes[1].positions || vaccineCS.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Vaccine Information.');
-            this.done();
-            return;
-        }
-
-        var rec = {
-            total     : agg.total,
-            label     : 'Study products',
-            subject   : 'products',
-            hierarchy : vaccineCS.axes[1].positions[0][0].level.hierarchy.name,
-            details   : agg.details,
-            sort      : 2
-        };
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
-    },
-
-    byVaccineComponent : function(qrArray, configArray) {
-
-        var vaccineCS = qrArray[0],
-                agg = this._aggregateByGroup(vaccineCS, true);
-
-        if (!vaccineCS.axes[1].positions || vaccineCS.axes[1].positions.length == 0) {
-            this.raiseError('Unable to locate Immunogen Information.');
-            this.done();
-            return;
-        }
-
-        var rec = {
-            total     : agg.total,
-            label     : 'Vaccine immunogens',
-            subject   : 'immunogens',
-            hierarchy : vaccineCS.axes[1].positions[0][0].level.hierarchy.name,
-            details   : agg.details, //Ext.String.ellipsis(agg.details, 100, true),
-            sort      : 3
-        };
-
-        this.subAdd(rec, configArray[0].flight);
-        this.done();
     },
 
     raiseError : function(msg) {
