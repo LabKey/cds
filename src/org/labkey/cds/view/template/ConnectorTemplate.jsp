@@ -110,6 +110,20 @@
         .x-panel-east-view {
             z-index: 10000;
         }
+
+        button.imgbutton {
+            padding: 0;
+            margin: 0;
+            border: 0px;
+            background-color: transparent;
+            cursor: pointer;
+
+            background-image: url(<%=text(appPath)%>/images/dropdown.svg);
+        }
+
+        button.imgbuttonover {
+            background-image: url(<%=text(appPath)%>/images/dropdown_hover.svg);
+        }
     </style>
 
     <style type="text/css">
@@ -222,7 +236,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
 
     <!-- Application source -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/button/DropDownButton.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>

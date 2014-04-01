@@ -134,16 +134,16 @@
         </Dimension>
 
 
-        <Dimension visible="true" highCardinality="false" name="Site" foreignKey="participantid">
-            <Hierarchy name="Sites" visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="Demographics">
-                <Join leftKey="enrolledclinicalsite" rightKey="id">
-                    <Table name="Demographics" schema="study"/>
-                    <Table name="Sites" schema="CDS"/>
-                </Join>
-                <Level name="Site" visible="true" table="Sites" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                </Level>
-            </Hierarchy>
-        </Dimension>
+        <!--<Dimension visible="true" highCardinality="false" name="Site" foreignKey="participantid">-->
+            <!--<Hierarchy name="Sites" visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="Demographics">-->
+                <!--<Join leftKey="enrolledclinicalsite" rightKey="id">-->
+                    <!--<Table name="Demographics" schema="study"/>-->
+                    <!--<Table name="Sites" schema="CDS"/>-->
+                <!--</Join>-->
+                <!--<Level name="Site" visible="true" table="Sites" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">-->
+                <!--</Level>-->
+            <!--</Hierarchy>-->
+        <!--</Dimension>-->
 
 
         <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">

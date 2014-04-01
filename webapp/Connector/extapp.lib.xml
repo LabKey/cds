@@ -72,7 +72,7 @@
         <script path="Connector/src/model/Variable.js"/>
 
         <!-- Application Widgets -->
-        <script path="Connector/src/button/DropDownButton.js"/>
+        <script path="Connector/src/button/Image.js"/>
         <script path="Connector/src/button/RoundedButton.js"/>
         <script path="Connector/src/window/Filter.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>

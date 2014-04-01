@@ -182,19 +182,25 @@ Ext.define('Connector.view.RawData', {
             closeAction: 'hide',
             layout: 'fit',
             items: [ this.getAxisPanel() ],
-            buttons: [{
-                text: 'select',
-                ui: 'rounded-inverted-accent',
-                handler : function() {
-                    this.fireEvent('measureselected', this.getAxisPanel().getSelection());
-                    this.win.hide();
-                },
-                scope: this
-            },{
-                text: 'cancel',
-                ui: 'rounded-inverted-accent',
-                handler : function() { this.win.hide(); },
-                scope: this
+            dockedItems : [{
+                xtype : 'toolbar',
+                dock : 'bottom',
+                ui : 'footer',
+                padding : 15,
+                items : ['->',{
+                    text: 'select',
+                    ui: 'rounded-inverted-accent',
+                    handler : function() {
+                        this.fireEvent('measureselected', this.getAxisPanel().getSelection());
+                        this.win.hide();
+                    },
+                    scope: this
+                },{
+                    text: 'cancel',
+                    ui: 'rounded-inverted-accent',
+                    handler : function() { this.win.hide(); },
+                    scope: this
+                }]
             }]
         });
 
@@ -259,9 +265,9 @@ Ext.define('Connector.view.RawData', {
             for (var i=0; i < measures.length; i++) {
                 colToMeasure[measures[i].alias] = measures[i];
             }
-            //Add columns for implicitly selected ParticipantId && ParticipantVisit/VisitDate
-            colToMeasure[this.queryMetadata.measureToColumn["ParticipantId"]] = {label: "Participant ID"};
-            colToMeasure[this.queryMetadata.measureToColumn["ParticipantVisit/VisitDate"]] = {label : "Visit Date"};
+
+            colToMeasure[this.queryMetadata.measureToColumn[Connector.studyContext.subjectColumn]] = {label: "Subject ID"};
+            colToMeasure[this.queryMetadata.measureToColumn[Connector.studyContext.subjectVisitColumn + "/VisitDate"]] = {label : "Visit Date"};
 
             this.colToMeasure = colToMeasure;
         }

@@ -60,8 +60,6 @@ Ext.define('Connector.view.DetailStatus', {
     initComponent : function() {
         this.filterTask  = new Ext.util.DelayedTask(this.filterChange, this);
 
-        var loadUrl = LABKEY.contextPath + '/production/Connector/resources/images/grid/loading.gif';
-
         this.callParent();
     },
 

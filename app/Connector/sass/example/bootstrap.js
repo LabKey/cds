@@ -21,7 +21,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.view.Site": "../../../../webapp/Connector/src/app/view/Site.js",
   "Connector.app.view.Study": "../../../../webapp/Connector/src/app/view/Study.js",
   "Connector.app.view.StudyProducts": "../../../../webapp/Connector/src/app/view/StudyProducts.js",
-  "Connector.button.DropDownButton": "../../../../webapp/Connector/src/button/DropDownButton.js",
+  "Connector.button.Image": "../../../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
@@ -131,7 +131,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
-  "Connector.button.DropDownButton": [],
+  "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
   "Connector.controller.AbstractViewController": [],
@@ -1054,8 +1054,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
-  "Connector.button.DropDownButton": [
-    "widget.dropdownbutton"
+  "Connector.button.Image": [
+    "widget.imgbutton"
   ],
   "Connector.button.InfoButton": [
     "widget.infobutton"
@@ -1089,7 +1089,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
-  "Connector.panel.AxisSelectDisplay": [],
+  "Connector.panel.AxisSelectDisplay": [
+    "widget.axisselectdisplay"
+  ],
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],

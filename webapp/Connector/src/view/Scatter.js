@@ -14,8 +14,6 @@ Ext.define('Connector.view.Scatter', {
     cls: 'scatterview',
 
     measures: [],
-    subjectColumn: 'ParticipantId',
-    subjectVisitColumn: 'ParticipantVisit',
     allColumns: false,
     canShowHidden: false,
 
@@ -784,7 +782,7 @@ Ext.define('Connector.view.Scatter', {
         LABKEY.Query.selectDistinctRows({
             schemaName: r.schemaName,
             queryName: r.queryName,
-            column: r.measureToColumn[this.subjectColumn],
+            column: r.measureToColumn[Connector.studyContext.subjectColumn],
             success: function(data) {
 
                 var filter = {
@@ -852,7 +850,7 @@ Ext.define('Connector.view.Scatter', {
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
         // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
         var subjectNoun = LABKEY.moduleContext.study.subject.columnName;
-        var subjectColumn = data.measureToColumn[subjectNoun];
+        var subjectCol = data.measureToColumn[subjectNoun];
         var xa = {
             schema : x.schemaName,
             query  : x.queryName,
@@ -908,7 +906,7 @@ Ext.define('Connector.view.Scatter', {
                 map.push({
                     x : x,
                     y : y,
-                    subjectId: rows[r][subjectColumn],
+                    subjectId: rows[r][subjectCol],
                     xname : xa.label,
                     yname : ya.label
                 });
@@ -1056,43 +1054,47 @@ Ext.define('Connector.view.Scatter', {
                     align: 'stretch'
                 },
                 items: [this.axisPanelY],
-                buttons: [{
-                    text: 'set y axis',
-                    ui: 'rounded-inverted-accent',
-                    handler: function() {
-                        var yselect = this.axisPanelY.getSelection();
-                        YY = yselect;
-                        if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
-                            this.initialized = true;
-                            this.showTask.delay(300);
-                            this.ywin.hide(null, function() {
-                                this.fireEvent('axisselect', this, 'y', yselect);
-                            }, this);
-                        }
-                        else if (this.axisPanelY.hasSelection()) {
-                            this.ywin.hide(null, function() {
-                                this.showXMeasureSelection(Ext.getCmp('xaxisselector').getEl());
-                                this.fireEvent('axisselect', this, 'y', yselect);
-                            }, this);
-                        }
-                    },
-                    scope: this
-                },{
-                    text: 'cancel',
-                    ui: 'rounded-inverted-accent',
-                    handler: function() {
-                        if (this.activeYSelection) {
-                            this.axisPanelY.setSelection(this.activeYSelection);
-                            this.activeYSelection = undefined;
-                        }
-                        this.ywin.hide();
-                    },
-                    scope : this
+                dockedItems : [{
+                    xtype : 'toolbar',
+                    dock : 'bottom',
+                    ui : 'footer',
+                    padding : 15,
+                    items : ['->',{
+                        text: 'set y axis',
+                        ui: 'rounded-inverted-accent',
+                        handler: function() {
+                            var yselect = this.axisPanelY.getSelection();
+                            YY = yselect;
+                            if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
+                                this.initialized = true;
+                                this.showTask.delay(300);
+                                this.ywin.hide(null, function() {
+                                    this.fireEvent('axisselect', this, 'y', yselect);
+                                }, this);
+                            }
+                            else if (this.axisPanelY.hasSelection()) {
+                                this.ywin.hide(null, function() {
+                                    this.showXMeasureSelection(Ext.getCmp('xaxisselector').getEl());
+                                    this.fireEvent('axisselect', this, 'y', yselect);
+                                }, this);
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: 'cancel',
+                        ui: 'rounded-inverted-accent',
+                        handler: function() {
+                            if (this.activeYSelection) {
+                                this.axisPanelY.setSelection(this.activeYSelection);
+                                this.activeYSelection = undefined;
+                            }
+                            this.ywin.hide();
+                        },
+                        scope : this
+                    }]
                 }],
                 scope : this
             });
-
-            this.axisPanelY.on('gotoassaypage', function(){ this.ywin.hide(); }, this);
         }
         else {
             this.updateMeasureSelection(this.ywin);
@@ -1157,42 +1159,46 @@ Ext.define('Connector.view.Scatter', {
                     align: 'stretch'
                 },
                 items   : [this.axisPanelX],
-                buttons : [{
-                    text  : 'set x axis',
-                    ui    : 'rounded-inverted-accent',
-                    handler : function() {
-                        var xselect = this.axisPanelX.getSelection();
-                        if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
-                            this.initialized = true;
-                            this.showTask.delay(300);
-                            this.xwin.hide(null, function() {
-                                this.fireEvent('axisselect', this, 'x', xselect);
-                            }, this);
-                        }
-                        else if (this.axisPanelX.hasSelection()) {
-                            this.xwin.hide(null, function() {
-                                this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
-                                this.fireEvent('axisselect', this, 'x', xselect);
-                            }, this);
-                        }
-                    },
-                    scope: this
-                },{
-                    text  : 'cancel',
-                    ui    : 'rounded-inverted-accent',
-                    handler : function() {
-                        if (this.activeXSelection) {
-                            this.axisPanelX.setSelection(this.activeXSelection);
-                            this.activeXSelection = undefined;
-                        }
-                        this.xwin.hide();
-                    },
-                    scope : this
+                dockedItems : [{
+                    xtype : 'toolbar',
+                    dock : 'bottom',
+                    ui : 'footer',
+                    padding : 15,
+                    items : ['->',{
+                        text  : 'set x axis',
+                        ui    : 'rounded-inverted-accent',
+                        handler : function() {
+                            var xselect = this.axisPanelX.getSelection();
+                            if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
+                                this.initialized = true;
+                                this.showTask.delay(300);
+                                this.xwin.hide(null, function() {
+                                    this.fireEvent('axisselect', this, 'x', xselect);
+                                }, this);
+                            }
+                            else if (this.axisPanelX.hasSelection()) {
+                                this.xwin.hide(null, function() {
+                                    this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
+                                    this.fireEvent('axisselect', this, 'x', xselect);
+                                }, this);
+                            }
+                        },
+                        scope: this
+                    },{
+                        text  : 'cancel',
+                        ui    : 'rounded-inverted-accent',
+                        handler : function() {
+                            if (this.activeXSelection) {
+                                this.axisPanelX.setSelection(this.activeXSelection);
+                                this.activeXSelection = undefined;
+                            }
+                            this.xwin.hide();
+                        },
+                        scope : this
+                    }]
                 }],
                 scope : this
             });
-
-            this.axisPanelX.on('gotoassaypage', function(){ this.xwin.hide(); }, this);
         }
         else {
             this.updateMeasureSelection(this.xwin);
@@ -1374,7 +1380,7 @@ Ext.define('Connector.view.Scatter', {
         var ptidSort;
         for (var i = 0; i < sorts.length; i++)
         {
-            if (sorts[i].name == this.subjectColumn) {
+            if (sorts[i].name == Connector.studyContext.subjectColumn) {
                 ptidSort = sorts[i];
                 break;
             }
@@ -1396,8 +1402,15 @@ Ext.define('Connector.view.Scatter', {
         }
 
         return [
-            {name : this.subjectColumn,                     queryName : firstMeasure.queryName,  schemaName : firstMeasure.schemaName},
-            {name : this.subjectVisitColumn + '/VisitDate', queryName : firstMeasure.queryName,  schemaName : firstMeasure.schemaName}
+            {
+                name: Connector.studyContext.subjectColumn,
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            },{
+                name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            }
         ];
     }
 });

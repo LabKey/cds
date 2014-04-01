@@ -43,6 +43,8 @@ Ext.define('Connector.view.Variable', {
             modelComponent.data = this.data;
         }
 
+        console.log(this.btnCls);
+
         this.items = [modelComponent,{
             itemId: 'cvbutton',
             xtype: 'button',
@@ -55,9 +57,10 @@ Ext.define('Connector.view.Variable', {
         },{
             itemId: 'ddbutton',
             hidden: true,
-            xtype: 'dropdownbutton',
+            xtype: 'imgbutton',
+            vector: 27,
             cls: this.btnCls,
-            margin: '-10 0 0 10',
+//            margin: '-10 0 0 10',
             handler: this.onBtnClick,
             scope: this
         }];

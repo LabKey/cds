@@ -47,6 +47,9 @@ Ext.define('Connector.panel.AxisSelector', {
 
         picker.getSourcesView().getSelectionModel().on('selectionchange', this.onSourceSelect, this);
         picker.getMeasuresGrid().getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
+
+        picker.getSourcesView().on('itemclick', this.updateDefinition, this);
+        picker.getMeasuresGrid().on('itemclick', this.updateDefinition, this);
     },
 
     getMainTitleDisplay : function() {
@@ -71,8 +74,7 @@ Ext.define('Connector.panel.AxisSelector', {
                 displayConfig: this.displayConfig,
                 disableScale: this.disableScale,
                 disableVariableOptions: this.disableVariableOptions,
-                scalename: this.scalename,
-                bubbleEvents: ['gotoassaypage']
+                scalename: this.scalename
             });
 
             this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
@@ -115,7 +117,7 @@ Ext.define('Connector.panel.AxisSelector', {
         // allows for a class to be added to the source selection panel
         if (this.measureConfig.sourceCls) {
             this.measurePicker.getSourcesView().on('afterrender', function(p) {
-                p.addCls(this.measureConfig.sourceCls);       // TODO: check that this still works with a dataview
+                p.addCls(this.measureConfig.sourceCls);
             }, this, {single: true});
         }
         return this.measurePicker;
@@ -134,16 +136,28 @@ Ext.define('Connector.panel.AxisSelector', {
     },
 
     onMeasureSelect : function(selModel, records) {
-        if (this.showDisplay) {
+        if (selModel.multiSelect)
+            this.updateDefinition(null, selModel.getLastSelected());
+        else if (this.showDisplay)
             this.getSelectionDisplay().setMeasureSelection(records[0]);
-            this.getSelectionDisplay().show();
-        }
     },
 
     onSourceSelect : function(selModel, records) {
         //select first variable in the list on source selection change, for singleSelect grid
         if (!this.getMeasurePicker().getMeasuresGrid().multiSelect)
             this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(0);
+    },
+
+    updateDefinition : function(view, record) {
+        if (this.showDisplay)
+        {
+            this.getSelectionDisplay().getDefinitionPanel().update({
+                label : record.get("label") || record.get("queryLabel"),
+                description : record.get("description")
+            });
+
+            this.getSelectionDisplay().show();
+        }
     }
 });
 
@@ -181,10 +195,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                         xtype: 'button',
                         ui: 'rounded-inverted-accent',
                         text: 'go to assay page',
-                        handler: function() {
-                            this.fireEvent('gotoassaypage');
-                        },
-                        scope: this
+                        itemId: 'gotoassaypage'
                     },
                     {
                         xtype: 'container',
@@ -208,8 +219,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         }];
 
         this.callParent();
-
-        this.addEvents('gotoassaypage');
     },
 
     getDefinitionPanel : function() {
@@ -217,7 +226,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         {
             this.definitionPanel = Ext.create('Ext.panel.Panel', {
                 border: false,
-                autoScroll: true,
                 ui: 'custom',
                 cls: 'definitionpanel iScroll',
                 height: !this.disableScale ? 125 : 180,
@@ -225,8 +233,9 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 padding: '10px 0 5px 0',
                 data: {},
                 tpl: new Ext.XTemplate(
-                        '<div class="curselauth" style="width: 100%;">Definition: {label}</div>',
-                        '<div class="curseldesc" style="width: 100%;">{description}</div>'
+                        '<div class="definition-overflow"></div>',
+                        '<div class="curselauth" style="width: 100%;">Definition: {label:htmlEncode}</div>',
+                        '<div class="curseldesc" style="width: 100%;">{description:htmlEncode}</div>'
                 )
             });
         }
@@ -263,10 +272,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     },
 
     setMeasureSelection : function(record) {
-        if (record) {
-            this.getDefinitionPanel().update(record.data);
+        if (record)
             this.setDefaultScale(record);
-        }
     },
 
     setDefaultScale : function(record) {
