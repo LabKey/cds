@@ -42,8 +42,11 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
-        this.control('axisselectdisplay', {
-            gotoassaypage: function() {
+        this.control('axisselectdisplay > panel > panel > button#gotoassaypage', {
+            click: function(btn) {
+                var win = btn.up('window');
+                if (win) win.hide();
+
                 this.getViewManager()._changeView('learn', 'learn', ['assay']);
             }
         });

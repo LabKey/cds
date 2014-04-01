@@ -74,8 +74,7 @@ Ext.define('Connector.panel.AxisSelector', {
                 displayConfig: this.displayConfig,
                 disableScale: this.disableScale,
                 disableVariableOptions: this.disableVariableOptions,
-                scalename: this.scalename,
-                bubbleEvents: ['gotoassaypage']
+                scalename: this.scalename
             });
 
             this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
@@ -196,10 +195,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                         xtype: 'button',
                         ui: 'rounded-inverted-accent',
                         text: 'go to assay page',
-                        handler: function() {
-                            this.fireEvent('gotoassaypage');
-                        },
-                        scope: this
+                        itemId: 'gotoassaypage'
                     },
                     {
                         xtype: 'container',
@@ -223,8 +219,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         }];
 
         this.callParent();
-
-        this.addEvents('gotoassaypage');
     },
 
     getDefinitionPanel : function() {
@@ -240,8 +234,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 data: {},
                 tpl: new Ext.XTemplate(
                         '<div class="definition-overflow"></div>',
-                        '<div class="curselauth" style="width: 100%;">Definition: {label}</div>',
-                        '<div class="curseldesc" style="width: 100%;">{description}</div>'
+                        '<div class="curselauth" style="width: 100%;">Definition: {label:htmlEncode}</div>',
+                        '<div class="curseldesc" style="width: 100%;">{description:htmlEncode}</div>'
                 )
             });
         }

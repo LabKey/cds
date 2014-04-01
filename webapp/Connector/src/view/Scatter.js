@@ -1095,8 +1095,6 @@ Ext.define('Connector.view.Scatter', {
                 }],
                 scope : this
             });
-
-            this.axisPanelY.on('gotoassaypage', function(){ this.ywin.hide(); }, this);
         }
         else {
             this.updateMeasureSelection(this.ywin);
@@ -1201,8 +1199,6 @@ Ext.define('Connector.view.Scatter', {
                 }],
                 scope : this
             });
-
-            this.axisPanelX.on('gotoassaypage', function(){ this.xwin.hide(); }, this);
         }
         else {
             this.updateMeasureSelection(this.xwin);
