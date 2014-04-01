@@ -182,7 +182,7 @@ Ext.define('Connector.view.Dimension', {
 
     extend: 'Ext.container.Container',
 
-    requires: ['Connector.button.DropDownButton'],
+    requires: ['Connector.button.Image'],
 
     alias: 'widget.dimensionview',
 
@@ -268,9 +268,11 @@ Ext.define('Connector.view.DimensionSelector', {
                     html: this.getDimensionLabel()
                 }
             },{
-                xtype: 'dropdownbutton',
                 itemId: 'dimensionbtn',
-                margin: '16 0 0 10',
+                xtype: 'imgbutton',
+                cls: 'dimselectdrop',
+                margin: '13 0 0 10',
+                vector: 27,
                 menu : {
                     xtype: 'menu',
                     ui: 'custom',
@@ -295,25 +297,24 @@ Ext.define('Connector.view.DimensionSelector', {
                     html: 'Sorted by:  <span class="sorttype"></span>'
                 }
             },{
-                id    : btnId,
+                id: btnId,
+                xtype: 'imgbutton',
                 itemId: 'sortdropdown',
-                xtype : 'dropdownbutton',
-                ui    : 'dropdown-alt',
-                cls   : 'sortDropdown',
-                margin: '10 0 0 8',
-                menu : {
+                cls: 'sortDropdown',
+                margin: '7 0 0 8',
+                vector: 21,
+                menu: {
                     xtype: 'menu',
-                    autoShow : true,
-                    itemId : 'sortedmenu',
+                    autoShow: true,
+                    itemId: 'sortedmenu',
                     margin: '0 0 0 0',
                     showSeparator: false,
-                    ui : 'custom',
-                    btn : btnId
+                    ui: 'custom',
+                    btn: btnId
                 },
-                listeners : {
+                listeners: {
                     afterrender : function(b) {
-                        b.showMenu();
-                        b.hideMenu();
+                        b.showMenu(); b.hideMenu();
                     }
                 }
             }]

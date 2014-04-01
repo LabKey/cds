@@ -108,6 +108,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         initTest.verifyFactTable();
 
         currentTest = initTest;
+
+        // wait for cube caching to take effect
+        initTest.enterApplication();
+        initTest.waitForElement(initTest.getByLocator("Studies"));
+        initTest.goToProjectHome();
     }
 
     @Before
@@ -117,7 +122,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         windowMaximize(); // Provides more useful screenshots on failure
         enterApplication();
-        sleep(10000); // wait for cube caching to take effect
 
         List<WebElement> filterCloseButtons = Locator.css("div.filtermember img[alt=delete]").findElements(getDriver());
         while (filterCloseButtons.size() > 0)
@@ -876,8 +880,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
 
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(AXIS_BUTTON_TEXT, "xaxisbtn").toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator(AXIS_BUTTON_TEXT, "yaxisbtn").toBy()));
+        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
+        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
 
         yAxisButton.click();
         _ext4Helper.waitForMask();
@@ -1143,7 +1147,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void pickCDSDimension(String dimension)
     {
-        click(Locator.xpath("//a[contains(@class, 'dropdown')]"));
+        click(cdsDropDownButtonLocator("dimselectdrop"));
         waitAndClick(Locator.xpath("//span[@class='x-menu-item-text' and text()='" + dimension + "']"));
     }
 
@@ -1289,6 +1293,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private Locator.XPathLocator cdsButtonLocatorContainingText(String text)
     {
         return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and contains(text(),'" + text + "')]"));
+    }
+
+    private Locator.XPathLocator cdsDropDownButtonLocator(String cssClass)
+    {
+        return Locator.xpath("//button[contains(@class, 'imgbutton') and contains(@class, '" + cssClass + "')]");
     }
 
     private Locator.XPathLocator filterMemberLocator()
