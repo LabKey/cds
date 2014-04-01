@@ -50,10 +50,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * User: t.chadick
- * Date: Mar 23, 2012
- */
 @Category(CustomModules.class)
 public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTest
 {
