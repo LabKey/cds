@@ -54,6 +54,7 @@ import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.TempQuerySettings;
+import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresPermissionClass;
 import org.labkey.api.security.permissions.AdminPermission;
@@ -222,13 +223,13 @@ public class CDSController extends SpringActionController
         public boolean handlePost(Object o, BindException errors) throws Exception
         {
             List<String> selectedDatasets = getViewContext().getList("dataset");
-
+            UserSchema studySchema = QueryService.get().getUserSchema(getUser(), getContainer(), "study");
             for (String dsName : selectedDatasets)
             {
                 DataSet dataSet = StudyService.get().getDataSet(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), dsName));
                 assert (null != dataSet) : "Couldn't find dataset " + dsName;
 
-                FactLoader loader = new FactLoader(dataSet, getUser(), getContainer());
+                FactLoader loader = new FactLoader(studySchema, dataSet, getUser(), getContainer());
                 _factLoaders.add(loader);
             }
 

@@ -37,7 +37,7 @@ Ext.define('Connector.app.view.StudyProducts', {
                 '<div class="detail-wrapper">',
                     '<div class="detail-container study-detail">',
                         '<div class="study-description">',
-                            '<h2>{VaccineName}</h2>',
+                            '<h2>{Label}</h2>',
                             '<div class="description-text">{Description}</div>',
                         '</div>',
                         '<div class="study-date">',
