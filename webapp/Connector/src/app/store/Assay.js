@@ -26,14 +26,14 @@ Ext.define('Connector.app.store.Assay', {
 
         if (assaySet.length > 0) {
             var queryConfig = {
-                schemaName: 'CDS',
-                queryName: 'assays',
+                schemaName: 'Study',
+                queryName: 'StudyDesignAssays',
                 success: this.onLoadQuery,
                 scope: this
             };
 
             if (assay.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('Id', assay, LABKEY.Filter.Types.IN) ]
+                queryConfig.filterArray = [ LABKEY.Filter.create('Name', assay, LABKEY.Filter.Types.IN) ]
             }
 
             LABKEY.Query.selectRows(queryConfig);

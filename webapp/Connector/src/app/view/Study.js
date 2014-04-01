@@ -37,7 +37,7 @@ Ext.define('Connector.app.view.Study', {
             '<div class="detail-wrapper">',
                 '<div class="detail-container study-detail">',
                     '<div class="study-description">',
-                        '<h2 class="name-text">{StudyName:htmlEncode}</h2>',
+                        '<h2 class="name-text">{Label:htmlEncode}</h2>',
                         '<tpl if="Phase && Phase.length &gt; 0">',
                             '<span class="phase-text">Phase {Phase:htmlEncode}</span>',
                         '</tpl>',

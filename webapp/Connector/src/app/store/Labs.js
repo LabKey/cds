@@ -24,16 +24,18 @@ Ext.define('Connector.app.store.Labs', {
         }
         labs = labSet.join(';');
 
+        var columns = Connector.app.model.Labs.Fields;
         if (labSet.length > 0) {
             var queryConfig = {
-                schemaName: 'CDS',
-                queryName: 'labs',
+                schemaName: 'study',
+                queryName: 'StudyDesignLabs',
+                columns: Ext.Array.pluck(Connector.app.model.Labs.getFields(), "name"),
                 success: this.onLoadQuery,
                 scope: this
             };
 
             if (labs.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('Id', labs, LABKEY.Filter.Types.IN) ]
+                queryConfig.filterArray = [ LABKEY.Filter.create('Name', labs, LABKEY.Filter.Types.IN) ]
             }
 
             LABKEY.Query.selectRows(queryConfig);

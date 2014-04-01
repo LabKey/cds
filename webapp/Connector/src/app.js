@@ -24,8 +24,8 @@ var launchApp = function(cube) {
         });
 
         Connector.studyContext = {
-            subjectColumn: 'ParticipantId',
-            subjectVisitColumn: 'ParticipantVisit'
+            subjectColumn: 'SubjectId',
+            subjectVisitColumn: 'SubjectVisit'
         };
     });
 };
