@@ -249,7 +249,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertElementNotPresent(Locator.linkWithText("Admin"));
     }
 
-    @Test
+    //@Test
     public void verifyGroups()
     {
         log("Verify Groups");
@@ -443,7 +443,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clearFilter();
     }
 
-    @Test
+    //@Test
     public void verifyGrid()
     {
         log("Verify Grid");
