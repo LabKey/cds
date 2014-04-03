@@ -1166,24 +1166,29 @@ div.totalcolumn {
       user-select:none;
       cursor: default;
     }
-  }
 
-  .primary {
-    display: inline-block;
-    font-family: $bodycaps-font;
-    font-size: 10pt;
-    padding-left: 10px;
-    max-width: 300px;
+    ul {
+      display: inline-block;
+      vertical-align: bottom;
+      margin-left: 5px;
+
+      li {
+        font-family: $bodycaps-font;
+        font-size: 10pt;
+        max-width: 250px;
+        white-space: nowrap;
+      }
+    }
   }
 
   h1 {
     display: inline-block;
     color: $interactive-color;
   }
+}
 
-  .x-btn {
-//    vertical-align: super;
-  }
+button.ddbutton {
+  margin: 5px 0 0 10px;
 }
 
 /* -- END Connector.view.Variable */
