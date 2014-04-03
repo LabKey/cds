@@ -3,7 +3,8 @@ Ext.define('Connector.model.Variable', {
 
     fields: [
         {name: 'typeLabel'},
-        {name: 'primaryLabel'},
+        {name: 'schemaLabel'},
+        {name: 'queryLabel'},
         {name: 'subLabel'}
     ],
 
@@ -17,18 +18,21 @@ Ext.define('Connector.model.Variable', {
             sel = selections;
         }
 
-        var label = '';
+        var schema = '', query = '';
         if (sel) {
             if (sel.$className === 'Measure') {
-                label = sel.get('queryLabel') + ': ' + sel.get('label');
+                schema = sel.get('queryLabel');
+                query = sel.get('label');
             }
             else {
                 // assume an object with measure 'properties'
-                label = sel['queryLabel'] + ': ' + sel['label'];
+                schema = sel['queryLabel'];
+                query = sel['label'];
             }
         }
 
-        this.set('primaryLabel', label);
+        this.set('schemaLabel', schema);
+        this.set('queryLabel', query);
         this.fireEvent('updatevariable', this);
     }
 });

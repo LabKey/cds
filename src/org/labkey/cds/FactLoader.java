@@ -27,6 +27,7 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
+import org.labkey.api.query.SchemaKey;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.study.DataSet;
@@ -49,10 +50,10 @@ public class FactLoader
     private ColumnMapper[] _colsToMap;
     private int _rowsInserted = -1;
 
-    public FactLoader(DataSet sourceDataset, User user, Container c)
+    public FactLoader(UserSchema studySchema, DataSet sourceDataset, User user, Container c)
     {
         _sourceDataset = sourceDataset;
-        _sourceTableInfo = sourceDataset.getTableInfo(user);
+        _sourceTableInfo = studySchema.getTable(sourceDataset.getName());
         _container = c;
         _user = user;
         CDSUserSchema cdsSchema = new CDSUserSchema(user, c);
@@ -63,8 +64,8 @@ public class FactLoader
          * tables in the star schema.
          */
         _colsToMap = new ColumnMapper[] {
-            new ColumnMapper("ParticipantId", null, null, "ParticipantId"),
-            new ColumnMapper("Study", cdsSchema.getTable("Studies"), null, "Study", "StudyName"),
+            new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
+            new ColumnMapper("Study", studySchema.getTable("StudyProperties"), null, "Folder", "Study"),
             new ColumnMapper("Assay", cdsSchema.getTable("Assays"), _sourceTableInfo.getName(), "Assay"),
             new ColumnMapper("Lab", cdsSchema.getTable("Labs"), null, "Lab"),
             new ColumnMapper("Antigen", cdsSchema.getTable("Antigens"), null, "Antigen", "VirusName", "Virus"),
@@ -181,7 +182,7 @@ public class FactLoader
                 {
                     TableInfo colTarget = col.getFkTableInfo();
                     //Not sure -- does TableInfo.equals work??
-                    if (colTarget.getSchema().getName().equalsIgnoreCase(targetSchemaName) && colTarget.getName().equalsIgnoreCase(targetTableName))
+                    if (null != colTarget && colTarget.getSchema().getName().equalsIgnoreCase(targetSchemaName) && colTarget.getName().equalsIgnoreCase(targetTableName))
                         return col;
                 }
             }
@@ -254,7 +255,7 @@ public class FactLoader
 
                 return sqlFragment;
             }
-            else if (null != _sourceColumn)
+            else if (null != _sourceColumn && _lookupTarget.getSchema().getName().equalsIgnoreCase("cds")) //TODO: Fix up missing keys in study schema
             {
                 /*
                 INSERT INTO cds.Assays ( container, id)

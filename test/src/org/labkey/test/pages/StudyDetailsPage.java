@@ -22,10 +22,6 @@ import org.labkey.test.util.LogMethod;
 
 import static org.junit.Assert.*;
 
-/**
- * User: tchadick
- * Date: 10/25/13
- */
 public class StudyDetailsPage
 {
     private final CDSTest _test;

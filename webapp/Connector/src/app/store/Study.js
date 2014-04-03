@@ -26,14 +26,14 @@ Ext.define('Connector.app.store.Study', {
 
         if (studySet.length > 0) {
             var queryConfig = {
-                schemaName: 'CDS',
-                queryName: 'studies',
+                schemaName: 'Study',
+                queryName: 'StudyProperties',
                 success: this.onLoadQuery,
                 scope: this
             };
 
             if (study.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('StudyName', study, LABKEY.Filter.Types.IN) ]
+                queryConfig.filterArray = [ LABKEY.Filter.create('Label', study, LABKEY.Filter.Types.IN) ]
             }
 
             LABKEY.Query.selectRows(queryConfig);

@@ -17,13 +17,13 @@
 
 SELECT Container, 'FAILED - missing study' as qc, Facts.Study as value
 FROM Facts
-WHERE Facts.Study.StudyName IS NULL
+WHERE Facts.Study.Label IS NULL
 
 UNION
 
 SELECT Container, 'FAILED - missing ptid' as qc, Facts.ParticipantId as value
 FROM Facts
-WHERE Facts.ParticipantId.ParticipantId IS NULL
+WHERE Facts.ParticipantId.SubjectId IS NULL
 
 UNION
 
@@ -35,11 +35,11 @@ UNION
 
 SELECT Container, 'FAILED - missing assay' as qc, Facts.Assay as value
 FROM Facts
-WHERE Facts.Assay IS NOT NULL AND Facts.Assay.Id IS NULL
+WHERE Facts.Assay IS NOT NULL AND Facts.Assay.Name IS NULL
 
 UNION
 
 SELECT Container, 'FAILED - missing lab' as qc, Facts.Lab as value
 FROM Facts
-WHERE Facts.Lab IS NOT NULL AND Facts.Lab.Id IS NULL
+WHERE Facts.Lab IS NOT NULL AND Facts.Lab.Name IS NULL
 

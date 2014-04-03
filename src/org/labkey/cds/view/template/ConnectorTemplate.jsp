@@ -113,8 +113,7 @@
 
         button.imgbutton {
             padding: 0;
-            margin: 0;
-            border: 0px;
+            border: none;
             background-color: transparent;
             cursor: pointer;
 

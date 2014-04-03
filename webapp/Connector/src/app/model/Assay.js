@@ -8,9 +8,9 @@ Ext.define('Connector.app.model.Assay', {
     extend : 'Ext.data.Model',
 
     fields: [
-        {name: 'Id'},
+        {name: 'Name'},
         {name: 'Description'},
-        {name: 'AltName'},
+        {name: 'Label'},
         {name: 'PI'},
         {name: 'SystemTarget'},
         {name: 'Type'},

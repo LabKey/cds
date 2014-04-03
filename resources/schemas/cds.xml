@@ -75,23 +75,23 @@
     <ns:columns>
       <ns:column columnName="ParticipantId">
           <ns:fk>
-            <ns:fkColumnName>ParticipantId</ns:fkColumnName>
+            <ns:fkColumnName>SubjectId</ns:fkColumnName>
             <ns:fkTable>Demographics</ns:fkTable>
             <ns:fkDbSchema>study</ns:fkDbSchema>
           </ns:fk>
       </ns:column>
         <ns:column columnName="Assay">
           <ns:fk>
-            <ns:fkColumnName>Id</ns:fkColumnName>
-            <ns:fkTable>Assays</ns:fkTable>
-            <ns:fkDbSchema>cds</ns:fkDbSchema>
+            <ns:fkColumnName>Name</ns:fkColumnName>
+            <ns:fkTable>StudyDesignAssays</ns:fkTable>
+            <ns:fkDbSchema>study</ns:fkDbSchema>
           </ns:fk>
         </ns:column>
         <ns:column columnName="Lab">
           <ns:fk>
-            <ns:fkColumnName>Id</ns:fkColumnName>
-            <ns:fkTable>Labs</ns:fkTable>
-            <ns:fkDbSchema>cds</ns:fkDbSchema>
+            <ns:fkColumnName>Name</ns:fkColumnName>
+            <ns:fkTable>StudyDesignLabs</ns:fkTable>
+            <ns:fkDbSchema>study</ns:fkDbSchema>
           </ns:fk>
         </ns:column>
       <ns:column columnName="Antigen">
@@ -104,9 +104,9 @@
 
       <ns:column columnName="Study">
         <ns:fk>
-          <ns:fkColumnName>StudyName</ns:fkColumnName>
-          <ns:fkTable>Studies</ns:fkTable>
-          <ns:fkDbSchema>cds</ns:fkDbSchema>
+          <ns:fkColumnName>Container</ns:fkColumnName>
+          <ns:fkTable>StudyProperties</ns:fkTable>
+          <ns:fkDbSchema>study</ns:fkDbSchema>
         </ns:fk>
       </ns:column>
       <ns:column columnName="Container">
@@ -369,9 +369,9 @@
         <ns:column columnName="AssayID">
             <ns:dimension>false</ns:dimension>
             <ns:fk>
-              <ns:fkColumnName>Id</ns:fkColumnName>
-              <ns:fkTable>Assays</ns:fkTable>
-              <ns:fkDbSchema>cds</ns:fkDbSchema>
+              <ns:fkColumnName>Name</ns:fkColumnName>
+              <ns:fkTable>StudyDesignAssays</ns:fkTable>
+              <ns:fkDbSchema>study</ns:fkDbSchema>
             </ns:fk>
           </ns:column>
         <ns:column columnName="PubMedID"/>

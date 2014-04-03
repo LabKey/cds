@@ -1,0 +1,1 @@
+ALTER TABLE cds.assaypublications DROP CONSTRAINT fk_assay_pub;

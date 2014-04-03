@@ -8,7 +8,7 @@ Ext.define('Connector.app.model.StudyProducts', {
     extend : 'Ext.data.Model',
 
     fields: [
-        {name: 'VaccineName'},
+        {name: 'Label'},
         {name: 'Type'},
         {name: 'Class', mapping: 'class'},
         {name: 'Subclass', mapping: 'subclass'},
