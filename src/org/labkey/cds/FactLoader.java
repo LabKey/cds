@@ -57,6 +57,7 @@ public class FactLoader
         _container = c;
         _user = user;
         CDSUserSchema cdsSchema = new CDSUserSchema(user, c);
+        UserSchema coreSchema = QueryService.get().getUserSchema(user, c, "core");
 
         /*
          * ColumnMappers find the correct columns in the dataset to map into cube columns and can map a const if not found.
@@ -65,7 +66,9 @@ public class FactLoader
          */
         _colsToMap = new ColumnMapper[] {
             new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
-            new ColumnMapper("Study", studySchema.getTable("StudyProperties"), null, "Folder", "Study"),
+            //The study column is the same as the container column and available directly in the table
+            //For this reason we just use the container to find the lookup into the studyproperties table
+            new ColumnMapper("Study", coreSchema.getTable("Container"), null, "Container", "Folder"),
             new ColumnMapper("Assay", cdsSchema.getTable("Assays"), _sourceTableInfo.getName(), "Assay"),
             new ColumnMapper("Lab", cdsSchema.getTable("Labs"), null, "Lab"),
             new ColumnMapper("Antigen", cdsSchema.getTable("Antigens"), null, "Antigen", "VirusName", "Virus"),
