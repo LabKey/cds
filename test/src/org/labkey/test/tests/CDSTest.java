@@ -153,6 +153,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText("Change Study Properties"));
         waitForElement(Ext4Helper.Locators.radiobutton(this, "DATE"));
         _ext4Helper.selectRadioButton("DATE");
+        //We need to set the root study name to blank to hide it from mondrian (issue 19996)
+        setFormElement(Locator.name("Label"), "");
         clickButton("Submit");
 
         goToProjectHome();
