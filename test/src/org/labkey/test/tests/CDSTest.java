@@ -185,7 +185,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void importComponentStudy(String studyName)
     {
         _containerHelper.createSubfolder(getProjectName(), studyName, "Study");
-        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true);
+        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true, true);
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -312,7 +312,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
-        assertFilterStatusCounts(18, 2, 4);
+        assertFilterStatusCounts(18, 2, 3);
 
         makeNavigationSelection(NavigationLink.HOME);
         waitForText(studyGroup);
@@ -332,7 +332,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Assays");
         selectBars("Luminex-Sample-LabKey");
         useSelectionAsFilter();
-        assertFilterStatusCounts(6, 1, 3);
+        assertFilterStatusCounts(6, 1, 2);
 
         makeNavigationSelection(NavigationLink.HOME);
         waitForText(studyGroup);
@@ -341,7 +341,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // Verify that filters get replaced when viewing group.
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
-        assertFilterStatusCounts(18, 2, 4);
+        assertFilterStatusCounts(18, 2, 3);
         assertTextPresent("Study Group Verify", "Description", "Updates", studyGroupDescModified);
 
         // Change from live to snapshot, verify choice remains after navigating away.
@@ -453,11 +453,11 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Studies");
         makeNavigationSelection(NavigationLink.GRID);
         addGridColumn("NAb", "Point IC50", true, true);
-        addGridColumn("NAb", "Study Name", false, true);
+        addGridColumn("NAb", "Lab", false, true);
 
         waitForGridCount(668);
         assertElementPresent(Locator.tagWithText("span", "Point IC50"));
-        assertElementPresent(Locator.tagWithText("span", "Study Name"));
+        assertElementPresent(Locator.tagWithText("span", "Lab"));
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Studies");
         click(cdsButtonLocator("hide empty"));
@@ -484,7 +484,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         waitForElementToDisappear(Locator.tagWithText("span", "Point IC50"));
         //But other column from same table is still there
-        waitForElement(Locator.tagContainingText("span", "Study Name"));
+        waitForElement(Locator.tagContainingText("span", "Lab"));
 
         setRawDataFilter("Ethnicity", "White");
         waitForGridCount(246);
@@ -494,7 +494,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(Locator.tagWithText("span", "Point IC50"));
         waitForGridCount(246);
 
-        openFilterPanel("Study Name");
+        openFilterPanel("Lab");
         waitForElement(Locator.tagWithText("div", "PI1"));
         _ext4Helper.checkGridRowCheckbox("PI1");
         click(cdsButtonLocator("OK"));
@@ -506,7 +506,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForGridCount(152);
 
         log("Ensure filtering goes away when column does");
-        openFilterPanel("Study Name");
+        openFilterPanel("Lab");
         _ext4Helper.uncheckGridRowCheckbox("PI1");
         click(cdsButtonLocator("OK"));
         waitForGridCount(246);
@@ -1500,6 +1500,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void deleteGroupFromSummaryPage(String name)
     {
+        shortWait().until(ExpectedConditions.elementToBeClickable(Locator.tagWithClass("div", "nav-label").withText(name).toBy()));
         click(Locator.tagWithClass("div", "nav-label").withText(name));
         waitForText(name);
         click(cdsButtonLocator("delete"));
