@@ -130,6 +130,8 @@
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 
+        <script path="Connector/src/utility/StoreCache.js"/>
+
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Site.js"/>
@@ -147,6 +149,7 @@
         <script path="Connector/src/app/view/Site.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
+        <script path="Connector/src/app/view/StudyDetail.js"/>
 
         <script path="Connector/src/Application.js"/>
 

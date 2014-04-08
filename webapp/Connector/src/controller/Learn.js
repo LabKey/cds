@@ -16,7 +16,8 @@ Ext.define('Connector.controller.Learn', {
             // When a dimension is selected the following event is fired. This is used in coordination
             // with this.updateLock to ensure that an infinite loop does not occur
             //
-            selectdimension: this.onSelectDimension
+            selectdimension: this.onSelectDimension,
+            selectitem: this.onSelectItem
         });
 
         this.control('infobutton', {
@@ -25,6 +26,12 @@ Ext.define('Connector.controller.Learn', {
                 detail.simple  = true;
                 var key        = e.dimension.getName().split('.')[0];
                 this.onDetail(key, detail);
+            }
+        });
+
+        this.control('#back', {
+            click : function() {
+                this.onBack();
             }
         });
 
@@ -167,17 +174,25 @@ Ext.define('Connector.controller.Learn', {
         this.getStateManager().onMDXReady(function(mdx) {
             var v = this.getViewManager().getViewInstance('learn');
             if (v) {
+                var dimensionName = context[0];
+                var id = context[1];
                 var dim;
-                if (context.length > 0) {
-                    dim = mdx.getDimension(context[0]);
+                if (dimensionName) {
+                    dim = mdx.getDimension(dimensionName);
                 }
+
+                // TEMP: This is a workaround for the context not being available from
+                // the view manager.
+                this.dimensionName = dimensionName;
+
                 if (dim) {
                     //
                     // Only update the active dimension when the dimension
                     // can be found in the context
                     //
+                    this.dimension = dim;
                     this.updateLock = true;
-                    v.selectDimension(dim, this.innerTransition);
+                    v.selectDimension(dim, id, this.innerTransition);
                     this.innerTransition = false;
                     this.updateLock = false;
                 }
@@ -198,6 +213,17 @@ Ext.define('Connector.controller.Learn', {
         }
     },
 
+    onSelectItem : function(item) {
+        var id = item.getId();
+
+        if (id) {
+            this.getViewManager()._changeView('learn', 'learn', [this.dimensionName, id]);
+        }
+        else {
+            console.warn('Unable to show item without an id property');
+        }
+    },
+
     /**
      * This is called when the app internally requests that a details view be shown (e.g. click a 'view info' button)
      */
@@ -211,5 +237,11 @@ Ext.define('Connector.controller.Learn', {
         }
 
         this.getViewManager()._changeView(action, 'learn', context.split('/'));
+    },
+
+    onBack : function() {
+        if (this.dimensionName) {
+            this.getViewManager()._changeView('learn', 'learn', [this.dimensionName]);
+        }
     }
 });

@@ -17,15 +17,22 @@ Ext.define('Connector.view.Learn', {
 
     initComponent : function() {
 
-        this.items = [ this.getHeader() ];
+        this.headerViews = {};
+
+        // Multiple headers are added here but they are initially set to hidden. When the page
+        // url changes the headers will be updated and made visible based on the type of view -
+        // parent learn view or study/assay detail page etc
+        this.items = [this.getHeader(), this.getStudyDetailHeader()];
 
         this.callParent();
     },
 
     getHeader : function() {
-        if (!this.headerView) {
-            this.headerView = Ext.create('Connector.view.LearnHeader', {
+        if (!this.headerViews.main) {
+            this.headerViews.main = Ext.create('Connector.view.LearnHeader', {
                 dimensions: this.getDimensions(),
+
+                hidden: true,
 
                 // TODO: This should be bubblable but the this.control() in the controller
                 // does not seem to respect bubbled events
@@ -37,7 +44,29 @@ Ext.define('Connector.view.Learn', {
                 }
             });
         }
-        return this.headerView;
+        return this.headerViews.main;
+    },
+
+    getStudyDetailHeader : function(id) {
+        if (!this.headerViews.studyDetail) {
+            this.headerViews.studyDetail = Ext.create('Connector.view.LearnItemHeader', {
+                dimensions: this.getDimensions(),
+
+                hidden: true,
+
+                // TODO: This should be bubblable but the this.control() in the controller
+                // does not seem to respect bubbled events
+                listeners: {
+                    selectdimension: function(model) {
+                        this.fireEvent('selectdimension', model);
+                    },
+                    scope: this
+                }
+            });
+        }
+        //this.headerViews.studyDetail.setId(id);
+
+        return this.headerViews.studyDetail;
     },
 
     onFilterChange : function(filters) {
@@ -64,7 +93,22 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    loadDataView : function(dimension, animate) {
+    setHeader : function(dimension, id) {
+        var listHeader = this.getHeader();
+        var studyDetailHeader = this.getStudyDetailHeader(id);
+        if (id) {
+            listHeader.setVisible(false);
+            studyDetailHeader.setDetailType(dimension.name);
+            studyDetailHeader.setVisible(true);
+        } else {
+            listHeader.setVisible(true);
+            studyDetailHeader.setVisible(false);
+        }
+    },
+
+    loadDataView : function(dimension, id, animate) {
+
+        this.setHeader(dimension, id);
 
         if (this.dataView) {
             this.state.un('filterchange', this.onFilterChange, this);
@@ -74,7 +118,7 @@ Ext.define('Connector.view.Learn', {
                     callback: function() {
                         this.remove(this.dataView);
                         this.dataView = undefined;
-                        this.completeLoad(dimension, animate);
+                        this.completeLoad(dimension, id, animate);
                     },
                     scope: this
                 });
@@ -82,35 +126,60 @@ Ext.define('Connector.view.Learn', {
             else {
                 this.remove(this.dataView);
                 this.dataView = undefined;
-                this.completeLoad(dimension, animate);
+                this.completeLoad(dimension, id, animate);
             }
         }
         else {
-            this.completeLoad(dimension, animate);
+            this.completeLoad(dimension, id, animate);
         }
     },
 
-    completeLoad : function(dimension, animate) {
+    completeLoad : function(dimension, id, animate) {
 
-        if (dimension && dimension.detailModel && dimension.detailView) {
+        if (Ext.isDefined(dimension)) {
+            var store;
+            if (id && dimension.detailItemView) {
+                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
 
-            this.dataView = Ext.create(dimension.detailView, {
-                dimension: dimension,
-                store: Ext.create(dimension.detailCollection, {
-                    model: dimension.detailModel
-                }),
-                plugins: ['learnheaderlock']
-            });
+                this.dataView = Ext.create(dimension.detailItemView, {
+//                    dimension: dimension,
+                    store: store
+                })
+
+                var model = store.getById(id);
+
+                if (model) {
+                    var studyDetailHeader = this.getStudyDetailHeader(id);
+
+                    studyDetailHeader.setModel(model);
+                }
+            }
+            else if (dimension.detailModel && dimension.detailView) {
+                store = StoreCache.getStore(dimension.detailCollection);
+
+                this.dataView = Ext.create(dimension.detailView, {
+                    dimension: dimension,
+                    store: store,
+                    plugins: ['learnheaderlock']
+                });
+
+                this.dataView.on('itemclick', function(view, model, el, idx) {
+                    this.fireEvent('selectitem', model);
+                }, this);
+
+            }
             this.add(this.dataView);
+
+            // TODO: Are these both needed for item view?
             this.loadData(this.dataView);
 
             this.state.on('filterchange', this.onFilterChange, this);
         }
-        else if (!Ext.isDefined(dimension)) {
+        else {
             //
             // See which one the header is respecting
             //
-            if (this.headerView) {
+            if (this.headerViews.main) {
                 var dimModel = this.getHeader().getHeaderView().getStore().getAt(0);
                 if (dimModel && dimModel.get('detailModel') && dimModel.get('detailView')) {
                     this.loadDataView(dimModel.data);
@@ -128,20 +197,187 @@ Ext.define('Connector.view.Learn', {
         this.getHeader().setDimensions(dimensions);
     },
 
-    selectDimension : function(dimension, animate) {
+    selectDimension : function(dimension, id, animate) {
 
         if (dimension) {
-            this.loadDataView(dimension, animate);
+            this.loadDataView(dimension, id, animate);
         }
         else {
-            if (this.headerView) {
-                this.headerView.on('selectdimension', this.loadDataView, this, {single: true});
+            if (this.headerViews.main) {
+                this.headerViews.main.on('selectdimension', this.loadDataView, this, {single: true});
             }
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id);
     }
 });
+
+// This is a shared header class for an individual item detail. This will be the header for a single
+// Study, a single Assay or a single Lab etc.
+Ext.define('Connector.view.LearnItemHeader', {
+
+    extend: 'Ext.container.Container',
+
+    height: 161,
+
+    requires: ['Connector.button.Image'],
+
+    alias: 'widget.learnitemheaderview',
+
+    layout: {
+        type : 'vbox',
+        align: 'stretch'
+    },
+
+    cls: 'learnitemheaderview learnheader',
+
+    defaults: {
+        ui: 'custom',
+        flex: 1
+    },
+
+    selectorId: 'dimselect',
+
+    initComponent : function() {
+
+        this.items = [
+            {
+                xtype: 'box',
+                itemId: 'headerLabel',
+                autoEl: {
+                    tag: 'div',
+                    cls: 'titlepanel',
+                    html: ''
+                }
+            },
+            {
+                xtype: 'toolbar',
+                ui: 'footer',
+                // dock: 'bottom',
+                items: [{
+                    xtype: 'button',
+                    //text: 'back',
+                    html: '<svg width="12" height="10" fill="#9b0d96">'+
+                        '<path d="M0 6 L5 10 L5 2 Z" />'+
+                    '</svg>back',
+                    cls: '',
+                    ui: 'rounded-inverted-accent',
+                    itemId: 'back',
+                    style: 'margin: 4px 2px 0 23px;'
+                    // handler: function() {
+                    //     this.fireEvent('navBack');
+                    // }
+                }, {
+                    xtype: 'tbspacer',
+                    width: 50
+                }, {
+                    xtype: 'label',
+                    text: 'Select:'
+                }, {
+                    xtype: 'button',
+                    ui: 'rounded-inverted-accent',
+                    text: 'all study subjects',
+                    itemId: 'studyAllSubjects',
+                    hidden: true,
+                    // TODO: Move to button class?
+                    style: 'margin: 4px 2px 0 23px;'
+                }, {
+                    xtype: 'button',
+                    ui: 'rounded-inverted-accent',
+                    text: 'all placebo',
+                    itemId: 'studyAllPlacebo',
+                    hidden: true,
+                    // TODO: Move to button class?
+                    style: 'margin: 4px 2px 0 2px;'
+                }, {
+                    xtype: 'button',
+                    ui: 'rounded-inverted-accent',
+                    text: 'all vaccinees',
+                    itemId: 'studyAllVaccine',
+                    hidden: true,
+                    // TODO: Move to button class?
+                    style: 'margin: 4px 2px 0 2px;'
+                }, {
+                    xtype: 'button',
+                    ui: 'rounded-inverted-accent',
+                    text: 'subjects tested on this assay',
+                    itemId: 'assaySubjects',
+                    hidden: true,
+                    // TODO: Move to button class?
+                    style: 'margin: 4px 2px 0 2px;'
+                }]
+            }
+            //{ xtype: 'button', text: 'clear', cls: 'filterclear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
+        ];
+
+        this.callParent();
+
+        this.dimSelector = this.getComponent(this.selectorId);
+    },
+
+    setDimension : function(dim, hierarchyIndex) {
+        if (this.dimSelector) {
+            this.dimSelector.setDimension(dim, hierarchyIndex);
+        }
+    },
+
+    setHierarchy : function(index) {
+        if (this.dimSelector) {
+            this.dimSelector.setHierarchy(index);
+        }
+    },
+
+    // Controls will only be shown when the detail type matches the given string (or array of strings)
+    controlFilters : {
+        studyAllSubjects: 'Study',
+        studyAllPlacebo: 'Study',
+        studyAllVaccine: 'Study',
+        assaySubjects: 'Assay'
+    },
+
+    update : function() {
+        var cmp = this.getComponent('headerLabel');
+        var content = '';
+        if (this.detailType) {
+            content += this.detailType;
+            if (this.model) {
+                content += ": ";
+            }
+        }
+        if (this.model) {
+            // TODO: Other models may have other label properties
+            content += this.model.get('Label');
+        }
+        cmp.update(content);
+
+        // Only show the controls that are valid for this detail type
+        Ext.iterate(this.controlFilters, function(key, value) {
+            // Value can be an id or an array of ids so normalize to an array before iterating
+            var values = Ext.Array.from(value);
+            var cmp = this.queryById(key);
+            if (cmp) {
+                var visible = false;
+                Ext.each(values, function(value) {
+                    visible = visible || this.detailType == value;
+                }, this);
+                cmp.setVisible(visible);
+            }
+        }, this);
+    },
+
+    setDetailType : function(type) {
+        this.detailType = type;
+
+        this.update();
+    },
+
+    setModel : function(model) {
+        this.model = model;
+
+        this.update();
+    }
+});
+
 
 Ext.define('Connector.view.LearnHeader', {
 
@@ -164,7 +400,7 @@ Ext.define('Connector.view.LearnHeader', {
                 autoEl: {
                     tag: 'div',
                     cls: 'titlepanel',
-                    html: '<span>Learn About...</span>'
+                    html: '<span></span>'
                 }
             },{
                 xtype: 'container',
@@ -204,7 +440,7 @@ Ext.define('Connector.view.LearnHeader', {
         return this.getComponent('dataviewcontainer').getComponent('headerdataview');
     },
 
-    selectDimension : function(dimUniqueName) {
+    selectDimension : function(dimUniqueName, id) {
         if (this.dimensions && this.dimensions.length > 0) {
             this.getHeaderView().selectDimension(dimUniqueName);
         }

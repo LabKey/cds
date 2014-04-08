@@ -79,6 +79,14 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
                 detailView: 'Connector.app.view.StudyProducts',
+                // detailDataSource: {
+                //     schema: 'Study',
+                //     query: 'StudyProperties'
+                // },
+                // detailPageViews: {
+                //     leadContributer: 'Connector.app.view.Person',
+
+                // },
 
                 hierarchies: [{
                     uniqueName: '[Vaccine.Type]',
@@ -103,6 +111,8 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Assay',
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
+
+                detailItemView: 'Connector.app.view.StudyDetail',
 
                 hierarchies: [{
                     uniqueName: '[Assay.Target Area]',
@@ -133,6 +143,8 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
+
+                detailItemView: 'Connector.app.view.StudyDetail',
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -238,7 +250,10 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsSummary: true,
                 detailCollection: undefined,
                 detailModel: undefined,
-                detailView: undefined
+                detailView: undefined,
+                detailItemCollection: undefined,
+                detailItemModel: undefined,
+                detailItemView: undefined
             };
 
             var hh = {
@@ -296,7 +311,10 @@ Ext4.define('Connector.cube.Configuration', {
                             summaryTargetLevel: Ext.isDefined(cd.summaryTargetLevel) ? cd.summaryTargetLevel : defaultTargetLevel,
                             detailCollection: Ext.isDefined(cd.detailCollection) ? cd.detailCollection : dd.detailCollection,
                             detailModel: Ext.isDefined(cd.detailModel) ? cd.detailModel : dd.detailModel,
-                            detailView: Ext.isDefined(cd.detailView) ? cd.detailView : dd.detailView
+                            detailView: Ext.isDefined(cd.detailView) ? cd.detailView : dd.detailView,
+                            detailItemCollection: Ext.isDefined(cd.detailItemCollection) ? cd.detailItemCollection : dd.detailItemCollection,
+                            detailItemModel: Ext.isDefined(cd.detailItemModel) ? cd.detailItemModel : dd.detailItemModel,
+                            detailItemView: Ext.isDefined(cd.detailItemView) ? cd.detailItemView : dd.detailItemView
                         });
 
                         //

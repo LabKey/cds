@@ -294,6 +294,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
+
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
@@ -311,6 +313,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
 
