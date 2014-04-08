@@ -71,7 +71,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     public static String getCDSSampleDataPath()
     {
-        File path = new File(getLabKeyRoot(), "server/optionalModules/cds/test/sampledata");
+        File path = new File(getLabKeyRoot(), "server/customModules/cds/test/sampledata");
         return path.toString();
     }
 
