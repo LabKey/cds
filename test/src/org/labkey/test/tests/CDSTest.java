@@ -55,7 +55,7 @@ import static org.junit.Assert.assertTrue;
 public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTest
 {
     private static final String PROJECT_NAME = "CDSTest Project";
-    private static final File FOLDER_ZIP = new File(getCDSSampleDataPath(), "Dataspace.folder.zip");
+    private static final File FOLDER_ZIP = getSampleData("Dataspace.folder.zip");
     private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     private static final String GROUP_NAME = "CDSTest_AGroup";
@@ -68,12 +68,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     public final static int CDS_WAIT = 1500;
-
-    public static String getCDSSampleDataPath()
-    {
-        File path = new File(getLabKeyRoot(), "server/customModules/cds/test/sampledata");
-        return path.toString();
-    }
 
     @Override
     public String getAssociatedModuleDirectory()
@@ -187,7 +181,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void importComponentStudy(String studyName)
     {
         _containerHelper.createSubfolder(getProjectName(), studyName, "Study");
-        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true, true);
+        importStudyFromZip(getSampleData(studyName + ".folder.zip"), true, true);
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -198,7 +192,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText(query));
         _listHelper.clickImportData();
 
-        setFormElementJS(Locator.id("tsv3"), getFileContents(new File(getCDSSampleDataPath(), dataFilePath)));
+        setFormElementJS(Locator.id("tsv3"), getFileContents(getSampleData(dataFilePath)));
         clickButton("Submit");
     }
 
