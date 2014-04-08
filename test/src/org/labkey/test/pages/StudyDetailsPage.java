@@ -73,7 +73,7 @@ public class StudyDetailsPage
 
     public static StudyDetailsPage demoStudy(CDSTest test)
     {
-        return new StudyDetailsPage(test, "Demo Study", "", "Igra M", "", "Fitzsimmons K", "Trial", "LabKey");
+        return new StudyDetailsPage(test, "DemoSubset", "", "Igra M", "", "Fitzsimmons K", "Trial", "LabKey");
     }
 
     public static StudyDetailsPage notActuallyCHAVI001(CDSTest test)

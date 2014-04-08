@@ -163,10 +163,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @LogMethod(category = LogMethod.MethodType.SETUP)
     private void importData()
     {
-        importComponentStudy("DemoSubset");
+        importComponentStudy(STUDIES[0]);
         importComponentStudy("NotCHAVI001");
-        importComponentStudy("NotCHAVI008");
-        importComponentStudy("NotRV144");
+        importComponentStudy(STUDIES[2]);
+        importComponentStudy(STUDIES[3]);
 
         //Can't add web part until we actually have the datasets imported above
         clickProject(PROJECT_NAME);
@@ -463,16 +463,16 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Studies");
         click(cdsButtonLocator("hide empty"));
-        selectBars("Demo Study");
+        selectBars(STUDIES[0]);
         useSelectionAsFilter();
 
-        waitForElementToDisappear(Locator.css("span.barlabel").withText("Not Actually CHAVI 001"), CDS_WAIT);
+        waitForElementToDisappear(Locator.css("span.barlabel").withText(STUDIES[1]), CDS_WAIT);
 
         //Check to see if grid is properly filtering based on explorer filter
         makeNavigationSelection(NavigationLink.GRID);
         waitForGridCount(437);
         clearFilter();
-        waitForElement(Locator.tagWithText("span", "NotRV144"));
+        waitForElement(Locator.tagWithText("span", STUDIES[3]));
         waitForGridCount(668);
 
         addGridColumn("Demographics", "Gender", true, true);
@@ -786,9 +786,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Studies");
-        assertNounInfoPage("Demo Study", Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
-        assertNounInfoPage("Not Actually CHAVI 001", Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
-        assertNounInfoPage("NotRV144", Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
+        assertNounInfoPage(STUDIES[0], Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
+        assertNounInfoPage(STUDIES[1], Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
+        assertNounInfoPage(STUDIES[3], Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
 
         // Labs info pages are currently disabled
 //        goToAppHome();
