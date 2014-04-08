@@ -148,7 +148,7 @@
         <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
             <Hierarchy visible="true" hasAll="true" primaryKey="container">
                 <Table schema="study" name="StudyProperties" />
-                <Level name="Study" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+                <Level name="Study" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="IfBlankName">
                 </Level>
             </Hierarchy>
         </Dimension>

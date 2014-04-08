@@ -29,12 +29,17 @@ Ext.define('Connector.view.Variable', {
             xtype: 'box',
             cls: 'variable',
             tpl: new Ext.XTemplate(
-                    '<h1 unselectable="on">{typeLabel} =</h1><span class="primary" style="vertical-align: {primaryLabel:this.align}">{primaryLabel}</span>',
+                '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
+                '<ul>',
+                    '<li>{schemaLabel:this.elipseEncode}</li>',
+                    '<li>{queryLabel:htmlEncode}</li>',
+                '</ul>',
                     {
-                        align: function(pl) {
-                            return (pl.length > 46 ? 'sub' : 'super') + ';';
+                        elipseEncode : function(v) {
+                            return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
                         }
-                    })
+                    }
+            )
         };
 
         if (this.model) {
@@ -42,8 +47,6 @@ Ext.define('Connector.view.Variable', {
 
             modelComponent.data = this.data;
         }
-
-        console.log(this.btnCls);
 
         this.items = [modelComponent,{
             itemId: 'cvbutton',
@@ -59,8 +62,7 @@ Ext.define('Connector.view.Variable', {
             hidden: true,
             xtype: 'imgbutton',
             vector: 27,
-            cls: this.btnCls,
-//            margin: '-10 0 0 10',
+            cls: this.btnCls + ' ddbutton',
             handler: this.onBtnClick,
             scope: this
         }];
@@ -84,7 +86,7 @@ Ext.define('Connector.view.Variable', {
             //
             // Determine what button should be shown based on label
             //
-            var haveLabel = m.data['primaryLabel'] && m.data['primaryLabel'].length > 0;
+            var haveLabel = m.data['schemaLabel'] && m.data['schemaLabel'].length > 0;
             var cv = this.getComponent('cvbutton');
             var dd = this.getComponent('ddbutton');
             if (haveLabel) {

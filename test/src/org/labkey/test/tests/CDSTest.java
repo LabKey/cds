@@ -153,6 +153,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText("Change Study Properties"));
         waitForElement(Ext4Helper.Locators.radiobutton(this, "DATE"));
         _ext4Helper.selectRadioButton("DATE");
+        //We need to set the root study name to blank to hide it from mondrian (issue 19996)
+        setFormElement(Locator.name("Label"), "");
         clickButton("Submit");
 
         goToProjectHome();
@@ -161,10 +163,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     @LogMethod(category = LogMethod.MethodType.SETUP)
     private void importData()
     {
-        importComponentStudy("DemoSubset");
+        importComponentStudy(STUDIES[0]);
         importComponentStudy("NotCHAVI001");
-        importComponentStudy("NotCHAVI008");
-        importComponentStudy("NotRV144");
+        importComponentStudy(STUDIES[2]);
+        importComponentStudy(STUDIES[3]);
 
         //Can't add web part until we actually have the datasets imported above
         clickProject(PROJECT_NAME);
@@ -185,7 +187,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void importComponentStudy(String studyName)
     {
         _containerHelper.createSubfolder(getProjectName(), studyName, "Study");
-        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true);
+        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true, true);
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -312,7 +314,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
-        assertFilterStatusCounts(18, 2, 4);
+        assertFilterStatusCounts(18, 2, 3);
 
         makeNavigationSelection(NavigationLink.HOME);
         waitForText(studyGroup);
@@ -332,7 +334,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Assays");
         selectBars("Luminex-Sample-LabKey");
         useSelectionAsFilter();
-        assertFilterStatusCounts(6, 1, 3);
+        assertFilterStatusCounts(6, 1, 2);
 
         makeNavigationSelection(NavigationLink.HOME);
         waitForText(studyGroup);
@@ -341,7 +343,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // Verify that filters get replaced when viewing group.
         waitForElement(filterMemberLocator(STUDIES[0]));
         assertElementPresent(filterMemberLocator(STUDIES[1]));
-        assertFilterStatusCounts(18, 2, 4);
+        assertFilterStatusCounts(18, 2, 3);
         assertTextPresent("Study Group Verify", "Description", "Updates", studyGroupDescModified);
 
         // Change from live to snapshot, verify choice remains after navigating away.
@@ -453,24 +455,24 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickBy("Studies");
         makeNavigationSelection(NavigationLink.GRID);
         addGridColumn("NAb", "Point IC50", true, true);
-        addGridColumn("NAb", "Study Name", false, true);
+        addGridColumn("NAb", "Lab", false, true);
 
         waitForGridCount(668);
         assertElementPresent(Locator.tagWithText("span", "Point IC50"));
-        assertElementPresent(Locator.tagWithText("span", "Study Name"));
+        assertElementPresent(Locator.tagWithText("span", "Lab"));
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Studies");
         click(cdsButtonLocator("hide empty"));
-        selectBars("Demo Study");
+        selectBars(STUDIES[0]);
         useSelectionAsFilter();
 
-        waitForElementToDisappear(Locator.css("span.barlabel").withText("Not Actually CHAVI 001"), CDS_WAIT);
+        waitForElementToDisappear(Locator.css("span.barlabel").withText(STUDIES[1]), CDS_WAIT);
 
         //Check to see if grid is properly filtering based on explorer filter
         makeNavigationSelection(NavigationLink.GRID);
         waitForGridCount(437);
         clearFilter();
-        waitForElement(Locator.tagWithText("span", "NotRV144"));
+        waitForElement(Locator.tagWithText("span", STUDIES[3]));
         waitForGridCount(668);
 
         addGridColumn("Demographics", "Gender", true, true);
@@ -484,7 +486,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         waitForElementToDisappear(Locator.tagWithText("span", "Point IC50"));
         //But other column from same table is still there
-        waitForElement(Locator.tagContainingText("span", "Study Name"));
+        waitForElement(Locator.tagContainingText("span", "Lab"));
 
         setRawDataFilter("Ethnicity", "White");
         waitForGridCount(246);
@@ -494,7 +496,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(Locator.tagWithText("span", "Point IC50"));
         waitForGridCount(246);
 
-        openFilterPanel("Study Name");
+        openFilterPanel("Lab");
         waitForElement(Locator.tagWithText("div", "PI1"));
         _ext4Helper.checkGridRowCheckbox("PI1");
         click(cdsButtonLocator("OK"));
@@ -506,7 +508,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForGridCount(152);
 
         log("Ensure filtering goes away when column does");
-        openFilterPanel("Study Name");
+        openFilterPanel("Lab");
         _ext4Helper.uncheckGridRowCheckbox("PI1");
         click(cdsButtonLocator("OK"));
         waitForGridCount(246);
@@ -784,9 +786,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Studies");
-        assertNounInfoPage("Demo Study", Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
-        assertNounInfoPage("Not Actually CHAVI 001", Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
-        assertNounInfoPage("NotRV144", Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
+        assertNounInfoPage(STUDIES[0], Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
+        assertNounInfoPage(STUDIES[1], Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
+        assertNounInfoPage(STUDIES[3], Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
 
         // Labs info pages are currently disabled
 //        goToAppHome();
@@ -881,13 +883,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
         final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100";
 
-        clickBy("Studies");
-
-        String AXIS_BUTTON_TEXT = "\u25bc";
-
-        makeNavigationSelection(NavigationLink.PLOT);
         WebElement xAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "xaxisbtn").toBy()));
         WebElement yAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "yaxisbtn").toBy()));
+
+        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
+        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
+
+        clickBy("Studies");
+        makeNavigationSelection(NavigationLink.PLOT);
 
         xAxisChooseButton.click();
         waitForElement(Locator.css(".xaxispicker div.itemrow").withText("Physical Exam (6)"));
@@ -898,9 +901,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("set y axis"));
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
-
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
 
         yAxisButton.click();
         _ext4Helper.waitForMask();
@@ -1502,6 +1502,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void deleteGroupFromSummaryPage(String name)
     {
+        shortWait().until(ExpectedConditions.elementToBeClickable(Locator.tagWithClass("div", "nav-label").withText(name).toBy()));
         click(Locator.tagWithClass("div", "nav-label").withText(name));
         waitForText(name);
         click(cdsButtonLocator("delete"));
@@ -1515,22 +1516,27 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Studies", "", "4 studies");
-        assertCDSPortalRow("Subject characteristics", "3 countries, 2 genders, 6 races & subtypes", "29 subject characteristics");
-        assertCDSPortalRow("Assays", "1 target areas, 3 methodologies", "4 assays");
-        assertCDSPortalRow("Assay antigens", "5 clades, 5 sample types, 5 tiers", "31 assay antigens");
-        assertCDSPortalRow("Labs", "", "3 labs");
+        assertCDSPortalRow("Studies", "4 studies");
+        assertCDSPortalRow("Subject characteristics", "29 subject characteristics", "3 countries", "2 genders", "6 races & subtypes");
+        assertCDSPortalRow("Assays", "4 assays", "1 target areas", "3 methodologies");
+        assertCDSPortalRow("Assay antigens", "31 assay antigens", "5 clades", "5 sample types", "5 tiers");
+        assertCDSPortalRow("Labs", "3 labs");
     }
 
-    private void assertCDSPortalRow(String byNoun, String expectedDetail, String expectedTotal)
+    private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
     {
         waitForElement(getByLocator(byNoun), 120000);
         assertTrue("'by " + byNoun + "' search option is not present", isElementPresent(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div[" +
                 "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' " + byNoun + "']]")));
+
+        Set<String> expectedDetailsSet = new HashSet<>(Arrays.asList(expectedDetails));
         String actualDetail = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
                 "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
                 "/div[contains(@class, 'detailcolumn')]"));
-        assertEquals("Wrong details for search by " + byNoun + ".", expectedDetail, actualDetail);
+        Set<String> splitDetailsSet = new HashSet<>();
+        if (actualDetail.length() > 0) splitDetailsSet.addAll(Arrays.asList(actualDetail.split(", ?")));
+        assertEquals("Wrong details for search by " + byNoun + ".", expectedDetailsSet, splitDetailsSet);
+
         String actualTotal = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
                 "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
                 "/div[contains(@class, 'totalcolumn')]"));
