@@ -39,7 +39,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +54,6 @@ import static org.junit.Assert.assertTrue;
 public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTest
 {
     private static final String PROJECT_NAME = "CDSTest Project";
-    private static final File FOLDER_ZIP = new File(getCDSSampleDataPath(), "Dataspace.folder.zip");
     private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     private static final String GROUP_NAME = "CDSTest_AGroup";
@@ -68,12 +66,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     public final static int CDS_WAIT = 1500;
-
-    public static String getCDSSampleDataPath()
-    {
-        File path = new File(getLabKeyRoot(), "server/customModules/cds/test/sampledata");
-        return path.toString();
-    }
 
     @Override
     public String getAssociatedModuleDirectory()
@@ -187,7 +179,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void importComponentStudy(String studyName)
     {
         _containerHelper.createSubfolder(getProjectName(), studyName, "Study");
-        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true, true);
+        importStudyFromZip(getSampleData(studyName + ".folder.zip"), true, true);
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -198,7 +190,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText(query));
         _listHelper.clickImportData();
 
-        setFormElementJS(Locator.id("tsv3"), getFileContents(new File(getCDSSampleDataPath(), dataFilePath)));
+        setFormElementJS(Locator.id("tsv3"), getFileContents(getSampleData(dataFilePath)));
         clickButton("Submit");
     }
 
@@ -875,7 +867,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    //@Test
+    @Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -1037,7 +1029,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
     }
 
-    //@Test
+    @Test
     @Ignore("Multi-noun details for antigens NYI")
     public void testMultiAntigenInfoPage()
     {
@@ -1062,7 +1054,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         closeInfoPage();
     }
 
-    //@Test
+    @Test
     @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
     {
