@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2014 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
+
 // This is a singleton that allows store instances to be lazily created and cached for later reuse. The
 // getStore method will create the store if it doesn't exist, otherwise it'll return the existing
 // instance.

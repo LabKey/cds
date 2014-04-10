@@ -85,6 +85,13 @@
         <!-- Application plugins -->
         <script path="Connector/src/plugin/Messaging.js"/>
 
+        <!-- Constant singletons -->
+        <script path="Connector/src/constant/Templates.js"></script>
+        <script path="Connector/src/constant/ModuleViewsLookup.js"></script>
+
+        <!-- Factories -->
+        <script path="Connector/src/factory/Module.js"></script>
+
         <!-- Application Stores -->
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
@@ -112,6 +119,7 @@
         <script path="Connector/src/view/Time.js"/>
         <script path="Connector/src/view/Viewport.js"/>
         <script path="Connector/src/view/search/Container.js"/>
+        <script path="Connector/src/view/module/Text.js"/>
 
         <!-- Application Controllers -->
         <script path="Connector/src/controller/AbstractViewController.js"/>

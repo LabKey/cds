@@ -5,17 +5,22 @@
  */
 Ext.define('Connector.app.view.StudyDetail', {
 
-    extend : 'Ext.view.View',
+    extend : 'Ext.container.Container',
 
-    tpl: new Ext.XTemplate(
-        '<tpl>',
-            '<h2>This is a study</h2>',
-        '</tpl>'),
+    style : {
+    	padding: '15px'
+    },
+
+    layout : {
+    	type: 'vbox',
+    	align: 'stretch',
+    	pack: 'start'
+    },
 
     initComponent : function() {
 
-    	// TODO:
+        this.items = Connector.factory.Module.defineViews(this.modules, this.model);
 
-    	this.callParent();
+        this.callParent();
     }
 });

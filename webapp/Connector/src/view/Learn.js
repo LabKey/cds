@@ -140,13 +140,13 @@ Ext.define('Connector.view.Learn', {
             var store;
             if (id && dimension.detailItemView) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
+                var model = store.getById(id);
 
                 this.dataView = Ext.create(dimension.detailItemView, {
-//                    dimension: dimension,
-                    store: store
-                })
-
-                var model = store.getById(id);
+                    store: store,
+                    model: model,
+                    modules: dimension.detailItemModules
+                });
 
                 if (model) {
                     var studyDetailHeader = this.getStudyDetailHeader(id);
