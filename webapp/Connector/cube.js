@@ -145,21 +145,23 @@ Ext4.define('Connector.cube.Configuration', {
                 detailView: 'Connector.app.view.Study',
 
                 detailItemView: 'Connector.app.view.StudyDetail',
-                detailItemModules: [{
+                detailItemModulesColumn1: [{
+                    type: 'studyheader'
+                }, {
                     type: 'text',
                     staticData: {
                         title: 'Data connector editorial'
                     },
                     modelData: {
-                        text: 'Description'
+                        text: 'Editorial'
                     }
                 }, {
                     type: 'text',
                     staticData: {
-                        title: 'Study name'
+                        title: 'Overview'
                     },
                     modelData: {
-                        text: 'Label'
+                        text: 'Description'
                     }
                 }, {
                     type: 'text',
@@ -277,7 +279,8 @@ Ext4.define('Connector.cube.Configuration', {
                 detailItemCollection: undefined,
                 detailItemModel: undefined,
                 detailItemView: undefined,
-                detailItemModules: []
+                detailItemModulesColumn1: [],
+                detailItemModulesColumn2: []
             };
 
             var hh = {
@@ -339,7 +342,8 @@ Ext4.define('Connector.cube.Configuration', {
                             detailItemCollection: Ext.isDefined(cd.detailItemCollection) ? cd.detailItemCollection : dd.detailItemCollection,
                             detailItemModel: Ext.isDefined(cd.detailItemModel) ? cd.detailItemModel : dd.detailItemModel,
                             detailItemView: Ext.isDefined(cd.detailItemView) ? cd.detailItemView : dd.detailItemView,
-                            detailItemModules: Ext.isDefined(cd.detailItemModules) ? cd.detailItemModules : dd.detailItemModules
+                            detailItemModulesColumn1: Ext.isDefined(cd.detailItemModulesColumn1) ? cd.detailItemModulesColumn1 : dd.detailItemModulesColumn1,
+                            detailItemModulesColumn2: Ext.isDefined(cd.detailItemModulesColumn2) ? cd.detailItemModulesColumn2 : dd.detailItemModulesColumn2
                         });
 
                         //

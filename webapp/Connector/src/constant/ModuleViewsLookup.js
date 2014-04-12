@@ -7,5 +7,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	singleton: true,
 
 	// Lookup table from module view types to view names
-	text: 'module.text'
+	text: 'module.text',
+	studyheader: 'module.studyheader'
 });

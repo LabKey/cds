@@ -16,6 +16,18 @@ Ext.define('Connector.app.model.Study', {
         {name: 'Phase'},
         {name: 'StartDate'},
         {name: 'EndDate'},
-        {name: 'Treatments'}
+        {name: 'Treatments'},
+
+        // TEMP: Test data
+        {name: 'Editorial', defaultValue: 'This study was stopped after vaccination when it became clear it was not efficacious. There was initial concern that vaccinated individuals may have been more likely to be infected if exposed to HIV. Investigation is ongoing but a more nuanced explanation is emerging.'},
+        {name: 'Sites', defaultValue: [{
+            type: 'vaccine',
+            latitude: 36,
+            longitude: -105.9,
+        }, {
+            type: 'placebo',
+            latitude: 39,
+            longitude: -95.7,
+        }]}
     ]
 });

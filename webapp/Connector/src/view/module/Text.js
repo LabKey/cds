@@ -7,7 +7,7 @@ Ext.define('Connector.view.module.Text', {
 
 	xtype : 'module.text',
 
-	extend : 'Ext.view.View',
+	extend : 'Ext.Component',
 
 	tpl : new Ext.XTemplate(
         '<tpl if="text || allowNullText">',
