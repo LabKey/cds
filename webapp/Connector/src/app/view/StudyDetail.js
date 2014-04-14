@@ -27,12 +27,14 @@ Ext.define('Connector.view.module.StudyHeader', {
             var s = '';
             if (phase) {
                 s = "Phase " + phase;
-                if (start && end) {
+                if (start || end) {
                     s += ": ";
                 }
             }
             if (start && end) {
                 s += Connector.app.view.Study.dateRenderer(start) + " - " + Connector.app.view.Study.dateRenderer(end);
+            } else if (start || end) {
+                s += Connector.app.view.Study.dateRenderer(start || end)
             }
             return s;
         }
