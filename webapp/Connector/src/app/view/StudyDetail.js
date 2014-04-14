@@ -43,22 +43,45 @@ Ext.define('Connector.app.view.StudyDetail', {
 
     extend : 'Ext.container.Container',
 
-    style : {
-    	padding: '15px'
+    layout : {
+    	type: 'hbox',
+        pack: 'start',
+        align: 'stretch'
     },
 
-    layout : {
-    	type: 'vbox',
-    	align: 'stretch',
-    	pack: 'start'
-    },
+    items: [{
+        flex: 1,
+        xtype: 'container',
+        itemId : 'column1',
+        layout : {
+            type : 'vbox',
+            align: 'stretch'
+        },
+        style : {
+            padding : '15px'
+        }
+    }, {
+        flex: 1,
+        xtype: 'container',
+        itemId : 'column2',
+        layout : {
+            type : 'vbox',
+            align: 'stretch'
+        },
+        style : {
+            padding : '15px'
+        }
+    }],
 
     initComponent : function() {
-console.log('MODULES',this.modules);
-        this.items = Connector.factory.Module.defineViews(this.modules[0], this.model);
-
-console.log('RAW thing', this.items.length, this.model.raw, this.model.get('Phase'), this.items);
 
         this.callParent();
+
+        var left = this.getComponent('column1');
+        var right = this.getComponent('column2');
+
+        console.log(left.items);
+        left.add(Connector.factory.Module.defineViews(this.modules[0], this.model));
+//        right.items = Connector.factory.Module.defineViews(this.modules[1], this.model);
     }
 });

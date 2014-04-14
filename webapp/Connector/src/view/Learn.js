@@ -145,10 +145,7 @@ Ext.define('Connector.view.Learn', {
                 this.dataView = Ext.create(dimension.detailItemView, {
                     store: store,
                     model: model,
-                    modules: [
-                        dimension.detailItemModulesColumn1,
-                        dimension.detailItemModulesColumn2
-                    ]
+                    modules: dimension.detailItemModules
                 });
 
                 if (model) {

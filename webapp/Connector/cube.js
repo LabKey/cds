@@ -145,7 +145,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailView: 'Connector.app.view.Study',
 
                 detailItemView: 'Connector.app.view.StudyDetail',
-                detailItemModulesColumn1: [{
+                detailItemModules: [[{
                     type: 'studyheader'
                 }, {
                     type: 'text',
@@ -169,7 +169,7 @@ Ext4.define('Connector.cube.Configuration', {
                         title: 'Static data test',
                         text: 'This is rendering text from cube.js, rather than from the data model'
                     }
-                }],
+                }], []],
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -279,8 +279,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailItemCollection: undefined,
                 detailItemModel: undefined,
                 detailItemView: undefined,
-                detailItemModulesColumn1: [],
-                detailItemModulesColumn2: []
+                detailItemModules: []
             };
 
             var hh = {
@@ -342,8 +341,7 @@ Ext4.define('Connector.cube.Configuration', {
                             detailItemCollection: Ext.isDefined(cd.detailItemCollection) ? cd.detailItemCollection : dd.detailItemCollection,
                             detailItemModel: Ext.isDefined(cd.detailItemModel) ? cd.detailItemModel : dd.detailItemModel,
                             detailItemView: Ext.isDefined(cd.detailItemView) ? cd.detailItemView : dd.detailItemView,
-                            detailItemModulesColumn1: Ext.isDefined(cd.detailItemModulesColumn1) ? cd.detailItemModulesColumn1 : dd.detailItemModulesColumn1,
-                            detailItemModulesColumn2: Ext.isDefined(cd.detailItemModulesColumn2) ? cd.detailItemModulesColumn2 : dd.detailItemModulesColumn2
+                            detailItemModules: Ext.isDefined(cd.detailItemModules) ? cd.detailItemModules : dd.detailItemModules
                         });
 
                         //
