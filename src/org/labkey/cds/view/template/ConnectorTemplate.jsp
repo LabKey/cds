@@ -58,10 +58,6 @@
             background-image: url(<%=text(appPath)%>/images/infoover.png);
         }
 
-        .x-column-header-trigger {
-            background-image: url(<%=text(appPath)%>/images/gridtrigger.gif) !important;
-        }
-
         /* Paging Toolbar */
         .x-tbar-page-next {
             background-image: url('<%=text(resourcePath)%>/images/grid/page-next.gif') !important;
@@ -90,7 +86,6 @@
 
         /* Ext.Grid */
         .x-column-header-trigger {
-            background-image: url(<%=text(appPath)%>/images/gridtrigger.gif);
             background-color: transparent;
         }
 
