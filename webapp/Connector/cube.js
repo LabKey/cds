@@ -164,6 +164,11 @@ Ext4.define('Connector.cube.Configuration', {
                         text: 'Description'
                     }
                 }, {
+                    type: 'studysites',
+                    staticData: {
+                        title: 'Cohort & sites'
+                    }
+                }, {
                     type: 'text',
                     staticData: {
                         title: 'Static data test',
@@ -171,6 +176,9 @@ Ext4.define('Connector.cube.Configuration', {
                     }
                 }], [{
                     type: 'person',
+                    staticData: {
+                        title: 'Study point of contact'
+                    },
                     modelData: {
                         name: 'MainContact.Name',
                         picture: 'MainContact.Portrait',

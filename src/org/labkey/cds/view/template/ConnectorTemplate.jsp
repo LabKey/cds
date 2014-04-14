@@ -167,6 +167,8 @@
         Ext = {}; Ext4 = Ext;
     </script>
 
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
@@ -284,6 +286,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 
     <!-- Application Controllers -->
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
@@ -323,6 +326,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
 

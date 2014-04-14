@@ -23,11 +23,11 @@ Ext.define('Connector.app.model.Study', {
         {name: 'Sites', defaultValue: [{
             Type: 'vaccine',
             Latitude: 36,
-            Longitude: -105.9,
+            Longitude: -105.9
         }, {
             Type: 'placebo',
             Latitude: 39,
-            Longitude: -95.7,
+            Longitude: -95.7
         }]},
         {name: 'MainContact', defaultValue: {
             Name: 'Warren Burger',

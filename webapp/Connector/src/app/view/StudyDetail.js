@@ -39,23 +39,6 @@ Ext.define('Connector.view.module.StudyHeader', {
     })
 });
 
-Ext.define('Connector.view.module.Person', {
-
-    xtype : 'module.person',
-
-    extend : 'Ext.Component',
-
-    tpl : new Ext.XTemplate(
-        '<tpl>',
-            '<tpl if="picture"><img style="float: left; width: 80px;" src="{picture}"></img></tpl>',
-            '<tpl if="name"><p>{name}</p></tpl>',
-            '<tpl if="line1"><p>{line1}</p></tpl>',
-            '<tpl if="line2"><p>{line2}</p></tpl>',
-            '<tpl if="line3"><p>{line3}</p></tpl>',
-            '<tpl if="line4"><p>{line4}</p></tpl>',
-        '</tpl>')
-});
-
 Ext.define('Connector.app.view.StudyDetail', {
 
     extend : 'Ext.container.Container',

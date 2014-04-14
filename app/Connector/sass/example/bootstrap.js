@@ -20,10 +20,14 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.view.Labs": "../../../../webapp/Connector/src/app/view/Labs.js",
   "Connector.app.view.Site": "../../../../webapp/Connector/src/app/view/Site.js",
   "Connector.app.view.Study": "../../../../webapp/Connector/src/app/view/Study.js",
+  "Connector.app.view.StudyDetail": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
   "Connector.app.view.StudyProducts": "../../../../webapp/Connector/src/app/view/StudyProducts.js",
+  "Connector.app.view.module.StudySites": "../../../../webapp/Connector/src/app/view/module/StudySites.js",
   "Connector.button.Image": "../../../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
+  "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
+  "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
   "Connector.controller.Chart": "../../../../webapp/Connector/src/controller/Chart.js",
   "Connector.controller.Citation": "../../../../webapp/Connector/src/controller/Citation.js",
@@ -39,6 +43,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Router": "../../../../webapp/Connector/src/controller/Router.js",
   "Connector.controller.State": "../../../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../../../webapp/Connector/src/controller/Summary.js",
+  "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
   "Connector.model.Citation": "../../../../webapp/Connector/src/model/Citation.js",
   "Connector.model.ColumnInfo": "../../../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../../../webapp/Connector/src/model/Detail.js",
@@ -83,6 +88,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../../../webapp/Connector/src/view/Learn.js",
+  "Connector.view.LearnItemHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Main": "../../../../webapp/Connector/src/view/Main.js",
   "Connector.view.Navigation": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../../../webapp/Connector/src/view/Navigation.js",
@@ -97,6 +103,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Time": "../../../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
+  "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
+  "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
+  "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.search.Container": "../../../../webapp/Connector/src/view/search/Container.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
@@ -112,7 +121,8 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
-  "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js"
+  "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js",
+  "StoreCache": "../../../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
@@ -130,10 +140,14 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.view.Labs": [],
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
+  "Connector.app.view.StudyDetail": [],
   "Connector.app.view.StudyProducts": [],
+  "Connector.app.view.module.StudySites": [],
   "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
+  "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Chart": [],
   "Connector.controller.Citation": [],
@@ -149,6 +163,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.factory.Module": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -193,6 +208,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
+  "Connector.view.LearnItemHeader": [],
   "Connector.view.Main": [],
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
@@ -207,6 +223,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
+  "Connector.view.module.Person": [],
+  "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.Text": [],
   "Connector.view.search.Container": [],
   "Connector.window.Filter": [],
   "Connector.window.SystemMessage": [],
@@ -1035,7 +1054,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.State": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [],
-  "LABKEY.app.view.Selection": []
+  "LABKEY.app.view.Selection": [],
+  "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Connector.Application": [],
@@ -1053,7 +1073,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.app.view.Labs": [],
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
+  "Connector.app.view.StudyDetail": [],
   "Connector.app.view.StudyProducts": [],
+  "Connector.app.view.module.StudySites": [
+    "widget.app.module.studysites"
+  ],
   "Connector.button.Image": [
     "widget.imgbutton"
   ],
@@ -1063,6 +1087,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.button.RoundedButton": [
     "widget.roundedbutton"
   ],
+  "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Chart": [],
   "Connector.controller.Citation": [],
@@ -1078,6 +1104,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.factory.Module": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -1174,6 +1201,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
   ],
+  "Connector.view.LearnItemHeader": [
+    "widget.learnitemheaderview"
+  ],
   "Connector.view.Main": [
     "widget.app-main"
   ],
@@ -1212,6 +1242,15 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.variableselector"
   ],
   "Connector.view.Viewport": [],
+  "Connector.view.module.Person": [
+    "widget.module.person"
+  ],
+  "Connector.view.module.StudyHeader": [
+    "widget.module.studyheader"
+  ],
+  "Connector.view.module.Text": [
+    "widget.module.text"
+  ],
   "Connector.view.search.Container": [
     "widget.searchcontainer"
   ],
@@ -2214,7 +2253,8 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"
   ],
-  "LABKEY.app.view.Selection": []
+  "LABKEY.app.view.Selection": [],
+  "StoreCache": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");
