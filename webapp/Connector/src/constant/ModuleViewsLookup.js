@@ -8,5 +8,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 
 	// Lookup table from module view types to view names
 	text: 'module.text',
-	studyheader: 'module.studyheader'
+	studyheader: 'module.studyheader',
+	person: 'module.person'
 });

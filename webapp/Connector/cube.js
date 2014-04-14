@@ -169,7 +169,15 @@ Ext4.define('Connector.cube.Configuration', {
                         title: 'Static data test',
                         text: 'This is rendering text from cube.js, rather than from the data model'
                     }
-                }], []],
+                }], [{
+                    type: 'person',
+                    modelData: {
+                        name: 'MainContact.Name',
+                        picture: 'MainContact.Portrait',
+                        line1: 'MainContact.Role',
+                        line2: 'MainContact.Team'
+                    }
+                }]],
 
                 hierarchies: [{
                     uniqueName: '[Study]',

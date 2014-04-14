@@ -21,13 +21,19 @@ Ext.define('Connector.app.model.Study', {
         // TEMP: Test data
         {name: 'Editorial', defaultValue: 'This study was stopped after vaccination when it became clear it was not efficacious. There was initial concern that vaccinated individuals may have been more likely to be infected if exposed to HIV. Investigation is ongoing but a more nuanced explanation is emerging.'},
         {name: 'Sites', defaultValue: [{
-            type: 'vaccine',
-            latitude: 36,
-            longitude: -105.9,
+            Type: 'vaccine',
+            Latitude: 36,
+            Longitude: -105.9,
         }, {
-            type: 'placebo',
-            latitude: 39,
-            longitude: -95.7,
-        }]}
+            Type: 'placebo',
+            Latitude: 39,
+            Longitude: -95.7,
+        }]},
+        {name: 'MainContact', defaultValue: {
+            Name: 'Warren Burger',
+            Portrait: 'http://www.blisstree.com/wp-content/uploads/2013/01/doctor.jpg',
+            Role: 'Program Manager',
+            Team: 'HVTN concept development team'
+        }}
     ]
 });
