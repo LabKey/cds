@@ -84,6 +84,7 @@
         <script path="Connector/src/panel/FilterPanel.js"/>
         <script path="Connector/src/panel/Selection.js"/>
         <script path="Connector/src/panel/GroupList.js"/>
+        <script path="Connector/src/grid/Panel.js"/>
 
         <!-- Application plugins -->
         <script path="Connector/src/plugin/Messaging.js"/>
@@ -109,6 +110,7 @@
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
         <script path="Connector/src/view/RawData.js"/>
+        <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>

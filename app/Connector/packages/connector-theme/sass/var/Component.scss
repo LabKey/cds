@@ -56,13 +56,18 @@ $window-header-color: $secondary-color;
 
 // Grid
 $grid-row-cell-over-background-color: $selectongrey-color;
-$grid-header-over-background-color: $selectongrey-color;
 $grid-cell-selected-background-color: $select-color;
 $grid-row-cell-selected-background-color: $select-color;
 $grid-row-cell-selected-color: $light-color;
 $grid-row-cell-selected-border-color: $select-color;
+$grid-row-cell-alt-background-color: $light-color;
+$grid-row-cell-background-color: $light-color;
+
+/* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
 $grid-column-header-font-size: 11pt;
+$grid-header-background-color: transparent;
+$grid-header-over-background-color: $selectongrey-color;
 
 @mixin header {
   font-family: $data-font;
