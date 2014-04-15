@@ -95,12 +95,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
 
@@ -438,6 +438,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
+    @Ignore("Visualization API for multi-study NYI")
     public void verifyGrid()
     {
         log("Verify Grid");
@@ -868,6 +869,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     protected static final String NORMAL_COLOR = "#000000";
 
     @Test
+    @Ignore("Visualization API for multi-study NYI")
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -875,14 +877,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
         final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100";
 
+        makeNavigationSelection(NavigationLink.PLOT);
+
         WebElement xAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "xaxisbtn").toBy()));
         WebElement yAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "yaxisbtn").toBy()));
-
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
-
-        clickBy("Studies");
-        makeNavigationSelection(NavigationLink.PLOT);
 
         xAxisChooseButton.click();
         waitForElement(Locator.css(".xaxispicker div.itemrow").withText("Physical Exam (6)"));
@@ -893,6 +891,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("set y axis"));
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
+
+        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
+        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
 
         yAxisButton.click();
         _ext4Helper.waitForMask();
