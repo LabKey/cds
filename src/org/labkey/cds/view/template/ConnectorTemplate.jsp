@@ -58,10 +58,6 @@
             background-image: url(<%=text(appPath)%>/images/infoover.png);
         }
 
-        .x-column-header-trigger {
-            background-image: url(<%=text(appPath)%>/images/gridtrigger.gif) !important;
-        }
-
         /* Paging Toolbar */
         .x-tbar-page-next {
             background-image: url('<%=text(resourcePath)%>/images/grid/page-next.gif') !important;
@@ -90,7 +86,6 @@
 
         /* Ext.Grid */
         .x-column-header-trigger {
-            background-image: url(<%=text(appPath)%>/images/gridtrigger.gif);
             background-color: transparent;
         }
 
@@ -170,11 +165,12 @@
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ExtAdapter.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/ExtAdapter.js"></script>
 
     <!-- Client API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Query.js"></script>
