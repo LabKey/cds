@@ -95,12 +95,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-//        initTest.doCleanup(false);
-//
-//        initTest.setupProject();
-//        initTest.importData();
-//        initTest.populateFactTable();
-//        initTest.verifyFactTable();
+        initTest.doCleanup(false);
+
+        initTest.setupProject();
+        initTest.importData();
+        initTest.populateFactTable();
+        initTest.verifyFactTable();
 
         currentTest = initTest;
 
