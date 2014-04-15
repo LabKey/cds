@@ -1365,6 +1365,11 @@ div.filterheader {
     font-family: $bodycaps-font;
   }
 
+  .groupheaderline {
+    margin-top: 8px;
+    border-top: solid $secondary-color 1px;
+  }
+
   .itemrow {
     color: $dark-color;
   }
