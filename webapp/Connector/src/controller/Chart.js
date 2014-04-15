@@ -61,6 +61,7 @@ Ext.define('Connector.controller.Chart', {
             var state = this.getStateManager();
             var v = Ext.create('Connector.view.Scatter', {
                 control : this.getController('RawData'),
+                visitTagStore : this.getStore('VisitTag'),
                 ui  : 'custom',
                 state : state
             });
