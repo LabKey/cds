@@ -285,6 +285,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 

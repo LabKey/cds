@@ -103,6 +103,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Time": "../../../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
+  "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
@@ -223,6 +224,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
+  "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.Text": [],
@@ -1242,6 +1244,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.variableselector"
   ],
   "Connector.view.Viewport": [],
+  "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [
     "widget.module.person"
   ],

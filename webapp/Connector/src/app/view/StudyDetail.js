@@ -13,7 +13,7 @@ Ext.define('Connector.view.module.StudyHeader', {
 
     xtype : 'module.studyheader',
 
-    extend : 'Ext.Component',
+    extend : 'Connector.view.module.BaseModule',
 
     tpl : new Ext.XTemplate(
         '<tpl><p>',
@@ -55,23 +55,19 @@ Ext.define('Connector.app.view.StudyDetail', {
         flex: 1,
         xtype: 'container',
         itemId : 'column1',
+        cls: 'modulecontainer',
         layout : {
             type : 'vbox',
             align: 'stretch'
-        },
-        style : {
-            padding : '15px'
         }
     }, {
         flex: 1,
         xtype: 'container',
         itemId : 'column2',
+        cls: 'modulecontainer',
         layout : {
             type : 'vbox',
             align: 'stretch'
-        },
-        style : {
-            padding : '15px'
         }
     }],
 

@@ -246,8 +246,7 @@ Ext.define('Connector.view.LearnItemHeader', {
                 itemId: 'headerLabel',
                 autoEl: {
                     tag: 'div',
-                    cls: 'titlepanel',
-                    html: ''
+                    cls: 'titlepanel'
                 }
             },
             {
@@ -343,10 +342,11 @@ Ext.define('Connector.view.LearnItemHeader', {
             if (this.model) {
                 content += ": ";
             }
+            content = "<h1 class='lhdv'>" + content + "</h1>"
         }
         if (this.model) {
             // TODO: Other models may have other label properties
-            content += this.model.get('Label');
+            content += "<h1>" + this.model.get('Label') + "</h1>";
         }
         cmp.update(content);
 

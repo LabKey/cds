@@ -7,12 +7,13 @@ Ext.define('Connector.app.view.module.StudySites', {
 
 	xtype : 'app.module.studysites',
 
-	extend : 'Ext.Component',
+	extend : 'Connector.view.module.BaseModule',
 
 	tpl : new Ext.XTemplate(
         '<tpl>',
 			Connector.constant.Templates.module.title,
 			'<div class="learn-map-container"></div>',
+			'<p>{[values.model.get("SitesSummary")]}</p>',
 		'</tpl>'),
 
 	afterRender : function() {

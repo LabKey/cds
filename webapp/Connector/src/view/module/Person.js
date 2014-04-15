@@ -7,7 +7,7 @@ Ext.define('Connector.view.module.Person', {
 
     xtype : 'module.person',
 
-    extend : 'Ext.Component',
+    extend : 'Connector.view.module.BaseModule',
 
     tpl : new Ext.XTemplate(
         '<tpl>',

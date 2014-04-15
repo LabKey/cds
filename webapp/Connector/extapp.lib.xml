@@ -120,6 +120,8 @@
         <script path="Connector/src/view/Time.js"/>
         <script path="Connector/src/view/Viewport.js"/>
         <script path="Connector/src/view/search/Container.js"/>
+
+        <script path="Connector/src/view/module/BaseModule.js"/>
         <script path="Connector/src/view/module/Text.js"/>
         <script path="Connector/src/view/module/Person.js"/>
 

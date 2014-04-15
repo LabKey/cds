@@ -24,6 +24,7 @@ $heat-scale-4: #E6E1E1;            // Heatmap Gray #4
 $title : 28pt;
 $headline : 18pt;
 $pageLeftPadding: 27px;
+$sectionTopPadding: 25px;
 
 $bodycaps-font : Arial;
 $info-font : Verdana, sans-serif;
@@ -87,6 +88,9 @@ $window-header-color: $secondary-color;
   }
 }
 
+@mixin sectionPaddingTop {
+  padding-top: $sectionTopPadding;
+}
 @mixin pagePaddingLeft {
   padding-left: $pageLeftPadding;
 }
@@ -174,8 +178,8 @@ li.fadein {
 }
 
 .titlepanel {
-  padding-top: 25px;
   padding-bottom: 7px;
+  @include sectionPaddingTop;
   @include pagePaddingLeft;
 
   span {
@@ -1698,6 +1702,16 @@ img.tutorialclose {
 div.learnview {
   overflow-y: auto;
   overflow-x: hidden;
+
+  .module {
+    padding-bottom: 20px;
+  }
+
+}
+
+.modulecontainer {
+  @include sectionPaddingTop;
+  @include pagePaddingLeft;
 }
 
 div.learnheader,
@@ -1715,6 +1729,7 @@ div.learn-header-container {
 
 div.learn-map-container {
   height: 320px;
+  margin-bottom: 4px;
 }
 
 h1.lhdv {
