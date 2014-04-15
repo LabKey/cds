@@ -55,6 +55,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
   "Connector.model.Variable": "../../webapp/Connector/src/model/Variable.js",
+  "Connector.model.VisitTag": "../../webapp/Connector/src/model/VisitTag.js",
   "Connector.panel.AxisSelectDisplay": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.Feedback": "../../webapp/Connector/src/panel/Feedback.js",
@@ -65,6 +66,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
   "Connector.store.Summary": "../../webapp/Connector/src/store/Summary.js",
+  "Connector.store.VisitTag": "../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.Citation": "../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../webapp/Connector/src/view/Compare.js",
@@ -176,6 +178,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
+  "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.Feedback": [],
@@ -186,6 +189,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
   "Connector.store.Summary": [],
+  "Connector.store.VisitTag": [],
   "Connector.types.Filter": [],
   "Connector.view.Citation": [],
   "Connector.view.Compare": [],
@@ -1118,6 +1122,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
+  "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [
     "widget.axisselectdisplay"
   ],
@@ -1143,6 +1148,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.store.FilterStatus": [],
   "Connector.store.Summary": [
     "store.summary"
+  ],
+  "Connector.store.VisitTag": [
+    "store.visittag"
   ],
   "Connector.types.Filter": [],
   "Connector.view.Citation": [

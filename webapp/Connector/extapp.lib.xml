@@ -29,6 +29,7 @@
         <script path="../../../internal/explodedModule/web/app/Selection.js"/>
         <script path="../../../internal/explodedModule/web/app/AbstractViewController.js"/>
         <script path="../../../internal/explodedModule/web/app/OlapExplorer.js"/>
+        <script path="../../../internal/explodedModule/web/app/MeasurePicker.js"/>
 
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
@@ -71,6 +72,7 @@
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
         <script path="Connector/src/model/Variable.js"/>
+        <script path="Connector/src/model/VisitTag.js"/>
 
         <!-- Application Widgets -->
         <script path="Connector/src/button/Image.js"/>
@@ -97,6 +99,7 @@
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
         <script path="Connector/src/store/Summary.js"/>
+        <script path="Connector/src/store/VisitTag.js"/>
 
         <!-- Application Views -->
         <script path="Connector/src/view/Citation.js"/>

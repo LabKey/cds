@@ -74,7 +74,8 @@ Ext.define('Connector.panel.AxisSelector', {
                 displayConfig: this.displayConfig,
                 disableScale: this.disableScale,
                 disableVariableOptions: this.disableVariableOptions,
-                scalename: this.scalename
+                scalename: this.scalename,
+                visitTagStore: this.visitTagStore
             });
 
             this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
@@ -95,13 +96,14 @@ Ext.define('Connector.panel.AxisSelector', {
         return this.getSelectionDisplay().getScaleForm().getValues()[this.scalename];
     },
 
-    getMeasurePicker : function() {
+    getVariableChooserPanel : function() {
 
-        if (this.measurePicker) {
-            return this.measurePicker;
+        if (this.variableChooserPanel) {
+            return this.variableChooserPanel;
         }
 
         Ext.applyIf(this.measureConfig, {
+            includeTimpointMeasures: false,
             allColumns: true,
             showHidden: false,
             multiSelect: true,
@@ -109,18 +111,70 @@ Ext.define('Connector.panel.AxisSelector', {
         });
 
         Ext.apply(this.measureConfig, {
+            getSourcesViewTpl : this.getSourcesViewTpl,
+            getAdditionalMeasuresArray : this.getAdditionalMeasuresArray,
             bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
         });
 
-        this.measurePicker = Ext.create('LABKEY.ext4.MeasuresDataView.SplitPanels', this.measureConfig);
+        this.variableChooserPanel = Ext.create('LABKEY.app.panel.MeasurePicker', this.measureConfig);
 
         // allows for a class to be added to the source selection panel
         if (this.measureConfig.sourceCls) {
-            this.measurePicker.getSourcesView().on('afterrender', function(p) {
+            this.variableChooserPanel.getMeasurePicker().getSourcesView().on('afterrender', function(p) {
                 p.addCls(this.measureConfig.sourceCls);
             }, this, {single: true});
         }
-        return this.measurePicker;
+        return this.variableChooserPanel;
+    },
+
+    getMeasurePicker : function() {
+        return this.getVariableChooserPanel().getMeasurePicker();
+    },
+
+    getSourcesViewTpl : function() {
+        return new Ext.XTemplate(
+            '<tpl for=".">',
+            '<tpl if="schemaName !=null && parent[xindex - 2] && parent[xindex - 2].schemaName == null">',
+            '<div class="groupheader groupheaderline" style="padding: 8px 6px 4px 6px; color: #808080">Datasets</div>',
+            '</tpl>',
+            '<div class="itemrow" style="padding: 3px 6px 4px 6px; cursor: pointer;">{queryLabel:htmlEncode}</div>',
+            '</tpl>'
+        );
+    },
+
+    getAdditionalMeasuresArray : function() {
+        var queryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
+
+        return !this.includeTimpointMeasures ? [] :[{
+            sortOrder: -1,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'Time points',
+            queryDescription: queryDescription,
+            isKeyVariable: true,
+            name: 'days',
+            label: 'Study days',
+            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
+            variableType: 'TIME'
+        },{
+            sortOrder: -1,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'User groups',
+            name: 'weeks',
+            label: 'Study weeks',
+            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
+            variableType: 'TIME'
+        },{
+            sortOrder: -1,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'Time points',
+            name: 'months',
+            label: 'Study months',
+            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
+            variableType: 'TIME'
+        }];
     },
 
     hasSelection : function() {
@@ -139,7 +193,10 @@ Ext.define('Connector.panel.AxisSelector', {
         if (selModel.multiSelect)
             this.updateDefinition(null, selModel.getLastSelected());
         else if (this.showDisplay)
+        {
             this.getSelectionDisplay().setMeasureSelection(records[0]);
+            this.getSelectionDisplay().setVariableOptions(records[0]);
+        }
     },
 
     onSourceSelect : function(selModel, records) {
@@ -199,22 +256,20 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     },
                     {
                         xtype: 'container',
-                        height: 75,
+                        height: 55,
+                        padding: '10px 0 0 0',
                         layout: { type: 'hbox' },
                         items: [ this.getScaleForm() ]
                     }
                 ]
             },{
                 xtype: 'panel',
+                itemId: 'variableoptions',
                 hidden: this.disableVariableOptions,
                 width: this.disableVariableOptions ? 0 : '50%',
                 bodyStyle: 'background-color: transparent;',
                 padding: '10px 0 0 0',
-                border: false,
-                items: [{
-                    xtype: 'box'
-                    // TODO
-                }]
+                items: [] // items to be added/removed as variables are selected
             }]
         }];
 
@@ -228,9 +283,9 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 border: false,
                 ui: 'custom',
                 cls: 'definitionpanel iScroll',
-                height: !this.disableScale ? 125 : 180,
+                height: !this.disableScale ? 145 : 180,
                 bodyStyle: 'background-color: transparent;',
-                padding: '10px 0 5px 0',
+                padding: '10px 5px 5px 0',
                 data: {},
                 tpl: new Ext.XTemplate(
                         '<div class="definition-overflow"></div>',
@@ -249,21 +304,18 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 ui: 'custom',
                 hidden: this.disableScale,
                 border: false, frame : false,
-                width: '100%',
                 items: [{
                     xtype: 'radiogroup',
                     itemId: 'scale',
                     ui: 'custom',
                     border: false, frame : false,
-                    vertical: true,
-                    columns: 1,
                     fieldLabel: 'Scale',
                     labelAlign: 'top',
-                    items: [{
-                        boxLabel: 'Log', name : this.scalename, inputValue: 'log'
-                    },{
-                        boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true
-                    }]
+                    labelCls: 'curselauth',
+                    items: [
+                        { boxLabel: 'Log', name : this.scalename, inputValue: 'log', width: 100 },
+                        { boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true }
+                    ]
                 }]
             });
         }
@@ -280,5 +332,56 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         var value = {};
         value[this.scalename] = record.get('defaultScale').toLowerCase();
         this.getScaleForm().getComponent('scale').setValue(value);
+    },
+
+    setVariableOptions : function(record) {
+        if (record)
+        {
+            var optionsPanel = this.down('#variableoptions');
+            optionsPanel.removeAll(false);
+
+            if (record.get('variableType') == 'TIME')
+                optionsPanel.add(this.getAlignmentForm());
+        }
+    },
+
+    getAlignmentForm : function() {
+        if (!this.alignmentForm)
+        {
+            var visitTagRadios = [];
+            Ext.each(this.visitTagStore.getRange(), function(record){
+                visitTagRadios.push({
+                    name : 'alignmentVisitTag',
+                    boxLabel: record.get('Caption'),
+                    inputValue: record.get('Name')
+                })
+            });
+
+            this.alignmentForm = Ext.create('Ext.form.Panel', {
+                ui: 'custom',
+                border: false, frame: false,
+                width: '100%',
+                padding: '0 0 10px 5px',
+                items: [{
+                    xtype: 'displayfield',
+                    fieldLabel: 'Align multiple studies by',
+                    labelCls: 'curselauth',
+                    labelWidth: 185
+                },{
+                    xtype: 'radiogroup',
+                    itemId: 'alignment',
+                    ui: 'custom',
+                    height: 175,
+                    autoScroll: true,
+                    cls: 'iScroll',
+                    border: false, frame : false,
+                    vertical: true,
+                    columns: 1,
+                    items: visitTagRadios
+                }]
+            });
+        }
+
+        return this.alignmentForm;
     }
 });

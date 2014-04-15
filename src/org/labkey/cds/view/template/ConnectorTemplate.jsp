@@ -192,6 +192,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/MeasurePicker.js"></script>
 
     <!-- Study Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
@@ -231,6 +232,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
@@ -257,6 +259,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
 
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Citation.js"></script>
