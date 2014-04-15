@@ -12,8 +12,12 @@ Ext.define('Connector.app.view.module.StudySites', {
 	tpl : new Ext.XTemplate(
         '<tpl>',
 			Connector.constant.Templates.module.title,
-			'<div class="learn-map-container"></div>',
-			'<p>{[values.model.get("SitesSummary")]}</p>',
+			'<tpl if="model.get(\'Sites\')">',
+				'<div class="learn-map-container"></div>',
+			'</tpl>',
+			'<tpl if="model.get(\'SitesSummary\')">',
+				'<p>{[values.model.get("SitesSummary")]}</p>',
+			'</tpl>',
 		'</tpl>'),
 
 	afterRender : function() {
@@ -22,12 +26,16 @@ Ext.define('Connector.app.view.module.StudySites', {
 		setTimeout(function() {
 
 			var div = this.getEl().query('.learn-map-container');
+			div = div[0];
+			if (!div) {
+				return;
+			}
 
 			var mapOptions = {
 	          center: new google.maps.LatLng(0, 0),
 	          zoom: 2
 	        };
-	        var map = new google.maps.Map(div[0],
+	        var map = new google.maps.Map(div,
 	            mapOptions);
 
 	        var sites = this.initialConfig.data.model.get('Sites');

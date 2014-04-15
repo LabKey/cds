@@ -55,6 +55,16 @@ $datepicker-base-color: $light-color;
 $window-body-background-color: $primary-color;
 $window-header-color: $secondary-color;
 
+// Grid
+$grid-row-cell-over-background-color: $selectongrey-color;
+$grid-header-over-background-color: $selectongrey-color;
+$grid-cell-selected-background-color: $select-color;
+$grid-row-cell-selected-background-color: $select-color;
+$grid-row-cell-selected-color: $light-color;
+$grid-row-cell-selected-border-color: $select-color;
+$grid-column-header-font-family: $info-font;
+$grid-column-header-font-size: 11pt;
+
 @mixin header {
   font-family: $data-font;
   font-weight: normal;
@@ -1322,11 +1332,6 @@ div.emptytext {
 }
 
 /* Ext.Grid*/
-.x-column-header-text {
-  font-family: $info-font;
-  font-size: 11pt;
-}
-
 .x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC {
   background-image: none !important;
   background-color: $secondary-color;
@@ -1334,8 +1339,6 @@ div.emptytext {
 }
 
 .x-column-header-trigger {
-  display: block;
-  width: 17px;
   border-left: 1px solid $primary-color;
 }
 
@@ -1404,14 +1407,6 @@ div.filterheader {
     background-color: $select-color;
     color: $light-color !important;
   }
-}
-
-/* Selection Highlight*/
-.x-grid-row-selected .x-grid-cell, .x-grid-row-selected .x-grid-rowwrap-div {
-  border-color: $select-color;
-  background-color: $select-color !important;
-  color: $light-color;
-  background-image: none !important;
 }
 
 /* Ext Mask */
@@ -1705,6 +1700,10 @@ div.learnview {
 
   .module {
     padding-bottom: 20px;
+
+    p {
+      color: #231F20;
+    }
   }
 
 }
