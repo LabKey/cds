@@ -112,7 +112,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
 
-                detailItemView: 'Connector.app.view.StudyDetail',
+                // detailItemView: 'Connector.app.view.StudyDetail',
 
                 hierarchies: [{
                     uniqueName: '[Assay.Target Area]',
@@ -167,12 +167,6 @@ Ext4.define('Connector.cube.Configuration', {
                     type: 'studysites',
                     staticData: {
                         title: 'Cohort & sites'
-                    }
-                }, {
-                    type: 'text',
-                    staticData: {
-                        title: 'Static data test',
-                        text: 'This is rendering text from cube.js, rather than from the data model'
                     }
                 }], [{
                     type: 'person',
