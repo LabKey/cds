@@ -1,5 +1,6 @@
 Ext.define('Connector.grid.Panel', {
-    extend: 'LABKEY.ext4.GridPanel',
+//    extend: 'LABKEY.ext4.GridPanel',
+    extend: 'Ext.grid.Panel',
 
     alias: 'widget.connector-gridpanel',
 
