@@ -400,7 +400,7 @@ Ext.define('Connector.view.LearnHeader', {
                 autoEl: {
                     tag: 'div',
                     cls: 'titlepanel',
-                    html: '<span></span>'
+                    html: '<span>Learn About...</span>'
                 }
             },{
                 xtype: 'container',
