@@ -89,6 +89,13 @@
         <!-- Application plugins -->
         <script path="Connector/src/plugin/Messaging.js"/>
 
+        <!-- Constant singletons -->
+        <script path="Connector/src/constant/Templates.js"></script>
+        <script path="Connector/src/constant/ModuleViewsLookup.js"></script>
+
+        <!-- Factories -->
+        <script path="Connector/src/factory/Module.js"></script>
+
         <!-- Application Stores -->
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
@@ -119,6 +126,10 @@
         <script path="Connector/src/view/Viewport.js"/>
         <script path="Connector/src/view/search/Container.js"/>
 
+        <script path="Connector/src/view/module/BaseModule.js"/>
+        <script path="Connector/src/view/module/Text.js"/>
+        <script path="Connector/src/view/module/Person.js"/>
+
         <!-- Application Controllers -->
         <script path="Connector/src/controller/AbstractViewController.js"/>
         <script path="Connector/src/controller/Chart.js"/>
@@ -135,6 +146,8 @@
         <script path="Connector/src/controller/Router.js"/>
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
+
+        <script path="Connector/src/utility/StoreCache.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
@@ -153,6 +166,9 @@
         <script path="Connector/src/app/view/Site.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
+        <script path="Connector/src/app/view/StudyDetail.js"/>
+
+        <script path="Connector/src/app/view/module/StudySites.js"/>
 
         <script path="Connector/src/Application.js"/>
 

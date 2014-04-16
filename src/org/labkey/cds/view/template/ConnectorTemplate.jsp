@@ -181,6 +181,8 @@
         Ext = {}; Ext4 = Ext;
     </script>
 
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
@@ -266,6 +268,13 @@
     <!-- Application plugins -->
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
 
+    <!-- Constant singletons -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
+
+    <!-- Factories -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
+
     <!-- Application Stores -->
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
@@ -296,6 +305,10 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
+
     <!-- Application Controllers -->
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Home.js"></script>
@@ -308,10 +321,13 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
+    
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/RawData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
@@ -330,6 +346,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
 
