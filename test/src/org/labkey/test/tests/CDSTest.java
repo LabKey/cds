@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.sun.jna.Platform.isMac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -1199,6 +1200,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void selectBarsHelper(boolean isShift, String...bars)
     {
+        Keys multiSelectKey;
+        if (isShift)
+            multiSelectKey = Keys.SHIFT;
+        else if (isMac())
+            multiSelectKey = Keys.COMMAND;
+        else
+            multiSelectKey = Keys.CONTROL;
+
         waitForBarToAnimate(bars[0]);
 
         String subselect = bars[0];
@@ -1212,10 +1221,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         {
             Actions builder = new Actions(getDriver());
 
-            if (isShift)
-                builder.keyDown(Keys.SHIFT).build().perform();
-            else
-                builder.keyDown(Keys.CONTROL).build().perform();
+            builder.keyDown(multiSelectKey).build().perform();
 
             for(int i = 1; i < bars.length; i++)
             {
@@ -1228,10 +1234,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
                 waitForFilterAnimation();
             }
 
-            if (isShift)
-                builder.keyUp(Keys.SHIFT).build().perform();
-            else
-                builder.keyUp(Keys.CONTROL).build().perform();
+            builder.keyUp(multiSelectKey).build().perform();
         }
     }
 
