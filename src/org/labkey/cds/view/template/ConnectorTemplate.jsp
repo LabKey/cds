@@ -177,6 +177,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/FieldKey.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Query.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ParticipantGroup.js"></script>

@@ -11,6 +11,7 @@
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Utils.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/ActionURL.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Filter.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/core/FieldKey.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Query.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Visualization.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/ParticipantGroup.js"/>
