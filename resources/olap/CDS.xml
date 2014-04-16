@@ -36,7 +36,7 @@
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Target Area">
             <Table schema="study" name="StudyDesignAssays" />
             <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="name"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Methodology">
