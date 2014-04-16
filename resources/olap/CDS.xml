@@ -2,7 +2,7 @@
 
 
     <Dimension visible="true" highCardinality="false" name="Antigen">
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Clade" uniqueKeyLevelName="Name">
+        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Clade">
             <Table schema="cds" name="antigens">
             </Table>
             <Level name="Clade" visible="true" column="clade" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
@@ -11,7 +11,7 @@
                 <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
             </Level>
         </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Tier" uniqueKeyLevelName="Name">
+        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Tier">
             <Table schema="cds" name="antigens" >
             </Table>
             <Level name="Tier" visible="true" column="tier" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
@@ -20,7 +20,7 @@
                 <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
             </Level>
         </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Sample Type" uniqueKeyLevelName="Name">
+        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Sample Type">
             <Table schema="cds" name="antigens">
             </Table>
             <Level name="Sample Type" visible="true" column="specimensource" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
@@ -50,6 +50,12 @@
 
 
     <Cube name="DataspaceCube" visible="true" defaultMeasure="ParticipantCount" cache="true" enabled="true">
+
+        <Annotations>
+            <Annotation name="SchemaName">Study</Annotation>
+            <Annotation name="AllowMDX">FALSE</Annotation>
+        </Annotations>
+
         <Table schema="cds" name="facts" >
         </Table>
 
@@ -57,7 +63,8 @@
         <Dimension visible="true" highCardinality="false" name="Subject" foreignKey="participantid">
             <Hierarchy visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Container" visible="true" column="Folder" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Subject" visible="true" column="SubjectID" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
@@ -72,7 +79,6 @@
             <!--<Hierarchy name="Treatment" visible="true" hasAll="true">-->
                 <!--<Table name="demographics" schema="study"/>-->
                 <!--<Level name="Treatment" visible="true" column="TreatmentID" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
-                <!--<Level name="Subject" visible="true" column="participantid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
             <!--</Hierarchy>-->
             <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
