@@ -7,5 +7,5 @@ Ext.define('Connector.view.module.BaseModule', {
 
 	cls: 'module',
 	
-	extend : 'Ext.Component',
+	extend : 'Ext.Component'
 });

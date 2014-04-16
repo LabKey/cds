@@ -75,6 +75,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterSave": "../../webapp/Connector/src/view/FilterSave.js",
   "Connector.view.FilterStatus": "../../webapp/Connector/src/view/FilterStatus.js",
+  "Connector.view.Grid": "../../webapp/Connector/src/view/Grid.js",
   "Connector.view.GroupListView": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSaveList": "../../webapp/Connector/src/view/GroupSave.js",
@@ -122,6 +123,7 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.Filter": "../../../../internal/webapp/app/Filter.js",
   "LABKEY.app.model.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.model.State": "../../../../internal/webapp/app/State.js",
+  "LABKEY.app.panel.MeasurePicker": "../../../../internal/webapp/app/MeasurePicker.js",
   "LABKEY.app.store.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.Selection": "../../../../internal/webapp/app/Selection.js",
@@ -198,6 +200,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.DimensionSelector": [],
   "Connector.view.FilterSave": [],
   "Connector.view.FilterStatus": [],
+  "Connector.view.Grid": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSaveList": [],
@@ -1058,6 +1061,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
+  "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [],
   "LABKEY.app.view.Selection": [],
@@ -1173,6 +1177,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"
+  ],
+  "Connector.view.Grid": [
+    "widget.groupdatagrid"
   ],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
@@ -2260,6 +2267,7 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
+  "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"

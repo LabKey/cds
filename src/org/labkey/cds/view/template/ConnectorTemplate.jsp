@@ -118,6 +118,25 @@
         button.imgbuttonover {
             background-image: url(<%=text(appPath)%>/images/dropdown_hover.svg);
         }
+
+        .x-column-header-inner {
+            height: 45px;
+        }
+
+        .x-column-header-align-center {
+            text-align: left;
+            color: #FFFFFF;
+            background-color: #666363;
+        }
+
+        .x-group-sub-header {
+            background-color: #E6E1E1;
+        }
+
+        .x-group-sub-header .x-column-header-text {
+            white-space: normal;
+            margin-top: 25px;
+        }
     </style>
 
     <style type="text/css">
@@ -244,6 +263,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
 
     <!-- Application plugins -->
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
@@ -276,6 +296,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
