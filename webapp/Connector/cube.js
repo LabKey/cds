@@ -38,7 +38,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Subject]',
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
-//                summaryTargetLevel: '[Subject].[Subject]',
+                summaryTargetLevel: '[Subject].[Subject]',
                 priority: 10,
                 hierarchies: [{
                     uniqueName: '[Subject]',
