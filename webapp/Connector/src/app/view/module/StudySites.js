@@ -41,14 +41,18 @@ Ext.define('Connector.app.view.module.StudySites', {
 	        var sites = this.initialConfig.data.model.get('Sites');
 	        if (sites) {
 	        	var bounds = new google.maps.LatLngBounds();
+	        	sites = sites.split(';');
 	        	Ext.each(sites, function(site) {
-	        		var latLng = new google.maps.LatLng(site.Latitude, site.Longitude);
-	        		bounds.extend(latLng);
-		        	var marker = new google.maps.Marker({
-					    position: latLng,
-					    map: map,
-					    title: site.Type
-					});
+	        		var latLng = site.split(',');
+	        		if (latLng.length == 2) {
+		        		latLng = new google.maps.LatLng(latLng[0], latLng[1]);
+		        		bounds.extend(latLng);
+			        	var marker = new google.maps.Marker({
+						    position: latLng,
+						    map: map,
+						    title: site.Type
+						});
+			        }
 	        	});
 	        	map.fitBounds(bounds);
 	        }
