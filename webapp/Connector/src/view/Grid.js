@@ -128,9 +128,9 @@ Ext.define('Connector.view.Grid', {
 
     getGridStore : function() {
 
-        console.log('schema:', this.schemaName);
-        console.log('query:', this.queryName);
-        console.log('columns:', this.columnSet);
+//        console.log('schema:', this.schemaName);
+//        console.log('query:', this.queryName);
+//        console.log('columns:', this.columnSet);
 
         if (!this.gridStore) {
             this.gridStore = Ext.create('LABKEY.ext4.data.Store', {
