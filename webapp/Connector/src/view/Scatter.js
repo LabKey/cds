@@ -837,9 +837,11 @@ Ext.define('Connector.view.Scatter', {
                     members: []
                 };
 
+                var container = '';
                 for (var i=0; i < data.values.length; i++) {
+                    container = Connector.model.Filter.getContainer(data.values[i]);
                     filter.members.push({
-                        uname: ['Subject', data.values[i]]
+                        uniqueName: '[Subject].[' + container + '].[' + data.values[i] + ']'
                     });
                 }
 

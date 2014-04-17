@@ -40,9 +40,11 @@ Ext.define('Connector.model.Filter', {
                         members: []
                     };
 
+                    var container = '';
                     for (var i = 0; i < resp.values.length; i++) {
+                        container = Connector.model.Filter.getContainer(resp.values[i]);
                         mdxFilterConfig.members.push({
-                            uname: ['Subject', resp.values[i]]
+                            uniqueName: '[Subject].[' + container + '].[' + resp.values[i] + ']'
                         });
                     }
                     config.success.call(config.scope ? config.scope : this, mdxFilterConfig);
@@ -59,6 +61,33 @@ Ext.define('Connector.model.Filter', {
 
         mdxToSql : function(filter) {
             // Translate a filter object to a set of SQL Filters for a plot selection.
+        },
+
+        loaded: false,
+        subjectMap: {},
+        getContainer : function(subjectID) {
+            return Connector.model.Filter.subjectMap[subjectID];
+        },
+        loadSubjectContainer : function(mdx) {
+
+            if (!Connector.model.Filter.loaded) {
+                // load from mdx
+                var level = mdx.getDimension('Subject').getHierarchies()[0].levelMap['Subject'];
+                var members = level.members;
+
+                Ext.each(members, function(member) {
+                    if (Connector.model.Filter.subjectMap[member.name]) {
+                        console.error('Unable to process the same subject identifier in multiple studies.');
+                    }
+                    else {
+                        var uniqueName = member.uniqueName.split('].');
+                        var containerID = uniqueName[1].replace('[', '');
+                        Connector.model.Filter.subjectMap[member.name] = containerID;
+                    }
+                });
+
+                Connector.model.Filter.loaded = true;
+            }
         }
     }
 });

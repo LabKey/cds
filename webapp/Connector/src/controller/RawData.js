@@ -416,7 +416,7 @@ Ext.define('Connector.controller.RawData', {
                     var members = [];
                     for (var g=0; g < groups[r].length; g++) {
                         members.push({
-                            uname : ['Subject', groups[r][g]]
+                            uniqueName: '[Subject].[' + groups[r][g] + ']'
                         });
                     }
                     this.getStateManager().updateFilterMembers(this.filterMap[this.getFilterId(fa[f])], members);
@@ -523,7 +523,7 @@ Ext.define('Connector.controller.RawData', {
 
     afterFilterAnimation : function(filterGroups) {
 
-        var filters = [], filterIndexes = [], filter, f, i, g;
+        var filters = [], filterIndexes = [], filter, f, i, grp, g, container;
         for (f=0; f < filterGroups.length; f++) {
 
             for (i=0; i < filterGroups[f].filters.length; i++) {
@@ -535,17 +535,17 @@ Ext.define('Connector.controller.RawData', {
                     members    : []
                 };
 
-                for (g=0; g < filterGroups[f].group.length; g++) {
-
+                grp = filterGroups[f].group;
+                for (g=0; g < grp.length; g++) {
+                    container = Connector.model.Filter.getContainer(grp[g]);
                     filter.members.push({
-                        uname : ['Subject', filterGroups[f].group[g]]
+                        uniqueName: '[Subject].[' + container + '].[' + grp[g] + ']'
                     });
 
                 }
 
                 filters.push(filter);
                 filterIndexes.push([f,i]);
-
             }
         }
 
