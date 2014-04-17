@@ -39,7 +39,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.sun.jna.Platform.isMac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +55,6 @@ import static org.junit.Assert.assertTrue;
 public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTest
 {
     private static final String PROJECT_NAME = "CDSTest Project";
-    private static final File FOLDER_ZIP = new File(getCDSSampleDataPath(), "Dataspace.folder.zip");
     private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     private static final String GROUP_NAME = "CDSTest_AGroup";
@@ -68,12 +67,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     public final static int CDS_WAIT = 1500;
-
-    public static String getCDSSampleDataPath()
-    {
-        File path = new File(getLabKeyRoot(), "server/customModules/cds/test/sampledata");
-        return path.toString();
-    }
 
     @Override
     public String getAssociatedModuleDirectory()
@@ -187,7 +180,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void importComponentStudy(String studyName)
     {
         _containerHelper.createSubfolder(getProjectName(), studyName, "Study");
-        importStudyFromZip(new File(getCDSSampleDataPath(), studyName + ".folder.zip"), true, true);
+        importStudyFromZip(getSampleData(studyName + ".folder.zip"), true, true);
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -198,7 +191,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkWithText(query));
         _listHelper.clickImportData();
 
-        setFormElementJS(Locator.id("tsv3"), getFileContents(new File(getCDSSampleDataPath(), dataFilePath)));
+        setFormElementJS(Locator.id("tsv3"), getFileContents(getSampleData(dataFilePath)));
         clickButton("Submit");
     }
 
@@ -446,6 +439,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
+    @Ignore("Visualization API for multi-study NYI")
     public void verifyGrid()
     {
         log("Verify Grid");
@@ -875,7 +869,8 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    //@Test
+    @Test
+    @Ignore("Visualization API for multi-study NYI")
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -883,14 +878,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
         final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100";
 
+        makeNavigationSelection(NavigationLink.PLOT);
+
         WebElement xAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "xaxisbtn").toBy()));
         WebElement yAxisChooseButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsButtonLocator("choose variable", "yaxisbtn").toBy()));
-
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
-
-        clickBy("Studies");
-        makeNavigationSelection(NavigationLink.PLOT);
 
         xAxisChooseButton.click();
         waitForElement(Locator.css(".xaxispicker div.itemrow").withText("Physical Exam (6)"));
@@ -901,6 +892,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("set y axis"));
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
+
+        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("xaxisbtn").toBy()));
+        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(cdsDropDownButtonLocator("yaxisbtn").toBy()));
 
         yAxisButton.click();
         _ext4Helper.waitForMask();
@@ -1037,7 +1031,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
     }
 
-    //@Test
+    @Test
     @Ignore("Multi-noun details for antigens NYI")
     public void testMultiAntigenInfoPage()
     {
@@ -1062,7 +1056,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         closeInfoPage();
     }
 
-    //@Test
+    @Test
     @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
     {
@@ -1206,6 +1200,14 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void selectBarsHelper(boolean isShift, String...bars)
     {
+        Keys multiSelectKey;
+        if (isShift)
+            multiSelectKey = Keys.SHIFT;
+        else if (isMac())
+            multiSelectKey = Keys.COMMAND;
+        else
+            multiSelectKey = Keys.CONTROL;
+
         waitForBarToAnimate(bars[0]);
 
         String subselect = bars[0];
@@ -1219,10 +1221,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         {
             Actions builder = new Actions(getDriver());
 
-            if (isShift)
-                builder.keyDown(Keys.SHIFT).build().perform();
-            else
-                builder.keyDown(Keys.CONTROL).build().perform();
+            builder.keyDown(multiSelectKey).build().perform();
 
             for(int i = 1; i < bars.length; i++)
             {
@@ -1235,10 +1234,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
                 waitForFilterAnimation();
             }
 
-            if (isShift)
-                builder.keyUp(Keys.SHIFT).build().perform();
-            else
-                builder.keyUp(Keys.CONTROL).build().perform();
+            builder.keyUp(multiSelectKey).build().perform();
         }
     }
 
@@ -1516,22 +1512,27 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
     private void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Studies", "", "4 studies");
-        assertCDSPortalRow("Subject characteristics", "3 countries, 2 genders, 6 races & subtypes", "29 subject characteristics");
-        assertCDSPortalRow("Assays", "1 target areas, 3 methodologies", "4 assays");
-        assertCDSPortalRow("Assay antigens", "5 clades, 5 sample types, 5 tiers", "31 assay antigens");
-        assertCDSPortalRow("Labs", "", "3 labs");
+        assertCDSPortalRow("Studies", "4 studies");
+        assertCDSPortalRow("Subject characteristics", "29 subject characteristics", "3 countries", "2 genders", "6 races & subtypes");
+        assertCDSPortalRow("Assays", "4 assays", "1 target areas", "3 methodologies");
+        assertCDSPortalRow("Assay antigens", "31 assay antigens", "5 clades", "5 sample types", "5 tiers");
+        assertCDSPortalRow("Labs", "3 labs");
     }
 
-    private void assertCDSPortalRow(String byNoun, String expectedDetail, String expectedTotal)
+    private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
     {
         waitForElement(getByLocator(byNoun), 120000);
         assertTrue("'by " + byNoun + "' search option is not present", isElementPresent(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div[" +
                 "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' " + byNoun + "']]")));
+
+        Set<String> expectedDetailsSet = new HashSet<>(Arrays.asList(expectedDetails));
         String actualDetail = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
                 "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
                 "/div[contains(@class, 'detailcolumn')]"));
-        assertEquals("Wrong details for search by " + byNoun + ".", expectedDetail, actualDetail);
+        Set<String> splitDetailsSet = new HashSet<>();
+        if (actualDetail.length() > 0) splitDetailsSet.addAll(Arrays.asList(actualDetail.split(", ?")));
+        assertEquals("Wrong details for search by " + byNoun + ".", expectedDetailsSet, splitDetailsSet);
+
         String actualTotal = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
                 "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
                 "/div[contains(@class, 'totalcolumn')]"));

@@ -43,20 +43,20 @@ div.measuresgrid .x-grid-view {
 //  border-bottom: 1px solid $legend-color !important;
 //}
 
-div.curseltitle {
+.curseltitle {
   @include bodycaps;
   font-size: 12pt;
   padding-bottom: 15px;
 }
 
-div.curselauth {
+.curselauth {
   font-size: 12pt;
   font-weight: normal;
   font-family: $data-font;
   padding-bottom: 5px;
 }
 
-div.curseldesc {
+.curseldesc {
   font-size: 9pt;
   font-weight: normal;
   width: 60%;

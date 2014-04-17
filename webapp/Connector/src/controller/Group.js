@@ -157,11 +157,16 @@ Ext.define('Connector.controller.Group', {
                 };
 
 
-                LABKEY.app.model.Filter.doGroupSave(mdx, saveSuccess, saveFailure, {
-                    label: values['groupname'],
-                    description: values['groupdescription'],
-                    filters: state.getFlatFilters(),
-                    isLive: isLiveFilter
+                LABKEY.app.model.Filter.doGroupSave({
+                    mdx : mdx,
+                    success : saveSuccess,
+                    failure : saveFailure,
+                    group : {
+                        label: values['groupname'],
+                        description: values['groupdescription'],
+                        filters: state.getFlatFilters(),
+                        isLive: isLiveFilter
+                    }
                 });
             }, this);
         }

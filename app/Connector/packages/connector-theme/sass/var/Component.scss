@@ -24,6 +24,7 @@ $heat-scale-4: #E6E1E1;            // Heatmap Gray #4
 $title : 28pt;
 $headline : 18pt;
 $pageLeftPadding: 27px;
+$sectionTopPadding: 25px;
 
 $bodycaps-font : Arial;
 $info-font : Verdana, sans-serif;
@@ -53,6 +54,21 @@ $datepicker-base-color: $light-color;
 
 $window-body-background-color: $primary-color;
 $window-header-color: $secondary-color;
+
+// Grid
+$grid-row-cell-over-background-color: $selectongrey-color;
+$grid-cell-selected-background-color: $select-color;
+$grid-row-cell-selected-background-color: $select-color;
+$grid-row-cell-selected-color: $light-color;
+$grid-row-cell-selected-border-color: $select-color;
+$grid-row-cell-alt-background-color: $light-color;
+$grid-row-cell-background-color: $light-color;
+
+/* Grid Column - default ui */
+$grid-column-header-font-family: $info-font;
+$grid-column-header-font-size: 11pt;
+$grid-header-background-color: transparent;
+$grid-header-over-background-color: $selectongrey-color;
 
 @mixin header {
   font-family: $data-font;
@@ -87,6 +103,9 @@ $window-header-color: $secondary-color;
   }
 }
 
+@mixin sectionPaddingTop {
+  padding-top: $sectionTopPadding;
+}
 @mixin pagePaddingLeft {
   padding-left: $pageLeftPadding;
 }
@@ -174,8 +193,8 @@ li.fadein {
 }
 
 .titlepanel {
-  padding-top: 25px;
   padding-bottom: 7px;
+  @include sectionPaddingTop;
   @include pagePaddingLeft;
 
   span {
@@ -1318,11 +1337,6 @@ div.emptytext {
 }
 
 /* Ext.Grid*/
-.x-column-header-text {
-  font-family: $info-font;
-  font-size: 11pt;
-}
-
 .x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC {
   background-image: none !important;
   background-color: $secondary-color;
@@ -1330,8 +1344,6 @@ div.emptytext {
 }
 
 .x-column-header-trigger {
-  display: block;
-  width: 17px;
   border-left: 1px solid $primary-color;
 }
 
@@ -1360,6 +1372,11 @@ div.filterheader {
     text-transform: uppercase;
     font-size: 12px;
     font-family: $bodycaps-font;
+  }
+
+  .groupheaderline {
+    margin-top: 8px;
+    border-top: solid $secondary-color 1px;
   }
 
   .itemrow {
@@ -1400,14 +1417,6 @@ div.filterheader {
     background-color: $select-color;
     color: $light-color !important;
   }
-}
-
-/* Selection Highlight*/
-.x-grid-row-selected .x-grid-cell, .x-grid-row-selected .x-grid-rowwrap-div {
-  border-color: $select-color;
-  background-color: $select-color !important;
-  color: $light-color;
-  background-image: none !important;
 }
 
 /* Ext Mask */
@@ -1698,6 +1707,20 @@ img.tutorialclose {
 div.learnview {
   overflow-y: auto;
   overflow-x: hidden;
+
+  .module {
+    padding-bottom: 20px;
+
+    p {
+      color: #231F20;
+    }
+  }
+
+}
+
+.modulecontainer {
+  @include sectionPaddingTop;
+  @include pagePaddingLeft;
 }
 
 div.learnheader,
@@ -1711,6 +1734,11 @@ div.learncolumnheader {
 
 div.learn-header-container {
   padding-left: $pageLeftPadding;
+}
+
+div.learn-map-container {
+  height: 320px;
+  margin-bottom: 4px;
 }
 
 h1.lhdv {

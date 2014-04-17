@@ -1121,6 +1121,7 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
                     allColumns : this.allColumns,
+                    includeTimpointMeasures : true,
                     filter     : LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
@@ -1133,7 +1134,8 @@ Ext.define('Connector.view.Scatter', {
                 displayConfig : {
                     mainTitle : 'Choose a Variable for the X Axis...'
                 },
-                scalename : 'xscale'
+                scalename : 'xscale',
+                visitTagStore: this.visitTagStore
             });
 
             var pos = this.getPlotPosition();
@@ -1245,7 +1247,9 @@ Ext.define('Connector.view.Scatter', {
         var sources = [], s;
 
         for (s=0; s < store.getCount(); s++) {
-            sources.push(store.getAt(s).data['queryLabel'] || store.getAt(s).data['queryName']);
+            var record = store.getAt(s);
+            if (record.data.schemaName != null)
+                sources.push(record.data['queryLabel'] || record.data['queryName']);
         }
 
         if (this.control) {

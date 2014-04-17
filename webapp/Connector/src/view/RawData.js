@@ -191,7 +191,7 @@ Ext.define('Connector.view.RawData', {
                     text: 'select',
                     ui: 'rounded-inverted-accent',
                     handler : function() {
-                        this.fireEvent('measureselected', this.getAxisPanel().getSelection());
+                        this.fireEvent('measureselected', this, this.getAxisPanel().getSelection());
                         this.win.hide();
                     },
                     scope: this
@@ -222,7 +222,7 @@ Ext.define('Connector.view.RawData', {
         }
     },
 
-    refreshGrid : function(queryMetadata, measures, ptids, subjectColumn) {
+    refreshGrid : function(queryMetadata, measures, ptids) {
 
         // RawData acts differently once the grid has been displayed
         if (!this.initialized) {
@@ -253,10 +253,6 @@ Ext.define('Connector.view.RawData', {
 
         if (ptids) {
             this.queryPtids = ptids;
-        }
-
-        if (subjectColumn) {
-            this.subjectColumn = subjectColumn;
         }
 
         if (measures) {
@@ -534,7 +530,7 @@ Ext.define('Connector.view.RawData', {
     },
 
     processFilters : function(groups, filterArrays) {
-        this.fireEvent('filtertranslate', groups, filterArrays);
+        this.fireEvent('filtertranslate', this, groups, filterArrays);
     },
 
     // This is called when users add/remove columns via the filter window

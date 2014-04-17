@@ -6,9 +6,10 @@
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
 
         <!-- Client API Dependencies -->
-        <script path="../../../../staging/labkeyWebapp/clientapi/core/ExtAdapter.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/dom/ExtAdapter.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Ajax.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Utils.js"/>
+        <script path="../../../../staging/labkeyWebapp/clientapi/dom/Utils.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/ActionURL.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Filter.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Query.js"/>
@@ -28,6 +29,7 @@
         <script path="../../../internal/explodedModule/web/app/Selection.js"/>
         <script path="../../../internal/explodedModule/web/app/AbstractViewController.js"/>
         <script path="../../../internal/explodedModule/web/app/OlapExplorer.js"/>
+        <script path="../../../internal/explodedModule/web/app/MeasurePicker.js"/>
 
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
@@ -70,6 +72,7 @@
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
         <script path="Connector/src/model/Variable.js"/>
+        <script path="Connector/src/model/VisitTag.js"/>
 
         <!-- Application Widgets -->
         <script path="Connector/src/button/Image.js"/>
@@ -81,14 +84,23 @@
         <script path="Connector/src/panel/FilterPanel.js"/>
         <script path="Connector/src/panel/Selection.js"/>
         <script path="Connector/src/panel/GroupList.js"/>
+        <script path="Connector/src/grid/Panel.js"/>
 
         <!-- Application plugins -->
         <script path="Connector/src/plugin/Messaging.js"/>
+
+        <!-- Constant singletons -->
+        <script path="Connector/src/constant/Templates.js"></script>
+        <script path="Connector/src/constant/ModuleViewsLookup.js"></script>
+
+        <!-- Factories -->
+        <script path="Connector/src/factory/Module.js"></script>
 
         <!-- Application Stores -->
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
         <script path="Connector/src/store/Summary.js"/>
+        <script path="Connector/src/store/VisitTag.js"/>
 
         <!-- Application Views -->
         <script path="Connector/src/view/Citation.js"/>
@@ -105,6 +117,7 @@
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
         <script path="Connector/src/view/RawData.js"/>
+        <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
@@ -112,6 +125,10 @@
         <script path="Connector/src/view/Time.js"/>
         <script path="Connector/src/view/Viewport.js"/>
         <script path="Connector/src/view/search/Container.js"/>
+
+        <script path="Connector/src/view/module/BaseModule.js"/>
+        <script path="Connector/src/view/module/Text.js"/>
+        <script path="Connector/src/view/module/Person.js"/>
 
         <!-- Application Controllers -->
         <script path="Connector/src/controller/AbstractViewController.js"/>
@@ -130,6 +147,8 @@
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 
+        <script path="Connector/src/utility/StoreCache.js"/>
+
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Site.js"/>
@@ -147,6 +166,9 @@
         <script path="Connector/src/app/view/Site.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
+        <script path="Connector/src/app/view/StudyDetail.js"/>
+
+        <script path="Connector/src/app/view/module/StudySites.js"/>
 
         <script path="Connector/src/Application.js"/>
 
