@@ -32,6 +32,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Chart": "../../webapp/Connector/src/controller/Chart.js",
   "Connector.controller.Citation": "../../webapp/Connector/src/controller/Citation.js",
   "Connector.controller.Connector": "../../webapp/Connector/src/controller/Connector.js",
+  "Connector.controller.Data": "../../webapp/Connector/src/controller/Data.js",
   "Connector.controller.Explorer": "../../webapp/Connector/src/controller/Explorer.js",
   "Connector.controller.FilterStatus": "../../webapp/Connector/src/controller/FilterStatus.js",
   "Connector.controller.Group": "../../webapp/Connector/src/controller/Group.js",
@@ -39,7 +40,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Learn": "../../webapp/Connector/src/controller/Learn.js",
   "Connector.controller.Main": "../../webapp/Connector/src/controller/Main.js",
   "Connector.controller.Navigation": "../../webapp/Connector/src/controller/Navigation.js",
-  "Connector.controller.RawData": "../../webapp/Connector/src/controller/RawData.js",
   "Connector.controller.Router": "../../webapp/Connector/src/controller/Router.js",
   "Connector.controller.State": "../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../webapp/Connector/src/controller/Summary.js",
@@ -71,6 +71,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.Citation": "../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../webapp/Connector/src/view/Compare.js",
+  "Connector.view.Data": "../../webapp/Connector/src/view/Data.js",
   "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -97,7 +98,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Navigation": "../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NotFound": "../../webapp/Connector/src/controller/Connector.js",
-  "Connector.view.RawData": "../../webapp/Connector/src/view/RawData.js",
   "Connector.view.Scatter": "../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.SingleAxisExplorer": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -158,6 +158,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Chart": [],
   "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
+  "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
@@ -165,7 +166,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
-  "Connector.controller.RawData": [],
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
@@ -197,6 +197,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.types.Filter": [],
   "Connector.view.Citation": [],
   "Connector.view.Compare": [],
+  "Connector.view.Data": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
@@ -223,7 +224,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
   "Connector.view.NotFound": [],
-  "Connector.view.RawData": [],
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.SingleAxisExplorer": [],
@@ -1105,6 +1105,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Chart": [],
   "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
+  "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
@@ -1112,7 +1113,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
-  "Connector.controller.RawData": [],
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
@@ -1167,6 +1167,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Compare": [
     "widget.compareview"
+  ],
+  "Connector.view.Data": [
+    "widget.datagrid"
   ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
@@ -1236,9 +1239,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.NotFound": [
     "widget.notfound"
   ],
-  "Connector.view.RawData": [
-    "widget.datagrid"
-  ],
   "Connector.view.Scatter": [
     "widget.plot"
   ],
@@ -1278,7 +1278,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.searchcontainer"
   ],
   "Connector.window.Filter": [
-    "widget.rawdatafilterwin"
+    "widget.columnfilterwin"
   ],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],

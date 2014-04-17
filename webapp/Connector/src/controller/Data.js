@@ -3,11 +3,11 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.controller.RawData', {
+Ext.define('Connector.controller.Data', {
 
     extend : 'Connector.controller.AbstractViewController',
 
-    views: ['RawData', 'Grid'],
+    views: ['Data', 'Grid'],
 
     measures : [],
     filterMap : {}, // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance.
@@ -624,7 +624,7 @@ Ext.define('Connector.controller.RawData', {
         var v;
 
         if (xtype == 'datagrid') {
-            v = Ext.create('Connector.view.RawData', {
+            v = Ext.create('Connector.view.Data', {
                 id: 'raw-data-view',
                 ui: 'custom',
                 control: this

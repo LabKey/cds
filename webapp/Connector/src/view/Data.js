@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.RawData', {
+Ext.define('Connector.view.Data', {
 
     extend: 'Ext.panel.Panel',
 
@@ -224,7 +224,7 @@ Ext.define('Connector.view.RawData', {
 
     refreshGrid : function(queryMetadata, measures, ptids) {
 
-        // RawData acts differently once the grid has been displayed
+        // The view acts differently once the grid has been displayed
         if (!this.initialized) {
             this.initialized = true;
             if (this.win) {
@@ -655,7 +655,7 @@ Ext.define('Connector.view.RawData', {
         if (column) {
             this.filterWin = Ext.create('Connector.window.Filter', {
                 col: column,
-                rawDataView: this
+                dataView: this
             });
         }
         else {

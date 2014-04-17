@@ -99,12 +99,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
-        initTest.doCleanup(false);
-
-        initTest.setupProject();
-        initTest.importData();
-        initTest.populateFactTable();
-        initTest.verifyFactTable();
+//        initTest.doCleanup(false);
+//
+//        initTest.setupProject();
+//        initTest.importData();
+//        initTest.populateFactTable();
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
 
@@ -480,7 +480,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         //But other column from same table is still there
         waitForElement(Locator.tagContainingText("span", "Lab"));
 
-        setRawDataFilter("Ethnicity", "White");
+        setDataFilter("Ethnicity", "White");
         waitForGridCount(246);
 
         log("Change column set and ensure still filtered");
@@ -496,7 +496,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         log("Filter on a looked-up column");
         waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText("PI1"));
         waitForElement(Locator.tagWithClass("div", "x-grid-cell-inner").withText("Igra M"));
-        setRawDataFilter("PI1", "Igra");
+        setDataFilter("PI1", "Igra");
         waitForGridCount(152);
 
         log("Ensure filtering goes away when column does");
@@ -505,7 +505,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         click(cdsButtonLocator("OK"));
         waitForGridCount(246);
 
-        setRawDataFilter("Point IC50", "Is Greater Than", "60");
+        setDataFilter("Point IC50", "Is Greater Than", "60");
         waitForGridCount(2);
         openFilterPanel("Ethnicity");
         waitAndClick(cdsButtonLocator(GRID_CLEAR_FILTER));
@@ -553,7 +553,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         addGridColumn("Physical Exam", "Source", true, true);
         addGridColumn("NAb", "Source", false, true);
         waitForGridCount(700);
-        setRawDataFilter("Source", "Demo"); // Hopefully get text on page
+        setDataFilter("Source", "Demo"); // Hopefully get text on page
         waitForText("Demo study physical exam", CDS_WAIT);
         waitForText("Demo study final NAb data", CDS_WAIT);
 
@@ -1412,12 +1412,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         }
     }
 
-    private void setRawDataFilter(String colName, String value)
+    private void setDataFilter(String colName, String value)
     {
-        setRawDataFilter(colName, null, value);
+        setDataFilter(colName, null, value);
     }
 
-    private void setRawDataFilter(String colName, String filter, String value)
+    private void setDataFilter(String colName, String filter, String value)
     {
         openFilterPanel(colName);
         if (null != filter)

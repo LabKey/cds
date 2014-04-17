@@ -39,7 +39,7 @@ Ext.define('Connector.Application', {
         'Learn',
         'Main',
         'Navigation',
-        'RawData',
+        'Data',
         'Scatter',
         'SingleAxisExplorer',
         'Summary',
@@ -60,7 +60,7 @@ Ext.define('Connector.Application', {
         'Home',
         'Learn',
         'Navigation',
-        'RawData',
+        'Data',
         'Summary'
     ],
 
