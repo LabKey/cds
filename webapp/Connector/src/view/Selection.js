@@ -49,7 +49,7 @@ Ext.define('Connector.view.Selection', {
                         '<tpl for="members">',
                             '<div class="status-over memberitem collapsed-member">',
                                 '<div class="closeitem" data-id="{parent.id}" member-index="{[xindex-1]}"></div>',
-                                '{uname:this.renderUname}',
+                                '{uniqueName:this.renderUniqueName}',
                             '</div>',
                         '</tpl>',
                     '</tpl>',
@@ -87,7 +87,7 @@ Ext.define('Connector.view.Selection', {
                     return op == LABKEY.app.model.Filter.Operators.UNION ? 'selected="selected"' : '';
                 },
                 renderType : function(member) {
-                    var u = member['uname'];
+                    var u = LABKEY.app.view.Selection.uniqueNameAsArray(member['uniqueName']);
                     var area = u[0], type = '';
 
                     // Determine if zero level
@@ -104,8 +104,9 @@ Ext.define('Connector.view.Selection', {
 
                     return Ext.htmlEncode(type);
                 },
-                renderUname : function(uname) {
-                    var member = uname[uname.length-1];
+                renderUniqueName : function(uniqueName) {
+                    var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
+                    var member = arrayName[arrayName.length-1];
                     if (member == '#null') {
                         member = 'Unknown';
                     }
@@ -123,7 +124,7 @@ Ext.define('Connector.view.Selection', {
                  */
                 renderMember : function(members) {
                     var member = '', area = '';
-                    var levels = members[0]['uname'];
+                    var levels = LABKEY.app.view.Selection.uniqueNameAsArray(members[0]['uniqueName']);
 
                     // Determine if zero level
                     if (levels[0].indexOf('.') == -1) {

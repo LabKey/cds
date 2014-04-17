@@ -158,8 +158,10 @@ Ext.define('Connector.store.FilterStatus', {
                 }
             }
             else {
-                count = qrArray[i].cells[0][0].value;
-                subcount = qrSels[configArray[i].requestId].cells[0][0].value;
+                if (qrArray[i].cells.length > 0)
+                    count = qrArray[i].cells[0][0].value;
+                if (qrSels[configArray[i].requestId].cells.length > 0)
+                    subcount = qrSels[configArray[i].requestId].cells[0][0].value;
             }
 
             rec = {
