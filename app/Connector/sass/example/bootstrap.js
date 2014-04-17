@@ -20,14 +20,19 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.view.Labs": "../../../../webapp/Connector/src/app/view/Labs.js",
   "Connector.app.view.Site": "../../../../webapp/Connector/src/app/view/Site.js",
   "Connector.app.view.Study": "../../../../webapp/Connector/src/app/view/Study.js",
+  "Connector.app.view.StudyDetail": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
   "Connector.app.view.StudyProducts": "../../../../webapp/Connector/src/app/view/StudyProducts.js",
+  "Connector.app.view.module.StudySites": "../../../../webapp/Connector/src/app/view/module/StudySites.js",
   "Connector.button.Image": "../../../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
+  "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
+  "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
   "Connector.controller.Chart": "../../../../webapp/Connector/src/controller/Chart.js",
   "Connector.controller.Citation": "../../../../webapp/Connector/src/controller/Citation.js",
   "Connector.controller.Connector": "../../../../webapp/Connector/src/controller/Connector.js",
+  "Connector.controller.Data": "../../../../webapp/Connector/src/controller/Data.js",
   "Connector.controller.Explorer": "../../../../webapp/Connector/src/controller/Explorer.js",
   "Connector.controller.FilterStatus": "../../../../webapp/Connector/src/controller/FilterStatus.js",
   "Connector.controller.Group": "../../../../webapp/Connector/src/controller/Group.js",
@@ -35,10 +40,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Learn": "../../../../webapp/Connector/src/controller/Learn.js",
   "Connector.controller.Main": "../../../../webapp/Connector/src/controller/Main.js",
   "Connector.controller.Navigation": "../../../../webapp/Connector/src/controller/Navigation.js",
-  "Connector.controller.RawData": "../../../../webapp/Connector/src/controller/RawData.js",
   "Connector.controller.Router": "../../../../webapp/Connector/src/controller/Router.js",
   "Connector.controller.State": "../../../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../../../webapp/Connector/src/controller/Summary.js",
+  "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
+  "Connector.grid.Panel": "../../../../webapp/Connector/src/grid/Panel.js",
   "Connector.model.Citation": "../../../../webapp/Connector/src/model/Citation.js",
   "Connector.model.ColumnInfo": "../../../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../../../webapp/Connector/src/model/Detail.js",
@@ -50,6 +56,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
+  "Connector.model.VisitTag": "../../../../webapp/Connector/src/model/VisitTag.js",
   "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
@@ -60,14 +67,17 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.Explorer": "../../../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../../../webapp/Connector/src/store/FilterStatus.js",
   "Connector.store.Summary": "../../../../webapp/Connector/src/store/Summary.js",
+  "Connector.store.VisitTag": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.view.Citation": "../../../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../../../webapp/Connector/src/view/Compare.js",
+  "Connector.view.Data": "../../../../webapp/Connector/src/view/Data.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterSave": "../../../../webapp/Connector/src/view/FilterSave.js",
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
+  "Connector.view.Grid": "../../../../webapp/Connector/src/view/Grid.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
@@ -83,11 +93,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../../../webapp/Connector/src/view/Learn.js",
+  "Connector.view.LearnItemHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Main": "../../../../webapp/Connector/src/view/Main.js",
   "Connector.view.Navigation": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NotFound": "../../../../webapp/Connector/src/controller/Connector.js",
-  "Connector.view.RawData": "../../../../webapp/Connector/src/view/RawData.js",
   "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.SingleAxisExplorer": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -97,6 +107,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Time": "../../../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
+  "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
+  "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
+  "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
+  "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.search.Container": "../../../../webapp/Connector/src/view/search/Container.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
@@ -110,9 +124,11 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.Filter": "../../../../../../internal/webapp/app/Filter.js",
   "LABKEY.app.model.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
+  "LABKEY.app.panel.MeasurePicker": "../../../../../../internal/webapp/app/MeasurePicker.js",
   "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
-  "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js"
+  "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js",
+  "StoreCache": "../../../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
   "Connector.Application": [],
@@ -130,14 +146,19 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.view.Labs": [],
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
+  "Connector.app.view.StudyDetail": [],
   "Connector.app.view.StudyProducts": [],
+  "Connector.app.view.module.StudySites": [],
   "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
+  "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Chart": [],
   "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
+  "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
@@ -145,10 +166,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
-  "Connector.controller.RawData": [],
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.factory.Module": [],
+  "Connector.grid.Panel": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -160,6 +182,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
+  "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.Feedback": [],
@@ -170,14 +193,17 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
   "Connector.store.Summary": [],
+  "Connector.store.VisitTag": [],
   "Connector.types.Filter": [],
   "Connector.view.Citation": [],
   "Connector.view.Compare": [],
+  "Connector.view.Data": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
   "Connector.view.FilterSave": [],
   "Connector.view.FilterStatus": [],
+  "Connector.view.Grid": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSaveList": [],
@@ -193,11 +219,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
+  "Connector.view.LearnItemHeader": [],
   "Connector.view.Main": [],
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
   "Connector.view.NotFound": [],
-  "Connector.view.RawData": [],
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.SingleAxisExplorer": [],
@@ -207,6 +233,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
+  "Connector.view.module.BaseModule": [],
+  "Connector.view.module.Person": [],
+  "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.Text": [],
   "Connector.view.search.Container": [],
   "Connector.window.Filter": [],
   "Connector.window.SystemMessage": [],
@@ -1033,9 +1063,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
+  "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [],
-  "LABKEY.app.view.Selection": []
+  "LABKEY.app.view.Selection": [],
+  "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Connector.Application": [],
@@ -1053,7 +1085,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.app.view.Labs": [],
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
+  "Connector.app.view.StudyDetail": [],
   "Connector.app.view.StudyProducts": [],
+  "Connector.app.view.module.StudySites": [
+    "widget.app.module.studysites"
+  ],
   "Connector.button.Image": [
     "widget.imgbutton"
   ],
@@ -1063,10 +1099,13 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.button.RoundedButton": [
     "widget.roundedbutton"
   ],
+  "Connector.constant.ModuleViewsLookup": [],
+  "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Chart": [],
   "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
+  "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
   "Connector.controller.FilterStatus": [],
   "Connector.controller.Group": [],
@@ -1074,10 +1113,13 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
-  "Connector.controller.RawData": [],
   "Connector.controller.Router": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.factory.Module": [],
+  "Connector.grid.Panel": [
+    "widget.connector-gridpanel"
+  ],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -1089,6 +1131,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
+  "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [
     "widget.axisselectdisplay"
   ],
@@ -1115,12 +1158,18 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.store.Summary": [
     "store.summary"
   ],
+  "Connector.store.VisitTag": [
+    "store.visittag"
+  ],
   "Connector.types.Filter": [],
   "Connector.view.Citation": [
     "widget.citation"
   ],
   "Connector.view.Compare": [
     "widget.compareview"
+  ],
+  "Connector.view.Data": [
+    "widget.datagrid"
   ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
@@ -1136,6 +1185,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"
+  ],
+  "Connector.view.Grid": [
+    "widget.groupdatagrid"
   ],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
@@ -1174,6 +1226,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
   ],
+  "Connector.view.LearnItemHeader": [
+    "widget.learnitemheaderview"
+  ],
   "Connector.view.Main": [
     "widget.app-main"
   ],
@@ -1183,9 +1238,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.NavigationView": [],
   "Connector.view.NotFound": [
     "widget.notfound"
-  ],
-  "Connector.view.RawData": [
-    "widget.datagrid"
   ],
   "Connector.view.Scatter": [
     "widget.plot"
@@ -1212,11 +1264,21 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.variableselector"
   ],
   "Connector.view.Viewport": [],
+  "Connector.view.module.BaseModule": [],
+  "Connector.view.module.Person": [
+    "widget.module.person"
+  ],
+  "Connector.view.module.StudyHeader": [
+    "widget.module.studyheader"
+  ],
+  "Connector.view.module.Text": [
+    "widget.module.text"
+  ],
   "Connector.view.search.Container": [
     "widget.searchcontainer"
   ],
   "Connector.window.Filter": [
-    "widget.rawdatafilterwin"
+    "widget.columnfilterwin"
   ],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
@@ -2210,11 +2272,13 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.model.Filter": [],
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
+  "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"
   ],
-  "LABKEY.app.view.Selection": []
+  "LABKEY.app.view.Selection": [],
+  "StoreCache": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
 Ext.setVersion("ext-theme-base", "4.2.1");

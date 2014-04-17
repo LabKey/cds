@@ -9,7 +9,7 @@ Ext.define('Connector.window.Filter', {
 
     requires: ['Connector.model.ColumnInfo', 'Ext.form.field.ComboBox'],
 
-    alias: 'widget.rawdatafilterwin',
+    alias: 'widget.columnfilterwin',
 
     ui: 'custom',
     cls: 'filterwindow',
@@ -39,8 +39,8 @@ Ext.define('Connector.window.Filter', {
         }
 
         Ext.apply(this, {
-            store       : this.rawDataView.store,
-            boundColumn : this.rawDataView.getColumnMetadata(this.col.dataIndex)
+            store       : this.dataView.store,
+            boundColumn : this.dataView.getColumnMetadata(this.col.dataIndex)
         });
 
         this.items = this.getItems();
@@ -69,7 +69,7 @@ Ext.define('Connector.window.Filter', {
 
                 this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
                 this.store.load();
-                this.rawDataView.removeGridFilter(fieldKeyPath);
+                this.dataView.removeGridFilter(fieldKeyPath);
                 this.close();
             },
             scope: this
@@ -107,7 +107,7 @@ Ext.define('Connector.window.Filter', {
     clearAll : function() {
         this.store.filterArray = [this.store.filterArray[0]];
         this.store.load();
-        this.rawDataView.removeAllFilters();
+        this.dataView.removeAllFilters();
     },
 
     getItems : function () {
@@ -128,12 +128,9 @@ Ext.define('Connector.window.Filter', {
         items.push({
             xtype       : 'labkey-default-filterpanel',
             boundColumn : this.boundColumn,
-//            title       : 'Filter',
-//            ui          : 'custom',
             filterArray : this.store.filterArray,
-//            style       : 'padding-bottom: 8px',
-            schemaName  : this.rawDataView.queryMetadata.schemaName,
-            queryName   : this.rawDataView.queryMetadata.queryName
+            schemaName  : this.dataView.queryMetadata.schemaName,
+            queryName   : this.dataView.queryMetadata.queryName
         });
 
         if (null != this.boundColumn.lookup) {
@@ -156,7 +153,7 @@ Ext.define('Connector.window.Filter', {
                 hideHeaders : true,
                 listeners : {
                     viewready : function() {
-                        var selectedCols = this.rawDataView.foreignColumns[this.boundColumn.name];
+                        var selectedCols = this.dataView.foreignColumns[this.boundColumn.name];
                         if (!selectedCols || selectedCols.length == 0) {
                             return;
                         }
@@ -216,7 +213,7 @@ Ext.define('Connector.window.Filter', {
 
         var lookupGrid = this.getLookupGrid(),
                 selections = lookupGrid.getSelectionModel().selected,
-                oldColumns = this.rawDataView.foreignColumns[this.boundColumn.name],
+                oldColumns = this.dataView.foreignColumns[this.boundColumn.name],
                 newColumns = [];
 
         selections.each(function(item, idx) {
@@ -225,8 +222,8 @@ Ext.define('Connector.window.Filter', {
 
         var columnListChanged = !this.equalColumnLists(oldColumns, newColumns);
         if (columnListChanged) {
-            this.rawDataView.foreignColumns[this.boundColumn.name] = newColumns;
-            this.rawDataView.updateAppliedColumns(newColumns, oldColumns);
+            this.dataView.foreignColumns[this.boundColumn.name] = newColumns;
+            this.dataView.updateAppliedColumns(newColumns, oldColumns);
         }
 
         return columnListChanged;
@@ -249,12 +246,12 @@ Ext.define('Connector.window.Filter', {
         if (this.applyFilters()) {
             var columnListChanged = this.applyColumns();
             if (columnListChanged) {
-                this.rawDataView.refreshGrid(this.rawDataView.queryMetadata, this.rawDataView.measures, this.rawDataView.queryPtids);
+                this.dataView.refreshGrid(this.dataView.queryMetadata, this.dataView.measures, this.dataView.queryPtids);
             }
             else {
                 this.store.load();
             }
-            this.rawDataView.translateGridFilter();
+            this.dataView.translateGridFilter();
 
             this.ppx = this.getPosition();
             this.close();

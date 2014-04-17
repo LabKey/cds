@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.RawData', {
+Ext.define('Connector.view.Data', {
 
     extend: 'Ext.panel.Panel',
 
@@ -191,7 +191,7 @@ Ext.define('Connector.view.RawData', {
                     text: 'select',
                     ui: 'rounded-inverted-accent',
                     handler : function() {
-                        this.fireEvent('measureselected', this.getAxisPanel().getSelection());
+                        this.fireEvent('measureselected', this, this.getAxisPanel().getSelection());
                         this.win.hide();
                     },
                     scope: this
@@ -222,9 +222,9 @@ Ext.define('Connector.view.RawData', {
         }
     },
 
-    refreshGrid : function(queryMetadata, measures, ptids, subjectColumn) {
+    refreshGrid : function(queryMetadata, measures, ptids) {
 
-        // RawData acts differently once the grid has been displayed
+        // The view acts differently once the grid has been displayed
         if (!this.initialized) {
             this.initialized = true;
             if (this.win) {
@@ -253,10 +253,6 @@ Ext.define('Connector.view.RawData', {
 
         if (ptids) {
             this.queryPtids = ptids;
-        }
-
-        if (subjectColumn) {
-            this.subjectColumn = subjectColumn;
         }
 
         if (measures) {
@@ -534,7 +530,7 @@ Ext.define('Connector.view.RawData', {
     },
 
     processFilters : function(groups, filterArrays) {
-        this.fireEvent('filtertranslate', groups, filterArrays);
+        this.fireEvent('filtertranslate', this, groups, filterArrays);
     },
 
     // This is called when users add/remove columns via the filter window
@@ -659,7 +655,7 @@ Ext.define('Connector.view.RawData', {
         if (column) {
             this.filterWin = Ext.create('Connector.window.Filter', {
                 col: column,
-                rawDataView: this
+                dataView: this
             });
         }
         else {

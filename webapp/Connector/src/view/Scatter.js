@@ -532,14 +532,58 @@ Ext.define('Connector.view.Scatter', {
                             .attr('fill-opacity', assocOpacityFn)
                             .attr('stroke-opacity', assocOpacityFn);
                 },
+                brushend: function(event, layerData, extent, plot, layerSelections) {
+                    var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
+                        plotMeasures = [null, null], xMeasure = null, yMeasure = null,
+                        sqlFilters = [null, null, null, null];
+
+                    if (measures.length > 1) {
+                        xMeasure = {measure: measures[0]};
+                        xMeasure.measure.colName = config.xaxis.colName;
+                        yMeasure = {measure: measures[1]};
+
+                    } else {
+                        yMeasure = {measure: measures[0]};
+                    }
+                    yMeasure.measure.colName = config.yaxis.colName;
+
+                    plotMeasures = [xMeasure, yMeasure];
+
+                    if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
+                        // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
+                        sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, Math.floor(xExtent[0]));
+                        sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, Math.ceil(xExtent[1]));
+                    }
+
+                    if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
+                        // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
+                        sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, Math.floor(yExtent[0]));
+                        sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, Math.ceil(yExtent[1]));
+                    }
+
+                    Connector.model.Filter.sqlToMdx({
+                        schemaName: config.schemaName,
+                        queryName: config.queryName,
+                        subjectColumn: config.subjectColumn,
+                        measures: plotMeasures,
+                        sqlFilters: sqlFilters,
+                        success: function(filterConfig){
+                            stateManager.addSelection([filterConfig], true, false, true);
+                        },
+                        scope: this
+                    });
+                },
                 brushclear : function() {
                     isBrushed = false;
+                    stateManager.clearSelections();
                 }
             };
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
-        var plot = this.plot; // hoisted for event listeners
+        var plot = this.plot; // hoisted for mouseover/mouseout event listeners
+        var measures = this.measures; // hoisted for brushend.
+        var stateManager = this.state; // hoisted for brushend and brushclear.
 
         if (this.plot) {
             this.plot.addLayer(pointLayer);
@@ -793,9 +837,11 @@ Ext.define('Connector.view.Scatter', {
                     members: []
                 };
 
+                var container = '';
                 for (var i=0; i < data.values.length; i++) {
+                    container = Connector.model.Filter.getContainer(data.values[i]);
                     filter.members.push({
-                        uname: ['Subject', data.values[i]]
+                        uniqueName: '[Subject].[' + container + '].[' + data.values[i] + ']'
                     });
                 }
 
@@ -843,13 +889,16 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _preprocessData : function(data) {
-
         var x = this.measures[0], y = this.measures[1];
 
         // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
         // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
-        var subjectNoun = LABKEY.moduleContext.study.subject.columnName;
+
+//        var subjectNoun = LABKEY.moduleContext.study.subject.columnName;
+        var subjectNoun = 'SubjectId'; // TODO: this is hard-coded because the measureToColumn object is returning a
+                                       // different value for the subjectNoun than the moduleContext. This is an issue
+                                       // with multi-study getDataAPI calls.
         var subjectCol = data.measureToColumn[subjectNoun];
         var xa = {
             schema : x.schemaName,
@@ -873,6 +922,11 @@ Ext.define('Connector.view.Scatter', {
                 rows = data.rows,
                 len = rows.length,
                 validCount = 0;
+
+        // We need the measure names as they appear in the temp query so we can create filters later. See the brushend
+        // handler on the plot for how they're used.
+        xa.colName = _xid;
+        ya.colName = _yid;
 
         if (len > this.rowlimit) {
             len = this.rowlimit;
@@ -957,6 +1011,10 @@ Ext.define('Connector.view.Scatter', {
         }
 
         return {
+            schemaName: data.schemaName,
+            queryName: data.queryName,
+            // We need the subject column as it appears in the temp query for the brushend handler.
+            subjectColumn: subjectCol,
             xaxis: xa,
             yaxis: ya,
             rows : map,
@@ -1416,5 +1474,28 @@ Ext.define('Connector.view.Scatter', {
                 schemaName: firstMeasure.schemaName
             }
         ];
+    },
+
+    onPlotSelectionRemoved : function(filterId, measureIdx) {
+//        this.state.removeSelection(filterId);
+        var curExtent = this.plot.getBrushExtent();
+
+        if (curExtent) {
+            if (curExtent[0][0] === null || curExtent[0][1] === null) {
+                // 1D, just clear the selection.
+                this.plot.clearBrush();
+            } else {
+                // 2D selection.
+                if (measureIdx === 0) {
+                    // clear the x-axis.
+                    this.plot.setBrushExtent([[null, curExtent[0][1]],[null, curExtent[1][1]]]);
+                } else if (measureIdx === 1) {
+                    // clear the y-axis.
+                    this.plot.setBrushExtent([[curExtent[0][0], null],[curExtent[1][0], null]]);
+                }
+            }
+        }
+
+//        p.setBrushExtent([[null, null], [null, null]]);
     }
 });

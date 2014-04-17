@@ -60,13 +60,15 @@ Ext.define('Connector.controller.Chart', {
         {
             var state = this.getStateManager();
             var v = Ext.create('Connector.view.Scatter', {
-                control : this.getController('RawData'),
+                control: this.getController('Data'),
                 visitTagStore : this.getStore('VisitTag'),
                 ui  : 'custom',
                 state : state
             });
 
+            state.clearSelections();
             state.on('filterchange', v.onFilterChange, v);
+            state.on('plotselectionremoved', v.onPlotSelectionRemoved, v);
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
 
             return v;
@@ -93,7 +95,11 @@ Ext.define('Connector.controller.Chart', {
         }
     },
 
-    updateView : function(xtype, context) {},
+    updateView : function(xtype, context) {
+        if (xtype === 'plot') {
+            this.getStateManager().clearSelections();
+        }
+    },
 
     getDefaultView : function() {
         return 'plot';

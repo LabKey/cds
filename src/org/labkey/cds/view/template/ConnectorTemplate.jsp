@@ -118,6 +118,39 @@
         button.imgbuttonover {
             background-image: url(<%=text(appPath)%>/images/dropdown_hover.svg);
         }
+
+        .x-column-header-trigger {
+            display: inline-block;
+            background-image: url(<%=text(appPath)%>/images/filter.svg);
+            background-position: 0px 28px;
+        }
+
+        .x-column-header-inner {
+            height: 45px;
+        }
+
+        .x-column-header-align-center {
+            text-align: left;
+            color: #FFFFFF;
+            background-color: #666363;
+        }
+
+        .x-group-sub-header {
+            background-color: #E6E1E1;
+        }
+
+        .x-group-sub-header .x-column-header-inner {
+            position: relative;
+        }
+
+        .x-group-sub-header .x-column-header-text {
+            white-space: normal;
+            position: absolute;
+            left: 4px;
+            bottom: 4px;
+            margin: 0;
+            text-align: justify;
+        }
     </style>
 
     <style type="text/css">
@@ -162,6 +195,8 @@
         Ext = {}; Ext4 = Ext;
     </script>
 
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
@@ -173,6 +208,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/FieldKey.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Query.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ParticipantGroup.js"></script>
@@ -242,9 +278,17 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
 
     <!-- Application plugins -->
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
+
+    <!-- Constant singletons -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/constant/ModuleViewsLookup.js"></script>
+
+    <!-- Factories -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
 
     <!-- Application Stores -->
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
@@ -266,7 +310,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Data.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
@@ -274,6 +319,10 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 
     <!-- Application Controllers -->
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
@@ -287,10 +336,13 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/RawData.js"></script>
+    
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
@@ -309,6 +361,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
+
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
 

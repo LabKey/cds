@@ -349,27 +349,17 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     afterSelectionAnimation : function(view, rec, node) {
-        var recs = view.getSelectionModel().getSelection();
+        var records = view.getSelectionModel().getSelection();
 
         var selections = [];
-        for (var i=0; i < recs.length; i++) {
-
-            var uname = [recs[i].data.hierarchy];
-            if (recs[i].data.level)
-                uname.push(recs[i].data.level);
-            uname.push(recs[i].data.value);
-
-            if (recs[i].data.isGroup) {
-                uname = uname.slice(0,uname.length-1);
-            }
-            // TODO: Convert this to using uniqueName -- currently displays parse this to find unique info
-
+        Ext.each(records, function(rec) {
             selections.push({
-                hierarchy : recs[i].data.hierarchy,
-                members : [{uname:uname}],
-                isGroup : recs[i].data.isGroup
+                hierarchy: rec.get('hierarchy'),
+                members: [{ uniqueName: rec.get('uniqueName') }],
+                isGroup: rec.get('isGroup')
             });
-        }
+        });
+
         if (selections.length > 0) {
             this.getStateManager().removePrivateSelection('hoverSelectionFilter');
             this.getStateManager().addSelection(selections, false, true, true);

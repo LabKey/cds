@@ -11,6 +11,13 @@ Ext.define('Connector.view.Selection', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
+                '<tpl if="this.isPlotSelection(values) == true">',
+                    // Plot Selection Filter
+                    '<div class="circle"></div>',
+//                    '<div class="closeitem wholeitem" data-id="{id}"></div>',
+//                    '<div class="selitem sel-listing">Plot Selection:</div>',
+                    '{[this.renderPlotSelection(values)]}',
+                '</tpl>',
                 '<tpl if="this.isGrid(values) == true">',
                     // Grid Filter
                     '<div class="circle"></div>',
@@ -27,7 +34,7 @@ Ext.define('Connector.view.Selection', {
                         '{[this.renderMeasures(values)]}',
                     '</div>',
                 '</tpl>',
-                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false">',
+                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false && this.isPlotSelection(values) == false">',
                     // Normal Filter (and Group Filters)
                     '<div class="circle"></div>',
                     '<tpl if="members.length &gt; 1">',
@@ -42,7 +49,7 @@ Ext.define('Connector.view.Selection', {
                         '<tpl for="members">',
                             '<div class="status-over memberitem collapsed-member">',
                                 '<div class="closeitem" data-id="{parent.id}" member-index="{[xindex-1]}"></div>',
-                                '{uname:this.renderUname}',
+                                '{uniqueName:this.renderUniqueName}',
                             '</div>',
                         '</tpl>',
                     '</tpl>',
@@ -56,13 +63,22 @@ Ext.define('Connector.view.Selection', {
             '</tpl>',
             {
                 isGrid : function(values) {
-                    return (values.isGrid ? true : false);
+                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
+                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
+                    return isGrid && !isPlot;
                 },
                 isGroup : function(values) {
                     return (Ext.isArray(values.filters) ? true : false);
                 },
                 isPlot : function(values) {
-                    return (values.isPlot ? true : false);
+                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
+                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
+                    return isPlot && !isGrid;
+                },
+                isPlotSelection: function(values) {
+                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
+                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
+                    return isPlot && isGrid;
                 },
                 selectIntersect : function(op) {
                     return op == LABKEY.app.model.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
@@ -71,7 +87,7 @@ Ext.define('Connector.view.Selection', {
                     return op == LABKEY.app.model.Filter.Operators.UNION ? 'selected="selected"' : '';
                 },
                 renderType : function(member) {
-                    var u = member['uname'];
+                    var u = LABKEY.app.view.Selection.uniqueNameAsArray(member['uniqueName']);
                     var area = u[0], type = '';
 
                     // Determine if zero level
@@ -88,8 +104,9 @@ Ext.define('Connector.view.Selection', {
 
                     return Ext.htmlEncode(type);
                 },
-                renderUname : function(uname) {
-                    var member = uname[uname.length-1];
+                renderUniqueName : function(uniqueName) {
+                    var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
+                    var member = arrayName[arrayName.length-1];
                     if (member == '#null') {
                         member = 'Unknown';
                     }
@@ -107,7 +124,7 @@ Ext.define('Connector.view.Selection', {
                  */
                 renderMember : function(members) {
                     var member = '', area = '';
-                    var levels = members[0]['uname'];
+                    var levels = LABKEY.app.view.Selection.uniqueNameAsArray(members[0]['uniqueName']);
 
                     // Determine if zero level
                     if (levels[0].indexOf('.') == -1) {
@@ -137,16 +154,43 @@ Ext.define('Connector.view.Selection', {
                 },
                 renderMeasures : function(values) {
                     var label = 'In the plot: ';
-                    var measures = values.plotMeasures, sep = '';
+                    var measures = values.plotMeasures, measureLabels = [];
                     for (var i=0; i < measures.length; i++) {
-                        label += sep + measures[i].measure.label;
-                        sep = ', ';
+                        measureLabels.push(measures[i].measure.label);
                     }
-                    return Ext.htmlEncode(label);
+                    return Ext.htmlEncode(label + measureLabels.join(', '));
                 },
                 renderLabel : function(values) {
                     var type = LABKEY.app.model.Filter.getGridHierarchy(values);
                     return Ext.htmlEncode(type + ": " + LABKEY.app.model.Filter.getGridLabel(values));
+                },
+                renderSelectionMeasure : function(measure, filters, id, idx) {
+                    if (measure && filters && filters[0] && filters[1]) {
+                        var domString =
+                                '<div class="status-over memberitem collapsed-member" style="width: 90%">' +
+                                    '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
+                                        measure.measure.label +
+                                        ': &gt;= ' + filters[0].getValue() +
+                                        ', &lt;= ' + filters[1].getValue() +
+                                '</div>';
+                        return domString;
+                    } else {
+                        return '';
+                    }
+                },
+                renderPlotSelection: function(values) {
+                    var measures = values.plotMeasures,
+                        filters = values.gridFilter, // TODO: rename to sqlFilters
+                        xMeasure = measures[0],
+                        yMeasure = measures[1],
+                        xFilters = filters.slice(0, 2),
+                        yFilters = filters.slice(2),
+                        domString;
+
+                    domString = this.renderSelectionMeasure(xMeasure, xFilters, values.id, 0);
+                    domString = domString + this.renderSelectionMeasure(yMeasure, yFilters, values.id, 1);
+
+                    return domString;
                 }
             }
     )

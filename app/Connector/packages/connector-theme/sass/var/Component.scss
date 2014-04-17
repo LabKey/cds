@@ -24,6 +24,7 @@ $heat-scale-4: #E6E1E1;            // Heatmap Gray #4
 $title : 28pt;
 $headline : 18pt;
 $pageLeftPadding: 27px;
+$sectionTopPadding: 25px;
 
 $bodycaps-font : Arial;
 $info-font : Verdana, sans-serif;
@@ -56,13 +57,18 @@ $window-header-color: $secondary-color;
 
 // Grid
 $grid-row-cell-over-background-color: $selectongrey-color;
-$grid-header-over-background-color: $selectongrey-color;
 $grid-cell-selected-background-color: $select-color;
 $grid-row-cell-selected-background-color: $select-color;
 $grid-row-cell-selected-color: $light-color;
 $grid-row-cell-selected-border-color: $select-color;
+$grid-row-cell-alt-background-color: $light-color;
+$grid-row-cell-background-color: $light-color;
+
+/* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
 $grid-column-header-font-size: 11pt;
+$grid-header-background-color: transparent;
+$grid-header-over-background-color: $selectongrey-color;
 
 @mixin header {
   font-family: $data-font;
@@ -97,6 +103,9 @@ $grid-column-header-font-size: 11pt;
   }
 }
 
+@mixin sectionPaddingTop {
+  padding-top: $sectionTopPadding;
+}
 @mixin pagePaddingLeft {
   padding-left: $pageLeftPadding;
 }
@@ -184,8 +193,8 @@ li.fadein {
 }
 
 .titlepanel {
-  padding-top: 25px;
   padding-bottom: 7px;
+  @include sectionPaddingTop;
   @include pagePaddingLeft;
 
   span {
@@ -1698,6 +1707,20 @@ img.tutorialclose {
 div.learnview {
   overflow-y: auto;
   overflow-x: hidden;
+
+  .module {
+    padding-bottom: 20px;
+
+    p {
+      color: #231F20;
+    }
+  }
+
+}
+
+.modulecontainer {
+  @include sectionPaddingTop;
+  @include pagePaddingLeft;
 }
 
 div.learnheader,
@@ -1711,6 +1734,11 @@ div.learncolumnheader {
 
 div.learn-header-container {
   padding-left: $pageLeftPadding;
+}
+
+div.learn-map-container {
+  height: 320px;
+  margin-bottom: 4px;
 }
 
 h1.lhdv {
