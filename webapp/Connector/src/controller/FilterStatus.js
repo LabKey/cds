@@ -42,6 +42,10 @@ Ext.define('Connector.controller.FilterStatus', {
         this.control('selectionpanel > container > selectionview', {
             removefilter : function(filterId, hName, uname) {
                 this.getStateManager().removeSelection(filterId, hName, uname);
+            },
+
+            removeplotselection : function(filterId, measureIdx) {
+                this.getStateManager().fireEvent('plotselectionremoved', filterId, measureIdx);
             }
         });
 
