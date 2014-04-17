@@ -119,6 +119,12 @@
             background-image: url(<%=text(appPath)%>/images/dropdown_hover.svg);
         }
 
+        .x-column-header-trigger {
+            display: inline-block;
+            background-image: url(<%=text(appPath)%>/images/filter.svg);
+            background-position: 0px 28px;
+        }
+
         .x-column-header-inner {
             height: 45px;
         }
@@ -133,9 +139,17 @@
             background-color: #E6E1E1;
         }
 
+        .x-group-sub-header .x-column-header-inner {
+            position: relative;
+        }
+
         .x-group-sub-header .x-column-header-text {
             white-space: normal;
-            margin-top: 25px;
+            position: absolute;
+            left: 4px;
+            bottom: 4px;
+            margin: 0;
+            text-align: justify;
         }
     </style>
 
@@ -194,6 +208,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/FieldKey.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Query.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Visualization.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ParticipantGroup.js"></script>
