@@ -40,11 +40,9 @@ Ext.define('Connector.model.Filter', {
                         members: []
                     };
 
-                    var container = '';
                     for (var i = 0; i < resp.values.length; i++) {
-                        container = Connector.model.Filter.getContainer(resp.values[i]);
                         mdxFilterConfig.members.push({
-                            uniqueName: '[Subject].[' + container + '].[' + resp.values[i] + ']'
+                            uniqueName: Connector.model.Filter.getSubjectUniqueName(resp.values[i])
                         });
                     }
                     config.success.call(config.scope ? config.scope : this, mdxFilterConfig);
@@ -65,6 +63,9 @@ Ext.define('Connector.model.Filter', {
 
         loaded: false,
         subjectMap: {},
+        getSubjectUniqueName : function(subjectID) {
+            return '[Subject].[' + Connector.model.Filter.getContainer(subjectID) + '].[' + subjectID + ']';
+        },
         getContainer : function(subjectID) {
             return Connector.model.Filter.subjectMap[subjectID];
         },

@@ -3,11 +3,11 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.controller.RawData', {
+Ext.define('Connector.controller.Data', {
 
     extend : 'Connector.controller.AbstractViewController',
 
-    views: ['RawData', 'Grid'],
+    views: ['Grid'],
 
     measures : [],
     filterMap : {}, // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance.
@@ -15,10 +15,9 @@ Ext.define('Connector.controller.RawData', {
 
     init : function() {
 
-        this.control('datagrid', {
+        this.control('groupdatagrid', {
             filtertranslate: this.onFilterTranslate,
             lookupcolumnchange: this.onLookupColumnChange,
-            measureselected: this.onMeasuresSelected,
             removefilter: this.onRemoveGridFilter,
             scope: this
         });
@@ -42,7 +41,7 @@ Ext.define('Connector.controller.RawData', {
         }
 
         var me = this;
-        state.onMDXReady(function(mdx){
+        state.onMDXReady(function(mdx) {
 
             state.addPrivateSelection(filters, 'gridselection');
 
@@ -83,96 +82,59 @@ Ext.define('Connector.controller.RawData', {
         }
     },
 
+    // TODO: Move this to the measure picker or somewhere where other classes can access this method
     displayCounts : function(response, sourceCls) {
         var rjson = Ext.decode(response.responseText);
 
         if (rjson && rjson.counts) {
             var cell, counts = rjson.counts;
-            for (var source in counts) {
-                if (counts.hasOwnProperty(source)) {
-                    cell = Ext.DomQuery.select('.' + sourceCls + ' .itemrow:nodeValue(' + source + ')');
-                    if (cell.length > 0) {
-                        if (counts[source] == 0)
-                            Ext.get(cell).addCls('itemdisabled');
+            Ext.iterate(counts, function(source, count) {
+                cell = Ext.DomQuery.select('.' + sourceCls + ' .itemrow:nodeValue(' + source + ')');
+                if (cell.length > 0) {
+                    if (counts[source] == 0)
+                        Ext.get(cell).addCls('itemdisabled');
 
-                        Ext.get(cell).update('<span class="upct"><span class="val">' + source + '</span>&nbsp;(' + counts[source] + ')</span>');
-                    }
+                    Ext.get(cell).update('<span class="upct"><span class="val">' + source + '</span>&nbsp;(' + count + ')</span>');
                 }
-            }
-        }
-    },
-
-    onMeasuresSelected : function (view, recs) {
-
-        var allMeasures = [], sourceMeasure,
-                item, i,
-                sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
-
-
-        for (i=0; i < recs.length; i++) {
-            item = Ext.clone(recs[i].data);
-            if (!(item.queryName in sourceMeasuresRequired))
-                sourceMeasuresRequired[item.queryName] = true;
-
-            //We don't want to lose foreign key info -- measure picker follows these by default
-            if (item.name.indexOf("/") != -1) {
-                if (item.name.toLowerCase() == "source/title") {
-                    sourceMeasuresRequired[item.queryName] = false;
-                    item.isSourceURI = true;
-                }
-
-                item.name = item.name.substring(0, item.name.indexOf("/"));
-                item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
-            }
-            allMeasures.push(item);
-        }
-
-        Ext.iterate(sourceMeasuresRequired, function(queryName, value) {
-            if (value) {
-                sourceMeasure = this.findSourceMeasure(view, queryName);
-                if (null != sourceMeasure)
-                    allMeasures.push(sourceMeasure);
-            }
-        }, this);
-
-        this.measures = allMeasures;
-
-        this.updateQuery(view);
-    },
-
-    updateQuery : function (view) {
-        var wrappedMeasures = [];
-
-        for (var i=0; i < this.measures.length; i++) {
-            wrappedMeasures.push({measure : this.measures[i], time : 'visit'});
-        }
-
-        var sorts = this.getSorts();
-        if (sorts.length > 0 && wrappedMeasures.length > 0) {
-            Ext.Ajax.request({
-                url     : LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-                method  : 'POST',
-                jsonData: {
-                    measures : wrappedMeasures,
-                    sorts    : sorts,
-                    metaDataOnly : true
-                },
-                success : function(response) {
-                    var result = Ext.decode(response.responseText);
-                    this.getParticipantIn(function(participants) {
-                        if (Ext.isDefined(view) && Ext.isFunction(view.refreshGrid)) {
-                            view.refreshGrid(result, this.measures, participants);
-                        }
-                    });
-                },
-                failure : this.onFailure,
-                scope   : this
             });
-            this.refreshRequired = false;
         }
-        else {
-            view.runUniqueQuery();
-        }
+    },
+
+    // Deprecated: will be removed
+    updateQuery : function (view) {
+        console.log('FYI: Connector.controller.Data.updateQuery is a NOOP -- see Connector.grid.Model.getMetaData');
+//        var wrappedMeasures = [];
+//
+//        for (var i=0; i < this.measures.length; i++) {
+//            wrappedMeasures.push({measure : this.measures[i], time : 'visit'});
+//        }
+//
+//        var sorts = this.getSorts();
+//        if (sorts.length > 0 && wrappedMeasures.length > 0) {
+//            Ext.Ajax.request({
+//                url     : LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
+//                method  : 'POST',
+//                jsonData: {
+//                    measures : wrappedMeasures,
+//                    sorts    : sorts,
+//                    metaDataOnly : true
+//                },
+//                success : function(response) {
+//                    var result = Ext.decode(response.responseText);
+//                    this.getParticipantIn(function(subjects) {
+//                        if (Ext.isObject(view) && Ext.isFunction(view.refreshGrid)) {
+//                            view.refreshGrid(result, this.measures, subjects);
+//                        }
+//                    });
+//                },
+//                failure : this.onFailure,
+//                scope   : this
+//            });
+//            this.refreshRequired = false;
+//        }
+//        else {
+//            view.runUniqueQuery();
+//        }
     },
 
     onFailure : function(response) {
@@ -183,57 +145,12 @@ Ext.define('Connector.controller.RawData', {
         });
     },
 
-    findSourceMeasure : function(view, datasetName) {
-        var allMeasures = view.axisPanel.getMeasurePicker().measuresStoreData.measures;
-        for (var i = 0; i < allMeasures.length; i++) {
-            var measure = allMeasures[i];
-            if (measure.name.toLowerCase() == "source/title" && measure.queryName == datasetName) {
-                var sourceMeasure = Ext.clone(measure);
-                sourceMeasure.name = sourceMeasure.name.substring(0, sourceMeasure.name.indexOf("/")); //Don't want the lookup
-                sourceMeasure.hidden = true;
-                sourceMeasure.isSourceURI = true;
-                sourceMeasure.alias = LABKEY.MeasureUtil.getAlias(sourceMeasure, true); //Can't change the name without changing the alias
-                return sourceMeasure;
-            }
-        }
-    },
-
-    getSorts : function() {
-
-        var first = this.measures[0];
-
-        // if we can help it, the sort should use the first non-demographic measure
-        for (var i=0; i < this.measures.length; i++) {
-            if (!this.measures[i].isDemographic) {
-                first = this.measures[i];
-                break;
-            }
-        }
-
-        if (!first) {
-            return [];
-        }
-
-        return [{
-            schemaName: first.schemaName,
-            queryName: first.queryName,
-            name: Connector.studyContext.subjectColumn
-        },{
-            schemaName: first.schemaName,
-            queryName: first.queryName,
-            name: 'Study' // it is currently hidden by default in the server configuration
-        },{
-            schemaName: first.schemaName,
-            queryName: first.queryName,
-            name: Connector.studyContext.subjectVisitColumn + '/VisitDate'
-        }];
-    },
-
     getColumnName : function(URLParameterName) {
         var param = URLParameterName.replace('query.', '');
         return param.split('~')[0];
     },
 
+    // TODO: Push all of this down into the Connector.grid.Model
     // Listener for Application CDS filters
     onFilterChange : function (view, appFilters) {
 
@@ -249,50 +166,52 @@ Ext.define('Connector.controller.RawData', {
         }
 
         // ensure the filterMap is not out of sync with the app filters
-        var remove = {}, colName, urlParam, found, id, i;
-        for (urlParam in this.filterMap) {
-            if (this.filterMap.hasOwnProperty(urlParam)) {
-                found = false, colName = '';
-                for (i=0; i < appFilters.length; i++) {
-
-                    if (appFilters[i].getValue('gridFilter')) {
-                        if (appFilters[i].id == this.hasFilter(appFilters[i].getValue('gridFilter'))) {
+        var remove = {}, colName, urlParam, found, id, i, gFilter;
+        Ext.iterate(this.filterMap, function(urlParam, value) {
+            found = false, colName = '';
+            Ext.each(appFilters, function(appFilter) {
+                gFilter = appFilter.getValue('gridFilter');
+                if (Ext.isArray(gFilter)) {
+                    Ext.each(gFilter, function(f) {
+                        if (appFilter.id == this.hasFilter(f)) {
                             found = true;
                         }
-                    }
+                    }, this);
                 }
-                if (!found) {
-                    remove[urlParam] = {
-                        urlParam : urlParam,
-                        colName  : this.getColumnName(urlParam)
-                    };
-                }
-            }
-        }
-
-        for (id in this.idMap) {
-            if (this.idMap.hasOwnProperty(id)) {
-                found = false;
-                for (i=0; i < appFilters.length; i++) {
-                    if (appFilters[i].id == id) {
+                else if (gFilter) {
+                    if (appFilter.id == this.hasFilter(gFilter)) {
                         found = true;
                     }
                 }
-                if (!found) {
-                    remove[this.idMap[id]] = {
-                        urlParam : this.idMap[id],
-                        colName  : this.getColumnName(this.idMap[id])
-                    };
+            }, this);
+
+            if (!found) {
+                remove[urlParam] = {
+                    urlParam: urlParam,
+                    colName: this.getColumnName(urlParam)
+                };
+            }
+        }, this);
+
+        Ext.iterate(this.idMap, function(id, urlParam) {
+            found = false;
+            for (i=0; i < appFilters.length; i++) {
+                if (appFilters[i].id == id) {
+                    found = true;
                 }
             }
-        }
+            if (!found) {
+                remove[urlParam] = {
+                    urlParam: urlParam,
+                    colName: this.getColumnName(urlParam)
+                };
+            }
+        }, this);
 
         found = [];
-        for (urlParam in remove) {
-            if (remove.hasOwnProperty(urlParam)) {
-                found.push(remove[urlParam]);
-            }
-        }
+        Ext.iterate(remove, function(urlParam, obj) {
+            found.push(obj);
+        });
 
         if (found.length > 0) {
             for (var r=0; r < found.length; r++) {
@@ -321,43 +240,32 @@ Ext.define('Connector.controller.RawData', {
         var fa = [],
                 filter,
                 updated = [],
-                found, f, g, m,
+                found, f, g,
                 matches = {};
 
-        for (f=0; f < filterArrays.length; f++) {
-            for (g=0; g < filterArrays[f].length; g++) {
-
-                fa.push(filterArrays[f][g]);
-                for (filter in this.filterMap) {
-                    if (this.filterMap.hasOwnProperty(filter)) {
-
-                        if (filter.indexOf(filterArrays[f][g].getColumnName()) > -1) {
-
-                            matches[filter] = true;
-
-                        }
+        Ext.each(filterArrays, function(first) {
+            Ext.each(first, function(second) {
+                fa.push(second);
+                Ext.iterate(this.filterMap, function(urlParam, id) {
+                    if (urlParam.indexOf(second.getColumnName()) > -1) {
+                        matches[urlParam] = true;
                     }
-                }
+                });
+            });
+        });
+
+        Ext.iterate(matches, function(m) {
+            found = false;
+            for (f=0; f < fa.length; f++) {
+                if ((m == this.getFilterId(fa[f])) && !(m.indexOf(fa[f].getColumnName()) > -1))
+                    found = true;
             }
-        }
 
-        for (m in matches) {
-
-            if (matches.hasOwnProperty(m)) {
-
-                found = false;
-                for (f=0; f < fa.length; f++) {
-                    if ((m == this.getFilterId(fa[f])) && !(m.indexOf(fa[f].getColumnName()) > -1))
-                        found = true;
-                }
-
-                if (!found) {
-                    updated.push(this.filterMap[m]);
-                    this.clearFilter(m);
-                }
-
+            if (!found) {
+                updated.push(this.filterMap[m]);
+                this.clearFilter(m);
             }
-        }
+        }, this);
 
         matches = [];
         if (updated.length > 0) {
@@ -416,7 +324,7 @@ Ext.define('Connector.controller.RawData', {
                     var members = [];
                     for (var g=0; g < groups[r].length; g++) {
                         members.push({
-                            uniqueName: '[Subject].[' + groups[r][g] + ']'
+                            uniqueName: Connector.model.Filter.getSubjectUniqueName(groups[r][g])
                         });
                     }
                     this.getStateManager().updateFilterMembers(this.filterMap[this.getFilterId(fa[f])], members);
@@ -446,32 +354,24 @@ Ext.define('Connector.controller.RawData', {
     // See: this.onFilterChange for when a filter is removed from app interface
     onRemoveGridFilter : function(fieldKey, all) {
 
-        if (this.gridFilter)
+        if (this.gridFilter) {
             return;
+        }
 
         if (all) {
-            var colName, names = [];
-            for (colName in this.filterMap) {
-                if (this.filterMap.hasOwnProperty(colName)) {
-                    names.push(colName);
-                }
-            }
+            var fMap = Ext.clone(this.filterMap);
             this.filterMap = {};
 
-            for (var n=0; n < names.length; n++) {
-                this.getStateManager().removeFilter(names[n], 'Subject');
-            }
+            Ext.iterate(this.filterMap, function(colName, id) {
+                this.getStateManager().removeFilter(colName, 'Subject');
+            }, this);
         }
         else {
-            var urlParam;
-            for (urlParam in this.filterMap) {
-                if (this.filterMap.hasOwnProperty(urlParam)) {
-                    if (urlParam.indexOf(fieldKey) > -1) {
-                        var id = this.filterMap[urlParam];
-                        this.getStateManager().removeFilter(id, 'Subject');
-                    }
+            Ext.iterate(this.filterMap, function(urlParam, id) {
+                if (urlParam.indexOf(fieldKey) > -1) {
+                    this.getStateManager().removeFilter(id, 'Subject');
                 }
-            }
+            }, this);
         }
 
     },
@@ -523,7 +423,7 @@ Ext.define('Connector.controller.RawData', {
 
     afterFilterAnimation : function(filterGroups) {
 
-        var filters = [], filterIndexes = [], filter, f, i, grp, g, container;
+        var filters = [], filterIndexes = [], filter, f, i, grp, g;
         for (f=0; f < filterGroups.length; f++) {
 
             for (i=0; i < filterGroups[f].filters.length; i++) {
@@ -537,9 +437,8 @@ Ext.define('Connector.controller.RawData', {
 
                 grp = filterGroups[f].group;
                 for (g=0; g < grp.length; g++) {
-                    container = Connector.model.Filter.getContainer(grp[g]);
                     filter.members.push({
-                        uniqueName: '[Subject].[' + container + '].[' + grp[g] + ']'
+                        uniqueName: Connector.model.Filter.getSubjectUniqueName(grp[g])
                     });
 
                 }
@@ -589,29 +488,28 @@ Ext.define('Connector.controller.RawData', {
     /**
      * Called on 'lookupcolumnchange' event from the grid view.
      * This occurs whenver lookup columns are added/removed to/from the grid.
-     * @param columns {Connector.model.ColumnInfo} - Array of lookup columns from the last modified lookup column
+     * @param newColumns {Connector.model.ColumnInfo} - Array of current lookup columns
+     * @param oldColumns {Connector.model.ColumnInfo} - Array of old lookup columns
      */
     onLookupColumnChange : function(newColumns, oldColumns) {
 
-        if (oldColumns) {
-            for (var f in this.filterMap) {
-                if (this.filterMap.hasOwnProperty(f)) {
+        if (Ext.isArray(oldColumns) && oldColumns.length > 0) {
 
-                    for (var h=0; h < oldColumns.length; h++) {
+            Ext.iterate(this.filterMap, function(urlParam, id) {
 
-                        if (f.indexOf(oldColumns[h].data.fieldKeyPath) > -1) {
-
-                            this.onRemoveGridFilter(oldColumns[h].data.fieldKeyPath, false);
-                        }
+                Ext.each(oldColumns, function(col) {
+                    if (urlParam.indexOf(col.data.fieldKeyPath) > -1) {
+                        this.onRemoveGridFilter(col.data.fieldKeyPath, false);
                     }
+                }, this);
 
-                }
-            }
+            }, this);
+
         }
     },
 
     onViewChange : function (controller, view)  {
-        this.isActiveView = view == 'datagrid';
+        this.isActiveView = view == 'groupdatagrid';
         //Note: When this event fires, animation still seems to be in play and grid doesn't render properly
         //Deferring seems to fix it, but perhaps event should fire later.
         if (this.isActiveView && this.refreshRequired) {
@@ -623,10 +521,18 @@ Ext.define('Connector.controller.RawData', {
 
         var v;
 
-        if (xtype == 'datagrid') {
-            v = Ext.create('Connector.view.RawData', {
-                id: 'raw-data-view',
-                ui: 'custom',
+        if (xtype == 'groupdatagrid') {
+            v = Ext.create('Connector.view.Grid', {
+                model: new Ext.create('Connector.model.Grid', {
+                    //
+                    // The initial columns to display in case the user has not selected any
+                    //
+                    columnSet: [
+                        Connector.studyContext.subjectColumn,
+                        'Study',
+                        'StartDate'
+                    ]
+                }),
                 control: this
             });
 
@@ -634,19 +540,9 @@ Ext.define('Connector.controller.RawData', {
                 this.onFilterChange(v, appFilters);
             }, this);
 
+            // TODO: Push this down into the views onViewChange
             this.getViewManager().on('afterchangeview', this.onViewChange, this);
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
-        }
-        else if (xtype == 'groupdatagrid') {
-            v = Ext.create('Connector.view.Grid', {
-                control: this
-            });
-
-            v.on('measureselected', this.onMeasuresSelected, this);
-
-            this.getStateManager().on('filterchange', function(appFilters) {
-                this.onFilterChange(v, appFilters);
-            }, this);
         }
 
         return v;
@@ -655,6 +551,6 @@ Ext.define('Connector.controller.RawData', {
     updateView : function(xtype, context) { },
 
     getDefaultView : function() {
-        return 'datagrid';
+        return 'groupdatagrid';
     }
 });

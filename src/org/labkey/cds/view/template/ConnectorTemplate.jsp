@@ -125,6 +125,12 @@
             background-position: 0px 28px;
         }
 
+        .x-column-header-trigger:hover {
+            background-color: transparent;
+            background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
+            background-position: 0px 28px;
+        }
+
         .x-column-header-inner {
             height: 45px;
         }
@@ -265,6 +271,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
 
@@ -310,7 +317,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
@@ -337,7 +344,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
     
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
