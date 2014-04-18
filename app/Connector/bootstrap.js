@@ -52,6 +52,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Explorer": "../../webapp/Connector/src/model/Explorer.js",
   "Connector.model.Filter": "../../webapp/Connector/src/model/Filter.js",
   "Connector.model.FilterGroup": "../../webapp/Connector/src/model/FilterGroup.js",
+  "Connector.model.Grid": "../../webapp/Connector/src/model/Grid.js",
   "Connector.model.Group": "../../webapp/Connector/src/model/Group.js",
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
@@ -109,7 +110,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.BaseModule": "../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.Person": "../../webapp/Connector/src/view/module/Person.js",
-  "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/StudyDetail.js",
+  "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
+  "Connector.view.module.StudyHeader": "../../webapp/Connector/src/app/view/module/StudyHeader.js",
+  "Connector.view.module.StudyProducts": "../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.search.Container": "../../webapp/Connector/src/view/search/Container.js",
   "Connector.window.Filter": "../../webapp/Connector/src/window/Filter.js",
@@ -178,6 +181,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Grid": [],
   "Connector.model.Group": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
@@ -235,7 +239,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Viewport": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [],
+  "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
   "Connector.view.search.Container": [],
   "Connector.window.Filter": [],
@@ -1127,6 +1133,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Grid": [],
   "Connector.model.Group": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
@@ -1268,8 +1275,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.Person": [
     "widget.module.person"
   ],
+  "Connector.view.module.StudyAssays": [
+    "widget.app.module.studyassays"
+  ],
   "Connector.view.module.StudyHeader": [
     "widget.module.studyheader"
+  ],
+  "Connector.view.module.StudyProducts": [
+    "widget.app.module.studyproducts"
   ],
   "Connector.view.module.Text": [
     "widget.module.text"

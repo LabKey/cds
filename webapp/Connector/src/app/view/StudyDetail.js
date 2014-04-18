@@ -9,37 +9,7 @@
 /*
  * Module views - these can be moved to separate files
  */
-Ext.define('Connector.view.module.StudyHeader', {
 
-    xtype : 'module.studyheader',
-
-    extend : 'Connector.view.module.BaseModule',
-
-    tpl : new Ext.XTemplate(
-        '<tpl><p>',
-            '{[this.phaseString(values.model)]}',
-        '</p></tpl>',
-    {
-        phaseString : function(model) {
-            var phase = model.get('Phase');
-            var start = model.get('StartDate');
-            var end = model.get('EndDate');
-            var s = '';
-            if (phase) {
-                s = "Phase " + phase;
-                if (start || end) {
-                    s += ": ";
-                }
-            }
-            if (start && end) {
-                s += Connector.app.view.Study.dateRenderer(start) + " - " + Connector.app.view.Study.dateRenderer(end);
-            } else if (start || end) {
-                s += Connector.app.view.Study.dateRenderer(start || end)
-            }
-            return s;
-        }
-    })
-});
 
 Ext.define('Connector.app.view.StudyDetail', {
 
@@ -78,7 +48,7 @@ Ext.define('Connector.app.view.StudyDetail', {
         var left = this.getComponent('column1');
         var right = this.getComponent('column2');
 
-        left.add(Connector.factory.Module.defineViews(this.modules[0], this.model));
-        right.add(Connector.factory.Module.defineViews(this.modules[1], this.model));
+        left.add(Connector.factory.Module.defineViews(this.modules[0], this.model, this.state));
+        right.add(Connector.factory.Module.defineViews(this.modules[1], this.model, this.state));
     }
 });

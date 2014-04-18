@@ -139,19 +139,34 @@ Ext.define('Connector.view.Learn', {
         if (Ext.isDefined(dimension)) {
             var store;
             if (id && dimension.detailItemView) {
-                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
+                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection, true);
                 var model = store.getById(id);
+                var self = this;
 
-                this.dataView = Ext.create(dimension.detailItemView, {
-                    store: store,
-                    model: model,
-                    modules: dimension.detailItemModules
-                });
+                function modelLoaded(model) {
+                    self.dataView = Ext.create(dimension.detailItemView, {
+                        state: self.state,
+                        model: model,
+                        modules: dimension.detailItemModules
+                    });
 
-                if (model) {
-                    var studyDetailHeader = this.getStudyDetailHeader(id);
+                    var studyDetailHeader = self.getStudyDetailHeader(id);
 
                     studyDetailHeader.setModel(model);
+
+                    self.add(self.dataView);
+                    // TODO: Is these needed for item view?
+                    self.loadData(self.dataView);
+                }
+
+                if (!model) {
+                    store.load({
+                        callback: function() {
+                            modelLoaded(store.getById(id));
+                        }
+                    });
+                } else {
+                    modelLoaded(model);
                 }
             }
             else if (dimension.detailModel && dimension.detailView) {
@@ -167,11 +182,9 @@ Ext.define('Connector.view.Learn', {
                     this.fireEvent('selectitem', model);
                 }, this);
 
+                this.add(this.dataView);
+                this.loadData(this.dataView);
             }
-            this.add(this.dataView);
-
-            // TODO: Are these both needed for item view?
-            this.loadData(this.dataView);
 
             this.state.on('filterchange', this.onFilterChange, this);
         }

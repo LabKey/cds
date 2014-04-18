@@ -10,7 +10,7 @@
 Ext.define('StoreCache', {
     singleton: true,
     sharedStores: {},
-    getStore: function(options) {
+    getStore: function(options, autoload) {
         if (Ext.isString(options)) {
             options = { type: options };
         }
@@ -34,6 +34,8 @@ Ext.define('StoreCache', {
         //console.log("Creating shared store",id);
         this.sharedStores[id] = Ext.create(type, createParams);
 
+        autoload && this.sharedStores[id].load();
+        
         return this.sharedStores[id];
     }
 });

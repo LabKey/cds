@@ -1710,12 +1710,17 @@ div.learnview {
 
   .module {
     padding-bottom: 20px;
+  }
+}
 
-    p {
-      color: #231F20;
+.module {
+  p {
+    color: #231F20;
+
+    &.loading-data {
+      color: $unselect-black;
     }
   }
-
 }
 
 .modulecontainer {

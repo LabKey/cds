@@ -33,7 +33,7 @@ Ext.define('Connector.app.model.Study', {
         // }]},
         {name: 'MainContact', defaultValue: {
             Name: 'Warren Burger',
-            Portrait: 'http://www.blisstree.com/wp-content/uploads/2013/01/doctor.jpg',
+//            Portrait: 'http://doctor.png',
             Role: 'Program Manager',
             Team: 'HVTN concept development team'
         }}

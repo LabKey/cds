@@ -385,6 +385,9 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
