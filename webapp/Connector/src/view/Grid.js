@@ -11,6 +11,8 @@ Ext.define('Connector.view.Grid', {
 
     queryName: 'Subject',
 
+    columnWidth: 125,
+
     constructor : function(config) {
         this.callParent([config]);
 
@@ -102,7 +104,7 @@ Ext.define('Connector.view.Grid', {
 
         var box = this.getBox();
 
-        var colBasedWidth = (this.getModel().getColumnSet().length * 100);
+        var colBasedWidth = (this.getModel().getColumnSet().length * this.columnWidth);
         var viewBasedWidth = box.width - 27;
         var width = viewBasedWidth; //Math.min(colBasedWidth, viewBasedWidth);
 
@@ -118,6 +120,7 @@ Ext.define('Connector.view.Grid', {
     getGridComponent : function() {
 
         var size = this.getWidthHeight();
+        this.columnMap = {};
 
         return {
             itemId: 'gridcomponent',
@@ -127,6 +130,7 @@ Ext.define('Connector.view.Grid', {
             forceFit: true,
             store: this.getStore(),
             border: false,
+            defaultColumnWidth: this.columnWidth,
             margin: '-92 0 0 27',
             ui: 'custom',
             listeners: {
@@ -134,6 +138,14 @@ Ext.define('Connector.view.Grid', {
                 beforerender: function(grid) {
                     var header = grid.down('headercontainer');
                     header.on('headertriggerclick', this.onTriggerClick, this);
+                },
+                reconfigure : function(grid) {
+                    var header = grid.down('headercontainer');
+
+                    var columns = header.getGridColumns();
+                    Ext.each(columns, function(gridColumn, idx) {
+                        this.columnMap[gridColumn.dataIndex] = idx;
+                    }, this);
                 },
                 scope: this
             }
@@ -157,7 +169,7 @@ Ext.define('Connector.view.Grid', {
         return this.gridStore;
     },
 
-    onColumnModelCustomize : function() {
+    onColumnModelCustomize : function(grid, rawColumnModels) {
         console.log('TODO: Implement onColumnModelCustomize');
     },
 
@@ -435,6 +447,27 @@ Ext.define('Connector.view.Grid', {
         if (this.gridStore) {
             this.gridStore.filterArray = filterArray;
         }
+
+        var grid = this.getComponent('gridcomponent');
+        var columns = grid.headerCt.getGridColumns();
+
+        // remove all filter classes
+        Ext.each(columns, function(column) {
+            column.getEl().removeCls('filtered-column');
+        }, this);
+
+        Ext.each(filterArray, function(filter, idx) {
+            // not exactly right since the user could filter on the subject column
+            if (idx > 0) {
+                var columnIndex = this.columnMap[filter.getColumnName()];
+                if (columnIndex > -1) {
+                    var col = grid.headerCt.getHeaderAtIndex(columnIndex);
+                    if (col) {
+                        col.getEl().addCls('filtered-column');
+                    }
+                }
+            }
+        }, this);
     },
 
     //
