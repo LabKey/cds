@@ -478,6 +478,21 @@ Ext.define('Connector.view.Grid', {
         this.fireEvent('filtertranslate', this, groups, filterArrays);
     },
 
+    applyFilters : function(gridFilters) {
+        if (Ext.isArray(gridFilters) && gridFilters.length > 0) {
+            var filterArray = Ext.clone(this.getModel().get('filterArray'));
+            filterArray = filterArray.slice(1);
+
+            Ext.each(gridFilters, function(gridFilter) {
+                filterArray = LABKEY.Filter.merge(filterArray, gridFilter.getColumnName(), [gridFilter]);
+            }, this);
+
+            // update model filterArray
+            this.getModel().changeFilterArray(filterArray);
+            this._applyGridFilterHelper();
+        }
+    },
+
     applyGridFilter : function(boundColumn, filterArray, apply) {
 
         // update model filterArray
