@@ -20,6 +20,13 @@ Ext.define('Connector.window.Filter', {
     closable: false,
     bodyStyle: 'margin: 8px;',
 
+    constructor : function(config) {
+
+        this.callParent([config]);
+
+        this.addEvents('clearall', 'filter');
+    },
+
     initComponent : function() {
 
         if (!this.col) {
@@ -100,16 +107,15 @@ Ext.define('Connector.window.Filter', {
     onClearFilters : function() {
         var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
 
-        this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
-        this.store.load();
-        this.dataView.removeGridFilter(fieldKeyPath);
+        this.fireEvent('clearfilter', this, fieldKeyPath);
+//        this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
+//        this.store.load();
+//        this.dataView.removeGridFilter(fieldKeyPath);
         this.close();
     },
 
     clearAll : function() {
-        this.store.filterArray = [this.store.filterArray[0]];
-        this.store.load();
-        this.dataView.removeAllFilters();
+        this.fireEvent('clearall', this);
     },
 
     getItems : function () {
@@ -166,7 +172,7 @@ Ext.define('Connector.window.Filter', {
                 hideHeaders : true,
                 listeners : {
                     viewready : function() {
-                        var selectedCols = this.dataView.foreignColumns[this.boundColumn.name];
+                        var selectedCols = this.dataView.getModel().get('foreignColumns')[this.boundColumn.name];
                         if (!selectedCols || selectedCols.length == 0) {
                             return;
                         }
@@ -221,55 +227,49 @@ Ext.define('Connector.window.Filter', {
     },
 
     applyColumns : function () {
-        if (!this.boundColumn.lookup) {
-            return false;
+
+        var changed = false, newColumns = [], oldColumns = [];
+
+        if (this.boundColumn.lookup) {
+            var lookupGrid = this.getLookupGrid(),
+                    selections = lookupGrid.getSelectionModel().selected;
+
+            oldColumns = this.dataView.getModel().get('foreignColumns')[this.boundColumn.name];
+
+            selections.each(function(item) { newColumns.push(item); });
+
+            changed = !this.equalColumnLists(oldColumns, newColumns);
         }
 
-        var lookupGrid = this.getLookupGrid(),
-                selections = lookupGrid.getSelectionModel().selected,
-                oldColumns = this.dataView.foreignColumns[this.boundColumn.name],
-                newColumns = [];
-
-        selections.each(function(item, idx) {
-            newColumns.push(item);
-        }, this);
-
-        var columnListChanged = !this.equalColumnLists(oldColumns, newColumns);
-        if (columnListChanged) {
-            this.dataView.foreignColumns[this.boundColumn.name] = newColumns;
-            this.dataView.updateAppliedColumns(newColumns, oldColumns);
-        }
-
-        return columnListChanged;
+        return {
+            columnSetChange: changed,
+            newColumns: newColumns,
+            oldColumns: oldColumns
+        };
     },
 
     applyFilters : function () {
         var filterPanel = this.down('labkey-default-filterpanel');
+        var filterArray = [];
         if (filterPanel.isValid()) {
-            var colFilters = filterPanel.getFilters();
-            this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
-            return true;
+            var colFilters = filterPanel.getFilters()
+            var fa = Ext.clone(this.store.filterArray);
+            fa = fa.slice(1);
+            filterArray = LABKEY.Filter.merge(fa, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
         }
         else {
             Ext.window.Msg.alert("Please fix errors in filter.");
-            return false;
         }
+
+        return filterArray;
     },
 
     applyFiltersAndColumns : function () {
-        if (this.applyFilters()) {
-            var columnListChanged = this.applyColumns();
-            if (columnListChanged) {
-                if (Ext.isDefined(this.dataView.queryMetadata))
-                    this.dataView.refreshGrid(this.dataView.queryMetadata, this.dataView.measures, this.dataView.queryPtids);
-                else
-                    this.dataView.refreshGrid();
-            }
-            else {
-                this.store.load();
-            }
-            this.dataView.translateGridFilter();
 
+        var filterArray = this.applyFilters();
+
+        if (filterArray.length > 0) {
+            this.fireEvent('filter', this, this.boundColumn, filterArray, this.applyColumns());
             this.ppx = this.getPosition();
             this.close();
         }

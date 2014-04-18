@@ -12,9 +12,6 @@ Ext.define('Connector.view.Grid', {
     queryName: 'Subject',
 
     constructor : function(config) {
-
-        GG = this;
-
         this.callParent([config]);
 
         this.addEvents('measureselected');
@@ -22,7 +19,7 @@ Ext.define('Connector.view.Grid', {
 
     initComponent : function() {
 
-        this.columnMeasureCache = {};
+        this.flights = 0;
 
         this.items = [
             // Iniital layout container for header objects (title, buttons, etc)
@@ -78,6 +75,7 @@ Ext.define('Connector.view.Grid', {
 
         // bind view to model
         model.on('measurechange', this.initializeGrid, this);
+        model.on('filterarraychange', this.onFilterArrayUpdate, this);
 
         this.on('boxready', function() {
             this.add(this.getGridComponent());
@@ -188,7 +186,20 @@ Ext.define('Connector.view.Grid', {
         if (column) {
             this.filterWin = Ext.create('Connector.window.Filter', {
                 col: column,
-                dataView: this
+                dataView: this,
+                listeners: {
+                    filter: function(win, boundColumn, filterArray, apply) {
+                        this.applyGridFilter(boundColumn, filterArray, apply);
+                    },
+                    clearfilter: function(win, fieldKeyPath) {
+                        this.removeGridFilter(fieldKeyPath, false);
+                    },
+                    clearall: function() {
+                        this.removeAllFilters();
+                    },
+                    scope: this
+                },
+                scope: this
             });
         }
         else {
@@ -221,20 +232,15 @@ Ext.define('Connector.view.Grid', {
     },
 
     refreshGrid : function() {
-        this.initializeGrid(this.getModel());
+        this.initializeGrid();
     },
 
-    initializeGrid : function(model) {
+    initializeGrid : function() {
+
+        var model = this.getModel();
 
         if (!this.initialized) {
             this.initialized = true;
-        }
-
-        var oldGrid = this.getComponent('gridcomponent');
-        if (oldGrid) {
-            // remove the grid and associated store
-            this.remove(this.getComponent('gridcomponent'), true);
-            this.gridStore = null;
         }
 
         // retrieve new column metadata based on the model configuration
@@ -253,36 +259,30 @@ Ext.define('Connector.view.Grid', {
 
     updateColumnModel : function(subjects) {
         var metadata = this.getModel().get('metadata');
-        var queryMetadata = metadata.metaData;
 
         // map columns to measures
         var columns = Connector.model.Grid.getColumnList(this.getModel());
-//        var measures = this.getModel().getMeasures();
-//        var colMeasure = {};
-//        Ext.each(measures, function(measure) {
-//            colMeasure[measure.alias] = measure;
-//        });
-//        colMeasure[queryMetadata.measureToColumn[Connector.studyContext.subjectColumn]] = {label: "Subject ID"};
-//        colMeasure[queryMetadata.measureToColumn[Connector.studyContext.subjectVisitColumn + "/VisitDate"]] = {label : "Visit Date"};
-//        this.columnMeasureCache = colMeasure;
-
-        // establish columns to include
-//        Ext.each(queryMetadata.fields, function(field) {
-//            columns.push(field.fieldKey);
-//        });
-
         this.getModel().set('columnSet', columns);
 
         // establish filters to apply
         var filterArray = [];
         // TODO: Add app filters
         // add Participant Filter due to application filters
-        filterArray.push(LABKEY.Filter.create(columns[0], subjects.join(';'), LABKEY.Filter.Types.IN));
-        this.getModel().set('filterArray', filterArray);
+        this.getModel().set('subjectFilter', LABKEY.Filter.create(columns[0], subjects.join(';'), LABKEY.Filter.Types.IN));
+        this.getModel().changeFilterArray(filterArray);
 
         this.schemaName = metadata.schemaName;
         this.queryName = metadata.queryName;
 
+        // remove the old grid
+        var oldGrid = this.getComponent('gridcomponent');
+        if (oldGrid) {
+            // remove the grid and associated store
+            this.remove(this.getComponent('gridcomponent'), true);
+            this.gridStore = null;
+        }
+
+        // add the new grid
         this.add(this.getGridComponent());
     },
 
@@ -313,7 +313,7 @@ Ext.define('Connector.view.Grid', {
         else if (!force) {
             if (this.control) {
                 var me = this;
-                this.control.getParticipantIn(function(ptids){
+                this.control.getParticipantIn(function(ptids) {
                     if (!me.initialized) {
                         me.queryPtids = ptids;
                         me.runUniqueQuery(true);
@@ -419,6 +419,21 @@ Ext.define('Connector.view.Grid', {
                 this.measureWindow.hide();
             else if (!this.initialized)
                 this.measureWindow.show();
+
+            // TODO: Check to see if we need to do a deferred update.
+            // example below
+
+            //Note: When this event fires, animation still seems to be in play and grid doesn't render properly
+            //Deferring seems to fix it, but perhaps event should fire later.
+//            if (this.isActiveView && this.refreshRequired) {
+//                Ext.defer(this.updateQuery, 300, this);
+//            }
+        }
+    },
+
+    onFilterArrayUpdate : function(filterArray) {
+        if (this.gridStore) {
+            this.gridStore.filterArray = filterArray;
         }
     },
 
@@ -430,24 +445,36 @@ Ext.define('Connector.view.Grid', {
         this.fireEvent('filtertranslate', this, groups, filterArrays);
     },
 
-    translateGridFilter : function(query, schema, column) {
-        if (column) {
-            this.lastCol = column;
+    applyGridFilter : function(boundColumn, filterArray, apply) {
+
+        // update model filterArray
+        this.getModel().changeFilterArray(filterArray);
+
+        // check if the column set has changed
+        if (apply.columnSetChange) {
+
+            // update foreign column model
+            var foreignColumns = this.getModel().get('foreignColumns');
+            foreignColumns[boundColumn.name] = apply.newColumns;
+            this.getModel().set('foreignColumns', foreignColumns);
+
+            this.updateAppliedColumns(apply.newColumns, apply.oldColumns);
         }
 
-        if (this.getModel().get('filterArray').length == 0) {
-            return;
-        }
+        this._applyGridFilterHelper();
+    },
 
-        var store = this.getStore();
+    _applyGridFilterHelper : function() {
+
+        // update the grid store
+        this.getStore().load();
+
         this.flights++;
         var configs = [],
                 bins = {},
                 keys = [],
-                fa = store.filterArray,
-                colname, f,
-                s = schema || store.schemaName,
-                q = query  || store.queryName;
+                fa = this.getModel().get('filterArray'),
+                colname, f;
 
         for (f=1; f < fa.length; f++) {
             colname = fa[f].getColumnName();
@@ -461,16 +488,15 @@ Ext.define('Connector.view.Grid', {
         }
 
         // This must be done independently for each filter
-        for (f=0; f < keys.length; f++)
-        {
+        for (f=0; f < keys.length; f++) {
             configs.push({
-                schemaName : s,
-                queryName  : q,
-                flight     : this.flights,
-                configId   : bins[keys[f]][0].getURLParameterName(),
-                column     : this.lastCol,
+                schemaName: this.schemaName,
+                queryName: this.queryName,
+                flight: this.flights,
+                configId: bins[keys[f]][0].getURLParameterName(),
+                column: this.getModel().getColumnSet()[0], // subject column?
                 filterArray: bins[keys[f]],
-                scope      : this
+                scope: this
             });
         }
 
@@ -500,8 +526,47 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    removeGridFilter : function() {
-        console.log('TODO: removeGridFilter');
+    removeGridFilter : function(fieldKey, all) {
+        this.fireEvent('removefilter', fieldKey, all);
+    },
+
+    removeAllFilters : function() {
+        this.removeGridFilter(null, true);
+    },
+
+    // This is called when users add/remove columns via the filter window
+    updateAppliedColumns : function(newColumns, oldColumns) {
+        this.fireEvent('lookupcolumnchange', newColumns, oldColumns);
+    },
+
+    // called when a 'grid' filter is removed from the application
+    removeAppFilter : function(fieldKeyArray) {
+        if (fieldKeyArray.length > 0) {
+
+            var store = this.getStore(), found = false, key;
+            var filtersToKeep = [];
+
+            for (var s=1; s < store.filterArray.length; s++) {
+
+                found = false;
+
+                for (var f=0; f < fieldKeyArray.length; f++) {
+                    key = store.filterArray[s].getURLParameterName() + '=' + store.filterArray[s].getValue();
+                    if (key == fieldKeyArray[f].urlParam) {
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    filtersToKeep.push(store.filterArray[s]);
+                }
+            }
+
+            this.getModel().changeFilterArray(filtersToKeep);
+
+            this.gridLock = true;
+            store.load();
+        }
     },
 
     queryMultiple : function(configs, success, failure, scope) {
@@ -518,12 +583,14 @@ Ext.define('Connector.view.Grid', {
 
         var checkDone = function()
         {
-            if (outstandingQueries > 0)
-                return;
-            if (failed)
-                failure.call(scope);
-            else
-                success.call(scope, results, flight);
+            if (outstandingQueries == 0) {
+                if (Ext.isFunction(failure))
+                    failure.call(scope);
+                else if (Ext.isFunction(success))
+                    success.call(scope, results, flight);
+                else
+                    console.warn('checkDone unable to find callback');
+            }
         };
 
         var innerSuccess = function(qr, config)
@@ -537,14 +604,14 @@ Ext.define('Connector.view.Grid', {
                 }
             }
             results[activeIdx] = {
-                queryResult : qr,
-                configIndex : activeIdx
+                queryResult: qr,
+                configIndex: activeIdx
             };
             outstandingQueries--;
             checkDone();
         };
 
-        var innerFailure = function(a,b,c)
+        var innerFailure = function()
         {
             console.error("NYI: finish failure handling");
             failed = true;

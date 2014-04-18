@@ -10,7 +10,9 @@ Ext.define('Connector.model.Grid', {
          */
         {name: 'foreignColumns', defaultValue: {}},
 
+        {name: 'subjectFilter', defaultValue: {}},
         {name: 'filterArray', defaultValue: []},
+
         {name: 'measures', defaultValue: []},
         {name: 'metadata', defaultValue: undefined},
         {name: 'wrappedMeasures', defaultValue: []},
@@ -164,6 +166,16 @@ Ext.define('Connector.model.Grid', {
         this._updateSorts(measureSet);
 
         this.fireEvent('measurechange', this, this.getMeasures());
+    },
+
+    changeFilterArray : function(filterArray) {
+
+        // include the subject filter
+        var newFilterArray = [this.get('subjectFilter')];
+        newFilterArray = newFilterArray.concat(Ext.clone(filterArray));
+
+        this.set('filterArray', newFilterArray);
+        this.fireEvent('filterarraychange', newFilterArray);
     },
 
     getColumnSet : function() {
