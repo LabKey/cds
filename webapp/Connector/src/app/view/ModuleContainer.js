@@ -20,9 +20,8 @@ Ext.define('Connector.app.view.ModuleContainer', {
     // column count
     columns : null,
 
-    items: [],
-
     initComponent : function() {
+        this.items = [];
 
         // If this.columns is null or undefined, use the number of module arrays
         // as the column count.

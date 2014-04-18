@@ -73,20 +73,45 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Vaccine]',
+                singularName: 'Study product',
                 pluralName: 'Study products',
                 priority: 20,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
                 detailView: 'Connector.app.view.StudyProducts',
-                // detailDataSource: {
-                //     schema: 'Study',
-                //     query: 'StudyProperties'
-                // },
-                // detailPageViews: {
-                //     leadContributer: 'Connector.app.view.Person',
-
-                // },
+                detailItemView: 'Connector.app.view.ModuleContainer',
+                detailItemModules: [[{
+                    type: 'text',
+                    staticData: {
+                        title: 'Test Module',
+                        text: 'Module 1, column 1'
+                    }
+                }, { 
+                    type: 'text',
+                    staticData: {
+                        title: 'Test Module',
+                        text: 'Module 2, column 1'
+                    }
+                }], [{
+                    type: 'text',
+                    staticData: {
+                        title: 'Test Module',
+                        text: 'Module 1, column 2'
+                    }
+                }], [{
+                    type: 'text',
+                    staticData: {
+                        title: 'Test Module',
+                        text: 'Module 1, column 3'
+                    }
+                }], [{
+                    type: 'text',
+                    staticData: {
+                        title: 'Test Module',
+                        text: 'Module 1, column 4'
+                    }
+                }]],
 
                 hierarchies: [{
                     uniqueName: '[Vaccine.Type]',

@@ -7,6 +7,8 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     extend : 'Ext.data.Model',
 
+    idProperty: 'Label',
+
     fields: [
         {name: 'Label'},
         {name: 'Type'},

@@ -98,7 +98,7 @@ Ext.define('Connector.view.Learn', {
         var learnDetailHeader = this.getLearnDetailHeader(id);
         if (id) {
             listHeader.setVisible(false);
-            learnDetailHeader.setDetailType(dimension.name);
+            learnDetailHeader.setDetailType(dimension.singularName);
             learnDetailHeader.setVisible(true);
         } else {
             listHeader.setVisible(true);
