@@ -210,7 +210,12 @@ Ext4.define('Connector.cube.Configuration', {
                 }, {
                     type: 'studyassays',
                     staticData: {
-                        title: 'Immune Assays'
+                        title: 'Immune assays'
+                    }
+                }, {
+                    type: 'studylabsandclinicaldata',
+                    staticData: {
+                        title: "Lab & clinical data"
                     }
                 }]],
 
