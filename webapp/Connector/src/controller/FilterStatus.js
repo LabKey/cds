@@ -39,7 +39,7 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('selectionpanel > container > selectionview', {
+        this.control('#selection-panel > container > selectionview', {
             removefilter : function(filterId, hName, uniqueName) {
                 this.getStateManager().removeSelection(filterId, hName, uniqueName);
             },
@@ -49,7 +49,7 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('filterpanel > container > selectionview', {
+        this.control('#filter-panel > container > selectionview', {
             removefilter : function(filterId, hName, uniqueName) {
                 this.getStateManager().removeFilter(filterId, hName, uniqueName);
             },
