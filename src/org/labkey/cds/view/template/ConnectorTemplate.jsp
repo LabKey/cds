@@ -125,6 +125,12 @@
             background-position: 0px 28px;
         }
 
+        .x-column-header-trigger:hover {
+            background-color: transparent;
+            background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
+            background-position: 0px 28px;
+        }
+
         .x-column-header-inner {
             height: 45px;
         }
@@ -265,6 +271,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
 

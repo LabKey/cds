@@ -39,8 +39,8 @@ Ext.define('Connector.window.Filter', {
         }
 
         Ext.apply(this, {
-            store       : this.dataView.store,
-            boundColumn : this.dataView.getColumnMetadata(this.col.dataIndex)
+            store: this.dataView.getStore(),
+            boundColumn: this.dataView.getColumnMetadata(this.col.dataIndex)
         });
 
         this.items = this.getItems();
@@ -64,14 +64,7 @@ Ext.define('Connector.window.Filter', {
             ui    : 'rounded-inverted-accent',
             text : 'Clear Filters',
             width : 80,
-            handler : function () {
-                var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
-
-                this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
-                this.store.load();
-                this.dataView.removeGridFilter(fieldKeyPath);
-                this.close();
-            },
+            handler : this.onClearFilters,
             scope: this
         },{
             xtype : 'roundedbutton',
@@ -104,6 +97,15 @@ Ext.define('Connector.window.Filter', {
         ]);
     },
 
+    onClearFilters : function() {
+        var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
+
+        this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
+        this.store.load();
+        this.dataView.removeGridFilter(fieldKeyPath);
+        this.close();
+    },
+
     clearAll : function() {
         this.store.filterArray = [this.store.filterArray[0]];
         this.store.load();
@@ -125,12 +127,23 @@ Ext.define('Connector.window.Filter', {
             items.push({xtype:'box', autoEl : {tag: 'div', cls:'x-body', html:Ext.htmlEncode(this.boundColumn.description)}});
         }
 
+        var schema, query;
+
+        if (Ext.isFunction(this.dataView.getModel)) {
+            schema = this.dataView.getModel().get('metadata').schemaName;
+            query = this.dataView.getModel().get('metadata').queryName;
+        }
+        else {
+            schema = this.dataView.queryMetadata.schemaName;
+            query = this.dataView.queryMetadata.queryName;
+        }
+
         items.push({
-            xtype       : 'labkey-default-filterpanel',
-            boundColumn : this.boundColumn,
-            filterArray : this.store.filterArray,
-            schemaName  : this.dataView.queryMetadata.schemaName,
-            queryName   : this.dataView.queryMetadata.queryName
+            xtype: 'labkey-default-filterpanel',
+            boundColumn: this.boundColumn,
+            filterArray: this.store.filterArray,
+            schemaName: schema,
+            queryName: query
         });
 
         if (null != this.boundColumn.lookup) {
@@ -208,8 +221,9 @@ Ext.define('Connector.window.Filter', {
     },
 
     applyColumns : function () {
-        if (!this.boundColumn.lookup)
+        if (!this.boundColumn.lookup) {
             return false;
+        }
 
         var lookupGrid = this.getLookupGrid(),
                 selections = lookupGrid.getSelectionModel().selected,
@@ -246,7 +260,10 @@ Ext.define('Connector.window.Filter', {
         if (this.applyFilters()) {
             var columnListChanged = this.applyColumns();
             if (columnListChanged) {
-                this.dataView.refreshGrid(this.dataView.queryMetadata, this.dataView.measures, this.dataView.queryPtids);
+                if (Ext.isDefined(this.dataView.queryMetadata))
+                    this.dataView.refreshGrid(this.dataView.queryMetadata, this.dataView.measures, this.dataView.queryPtids);
+                else
+                    this.dataView.refreshGrid();
             }
             else {
                 this.store.load();

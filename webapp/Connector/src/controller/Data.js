@@ -23,6 +23,12 @@ Ext.define('Connector.controller.Data', {
             scope: this
         });
 
+        this.control('groupdatagrid', {
+            filtertranslate: this.onFilterTranslate,
+            measureselected: this._onMeasuresSelected,
+            scope: this
+        });
+
         this.callParent();
     },
 
@@ -140,6 +146,10 @@ Ext.define('Connector.controller.Data', {
         this.updateQuery(view);
     },
 
+    _onMeasuresSelected : function() {
+
+    },
+
     updateQuery : function (view) {
         var wrappedMeasures = [];
 
@@ -159,9 +169,9 @@ Ext.define('Connector.controller.Data', {
                 },
                 success : function(response) {
                     var result = Ext.decode(response.responseText);
-                    this.getParticipantIn(function(participants) {
-                        if (Ext.isDefined(view) && Ext.isFunction(view.refreshGrid)) {
-                            view.refreshGrid(result, this.measures, participants);
+                    this.getParticipantIn(function(subjects) {
+                        if (Ext.isObject(view) && Ext.isFunction(view.refreshGrid)) {
+                            view.refreshGrid(result, this.measures, subjects);
                         }
                     });
                 },
@@ -639,14 +649,24 @@ Ext.define('Connector.controller.Data', {
         }
         else if (xtype == 'groupdatagrid') {
             v = Ext.create('Connector.view.Grid', {
+                model: new Ext.create('Connector.model.Grid', {
+                    //
+                    // The initial columns to display in case the user has not selected any
+                    //
+                    columnSet: [
+                        Connector.studyContext.subjectColumn,
+                        'Study',
+                        'StartDate'
+                    ]
+                }),
                 control: this
             });
-
-            v.on('measureselected', this.onMeasuresSelected, this);
 
             this.getStateManager().on('filterchange', function(appFilters) {
                 this.onFilterChange(v, appFilters);
             }, this);
+
+            this.getViewManager().on('afterchangeview', v.onViewChange, v);
         }
 
         return v;
@@ -655,6 +675,6 @@ Ext.define('Connector.controller.Data', {
     updateView : function(xtype, context) { },
 
     getDefaultView : function() {
-        return 'datagrid';
+        return 'groupdatagrid';
     }
 });

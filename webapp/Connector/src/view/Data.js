@@ -165,6 +165,10 @@ Ext.define('Connector.view.Data', {
         }
     },
 
+    getStore : function() {
+        return this.store;
+    },
+
     getMeasureWindow : function() {
         if (this.win) {
             return this.win;
