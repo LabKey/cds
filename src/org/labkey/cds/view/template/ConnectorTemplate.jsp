@@ -380,10 +380,10 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>

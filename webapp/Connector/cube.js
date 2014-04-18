@@ -112,8 +112,6 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
 
-                // detailItemView: 'Connector.app.view.StudyDetail',
-
                 hierarchies: [{
                     uniqueName: '[Assay.Target Area]',
                     levels: [{
@@ -144,7 +142,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
 
-                detailItemView: 'Connector.app.view.StudyDetail',
+                detailItemView: 'Connector.app.view.ModuleContainer',
                 detailItemModules: [[{
                     type: 'studyheader'
                 }, {

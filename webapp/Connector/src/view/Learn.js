@@ -22,7 +22,7 @@ Ext.define('Connector.view.Learn', {
         // Multiple headers are added here but they are initially set to hidden. When the page
         // url changes the headers will be updated and made visible based on the type of view -
         // parent learn view or study/assay detail page etc
-        this.items = [this.getHeader(), this.getStudyDetailHeader()];
+        this.items = [this.getHeader(), this.getLearnDetailHeader()];
 
         this.callParent();
     },
@@ -47,9 +47,9 @@ Ext.define('Connector.view.Learn', {
         return this.headerViews.main;
     },
 
-    getStudyDetailHeader : function(id) {
-        if (!this.headerViews.studyDetail) {
-            this.headerViews.studyDetail = Ext.create('Connector.view.LearnItemHeader', {
+    getLearnDetailHeader : function(id) {
+        if (!this.headerViews.learnDetail) {
+            this.headerViews.learnDetail = Ext.create('Connector.view.LearnItemHeader', {
                 dimensions: this.getDimensions(),
 
                 hidden: true,
@@ -64,9 +64,9 @@ Ext.define('Connector.view.Learn', {
                 }
             });
         }
-        //this.headerViews.studyDetail.setId(id);
+        //this.headerViews.learnDetail.setId(id);
 
-        return this.headerViews.studyDetail;
+        return this.headerViews.learnDetail;
     },
 
     onFilterChange : function(filters) {
@@ -95,14 +95,14 @@ Ext.define('Connector.view.Learn', {
 
     setHeader : function(dimension, id) {
         var listHeader = this.getHeader();
-        var studyDetailHeader = this.getStudyDetailHeader(id);
+        var learnDetailHeader = this.getLearnDetailHeader(id);
         if (id) {
             listHeader.setVisible(false);
-            studyDetailHeader.setDetailType(dimension.name);
-            studyDetailHeader.setVisible(true);
+            learnDetailHeader.setDetailType(dimension.name);
+            learnDetailHeader.setVisible(true);
         } else {
             listHeader.setVisible(true);
-            studyDetailHeader.setVisible(false);
+            learnDetailHeader.setVisible(false);
         }
     },
 
@@ -150,9 +150,9 @@ Ext.define('Connector.view.Learn', {
                         modules: dimension.detailItemModules
                     });
 
-                    var studyDetailHeader = self.getStudyDetailHeader(id);
+                    var learnDetailHeader = self.getLearnDetailHeader(id);
 
-                    studyDetailHeader.setModel(model);
+                    learnDetailHeader.setModel(model);
 
                     self.add(self.dataView);
                     // TODO: Is these needed for item view?

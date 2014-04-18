@@ -165,10 +165,10 @@
 
         <script path="Connector/src/app/view/Assay.js"/>
         <script path="Connector/src/app/view/Labs.js"/>
+        <script path="Connector/src/app/view/ModuleContainer.js"/>
         <script path="Connector/src/app/view/Site.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
-        <script path="Connector/src/app/view/StudyDetail.js"/>
 
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
