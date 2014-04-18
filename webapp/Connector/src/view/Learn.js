@@ -70,20 +70,20 @@ Ext.define('Connector.view.Learn', {
     },
 
     onFilterChange : function(filters) {
-        this.loadData(this.dataView);
+        this.loadData(this.dataView.dimension, this.dataView.getStore());
     },
 
-    loadData : function(view) {
+    loadData : function(dimension, store) {
 
-        if (view && view.dimension) {
+        if (dimension) {
             this.state.onMDXReady(function(mdx) {
-                var hierarchy = view.dimension.getHierarchies()[0];
+                var hierarchy = dimension.getHierarchies()[0];
                 var config = {
                     onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
                     useNamedFilters: ['statefilter'],
                     success: function(slice) {
-                        if (view && view.getStore())
-                            view.getStore().loadSlice(slice);
+                        if (store)
+                            store.loadSlice(slice);
                     },
                     scope: this
                 };
@@ -139,7 +139,7 @@ Ext.define('Connector.view.Learn', {
         if (Ext.isDefined(dimension)) {
             var store;
             if (id && dimension.detailItemView) {
-                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection, true);
+                store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
                 var model = store.getById(id);
                 var self = this;
 
@@ -155,16 +155,16 @@ Ext.define('Connector.view.Learn', {
                     learnDetailHeader.setModel(model);
 
                     self.add(self.dataView);
-                    // TODO: Is these needed for item view?
-                    self.loadData(self.dataView);
                 }
 
                 if (!model) {
-                    store.load({
-                        callback: function() {
-                            modelLoaded(store.getById(id));
-                        }
+                    store.on('load', function() {
+                        modelLoaded(store.getById(id));
+                        //console.log(">>>",arguments);
+                    }, this, {
+                        single: true
                     });
+                    this.loadData(dimension, store);
                 } else {
                     modelLoaded(model);
                 }
@@ -183,7 +183,7 @@ Ext.define('Connector.view.Learn', {
                 }, this);
 
                 this.add(this.dataView);
-                this.loadData(this.dataView);
+                this.loadData(dimension, this.dataView.getStore());
             }
 
             this.state.on('filterchange', this.onFilterChange, this);
