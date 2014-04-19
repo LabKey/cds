@@ -837,7 +837,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList("VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
+        List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
         verifyLearnAboutPage(studyProducts);
     }
 
@@ -1492,7 +1492,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void assertAllSubjectsPortalPage()
     {
         assertCDSPortalRow("Studies", "4 studies");
-        assertCDSPortalRow("Subject characteristics", "29 subject characteristics", "3 countries", "2 genders", "6 races & subtypes");
+        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 genders", "6 races & subtypes");
         assertCDSPortalRow("Assays", "4 assays", "1 target areas", "3 methodologies");
         assertCDSPortalRow("Assay antigens", "31 assay antigens", "5 clades", "5 sample types", "5 tiers");
         assertCDSPortalRow("Labs", "3 labs");
