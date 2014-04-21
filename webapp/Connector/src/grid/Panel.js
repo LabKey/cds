@@ -1,6 +1,15 @@
 Ext.define('Connector.grid.Panel', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.connector-gridpanel',
+
+    defaultColumnWidth: 100,
+
+    /**
+     * True to constrain column dragging so that a column cannot be dragged
+     * in or out of it's current group.
+     */
+    sealedColumns: true,
+
     config: {
         defaultFieldWidth: 200,
         editable: true,
@@ -10,6 +19,7 @@ Ext.define('Connector.grid.Panel', {
         clicksToEdit: 2,
         editingPluginId: 'editingplugin'
     },
+
     initComponent : function() {
         this.initStore();
 
@@ -193,7 +203,7 @@ Ext.define('Connector.grid.Panel', {
         this.inferColumnWidths(columns);
 
         for (var i=0; i < columns.length; i++) {
-            columns[i].width = 100;
+            columns[i].width = this.defaultColumnWidth;
         }
 
         // Split columns into groups

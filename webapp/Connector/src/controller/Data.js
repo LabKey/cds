@@ -15,6 +15,8 @@ Ext.define('Connector.controller.Data', {
 
     init : function() {
 
+        DD = this;
+
         this.control('groupdatagrid', {
             filtertranslate: this.onFilterTranslate,
             lookupcolumnchange: this.onLookupColumnChange,
@@ -101,40 +103,30 @@ Ext.define('Connector.controller.Data', {
     },
 
     // Deprecated: will be removed
-    updateQuery : function (view) {
-        console.log('FYI: Connector.controller.Data.updateQuery is a NOOP -- see Connector.grid.Model.getMetaData');
-//        var wrappedMeasures = [];
-//
-//        for (var i=0; i < this.measures.length; i++) {
-//            wrappedMeasures.push({measure : this.measures[i], time : 'visit'});
-//        }
-//
-//        var sorts = this.getSorts();
-//        if (sorts.length > 0 && wrappedMeasures.length > 0) {
-//            Ext.Ajax.request({
-//                url     : LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-//                method  : 'POST',
-//                jsonData: {
-//                    measures : wrappedMeasures,
-//                    sorts    : sorts,
-//                    metaDataOnly : true
-//                },
-//                success : function(response) {
-//                    var result = Ext.decode(response.responseText);
-//                    this.getParticipantIn(function(subjects) {
-//                        if (Ext.isObject(view) && Ext.isFunction(view.refreshGrid)) {
-//                            view.refreshGrid(result, this.measures, subjects);
-//                        }
-//                    });
-//                },
-//                failure : this.onFailure,
-//                scope   : this
-//            });
-//            this.refreshRequired = false;
-//        }
-//        else {
-//            view.runUniqueQuery();
-//        }
+    updateQuery : function () {
+        var view = this.getViewManager().getViewInstance('groupdatagrid');
+
+        if (view) {
+            var appFilters = this.getStateManager().getFilters();
+            var gridFilters = [];
+            Ext.iterate(this.idMap, function(id, urlParam) {
+                for (var i=0; i < appFilters.length; i++) {
+                    if (appFilters[i].id == id) {
+                        var gf = appFilters[i].getValue('gridFilter');
+                        if (Ext.isArray(gf)) {
+                            Ext.each(gf, function(_gf) {
+                                gridFilters.push(_gf);
+                            });
+                        }
+                        else {
+                            gridFilters.push(gf);
+                        }
+                    }
+                }
+            }, this);
+
+            view.applyFilters(gridFilters);
+        }
     },
 
     onFailure : function(response) {
@@ -166,8 +158,8 @@ Ext.define('Connector.controller.Data', {
         }
 
         // ensure the filterMap is not out of sync with the app filters
-        var remove = {}, colName, urlParam, found, id, i, gFilter;
-        Ext.iterate(this.filterMap, function(urlParam, value) {
+        var remove = {}, colName, found, gFilter;
+        Ext.iterate(this.filterMap, function(urlParam, id) {
             found = false, colName = '';
             Ext.each(appFilters, function(appFilter) {
                 gFilter = appFilter.getValue('gridFilter');
@@ -193,9 +185,26 @@ Ext.define('Connector.controller.Data', {
             }
         }, this);
 
+        // Examine each app filter to see if new grid filters are present
+        Ext.each(appFilters, function(appFilter) {
+            gFilter = appFilter.getValue('gridFilter');
+            if (Ext.isArray(gFilter)) {
+                Ext.each(gFilter, function(f) {
+                    if (!this.hasFilter(f)) {
+                        this.addToFilters(f, appFilter.id);
+                    }
+                }, this);
+            }
+            else if (gFilter) {
+                if (!this.hasFilter(gFilter)) {
+                    this.addToFilters(gFilter, appFilter.id);
+                }
+            }
+        }, this);
+
         Ext.iterate(this.idMap, function(id, urlParam) {
             found = false;
-            for (i=0; i < appFilters.length; i++) {
+            for (var i=0; i < appFilters.length; i++) {
                 if (appFilters[i].id == id) {
                     found = true;
                 }
@@ -358,20 +367,14 @@ Ext.define('Connector.controller.Data', {
             return;
         }
 
-        if (all) {
-            var fMap = Ext.clone(this.filterMap);
-            this.filterMap = {};
+        Ext.iterate(this.filterMap, function(urlParam, id) {
+            if (all || urlParam.indexOf(fieldKey) > -1 ) {
+                this.getStateManager().removeFilter(id, 'Subject');
+            }
+        }, this);
 
-            Ext.iterate(this.filterMap, function(colName, id) {
-                this.getStateManager().removeFilter(colName, 'Subject');
-            }, this);
-        }
-        else {
-            Ext.iterate(this.filterMap, function(urlParam, id) {
-                if (urlParam.indexOf(fieldKey) > -1) {
-                    this.getStateManager().removeFilter(id, 'Subject');
-                }
-            }, this);
+        if (all) {
+            this.filterMap = {};
         }
 
     },
