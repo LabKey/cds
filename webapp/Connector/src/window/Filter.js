@@ -41,7 +41,7 @@ Ext.define('Connector.window.Filter', {
 
             Ext.apply(this, {
                 x: box.x - 52,
-                y: box.y + 35
+                y: box.y + 45
             });
         }
 
@@ -252,7 +252,7 @@ Ext.define('Connector.window.Filter', {
         var filterPanel = this.down('labkey-default-filterpanel');
         var filterArray = [];
         if (filterPanel.isValid()) {
-            var colFilters = filterPanel.getFilters()
+            var colFilters = filterPanel.getFilters();
             var fa = Ext.clone(this.store.filterArray);
             fa = fa.slice(1);
             filterArray = LABKEY.Filter.merge(fa, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
