@@ -948,22 +948,22 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         }
 
         // Test brush events.
-//        builder.moveToElement(points.get(10)).moveByOffset(-10, -5).clickAndHold().moveByOffset(35, 30).release().perform();
-//
-//        for (int i = 10; i < 15; i++)
-//        {
-//            assertEquals("Brushed point had an unexpected fill color", BRUSHED_FILL, points.get(i).getAttribute("fill"));
-//            assertEquals("Brushed point had an unexpected stroke color", BRUSHED_STROKE, points.get(i).getAttribute("stroke"));
-//        }
-//
-//        builder.moveToElement(points.get(37)).moveByOffset(-25, 0).clickAndHold().release().perform();
-//
-//        // Check that the points are no longer brushed.
-//        for (int i = 10; i < 15; i++)
-//        {
-//            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
-//            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
-//        }
+        builder.moveToElement(points.get(10)).moveByOffset(-10, -8).clickAndHold().moveByOffset(35, 30).release().perform();
+
+        for (int i = 10; i < 15; i++)
+        {
+            assertEquals("Brushed point had an unexpected fill color", BRUSHED_FILL, points.get(i).getAttribute("fill"));
+            assertEquals("Brushed point had an unexpected stroke color", BRUSHED_STROKE, points.get(i).getAttribute("stroke"));
+        }
+
+        builder.moveToElement(points.get(37)).moveByOffset(-25, 0).clickAndHold().release().perform();
+
+        // Check that the points are no longer brushed.
+        for (int i = 10; i < 15; i++)
+        {
+            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
+            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+        }
 
         clearFilter();
     }
