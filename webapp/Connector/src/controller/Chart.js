@@ -69,6 +69,7 @@ Ext.define('Connector.controller.Chart', {
             state.clearSelections();
             state.on('filterchange', v.onFilterChange, v);
             state.on('plotselectionremoved', v.onPlotSelectionRemoved, v);
+            state.on('selectionchange', v.onSelectionChange, v);
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
 
             return v;
