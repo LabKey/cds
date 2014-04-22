@@ -72,6 +72,7 @@
         <script path="Connector/src/model/FilterGroup.js"/>
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
+        <script path="Connector/src/model/Grid.js"/>
         <script path="Connector/src/model/Variable.js"/>
         <script path="Connector/src/model/VisitTag.js"/>
 
@@ -117,7 +118,7 @@
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
-        <script path="Connector/src/view/RawData.js"/>
+        <script path="Connector/src/view/Data.js"/>
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
@@ -143,7 +144,7 @@
         <script path="Connector/src/controller/Learn.js"/>
         <script path="Connector/src/controller/Main.js"/>
         <script path="Connector/src/controller/Navigation.js"/>
-        <script path="Connector/src/controller/RawData.js"/>
+        <script path="Connector/src/controller/Data.js"/>
         <script path="Connector/src/controller/Router.js"/>
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>

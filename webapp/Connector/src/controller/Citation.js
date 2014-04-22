@@ -31,9 +31,9 @@ Ext.define('Connector.controller.Citation', {
         // sources/references from citations
         this.control('citation', {
             citationrequest : function() {
-                var rawdata = this.getViewManager().getViewInstance('datagrid');
-                if (rawdata) {
-                    this.sourceRequest(rawdata.measures, rawdata.queryMetadata);
+                var datagrid = this.getViewManager().getViewInstance('datagrid');
+                if (datagrid) {
+                    this.sourceRequest(datagrid.measures, datagrid.queryMetadata);
                 }
             },
             referencerequest : function(rec) {

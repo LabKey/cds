@@ -68,7 +68,7 @@ Ext.define('Connector.view.Main', {
                         controller: 'chart'
                     },{
                         label: 'View data grid',
-                        controller: 'rawdata'
+                        controller: 'data'
                     }]
                 }
             }]

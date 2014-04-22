@@ -86,7 +86,7 @@
 
         /* Ext.Grid */
         .x-column-header-trigger {
-            background-color: transparent;
+            background-color: #E6E1E1;
         }
 
         .closeitem {
@@ -123,6 +123,19 @@
             display: inline-block;
             background-image: url(<%=text(appPath)%>/images/filter.svg);
             background-position: 0px 28px;
+            border-left: 1px solid transparent;
+        }
+
+        .x-column-header-trigger:hover {
+            background-color: #E6E1E1 !important;
+            background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
+            background-position: 0px 28px;
+        }
+
+        .filtered-column .x-column-header-trigger {
+            background-color: #E6E1E1 !important;
+            background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
+            background-position: 0px 28px;
         }
 
         .x-column-header-inner {
@@ -135,8 +148,16 @@
             background-color: #666363;
         }
 
+        .x-column-header-align-center .x-column-header-trigger {
+            display: none;
+        }
+
         .x-group-sub-header {
             background-color: #E6E1E1;
+        }
+
+        .x-column-header-align-center .x-group-sub-header .x-column-header-trigger {
+            display: block;
         }
 
         .x-group-sub-header .x-column-header-inner {
@@ -265,6 +286,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
 
@@ -310,7 +332,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
@@ -337,7 +359,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
     
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/RawData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
