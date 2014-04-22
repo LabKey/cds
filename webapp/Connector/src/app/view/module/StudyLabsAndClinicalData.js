@@ -12,11 +12,19 @@ Ext.define('Connector.view.module.StudyLabsAndClinicalData', {
     tpl : new Ext.XTemplate(
         '<tpl><p>',
             Connector.constant.Templates.module.title,
-            '<tpl if="!values.items">',
+            '<tpl if="!values.dataSets">',
                 '<p class="loading-data">Loading data...</p>',
             '</tpl>',
-            '<tpl for="items">',
-                '<p><a href="#">{.}</a></p>',
+            '<div class="disabled"><div class="checkbox">&#10003</div> = available in the data connector</div>',
+            '<tpl for="dataSets">',
+                '<div>',
+                    '<div class="checkbox">',
+                        '<tpl if="values.hasDataFromStudy(parent.model.get(\'Label\'))">',
+                            '&#10003',
+                        '</tpl>',
+                    '</div>',
+                    '<a href="#">{[values.get("Label")]}</a>',
+                '</div>',
             '</tpl>',
         '</p></tpl>'),
 
@@ -26,28 +34,28 @@ Ext.define('Connector.view.module.StudyLabsAndClinicalData', {
         var study = data.model;
         var studyId = study.get('Label');
 
-        //var hierarchy = view.dimension.getHierarchies()[0];
-        var config = {
-            onRows: [{ level: '[Vaccine.Type].[Name]' }],
-            filter: [ {hierarchy : 'Study', members: ["[Study].["+studyId+"]"]} ],
-            success: function(slice) {
-                var cells = slice.cells, row;
-                var set = [], object;
-                for (var c=0; c < cells.length; c++) {
-                    row = cells[c][0];
-                    object = row.positions[row.positions.length-1][0];
-                    if (row.value > 0) {
-                        set.push(object.name);
-                    }
-                }
-                data.items = set;
-                this.update(data);
-            },
-            scope: this
-        };
-        this.state.onMDXReady(function(mdx) {
-            mdx.query(config);
-        });
+        var store = StoreCache.getStore('Connector.app.store.DataSet');
+
+        var me = this;
+
+        function dataSetsLoaded(store, records) {
+            data.dataSets = records;
+            me.update(data);
+            Ext.each(records, function(record) {
+                record.queryDataFromStudy(studyId, function(hasData) {
+                    me.update(data);
+                })
+            })
+        }
+
+        if (!store.data.length) {
+            store.on('load', dataSetsLoaded, this, {
+                single: true
+            });
+            store.load();
+        } else {
+            dataSetsLoaded(store, store.data.items);
+        }
 
         this.callParent();
     }

@@ -43,10 +43,11 @@ Ext.define('Connector.app.view.ModuleContainer', {
 
         this.callParent();
 
+//this.model && console.log("Model:",JSON.stringify(this.model.raw, undefined, 4));
+
         for (i = 0; i < columns; ++i) {
             if (i < this.modules.length) {
                 var column = this.getComponent('column'+i);
-
                 column.add(Connector.factory.Module.defineViews(this.modules[i], this.model, this.state));
             }
         }

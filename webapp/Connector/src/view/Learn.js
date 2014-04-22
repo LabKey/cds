@@ -639,12 +639,14 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
         // unregister
         var EM = Ext.EventManager;
         EM.un(window, 'resize', this.onResize, this);
-        EM.un(this.elements.view, 'scroll', this.onScroll, this);
+        if (this.elements) {
+            EM.un(this.elements.view, 'scroll', this.onScroll, this);
 
-        // clear
-        this.elements.lock = null;
-        this.elements.header = null;
-        this.elements.view = null;
+            // clear
+            this.elements.lock = null;
+            this.elements.header = null;
+            this.elements.view = null;
+        }
     },
 
     update : function() {

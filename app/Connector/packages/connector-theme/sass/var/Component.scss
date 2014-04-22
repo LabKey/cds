@@ -1721,6 +1721,17 @@ div.learnview {
       color: $unselect-black;
     }
   }
+
+  .disabled {
+    color: $unselect-black;
+  }
+
+  .checkbox {
+    color: $unselect-black;
+    width: 11px;
+    min-height: 10px;
+    float: left;
+  }
 }
 
 .modulecontainer {

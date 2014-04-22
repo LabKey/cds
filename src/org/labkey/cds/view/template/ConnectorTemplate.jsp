@@ -367,12 +367,14 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DataSet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DataSet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
