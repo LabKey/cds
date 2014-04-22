@@ -489,7 +489,12 @@ Ext.define('Connector.view.Scatter', {
                         var sel = layerSelections[0]; // We only have one layer, so grab the first one.
                         var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
                         var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-                        var assocColorFn, assocOpacityFn, assocStrokeFn;
+                        var isX, isY, xExtent, yExtent, assocColorFn, assocOpacityFn, assocStrokeFn;
+
+                        xExtent = [extent[0][0], extent[1][0]];
+                        yExtent = [extent[0][1], extent[1][1]];
+                        isX = xExtent[0] !== null && xExtent[1] !== null;
+                        isY = yExtent[0] !== null && yExtent[1] !== null;
 
                         if (plot.scales.color && plot.scales.color.scale) {
                             colorScale = plot.scales.color.scale;
@@ -498,7 +503,18 @@ Ext.define('Connector.view.Scatter', {
 
                         colorFn = function(d) {
                             var x = d.x, y = d.y;
-                            d.isSelected = (x > extent[0][0] && x < extent[1][0] && y > extent[0][1] && y < extent[1][1]);
+
+                            // Issue 20116
+                            if (isX && isY) { // 2D
+                                d.isSelected = (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
+                            } else if (isX) { // 1D
+                                d.isSelected = (x > xExtent[0] && x < xExtent[1]);
+                            } else if (isY) { // 1D
+                                d.isSelected = (y > yExtent[0] && y < yExtent[1]);
+                            } else { // Just incase.
+                                d.isSelected = false;
+                            }
+
                             if (d.isSelected) {
                                 subjects[d.subjectId.value] = true;
                                 return '#14C9CC';
@@ -1582,6 +1598,16 @@ Ext.define('Connector.view.Scatter', {
                     // clear the y-axis.
                     this.plot.setBrushExtent([[curExtent[0][0], null],[curExtent[1][0], null]]);
                 }
+            }
+        }
+    },
+
+    onSelectionChange : function(selections) {
+        if (selections.length === 0) {
+            var ex = this.plot.getBrushExtent();
+            if (ex !== null) {
+                // Issue 20117.
+                this.plot.clearBrush();
             }
         }
     }

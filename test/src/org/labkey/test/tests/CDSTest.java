@@ -951,7 +951,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         }
 
         // Test brush events.
-        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(40, 40).release().perform();
+        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
 
         for (int i = 10; i < 15; i++)
         {
