@@ -969,7 +969,7 @@ Ext.define('Connector.view.Scatter', {
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
         // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
 
-        var subjectNoun = 'SubjectId'; // TODO: this is hard-coded because the measureToColumn object is returning a
+        var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
                                        // different value for the subjectNoun than the moduleContext. This is an issue
                                        // with multi-study getDataAPI calls.
         var subjectCol = data.measureToColumn[subjectNoun];

@@ -914,8 +914,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // set Y to log scale
         click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
         click(cdsButtonLocator("set y axis"));
-//        waitForText("Points outside the plotting area have no match");
-        waitForText("Failed to Load");
+        waitForText("Points outside the plotting area have no match");
         xAxisButton.click();
         _ext4Helper.waitForMask();
         _extHelper.pickMeasure("xaxispicker", "Physical Exam", "Pulse");
