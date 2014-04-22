@@ -1584,5 +1584,15 @@ Ext.define('Connector.view.Scatter', {
                 }
             }
         }
+    },
+
+    onSelectionChange : function(selections) {
+        if (selections.length === 0) {
+            var ex = this.plot.getBrushExtent();
+            if (ex !== null) {
+                // Issue 20117.
+                this.plot.clearBrush();
+            }
+        }
     }
 });
