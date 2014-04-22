@@ -46,6 +46,7 @@ Ext.define('Connector.view.Grid', {
                 },{
                     xtype: 'button',
                     ui: 'rounded-inverted-accent',
+                    cls: 'gridexportbtn',
                     text: 'export',
                     margin: '27 0 0 5',
                     handler: function() {},
@@ -53,6 +54,7 @@ Ext.define('Connector.view.Grid', {
                 },{
                     xtype: 'button',
                     ui: 'rounded-inverted-accent',
+                    cls: 'gridcitationsbtn',
                     text: 'citations',
                     margin: '27 0 0 5',
                     handler: function() {},
@@ -60,6 +62,7 @@ Ext.define('Connector.view.Grid', {
                 },{
                     xtype: 'button',
                     ui: 'rounded-inverted-accent',
+                    cls: 'gridcolumnsbtn',
                     text: 'choose columns',
                     margin: '27 0 0 5',
                     handler: this.showMeasureSelection,
