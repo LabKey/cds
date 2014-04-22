@@ -11,13 +11,13 @@ Ext.define('Connector.view.module.StudyHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
-            '<p>Network: {[values.model.get("Network")]}</p>',
-            '<p>Study Type: {[this.typeString(values.model)]}</p>',
+            '<p class="item-row">Network: {[values.model.get("Network")]}</p>',
+            '<p class="item-row">Study Type: {[this.typeString(values.model)]}</p>',
             '<tpl if="model.get(\'StartDate\')">',
-                '<p>Started: {[Connector.app.view.Study.dateRenderer(values.model.get("StartDate"))]}</p>',
+                '<p class="item-row">Started: {[Connector.app.view.Study.dateRenderer(values.model.get("StartDate"))]}</p>',
             '</tpl>',
             '<tpl if="model.get(\'EndDate\')">',
-                '<p>Ended: {[Connector.app.view.Study.dateRenderer(values.model.get("EndDate"))]}</p>',
+                '<p class="item-row">Ended: {[Connector.app.view.Study.dateRenderer(values.model.get("EndDate"))]}</p>',
             '</tpl>',
         '</tpl>',
     {

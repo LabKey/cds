@@ -10,6 +10,7 @@ $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 
 $interactive-color: #9B0D96;       // Interactive
+$link-color: #03ADB0;
 $info-color: #F5A73A;              // Info
 
 $black: #000000;
@@ -745,7 +746,7 @@ div.status-over {
 
 /* Logout Link */
 a {
-  color: $interactive-color;
+  color: $link-color;
 
   &.logout {
     color: $light-color;
@@ -1135,7 +1136,7 @@ div.detailcolumn {
   padding-top: 4px;
 
   a {
-    color: $select-color;
+    color: $link-color;
 
     &.nav:hover {
       color: $select-color;
@@ -1586,7 +1587,7 @@ a.cite-ref {
 }
 
 a {
-  color: $interactive-color;
+  color: $link-color;
 
   &.logout {
     color: $light-color;
@@ -1731,6 +1732,10 @@ div.learnview {
     width: 11px;
     min-height: 10px;
     float: left;
+  }
+
+  .item-row {
+    padding: 2px 0px;
   }
 }
 

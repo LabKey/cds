@@ -15,8 +15,18 @@ Ext.define('Connector.view.module.StudyAssays', {
             '<tpl if="!values.assays">',
                 '<p class="loading-data">Loading data...</p>',
             '</tpl>',
-            '<tpl for="assays">',
-                '<p><a href="#">{.}</a></p>',
+            '<tpl if="values.assays">',
+                Connector.constant.Templates.module.availableDataLegend,
+                '<tpl for="assays">',
+                    '<div class="item-row">',
+                        '<div class="checkbox">',
+                            '<tpl if="count">',
+                                '&#10003',
+                            '</tpl>',
+                        '</div>',
+                        '<p><a href="#learn/learn/assay/{name}">{name}</a></p>',
+                    '</div>',
+                '</tpl>',
             '</tpl>',
         '</p></tpl>'),
 
@@ -36,9 +46,12 @@ Ext.define('Connector.view.module.StudyAssays', {
                 for (var c=0; c < cells.length; c++) {
                     row = cells[c][0];
                     assay = row.positions[row.positions.length-1][0];
-                    if (row.value > 0) {
-                        assaySet.push(assay.name);
-                    }
+                    //if (row.value > 0) {
+                    assaySet.push({
+                        name: assay.name,
+                        count: row.value
+                    });
+                    //}
                 }
                 data.assays = assaySet;
                 this.update(data);

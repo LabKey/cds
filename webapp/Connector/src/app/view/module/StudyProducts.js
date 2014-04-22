@@ -16,7 +16,9 @@ Ext.define('Connector.view.module.StudyProducts', {
                 '<p class="loading-data">Loading data...</p>',
             '</tpl>',
             '<tpl for="items">',
-                '<p><a href="#">{.}</a></p>',
+                '<div class="item-row">',
+                    '<p><a href="#learn/learn/vaccine/{.}">{.}</a></p>',
+                '</div>',
             '</tpl>',
         '</p></tpl>'),
 

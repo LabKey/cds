@@ -187,11 +187,6 @@ Ext4.define('Connector.cube.Configuration', {
                         text: 'Description'
                     }
                 }, {
-                    type: 'studyproducts',
-                    staticData: {
-                        title: 'Products'
-                    }
-                }, {
                     type: 'studysites',
                     staticData: {
                         title: 'Cohort & sites'
@@ -206,6 +201,11 @@ Ext4.define('Connector.cube.Configuration', {
                         picture: 'MainContact.Portrait',
                         line1: 'MainContact.Role',
                         line2: 'MainContact.Team'
+                    }
+                }, {
+                    type: 'studyproducts',
+                    staticData: {
+                        title: 'Products'
                     }
                 }, {
                     type: 'studyassays',
