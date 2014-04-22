@@ -3,6 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
+// TODO: Rename this view. It is no longer scatter specific, but instead includes scatter and box plots.
 Ext.define('Connector.view.Scatter', {
 
     extend: 'Ext.panel.Panel',
@@ -263,44 +264,33 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    initPlot : function(config, noplot) {
-        var rows = config.rows;
-        // Below vars needed for brush and mouse event handlers.
-        var isBrushed = false, plot;
+    getNoPlotLayer : function() {
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.Point({
+                plotNullPoints: true,
+                opacity: 0
+            }),
+            aes: {
+                yLeft: function(row){return row.y}
+            }
+        });
+    },
 
-        if (!rows || !rows.length) {
-            this.showMessage('No information available to plot.');
-            this.hideLoad();
-            this.plot = null;
-            this.plotEl.update('');
-            this.noPlot();
-            return;
-        }
-        else if (rows.length < this.rowlimit && !noplot && (this.percentOverlap && this.percentOverlap == 1)) {
-            this.hideMessage();
-        }
-
-        if (this.plot) {
-            this.plot.clearGrid();
-            this.plotEl.update('');
-            this.plot = null;
-        }
-
-        var pointLayer = new LABKEY.vis.Layer({
+    getPointLayer : function(layerScope) {
+        return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Point({
                 size: 3,
-                plotNullPoints: !noplot,
+                plotNullPoints: true,
                 opacity: 0.5
             }),
             aes: {
-                yLeft: function(row){return row.y},
                 hoverText : function(row) {
                     // TODO: figure out how to display subject id.
                     return '' + row.xname + ': ' + row.x + ', ' + row.yname + ': ' + row.y;
                 },
                 mouseOverFn: function(event, pointData, layerSel){
-                    if (!isBrushed) {
-                        var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+                    if (!layerScope.isBrushed) {
+                        var plot = layerScope.plot, colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
 
                         if (plot.scales.color && plot.scales.color.scale) {
                             colorScale = plot.scales.color.scale;
@@ -342,7 +332,7 @@ Ext.define('Connector.view.Scatter', {
                                 .attr('fill-opacity', opacityFn)
                                 .attr('stroke-opacity', opacityFn);
 
-                        points.each(function(d){
+                        points.each(function(d) {
                             // Re-append the node so it is on top of all the other nodes, this way highlighted points
                             // are always visible.
                             var node = this.parentNode;
@@ -353,8 +343,8 @@ Ext.define('Connector.view.Scatter', {
                     }
                 },
                 mouseOutFn: function(event, pointData, layerSel){
-                    if (!isBrushed) {
-                        var colorFn, colorScale = null, colorAcc = null;
+                    if (!layerScope.isBrushed) {
+                        var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
 
                         if (plot.scales.color && plot.scales.color.scale) {
                             colorScale = plot.scales.color.scale;
@@ -377,16 +367,52 @@ Ext.define('Connector.view.Scatter', {
                 }
             }
         });
+    },
+
+    getBoxLayer : function() {
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.Boxplot({})
+        });
+    },
+
+    initPlot : function(config, noplot) {
+        var rows = config.rows;
+        R = rows;
+        // Below vars needed for brush and mouse event handlers.
+        var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
+
+        if (!rows || !rows.length) {
+            this.showMessage('No information available to plot.');
+            this.hideLoad();
+            this.plot = null;
+            this.plotEl.update('');
+            this.noPlot();
+            return;
+        }
+        else if (rows.length < this.rowlimit && !noplot && (this.percentOverlap && this.percentOverlap == 1)) {
+            this.hideMessage();
+        }
+
+        if (this.plot) {
+            this.plot.clearGrid();
+            this.plotEl.update('');
+            this.plot = null;
+        }
+
+        if (noplot) {
+            layer = this.getNoPlotLayer();
+        }else if (config.xaxis && config.xaxis.isNumeric) {
+            // Scatter.
+            layer = this.getPointLayer(layerScope);
+        } else if (config.xaxis && !config.xaxis.isNumeric) {
+            // Box plot (aka 1D).
+            layer = this.getBoxLayer();
+        }
 
         // maintain ratio 1:1
         var box = this.plotEl.getSize();
 
-        var tickFormat = function(val) {
-
-            if (noplot) {
-                return '';
-            }
-
+        var numericTickFormat = function(val) {
             var s = val.toString();
             if (s.indexOf('.') > -1)
             {
@@ -405,19 +431,24 @@ Ext.define('Connector.view.Scatter', {
         if (noplot) {
             scales.x = scales.yLeft = {
                 scaleType: 'continuous',
-                domain: [0, 0]
+                domain: [0, 0],
+                tickFormat: function(val) {return '';}
             };
         }
         else {
-            scales.x = {scaleType: 'continuous'};
-            scales.yLeft = {scaleType: 'continuous'};
+            if (config.xaxis.isNumeric) {
+                scales.x = {
+                    scaleType: 'continuous',
+                    tickFormat: numericTickFormat
+                };
+            } else {
+                scales.x = {scaleType: 'discrete'};
+            }
+            scales.yLeft = {
+                scaleType: 'continuous',
+                tickFormat: numericTickFormat
+            };
         }
-
-        scales.x.tickFormat = tickFormat;
-        scales.yLeft.tickFormat = tickFormat;
-
-//        var labelX = (config.xaxis) ? config.xaxis.query + ': ' : '',
-//                labelY = (config.yaxis) ? config.yaxis.query + ': ' : '';
 
         var plotConfig = {
             renderTo: this.plotEl.id,
@@ -425,16 +456,13 @@ Ext.define('Connector.view.Scatter', {
             throwErrors: true,
             clipRect: false,
             margins: {top: 25, left: 25+43, right: 25+10, bottom: 25+43},
-//            labels: {
-//                x: {value: labelX + rows[0].xname.replace(/_/g, ' ')},
-//                yLeft: {value: labelY + rows[0].yname.replace(/_/g, ' ')}
-//            },
             width     : box.width,
             height    : box.height,
             data      : rows,
             legendPos : 'none',
             aes: {
-                x: function(row){return row.x;}
+                x: function(row){return row.x;},
+                yLeft: function(row){return row.y}
             },
             bgColor: '#FFFFFF', // $light-color
             gridColor: '#FFFFFF', // $light-color
@@ -452,141 +480,143 @@ Ext.define('Connector.view.Scatter', {
             this.setScale(plotConfig.scales.yLeft, 'y', config);
 
             // add brush handling
-            plotConfig.brushing = {
-                brushstart : function() {
-                    isBrushed = true;
-                },
-                brush : function(event, layerData, extent, plot, layerSelections) {
-                    var sel = layerSelections[0]; // We only have one layer, so grab the first one.
-                    var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-                    var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-                    var assocColorFn, assocOpacityFn, assocStrokeFn;
+            if (config.xaxis.isNumeric) {
+                plotConfig.brushing = {
+                    brushstart : function() {
+                        layerScope.isBrushed = true;
+                    },
+                    brush : function(event, layerData, extent, plot, layerSelections) {
+                        var sel = layerSelections[0]; // We only have one layer, so grab the first one.
+                        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+                        var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+                        var assocColorFn, assocOpacityFn, assocStrokeFn;
 
-                    if (plot.scales.color && plot.scales.color.scale) {
-                        colorScale = plot.scales.color.scale;
-                        colorAcc = plot.aes.color;
-                    }
+                        if (plot.scales.color && plot.scales.color.scale) {
+                            colorScale = plot.scales.color.scale;
+                            colorAcc = plot.aes.color;
+                        }
 
-                    colorFn = function(d) {
-                        var x = d.x, y = d.y;
-                        d.isSelected = (x > extent[0][0] && x < extent[1][0] && y > extent[0][1] && y < extent[1][1]);
-                        if (d.isSelected) {
-                            subjects[d.subjectId.value] = true;
-                            return '#14C9CC';
-                        } else {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
+                        colorFn = function(d) {
+                            var x = d.x, y = d.y;
+                            d.isSelected = (x > extent[0][0] && x < extent[1][0] && y > extent[0][1] && y < extent[1][1]);
+                            if (d.isSelected) {
+                                subjects[d.subjectId.value] = true;
+                                return '#14C9CC';
+                            } else {
+                                if (colorScale && colorAcc) {
+                                    return colorScale(colorAcc.getValue(d));
+                                }
+
+                                return '#000000';
                             }
+                        };
 
-                            return '#000000';
-                        }
-                    };
+                        strokeFn = function(d) {
+                            if (d.isSelected) {
+                                return '#00393A';
+                            } else {
+                                if (colorScale && colorAcc) {
+                                    return colorScale(colorAcc.getValue(d));
+                                }
 
-                    strokeFn = function(d) {
-                        if (d.isSelected) {
-                            return '#00393A';
-                        } else {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
+                                return '#000000';
                             }
+                        };
 
-                            return '#000000';
-                        }
-                    };
+                        opacityFn = function(d) {
+                            return d.isSelected ? 1 : .5;
+                        };
 
-                    opacityFn = function(d) {
-                        return d.isSelected ? 1 : .5;
-                    };
+                        sel.selectAll('.point path').attr('fill', colorFn)
+                                .attr('stroke', strokeFn)
+                                .attr('fill-opacity', opacityFn)
+                                .attr('stroke-opacity', opacityFn);
 
-                    sel.selectAll('.point path').attr('fill', colorFn)
-                            .attr('stroke', strokeFn)
-                            .attr('fill-opacity', opacityFn)
-                            .attr('stroke-opacity', opacityFn);
+                        assocColorFn = function(d) {
+                            if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                                return '#01BFC2';
+                            } else{
+                                return this.getAttribute('fill');
+                            }
+                        };
 
-                    assocColorFn = function(d) {
-                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                            return '#01BFC2';
-                        } else{
-                            return this.getAttribute('fill');
-                        }
-                    };
+                        assocStrokeFn = function(d) {
+                            if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                                return '#00EAFF';
+                            } else {
+                                return this.getAttribute('stroke');
+                            }
+                        };
 
-                    assocStrokeFn = function(d) {
-                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                            return '#00EAFF';
+                        assocOpacityFn = function(d) {
+                            if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                                return 1;
+                            } else {
+                                return this.getAttribute('fill-opacity');
+                            }
+                        };
+
+                        sel.selectAll('.point path').attr('fill', assocColorFn)
+                                .attr('stroke', assocStrokeFn)
+                                .attr('fill-opacity', assocOpacityFn)
+                                .attr('stroke-opacity', assocOpacityFn);
+                    },
+                    brushend: function(event, layerData, extent, plot, layerSelections) {
+                        var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
+                                plotMeasures = [null, null], xMeasure = null, yMeasure = null,
+                                sqlFilters = [null, null, null, null];
+
+                        if (measures.length > 1) {
+                            xMeasure = {measure: measures[0]};
+                            xMeasure.measure.colName = config.xaxis.colName;
+                            yMeasure = {measure: measures[1]};
+
                         } else {
-                            return this.getAttribute('stroke');
+                            yMeasure = {measure: measures[0]};
                         }
-                    };
+                        yMeasure.measure.colName = config.yaxis.colName;
 
-                    assocOpacityFn = function(d) {
-                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                            return 1;
-                        } else {
-                            return this.getAttribute('fill-opacity');
+                        plotMeasures = [xMeasure, yMeasure];
+
+                        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
+                            // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
+                            sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, Math.floor(xExtent[0]));
+                            sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, Math.ceil(xExtent[1]));
                         }
-                    };
 
-                    sel.selectAll('.point path').attr('fill', assocColorFn)
-                            .attr('stroke', assocStrokeFn)
-                            .attr('fill-opacity', assocOpacityFn)
-                            .attr('stroke-opacity', assocOpacityFn);
-                },
-                brushend: function(event, layerData, extent, plot, layerSelections) {
-                    var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
-                        plotMeasures = [null, null], xMeasure = null, yMeasure = null,
-                        sqlFilters = [null, null, null, null];
+                        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
+                            // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
+                            sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, Math.floor(yExtent[0]));
+                            sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, Math.ceil(yExtent[1]));
+                        }
 
-                    if (measures.length > 1) {
-                        xMeasure = {measure: measures[0]};
-                        xMeasure.measure.colName = config.xaxis.colName;
-                        yMeasure = {measure: measures[1]};
-
-                    } else {
-                        yMeasure = {measure: measures[0]};
+                        Connector.model.Filter.sqlToMdx({
+                            schemaName: config.schemaName,
+                            queryName: config.queryName,
+                            subjectColumn: config.subjectColumn,
+                            measures: plotMeasures,
+                            sqlFilters: sqlFilters,
+                            success: function(filterConfig){
+                                stateManager.addSelection([filterConfig], true, false, true);
+                            },
+                            scope: this
+                        });
+                    },
+                    brushclear : function() {
+                        layerScope.isBrushed = false;
+                        stateManager.clearSelections();
                     }
-                    yMeasure.measure.colName = config.yaxis.colName;
-
-                    plotMeasures = [xMeasure, yMeasure];
-
-                    if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
-                        // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
-                        sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, Math.floor(xExtent[0]));
-                        sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, Math.ceil(xExtent[1]));
-                    }
-
-                    if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
-                        // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
-                        sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, Math.floor(yExtent[0]));
-                        sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, Math.ceil(yExtent[1]));
-                    }
-
-                    Connector.model.Filter.sqlToMdx({
-                        schemaName: config.schemaName,
-                        queryName: config.queryName,
-                        subjectColumn: config.subjectColumn,
-                        measures: plotMeasures,
-                        sqlFilters: sqlFilters,
-                        success: function(filterConfig){
-                            stateManager.addSelection([filterConfig], true, false, true);
-                        },
-                        scope: this
-                    });
-                },
-                brushclear : function() {
-                    isBrushed = false;
-                    stateManager.clearSelections();
-                }
-            };
+                };
+            }
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
-        var plot = this.plot; // hoisted for mouseover/mouseout event listeners
+        layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
         var measures = this.measures; // hoisted for brushend.
         var stateManager = this.state; // hoisted for brushend and brushclear.
 
         if (this.plot) {
-            this.plot.addLayer(pointLayer);
+            this.plot.addLayer(layer);
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
@@ -616,17 +646,20 @@ Ext.define('Connector.view.Scatter', {
     },
 
     setScale : function(scale, axis, config) {
-        var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !config.setYLinear : !config.setXLinear;
+        // This function should likley be renamed, and refactored so it's less side-effecty.
+        if (scale.scaleType !== 'discrete') {
+            var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !config.setYLinear : !config.setXLinear;
 
-        if (!allowLog && axisValue == 'log') {
-            this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.');
-            axisValue = 'linear';
+            if (!allowLog && axisValue == 'log') {
+                this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.');
+                axisValue = 'linear';
+            }
+
+            Ext.apply(scale, {
+                trans : axisValue,
+                domain: [axisValue == 'log' ? 1 : null, null] // allow negative values in linear plots
+            });
         }
-
-        Ext.apply(scale, {
-            trans : axisValue,
-            domain: [axisValue == 'log' ? 1 : null, null] // allow negative values in linear plots
-        });
 
         return scale;
     },
@@ -658,8 +691,15 @@ Ext.define('Connector.view.Scatter', {
             for (var f=0; f < filters.length; f++) {
                 if (filters[f].get('isPlot') == true) {
                     var m = filters[f].get('plotMeasures');
-                    measures.x = m[0].measure;
-                    measures.y = m[1].measure;
+
+                    if (m.length > 1) {
+                        measures.x = m[0].measure;
+                        measures.y = m[1].measure;
+                    } else {
+                        measures.x = null;
+                        measures.y = m[0].measure;
+                    }
+
                     this.fromFilter = true;
                     break;
                 }
@@ -679,7 +719,7 @@ Ext.define('Connector.view.Scatter', {
         this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
         this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
 
-        if (this.filterClear || !activeMeasures.x || !activeMeasures.y) {
+        if (this.filterClear || !activeMeasures.y) {
             this.filterClear = false;
             this.noPlot();
             return;
@@ -691,10 +731,15 @@ Ext.define('Connector.view.Scatter', {
 
         var sorts = this.getSorts();
 
-        var wrappedMeasures = [
-            {measure : this.measures[0], time: 'visit'},
-            {measure : this.measures[1], time: 'visit'}
-        ];
+        var wrappedMeasures = [];
+
+        if (this.measures[0]) {
+            wrappedMeasures.push({measure : this.measures[0], time: 'visit'});
+        }
+
+        if (this.measures[1]) {
+            wrappedMeasures.push({measure : this.measures[1], time: 'visit'});
+        }
 
         if (!this.fromFilter) {
             this.updatePlotBasedFilter(wrappedMeasures);
@@ -751,14 +796,21 @@ Ext.define('Connector.view.Scatter', {
     requestCitations : function() {
         var measures = this.getActiveMeasures();
         var x = measures.x, y = measures.y;
+        var xy = [];
 
-        var xy = [{
-            s : x.schemaName,
-            q : x.queryName
-        },{
-            s : y.schemaName,
-            q : y.queryName
-        }];
+        if (x) {
+            xy.push({
+                s : x.schemaName,
+                q : x.queryName
+            });
+        }
+
+        if (y) {
+            xy.push({
+                s : y.schemaName,
+                q : y.queryName
+            });
+        }
 
         this.srcs = [];
         var me = this;
@@ -886,45 +938,80 @@ Ext.define('Connector.view.Scatter', {
         return !(number === undefined || isNaN(number) || number === null);
     },
 
+    isValidValue: function(measure, value) {
+        if (measure.type === 'INTEGER' || measure.type === 'DOUBLE') {
+            return this.isValidNumber(value);
+        } else {
+            return !(value === undefined || value === null);
+        }
+    },
+
+    _getValue : function(measure, colName, row) {
+        var val;
+
+        if (measure.type === 'INTEGER') {
+            val = parseInt(row[colName].value);
+            return this.isValidNumber(val) ? val : null;
+        } else if (measure.type === 'DOUBLE') {
+            val = parseFloat(row[colName].value);
+            return this.isValidNumber(val) ? val : null;
+        } else {
+            // Assume categorical.
+            val = row[colName].displayValue ? row[colName].displayValue : row[colName].value;
+            return (val !== undefined) ? val : null;
+        }
+    },
+
     _preprocessData : function(data) {
-        var x = this.measures[0], y = this.measures[1];
+        var x = this.measures[0], y = this.measures[1], xa = null, ya = null, _xid, _yid;
 
         // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
         // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
 
-//        var subjectNoun = LABKEY.moduleContext.study.subject.columnName;
-        var subjectNoun = 'SubjectId'; // TODO: this is hard-coded because the measureToColumn object is returning a
+        var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
                                        // different value for the subjectNoun than the moduleContext. This is an issue
                                        // with multi-study getDataAPI calls.
         var subjectCol = data.measureToColumn[subjectNoun];
-        var xa = {
-            schema : x.schemaName,
-            query  : x.queryName,
-            name   : x.name,
-            alias  : x.alias,
-            label  : x.label
-        };
 
-        var ya = {
+        if (x) {
+            _xid = data.measureToColumn[x.alias] || data.measureToColumn[x.name];
+            xa = {
+                schema : x.schemaName,
+                query  : x.queryName,
+                name   : x.name,
+                alias  : x.alias,
+                colName: _xid, // Stash colName so we can query the getData temp table in the brushend handler.
+                label  : x.label,
+                isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE'
+            };
+        } else {
+            xa = {
+                schema  : null,
+                query   : null,
+                name    : null,
+                alias   : null,
+                colName : null,
+                label   : "",
+                isNumeric: false
+            }
+        }
+
+        _yid = data.measureToColumn[y.alias] || data.measureToColumn[y.name];
+        ya = {
             schema : y.schemaName,
             query  : y.queryName,
             name   : y.name,
             alias  : y.alias,
-            label  : y.label
+            colName: _yid, // Stash colName so we can query the getData temp table in the brushend handler.
+            label  : y.label,
+            isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE'
         };
 
         var map = [], r,
-                _xid = data.measureToColumn[xa.alias] || data.measureToColumn[xa.name],
-                _yid = data.measureToColumn[ya.alias] || data.measureToColumn[ya.name],
                 rows = data.rows,
                 len = rows.length,
                 validCount = 0;
-
-        // We need the measure names as they appear in the temp query so we can create filters later. See the brushend
-        // handler on the plot for how they're used.
-        xa.colName = _xid;
-        ya.colName = _yid;
 
         if (len > this.rowlimit) {
             len = this.rowlimit;
@@ -934,38 +1021,46 @@ Ext.define('Connector.view.Scatter', {
             this.msg.hide();
         }
 
-        var xnum, ynum, negX = false, negY = false;
+        var xVal, yVal, xIsNum, yIsNum, negX = false, negY = false;
         for (r = 0; r < len; r++) {
-            if (rows[r][_xid] && rows[r][_yid]) {
-                x = parseFloat(rows[r][_xid].value, 10);
-                y = parseFloat(rows[r][_yid].value, 10);
+            if (x) {
+                xVal = this._getValue(x, _xid, rows[r]);
+            } else {
+                xVal = "";
+            }
+            yVal = this._getValue(y, _yid, rows[r]);
 
-                // allow any pair that does not contain a negative value.
-                // NaN, null, and undefined are non-negative values.
+            // allow any pair that does not contain a negative value.
+            // NaN, null, and undefined are non-negative values.
 
-                // validate x
-                xnum = !(Ext.isNumber(x) && x < 1);
-                if (!negX && !xnum) {
+            // validate x
+            if (xa && xa.isNumeric) {
+                xIsNum = !(Ext.isNumber(x) && x < 1);
+                if (!negX && !xIsNum) {
                     negX = true;
                 }
+            }
 
-                // validate y
-                ynum = !(Ext.isNumber(y) && y < 1);
-                if (!negY && !ynum) {
+            // validate y
+            if (ya.isNumeric) {
+                yIsNum = !(Ext.isNumber(y) && y < 1);
+                if (!negY && !yIsNum) {
                     negY = true;
                 }
+            }
 
+            if ((xa && xa.isNumeric) || (!xa.isNumeric && xVal !== undefined && xVal !== null)) {
                 map.push({
-                    x : x,
-                    y : y,
+                    x : xVal,
+                    y : yVal,
                     subjectId: rows[r][subjectCol],
-                    xname : xa.label,
+                    xname : xa ? xa.label : '',
                     yname : ya.label
                 });
+            }
 
-                if (this.isValidNumber(x) && this.isValidNumber(y)) {
-                    validCount ++;
-                }
+            if ((!x || this.isValidValue(x, xVal)) && this.isValidValue(y, yVal)) {
+                validCount ++;
             }
         }
 
@@ -1121,16 +1216,10 @@ Ext.define('Connector.view.Scatter', {
                         handler: function() {
                             var yselect = this.axisPanelY.getSelection();
                             YY = yselect;
-                            if (this.axisPanelX && this.axisPanelX.hasSelection() && this.axisPanelY.hasSelection()) {
+                            if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);
                                 this.ywin.hide(null, function() {
-                                    this.fireEvent('axisselect', this, 'y', yselect);
-                                }, this);
-                            }
-                            else if (this.axisPanelY.hasSelection()) {
-                                this.ywin.hide(null, function() {
-                                    this.showXMeasureSelection(Ext.getCmp('xaxisselector').getEl());
                                     this.fireEvent('axisselect', this, 'y', yselect);
                                 }, this);
                             }
@@ -1176,7 +1265,7 @@ Ext.define('Connector.view.Scatter', {
                 title     : 'X Axis',
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
-                    allColumns : this.allColumns,
+                    allColumns : true,
                     includeTimpointMeasures : true,
                     filter     : LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -1455,29 +1544,31 @@ Ext.define('Connector.view.Scatter', {
         // if we can help it, the sort should use the first non-demographic measure
         for (var i=0; i < this.measures.length; i++) {
             var item = this.measures[i];
-            if (!item.isDemographic) {
+            if (item && !item.isDemographic) {
                 firstMeasure = item;
                 break;
             }
         }
 
-        return [
-            {
-                name: Connector.studyContext.subjectColumn,
-                queryName: firstMeasure.queryName,
-                schemaName: firstMeasure.schemaName
-            },{
-                name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
-                queryName: firstMeasure.queryName,
-                schemaName: firstMeasure.schemaName
-            }
-        ];
+        if (firstMeasure) {
+            return [
+                {
+                    name: Connector.studyContext.subjectColumn,
+                    queryName: firstMeasure.queryName,
+                    schemaName: firstMeasure.schemaName
+                },{
+                    name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+                    queryName: firstMeasure.queryName,
+                    schemaName: firstMeasure.schemaName
+                }
+            ];
+        } else {
+            return [];
+        }
     },
 
     onPlotSelectionRemoved : function(filterId, measureIdx) {
-//        this.state.removeSelection(filterId);
         var curExtent = this.plot.getBrushExtent();
-
         if (curExtent) {
             if (curExtent[0][0] === null || curExtent[0][1] === null) {
                 // 1D, just clear the selection.
@@ -1493,7 +1584,5 @@ Ext.define('Connector.view.Scatter', {
                 }
             }
         }
-
-//        p.setBrushExtent([[null, null], [null, null]]);
     }
 });
