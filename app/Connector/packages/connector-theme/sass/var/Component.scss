@@ -10,7 +10,7 @@ $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 
 $interactive-color: #9B0D96;       // Interactive
-$link-color: #03ADB0;
+$link-color: #14C9CC;
 $info-color: #F5A73A;              // Info
 
 $black: #000000;
@@ -744,27 +744,6 @@ div.status-over {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
 }
 
-/* Logout Link */
-a {
-  color: $link-color;
-
-  &.logout {
-    color: $light-color;
-    text-decoration: none;
-  }
-
-  &.survey {
-    float: right;
-    vertical-align: middle;
-    text-decoration: none;
-  }
-
-  &.logout, &.survey {
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
 
 /* -- END Connector.view.Header */
 
@@ -1589,21 +1568,19 @@ a.cite-ref {
 a {
   color: $link-color;
 
+  text-decoration: none;
+
   &.logout {
     color: $light-color;
-    text-decoration: none;
   }
 
   &.survey {
     float: right;
     vertical-align: middle;
-    text-decoration: none;
   }
 
-  &.logout, &.survey {
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover, &:active {
+    text-decoration: underline;
   }
 }
 
