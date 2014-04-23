@@ -24,7 +24,7 @@ Ext.define('Connector.view.module.StudyAssays', {
                                 '&#10003',
                             '</tpl>',
                         '</div>',
-                        '<p><a href="#learn/learn/assay/{name}">{name}</a></p>',
+                        '<p><a href="#learn/learn/assay/{[encodeURIComponent(values.name)]}">{name}</a></p>',
                     '</div>',
                 '</tpl>',
             '</tpl>',

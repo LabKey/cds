@@ -138,17 +138,19 @@ Ext.define('Connector.view.Learn', {
 
         if (Ext.isDefined(dimension)) {
             var store;
-            if (id && dimension.detailItemView) {
+            if (id) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
                 var model = store.getById(id);
                 var self = this;
 
                 function modelLoaded(model) {
-                    self.dataView = Ext.create(dimension.detailItemView, {
-                        state: self.state,
-                        model: model,
-                        modules: dimension.detailItemModules
-                    });
+                    if (dimension.detailItemView) {
+                        self.dataView = Ext.create(dimension.detailItemView, {
+                            state: self.state,
+                            model: model,
+                            modules: dimension.detailItemModules
+                        });
+                    }
 
                     var learnDetailHeader = self.getLearnDetailHeader(id);
 
@@ -160,7 +162,6 @@ Ext.define('Connector.view.Learn', {
                 if (!model) {
                     store.on('load', function() {
                         modelLoaded(store.getById(id));
-                        //console.log(">>>",arguments);
                     }, this, {
                         single: true
                     });
