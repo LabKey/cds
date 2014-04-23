@@ -580,7 +580,27 @@ Ext.define('Connector.view.Scatter', {
                     brushend: function(event, layerData, extent, plot, layerSelections) {
                         var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
                                 plotMeasures = [null, null], xMeasure = null, yMeasure = null,
-                                sqlFilters = [null, null, null, null];
+                                sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
+
+                        var transformVal = function(val, type, isMin) {
+                            if (type === 'INTEGER') {
+                                return isMin ? Math.floor(val) : Math.ceil(val);
+                            } else {
+                                var precision;
+
+                                if (val >= 1000) {
+                                    precision = 0;
+                                } else if (val >= 100) {
+                                    precision = 1;
+                                } else if (val >= 10) {
+                                    precision = 2;
+                                } else {
+                                    precision = 3;
+                                }
+
+                                return parseFloat(val.toFixed(precision));
+                            }
+                        };
 
                         if (measures.length > 1) {
                             xMeasure = {measure: measures[0]};
@@ -595,15 +615,19 @@ Ext.define('Connector.view.Scatter', {
                         plotMeasures = [xMeasure, yMeasure];
 
                         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
-                            // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
-                            sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, Math.floor(xExtent[0]));
-                            sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, Math.ceil(xExtent[1]));
+                            xMin = transformVal(xExtent[0], xMeasure.measure.type, true);
+                            xMax = transformVal(xExtent[1], xMeasure.measure.type, false);
+
+                            sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, xMin);
+                            sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, xMax);
                         }
 
                         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
-                            // TODO: Look at measure metadata and use parseInt only if the measure is an integer column.
-                            sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, Math.floor(yExtent[0]));
-                            sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, Math.ceil(yExtent[1]));
+                            yMin = transformVal(yExtent[0], yMeasure.measure.type, true);
+                            yMax = transformVal(yExtent[1], yMeasure.measure.type, false);
+
+                            sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, yMin);
+                            sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, yMax);
                         }
 
                         Connector.model.Filter.sqlToMdx({
@@ -734,6 +758,18 @@ Ext.define('Connector.view.Scatter', {
 
         this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
         this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
+
+        if (this.filterClear) {
+            if (this.axisPanelY) {
+                this.axisPanelY.clearSelection();
+                Ext.getCmp('yaxisselector').clearModel();
+            }
+
+            if (this.axisPanelX) {
+                this.axisPanelX.clearSelection();
+                Ext.getCmp('xaxisselector').clearModel();
+            }
+        }
 
         if (this.filterClear || !activeMeasures.y) {
             this.filterClear = false;
@@ -1475,7 +1511,7 @@ Ext.define('Connector.view.Scatter', {
         // mark as clear when there are no plot filters
         this.filterClear = true;
         for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot()) {
+            if (filters[f].isPlot() && !filters[f].isGrid()) {
                 this.filterClear = false;
                 break;
             }

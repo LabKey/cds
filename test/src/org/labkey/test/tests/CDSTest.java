@@ -908,9 +908,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(HEMO_CD4_UNFILTERED);
 
-        // Clear the plot selection
-        clearFilter();
-
         // Test log scales
         yAxisButton.click();
         _ext4Helper.waitForMask();
@@ -968,7 +965,10 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
         }
 
+        // Test that variable selectors are reset when filters are cleared (Issue 20138).
         clearFilter();
+        waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
+        waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
     }
 
     @Test

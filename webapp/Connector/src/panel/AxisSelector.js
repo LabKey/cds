@@ -189,6 +189,10 @@ Ext.define('Connector.panel.AxisSelector', {
         this.getMeasurePicker().setSelectedRecord(measure);
     },
 
+    clearSelection : function() {
+        this.getMeasurePicker().clearSelection();
+    },
+
     onMeasureSelect : function(selModel, records) {
         if (selModel.multiSelect)
             this.updateDefinition(null, selModel.getLastSelected());
