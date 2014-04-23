@@ -759,6 +759,18 @@ Ext.define('Connector.view.Scatter', {
         this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
         this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
 
+        if (this.filterClear) {
+            if (this.axisPanelY) {
+                this.axisPanelY.clearSelection();
+                Ext.getCmp('yaxisselector').clearModel();
+            }
+
+            if (this.axisPanelX) {
+                this.axisPanelX.clearSelection();
+                Ext.getCmp('xaxisselector').clearModel();
+            }
+        }
+
         if (this.filterClear || !activeMeasures.y) {
             this.filterClear = false;
             this.noPlot();
@@ -1499,7 +1511,7 @@ Ext.define('Connector.view.Scatter', {
         // mark as clear when there are no plot filters
         this.filterClear = true;
         for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot()) {
+            if (filters[f].isPlot() && !filters[f].isGrid()) {
                 this.filterClear = false;
                 break;
             }

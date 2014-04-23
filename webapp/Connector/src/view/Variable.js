@@ -82,24 +82,30 @@ Ext.define('Connector.view.Variable', {
         this.model = variable;
         this.data = this.model.data;
 
-        this.model.on('updatevariable', function(m) {
-            //
-            // Determine what button should be shown based on label
-            //
-            var haveLabel = m.data['schemaLabel'] && m.data['schemaLabel'].length > 0;
-            var cv = this.getComponent('cvbutton');
-            var dd = this.getComponent('ddbutton');
-            if (haveLabel) {
-                cv.hide();
-                dd.show();
-            }
-            else {
-                cv.show();
-                dd.hide();
-            }
+        this.model.on('updatevariable', this.onUpdateVariable, this);
+    },
 
-            this.getComponent('modelcomponent').update(m.data);
-        }, this);
+    onUpdateVariable : function(m) {
+        //
+        // Determine what button should be shown based on label
+        //
+        var haveLabel = m.data['schemaLabel'] && m.data['schemaLabel'].length > 0;
+        var cv = this.getComponent('cvbutton');
+        var dd = this.getComponent('ddbutton');
+        if (haveLabel) {
+            cv.hide();
+            dd.show();
+        }
+        else {
+            cv.show();
+            dd.hide();
+        }
+
+        this.getComponent('modelcomponent').update(m.data);
+    },
+
+    clearModel : function() {
+        this.getModel().updateVariable();
     },
 
     onBtnClick : function() {
