@@ -10,6 +10,7 @@ $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 
 $interactive-color: #9B0D96;       // Interactive
+$link-color: #14C9CC;
 $info-color: #F5A73A;              // Info
 
 $black: #000000;
@@ -743,27 +744,6 @@ div.status-over {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
 }
 
-/* Logout Link */
-a {
-  color: $interactive-color;
-
-  &.logout {
-    color: $light-color;
-    text-decoration: none;
-  }
-
-  &.survey {
-    float: right;
-    vertical-align: middle;
-    text-decoration: none;
-  }
-
-  &.logout, &.survey {
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
 
 /* -- END Connector.view.Header */
 
@@ -1135,7 +1115,7 @@ div.detailcolumn {
   padding-top: 4px;
 
   a {
-    color: $select-color;
+    color: $link-color;
 
     &.nav:hover {
       color: $select-color;
@@ -1586,23 +1566,21 @@ a.cite-ref {
 }
 
 a {
-  color: $interactive-color;
+  color: $link-color;
+
+  text-decoration: none;
 
   &.logout {
     color: $light-color;
-    text-decoration: none;
   }
 
   &.survey {
     float: right;
     vertical-align: middle;
-    text-decoration: none;
   }
 
-  &.logout, &.survey {
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover, &:active {
+    text-decoration: underline;
   }
 }
 
@@ -1710,12 +1688,32 @@ div.learnview {
 
   .module {
     padding-bottom: 20px;
+  }
+}
 
-    p {
-      color: #231F20;
+.module {
+  p {
+    color: #231F20;
+
+    &.loading-data {
+      color: $unselect-black;
     }
   }
 
+  .disabled {
+    color: $unselect-black;
+  }
+
+  .checkbox {
+    color: $unselect-black;
+    width: 11px;
+    min-height: 10px;
+    float: left;
+  }
+
+  .item-row {
+    padding: 2px 0px;
+  }
 }
 
 .modulecontainer {

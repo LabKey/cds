@@ -7,12 +7,23 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     extend : 'Ext.data.Model',
 
+    idProperty: 'Label',
+
     fields: [
         {name: 'Label'},
         {name: 'Type'},
         {name: 'Class', mapping: 'class'},
         {name: 'Subclass', mapping: 'subclass'},
         {name: 'Developer', mapping: 'developer'},
-        {name: 'Description', mapping: 'description'}
+
+        // TEMP:
+        {name: 'Description', mapping: 'description', defaultValue: "Placeholder description."},
+
+        {name: 'Contact', defaultValue: {
+            Name: 'Uknown Person',
+//            Portrait: 'http://doctor.png',
+            Role: 'Program Manager',
+            Team: 'HVTN concept development team'
+        }},
     ]
 });

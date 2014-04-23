@@ -12,7 +12,7 @@ Ext.define('Connector.app.view.module.StudySites', {
 	tpl : new Ext.XTemplate(
         '<tpl>',
 			Connector.constant.Templates.module.title,
-			'<tpl if="model.get(\'Sites\')">',
+			'<tpl if="model.get(\'SiteLocations\')">',
 				'<div class="learn-map-container"></div>',
 			'</tpl>',
 			'<tpl if="model.get(\'SitesSummary\')">',
@@ -38,7 +38,7 @@ Ext.define('Connector.app.view.module.StudySites', {
 	        var map = new google.maps.Map(div,
 	            mapOptions);
 
-	        var sites = this.initialConfig.data.model.get('Sites');
+	        var sites = this.initialConfig.data.model.get('SiteLocations');
 	        if (sites) {
 	        	var bounds = new google.maps.LatLngBounds();
 	        	sites = sites.split(';');

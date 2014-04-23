@@ -22,7 +22,7 @@ Ext.define('Connector.view.Learn', {
         // Multiple headers are added here but they are initially set to hidden. When the page
         // url changes the headers will be updated and made visible based on the type of view -
         // parent learn view or study/assay detail page etc
-        this.items = [this.getHeader(), this.getStudyDetailHeader()];
+        this.items = [this.getHeader(), this.getLearnDetailHeader()];
 
         this.callParent();
     },
@@ -47,9 +47,9 @@ Ext.define('Connector.view.Learn', {
         return this.headerViews.main;
     },
 
-    getStudyDetailHeader : function(id) {
-        if (!this.headerViews.studyDetail) {
-            this.headerViews.studyDetail = Ext.create('Connector.view.LearnItemHeader', {
+    getLearnDetailHeader : function(id) {
+        if (!this.headerViews.learnDetail) {
+            this.headerViews.learnDetail = Ext.create('Connector.view.LearnItemHeader', {
                 dimensions: this.getDimensions(),
 
                 hidden: true,
@@ -64,26 +64,26 @@ Ext.define('Connector.view.Learn', {
                 }
             });
         }
-        //this.headerViews.studyDetail.setId(id);
+        //this.headerViews.learnDetail.setId(id);
 
-        return this.headerViews.studyDetail;
+        return this.headerViews.learnDetail;
     },
 
     onFilterChange : function(filters) {
-        this.loadData(this.dataView);
+        this.loadData(this.dataView.dimension, this.dataView.getStore());
     },
 
-    loadData : function(view) {
+    loadData : function(dimension, store) {
 
-        if (view && view.dimension) {
+        if (dimension) {
             this.state.onMDXReady(function(mdx) {
-                var hierarchy = view.dimension.getHierarchies()[0];
+                var hierarchy = dimension.getHierarchies()[0];
                 var config = {
                     onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
                     useNamedFilters: ['statefilter'],
                     success: function(slice) {
-                        if (view && view.getStore())
-                            view.getStore().loadSlice(slice);
+                        if (store)
+                            store.loadSlice(slice);
                     },
                     scope: this
                 };
@@ -95,14 +95,14 @@ Ext.define('Connector.view.Learn', {
 
     setHeader : function(dimension, id) {
         var listHeader = this.getHeader();
-        var studyDetailHeader = this.getStudyDetailHeader(id);
+        var learnDetailHeader = this.getLearnDetailHeader(id);
         if (id) {
             listHeader.setVisible(false);
-            studyDetailHeader.setDetailType(dimension.name);
-            studyDetailHeader.setVisible(true);
+            learnDetailHeader.setDetailType(dimension.singularName);
+            learnDetailHeader.setVisible(true);
         } else {
             listHeader.setVisible(true);
-            studyDetailHeader.setVisible(false);
+            learnDetailHeader.setVisible(false);
         }
     },
 
@@ -141,17 +141,32 @@ Ext.define('Connector.view.Learn', {
             if (id && dimension.detailItemView) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
                 var model = store.getById(id);
+                var self = this;
 
-                this.dataView = Ext.create(dimension.detailItemView, {
-                    store: store,
-                    model: model,
-                    modules: dimension.detailItemModules
-                });
+                function modelLoaded(model) {
+                    self.dataView = Ext.create(dimension.detailItemView, {
+                        state: self.state,
+                        model: model,
+                        modules: dimension.detailItemModules
+                    });
 
-                if (model) {
-                    var studyDetailHeader = this.getStudyDetailHeader(id);
+                    var learnDetailHeader = self.getLearnDetailHeader(id);
 
-                    studyDetailHeader.setModel(model);
+                    learnDetailHeader.setModel(model);
+
+                    self.add(self.dataView);
+                }
+
+                if (!model) {
+                    store.on('load', function() {
+                        modelLoaded(store.getById(id));
+                        //console.log(">>>",arguments);
+                    }, this, {
+                        single: true
+                    });
+                    this.loadData(dimension, store);
+                } else {
+                    modelLoaded(model);
                 }
             }
             else if (dimension.detailModel && dimension.detailView) {
@@ -167,11 +182,9 @@ Ext.define('Connector.view.Learn', {
                     this.fireEvent('selectitem', model);
                 }, this);
 
+                this.add(this.dataView);
+                this.loadData(dimension, this.dataView.getStore());
             }
-            this.add(this.dataView);
-
-            // TODO: Are these both needed for item view?
-            this.loadData(this.dataView);
 
             this.state.on('filterchange', this.onFilterChange, this);
         }
@@ -626,12 +639,14 @@ Ext.define('Connector.view.Learn.plugin.HeaderLock', {
         // unregister
         var EM = Ext.EventManager;
         EM.un(window, 'resize', this.onResize, this);
-        EM.un(this.elements.view, 'scroll', this.onScroll, this);
+        if (this.elements) {
+            EM.un(this.elements.view, 'scroll', this.onScroll, this);
 
-        // clear
-        this.elements.lock = null;
-        this.elements.header = null;
-        this.elements.view = null;
+            // clear
+            this.elements.lock = null;
+            this.elements.header = null;
+            this.elements.view = null;
+        }
     },
 
     update : function() {
