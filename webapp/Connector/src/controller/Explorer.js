@@ -158,6 +158,8 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     parseContext : function(urlContext) {
+        urlContext = this.callParent(arguments);
+
         var context = {
             dimension: urlContext.length > 0 ? urlContext[0] : 'Study' // make the default the first hierarchy listed
         };
