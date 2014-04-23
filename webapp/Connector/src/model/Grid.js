@@ -2,7 +2,11 @@ Ext.define('Connector.model.Grid', {
     extend: 'Ext.data.Model',
 
     fields: [
-        {name: 'columnSet', defaultValue: []},
+        {name: 'columnSet', defaultValue: [
+            'SubjectID', // Connector.studyContext.subjectColumn
+            'Study',
+            'StartDate'
+        ]},
 
         /**
          * columns not reachable via getData API but joined in via the grid API.
@@ -14,8 +18,14 @@ Ext.define('Connector.model.Grid', {
         {name: 'filterArray', defaultValue: []},
 
         {name: 'measures', defaultValue: []},
+        {name: 'measuresMap', defaultValue: {}},
+
         {name: 'metadata', defaultValue: undefined},
         {name: 'wrappedMeasures', defaultValue: []},
+        {name: 'schemaName', defaultValue: 'study'},
+        {name: 'queryName', defaultValue: 'Demographics'},
+        {name: 'sortSchemaName', defaultValue: 'study'},
+        {name: 'sortQueryName', defaultValue: 'Demographics'},
         {name: 'sorts', defaultValue: []}
     ],
 
@@ -37,38 +47,36 @@ Ext.define('Connector.model.Grid', {
         },
         getMetaData : function(gridModel, config) {
 
-            var wrapped = gridModel.getWrappedMeasures();
+            var measures = gridModel.getWrappedMeasures();
             var sorts = gridModel.getSorts();
 
-            if (wrapped.length > 0 && sorts.length > 0) {
-                Ext.Ajax.request({
-                    url     : LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-                    method  : 'POST',
-                    jsonData: {
-                        measures: gridModel.getWrappedMeasures(),
-                        sorts: gridModel.getSorts(),
-                        metaDataOnly: true
-                    },
-                    success : function(response) {
-
-                        var metadata = Ext.decode(response.responseText);
+            if (measures.length > 0 && sorts.length > 0)
+            {
+                LABKEY.Visualization.getData({
+                    measures: measures,
+                    sorts: sorts,
+                    success: function(metadata)
+                    {
+//                        var metadata = Ext.decode(response.responseText);
                         gridModel.set('metadata', metadata);
 
-                        if (Ext.isFunction(config.onSuccess)) {
+                        if (Ext.isFunction(config.onSuccess))
+                        {
                             config.onSuccess.call(config.scope, gridModel, metadata);
                         }
                     },
-                    failure : config.onFailure,
-                    scope   : config.scope
+                    failure: config.onFailure,
+                    scope: config.scope
                 });
             }
-            else {
+            else
+            {
                 console.warn('0 length measures or sorts');
             }
         },
         getColumnList : function(gridModel) {
             var measures = gridModel.getMeasures();
-            var metadata = gridModel.get('metadata');
+            var metadata = gridModel.getMetadata();
 
             var colMeasure = {};
             Ext.each(measures, function(measure) {
@@ -93,30 +101,43 @@ Ext.define('Connector.model.Grid', {
         },
         addLookupColumns : function(gridModel, keyColumn, columns) {
             var foreignColumns = gridModel.get('foreignColumns');
+
             if (!foreignColumns[keyColumn.fieldKeyPath]) {
                 return;
             }
 
-            var names = foreignColumns[keyColumn.name], fieldKeyPath;
-            Ext.each(names, function(column) {
-                fieldKeyPath = column.get("fieldKeyPath");
-                columns.push(fieldKeyPath);
-
-                // Recurse since fk's lookup to more fk's
-                if (foreignColumns[fieldKeyPath]) {
-                    Connector.model.Grid.addLookupColumns(column.raw, columns);
-                }
+            var names = foreignColumns[keyColumn.name];
+            Ext.iterate(names, function(column, val) {
+                columns.push(keyColumn.name + '/' + val.fieldKeyPath);
             });
         }
     },
 
     constructor : function(config) {
+
         this.callParent([config]);
+
+        var columns = this.getColumnSet();
+        var schema = this.get('schemaName');
+        var query = this.get('queryName');
+
+        var measures = [];
+        Ext.each(columns, function(columnName) {
+            measures.push({
+                data: {
+                    schemaName: schema,
+                    queryName: query,
+                    name: columnName
+                }
+            });
+        });
+
+        this.changeMeasures(measures, [], [], true);
 
         this.addEvents('measurechange');
     },
 
-    changeMeasures : function(selectedMeasures, allMeasures) {
+    changeMeasures : function(selectedMeasures, allMeasures, foreignColumns, silent) {
 
         var measureSet = [], sourceMeasure,
                 item,
@@ -159,23 +180,47 @@ Ext.define('Connector.model.Grid', {
         // set the raw measures
         this.set('measures', measureSet);
 
+        // set the measures map
+        var measureMap = {};
+        Ext.each(measureSet, function(measure) {
+            if (Ext.isDefined(measure.alias))
+            {
+                measureMap[measure.alias] = measure;
+            }
+        });
+
         // set the wrapped measures
         this.set('wrappedMeasures', wrapped);
+
+        // set the foreign columns
+        this.set('foreignColumns', foreignColumns);
 
         // update sorts
         this._updateSorts(measureSet);
 
-        this.fireEvent('measurechange', this, this.getMeasures());
+        if (silent !== true)
+        {
+            this.fireEvent('measurechange', this, this.getMeasures());
+        }
     },
 
-    changeFilterArray : function(filterArray) {
+    changeSubjectFilter : function(filter) {
+        this.set('subjectFilter', filter);
+        this.changeFilterArray(this.getFilterArray().slice(1), true);
+    },
+
+    changeFilterArray : function(filterArray, silent) {
 
         // include the subject filter
         var newFilterArray = [this.get('subjectFilter')];
         newFilterArray = newFilterArray.concat(Ext.clone(filterArray));
 
         this.set('filterArray', newFilterArray);
-        this.fireEvent('filterarraychange', newFilterArray);
+
+        if (silent !== true)
+        {
+            this.fireEvent('filterarraychange', newFilterArray);
+        }
     },
 
     getColumnSet : function() {
@@ -190,8 +235,40 @@ Ext.define('Connector.model.Grid', {
         return this.get('measures');
     },
 
-    getSorts : function() {
-        return this.get('sorts');
+    getMetadata : function() {
+        return this.get('metadata');
+    },
+
+    getSorts : function()
+    {
+        var measures = this.getMeasures();
+        var targetMeasure;
+
+        for (var m=0; m < measures.length; m++)
+        {
+            if (!measures[m].isDemographic)
+            {
+                targetMeasure = measures[m];
+                break;
+            }
+        }
+
+        var schema = targetMeasure.schemaName;
+        var query = targetMeasure.queryName;
+
+        return [{
+            schemaName: schema,
+            queryName: query,
+            name: Connector.studyContext.subjectColumn
+        },{
+            schemaName: schema,
+            queryName: query,
+            name: 'Study' // it is currently hidden by default in the server configuration
+        },{
+            schemaName: schema,
+            queryName: query,
+            name: Connector.studyContext.subjectVisitColumn + '/VisitDate'
+        }];
     },
 
     getWrappedMeasures : function() {
@@ -200,34 +277,34 @@ Ext.define('Connector.model.Grid', {
 
     _updateSorts : function(newMeasures) {
 
-        var first = newMeasures[0];
-
-        // if we can help it, the sort should use the first non-demographic measure
-        for (var i=0; i < newMeasures.length; i++) {
-            if (!newMeasures[i].isDemographic) {
-                first = newMeasures[i];
-                break;
-            }
-        }
-
-        if (!first) {
-            return [];
-        }
-
-        var sorts = [{
-            schemaName: first.schemaName,
-            queryName: first.queryName,
-            name: Connector.studyContext.subjectColumn
-        },{
-            schemaName: first.schemaName,
-            queryName: first.queryName,
-            name: 'Study' // it is currently hidden by default in the server configuration
-        },{
-            schemaName: first.schemaName,
-            queryName: first.queryName,
-            name: Connector.studyContext.subjectVisitColumn + '/VisitDate'
-        }];
-
-        this.set('sorts', sorts);
+//        var first = newMeasures[0];
+//
+//        // if we can help it, the sort should use the first non-demographic measure
+//        for (var i=0; i < newMeasures.length; i++) {
+//            if (!newMeasures[i].isDemographic) {
+//                first = newMeasures[i];
+//                break;
+//            }
+//        }
+//
+//        if (!first) {
+//            return [];
+//        }
+//
+//        var sorts = [{
+//            schemaName: first.schemaName,
+//            queryName: first.queryName,
+//            name: Connector.studyContext.subjectColumn
+//        },{
+//            schemaName: first.schemaName,
+//            queryName: first.queryName,
+//            name: 'Study' // it is currently hidden by default in the server configuration
+//        },{
+//            schemaName: first.schemaName,
+//            queryName: first.queryName,
+//            name: Connector.studyContext.subjectVisitColumn + '/VisitDate'
+//        }];
+//
+//        this.set('sorts', sorts);
     }
 });

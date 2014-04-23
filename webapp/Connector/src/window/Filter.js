@@ -152,94 +152,12 @@ Ext.define('Connector.window.Filter', {
             queryName: query
         });
 
-        if (null != this.boundColumn.lookup) {
-            items.push({
-                xtype   : 'grid',
-                selType : 'checkboxmodel',
-                title   : 'Show Detail Columns',
-                selModel: { mode:'MULTI' },
-                store   : this.getLookupColumnStore(),
-                ui      : 'custom',
-                cls     : 'lookupcols',
-                columns : [{
-                    header    : 'Detail Columns',
-                    dataIndex : 'shortCaption',
-                    width     : 320
-                }],
-                height  : 200,
-                width   : 320,
-                style   : 'padding-bottom:10px',
-                hideHeaders : true,
-                listeners : {
-                    viewready : function() {
-                        var selectedCols = this.dataView.getModel().get('foreignColumns')[this.boundColumn.name];
-                        if (!selectedCols || selectedCols.length == 0) {
-                            return;
-                        }
-
-                        this.getLookupGrid().getSelectionModel().select(selectedCols);
-                    },
-                    scope:this
-                }
-            });
-        }
-
         return items;
-    },
-
-    getLookupGrid : function () {
-        return this.down('grid');
-    },
-
-    getLookupColumnStore : function () {
-        if (!this.boundColumn.lookup) {
-            return null;
-        }
-
-        var storeId = "fkColumns-" + this.boundColumn.lookup.schemaName + "-" + this.boundColumn.lookup.queryName + "-" + this.boundColumn.fieldKey;
-        var store = Ext.getStore(storeId);
-        if (null != store) {
-            return store;
-        }
-
-        var url = LABKEY.ActionURL.buildURL("query", "getQueryDetails", null, {
-            queryName  : this.store.queryName,
-            schemaName : this.store.schemaName,
-            fk         : this.boundColumn.fieldKey
-        });
-
-        var displayColFieldKey = this.boundColumn.fieldKey + "/" + this.boundColumn.lookup.displayColumn;
-        return Ext.create('Ext.data.Store', {
-            model   : 'Connector.model.ColumnInfo',
-            storeId : storeId,
-            proxy   : {
-                type   : 'ajax',
-                url    : url,
-                reader : {
-                    type:'json',
-                    root:'columns'
-                }
-            },
-            filterOnLoad: true,   //Don't allow user to select hidden cols or the display column (because it is already being displayed)
-            filters: [function(item) {return !item.raw.isHidden && item.raw.name != displayColFieldKey;}],
-            autoLoad:true
-        });
     },
 
     applyColumns : function () {
 
         var changed = false, newColumns = [], oldColumns = [];
-
-        if (this.boundColumn.lookup) {
-            var lookupGrid = this.getLookupGrid(),
-                    selections = lookupGrid.getSelectionModel().selected;
-
-            oldColumns = this.dataView.getModel().get('foreignColumns')[this.boundColumn.name];
-
-            selections.each(function(item) { newColumns.push(item); });
-
-            changed = !this.equalColumnLists(oldColumns, newColumns);
-        }
 
         return {
             columnSetChange: changed,
