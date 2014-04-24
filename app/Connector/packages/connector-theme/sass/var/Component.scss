@@ -1118,7 +1118,6 @@ div.detailcolumn {
     &.nav:hover {
       color: $select-color;
       cursor: pointer;
-      text-decoration: underline;
     }
   }
 }
@@ -1323,10 +1322,11 @@ div.emptytext {
 
 .x-column-header-trigger {
   border-left: 1px solid $primary-color;
-}
+  background-color: $heat-scale-4;
 
-.x-column-header-trigger:hover {
-  background-color: #F4F4F4 !important;
+  &:hover {
+    background-color: #F4F4F4 !important;
+  }
 }
 
 div.filterheader {
@@ -1337,6 +1337,61 @@ div.filterheader {
   background-color: transparent;
   border-bottom: none;
 }
+
+/* Connector.grid.Panel */
+.connector-grid {
+
+  .filtered-column {
+
+    .x-column-header-trigger {
+      background-color: $heat-scale-4 !important;
+    }
+
+  }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header-inner {
+    height: 45px;
+  }
+
+  .x-column-header-align-center {
+    text-align: left;
+    color: $light-color;
+    background-color: $heat-scale-1;
+
+    /* Column group headers do not show trigger */
+    .x-column-header-trigger {
+      display: none;
+    }
+
+    .x-group-sub-header {
+
+      background-color: $heat-scale-4;
+
+      .x-column-header-trigger {
+        display: block;
+      }
+
+      .x-column-header-inner {
+        position: relative;
+      }
+
+      .x-column-header-text {
+        white-space: normal;
+        position: absolute;
+        left: 4px;
+        bottom: 4px;
+        margin: 0;
+        text-align: justify;
+      }
+    }
+  }
+}
+/* -- END Connector.grid.Panel */
 
 /* Measure Picker */
 .sourcepanel, .measurepanel {

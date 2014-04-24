@@ -1267,7 +1267,6 @@ Ext.define('Connector.view.Scatter', {
                         ui: 'rounded-inverted-accent',
                         handler: function() {
                             var yselect = this.axisPanelY.getSelection();
-                            YY = yselect;
                             if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);

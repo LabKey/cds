@@ -503,7 +503,10 @@ Ext.define('Connector.view.Grid', {
 
             // remove all filter classes
             Ext.each(columns, function(column) {
-                column.getEl().removeCls('filtered-column');
+                if (Ext.isDefined(column.getEl()))
+                {
+                    column.getEl().removeCls('filtered-column');
+                }
             }, this);
 
             var filterFieldMap = {}, colMeta;

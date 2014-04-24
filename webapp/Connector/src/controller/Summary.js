@@ -15,10 +15,6 @@ Ext.define('Connector.controller.Summary', {
 
         this.selected = {};
 
-        this.control('summary', {
-            afterrender: function(v) { v.refresh(); }
-        });
-
         this.control('summarydataview', {
             itemclick: this.onSummarySelect
         });
@@ -110,26 +106,13 @@ Ext.define('Connector.controller.Summary', {
 
         var v = Ext.create(type, c);
 
-        v.store.on('mdxerror', v.showMessage, v);
-        v.store.on('beforeload', function(s) {
-            this.displayLoad();
-        }, v);
-        v.store.on('load', function(s) {
-            this.removeLoad();
-        }, v);
-
         this.getStateManager().on('filterchange', v.onFilterChange, v);
+        this.getViewManager().on('afterchangeview', v.onViewChange, v);
+
         return v;
     },
 
-    updateView : function(xtype, context) {
-        if (xtype == 'summary') {
-            var v = this.getViewManager().getViewInstance('summary');
-            if (v && v.refreshRequired) {
-                v.refresh();
-            }
-        }
-    },
+    updateView : function(xtype, context) { },
 
     getDefaultView : function() {
         return 'summary';
