@@ -61,6 +61,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String PROJECT_NAME = "CDSTest Project";
     private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
+    private static final String[] ASSAYS = new String[]{"ADCC-Ferrari", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey"};
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " +LABS[1]+ " and " + LABS[2];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
@@ -833,7 +834,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         viewLearnAboutPage("Assays");
 
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
+        List<String> assays = Arrays.asList(ASSAYS);
         verifyLearnAboutPage(assays);
     }
 
@@ -1103,6 +1104,59 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
         verifyParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
         verifyParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
+    }
+
+    @Test
+    public void testXAxisVariableSelectorDefinitionPanel()
+    {
+        makeNavigationSelection(NavigationLink.PLOT);
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+
+        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+
+        assertElementNotPresent(definitionPanel.notHidden());
+
+        xaxis.pickSource("ADCC");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: ADCC")
+                .containing("Contains up to one row of ADCC data for each Participant/visit/TARGET_CELL_PREP_ISOLATE combination."));
+
+        xaxis.pickMeasure("ADCC", "ACTIVITY PCT");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: ACTIVITY PCT")
+                .containing("Percent activity observed"));
+
+        click(Locators.cdsButtonLocator("go to assay page"));
+
+        verifyLearnAboutPage(Arrays.asList(ASSAYS));
+    }
+
+    @Test
+    public void testYAxisVariableSelectorDefinitionPanel()
+    {
+        makeNavigationSelection(NavigationLink.PLOT);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
+
+        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+
+        assertElementNotPresent(definitionPanel.notHidden());
+
+        yaxis.pickSource("MRNA");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: MRNA")
+                .containing("Contains up to one row of MRNA data for each Participant/visit combination."));
+
+        yaxis.pickMeasure("MRNA", "CCL5");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: CCL5")
+                .containing("Expression levels for CCL5"));
+
+        click(Locators.cdsButtonLocator("go to assay page"));
+        verifyLearnAboutPage(Arrays.asList(ASSAYS));
     }
 
     private void verifyAssayInfo(AssayDetailsPage assay)
