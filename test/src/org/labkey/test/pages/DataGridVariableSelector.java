@@ -61,4 +61,16 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             _test.click(CDSTest.Locators.cdsButtonLocator("select"));
         }
     }
+
+    @Override
+    public void setScale(Scale scale)
+    {
+        throw new UnsupportedOperationException("Grid does not have a scale");
+    }
+
+    @Override
+    public void confirmSelection()
+    {
+        _test.click(CDSTest.Locators.cdsButtonLocator("select"));
+    }
 }

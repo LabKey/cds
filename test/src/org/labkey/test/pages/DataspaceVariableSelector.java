@@ -67,4 +67,14 @@ public abstract class DataspaceVariableSelector
     {
         pickMeasure(source, measure, false, false);
     }
+
+    public abstract void setScale(Scale scale);
+
+    public abstract void confirmSelection();
+
+    public static enum Scale
+    {
+        Log,
+        Linear
+    }
 }

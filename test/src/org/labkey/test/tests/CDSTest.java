@@ -887,42 +887,33 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Lab Results", "CD4");
-        click(Locators.cdsButtonLocator("set x axis"));
+        xaxis.confirmSelection();
         waitForElement(Locator.css(".curseltitle").containing("Y AXIS"));
         yaxis.pickMeasure("Lab Results", "Lymphocytes");
-        click(Locators.cdsButtonLocator("set y axis"));
+        yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
 
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(Locators.cdsDropDownButtonLocator("xaxisbtn").toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(Locators.cdsDropDownButtonLocator("yaxisbtn").toBy()));
-
-        yAxisButton.click();
-        _ext4Helper.waitForMask();
+        yaxis.openSelectorWindow();
         yaxis.pickMeasure("Lab Results", "CD4");
-        click(Locators.cdsButtonLocator("set y axis"));
+        yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        xAxisButton.click();
-        _ext4Helper.waitForMask();
+        xaxis.openSelectorWindow();
         xaxis.pickMeasure("Lab Results", "Hemoglobin");
-        click(Locators.cdsButtonLocator("set x axis"));
+        xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(HEMO_CD4_UNFILTERED);
 
         // Test log scales
-        yAxisButton.click();
-        _ext4Helper.waitForMask();
+        yaxis.openSelectorWindow();
         yaxis.pickMeasure("Physical Exam", "Weight Kg");
-        // set Y to log scale
-        click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(Locators.cdsButtonLocator("set y axis"));
+        yaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        yaxis.confirmSelection();
         waitForText("Points outside the plotting area have no match");
-        xAxisButton.click();
-        _ext4Helper.waitForMask();
+        xaxis.openSelectorWindow();
         xaxis.pickMeasure("Physical Exam", "Pulse");
-        // set X to log scale
-        click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(Locators.cdsButtonLocator("set x axis"));
+        xaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        xaxis.confirmSelection();
         assertSVG(WT_PLSE_LOG);
 
         Actions builder = new Actions(getDriver());
