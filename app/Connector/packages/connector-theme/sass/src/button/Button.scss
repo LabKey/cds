@@ -1,3 +1,10 @@
+/* General button*/
+a.x-btn {
+  &:hover, &:active {
+    text-decoration: none;
+  }
+}
+
 /* Connector.button.RoundedButton */
 @include extjs-button-ui (
   $ui: 'rounded-small',

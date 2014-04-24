@@ -7,5 +7,20 @@ Ext.define('Connector.view.module.BaseModule', {
 
 	cls: 'module',
 	
-	extend : 'Ext.Component'
+	extend : 'Ext.Component',
+
+	// Override this to add custom logic to determine whether this module has enough content to
+	// be shown. If hasContent returns false, it won't be added to its container view.
+	hasContent : function() {
+		return true;
+	},
+
+	initComponent : function() {
+
+		if (!this.hasContent()) {
+			this.hidden = true;
+		}
+		
+		this.callParent();
+	}
 });

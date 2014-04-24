@@ -10,6 +10,8 @@ Ext.define('Connector.grid.Panel', {
      */
     sealedColumns: true,
 
+    cls: 'connector-grid',
+
     config: {
         defaultFieldWidth: 200,
         editable: true,

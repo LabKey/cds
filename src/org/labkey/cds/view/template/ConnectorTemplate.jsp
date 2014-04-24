@@ -85,10 +85,6 @@
         }
 
         /* Ext.Grid */
-        .x-column-header-trigger {
-            background-color: #E6E1E1;
-        }
-
         .closeitem {
             background: url(<%=text(appPath)%>/images/close.png);
             background-size: 8px 8px;
@@ -119,58 +115,21 @@
             background-image: url(<%=text(appPath)%>/images/dropdown_hover.svg);
         }
 
-        .x-column-header-trigger {
-            display: inline-block;
+        /* Connector.grid.Panel */
+        .connector-grid .x-column-header-trigger {
             background-image: url(<%=text(appPath)%>/images/filter.svg);
             background-position: 0px 28px;
-            border-left: 1px solid transparent;
         }
 
-        .x-column-header-trigger:hover {
+        .connector-grid .x-column-header-trigger:hover {
             background-color: #E6E1E1 !important;
             background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
             background-position: 0px 28px;
         }
 
-        .filtered-column .x-column-header-trigger {
-            background-color: #E6E1E1 !important;
+        .connector-grid .filtered-column .x-column-header-trigger {
             background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
             background-position: 0px 28px;
-        }
-
-        .x-column-header-inner {
-            height: 45px;
-        }
-
-        .x-column-header-align-center {
-            text-align: left;
-            color: #FFFFFF;
-            background-color: #666363;
-        }
-
-        .x-column-header-align-center .x-column-header-trigger {
-            display: none;
-        }
-
-        .x-group-sub-header {
-            background-color: #E6E1E1;
-        }
-
-        .x-column-header-align-center .x-group-sub-header .x-column-header-trigger {
-            display: block;
-        }
-
-        .x-group-sub-header .x-column-header-inner {
-            position: relative;
-        }
-
-        .x-group-sub-header .x-column-header-text {
-            white-space: normal;
-            position: absolute;
-            left: 4px;
-            bottom: 4px;
-            margin: 0;
-            text-align: justify;
         }
     </style>
 
@@ -387,6 +346,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyLabsAndClinicalData.js"></script>
