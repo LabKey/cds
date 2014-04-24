@@ -306,7 +306,7 @@ Ext.define('Connector.view.LearnItemHeader', {
                     xtype: 'button',
                     ui: 'rounded-inverted-accent',
                     text: 'all vaccinees',
-                    itemId: 'studyAllVaccine',
+                    itemId: 'studyAllVaccinees',
                     hidden: true,
                     // TODO: Move to button class?
                     style: 'margin: 4px 2px 0 2px;'
@@ -344,7 +344,7 @@ Ext.define('Connector.view.LearnItemHeader', {
     controlFilters : {
         studyAllSubjects: 'Study',
         studyAllPlacebo: 'Study',
-        studyAllVaccine: 'Study',
+        studyAllVaccinees: ['Study','Study product'],
         assaySubjects: 'Assay'
     },
 

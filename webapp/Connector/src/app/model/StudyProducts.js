@@ -11,19 +11,21 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     fields: [
         {name: 'Label'},
+        {name: 'Role'},
         {name: 'Type'},
-        {name: 'Class', mapping: 'class'},
-        {name: 'Subclass', mapping: 'subclass'},
-        {name: 'Developer', mapping: 'developer'},
-
-        // TEMP:
-        {name: 'Description', mapping: 'description', defaultValue: "Placeholder description."},
-
+        {name: 'Developer'},
+        {name: 'Class'},
+        {name: 'Subclass'},
+        {name: 'Production'},
+        {name: 'Inserts'},
+        {name: 'ToxicityStudies'},
+        {name: 'PreviousTrials'},
+        {name: 'Description', defaultValue: "Placeholder description."},
         {name: 'Contact', defaultValue: {
             Name: 'Uknown Person',
 //            Portrait: 'http://doctor.png',
             Role: 'Program Manager',
             Team: 'HVTN concept development team'
-        }},
+        }}
     ]
 });
