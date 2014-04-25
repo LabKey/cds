@@ -39,9 +39,24 @@ div.measuresgrid .x-grid-view {
   background-color: $light-color;
 }
 
-//.x-panel-header-axispanel.x-docked-top {
-//  border-bottom: 1px solid $legend-color !important;
-//}
+.x-grid-cell-special,
+.x-grid-row-selected .x-grid-cell-special {
+  background-color: #FFFFFF;
+  background-image: none;
+}
+
+.x-grid-row-over .x-grid-cell-special {
+  background-color: #FFFFFF;
+  background-image: none;
+}
+
+.highlight .x-grid-cell-last {
+  background-color: #14C9CC;
+}
+
+.highlight .x-grid-cell-inner {
+  color: #FFFFFF;
+}
 
 .curseltitle {
   @include bodycaps;
