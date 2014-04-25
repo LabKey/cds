@@ -273,12 +273,10 @@ Ext.define('Connector.view.LearnItemHeader', {
                 // dock: 'bottom',
                 items: [{
                     xtype: 'button',
-                    //text: 'back',
                     html: '<svg width="12" height="10" fill="#9b0d96">'+
                         '<path d="M0 6 L5 10 L5 2 Z" />'+
                     '</svg>back',
                     cls: '',
-                    ui: 'rounded-inverted-accent',
                     itemId: 'back',
                     style: 'margin: 4px 2px 0 23px;'
                 }, {
@@ -290,7 +288,6 @@ Ext.define('Connector.view.LearnItemHeader', {
                     itemId: 'selectLabel'
                 }, {
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     text: 'all study subjects',
                     itemId: 'studyAllSubjects',
                     handler: function(button) {

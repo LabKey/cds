@@ -1264,7 +1264,6 @@ Ext.define('Connector.view.Scatter', {
                     padding : 15,
                     items : ['->',{
                         text: 'set y axis',
-                        ui: 'rounded-inverted-accent',
                         handler: function() {
                             var yselect = this.axisPanelY.getSelection();
                             if (this.axisPanelY.hasSelection()) {
@@ -1278,7 +1277,6 @@ Ext.define('Connector.view.Scatter', {
                         scope: this
                     },{
                         text: 'cancel',
-                        ui: 'rounded-inverted-accent',
                         handler: function() {
                             if (this.activeYSelection) {
                                 this.axisPanelY.setSelection(this.activeYSelection);

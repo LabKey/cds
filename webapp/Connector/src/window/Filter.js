@@ -53,26 +53,18 @@ Ext.define('Connector.window.Filter', {
         this.items = this.getItems();
 
         this.buttons =  [{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text  : 'OK',
             handler: this.applyFiltersAndColumns,
             scope: this
         },{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text : 'Cancel',
             handler : this.close,
             scope : this
         },{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text : 'Clear Filters',
             handler : this.onClearFilters,
             scope: this
         },{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text : 'Clear All',
             handler : function() {
                 this.clearAll();
