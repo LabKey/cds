@@ -323,6 +323,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Animation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>

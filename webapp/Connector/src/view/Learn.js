@@ -54,6 +54,8 @@ Ext.define('Connector.view.Learn', {
 
                 hidden: true,
 
+                state: this.state,
+
                 // TODO: This should be bubblable but the this.control() in the controller
                 // does not seem to respect bubbled events
                 listeners: {
@@ -254,6 +256,8 @@ Ext.define('Connector.view.LearnItemHeader', {
 
     initComponent : function() {
 
+        var me = this;
+
         this.items = [
             {
                 xtype: 'box',
@@ -277,9 +281,6 @@ Ext.define('Connector.view.LearnItemHeader', {
                     ui: 'rounded-inverted-accent',
                     itemId: 'back',
                     style: 'margin: 4px 2px 0 23px;'
-                    // handler: function() {
-                    //     this.fireEvent('navBack');
-                    // }
                 }, {
                     xtype: 'tbspacer',
                     width: 50
@@ -291,6 +292,17 @@ Ext.define('Connector.view.LearnItemHeader', {
                     ui: 'rounded-inverted-accent',
                     text: 'all study subjects',
                     itemId: 'studyAllSubjects',
+                    handler: function(button) {
+                        Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
+//                            console.log(">>",this.detailType,this.dimension);
+                            var selections = [{
+                                hierarchy: this.detailType,
+                                members: [{ uniqueName: '['+this.detailType+'].['+this.model.get('Label')+']' }],
+                                isGroup: false
+                            }];
+                            this.state.addSelection(selections, false, true, true);
+                        }, me);
+                    },
                     hidden: true,
                     // TODO: Move to button class?
                     style: 'margin: 4px 2px 0 23px;'

@@ -149,6 +149,7 @@
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 
+        <script path="Connector/src/utility/Animation.js"/>
         <script path="Connector/src/utility/StoreCache.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
