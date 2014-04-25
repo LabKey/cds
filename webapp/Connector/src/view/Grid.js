@@ -33,6 +33,8 @@ Ext.define('Connector.view.Grid', {
                 cls: 'dimensionview',
                 layout: {
                     type: 'hbox'
+//                    pack: 'end'
+//                    align: 'stretch'
                 },
                 items: [{
                     xtype: 'box',
@@ -61,11 +63,18 @@ Ext.define('Connector.view.Grid', {
                     handler: function() {},
                     scope: this
                 },{
+                    // This allows for the following items to be right aligned
+                    xtype: 'box',
+                    flex: 1,
+                    autoEl: {
+                        tag: 'div'
+                    }
+                },{
                     xtype: 'button',
                     ui: 'rounded-inverted-accent',
                     cls: 'gridcolumnsbtn',
                     text: 'choose columns',
-                    margin: '27 0 0 5',
+                    margin: '27 20 0 5',
                     handler: this.showMeasureSelection,
                     listeners: {
                         afterrender : function(b) {

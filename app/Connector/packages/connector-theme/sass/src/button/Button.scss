@@ -374,7 +374,7 @@ a.x-btn {
 
   .info {
     top: -4px;
-    background-image: url(/labkey/Connector/images/info.png);
+    background-image: url(images/info.png);
     background-size: 15px 15px;
   }
 }
@@ -383,7 +383,7 @@ a.x-btn {
 
   .info {
     top: -4px;
-    background-image: url(/labkey/Connector/images/infoover.png);
+    background-image: url(images/infoover.png);
     background-size: 15px 15px;
   }
 }
@@ -401,6 +401,22 @@ a.x-btn {
   }
 
   .icon {
-    background-image: url(/labkey/Connector/images/infoover.png);
+    background-image: url(images/infoover.png);
   }
+}
+
+button.imgbutton {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  background-image: url(images/dropdown.svg);
+}
+
+button.imgbuttonover {
+  background-image: url(images/dropdown_hover.svg);
+}
+
+.yaxisbutton {
+  position: absolute;
 }

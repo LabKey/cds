@@ -56,28 +56,24 @@ Ext.define('Connector.window.Filter', {
             xtype : 'roundedbutton',
             ui    : 'rounded-inverted-accent',
             text  : 'OK',
-            width : 70,
             handler: this.applyFiltersAndColumns,
             scope: this
         },{
             xtype : 'roundedbutton',
             ui    : 'rounded-inverted-accent',
             text : 'Cancel',
-            width : 70,
             handler : this.close,
             scope : this
         },{
             xtype : 'roundedbutton',
             ui    : 'rounded-inverted-accent',
             text : 'Clear Filters',
-            width : 80,
             handler : this.onClearFilters,
             scope: this
         },{
             xtype : 'roundedbutton',
             ui    : 'rounded-inverted-accent',
             text : 'Clear All',
-            width : 70,
             handler : function() {
                 this.clearAll();
                 this.close();
