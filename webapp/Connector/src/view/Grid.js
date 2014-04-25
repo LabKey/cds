@@ -192,18 +192,31 @@ Ext.define('Connector.view.Grid', {
     },
 
     onColumnModelCustomize : function(grid, columnGroups) {
-        console.log('TODO: Implement onColumnModelCustomize');
-//        var model = this.getModel(), columns;
-//
-//        Ext.each(columnGroups, function(group)
-//        {
-//            columns = group.columns;
-//            Ext.each(columns, function(column)
-//            {
-//                console.log('customize:', column.dataIndex);
-//            }, this);
-//
-//        }, this);
+        var model = this.getModel(), columns;
+
+        var modelMap = {};
+        var models = model.getMetadata().columnModel;
+        Ext.each(models, function(model)
+        {
+            modelMap[model.dataIndex] = model;
+        }, this);
+
+        Ext.each(columnGroups, function(group)
+        {
+            columns = group.columns;
+            Ext.each(columns, function(column)
+            {
+                var model = modelMap[column.dataIndex];
+                if (model)
+                {
+                    column.hidden = model.hidden;
+                    column.header = Ext.htmlEncode(model.header);
+                }
+
+                column.showLink = false;
+            }, this);
+
+        }, this);
     },
 
     onTriggerClick : function(headerCt, column, evt, el) {
@@ -429,6 +442,7 @@ Ext.define('Connector.view.Grid', {
                 displayConfig: {
                     mainTitle: 'Choose Measures for the Data Grid...'
                 },
+                disableLookups: false,
                 disableScale: true,
                 disableVariableOptions: false
             });

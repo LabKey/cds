@@ -21,6 +21,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
     scalename: 'scale',
 
+    disableLookups: true,
+
     disableScale: false,
 
     disableVariableOptions: false,
@@ -47,12 +49,23 @@ Ext.define('Connector.panel.AxisSelector', {
 
         this.callParent();
 
-        picker.getSourcesView().getSelectionModel().on('selectionchange', this.onSourceSelect, this);
-        picker.getMeasuresGrid().getSelectionModel().on('select', this.onMeasureSelect, this);
-        picker.getMeasuresGrid().getSelectionModel().on('deselect', this.onMeasureSelect, this);
+        var measureGrid = picker.getMeasuresGrid();
+        var sourceView = picker.getSourcesView();
 
-        picker.getSourcesView().on('itemclick', this.updateDefinition, this);
-        picker.getMeasuresGrid().on('itemclick', this.updateDefinition, this);
+        // Source listeners
+        sourceView.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
+
+        // Measure listeners
+        measureGrid.getSelectionModel().on({
+            select: this.onMeasureSelect,
+//            deselect: this.onMeasureSelect,
+            scope: this
+        });
+
+        if (this.showDisplay) {
+            sourceView.on('itemclick', this.onSourceClick, this);
+            measureGrid.on('itemclick', this.onMeasureClick, this);
+        }
     },
 
     getMainTitleDisplay : function() {
@@ -75,6 +88,7 @@ Ext.define('Connector.panel.AxisSelector', {
                 height: 210,
                 hidden: true,
                 displayConfig: this.displayConfig,
+                disableLookups: this.disableLookups,
                 disableScale: this.disableScale,
                 disableVariableOptions: this.disableVariableOptions,
                 scalename: this.scalename,
@@ -82,6 +96,14 @@ Ext.define('Connector.panel.AxisSelector', {
             });
 
             this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
+
+            this.selectionDisplay.on('lookupselect', function()
+            {
+                if (this.lastMeasure)
+                {
+                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure);
+                }
+            }, this);
         }
 
         return this.selectionDisplay;
@@ -200,31 +222,128 @@ Ext.define('Connector.panel.AxisSelector', {
         this.getMeasurePicker().clearSelection();
     },
 
-    onMeasureSelect : function(selModel, record) {
-        if (selModel.multiSelect)
-            this.updateDefinition(null, selModel.getLastSelected());
-        else if (this.showDisplay)
+    onMeasureClick : function(view, measure, element, index) {
+        this.updateDefinition(measure);
+        this.getSelectionDisplay().setVariableOptions(measure);
+        this.lastMeasure = measure;
+
+        this.handleMeasureHighlight(true, element);
+    },
+
+    onMeasureSelect : function(selModel, measure) {
+
+        if (selModel.multiSelect && this.showDisplay)
         {
-            this.getSelectionDisplay().setMeasureSelection(record);
-            this.getSelectionDisplay().setVariableOptions(record);
+            this.updateDefinition(selModel.getLastSelected());
+        }
+        else if (this.showDisplay && this.disableLookups)
+        {
+            this.getSelectionDisplay().setMeasureSelection(measure);
+            this.getSelectionDisplay().setVariableOptions(measure);
+            this.lastMeasure = measure;
+        }
+
+        this.handleMeasureHighlight(false, measure);
+    },
+
+    handleMeasureHighlight : function(isClick, element) {
+        if (isClick)
+        {
+            if (element)
+            {
+                var _el = Ext.get(element);
+                if (_el)
+                {
+                    if (_el.hasCls('x-grid-row-focused'))
+                    {
+                        // for some reason itemclick fires in the case of unchecking but not
+                        // checking. This will stop us from removing highlight when someone
+                        // unchecked a row
+                        Ext.defer(function() {
+                            var el = Ext.get(this.lastElementId);
+                            if (el)
+                            {
+                                el.addCls('highlight');
+                            }
+                        }, 1, this);
+                    }
+                    else if (this.lastElementId != element.id)
+                    {
+                        // clear the former element highlight
+                        var el = Ext.get(this.lastElementId);
+                        if (el)
+                        {
+                            el.removeCls('highlight');
+                        }
+
+                        this.lastElementId = element.id;
+
+                        el = Ext.get(element.id);
+                        if (el)
+                        {
+                            el.addCls('highlight');
+                        }
+                    }
+                }
+            }
+            else
+            {
+                console.warn('No element available onClick');
+            }
+        }
+        else
+        {
+            if (this.lastMeasure)
+            {
+                if (this.lastMeasure.id == element.id)
+                {
+                    if (this.lastElementId)
+                    {
+                        var el = Ext.get(this.lastElementId);
+                        if (el)
+                        {
+                            el.addCls('highlight');
+                        }
+                    }
+                }
+            }
         }
     },
 
-    onSourceSelect : function(selModel, records) {
-        //select first variable in the list on source selection change, for singleSelect grid
-        if (!this.getMeasurePicker().getMeasuresGrid().multiSelect)
-            this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(0);
+    onSourceClick : function(view, source) {
+        this.updateDefinition(source);
     },
 
-    updateDefinition : function(view, record) {
-        if (this.showDisplay)
+    onSourceSelect : function(selModel, sources) {
+
+        this.getSelectionDisplay().clearVariableOptions();
+
+        if (Ext.isArray(sources) && sources.length > 0)
         {
-            this.getSelectionDisplay().getDefinitionPanel().update({
-                label : record.get("label") || record.get("queryLabel"),
-                description : record.get("description")
+            var source = sources[0];
+            this.updateDefinition(source);
+        }
+
+        //select first variable in the list on source selection change, for singleSelect grid
+        var measureGrid = this.getMeasurePicker().getMeasuresGrid();
+        if (!measureGrid.multiSelect)
+            measureGrid.getSelectionModel().select(0);
+    },
+
+    updateDefinition : function(record) {
+
+        if (record.id != this.lastDefinitionId)
+        {
+            this.lastDefinitionId = record.id;
+
+            var display = this.getSelectionDisplay();
+
+            display.getDefinitionPanel().update({
+                label: record.get("label") || record.get("queryLabel"),
+                description: record.get("description")
             });
 
-            this.getSelectionDisplay().show();
+            display.show();
         }
     }
 });
@@ -239,6 +358,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     border: false,
 
     frame: false,
+
+    disableLookups: true,
 
     disableVariableOptions: false,
 
@@ -349,17 +470,27 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         this.getScaleForm().getComponent('scale').setValue(value);
     },
 
+    getVariableOptionsPanel : function() {
+        return this.down('#variableoptions');
+    },
+
+    clearVariableOptions : function() {
+        this.getVariableOptionsPanel().removeAll(false);
+    },
+
     setVariableOptions : function(measure) {
-        if (measure)
+        if (measure && measure.id != this.lastMeasureId)
         {
-            var optionsPanel = this.down('#variableoptions');
-            optionsPanel.removeAll(false);
+            this.lastMeasureId = measure.id;
+
+            this.clearVariableOptions();
+            var optionsPanel = this.getVariableOptionsPanel();
 
             if (measure.get('variableType') == 'TIME')
             {
                 optionsPanel.add(this.getAlignmentForm());
             }
-            else if (Ext.isDefined(measure.get('lookup').queryName))
+            else if (!this.disableLookups && Ext.isDefined(measure.get('lookup').queryName))
             {
                 optionsPanel.add({
                     xtype: 'box',
@@ -372,8 +503,11 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 optionsPanel.add({
                     xtype: 'grid',
                     viewConfig : { stripeRows : false },
-//                    selModel: Ext.create('Ext.selection.CheckboxModel', {mode: 'SIMPLE'}),
                     selType: 'checkboxmodel',
+                    selModel: {
+                        checkOnly: true,
+                        checkSelector: 'td.x-grid-cell-row-checker'
+                    },
                     enableColumnHide: false,
                     enableColumnResize: false,
                     multiSelect: true,
@@ -381,12 +515,15 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     store: this.getLookupColumnStore(measure),
                     ui: 'custom',
                     height: 200,
-                    cls: 'iScroll',
+                    cls: 'measuresgrid iScroll',
                     flex: 1,
                     hideHeaders: true,
                     columns: [{
                         dataIndex: 'shortCaption',
-                        width: '100%'
+                        width: '100%',
+                        flex: 1,
+                        sortable: false,
+                        menuDisabled: true
                     }],
                     listeners: {
                         boxready: function(grid) {
@@ -425,6 +562,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             this.lookupMap[alias][record.get('fieldKeyPath')] = {
                 fieldKeyPath: record.get('fieldKeyPath')
             };
+
+            this.fireEvent('lookupselect', this, record);
         }
     },
 
@@ -457,7 +596,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 }
             }, this);
 
-            grid.getSelectionModel().select(selectedLookups);
+            grid.getSelectionModel().select(selectedLookups, false, true);
         }
     },
 

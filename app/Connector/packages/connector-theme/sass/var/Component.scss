@@ -58,10 +58,12 @@ $window-header-color: $secondary-color;
 
 // Grid
 $grid-row-cell-over-background-color: $selectongrey-color;
-$grid-cell-selected-background-color: $select-color;
-$grid-row-cell-selected-background-color: $select-color;
-$grid-row-cell-selected-color: $light-color;
-$grid-row-cell-selected-border-color: $select-color;
+$grid-row-cell-over-color: $black;
+
+$grid-cell-selected-background-color: $light-color; //$select-color;
+$grid-row-cell-selected-background-color: $light-color; //$select-color;
+$grid-row-cell-selected-color: $black; //$light-color;
+$grid-row-cell-selected-border-color: $light-color; //$select-color;
 $grid-row-cell-alt-background-color: $light-color;
 $grid-row-cell-background-color: $light-color;
 
