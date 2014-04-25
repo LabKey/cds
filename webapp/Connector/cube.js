@@ -86,6 +86,14 @@ Ext4.define('Connector.cube.Configuration', {
                 }, {
                     type: 'text',
                     staticData: {
+                        title: 'Product production'
+                    },
+                    modelData: {
+                        text: 'Production'
+                    }
+                }, {
+                    type: 'text',
+                    staticData: {
                         title: 'Description'
                     },
                     modelData: {

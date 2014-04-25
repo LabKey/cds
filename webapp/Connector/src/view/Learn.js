@@ -286,7 +286,8 @@ Ext.define('Connector.view.LearnItemHeader', {
                     width: 50
                 }, {
                     xtype: 'label',
-                    text: 'Select:'
+                    text: 'Select:',
+                    itemId: 'selectLabel'
                 }, {
                     xtype: 'button',
                     ui: 'rounded-inverted-accent',
@@ -355,9 +356,10 @@ Ext.define('Connector.view.LearnItemHeader', {
     // Controls will only be shown when the detail type matches the given string (or array of strings)
     controlFilters : {
         studyAllSubjects: 'Study',
-        studyAllPlacebo: 'Study',
-        studyAllVaccinees: ['Study','Study product'],
-        assaySubjects: 'Assay'
+//        studyAllPlacebo: 'Study',
+//        studyAllVaccinees: ['Study','Study product'],
+//        assaySubjects: 'Assay'
+        selectLabel: 'Study'
     },
 
     update : function() {
