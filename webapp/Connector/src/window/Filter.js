@@ -14,7 +14,7 @@ Ext.define('Connector.window.Filter', {
     ui: 'custom',
     cls: 'filterwindow',
     modal: true,
-    width: 340,
+    width: 360,
     autoShow: true,
     draggable: false,
     closable: false,
