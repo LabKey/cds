@@ -59,6 +59,7 @@ $window-header-color: $secondary-color;
 // Grid
 $grid-row-cell-over-background-color: $selectongrey-color;
 $grid-row-cell-over-color: $black;
+$grid-row-cell-font-size: 14px/15px;
 
 $grid-cell-selected-background-color: $light-color; //$select-color;
 $grid-row-cell-selected-background-color: $light-color; //$select-color;
@@ -136,6 +137,7 @@ $grid-header-over-background-color: $selectongrey-color;
   - Connector.view.Header
   - Connector.view.GroupListView
   - Connector.view.Navigation
+  - Connector.view.Selection
   - Connector.view.SelectionStatus
   - Connector.view.SingleAxisExplorer
   - Connector.view.Summary
@@ -168,6 +170,40 @@ h3 {
 
 ul {
   list-style: none;
+}
+
+@media (max-width: 1300px) {
+  h1 {
+    font-size: 24pt;
+  }
+
+  h2 {
+    font-size: 20pt;
+  }
+
+  div.study-description .description-text {
+    font-size: 11pt;
+  }
+}
+
+@media (max-width: 1250px) {
+  h1 {
+    font-size: 22pt;
+  }
+
+  h2 {
+    font-size: 18pt;
+  }
+
+  div.study-description .description-text {
+    font-size: 11pt;
+  }
+}
+
+@media (max-width: 1175px) {
+  .noplotmsg h1 {
+    font-size: 18pt;
+  }
 }
 
 li.fadein {
@@ -250,10 +286,6 @@ li.fadein {
   &:after {
     border-bottom-color: $secondary-color;
   }
-
-  &:before {
-    /*border-bottom-color: trans;*/
-  }
 }
 
 .axiswindow {
@@ -273,7 +305,6 @@ li.fadein {
       @include smallStandout;
     }
     background-color: $secondary-color;
-    /*border-bottom: 1px solid $heat-scale-3;*/
   }
 }
 
@@ -288,12 +319,8 @@ li.fadein {
     left: 215px;
   }
 
-  .x-column-header-text {
-    font-size: 11px;
-  }
-
   .x-column-header-over {
-    background-color: $select-color
+    background-color: $select-color;
   }
 
   .definitionpanel {
@@ -426,6 +453,8 @@ div.selectionfilter {
   z-index: 5;
   border: 0;
   background-repeat: no-repeat;
+  background: url(images/close.png);
+  background-size: 8px 8px;
 }
 
 .memberitem {
@@ -860,6 +889,12 @@ div.grouplist-label-selected, div.nav-label-selected {
 
 /* -- END Connector.view.Navigation */
 
+/* Connector.view.Selection */
+.sel-listing {
+  padding: 5px 0 5px 30px;
+}
+/* -- END Connector.view.Selection */
+
 /* Connector.view.SelectionStatus */
 div.selectionstatus,
 div.activefilterstatus {
@@ -1131,6 +1166,11 @@ div.totalcolumn {
   width: 15%;
 }
 
+div.showload {
+  background: url(images/grid/loading.gif) no-repeat 15px;
+  background-size: 20px;
+}
+
 /* -- END Connector.view.Summary */
 
 /* Connector.view.search.Container */
@@ -1388,6 +1428,7 @@ div.filterheader {
         left: 4px;
         bottom: 4px;
         margin: 0;
+        width: 85%;
         text-align: justify;
       }
     }
@@ -1400,7 +1441,6 @@ div.filterheader {
   .x-panel-body .x-box-inner {
     background-color: $light-color;
     border: none;
-    font-size: 11px;
   }
 
   .groupheader {

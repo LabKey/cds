@@ -12,6 +12,10 @@
   $ui-body-border-width: 0
 );
 
+.x-panel-east-view {
+  z-index: 10000;
+}
+
 .x-panel-body-east-view {
   background: linear-gradient(90deg, #ebebeb, #f0f0f0) !important;
 }
@@ -77,4 +81,27 @@ div.measuresgrid .x-grid-view {
   width: 60%;
   font-family: $info-font;
   color: $heat-scale-1;
+}
+
+/* Connector.grid.Panel */
+.connector-grid .x-column-header-trigger {
+  background-image: url(images/filter.svg);
+  background-position: 0px 28px;
+}
+
+.connector-grid .x-column-header-trigger:hover {
+  background-color: #E6E1E1 !important;
+  background-image: url(images/filter_selected.svg);
+  background-position: 0px 28px;
+}
+
+.connector-grid .filtered-column .x-column-header-trigger {
+  background-image: url(images/filter_selected.svg);
+  background-position: 0px 28px;
+}
+
+.x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
+  height: 13px;
+  width: 13px;
+  background-image: url(images/form/checkbox2.gif);
 }

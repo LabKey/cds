@@ -5,6 +5,7 @@
  * metadata-driven class system features 
  */
 Ext.Loader.addClassPathMappings({
+  "Animation": "../../webapp/Connector/src/utility/Animation.js",
   "Connector.Application": "../../webapp/Connector/src/Application.js",
   "Connector.app.model.Assay": "../../webapp/Connector/src/app/model/Assay.js",
   "Connector.app.model.DataSet": "../../webapp/Connector/src/app/model/DataSet.js",
@@ -138,6 +139,7 @@ Ext.Loader.addClassPathMappings({
   "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
+  "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
   "Connector.app.model.DataSet": [],
@@ -1084,6 +1086,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
+  "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
   "Connector.app.model.DataSet": [],
