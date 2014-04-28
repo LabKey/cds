@@ -6,22 +6,23 @@ Ext.define('Connector.view.Grid', {
 
     axisSourceCls: 'rawdatasource',
 
-    // These probably are not good starting filters as the user might filter on them prior to choosing any other columns
-    schemaName: 'study',
-
-    queryName: 'Subject',
-
     columnWidth: 125,
 
     constructor : function(config) {
+
+        GG = this;
         this.callParent([config]);
 
-        this.addEvents('measureselected');
+        this.addEvents('measureselected', 'updatecolumnmodel');
     },
 
     initComponent : function() {
 
         this.flights = 0;
+
+        if (!Ext.isDefined(this.model)) {
+            this.model = Ext.create('Connector.model.Grid', {});
+        }
 
         this.items = [
             // Iniital layout container for header objects (title, buttons, etc)
@@ -32,6 +33,8 @@ Ext.define('Connector.view.Grid', {
                 cls: 'dimensionview',
                 layout: {
                     type: 'hbox'
+//                    pack: 'end'
+//                    align: 'stretch'
                 },
                 items: [{
                     xtype: 'box',
@@ -45,7 +48,6 @@ Ext.define('Connector.view.Grid', {
                     }
                 },{
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     cls: 'gridexportbtn',
                     text: 'export',
                     margin: '27 0 0 5',
@@ -53,19 +55,36 @@ Ext.define('Connector.view.Grid', {
                     scope: this
                 },{
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     cls: 'gridcitationsbtn',
                     text: 'citations',
                     margin: '27 0 0 5',
                     handler: function() {},
                     scope: this
                 },{
+                    // This allows for the following items to be right aligned
+                    xtype: 'box',
+                    flex: 1,
+                    autoEl: {
+                        tag: 'div'
+                    }
+                },{
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     cls: 'gridcolumnsbtn',
                     text: 'choose columns',
-                    margin: '27 0 0 5',
+                    margin: '27 20 0 5',
                     handler: this.showMeasureSelection,
+                    listeners: {
+                        afterrender : function(b) {
+                            var picker = this.getAxisPanel().getMeasurePicker();
+                            picker.on('beforeMeasuresStoreLoad', function(p, data) {
+                                if (Ext.isDefined(data) && Ext.isArray(data.measures)) {
+                                    this.setText('choose from ' + data.measures.length + ' other columns');
+                                }
+                            }, b, {single: true});
+                            picker.getMeasures();
+                        },
+                        scope: this
+                    },
                     scope: this
                 }]
             }
@@ -82,10 +101,7 @@ Ext.define('Connector.view.Grid', {
         model.on('measurechange', this.initializeGrid, this);
         model.on('filterarraychange', this.onFilterArrayUpdate, this);
 
-        this.on('boxready', function() {
-            this.add(this.getGridComponent());
-        }, this, {single: true});
-
+        this.on('boxready', this.initializeGrid, this, {single: true});
         this.on('resize', this.onViewResize, this);
     },
 
@@ -107,12 +123,12 @@ Ext.define('Connector.view.Grid', {
 
         var box = this.getBox();
 
-        var colBasedWidth = (this.getModel().getColumnSet().length * this.columnWidth);
+//        var colBasedWidth = (this.getModel().getColumnSet().length * this.columnWidth);
         var viewBasedWidth = box.width - 27;
         var width = viewBasedWidth; //Math.min(colBasedWidth, viewBasedWidth);
 
         var viewHeight = box.height;
-        var height = viewHeight - 161 + 92;
+        var height = viewHeight - 161 + 93;
 
         return {
             width: width,
@@ -123,6 +139,8 @@ Ext.define('Connector.view.Grid', {
     getGridComponent : function() {
 
         var size = this.getWidthHeight();
+
+        // reset the column mapping
         this.columnMap = {};
 
         return {
@@ -134,21 +152,19 @@ Ext.define('Connector.view.Grid', {
             store: this.getStore(),
             border: false,
             defaultColumnWidth: this.columnWidth,
-            margin: '-92 0 0 27',
+            margin: '-93 0 0 27',
             ui: 'custom',
             listeners: {
                 columnmodelcustomize: this.onColumnModelCustomize,
+                columnmove : this.updateColumnMap,
                 beforerender: function(grid) {
                     var header = grid.down('headercontainer');
                     header.on('headertriggerclick', this.onTriggerClick, this);
                 },
                 reconfigure : function(grid) {
-                    var header = grid.down('headercontainer');
-
-                    var columns = header.getGridColumns();
-                    Ext.each(columns, function(gridColumn, idx) {
-                        this.columnMap[gridColumn.dataIndex] = idx;
-                    }, this);
+                    this.updateColumnMap(grid.down('headercontainer'));
+                    // reapply filters to the column UI
+                    this.onFilterArrayUpdate(this.getModel().getFilterArray());
                 },
                 scope: this
             }
@@ -162,8 +178,8 @@ Ext.define('Connector.view.Grid', {
             var model = this.getModel();
 
             this.gridStore = Ext.create('LABKEY.ext4.data.Store', {
-                schemaName: this.schemaName,
-                queryName: this.queryName,
+                schemaName: model.get('schemaName'),
+                queryName: model.get('queryName'),
                 columns: model.getColumnSet(),
                 filterArray: model.getFilterArray()
             });
@@ -172,8 +188,41 @@ Ext.define('Connector.view.Grid', {
         return this.gridStore;
     },
 
-    onColumnModelCustomize : function(grid, rawColumnModels) {
-        console.log('TODO: Implement onColumnModelCustomize');
+    updateColumnMap : function(/* Ext.grid.header.Container */ gridHeader)
+    {
+        var columns = gridHeader.getGridColumns();
+
+        Ext.each(columns, function(gridColumn, idx) {
+            this.columnMap[gridColumn.dataIndex] = idx;
+        }, this);
+    },
+
+    onColumnModelCustomize : function(grid, columnGroups) {
+        var model = this.getModel(), columns;
+
+        var modelMap = {};
+        var models = model.getMetadata().columnModel;
+        Ext.each(models, function(model)
+        {
+            modelMap[model.dataIndex] = model;
+        }, this);
+
+        Ext.each(columnGroups, function(group)
+        {
+            columns = group.columns;
+            Ext.each(columns, function(column)
+            {
+                var model = modelMap[column.dataIndex];
+                if (model)
+                {
+                    column.hidden = model.hidden;
+                    column.header = Ext.htmlEncode(model.header);
+                }
+
+                column.showLink = false;
+            }, this);
+
+        }, this);
     },
 
     onTriggerClick : function(headerCt, column, evt, el) {
@@ -225,43 +274,56 @@ Ext.define('Connector.view.Grid', {
     },
 
     getColumnMetadata : function(columnName) {
-        var fields = this.getModel().get('metadata').metaData.fields;
-
-        // The proxy will have the most complete metadata -- getData API does not return lookup info
-        if (this.gridStore && this.gridStore.proxy) {
-            fields = this.gridStore.proxy.reader.getFields();
-        }
 
         var target;
 
-        if (fields) {
-            for (var i = 0; i < fields.length; i++) {
-                if (fields[i].name == columnName) {
-                    target = fields[i];
-                    break;
+        if (Ext.isString(columnName))
+        {
+            var fields = this.getModel().getMetadata().metaData.fields;
+
+            // The proxy will have the most complete metadata -- getData API does not return lookup info
+            if (this.gridStore && this.gridStore.proxy)
+            {
+                fields = this.gridStore.proxy.reader.getFields();
+            }
+
+            if (fields)
+            {
+                for (var i = 0; i < fields.length; i++)
+                {
+                    if (fields[i].name == columnName)
+                    {
+                        target = Ext.clone(fields[i]);
+                        break;
+                    }
                 }
+            }
+
+            if (target)
+            {
+                target.filterField = (Ext.isDefined(target.displayField) ? target.displayField : target.fieldKey);
+            }
+            else
+            {
+                console.warn('failed to find column metadata:', columnName);
             }
         }
 
         return target;
     },
 
-    refreshGrid : function() {
-        this.initializeGrid();
-    },
-
-    initializeGrid : function() {
-
+    initializeGrid : function()
+    {
         var model = this.getModel();
 
-        if (!this.initialized) {
+        if (!this.initialized)
+        {
             this.initialized = true;
         }
 
         // retrieve new column metadata based on the model configuration
         Connector.model.Grid.getMetaData(model, {
             onSuccess: function(gridModel, metadata) {
-
                 var me = this;
                 me.control.getParticipantIn(function(subjects) {
                     me.updateColumnModel.call(me, subjects);
@@ -273,23 +335,10 @@ Ext.define('Connector.view.Grid', {
     },
 
     updateColumnModel : function(subjects) {
-        var metadata = this.getModel().get('metadata');
 
-        // map columns to measures
-        var columns = Connector.model.Grid.getColumnList(this.getModel());
-        this.getModel().set('columnSet', columns);
-
-        // establish filters to apply
-        var filterArray = [];
-        // TODO: Add app filters
-        // add Participant Filter due to application filters
-        this.getModel().set('subjectFilter', LABKEY.Filter.create(columns[0], subjects.join(';'), LABKEY.Filter.Types.IN));
-        this.getModel().changeFilterArray(filterArray);
-
-        this.schemaName = metadata.schemaName;
-        this.queryName = metadata.queryName;
-
+        //
         // remove the old grid
+        //
         var oldGrid = this.getComponent('gridcomponent');
         if (oldGrid) {
             // remove the grid and associated store
@@ -297,8 +346,32 @@ Ext.define('Connector.view.Grid', {
             this.gridStore = null;
         }
 
+        //
+        // update the model
+        //
+        var model = this.getModel();
+        var metadata = model.getMetadata();
+
+        var columns = Connector.model.Grid.getColumnList(this.getModel());
+
+        model.set('schemaName', metadata.schemaName);
+        model.set('queryName', metadata.queryName);
+        model.set('columnSet', columns);
+
+        //
+        // add Participant Filter due to application filters
+        //
+        model.changeSubjectFilter(LABKEY.Filter.create(columns[0], subjects.join(';'), LABKEY.Filter.Types.IN));
+
+        //
         // add the new grid
+        //
         this.add(this.getGridComponent());
+
+        //
+        // fire events
+        //
+        this.fireEvent('updatecolumnmodel', this, model.get('schemaName'), model.get('queryName'), model.getColumnSet());
     },
 
     showMeasureSelection : function() {
@@ -375,8 +448,9 @@ Ext.define('Connector.view.Grid', {
                 displayConfig: {
                     mainTitle: 'Choose Measures for the Data Grid...'
                 },
+                disableLookups: false,
                 disableScale: true,
-                disableVariableOptions: true
+                disableVariableOptions: false
             });
         }
 
@@ -405,17 +479,15 @@ Ext.define('Connector.view.Grid', {
                     padding : 15,
                     items : ['->',{
                         text: 'select',
-                        ui: 'rounded-inverted-accent',
                         handler : function() {
                             var axispanel = this.getAxisPanel();
                             var allMeasures = axispanel.getMeasurePicker().measuresStoreData.measures;
-                            this.fireEvent('measureselected', axispanel.getSelection(), allMeasures);
+                            this.fireEvent('measureselected', axispanel.getSelection(), allMeasures, axispanel.getLookups());
                             this.measureWindow.hide();
                         },
                         scope: this
                     },{
                         text: 'cancel',
-                        ui: 'rounded-inverted-accent',
                         handler : function() { this.measureWindow.hide(); },
                         scope: this
                     }]
@@ -434,15 +506,6 @@ Ext.define('Connector.view.Grid', {
                 this.measureWindow.hide();
             else if (!this.initialized)
                 this.measureWindow.show();
-
-            // TODO: Check to see if we need to do a deferred update.
-            // example below
-
-            //Note: When this event fires, animation still seems to be in play and grid doesn't render properly
-            //Deferring seems to fix it, but perhaps event should fire later.
-//            if (this.isActiveView && this.refreshRequired) {
-//                Ext.defer(this.updateQuery, 300, this);
-//            }
         }
     },
 
@@ -452,25 +515,64 @@ Ext.define('Connector.view.Grid', {
         }
 
         var grid = this.getComponent('gridcomponent');
-        var columns = grid.headerCt.getGridColumns();
+        if (Ext.isDefined(grid))
+        {
+            var columns = grid.headerCt.getGridColumns();
 
-        // remove all filter classes
-        Ext.each(columns, function(column) {
-            column.getEl().removeCls('filtered-column');
-        }, this);
+            // remove all filter classes
+            Ext.each(columns, function(column) {
+                if (Ext.isDefined(column.getEl()))
+                {
+                    column.getEl().removeCls('filtered-column');
+                }
+            }, this);
 
-        Ext.each(filterArray, function(filter, idx) {
-            // not exactly right since the user could filter on the subject column
-            if (idx > 0) {
-                var columnIndex = this.columnMap[filter.getColumnName()];
-                if (columnIndex > -1) {
-                    var col = grid.headerCt.getHeaderAtIndex(columnIndex);
-                    if (col) {
-                        col.getEl().addCls('filtered-column');
+            var filterFieldMap = {}, colMeta;
+            Ext.iterate(this.columnMap, function(dataIndex)
+            {
+                colMeta = this.getColumnMetadata(dataIndex);
+
+                if (Ext.isDefined(colMeta.filterField))
+                {
+                    filterFieldMap[colMeta.filterField] = {
+                        metdata: colMeta,
+                        dataIndex: dataIndex
+                    };
+                }
+                else
+                {
+                    console.warn('unable to map filter column');
+                }
+
+            }, this);
+
+            Ext.each(filterArray, function(filter)
+            {
+                colMeta = filterFieldMap[filter.getColumnName()];
+                if (colMeta)
+                {
+                    var columnIndex = this.columnMap[colMeta.dataIndex];
+
+                    if (columnIndex > -1)
+                    {
+                        var col = grid.headerCt.getHeaderAtIndex(columnIndex);
+                        if (col)
+                        {
+                            col.getEl().addCls('filtered-column');
+                        }
                     }
                 }
-            }
-        }, this);
+                else
+                {
+                    console.log('failed to find filter column');
+                }
+
+            }, this);
+        }
+        else
+        {
+            console.warn('unable to locate grid for filter array updates');
+        }
     },
 
     //
@@ -539,10 +641,13 @@ Ext.define('Connector.view.Grid', {
         }
 
         // This must be done independently for each filter
+        var schema = this.getModel().get('schemaName');
+        var query = this.getModel().get('queryName');
+
         for (f=0; f < keys.length; f++) {
             configs.push({
-                schemaName: this.schemaName,
-                queryName: this.queryName,
+                schemaName: schema,
+                queryName: query,
                 flight: this.flights,
                 configId: bins[keys[f]][0].getURLParameterName(),
                 column: this.getModel().getColumnSet()[0], // subject column?

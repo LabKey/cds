@@ -15,12 +15,11 @@ Ext.define('Connector.controller.Data', {
 
     init : function() {
 
-        DD = this;
-
         this.control('groupdatagrid', {
             filtertranslate: this.onFilterTranslate,
             lookupcolumnchange: this.onLookupColumnChange,
             removefilter: this.onRemoveGridFilter,
+            updatecolumnmodel: this.onUpdateColumnModel,
             scope: this
         });
 
@@ -126,7 +125,10 @@ Ext.define('Connector.controller.Data', {
             }, this);
 
             view.applyFilters(gridFilters);
+            view.initializeGrid();
         }
+
+        this.refreshRequired = false;
     },
 
     onFailure : function(response) {
@@ -236,10 +238,12 @@ Ext.define('Connector.controller.Data', {
             view.gridLock = false;
         }
 
-        if (this.isActiveView) {
+        if (this.isActiveView)
+        {
             this.updateQuery();
         }
-        else {
+        else
+        {
             this.refreshRequired = true;
         }
     },
@@ -252,6 +256,8 @@ Ext.define('Connector.controller.Data', {
                 found, f, g,
                 matches = {};
 
+        // Iterate over the set of incoming filters to determine if any filter on that column
+        // already exists. If it does, place the column in the 'matches' mapping.
         Ext.each(filterArrays, function(first) {
             Ext.each(first, function(second) {
                 fa.push(second);
@@ -260,9 +266,11 @@ Ext.define('Connector.controller.Data', {
                         matches[urlParam] = true;
                     }
                 });
-            });
-        });
+            }, this);
+        }, this);
 
+        // Examine the filters that met the match criteria above and determine if the current filter
+        // should replace the existing filter(s) on their shared column.
         Ext.iterate(matches, function(m) {
             found = false;
             for (f=0; f < fa.length; f++) {
@@ -276,6 +284,8 @@ Ext.define('Connector.controller.Data', {
             }
         }, this);
 
+        // Since we want to update all matching filters iterate across the entire set of application
+        // filters and search for matches.
         matches = [];
         if (updated.length > 0) {
             filter = this.getStateManager().getFilters();
@@ -377,6 +387,18 @@ Ext.define('Connector.controller.Data', {
             this.filterMap = {};
         }
 
+    },
+
+    onUpdateColumnModel : function(view, schema, query, columnSet) {
+//        this.getStateManager().setCustomState({
+//            view: 'groupdatagrid',
+//            key: 'queryState'
+//        }, {
+//            schema: schema,
+//            query: query,
+//            columnSet: columnSet
+//        });
+//        this.getStateManager().updateState();
     },
 
     runFilterAnimation : function(view, filterGroups, callback) {
@@ -520,22 +542,27 @@ Ext.define('Connector.controller.Data', {
         }
     },
 
-    createView : function(xtype, config) {
+    createView : function(xtype, context) {
 
         var v;
 
         if (xtype == 'groupdatagrid') {
+
+            // When this is enabled, columns can be loaded from the saved view state
+            var queryState = undefined; //this.getStateManager().getCustomState('groupdatagrid', 'queryState');
+            var model;
+
+            // Optionally, load the model from state persistence
+            if (Ext.isDefined(queryState)) {
+                model = Ext.create('Connector.model.Grid', {
+                    schemaName: queryState['schema'],
+                    queryName: queryState['query'],
+                    columnSet: queryState['columnSet']
+                });
+            }
+
             v = Ext.create('Connector.view.Grid', {
-                model: new Ext.create('Connector.model.Grid', {
-                    //
-                    // The initial columns to display in case the user has not selected any
-                    //
-                    columnSet: [
-                        Connector.studyContext.subjectColumn,
-                        'Study',
-                        'StartDate'
-                    ]
-                }),
+                model: model,
                 control: this
             });
 

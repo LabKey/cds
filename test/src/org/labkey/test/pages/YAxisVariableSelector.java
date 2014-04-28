@@ -22,4 +22,15 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     {
         return Locator.tagWithClass("*", "yaxisbtn").notHidden();
     }
+
+    @Override
+    public void confirmSelection()
+    {
+        _test.click(CDSTest.Locators.cdsButtonLocator("set y axis"));
+    }
+
+    public void setScale(Scale scale)
+    {
+        _test.click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='" + scale + "']]//input"));
+    }
 }

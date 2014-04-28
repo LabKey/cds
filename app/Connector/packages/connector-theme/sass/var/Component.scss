@@ -10,6 +10,7 @@ $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 
 $interactive-color: #9B0D96;       // Interactive
+$link-color: #14C9CC;
 $info-color: #F5A73A;              // Info
 
 $black: #000000;
@@ -57,10 +58,13 @@ $window-header-color: $secondary-color;
 
 // Grid
 $grid-row-cell-over-background-color: $selectongrey-color;
-$grid-cell-selected-background-color: $select-color;
-$grid-row-cell-selected-background-color: $select-color;
-$grid-row-cell-selected-color: $light-color;
-$grid-row-cell-selected-border-color: $select-color;
+$grid-row-cell-over-color: $black;
+$grid-row-cell-font-size: 14px/15px;
+
+$grid-cell-selected-background-color: $light-color; //$select-color;
+$grid-row-cell-selected-background-color: $light-color; //$select-color;
+$grid-row-cell-selected-color: $black; //$light-color;
+$grid-row-cell-selected-border-color: $light-color; //$select-color;
 $grid-row-cell-alt-background-color: $light-color;
 $grid-row-cell-background-color: $light-color;
 
@@ -69,6 +73,11 @@ $grid-column-header-font-family: $info-font;
 $grid-column-header-font-size: 11pt;
 $grid-header-background-color: transparent;
 $grid-header-over-background-color: $selectongrey-color;
+
+// Tips
+$tip-background-color: $light-color;
+$tip-border-color: $info-color;
+$tip-body-color: $info-color;
 
 @mixin header {
   font-family: $data-font;
@@ -133,6 +142,7 @@ $grid-header-over-background-color: $selectongrey-color;
   - Connector.view.Header
   - Connector.view.GroupListView
   - Connector.view.Navigation
+  - Connector.view.Selection
   - Connector.view.SelectionStatus
   - Connector.view.SingleAxisExplorer
   - Connector.view.Summary
@@ -165,6 +175,40 @@ h3 {
 
 ul {
   list-style: none;
+}
+
+@media (max-width: 1300px) {
+  h1 {
+    font-size: 24pt;
+  }
+
+  h2 {
+    font-size: 20pt;
+  }
+
+  div.study-description .description-text {
+    font-size: 11pt;
+  }
+}
+
+@media (max-width: 1250px) {
+  h1 {
+    font-size: 22pt;
+  }
+
+  h2 {
+    font-size: 18pt;
+  }
+
+  div.study-description .description-text {
+    font-size: 11pt;
+  }
+}
+
+@media (max-width: 1175px) {
+  .noplotmsg h1 {
+    font-size: 18pt;
+  }
 }
 
 li.fadein {
@@ -247,10 +291,6 @@ li.fadein {
   &:after {
     border-bottom-color: $secondary-color;
   }
-
-  &:before {
-    /*border-bottom-color: trans;*/
-  }
 }
 
 .axiswindow {
@@ -270,7 +310,6 @@ li.fadein {
       @include smallStandout;
     }
     background-color: $secondary-color;
-    /*border-bottom: 1px solid $heat-scale-3;*/
   }
 }
 
@@ -285,12 +324,8 @@ li.fadein {
     left: 215px;
   }
 
-  .x-column-header-text {
-    font-size: 11px;
-  }
-
   .x-column-header-over {
-    background-color: $select-color
+    background-color: $select-color;
   }
 
   .definitionpanel {
@@ -423,6 +458,8 @@ div.selectionfilter {
   z-index: 5;
   border: 0;
   background-repeat: no-repeat;
+  background: url(images/close.png);
+  background-size: 8px 8px;
 }
 
 .memberitem {
@@ -743,27 +780,6 @@ div.status-over {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
 }
 
-/* Logout Link */
-a {
-  color: $interactive-color;
-
-  &.logout {
-    color: $light-color;
-    text-decoration: none;
-  }
-
-  &.survey {
-    float: right;
-    vertical-align: middle;
-    text-decoration: none;
-  }
-
-  &.logout, &.survey {
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
 
 /* -- END Connector.view.Header */
 
@@ -877,6 +893,12 @@ div.grouplist-label-selected, div.nav-label-selected {
 }
 
 /* -- END Connector.view.Navigation */
+
+/* Connector.view.Selection */
+.sel-listing {
+  padding: 5px 0 5px 30px;
+}
+/* -- END Connector.view.Selection */
 
 /* Connector.view.SelectionStatus */
 div.selectionstatus,
@@ -1135,12 +1157,9 @@ div.detailcolumn {
   padding-top: 4px;
 
   a {
-    color: $select-color;
-
     &.nav:hover {
       color: $select-color;
       cursor: pointer;
-      text-decoration: underline;
     }
   }
 }
@@ -1150,6 +1169,11 @@ div.totalcolumn {
   font-weight: bold;
   white-space: pre-wrap;
   width: 15%;
+}
+
+div.showload {
+  background: url(images/grid/loading.gif) no-repeat 15px;
+  background-size: 20px;
 }
 
 /* -- END Connector.view.Summary */
@@ -1345,10 +1369,11 @@ div.emptytext {
 
 .x-column-header-trigger {
   border-left: 1px solid $primary-color;
-}
+  background-color: $heat-scale-4;
 
-.x-column-header-trigger:hover {
-  background-color: #F4F4F4 !important;
+  &:hover {
+    background-color: #F4F4F4 !important;
+  }
 }
 
 div.filterheader {
@@ -1360,12 +1385,67 @@ div.filterheader {
   border-bottom: none;
 }
 
+/* Connector.grid.Panel */
+.connector-grid {
+
+  .filtered-column {
+
+    .x-column-header-trigger {
+      background-color: $heat-scale-4 !important;
+    }
+
+  }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header-inner {
+    height: 45px;
+  }
+
+  .x-column-header-align-center {
+    text-align: left;
+    color: $light-color;
+    background-color: $heat-scale-1;
+
+    /* Column group headers do not show trigger */
+    .x-column-header-trigger {
+      display: none;
+    }
+
+    .x-group-sub-header {
+
+      background-color: $heat-scale-4;
+
+      .x-column-header-trigger {
+        display: block;
+      }
+
+      .x-column-header-inner {
+        position: relative;
+      }
+
+      .x-column-header-text {
+        white-space: normal;
+        position: absolute;
+        left: 4px;
+        bottom: 4px;
+        margin: 0;
+        width: 85%;
+        text-align: justify;
+      }
+    }
+  }
+}
+/* -- END Connector.grid.Panel */
+
 /* Measure Picker */
 .sourcepanel, .measurepanel {
   .x-panel-body .x-box-inner {
     background-color: $light-color;
     border: none;
-    font-size: 11px;
   }
 
   .groupheader {
@@ -1586,23 +1666,21 @@ a.cite-ref {
 }
 
 a {
-  color: $interactive-color;
+  color: $link-color;
+
+  text-decoration: none;
 
   &.logout {
     color: $light-color;
-    text-decoration: none;
   }
 
   &.survey {
     float: right;
     vertical-align: middle;
-    text-decoration: none;
   }
 
-  &.logout, &.survey {
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover, &:active {
+    text-decoration: underline;
   }
 }
 
@@ -1710,12 +1788,32 @@ div.learnview {
 
   .module {
     padding-bottom: 20px;
+  }
+}
 
-    p {
-      color: #231F20;
+.module {
+  p {
+    color: #231F20;
+
+    &.loading-data {
+      color: $unselect-black;
     }
   }
 
+  .disabled {
+    color: $unselect-black;
+  }
+
+  .checkbox {
+    color: $unselect-black;
+    width: 11px;
+    min-height: 10px;
+    float: left;
+  }
+
+  .item-row {
+    padding: 2px 0px;
+  }
 }
 
 .modulecontainer {
@@ -1737,7 +1835,7 @@ div.learn-header-container {
 }
 
 div.learn-map-container {
-  height: 320px;
+  height: 340px;
   margin-bottom: 4px;
 }
 

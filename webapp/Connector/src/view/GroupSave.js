@@ -157,13 +157,11 @@ Ext.define('Connector.view.GroupSave', {
                     items: ['->',{
                         text: 'save',
                         itemId: 'groupcreatesave',
-                        cls: 'groupcreatesave', // tests
-                        ui: 'rounded-inverted-accent'
+                        cls: 'groupcreatesave' // tests
                     },{
                         text: 'cancel',
                         itemId: 'cancelgroupsave',
-                        cls: 'cancelgroupsave', // tests
-                        ui: 'rounded-inverted-accent'
+                        cls: 'cancelgroupsave' // tests
                     }]
                 }],
                 listeners : {
@@ -288,13 +286,11 @@ Ext.define('Connector.view.GroupSave', {
                     items: ['->',{
                         text: 'save',
                         itemId: 'groupupdatesave',
-                        cls: 'groupupdatesave', // tests
-                        ui: 'rounded-inverted-accent'
+                        cls: 'groupupdatesave' // tests
                     },{
                         text: 'cancel',
                         itemId: 'groupupdatecancel',
-                        cls: 'groupupdatecancel', // tests
-                        ui: 'rounded-inverted-accent'
+                        cls: 'groupupdatecancel' // tests
                     }]
                 }],
                 listeners : {

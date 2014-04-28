@@ -73,20 +73,33 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Vaccine]',
+                singularName: 'Study product',
                 pluralName: 'Study products',
                 priority: 20,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
                 detailView: 'Connector.app.view.StudyProducts',
-                // detailDataSource: {
-                //     schema: 'Study',
-                //     query: 'StudyProperties'
-                // },
-                // detailPageViews: {
-                //     leadContributer: 'Connector.app.view.Person',
-
-                // },
+                detailItemView: 'Connector.app.view.ModuleContainer',
+                detailItemModules: [[{
+                    type: 'productheader'
+                }, {
+                    type: 'text',
+                    staticData: {
+                        title: 'Product production'
+                    },
+                    modelData: {
+                        text: 'Production'
+                    }
+                }, {
+                    type: 'text',
+                    staticData: {
+                        title: 'Description'
+                    },
+                    modelData: {
+                        text: 'Description'
+                    }
+                }], []],
 
                 hierarchies: [{
                     uniqueName: '[Vaccine.Type]',
@@ -111,8 +124,6 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Assay',
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
-
-                // detailItemView: 'Connector.app.view.StudyDetail',
 
                 hierarchies: [{
                     uniqueName: '[Assay.Target Area]',
@@ -144,7 +155,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
 
-                detailItemView: 'Connector.app.view.StudyDetail',
+                detailItemView: 'Connector.app.view.ModuleContainer',
                 detailItemModules: [[{
                     type: 'studyheader'
                 }, {
@@ -178,6 +189,21 @@ Ext4.define('Connector.cube.Configuration', {
                         picture: 'MainContact.Portrait',
                         line1: 'MainContact.Role',
                         line2: 'MainContact.Team'
+                    }
+                }, {
+                    type: 'studyproducts',
+                    staticData: {
+                        title: 'Products'
+                    }
+                }, {
+                    type: 'studyassays',
+                    staticData: {
+                        title: 'Immune assays'
+                    }
+                }, {
+                    type: 'studylabsandclinicaldata',
+                    staticData: {
+                        title: "Lab & clinical data"
                     }
                 }]],
 

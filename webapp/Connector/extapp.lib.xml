@@ -118,7 +118,6 @@
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
-        <script path="Connector/src/view/Data.js"/>
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
@@ -149,15 +148,18 @@
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 
+        <script path="Connector/src/utility/Animation.js"/>
         <script path="Connector/src/utility/StoreCache.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
+        <script path="Connector/src/app/model/DataSet.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Site.js"/>
         <script path="Connector/src/app/model/Study.js"/>
         <script path="Connector/src/app/model/StudyProducts.js"/>
 
         <script path="Connector/src/app/store/Assay.js"/>
+        <script path="Connector/src/app/store/DataSet.js"/>
         <script path="Connector/src/app/store/Labs.js"/>
         <script path="Connector/src/app/store/Site.js"/>
         <script path="Connector/src/app/store/Study.js"/>
@@ -165,11 +167,16 @@
 
         <script path="Connector/src/app/view/Assay.js"/>
         <script path="Connector/src/app/view/Labs.js"/>
+        <script path="Connector/src/app/view/ModuleContainer.js"/>
         <script path="Connector/src/app/view/Site.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
-        <script path="Connector/src/app/view/StudyDetail.js"/>
 
+        <script path="Connector/src/app/view/module/ProductHeader.js"/>
+        <script path="Connector/src/app/view/module/StudyAssays.js"/>
+        <script path="Connector/src/app/view/module/StudyHeader.js"/>
+        <script path="Connector/src/app/view/module/StudyLabsAndClinicalData.js"/>
+        <script path="Connector/src/app/view/module/StudyProducts.js"/>
         <script path="Connector/src/app/view/module/StudySites.js"/>
 
         <script path="Connector/src/Application.js"/>

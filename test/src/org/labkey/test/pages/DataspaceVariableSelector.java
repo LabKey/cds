@@ -35,7 +35,8 @@ public abstract class DataspaceVariableSelector
 
     protected Locator.CssLocator sourcePanelRow()
     {
-        return pickerPanel().append(".sourcepanel div.itemrow span.val");
+        return Locator.CssLocator.union(pickerPanel().append(".sourcepanel div.itemrow span.val"), // selects rows with counts
+                                        pickerPanel().append(".sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
     }
 
     public void pickSource(String source)
@@ -65,5 +66,15 @@ public abstract class DataspaceVariableSelector
     public void pickMeasure(String source, String measure)
     {
         pickMeasure(source, measure, false, false);
+    }
+
+    public abstract void setScale(Scale scale);
+
+    public abstract void confirmSelection();
+
+    public static enum Scale
+    {
+        Log,
+        Linear
     }
 }

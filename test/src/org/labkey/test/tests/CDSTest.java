@@ -61,6 +61,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String PROJECT_NAME = "CDSTest Project";
     private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
+    private static final String[] ASSAYS = new String[]{"ADCC-Ferrari", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey"};
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " +LABS[1]+ " and " + LABS[2];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
@@ -833,7 +834,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         viewLearnAboutPage("Assays");
 
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
+        List<String> assays = Arrays.asList(ASSAYS);
         verifyLearnAboutPage(assays);
     }
 
@@ -886,42 +887,33 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Lab Results", "CD4");
-        click(Locators.cdsButtonLocator("set x axis"));
+        xaxis.confirmSelection();
         waitForElement(Locator.css(".curseltitle").containing("Y AXIS"));
         yaxis.pickMeasure("Lab Results", "Lymphocytes");
-        click(Locators.cdsButtonLocator("set y axis"));
+        yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(CD4_LYMPH);
 
-        WebElement xAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(Locators.cdsDropDownButtonLocator("xaxisbtn").toBy()));
-        WebElement yAxisButton = shortWait().until(ExpectedConditions.elementToBeClickable(Locators.cdsDropDownButtonLocator("yaxisbtn").toBy()));
-
-        yAxisButton.click();
-        _ext4Helper.waitForMask();
+        yaxis.openSelectorWindow();
         yaxis.pickMeasure("Lab Results", "CD4");
-        click(Locators.cdsButtonLocator("set y axis"));
+        yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        xAxisButton.click();
-        _ext4Helper.waitForMask();
+        xaxis.openSelectorWindow();
         xaxis.pickMeasure("Lab Results", "Hemoglobin");
-        click(Locators.cdsButtonLocator("set x axis"));
+        xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
         assertSVG(HEMO_CD4_UNFILTERED);
 
         // Test log scales
-        yAxisButton.click();
-        _ext4Helper.waitForMask();
+        yaxis.openSelectorWindow();
         yaxis.pickMeasure("Physical Exam", "Weight Kg");
-        // set Y to log scale
-        click(Locator.xpath("//div[@id='plotymeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(Locators.cdsButtonLocator("set y axis"));
+        yaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        yaxis.confirmSelection();
         waitForText("Points outside the plotting area have no match");
-        xAxisButton.click();
-        _ext4Helper.waitForMask();
+        xaxis.openSelectorWindow();
         xaxis.pickMeasure("Physical Exam", "Pulse");
-        // set X to log scale
-        click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='Log']]//input"));
-        click(Locators.cdsButtonLocator("set x axis"));
+        xaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        xaxis.confirmSelection();
         assertSVG(WT_PLSE_LOG);
 
         Actions builder = new Actions(getDriver());
@@ -1103,6 +1095,59 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
         verifyParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
         verifyParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
+    }
+
+    @Test
+    public void testXAxisVariableSelectorDefinitionPanel()
+    {
+        makeNavigationSelection(NavigationLink.PLOT);
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+
+        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+
+        assertElementNotPresent(definitionPanel.notHidden());
+
+        xaxis.pickSource("ADCC");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: ADCC")
+                .containing("Contains up to one row of ADCC data for each Participant/visit/TARGET_CELL_PREP_ISOLATE combination."));
+
+        xaxis.pickMeasure("ADCC", "ACTIVITY PCT");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: ACTIVITY PCT")
+                .containing("Percent activity observed"));
+
+        click(Locators.cdsButtonLocator("go to assay page"));
+
+        verifyLearnAboutPage(Arrays.asList(ASSAYS));
+    }
+
+    @Test
+    public void testYAxisVariableSelectorDefinitionPanel()
+    {
+        makeNavigationSelection(NavigationLink.PLOT);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
+
+        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+
+        assertElementNotPresent(definitionPanel.notHidden());
+
+        yaxis.pickSource("MRNA");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: MRNA")
+                .containing("Contains up to one row of MRNA data for each Participant/visit combination."));
+
+        yaxis.pickMeasure("MRNA", "CCL5");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: CCL5")
+                .containing("Expression levels for CCL5"));
+
+        click(Locators.cdsButtonLocator("go to assay page"));
+        verifyLearnAboutPage(Arrays.asList(ASSAYS));
     }
 
     private void verifyAssayInfo(AssayDetailsPage assay)

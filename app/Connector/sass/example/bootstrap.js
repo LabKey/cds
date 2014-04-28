@@ -5,22 +5,25 @@
  * metadata-driven class system features 
  */
 Ext.Loader.addClassPathMappings({
+  "Animation": "../../../../webapp/Connector/src/utility/Animation.js",
   "Connector.Application": "../../../../webapp/Connector/src/Application.js",
   "Connector.app.model.Assay": "../../../../webapp/Connector/src/app/model/Assay.js",
+  "Connector.app.model.DataSet": "../../../../webapp/Connector/src/app/model/DataSet.js",
   "Connector.app.model.Labs": "../../../../webapp/Connector/src/app/model/Labs.js",
   "Connector.app.model.Site": "../../../../webapp/Connector/src/app/model/Site.js",
   "Connector.app.model.Study": "../../../../webapp/Connector/src/app/model/Study.js",
   "Connector.app.model.StudyProducts": "../../../../webapp/Connector/src/app/model/StudyProducts.js",
   "Connector.app.store.Assay": "../../../../webapp/Connector/src/app/store/Assay.js",
+  "Connector.app.store.DataSet": "../../../../webapp/Connector/src/app/store/DataSet.js",
   "Connector.app.store.Labs": "../../../../webapp/Connector/src/app/store/Labs.js",
   "Connector.app.store.Site": "../../../../webapp/Connector/src/app/store/Site.js",
   "Connector.app.store.Study": "../../../../webapp/Connector/src/app/store/Study.js",
   "Connector.app.store.StudyProducts": "../../../../webapp/Connector/src/app/store/StudyProducts.js",
   "Connector.app.view.Assay": "../../../../webapp/Connector/src/app/view/Assay.js",
   "Connector.app.view.Labs": "../../../../webapp/Connector/src/app/view/Labs.js",
+  "Connector.app.view.ModuleContainer": "../../../../webapp/Connector/src/app/view/ModuleContainer.js",
   "Connector.app.view.Site": "../../../../webapp/Connector/src/app/view/Site.js",
   "Connector.app.view.Study": "../../../../webapp/Connector/src/app/view/Study.js",
-  "Connector.app.view.StudyDetail": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
   "Connector.app.view.StudyProducts": "../../../../webapp/Connector/src/app/view/StudyProducts.js",
   "Connector.app.view.module.StudySites": "../../../../webapp/Connector/src/app/view/module/StudySites.js",
   "Connector.button.Image": "../../../../webapp/Connector/src/button/Image.js",
@@ -52,6 +55,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Explorer": "../../../../webapp/Connector/src/model/Explorer.js",
   "Connector.model.Filter": "../../../../webapp/Connector/src/model/Filter.js",
   "Connector.model.FilterGroup": "../../../../webapp/Connector/src/model/FilterGroup.js",
+  "Connector.model.Grid": "../../../../webapp/Connector/src/model/Grid.js",
   "Connector.model.Group": "../../../../webapp/Connector/src/model/Group.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
@@ -71,7 +75,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.view.Citation": "../../../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../../../webapp/Connector/src/view/Compare.js",
-  "Connector.view.Data": "../../../../webapp/Connector/src/view/Data.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -109,7 +112,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
-  "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/StudyDetail.js",
+  "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
+  "Connector.view.module.StudyAssays": "../../../../webapp/Connector/src/app/view/module/StudyAssays.js",
+  "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
+  "Connector.view.module.StudyLabsAndClinicalData": "../../../../webapp/Connector/src/app/view/module/StudyLabsAndClinicalData.js",
+  "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.search.Container": "../../../../webapp/Connector/src/view/search/Container.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
@@ -131,22 +138,25 @@ Ext.Loader.addClassPathMappings({
   "StoreCache": "../../../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
+  "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
+  "Connector.app.model.DataSet": [],
   "Connector.app.model.Labs": [],
   "Connector.app.model.Site": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
   "Connector.app.store.Assay": [],
+  "Connector.app.store.DataSet": [],
   "Connector.app.store.Labs": [],
   "Connector.app.store.Site": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
+  "Connector.app.view.ModuleContainer": [],
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
-  "Connector.app.view.StudyDetail": [],
   "Connector.app.view.StudyProducts": [],
   "Connector.app.view.module.StudySites": [],
   "Connector.button.Image": [],
@@ -178,6 +188,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Grid": [],
   "Connector.model.Group": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
@@ -197,7 +208,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.types.Filter": [],
   "Connector.view.Citation": [],
   "Connector.view.Compare": [],
-  "Connector.view.Data": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
@@ -235,7 +245,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Viewport": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [],
+  "Connector.view.module.ProductHeader": [],
+  "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyHeader": [],
+  "Connector.view.module.StudyLabsAndClinicalData": [],
+  "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
   "Connector.view.search.Container": [],
   "Connector.window.Filter": [],
@@ -1070,22 +1084,25 @@ Ext.ClassManager.addNameAlternateMappings({
   "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
+  "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
+  "Connector.app.model.DataSet": [],
   "Connector.app.model.Labs": [],
   "Connector.app.model.Site": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
   "Connector.app.store.Assay": [],
+  "Connector.app.store.DataSet": [],
   "Connector.app.store.Labs": [],
   "Connector.app.store.Site": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
+  "Connector.app.view.ModuleContainer": [],
   "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
-  "Connector.app.view.StudyDetail": [],
   "Connector.app.view.StudyProducts": [],
   "Connector.app.view.module.StudySites": [
     "widget.app.module.studysites"
@@ -1127,6 +1144,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Explorer": [],
   "Connector.model.Filter": [],
   "Connector.model.FilterGroup": [],
+  "Connector.model.Grid": [],
   "Connector.model.Group": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
@@ -1167,9 +1185,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Compare": [
     "widget.compareview"
-  ],
-  "Connector.view.Data": [
-    "widget.datagrid"
   ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
@@ -1268,8 +1283,20 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.Person": [
     "widget.module.person"
   ],
+  "Connector.view.module.ProductHeader": [
+    "widget.module.productheader"
+  ],
+  "Connector.view.module.StudyAssays": [
+    "widget.app.module.studyassays"
+  ],
   "Connector.view.module.StudyHeader": [
     "widget.module.studyheader"
+  ],
+  "Connector.view.module.StudyLabsAndClinicalData": [
+    "widget.app.module.studylabsandclinicaldata"
+  ],
+  "Connector.view.module.StudyProducts": [
+    "widget.app.module.studyproducts"
   ],
   "Connector.view.module.Text": [
     "widget.module.text"

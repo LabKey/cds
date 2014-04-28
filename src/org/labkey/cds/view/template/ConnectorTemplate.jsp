@@ -44,179 +44,13 @@
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
-    <!-- Context Path required for CSS -->
-    <style type="text/css">
-        .yaxisbutton {
-            position: absolute;
-        }
-
-        .x-btn-rounded-inverted-accent-icon-small .info {
-            background-image: url(<%=text(appPath)%>/images/info.png);
-        }
-
-        .x-btn-rounded-inverted-accent-icon-small-over .info {
-            background-image: url(<%=text(appPath)%>/images/infoover.png);
-        }
-
-        /* Paging Toolbar */
-        .x-tbar-page-next {
-            background-image: url('<%=text(resourcePath)%>/images/grid/page-next.gif') !important;
-        }
-
-        .x-tbar-page-last {
-            background-image: url('<%=text(resourcePath)%>/images/grid/page-last.gif') !important;
-        }
-
-        .x-tbar-page-prev {
-            background-image: url('<%=text(resourcePath)%>/images/grid/page-prev.gif') !important;
-        }
-
-        .x-tbar-page-first {
-            background-image: url('<%=text(resourcePath)%>/images/grid/page-first.gif') !important;
-        }
-
-        .x-tbar-loading {
-            background-image: url('<%=text(resourcePath)%>/images/grid/refresh.gif') !important;
-        }
-
-        div.showload {
-            background: url('<%=text(resourcePath)%>/images/grid/loading.gif') no-repeat 15px;
-            background-size: 20px;
-        }
-
-        /* Ext.Grid */
-        .x-column-header-trigger {
-            background-color: #E6E1E1;
-        }
-
-        .closeitem {
-            background: url(<%=text(appPath)%>/images/close.png);
-            background-size: 8px 8px;
-        }
-
-        .sel-listing {
-            padding: 5px 0 5px 30px;
-        }
-
-        .x-border-box textarea.x-form-field {
-            padding: 4px 3px;
-        }
-
-        .x-panel-east-view {
-            z-index: 10000;
-        }
-
-        button.imgbutton {
-            padding: 0;
-            border: none;
-            background-color: transparent;
-            cursor: pointer;
-
-            background-image: url(<%=text(appPath)%>/images/dropdown.svg);
-        }
-
-        button.imgbuttonover {
-            background-image: url(<%=text(appPath)%>/images/dropdown_hover.svg);
-        }
-
-        .x-column-header-trigger {
-            display: inline-block;
-            background-image: url(<%=text(appPath)%>/images/filter.svg);
-            background-position: 0px 28px;
-            border-left: 1px solid transparent;
-        }
-
-        .x-column-header-trigger:hover {
-            background-color: #E6E1E1 !important;
-            background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
-            background-position: 0px 28px;
-        }
-
-        .filtered-column .x-column-header-trigger {
-            background-color: #E6E1E1 !important;
-            background-image: url(<%=text(appPath)%>/images/filter_selected.svg);
-            background-position: 0px 28px;
-        }
-
-        .x-column-header-inner {
-            height: 45px;
-        }
-
-        .x-column-header-align-center {
-            text-align: left;
-            color: #FFFFFF;
-            background-color: #666363;
-        }
-
-        .x-column-header-align-center .x-column-header-trigger {
-            display: none;
-        }
-
-        .x-group-sub-header {
-            background-color: #E6E1E1;
-        }
-
-        .x-column-header-align-center .x-group-sub-header .x-column-header-trigger {
-            display: block;
-        }
-
-        .x-group-sub-header .x-column-header-inner {
-            position: relative;
-        }
-
-        .x-group-sub-header .x-column-header-text {
-            white-space: normal;
-            position: absolute;
-            left: 4px;
-            bottom: 4px;
-            margin: 0;
-            text-align: justify;
-        }
-    </style>
-
-    <style type="text/css">
-        @media (max-width: 1300px) {
-            h1 {
-                font-size: 24pt;
-            }
-
-            h2 {
-                font-size: 20pt;
-            }
-
-            div.study-description .description-text {
-                font-size: 11pt;
-            }
-        }
-
-        @media (max-width: 1250px) {
-            h1 {
-                font-size: 22pt;
-            }
-
-            h2 {
-                font-size: 18pt;
-            }
-
-            div.study-description .description-text {
-                font-size: 11pt;
-            }
-        }
-
-        @media (max-width: 1175px) {
-            .noplotmsg h1 {
-                font-size: 18pt;
-            }
-        }
-    </style>
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
     <script type="text/javascript">
         Ext = {}; Ext4 = Ext;
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
@@ -332,7 +166,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
@@ -364,15 +197,18 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Animation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DataSet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DataSet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
@@ -380,11 +216,16 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyDetail.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyLabsAndClinicalData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
