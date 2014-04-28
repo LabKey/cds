@@ -118,7 +118,6 @@
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
-        <script path="Connector/src/view/Data.js"/>
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>

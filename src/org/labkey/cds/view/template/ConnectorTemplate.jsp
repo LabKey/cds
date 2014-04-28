@@ -44,20 +44,13 @@
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
-    <!-- Context Path required for CSS -->
-    <style type="text/css">
-        .x-border-box textarea.x-form-field {
-            padding: 4px 3px;
-        }
-    </style>
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
     <script type="text/javascript">
         Ext = {}; Ext4 = Ext;
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
@@ -173,7 +166,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>

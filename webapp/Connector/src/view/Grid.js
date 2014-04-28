@@ -48,7 +48,6 @@ Ext.define('Connector.view.Grid', {
                     }
                 },{
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     cls: 'gridexportbtn',
                     text: 'export',
                     margin: '27 0 0 5',
@@ -56,7 +55,6 @@ Ext.define('Connector.view.Grid', {
                     scope: this
                 },{
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     cls: 'gridcitationsbtn',
                     text: 'citations',
                     margin: '27 0 0 5',
@@ -71,7 +69,6 @@ Ext.define('Connector.view.Grid', {
                     }
                 },{
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent',
                     cls: 'gridcolumnsbtn',
                     text: 'choose columns',
                     margin: '27 20 0 5',
@@ -482,7 +479,6 @@ Ext.define('Connector.view.Grid', {
                     padding : 15,
                     items : ['->',{
                         text: 'select',
-                        ui: 'rounded-inverted-accent',
                         handler : function() {
                             var axispanel = this.getAxisPanel();
                             var allMeasures = axispanel.getMeasurePicker().measuresStoreData.measures;
@@ -492,7 +488,6 @@ Ext.define('Connector.view.Grid', {
                         scope: this
                     },{
                         text: 'cancel',
-                        ui: 'rounded-inverted-accent',
                         handler : function() { this.measureWindow.hide(); },
                         scope: this
                     }]

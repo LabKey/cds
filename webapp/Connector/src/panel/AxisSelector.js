@@ -386,7 +386,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     this.getDefinitionPanel(),
                     {
                         xtype: 'button',
-                        ui: 'rounded-inverted-accent',
                         text: 'go to assay page',
                         itemId: 'gotoassaypage'
                     },

@@ -74,6 +74,11 @@ $grid-column-header-font-size: 11pt;
 $grid-header-background-color: transparent;
 $grid-header-over-background-color: $selectongrey-color;
 
+// Tips
+$tip-background-color: $light-color;
+$tip-border-color: $info-color;
+$tip-body-color: $info-color;
+
 @mixin header {
   font-family: $data-font;
   font-weight: normal;

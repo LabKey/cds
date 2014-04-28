@@ -75,7 +75,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.Citation": "../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../webapp/Connector/src/view/Compare.js",
-  "Connector.view.Data": "../../webapp/Connector/src/view/Data.js",
   "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -209,7 +208,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.types.Filter": [],
   "Connector.view.Citation": [],
   "Connector.view.Compare": [],
-  "Connector.view.Data": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
@@ -1187,9 +1185,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Compare": [
     "widget.compareview"
-  ],
-  "Connector.view.Data": [
-    "widget.datagrid"
   ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"

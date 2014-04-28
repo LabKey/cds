@@ -100,8 +100,17 @@ div.measuresgrid .x-grid-view {
   background-position: 0px 28px;
 }
 
+.x-column-header-text {
+  font-size: 12px;
+}
+
 .x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
   height: 13px;
   width: 13px;
   background-image: url(images/form/checkbox2.gif);
+}
+
+/* Group selection panels */
+.x-border-box textarea.x-form-field {
+  padding: 4px 3px;
 }

@@ -49,18 +49,17 @@ Ext.define('Connector.view.Variable', {
         }
 
         this.items = [modelComponent,{
-            itemId: 'cvbutton',
             xtype: 'button',
-            ui: 'rounded-inverted-accent',
+            itemId: 'cvbutton',
             cls: this.btnCls,
             margin: '-13 0 0 0',
             text: this.buttonText,
             handler: this.onBtnClick,
             scope: this
         },{
+            xtype: 'imgbutton',
             itemId: 'ddbutton',
             hidden: true,
-            xtype: 'imgbutton',
             vector: 27,
             cls: this.btnCls + ' ddbutton',
             handler: this.onBtnClick,
