@@ -5,7 +5,7 @@
  */
 Ext.define('Connector.view.module.StudyHeader', {
 
-    xtype : 'module.studyheader',
+    xtype : 'app.module.studyheader',
 
     extend : 'Connector.view.module.BaseModule',
 
