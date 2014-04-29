@@ -45,9 +45,11 @@ Ext.define('Connector.window.Filter', {
             });
         }
 
+        var columnName = this.col.dataIndex;
+
         Ext.apply(this, {
             store: this.dataView.getStore(),
-            boundColumn: this.dataView.getColumnMetadata(this.col.dataIndex)
+            boundColumn: this.dataView.getColumnMetadata(columnName)
         });
 
         this.items = this.getItems();
@@ -96,9 +98,6 @@ Ext.define('Connector.window.Filter', {
         var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
 
         this.fireEvent('clearfilter', this, fieldKeyPath);
-//        this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
-//        this.store.load();
-//        this.dataView.removeGridFilter(fieldKeyPath);
         this.close();
     },
 
@@ -143,23 +142,12 @@ Ext.define('Connector.window.Filter', {
         return items;
     },
 
-    applyColumns : function () {
-
-        var changed = false, newColumns = [], oldColumns = [];
-
-        return {
-            columnSetChange: changed,
-            newColumns: newColumns,
-            oldColumns: oldColumns
-        };
-    },
-
     applyFilters : function () {
         var filterPanel = this.down('labkey-default-filterpanel');
         var filterArray = [];
         if (filterPanel.isValid()) {
             var colFilters = filterPanel.getFilters();
-            var fa = Ext.clone(this.store.filterArray);
+            var fa = Ext.clone(this.dataView.getStore().filterArray);
             fa = fa.slice(1);
             filterArray = LABKEY.Filter.merge(fa, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
         }
@@ -175,7 +163,7 @@ Ext.define('Connector.window.Filter', {
         var filterArray = this.applyFilters();
 
         if (filterArray.length > 0) {
-            this.fireEvent('filter', this, this.boundColumn, filterArray, this.applyColumns());
+            this.fireEvent('filter', this, this.boundColumn, filterArray);
             this.ppx = this.getPosition();
             this.close();
         }
