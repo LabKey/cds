@@ -964,7 +964,7 @@ Ext.define('Connector.view.Scatter', {
                     if (filters[f].get('isPlot') == true) {
                         found = true;
                         filters[f].set('plotMeasures', measures);
-                        this.state.updateFilterMembers(filters[f].get('id'), filter.members);
+                        this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
                         break;
                     }
                 }

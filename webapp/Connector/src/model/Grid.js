@@ -514,7 +514,7 @@ Ext.define('Connector.model.Grid', {
                                     uniqueName: Connector.model.Filter.getSubjectUniqueName(groups[r][g])
                                 });
                             }
-                            this.olapProvider.updateFilterMembers(this.filterMap[this.getFilterId(fa[f])], members);
+                            this.olapProvider.updateFilterMembers(this.filterMap[this.getFilterId(fa[f])], members, true);
                         }
                     }
 
