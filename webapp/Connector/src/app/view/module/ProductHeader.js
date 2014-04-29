@@ -5,7 +5,7 @@
  */
 Ext.define('Connector.view.module.ProductHeader', {
 
-    xtype : 'module.productheader',
+    xtype : 'app.module.productheader',
 
     extend : 'Connector.view.module.BaseModule',
 

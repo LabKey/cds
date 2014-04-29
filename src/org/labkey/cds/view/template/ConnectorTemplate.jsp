@@ -222,6 +222,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyLabsAndClinicalData.js"></script>

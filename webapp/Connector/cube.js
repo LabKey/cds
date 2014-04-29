@@ -99,7 +99,12 @@ Ext4.define('Connector.cube.Configuration', {
                     modelData: {
                         text: 'Description'
                     }
-                }], []],
+                }], [{
+                    type: 'productstudies',
+                    staticData: {
+                        title: 'Studies where used'
+                    }
+                }]],
 
                 hierarchies: [{
                     uniqueName: '[Vaccine.Type]',

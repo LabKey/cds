@@ -173,6 +173,7 @@
         <script path="Connector/src/app/view/StudyProducts.js"/>
 
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
+        <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/StudyLabsAndClinicalData.js"/>
