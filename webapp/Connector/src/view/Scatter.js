@@ -377,7 +377,6 @@ Ext.define('Connector.view.Scatter', {
 
     initPlot : function(config, noplot) {
         var rows = config.rows;
-        R = rows;
         // Below vars needed for brush and mouse event handlers.
         var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
@@ -401,17 +400,16 @@ Ext.define('Connector.view.Scatter', {
 
         if (noplot) {
             layer = this.getNoPlotLayer();
-        }else if (config.xaxis && config.xaxis.isNumeric) {
+        }else if (config.xaxis && config.xaxis.isContinuous) {
             // Scatter.
             layer = this.getPointLayer(layerScope);
-        } else if (config.xaxis && !config.xaxis.isNumeric) {
+        } else if (config.xaxis && !config.xaxis.isContinuous) {
             // Box plot (aka 1D).
             layer = this.getBoxLayer();
         }
 
-        // maintain ratio 1:1
-        var box = this.plotEl.getSize();
-
+        var box = this.plotEl.getSize(); // maintain ratio 1:1
+        var scales = {};
         var numericTickFormat = function(val) {
             var s = val.toString();
             if (s.indexOf('.') > -1)
@@ -426,8 +424,12 @@ Ext.define('Connector.view.Scatter', {
             }
             return val;
         };
+        var dateFormat = function(val) {
+            // D3 converts dates to integers, so we need to convert it back to a date to get the format.
+            var d = new Date(val);
+            return d.toDateString();
+        };
 
-        var scales = {};
         if (noplot) {
             scales.x = scales.yLeft = {
                 scaleType: 'continuous',
@@ -436,11 +438,16 @@ Ext.define('Connector.view.Scatter', {
             };
         }
         else {
-            if (config.xaxis.isNumeric) {
+            if (config.xaxis.isContinuous) {
                 scales.x = {
-                    scaleType: 'continuous',
-                    tickFormat: numericTickFormat
+                    scaleType: 'continuous'
                 };
+
+                if (config.xaxis.isNumeric) {
+                    scales.x.tickFormat = numericTickFormat;
+                } else if (config.xaxis.type === 'TIMESTAMP') {
+                    scales.x.tickFormat = dateFormat;
+                }
             } else {
                 scales.x = {scaleType: 'discrete'};
             }
@@ -582,17 +589,17 @@ Ext.define('Connector.view.Scatter', {
                                 plotMeasures = [null, null], xMeasure = null, yMeasure = null,
                                 sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
 
-                        var transformVal = function(val, type, isMin) {
+                        var transformVal = function(val, type, isMin, domain) {
                             if (type === 'INTEGER') {
                                 return isMin ? Math.floor(val) : Math.ceil(val);
-                            } else {
+                            } else if (type === "DOUBLE"){
                                 var precision;
 
-                                if (val >= 1000) {
+                                if (domain[1] >= 1000) {
                                     precision = 0;
-                                } else if (val >= 100) {
+                                } else if (domain[1] >= 100) {
                                     precision = 1;
-                                } else if (val >= 10) {
+                                } else if (domain[1] >= 10) {
                                     precision = 2;
                                 } else {
                                     precision = 3;
@@ -600,6 +607,8 @@ Ext.define('Connector.view.Scatter', {
 
                                 return parseFloat(val.toFixed(precision));
                             }
+
+                            return val;
                         };
 
                         if (measures.length > 1) {
@@ -615,16 +624,16 @@ Ext.define('Connector.view.Scatter', {
                         plotMeasures = [xMeasure, yMeasure];
 
                         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
-                            xMin = transformVal(xExtent[0], xMeasure.measure.type, true);
-                            xMax = transformVal(xExtent[1], xMeasure.measure.type, false);
+                            xMin = transformVal(xExtent[0], xMeasure.measure.type, true, plot.scales.x.scale.domain());
+                            xMax = transformVal(xExtent[1], xMeasure.measure.type, false, plot.scales.x.scale.domain());
 
                             sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, xMin);
                             sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, xMax);
                         }
 
                         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
-                            yMin = transformVal(yExtent[0], yMeasure.measure.type, true);
-                            yMax = transformVal(yExtent[1], yMeasure.measure.type, false);
+                            yMin = transformVal(yExtent[0], yMeasure.measure.type, true, plot.scales.yLeft.scale.domain());
+                            yMax = transformVal(yExtent[1], yMeasure.measure.type, false, plot.scales.yLeft.scale.domain());
 
                             sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, yMin);
                             sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, yMax);
@@ -667,6 +676,8 @@ Ext.define('Connector.view.Scatter', {
                 this.plot = null;
                 this.plotEl.update('');
                 this.noPlot();
+                console.error(err);
+                console.error(err.stack);
                 return;
             }
         }
@@ -953,7 +964,7 @@ Ext.define('Connector.view.Scatter', {
                     if (filters[f].get('isPlot') == true) {
                         found = true;
                         filters[f].set('plotMeasures', measures);
-                        this.state.updateFilterMembers(filters[f].get('id'), filter.members);
+                        this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
                         break;
                     }
                 }
@@ -1007,6 +1018,9 @@ Ext.define('Connector.view.Scatter', {
         } else if (measure.type === 'DOUBLE') {
             val = parseFloat(row[colName].value);
             return this.isValidNumber(val) ? val : null;
+        } else if (measure.type === 'TIMESTAMP') {
+            val = row[colName].value;
+            return val !== undefined && val !== null ? new Date(val) : null;
         } else {
             // Assume categorical.
             val = row[colName].displayValue ? row[colName].displayValue : row[colName].value;
@@ -1035,7 +1049,9 @@ Ext.define('Connector.view.Scatter', {
                 alias  : x.alias,
                 colName: _xid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : x.label,
-                isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE'
+                type   : x.type,
+                isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE',
+                isContinuous: x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'TIMESTAMP'
             };
         } else {
             xa = {
@@ -1057,7 +1073,9 @@ Ext.define('Connector.view.Scatter', {
             alias  : y.alias,
             colName: _yid, // Stash colName so we can query the getData temp table in the brushend handler.
             label  : y.label,
-            isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE'
+            type   : y.type,
+            isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE',
+            isContinuous: y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'TIMESTAMP'
         };
 
         var map = [], r,
@@ -1218,6 +1236,7 @@ Ext.define('Connector.view.Scatter', {
                 open : function() {},
                 measureConfig: {
                     allColumns: this.allColumns,
+                    displaySourceCounts: true,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
@@ -1298,7 +1317,7 @@ Ext.define('Connector.view.Scatter', {
             this.activeYSelection = this.axisPanelY.getSelection()[0];
         }
         this.ywin.show(null, function() {
-            this.runUniqueQuery(false, this.axisPanelY, 'yaxissource');
+            this.runUniqueQuery(this.axisPanelY);
         }, this);
     },
 
@@ -1315,6 +1334,7 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
                     allColumns : true,
+                    displaySourceCounts: true,
                     includeTimpointMeasures : true,
                     filter     : LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -1404,67 +1424,19 @@ Ext.define('Connector.view.Scatter', {
             this.activeXSelection = this.axisPanelX.getSelection()[0];
         }
         this.xwin.show(null, function() {
-            this.runUniqueQuery(false, this.axisPanelX, 'xaxissource');
+            this.runUniqueQuery(this.axisPanelX);
         }, this);
     },
 
-    runUniqueQuery : function(force, axisSelector, cls) {
+    runUniqueQuery : function(axisSelector) {
         var picker = axisSelector.getMeasurePicker();
 
         if (picker) {
-            var store = picker.getSourceStore();
-            if (force) {
-                if (store.getCount() > 0) {
-                    this._processQuery(store, cls);
-                }
-                else {
-                    store.on('load', function(s) {
-                        this._processQuery(s, cls);
-                    }, this, {single: true});
-                }
-            }
-            else if (!force) {
-                if (this.control) {
-                    var me = this;
-                    this.control.getParticipantIn(function(ptids){
-                        if (!me.initialized) {
-                            me.queryPtids = ptids;
-                            me.runUniqueQuery(true, axisSelector, cls);
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    _processQuery : function(store, cls) {
-        var sources = [], s;
-
-        for (s=0; s < store.getCount(); s++) {
-            var record = store.getAt(s);
-            if (record.data.schemaName != null)
-                sources.push(record.data['queryLabel'] || record.data['queryName']);
-        }
-
-        if (this.control) {
             var me = this;
-            if (this.state.getFilters().length == 0) {
-                me.control.requestCounts(sources, [], function(r){
-                    me._postProcessQuery(r, cls);
-                }, me);
-            }
-            else {
-                this.control.getParticipantIn(function(ids) {
-                    me.control.requestCounts(sources, ids, function(r){
-                        me._postProcessQuery(r, cls);
-                    }, me);
-                });
-            }
+            me.getParticipantIn(function(subjects) {
+                picker.setCountMemberSet(subjects);
+            });
         }
-    },
-
-    _postProcessQuery : function(response, cls) {
-        this.control.displayCounts(response, cls);
     },
 
     showMessage : function(msg, append) {

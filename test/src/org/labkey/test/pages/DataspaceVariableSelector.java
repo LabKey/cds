@@ -41,7 +41,7 @@ public abstract class DataspaceVariableSelector
 
     public void pickSource(String source)
     {
-        _test.waitAndClick(sourcePanelRow().withText(source));
+        _test.waitAndClick(sourcePanelRow().containing(source));
     }
 
     //Pick measure from one of multiple split panel measure pickers
