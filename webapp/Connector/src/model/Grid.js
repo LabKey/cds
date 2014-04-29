@@ -233,8 +233,6 @@ Ext.define('Connector.model.Grid', {
 
     constructor : function(config) {
 
-        DGM = this;
-
         this.callParent([config]);
 
         this.flights = 0;
@@ -736,6 +734,8 @@ Ext.define('Connector.model.Grid', {
 
         this.setSubjectFilter(this.get('filterState'));
 
+        this.initialized = true;
+
         if (this.isActive()) {
             this.activeColumn = false;
             this.fireEvent('updatecolumns', this);
@@ -763,6 +763,6 @@ Ext.define('Connector.model.Grid', {
     },
 
     isActive : function() {
-        return this.get('active') === true;
+        return this.get('active') === true && this.initialized === true;
     }
 });
