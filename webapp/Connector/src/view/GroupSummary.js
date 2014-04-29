@@ -203,20 +203,17 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             cls: 'dimgroup',
             items: [{
                 xtype: 'button',
-                ui : 'rounded-inverted-accent',
                 text: '&#9668;&nbsp;back',
                 handler: this.back,
                 scope: this
             }, {
                 xtype: 'button',
-                ui: 'rounded-inverted-accent',
                 text: 'apply filters',
                 margin: '0 0 0 10',
                 handler: this.applyFilters,
                 scope: this
             }, {
                 xtype: 'button',
-                ui : 'rounded-inverted-accent',
                 text: 'delete',
                 margin: '0 0 0 10',
                 handler: this.deleteGroup,

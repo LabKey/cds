@@ -21,6 +21,8 @@ Ext.define('Connector.panel.AxisSelector', {
 
     scalename: 'scale',
 
+    disableLookups: true,
+
     disableScale: false,
 
     disableVariableOptions: false,
@@ -30,14 +32,16 @@ Ext.define('Connector.panel.AxisSelector', {
         align: 'stretch'
     },
 
+    lookupMap: {},
+
     initComponent : function() {
 
-        this.items = [];
-
-        this.items.push(this.getMainTitleDisplay());
-
         var picker = this.getMeasurePicker();
-        this.items.push(picker);
+
+        this.items = [
+            this.getMainTitleDisplay(),
+            picker
+        ];
 
         if (this.showDisplay) {
             this.items.push(this.getSelectionDisplay());
@@ -45,11 +49,23 @@ Ext.define('Connector.panel.AxisSelector', {
 
         this.callParent();
 
-        picker.getSourcesView().getSelectionModel().on('selectionchange', this.onSourceSelect, this);
-        picker.getMeasuresGrid().getSelectionModel().on('selectionchange', this.onMeasureSelect, this);
+        var measureGrid = picker.getMeasuresGrid();
+        var sourceView = picker.getSourcesView();
 
-        picker.getSourcesView().on('itemclick', this.updateDefinition, this);
-        picker.getMeasuresGrid().on('itemclick', this.updateDefinition, this);
+        // Source listeners
+        sourceView.getSelectionModel().on('selectionchange', this.onSourceSelect, this);
+
+        // Measure listeners
+        measureGrid.getSelectionModel().on({
+            select: this.onMeasureSelect,
+//            deselect: this.onMeasureSelect,
+            scope: this
+        });
+
+        if (this.showDisplay) {
+            sourceView.on('itemclick', this.onSourceClick, this);
+            measureGrid.on('itemclick', this.onMeasureClick, this);
+        }
     },
 
     getMainTitleDisplay : function() {
@@ -72,6 +88,7 @@ Ext.define('Connector.panel.AxisSelector', {
                 height: 210,
                 hidden: true,
                 displayConfig: this.displayConfig,
+                disableLookups: this.disableLookups,
                 disableScale: this.disableScale,
                 disableVariableOptions: this.disableVariableOptions,
                 scalename: this.scalename,
@@ -79,6 +96,14 @@ Ext.define('Connector.panel.AxisSelector', {
             });
 
             this.selectionDisplay = Ext.create('Connector.panel.AxisSelectDisplay', displayCfg);
+
+            this.selectionDisplay.on('lookupselect', function()
+            {
+                if (this.lastMeasure)
+                {
+                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure);
+                }
+            }, this);
         }
 
         return this.selectionDisplay;
@@ -185,35 +210,140 @@ Ext.define('Connector.panel.AxisSelector', {
         return this.getMeasurePicker().getSelectedRecords();
     },
 
+    getLookups : function() {
+        return this.getSelectionDisplay().getLookups();
+    },
+
     setSelection : function(measure) {
         this.getMeasurePicker().setSelectedRecord(measure);
     },
 
-    onMeasureSelect : function(selModel, records) {
-        if (selModel.multiSelect)
-            this.updateDefinition(null, selModel.getLastSelected());
-        else if (this.showDisplay)
+    clearSelection : function() {
+        this.getMeasurePicker().clearSelection();
+    },
+
+    onMeasureClick : function(view, measure, element, index) {
+        this.updateDefinition(measure);
+        this.getSelectionDisplay().setVariableOptions(measure);
+        this.lastMeasure = measure;
+
+        this.handleMeasureHighlight(true, element);
+    },
+
+    onMeasureSelect : function(selModel, measure) {
+
+        if (selModel.multiSelect && this.showDisplay)
         {
-            this.getSelectionDisplay().setMeasureSelection(records[0]);
-            this.getSelectionDisplay().setVariableOptions(records[0]);
+            this.updateDefinition(selModel.getLastSelected());
+        }
+        else if (this.showDisplay && this.disableLookups)
+        {
+            this.getSelectionDisplay().setMeasureSelection(measure);
+            this.getSelectionDisplay().setVariableOptions(measure);
+            this.lastMeasure = measure;
+        }
+
+        this.handleMeasureHighlight(false, measure);
+    },
+
+    handleMeasureHighlight : function(isClick, element) {
+        if (isClick)
+        {
+            if (element)
+            {
+                var _el = Ext.get(element);
+                if (_el)
+                {
+                    if (_el.hasCls('x-grid-row-focused'))
+                    {
+                        // for some reason itemclick fires in the case of unchecking but not
+                        // checking. This will stop us from removing highlight when someone
+                        // unchecked a row
+                        Ext.defer(function() {
+                            var el = Ext.get(this.lastElementId);
+                            if (el)
+                            {
+                                el.addCls('highlight');
+                            }
+                        }, 1, this);
+                    }
+                    else if (this.lastElementId != element.id)
+                    {
+                        // clear the former element highlight
+                        var el = Ext.get(this.lastElementId);
+                        if (el)
+                        {
+                            el.removeCls('highlight');
+                        }
+
+                        this.lastElementId = element.id;
+
+                        el = Ext.get(element.id);
+                        if (el)
+                        {
+                            el.addCls('highlight');
+                        }
+                    }
+                }
+            }
+            else
+            {
+                console.warn('No element available onClick');
+            }
+        }
+        else
+        {
+            if (this.lastMeasure)
+            {
+                if (this.lastMeasure.id == element.id)
+                {
+                    if (this.lastElementId)
+                    {
+                        var el = Ext.get(this.lastElementId);
+                        if (el)
+                        {
+                            el.addCls('highlight');
+                        }
+                    }
+                }
+            }
         }
     },
 
-    onSourceSelect : function(selModel, records) {
-        //select first variable in the list on source selection change, for singleSelect grid
-        if (!this.getMeasurePicker().getMeasuresGrid().multiSelect)
-            this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(0);
+    onSourceClick : function(view, source) {
+        this.updateDefinition(source);
     },
 
-    updateDefinition : function(view, record) {
-        if (this.showDisplay)
+    onSourceSelect : function(selModel, sources) {
+
+        this.getSelectionDisplay().clearVariableOptions();
+
+        if (Ext.isArray(sources) && sources.length > 0)
         {
-            this.getSelectionDisplay().getDefinitionPanel().update({
-                label : record.get("label") || record.get("queryLabel"),
-                description : record.get("description")
+            var source = sources[0];
+            this.updateDefinition(source);
+        }
+
+        //select first variable in the list on source selection change, for singleSelect grid
+        var measureGrid = this.getMeasurePicker().getMeasuresGrid();
+        if (!measureGrid.multiSelect)
+            measureGrid.getSelectionModel().select(0);
+    },
+
+    updateDefinition : function(record) {
+
+        if (record.id != this.lastDefinitionId)
+        {
+            this.lastDefinitionId = record.id;
+
+            var display = this.getSelectionDisplay();
+
+            display.getDefinitionPanel().update({
+                label: record.get("label") || record.get("queryLabel"),
+                description: record.get("description")
             });
 
-            this.getSelectionDisplay().show();
+            display.show();
         }
     }
 });
@@ -229,9 +359,15 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
     frame: false,
 
+    disableLookups: true,
+
+    disableVariableOptions: false,
+
     layout: {
         type: 'vbox'
     },
+
+    lookupMap: {},
 
     initComponent : function() {
 
@@ -250,7 +386,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     this.getDefinitionPanel(),
                     {
                         xtype: 'button',
-                        ui: 'rounded-inverted-accent',
                         text: 'go to assay page',
                         itemId: 'gotoassaypage'
                     },
@@ -334,15 +469,176 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         this.getScaleForm().getComponent('scale').setValue(value);
     },
 
-    setVariableOptions : function(record) {
-        if (record)
-        {
-            var optionsPanel = this.down('#variableoptions');
-            optionsPanel.removeAll(false);
+    getVariableOptionsPanel : function() {
+        return this.down('#variableoptions');
+    },
 
-            if (record.get('variableType') == 'TIME')
+    clearVariableOptions : function() {
+        this.getVariableOptionsPanel().removeAll(false);
+    },
+
+    setVariableOptions : function(measure) {
+        if (measure && measure.id != this.lastMeasureId)
+        {
+            this.lastMeasureId = measure.id;
+
+            this.clearVariableOptions();
+            var optionsPanel = this.getVariableOptionsPanel();
+
+            if (measure.get('variableType') == 'TIME')
+            {
                 optionsPanel.add(this.getAlignmentForm());
+            }
+            else if (!this.disableLookups && Ext.isDefined(measure.get('lookup').queryName))
+            {
+                optionsPanel.add({
+                    xtype: 'box',
+                    cls: 'curselauth',
+                    autoEl: {
+                        tag: 'div',
+                        html: Ext.htmlEncode(measure.get('name') + ' details')
+                    }
+                });
+                optionsPanel.add({
+                    xtype: 'grid',
+                    viewConfig : { stripeRows : false },
+                    selType: 'checkboxmodel',
+                    selModel: {
+                        checkOnly: true,
+                        checkSelector: 'td.x-grid-cell-row-checker'
+                    },
+                    enableColumnHide: false,
+                    enableColumnResize: false,
+                    multiSelect: true,
+                    border: false,
+                    store: this.getLookupColumnStore(measure),
+                    ui: 'custom',
+                    height: 200,
+                    cls: 'measuresgrid iScroll',
+                    flex: 1,
+                    hideHeaders: true,
+                    columns: [{
+                        dataIndex: 'shortCaption',
+                        width: '100%',
+                        flex: 1,
+                        sortable: false,
+                        menuDisabled: true
+                    }],
+                    listeners: {
+                        boxready: function(grid) {
+                            var store = grid.getStore();
+                            if (store.isLoading())
+                            {
+                                grid.getStore().on('load', function()
+                                {
+                                    this.applyLookupSelections(grid, store);
+                                }, this);
+                            }
+                            else
+                            {
+                                this.applyLookupSelections(grid, store);
+                            }
+                        },
+                        select: this.onLookupSelect,
+                        deselect: this.onLookupDeselect,
+                        scope: this
+                    }
+                });
+            }
         }
+    },
+
+    onLookupSelect : function(selModel, record, ix) {
+
+        if (Ext.isDefined(this.boundColumn))
+        {
+            var alias = this.boundColumn.get('alias');
+            if (!this.lookupMap[alias])
+            {
+                this.lookupMap[alias] = {};
+            }
+
+            this.lookupMap[alias][record.get('fieldKeyPath')] = {
+                fieldKeyPath: record.get('fieldKeyPath')
+            };
+
+            this.fireEvent('lookupselect', this, record);
+        }
+    },
+
+    onLookupDeselect : function(selModel, record, ix) {
+
+        var alias = this.boundColumn.get('alias');
+
+        if (this.lookupMap[alias])
+        {
+            if (Ext.isDefined(this.lookupMap[alias][record.get('fieldKeyPath')])) {
+                delete this.lookupMap[alias][record.get('fieldKeyPath')];
+            }
+        }
+    },
+
+    applyLookupSelections : function(grid, lookupStore) {
+
+        var lookupSelections = this.lookupMap[this.boundColumn.get('alias')];
+
+        if (Ext.isDefined(grid) && Ext.isDefined(lookupSelections))
+        {
+            var selectedLookups = [];
+
+            Ext.iterate(lookupSelections, function(fieldKeyPath, value)
+            {
+                var idx = lookupStore.findExact('fieldKeyPath', fieldKeyPath);
+                if (idx > -1)
+                {
+                    selectedLookups.push(lookupStore.getAt(idx));
+                }
+            }, this);
+
+            grid.getSelectionModel().select(selectedLookups, false, true);
+        }
+    },
+
+    getLookups : function() {
+        return this.lookupMap;
+    },
+
+    getLookupColumnStore : function(boundColumn) {
+
+        this.boundColumn = boundColumn;
+        var lookup = boundColumn.get('lookup');
+
+        var storeId = "fkColumns-" +  lookup.schemaName + "-" + lookup.queryName + "-" + lookup.keyColumn;
+
+        var store = Ext.getStore(storeId);
+        if (null != store) {
+            return store;
+        }
+
+        var url = LABKEY.ActionURL.buildURL("query", "getQueryDetails", null, {
+            schemaName: lookup.schemaName,
+            queryName: lookup.queryName
+        });
+
+        SS = Ext.create('Ext.data.Store', {
+            model   : 'Connector.model.ColumnInfo',
+            storeId : storeId,
+            proxy   : {
+                type   : 'ajax',
+                url    : url,
+                reader : {
+                    type: 'json',
+                    root: 'columns'
+                }
+            },
+            filterOnLoad: true,   //Don't allow user to select hidden cols or the display column (because it is already being displayed)
+            filters: [function(item) {
+                return !item.raw.isHidden; //&& item.raw.name != displayColFieldKey;
+            }],
+            autoLoad: true
+        });
+
+        return SS;
     },
 
     getAlignmentForm : function() {

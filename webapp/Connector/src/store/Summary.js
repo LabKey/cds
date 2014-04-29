@@ -28,10 +28,6 @@ Ext.define('Connector.store.Summary', {
         }, this);
     },
 
-    setFilterSet : function(filterSet) {
-        this.filterSet = filterSet;
-    },
-
     bindRequestConfigs : function(mdx) {
 
         var request = {
@@ -133,19 +129,42 @@ Ext.define('Connector.store.Summary', {
                 dim = mdx.getDimension(ca.dimName);
                 if (dim) {
                     var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name;
-                    var cellset = qrArray[i];
 
-                    var rec = {
-                        dimName: ca.dimName,
-                        total: this._aggregate(cellset),
-                        label: label,
-                        subject: label.toLowerCase(),
-                        hierarchy: cellset.axes[1].positions[0][0].level.hierarchy.name,
-                        details: [],
-                        sort: i
-                    };
+                    var hierarchies = dim.getHierarchies();
+                    var targetHierarchy;
 
-                    recs.push(rec);
+                    Ext.each(hierarchies, function(hier)
+                    {
+                        Ext.each(hier.levels, function(lvl)
+                        {
+                            if (lvl.uniqueName == dim.summaryTargetLevel)
+                            {
+                                targetHierarchy = hier;
+                            }
+                        }, this);
+
+                    }, this);
+
+                    if (Ext.isDefined(targetHierarchy))
+                    {
+                        var cellset = qrArray[i];
+
+                        var rec = {
+                            dimName: ca.dimName,
+                            total: this._aggregate(cellset),
+                            label: label,
+                            subject: label.toLowerCase(),
+                            hierarchy: targetHierarchy.name,
+                            details: [],
+                            sort: i
+                        };
+
+                        recs.push(rec);
+                    }
+                    else
+                    {
+                        console.error('Unable to locate level:', dim.summaryTargetLevel);
+                    }
                 }
                 else {
                     console.error('unable to locate dimension:', ca.dimName);

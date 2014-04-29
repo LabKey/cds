@@ -12,6 +12,10 @@
   $ui-body-border-width: 0
 );
 
+.x-panel-east-view {
+  z-index: 10000;
+}
+
 .x-panel-body-east-view {
   background: linear-gradient(90deg, #ebebeb, #f0f0f0) !important;
 }
@@ -39,9 +43,24 @@ div.measuresgrid .x-grid-view {
   background-color: $light-color;
 }
 
-//.x-panel-header-axispanel.x-docked-top {
-//  border-bottom: 1px solid $legend-color !important;
-//}
+.x-grid-cell-special,
+.x-grid-row-selected .x-grid-cell-special {
+  background-color: #FFFFFF;
+  background-image: none;
+}
+
+.x-grid-row-over .x-grid-cell-special {
+  background-color: #FFFFFF;
+  background-image: none;
+}
+
+.highlight .x-grid-cell-last {
+  background-color: #14C9CC;
+}
+
+.highlight .x-grid-cell-inner {
+  color: #FFFFFF;
+}
 
 .curseltitle {
   @include bodycaps;
@@ -62,4 +81,36 @@ div.measuresgrid .x-grid-view {
   width: 60%;
   font-family: $info-font;
   color: $heat-scale-1;
+}
+
+/* Connector.grid.Panel */
+.connector-grid .x-column-header-trigger {
+  background-image: url(images/filter.svg);
+  background-position: 0px 28px;
+}
+
+.connector-grid .x-column-header-trigger:hover {
+  background-color: #E6E1E1 !important;
+  background-image: url(images/filter_selected.svg);
+  background-position: 0px 28px;
+}
+
+.connector-grid .filtered-column .x-column-header-trigger {
+  background-image: url(images/filter_selected.svg);
+  background-position: 0px 28px;
+}
+
+.x-column-header-text {
+  font-size: 12px;
+}
+
+.x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
+  height: 13px;
+  width: 13px;
+  background-image: url(images/form/checkbox2.gif);
+}
+
+/* Group selection panels */
+.x-border-box textarea.x-form-field {
+  padding: 4px 3px;
 }

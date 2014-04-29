@@ -22,4 +22,15 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     {
         return Locator.tagWithClass("*", "xaxisbtn").notHidden();
     }
+
+    @Override
+    public void confirmSelection()
+    {
+        _test.click(CDSTest.Locators.cdsButtonLocator("set x axis"));
+    }
+
+    public void setScale(Scale scale)
+    {
+        _test.click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='" + scale + "']]//input"));
+    }
 }

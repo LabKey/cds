@@ -38,6 +38,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     parseContext : function(urlContext) {
+        urlContext = this.callParent(arguments);
         var ctx = {groupId: null};
         if (urlContext && urlContext.length > 0) {
             ctx.groupId = urlContext[0];

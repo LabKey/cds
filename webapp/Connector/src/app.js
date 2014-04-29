@@ -8,6 +8,9 @@
     needed for your application, but these edits will have to be merged by
     Sencha Cmd when upgrading.
 */
+Ext.override(Ext.button.Button, {
+    ui: 'rounded-inverted-accent'
+});
 
 // This is a bug in setting the style so IE can render.
 // See line #14789 in ext-all-sandbox-dev.js

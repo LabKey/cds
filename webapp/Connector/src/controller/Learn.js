@@ -93,16 +93,9 @@ Ext.define('Connector.controller.Learn', {
         vm.showStatusView('filterstatus');
     },
 
-    createView : function(xtype, config, context) {
-
+    createView : function(xtype, context) {
         var type = '';
-        var c;
-        if (Ext.isArray(config)) {
-            c = { ctx: config };
-        }
-        else {
-            c = config || {};
-        }
+        var c = { ctx: context };
 
         if (xtype == 'learn') {
             type = 'Connector.view.Learn';
@@ -118,6 +111,14 @@ Ext.define('Connector.controller.Learn', {
 
             return v;
         }
+    },
+
+    parseContext : function(ctx) {
+        this.context = {
+            dimension: ctx[0],
+            id: ctx[1]
+        }
+        return this.context;
     },
 
     bindLearnView : function(v, context) {
@@ -138,8 +139,8 @@ Ext.define('Connector.controller.Learn', {
             //
             // Set the active dimension
             //
-            if (context && context.length > 0) {
-                var dim = mdx.getDimension(context);
+            if (context && context.dimension) {
+                var dim = mdx.getDimension(context.dimension);
                 if (dim) {
                     for (var d=0; d < dims.length; d++) {
                         if (dims[d].uniqueName == dim.uniqueName) {
@@ -174,8 +175,8 @@ Ext.define('Connector.controller.Learn', {
         this.getStateManager().onMDXReady(function(mdx) {
             var v = this.getViewManager().getViewInstance('learn');
             if (v) {
-                var dimensionName = context[0];
-                var id = context[1];
+                var dimensionName = context.dimension;
+                var id = context.id;
                 var dim;
                 if (dimensionName) {
                     dim = mdx.getDimension(dimensionName);
@@ -209,7 +210,11 @@ Ext.define('Connector.controller.Learn', {
 
     onSelectDimension : function(dimension) {
         if (!this.updateLock) {
-            this.getViewManager()._changeView('learn', 'learn', dimension.get('name'), 'Learn About: ' + dimension.get('pluralName'));
+            var context = [dimension.get('name')];
+            if (this.context.id) {
+                context.push(this.context.id);
+            }
+            this.getViewManager()._changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
         }
     },
 

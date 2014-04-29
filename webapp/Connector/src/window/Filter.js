@@ -14,7 +14,7 @@ Ext.define('Connector.window.Filter', {
     ui: 'custom',
     cls: 'filterwindow',
     modal: true,
-    width: 340,
+    width: 360,
     autoShow: true,
     draggable: false,
     closable: false,
@@ -45,39 +45,29 @@ Ext.define('Connector.window.Filter', {
             });
         }
 
+        var columnName = this.col.dataIndex;
+
         Ext.apply(this, {
             store: this.dataView.getStore(),
-            boundColumn: this.dataView.getColumnMetadata(this.col.dataIndex)
+            boundColumn: this.dataView.getColumnMetadata(columnName)
         });
 
         this.items = this.getItems();
 
         this.buttons =  [{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text  : 'OK',
-            width : 70,
             handler: this.applyFiltersAndColumns,
             scope: this
         },{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text : 'Cancel',
-            width : 70,
             handler : this.close,
             scope : this
         },{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text : 'Clear Filters',
-            width : 80,
             handler : this.onClearFilters,
             scope: this
         },{
-            xtype : 'roundedbutton',
-            ui    : 'rounded-inverted-accent',
             text : 'Clear All',
-            width : 70,
             handler : function() {
                 this.clearAll();
                 this.close();
@@ -108,9 +98,6 @@ Ext.define('Connector.window.Filter', {
         var fieldKeyPath = this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKeyPath;
 
         this.fireEvent('clearfilter', this, fieldKeyPath);
-//        this.store.filterArray = LABKEY.Filter.merge(this.store.filterArray, fieldKeyPath, null);
-//        this.store.load();
-//        this.dataView.removeGridFilter(fieldKeyPath);
         this.close();
     },
 
@@ -152,100 +139,7 @@ Ext.define('Connector.window.Filter', {
             queryName: query
         });
 
-        if (null != this.boundColumn.lookup) {
-            items.push({
-                xtype   : 'grid',
-                selType : 'checkboxmodel',
-                title   : 'Show Detail Columns',
-                selModel: { mode:'MULTI' },
-                store   : this.getLookupColumnStore(),
-                ui      : 'custom',
-                cls     : 'lookupcols',
-                columns : [{
-                    header    : 'Detail Columns',
-                    dataIndex : 'shortCaption',
-                    width     : 320
-                }],
-                height  : 200,
-                width   : 320,
-                style   : 'padding-bottom:10px',
-                hideHeaders : true,
-                listeners : {
-                    viewready : function() {
-                        var selectedCols = this.dataView.getModel().get('foreignColumns')[this.boundColumn.name];
-                        if (!selectedCols || selectedCols.length == 0) {
-                            return;
-                        }
-
-                        this.getLookupGrid().getSelectionModel().select(selectedCols);
-                    },
-                    scope:this
-                }
-            });
-        }
-
         return items;
-    },
-
-    getLookupGrid : function () {
-        return this.down('grid');
-    },
-
-    getLookupColumnStore : function () {
-        if (!this.boundColumn.lookup) {
-            return null;
-        }
-
-        var storeId = "fkColumns-" + this.boundColumn.lookup.schemaName + "-" + this.boundColumn.lookup.queryName + "-" + this.boundColumn.fieldKey;
-        var store = Ext.getStore(storeId);
-        if (null != store) {
-            return store;
-        }
-
-        var url = LABKEY.ActionURL.buildURL("query", "getQueryDetails", null, {
-            queryName  : this.store.queryName,
-            schemaName : this.store.schemaName,
-            fk         : this.boundColumn.fieldKey
-        });
-
-        var displayColFieldKey = this.boundColumn.fieldKey + "/" + this.boundColumn.lookup.displayColumn;
-        return Ext.create('Ext.data.Store', {
-            model   : 'Connector.model.ColumnInfo',
-            storeId : storeId,
-            proxy   : {
-                type   : 'ajax',
-                url    : url,
-                reader : {
-                    type:'json',
-                    root:'columns'
-                }
-            },
-            filterOnLoad: true,   //Don't allow user to select hidden cols or the display column (because it is already being displayed)
-            filters: [function(item) {return !item.raw.isHidden && item.raw.name != displayColFieldKey;}],
-            autoLoad:true
-        });
-    },
-
-    applyColumns : function () {
-
-        var changed = false, newColumns = [], oldColumns = [];
-
-        if (this.boundColumn.lookup) {
-            var lookupGrid = this.getLookupGrid(),
-                    selections = lookupGrid.getSelectionModel().selected;
-
-            oldColumns = this.dataView.getModel().get('foreignColumns')[this.boundColumn.name];
-
-            selections.each(function(item) { newColumns.push(item); });
-
-            changed = !this.equalColumnLists(oldColumns, newColumns);
-        }
-
-        return {
-            columnSetChange: changed,
-            newColumns: newColumns,
-            oldColumns: oldColumns
-        };
     },
 
     applyFilters : function () {
@@ -253,7 +147,7 @@ Ext.define('Connector.window.Filter', {
         var filterArray = [];
         if (filterPanel.isValid()) {
             var colFilters = filterPanel.getFilters();
-            var fa = Ext.clone(this.store.filterArray);
+            var fa = Ext.clone(this.dataView.getStore().filterArray);
             fa = fa.slice(1);
             filterArray = LABKEY.Filter.merge(fa, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
         }
@@ -269,7 +163,7 @@ Ext.define('Connector.window.Filter', {
         var filterArray = this.applyFilters();
 
         if (filterArray.length > 0) {
-            this.fireEvent('filter', this, this.boundColumn, filterArray, this.applyColumns());
+            this.fireEvent('filter', this, this.boundColumn, filterArray);
             this.ppx = this.getPosition();
             this.close();
         }

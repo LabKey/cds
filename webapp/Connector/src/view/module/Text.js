@@ -13,5 +13,10 @@ Ext.define('Connector.view.module.Text', {
         '<tpl if="text || allowNullText">',
 			Connector.constant.Templates.module.title,
 			'<p>{text}</p>',
-		'</tpl>')
+		'</tpl>'),
+
+	hasContent : function() {
+		var data = this.data || this.initalConfig.data || {};
+		return data.text || data.allowNullText;
+	}
 });

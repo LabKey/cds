@@ -6,7 +6,7 @@
 Ext.define('Connector.factory.Module', {
 	singleton: true,
 
-	defineView: function(moduleSpec, model) {
+	defineView: function(moduleSpec, model, state) {
 		var data = {};
 		var xtype = Connector.constant.ModuleViewsLookup[moduleSpec.type];
 
@@ -42,6 +42,7 @@ Ext.define('Connector.factory.Module', {
 
 			return {
 				data: data,
+				state: state,
 				xtype: xtype
 			}
 		}
@@ -50,19 +51,19 @@ Ext.define('Connector.factory.Module', {
 		return null;
 	},
 
-	defineViews: function(moduleSpecs, model) {
+	defineViews: function(moduleSpecs, model, state) {
 		return Ext.Array.map(moduleSpecs, function(spec) {
-			return this.defineView(spec, model);
+			return this.defineView(spec, model, state);
 		}, this);
 	},
 
-	createView: function(moduleSpec, model) {
-		return Ext.create(this.defineView(moduleSpec, model));
+	createView: function(moduleSpec, model, state) {
+		return Ext.create(this.defineView(moduleSpec, model, state));
 	},
 
-	createViews: function(moduleSpecs, model) {
+	createViews: function(moduleSpecs, model, state) {
 		return Ext.Array.map(moduleSpecs, function(spec) {
-			return this.createView(spec, model)
+			return this.createView(spec, model, state)
 		}, this);
 	}
 });

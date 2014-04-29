@@ -30,37 +30,47 @@ Ext.define('Connector.view.Summary', {
         this.items = [this.titlePanel, this.getSummaryDataView()];
 
         this.callParent();
+
+        this.store.on('mdxerror', this.showMessage, this);
+        this.store.on('beforeload', this.displayLoad, this);
+        this.store.on('load', this.removeLoad, this);
+
+        this.on('afterrender', this.refresh, this, {single: true});
     },
 
     getSummaryDataView : function() {
 
-        if (this.summaryPanel)
-            return this.summaryPanel;
-
-        this.summaryPanel = Ext.create('Connector.view.SummaryDataView', {
-            anchor : '100% 50%',
-            ui     : 'custom',
-            store  : this.store
-        });
-
-        XX = this.store;
+        if (!Ext.isDefined(this.summaryPanel))
+        {
+            this.summaryPanel = Ext.create('Connector.view.SummaryDataView', {
+                anchor: '100% 50%',
+                ui: 'custom',
+                store: this.store
+            });
+        }
 
         return this.summaryPanel;
     },
 
     refresh : function () {
-        if (this.summaryPanel) {
-            this.summaryPanel.getStore().load();
-        }
+        this.refreshRequired = false;
+        this.summaryPanel.getStore().load();
     },
 
     onFilterChange : function(f) {
-
         if (this.isVisible()) {
             this.refresh();
         }
         else {
             this.refreshRequired = true;
+        }
+    },
+
+    onViewChange : function(controller, xtype) {
+        if (xtype == 'summary') {
+            if (this.refreshRequired) {
+                this.refresh();
+            }
         }
     },
 

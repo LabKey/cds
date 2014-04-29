@@ -28,25 +28,6 @@ Ext.define('Connector.Application', {
         'Connector.app.view.StudyProducts'
     ],
 
-    views: [
-        'Citation',
-        'Compare',
-        'FilterSave',
-        'FilterStatus',
-        'GroupSave',
-        'Header',
-        'Home',
-        'Learn',
-        'Main',
-        'Navigation',
-        'Data',
-        'Scatter',
-        'SingleAxisExplorer',
-        'Summary',
-        'Time',
-        'Viewport'
-    ],
-
     controllers: [
         'Connector', // View Manager must be registered first to properly initialize
         'State',
@@ -64,7 +45,7 @@ Ext.define('Connector.Application', {
         'Summary'
     ],
 
-    stores: [
-        // TODO: add stores here
-    ]
+    views: [],
+
+    stores: []
 });
