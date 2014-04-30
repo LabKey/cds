@@ -27,6 +27,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.AssayDetailsPage;
+import org.labkey.test.pages.DataGridSelector;
 import org.labkey.test.pages.DataGridVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.StudyDetailsPage;
@@ -37,7 +38,6 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PortalHelper;
 import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ext4cmp.Ext4CmpRef;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -442,130 +442,167 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
-    @Ignore("Visualization API for multi-study NYI")
     public void verifyGrid()
     {
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
         log("Verify Grid");
 
         final String GRID_CLEAR_FILTER = "Clear Filters";
+        final int COLUMN_COUNT = 106;
 
-        clickBy("Studies");
+        DataGridSelector grid = new DataGridSelector(this);
+
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
+        gridColumnSelector.setColumnCount(COLUMN_COUNT);
+
         makeNavigationSelection(NavigationLink.GRID);
+        waitForText("choose from " + COLUMN_COUNT + " columns");
+
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
+        grid.ensureColumnsPresent("Point IC50", "Lab");
+        grid.waitForCount(668);
 
-        waitForGridCount(668);
-        assertElementPresent(Locator.tagWithText("span", "Point IC50"));
-        assertElementPresent(Locator.tagWithText("span", "Lab"));
+        //
+        // Navigate to Summary to apply a filter
+        //
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Studies");
         click(Locators.cdsButtonLocator("hide empty"));
+        waitForBarToAnimate(STUDIES[0]);
         selectBars(STUDIES[0]);
         useSelectionAsFilter();
 
-        waitForElementToDisappear(Locator.css("span.barlabel").withText(STUDIES[1]), CDS_WAIT);
+        waitForElement(Locators.filterMemberLocator("Study: " + STUDIES[0]));
 
-        //Check to see if grid is properly filtering based on explorer filter
+        //
+        // Check to see if grid is properly filtering based on explorer filter
+        //
         makeNavigationSelection(NavigationLink.GRID);
-        waitForGridCount(437);
+        grid.waitForCount(437);
         clearFilter();
-        waitForElement(Locator.tagWithText("span", STUDIES[3]));
-        waitForGridCount(668);
+        grid.waitForCount(668);
+        assertElementPresent(grid.cellLocator("Piehler/Eckels Lab"));
 
         gridColumnSelector.addGridColumn("Demographics", "Gender", true, true);
         gridColumnSelector.addGridColumn("Demographics", "Ethnicity", false, true);
-
-        waitForElement(Locator.tagWithText("span", "Gender"));
-        waitForElement(Locator.tagWithText("span", "Ethnicity"));
+        grid.ensureColumnsPresent("Point IC50", "Lab", "Gender", "Ethnicity");
+        grid.waitForCount(671); // Why does this change?
 
         log("Remove a column");
         gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
+        grid.assertColumnsNotPresent("Point IC50");
+        grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
 
-        waitForElementToDisappear(Locator.tagWithText("span", "Point IC50"));
-        //But other column from same table is still there
-        waitForElement(Locator.tagContainingText("span", "Lab"));
-
-        setDataFilter("Ethnicity", "White");
-        waitForGridCount(246);
+        grid.setFilter("Ethnicity", "White");
+        grid.waitForCount(246);
+        assertFilterStatusCounts(11, 4, 4);
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
-        waitForElement(Locator.tagWithText("span", "Point IC50"));
-        waitForGridCount(246);
+        grid.ensureColumnsPresent("Point IC50");
+        grid.waitForCount(246);
+        assertFilterStatusCounts(11, 4, 4);
 
-        openFilterPanel("Lab");
-        waitForElement(Locator.tagWithText("div", "PI1"));
-        _ext4Helper.checkGridRowCheckbox("PI1");
-        click(Locators.cdsButtonLocator("OK"));
+        log("Add a lookup column");
+        gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
+        grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
+        grid.waitForCount(246);
+        assertFilterStatusCounts(11, 4, 4);
 
         log("Filter on a looked-up column");
-        waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText("PI1"));
-        waitForElement(Locator.tagWithClass("div", "x-grid-cell-inner").withText("Igra M"));
-        setDataFilter("PI1", "Igra");
-        waitForGridCount(152);
+        grid.setFilter("PI", "Mark I");
+        waitForElement(Locators.filterMemberLocator("Ethnicity: Starts With White"));
+        waitForElement(Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
+        grid.waitForCount(237);
+        assertFilterStatusCounts(8, 3, 4);
 
-        log("Ensure filtering goes away when column does");
-        openFilterPanel("Lab");
-        _ext4Helper.uncheckGridRowCheckbox("PI1");
-        click(Locators.cdsButtonLocator("OK"));
-        waitForGridCount(246);
+        log("Filter undo on grid");
+        clearFilter();
+        grid.waitForCount(671);
+        assertFilterStatusCounts(29, 4, 4);
 
-        setDataFilter("Point IC50", "Is Greater Than", "60");
-        waitForGridCount(2);
-        openFilterPanel("Ethnicity");
-        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
+        click(Locator.linkWithText("Undo"));
+        waitForElement(Locators.filterMemberLocator("Ethnicity: Starts With White"));
+        waitForElement(Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
+        grid.waitForCount(237);
+        assertFilterStatusCounts(8, 3, 4);
 
-        // TODO: Workaround for duplicate filters on Firefox
-        List<WebElement> closers = Locator.tag("div").withClass("hierfilter").containing("Ethnicity").append("//img").findElements(getDriver());
-        if (closers.size() > 0)
-            closers.get(0).click();
+        log("update a column filter that already has a filter");
+        grid.setFilter("Ethnicity", "Black");
+        grid.waitForCount(128);
+        assertFilterStatusCounts(5, 2, 3);
 
-        waitForGridCount(5);
-
-        openFilterPanel("Point IC50");
-        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-        waitForGridCount(668);
-
-        log("Verify citation sources");
-        click(Locators.cdsButtonLocator("Sources"));
-        waitForText("References", CDS_WAIT);
-        assertTextPresent(
-                "Demo study final NAb data",
-                "NAb Data From Igra Lab",
-                "Data extracted from LabKey lab site on Atlas"
-        );
-        click(Locator.xpath("//a[text()='References']"));
-        waitForText("Recent advances in assay", CDS_WAIT);
-        click(Locators.cdsButtonLocator("Close"));
-        waitForGridCount(668);
-
-        log("Verify multiple citation sources");
-        gridColumnSelector.addGridColumn("Physical Exam", "Weight Kg", false, true);
-        waitForElement(Locator.tagWithText("span", "Weight Kg"));
-        waitForGridCount(700);
-
-        click(Locators.cdsButtonLocator("Sources"));
-        waitAndClick(Locator.linkWithText("Sources"));
-        waitForText("Pulled from Atlas", CDS_WAIT);
-        assertTextPresent("Demo study data delivered by spreadsheet");
-        click(Locators.cdsButtonLocator("Close"));
-        waitForGridCount(700);
-
-        gridColumnSelector.removeGridColumn("Physical Exam", "Weight Kg", false);
-        waitForGridCount(668);
-
-        // 15267
-        gridColumnSelector.addGridColumn("Physical Exam", "Source", true, true);
-        gridColumnSelector.addGridColumn("NAb", "Source", false, true);
-        waitForGridCount(700);
-        setDataFilter("Source", "Demo"); // Hopefully get text on page
-        waitForText("Demo study physical exam", CDS_WAIT);
-        waitForText("Demo study final NAb data", CDS_WAIT);
-
-        openFilterPanel("Source");
-        click(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
+//        log("Ensure filtering goes away when column does");
+//        gridColumnSelector.removeLookupColumn("NAb", "Lab", "PI");
+//        grid.waitForCount(999); // update to real count
     }
+
+//    public void verifyGridOld()
+//    {
+//        final String GRID_CLEAR_FILTER = "Clear Filters";
+//        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
+
+//        log("Ensure filtering goes away when column does");
+//        openFilterPanel("Lab");
+//        _ext4Helper.uncheckGridRowCheckbox("PI1");
+//        click(Locators.cdsButtonLocator("OK"));
+//        waitForGridCount(246);
+//
+//        setDataFilter("Point IC50", "Is Greater Than", "60");
+//        waitForGridCount(2);
+//        openFilterPanel("Ethnicity");
+//        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
+//
+//        // TODO: Workaround for duplicate filters on Firefox
+//        List<WebElement> closers = Locator.tag("div").withClass("hierfilter").containing("Ethnicity").append("//img").findElements(getDriver());
+//        if (closers.size() > 0)
+//            closers.get(0).click();
+//
+//        waitForGridCount(5);
+//
+//        openFilterPanel("Point IC50");
+//        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
+//        waitForGridCount(668);
+//
+//        log("Verify citation sources");
+//        click(Locators.cdsButtonLocator("Sources"));
+//        waitForText("References", CDS_WAIT);
+//        assertTextPresent(
+//                "Demo study final NAb data",
+//                "NAb Data From Igra Lab",
+//                "Data extracted from LabKey lab site on Atlas"
+//        );
+//        click(Locator.xpath("//a[text()='References']"));
+//        waitForText("Recent advances in assay", CDS_WAIT);
+//        click(Locators.cdsButtonLocator("Close"));
+//        waitForGridCount(668);
+//
+//        log("Verify multiple citation sources");
+//        gridColumnSelector.addGridColumn("Physical Exam", "Weight Kg", false, true);
+//        waitForElement(Locator.tagWithText("span", "Weight Kg"));
+//        waitForGridCount(700);
+//
+//        click(Locators.cdsButtonLocator("Sources"));
+//        waitAndClick(Locator.linkWithText("Sources"));
+//        waitForText("Pulled from Atlas", CDS_WAIT);
+//        assertTextPresent("Demo study data delivered by spreadsheet");
+//        click(Locators.cdsButtonLocator("Close"));
+//        waitForGridCount(700);
+//
+//        gridColumnSelector.removeGridColumn("Physical Exam", "Weight Kg", false);
+//        waitForGridCount(668);
+//
+//        // 15267
+//        gridColumnSelector.addGridColumn("Physical Exam", "Source", true, true);
+//        gridColumnSelector.addGridColumn("NAb", "Source", false, true);
+//        waitForGridCount(700);
+//        setDataFilter("Source", "Demo"); // Hopefully get text on page
+//        waitForText("Demo study physical exam", CDS_WAIT);
+//        waitForText("Demo study final NAb data", CDS_WAIT);
+//
+//        openFilterPanel("Source");
+//        click(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
+//    }
 
     @Test
     public void verifyCounts()
@@ -666,7 +703,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         toggleExplorerBar("1B");
         shiftSelectBars("SF162.LS", "DJ263.8");
         waitForElement(Locators.filterMemberLocator("DJ263.8"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(Locators.filterMemberLocator(), 3);
+        assertElementPresent(Locators.filterMemberLocator(), 4);
         assertSelectionStatusCounts(6, 1, 2);
         clearSelection();
         assertDefaultFilterStatusCounts();
@@ -1326,7 +1363,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
         SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
-        GRID("View data grid", Locator.tagWithClass("div", "dimgroup").withText("Data Grid"));
+        GRID("View data grid", Locator.tagWithClass("div", "titlepanel").withText("view data grid"));
 
         private String _linkText;
         private Locator.XPathLocator _expectedElement;
@@ -1383,51 +1420,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         click(Locators.cdsButtonLocator("Close"));
         waitForElementToDisappear(Locator.button("Close"), WAIT_FOR_JAVASCRIPT);
-    }
-
-    private void setDataFilter(String colName, String value)
-    {
-        setDataFilter(colName, null, value);
-    }
-
-    private void setDataFilter(String colName, String filter, String value)
-    {
-        openFilterPanel(colName);
-        if (null != filter)
-            _ext4Helper.selectComboBoxItem("Value:", filter);
-
-        waitForElement(Locator.id("value_1"));
-        setFormElement(Locator.css("#value_1 input"), value);
-        click(Locators.cdsButtonLocator("OK"));
-        String filterText = colName.length() > 9 ? colName.replace(" ", "").substring(0, 9) : colName.replace(" ", "");
-        waitForElement(Locators.filterMemberLocator(filterText));
-        waitForFilterAnimation();
-    }
-
-    private void openFilterPanel(String colHeader)
-    {
-        waitForElement(Locator.tag("span").withText(colHeader));
-
-        List<Ext4CmpRef> dataViews = _ext4Helper.componentQuery("#raw-data-view", Ext4CmpRef.class);
-        Ext4CmpRef dataView = dataViews.get(0);
-
-        log("openFilterWindow: " + colHeader);
-        dataView.eval("openFilterWindow(\'" + colHeader + "\');");
-        waitForElement(Locator.css(".filterheader").withText(colHeader));
-    }
-
-    private void waitForGridCount(int count)
-    {
-        String displayText;
-        if (count == 0)
-            displayText = "No data to display";
-        else if (count < 100)
-            displayText = "Displaying 1 - " + count + " of " + count;
-        else
-            displayText = "Displaying 1 - 100 of " + count;
-
-        waitForFilterAnimation();
-        waitForElement(Locator.tagContainingText("div", displayText));
     }
 
     private void ensureGroupsDeleted(List<String> groups)

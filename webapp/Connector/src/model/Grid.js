@@ -427,18 +427,15 @@ Ext.define('Connector.model.Grid', {
      * Called when a user creates/updates a filter via the grid filtering interface.
      * @param view
      * @param boundColumn
-     * @param filterArray
+     * @param filterArray - only contains new filters. That is, filters applied after the user's change
      */
     onGridFilterChange : function(view, boundColumn, filterArray) {
-
-        var newFilterArray = this.get('filterArray');
-        newFilterArray = newFilterArray.concat(Ext.clone(filterArray));
 
         this.flights++;
         var configs = [],
                 bins = {},
                 keys = [],
-                fa = newFilterArray,
+                fa = filterArray,
                 colname, f;
 
         for (f=0; f < fa.length; f++) {
@@ -469,161 +466,103 @@ Ext.define('Connector.model.Grid', {
         }
 
         if (configs.length > 0) {
-            Connector.model.Grid.queryMultiple(configs, function(result, flight) {
+            Connector.model.Grid.queryMultiple(configs, function(results, flight) {
                 if (flight != this.flights) {
                     return;
                 }
 
-                var groups = [], filterArrays = [];
-                for (f=0; f < configs.length; f++) {
-                    groups.push(result[f].queryResult.values);
-                    filterArrays.push(configs[result[f].configIndex].filterArray);
-                }
+                var configResults = [];
 
-                if (this.gridLock) {
-                    this.gridLock = false;
-                    return;
-                }
+                Ext.each(results, function(result) {
+                    configResults.push({
+                        group: result.queryResult.values,
+                        filterArrays: configs[result.configIndex].filterArray
+                    });
+                }, this);
 
-                this.mergeUpdatedFilters(filterArrays);
+                // For each result do one of the following:
+                // 1. replacement, find the record id
+                // 2. new, create a new app filter
 
-                var fa, group, found, newFilters = [];
-                for (var r=0; r < groups.length; r++) {
+                var appFilters = this.olapProvider.getFilters(), newFilters = [], filter;
 
-                    fa = filterArrays[r];
-                    group = groups[r];
+                Ext.each(configResults, function(configResult) {
 
-                    if (fa.length == 0) {
-                        this.removeAllGridFilters();
-                        return;
-                    }
-
-                    found = false;
-                    for (var f=0; f < fa.length; f++) {
-                        if (!this.hasFilter(fa[f])) {
-                            found = true;
-                            fa[f].isNew = true;
-                        }
-                        else
-                        {
-                            var members = [];
-                            for (var g=0; g < groups[r].length; g++) {
-                                members.push({
-                                    uniqueName: Connector.model.Filter.getSubjectUniqueName(groups[r][g])
-                                });
+                    var flat = [];
+                    for (var f=0; f < configResult.filterArrays.length; f++) {
+                        var fa = configResult.filterArrays[f];
+                        if (Ext.isArray(fa)) {
+                            for (var j=0; j < fa.length; j++) {
+                                flat.push(fa[j]);
                             }
-                            this.olapProvider.updateFilterMembers(this.filterMap[this.getFilterId(fa[f])], members, true);
+                        }
+                        else if (Ext.isObject(fa)) {
+                            flat.push(fa);
+                        }
+                        else {
+                            console.error('invalid filter object');
                         }
                     }
 
-                    if (found) {
-                        newFilters.push({
-                            group: group,
-                            filters: fa
-                        });
-                    }
+                    // assume all filter objects in this configuration have the same column name
+                    var columnName = flat[0].getColumnName(), replacement = false;
+                    Ext.each(appFilters, function(af) {
+                        if (af.isGrid()) {
+                            var gridFilter = af.get('gridFilter')[0];
+                            if (gridFilter.getColumnName() === columnName) {
 
-                }
+                                var newMembers = [];
+                                Ext.each(configResult.group, function(member) {
+                                    newMembers.push({
+                                        uniqueName: Connector.model.Filter.getSubjectUniqueName(member)
+                                    });
+                                }, this);
 
-                if (newFilters.length > 0) {
-
-                    var filters = [], filterIndexes = [], filter, f, i, grp, g;
-                    for (f=0; f < newFilters.length; f++) {
-
-                        for (i=0; i < newFilters[f].filters.length; i++) {
-
-                            filter = {
-                                hierarchy: 'Subject',
-                                isGrid: true,
-                                gridFilter: newFilters[f].filters[i],
-                                members: []
-                            };
-
-                            grp = newFilters[f].group;
-                            for (g=0; g < grp.length; g++) {
-                                filter.members.push({
-                                    uniqueName: Connector.model.Filter.getSubjectUniqueName(grp[g])
-                                });
-
+                                replacement = true;
+                                af.set('gridFilter', flat);
+                                af.set('members', newMembers);
                             }
-
-                            filters.push(filter);
-                            filterIndexes.push([f,i]);
                         }
+                    }, this);
+
+                    if (!replacement) {
+                        filter = {
+                            hierarchy: 'Subject',
+                            isGrid: true,
+                            gridFilter: flat,
+                            members: []
+                        };
+
+                        Ext.each(configResult.group, function(member) {
+                            filter.members.push({
+                                uniqueName: Connector.model.Filter.getSubjectUniqueName(member)
+                            });
+                        }, this);
+
+                        newFilters.push(filter);
                     }
+                }, this);
 
-                    // filters are added to applicaton
-                    var _newFilters = this.olapProvider.addFilters(filters);
+                appFilters = appFilters.concat(newFilters);
+                this.olapProvider.setFilters(appFilters);
 
-                    // filters are tracked
-                    // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                    for (f=0; f < _newFilters.length; f++) {
-                        this.addToFilters(newFilters[filterIndexes[f][0]].filters[filterIndexes[f][1]], _newFilters[f].id);
+                var allFilters = this.olapProvider.getFilters();
+
+                this.filterMap = {};
+                this.idMap = {};
+
+                // filters are tracked
+                // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
+                Ext.each(allFilters, function(filter) {
+                    if (filter.isGrid()) {
+                        var gridFilters = filter.get('gridFilter');
+                        Ext.each(gridFilters, function(gf) {
+                            this.addToFilters(gf, filter.id);
+                        }, this);
                     }
+                }, this);
 
-                    this.gridFilter = false; // end lock
-                    this.filterremove = false;
-                }
             }, null, this);
-        }
-    },
-
-    mergeUpdatedFilters : function(filterArrays) {
-
-        var fa = [],
-                filter,
-                updated = [],
-                found, f, g,
-                matches = {};
-
-        // Iterate over the set of incoming filters to determine if any filter on that column
-        // already exists. If it does, place the column in the 'matches' mapping.
-        Ext.each(filterArrays, function(first) {
-            Ext.each(first, function(second) {
-                fa.push(second);
-                Ext.iterate(this.filterMap, function(urlParam, id) {
-                    if (urlParam.indexOf(second.getColumnName()) > -1) {
-                        matches[urlParam] = true;
-                    }
-                });
-            }, this);
-        }, this);
-
-        // Examine the filters that met the match criteria above and determine if the current filter
-        // should replace the existing filter(s) on their shared column.
-        Ext.iterate(matches, function(m) {
-            found = false;
-            for (f=0; f < fa.length; f++) {
-                if ((m == this.getFilterId(fa[f])) && !(m.indexOf(fa[f].getColumnName()) > -1))
-                    found = true;
-            }
-
-            if (!found) {
-                updated.push(this.filterMap[m]);
-                this.clearFilter(m);
-            }
-        }, this);
-
-        // Since we want to update all matching filters iterate across the entire set of application
-        // filters and search for matches.
-        matches = [];
-        if (updated.length > 0) {
-            filter = this.olapProvider.getFilters();
-
-            for (f=0; f < filter.length; f++) {
-
-                found = false;
-                for (g=0; g < updated.length; g++) {
-                    if (filter[f].id == updated[g])
-                        found = true;
-                }
-
-                if (!found) {
-                    matches.push(filter[f]);
-                }
-            }
-
-            this.olapProvider.filters = matches;
         }
     },
 

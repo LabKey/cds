@@ -101,7 +101,7 @@ Ext.define('Connector.panel.AxisSelector', {
             {
                 if (this.lastMeasure)
                 {
-                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure);
+                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure, true, false);
                 }
             }, this);
         }
@@ -400,6 +400,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             },{
                 xtype: 'panel',
                 itemId: 'variableoptions',
+                cls: 'variableoptions',
                 hidden: this.disableVariableOptions,
                 width: this.disableVariableOptions ? 0 : '50%',
                 bodyStyle: 'background-color: transparent;',
@@ -514,7 +515,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     store: this.getLookupColumnStore(measure),
                     ui: 'custom',
                     height: 200,
-                    cls: 'measuresgrid iScroll',
+                    cls: 'measuresgrid iScroll lookupgrid',
                     flex: 1,
                     hideHeaders: true,
                     columns: [{
