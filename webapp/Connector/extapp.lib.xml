@@ -6,7 +6,6 @@
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
 
         <!-- Client API Dependencies -->
-        <script path="../../../../staging/labkeyWebapp/clientapi/dom/ExtAdapter.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Ajax.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Utils.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/dom/Utils.js"/>

@@ -55,7 +55,6 @@
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/ExtAdapter.js"></script>
 
     <!-- Client API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
