@@ -69,7 +69,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         String lookupClass = "variableoptions .lookupgrid";
         Locator.CssLocator _lookupPanelRow = Locator.css("." + lookupClass + " ." + Ext4Helper.getCssPrefix() + "grid-row");
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(_lookupPanelRow.toBy()));
-        _test._extHelper.selectExt4GridItem("shortCaption", lookup, -1, lookupClass, true);
+        _test._ext4Helper.selectGridItem("shortCaption", lookup, -1, lookupClass, true);
 
         confirmSelection();
     }

@@ -53,7 +53,7 @@ public abstract class DataspaceVariableSelector
         {
             Locator.CssLocator _variablePanelRow = pickerPanel().append(".measuresgrid ." + Ext4Helper.getCssPrefix() + "grid-row");
             _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow.toBy())); // if one row is ready, all should be
-            _test._extHelper.selectExt4GridItem("label", measure, -1, getPickerClass() + " .measuresgrid", keepSelection);
+            _test._ext4Helper.selectGridItem("label", measure, -1, getPickerClass() + " .measuresgrid", keepSelection);
         }
         else
         {
