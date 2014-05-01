@@ -757,6 +757,18 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
+        // map the y-axis schema and query name for a time point x-axis variable
+        if (measures.x)
+        {
+            if (!measures.x.schemaName && !measures.x.queryName)
+            {
+                var x = Ext.clone(measures.x);
+                x.schemaName = measures.y.schemaName;
+                x.queryName = measures.y.queryName;
+                measures.x = x;
+            }
+        }
+
         return measures;
     },
 
@@ -1385,6 +1397,17 @@ Ext.define('Connector.view.Scatter', {
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
                             var xselect = this.axisPanelX.getSelection();
+
+                            // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
+                            if (xselect && xselect.length > 0)
+                            {
+                                if (xselect[0].data.variableType == "TIME" && xselect[0].data.name == null)
+                                {
+                                    this.showMessage('Time point ' + xselect[0].data.label.toLowerCase() + ' not yet supported.');
+                                    return;
+                                }
+                            }
+
                             if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);
