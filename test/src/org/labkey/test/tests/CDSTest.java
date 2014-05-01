@@ -703,7 +703,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         toggleExplorerBar("1B");
         shiftSelectBars("SF162.LS", "DJ263.8");
         waitForElement(Locators.filterMemberLocator("DJ263.8"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(Locators.filterMemberLocator(), 4);
+        assertElementPresent(Locators.filterMemberLocator(), 3);
         assertSelectionStatusCounts(6, 1, 2);
         clearSelection();
         assertDefaultFilterStatusCounts();
