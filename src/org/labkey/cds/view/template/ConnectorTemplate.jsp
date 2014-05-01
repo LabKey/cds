@@ -55,7 +55,6 @@
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/ExtAdapter.js"></script>
 
     <!-- Client API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
@@ -222,6 +221,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>

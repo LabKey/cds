@@ -79,6 +79,15 @@ Ext.define('Connector.view.Grid', {
                     },
                     scope: this
                 }]
+            },{
+                // This provides a row count on the screen for testing purposes
+                id: 'gridrowcountcmp',
+                xtype: 'box',
+                style: 'position: absolute; top: 50px; left: 27px; color: transparent;',
+                tpl: '<span id="gridrowcount">Row Count: {count}</span>',
+                data: {
+                    count: -1
+                }
             }
         ];
 
@@ -301,8 +310,16 @@ Ext.define('Connector.view.Grid', {
                 schemaName: model.get('schemaName'),
                 queryName: model.get('queryName'),
                 columns: model.get('columnSet'),
-                filterArray: model.getFilterArray()
+                filterArray: model.getFilterArray(),
+                maxRows: 10000
             });
+
+            this.gridStore.on('load', function(store) {
+                var cmp = Ext.getCmp('gridrowcountcmp');
+                if (cmp) {
+                    cmp.update({count: store.getCount()});
+                }
+            }, this);
         }
 
         return this.gridStore;

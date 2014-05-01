@@ -6,7 +6,6 @@
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
 
         <!-- Client API Dependencies -->
-        <script path="../../../../staging/labkeyWebapp/clientapi/dom/ExtAdapter.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Ajax.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/core/Utils.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/dom/Utils.js"/>
@@ -173,6 +172,7 @@
         <script path="Connector/src/app/view/StudyProducts.js"/>
 
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
+        <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>

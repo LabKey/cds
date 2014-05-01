@@ -101,7 +101,7 @@ Ext.define('Connector.panel.AxisSelector', {
             {
                 if (this.lastMeasure)
                 {
-                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure);
+                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure, true, false);
                 }
             }, this);
         }
@@ -136,7 +136,8 @@ Ext.define('Connector.panel.AxisSelector', {
         });
 
         Ext.apply(this.measureConfig, {
-            getSourcesViewTpl : this.getSourcesViewTpl,
+            sourceGroupHeader : 'Datasets',
+            measuresAllHeader : 'All columns for this assay',
             getAdditionalMeasuresArray : this.getAdditionalMeasuresArray,
             bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
         });
@@ -154,17 +155,6 @@ Ext.define('Connector.panel.AxisSelector', {
 
     getMeasurePicker : function() {
         return this.getVariableChooserPanel().getMeasurePicker();
-    },
-
-    getSourcesViewTpl : function() {
-        return new Ext.XTemplate(
-            '<tpl for=".">',
-            '<tpl if="schemaName !=null && parent[xindex - 2] && parent[xindex - 2].schemaName == null">',
-            '<div class="groupheader groupheaderline" style="padding: 8px 6px 4px 6px; color: #808080">Datasets</div>',
-            '</tpl>',
-            '<div class="itemrow" style="padding: 3px 6px 4px 6px; cursor: pointer;">{queryLabel:htmlEncode}</div>',
-            '</tpl>'
-        );
     },
 
     getAdditionalMeasuresArray : function() {
@@ -322,6 +312,8 @@ Ext.define('Connector.panel.AxisSelector', {
         {
             var source = sources[0];
             this.updateDefinition(source);
+
+            this.down('button#gotoassaypage').setVisible(source.get('queryName') != null);
         }
 
         //select first variable in the list on source selection change, for singleSelect grid
@@ -400,6 +392,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             },{
                 xtype: 'panel',
                 itemId: 'variableoptions',
+                cls: 'variableoptions',
                 hidden: this.disableVariableOptions,
                 width: this.disableVariableOptions ? 0 : '50%',
                 bodyStyle: 'background-color: transparent;',
@@ -418,7 +411,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 border: false,
                 ui: 'custom',
                 cls: 'definitionpanel iScroll',
-                height: !this.disableScale ? 145 : 180,
+                height: !this.disableScale ? 140 : 180,
                 bodyStyle: 'background-color: transparent;',
                 padding: '10px 5px 5px 0',
                 data: {},
@@ -444,11 +437,12 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     itemId: 'scale',
                     ui: 'custom',
                     border: false, frame : false,
+                    width : 150,
                     fieldLabel: 'Scale',
                     labelAlign: 'top',
                     labelCls: 'curselauth',
                     items: [
-                        { boxLabel: 'Log', name : this.scalename, inputValue: 'log', width: 100 },
+                        { boxLabel: 'Log', name : this.scalename, inputValue: 'log', width: 80 },
                         { boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true }
                     ]
                 }]
@@ -514,7 +508,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     store: this.getLookupColumnStore(measure),
                     ui: 'custom',
                     height: 200,
-                    cls: 'measuresgrid iScroll',
+                    cls: 'measuresgrid iScroll lookupgrid',
                     flex: 1,
                     hideHeaders: true,
                     columns: [{
