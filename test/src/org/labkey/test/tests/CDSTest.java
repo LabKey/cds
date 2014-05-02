@@ -42,6 +42,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+//import org.labkey.test.tests.AbstractAssayTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -267,6 +268,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         assertElementNotPresent(Locator.linkWithText("Home"));
         assertElementNotPresent(Locator.linkWithText("Admin"));
+        Ext4Helper.setCssPrefix ("x-");
     }
 
     @Test
@@ -371,6 +373,49 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         makeNavigationSelection(NavigationLink.SUMMARY);
     }
 
+    @Test
+    public void verifyUserPermissions()
+    {
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        ensureAdminMode();
+        Ext4Helper.resetCssPrefix();
+        createPermissionsGroup("PermGroup1");
+        if (isElementPresent(Locator.permissionRendered()) && isNavButtonPresent("Save and Finish"))
+            clickButton("Save and Finish");
+        clickProject("CDSTest Project");
+        clickFolder("NotRV144");
+        enterPermissionsUI();
+        uncheckInheritedPermissions();
+        waitAndClickButton("Save", 0);
+        _ext4Helper.waitForMaskToDisappear();
+        waitForElement(Locator.permissionRendered());
+        _securityHelper.setProjectPerm("PermGroup1", "Reader");
+        clickButton("Save and Finish");
+        clickProject("CDSTest Project");
+        enterPermissionsUI();
+        _securityHelper.setProjectPerm("PermGroup1", "Reader");
+        clickButton("Save and Finish");
+        createPermissionsGroup("PermGroup2");
+        clickButton("Save and Finish");
+        enterPermissionsUI();
+        _securityHelper.setProjectPerm("PermGroup2", "Reader");
+        clickButton("Save and Finish");
+        impersonateGroup("PermGroup1", false);
+        enterApplication();
+        assertFilterStatusCounts(6, 1, 2);
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        clickUserMenuItem("Stop Impersonating");
+        assertSignOutAndMyAccountPresent();
+        impersonateGroup("PermGroup2", false);
+        enterApplication();
+        assertFilterStatusCounts(0, 0, 0);
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        clickUserMenuItem("Stop Impersonating");
+        assertSignOutAndMyAccountPresent();
+
+    }
     @Test
     public void verifyFilterDisplays()
     {
@@ -1509,7 +1554,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         waitForElement(Locators.getSelectionStatusLocator(subjectCount, "Subject"));
         waitForElement(Locators.getSelectionStatusLocator(studyCount, "Stud"));
-        waitForElement(Locators.getSelectionStatusLocator(assayCount, "Assay"));
+        waitForElement(Locators.getSelectionStatusLocator(assayCount, "Assays"));
     }
 
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
