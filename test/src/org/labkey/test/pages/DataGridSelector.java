@@ -65,6 +65,13 @@ public class DataGridSelector
         _test.waitForElement(CDSTest.Locators.filterMemberLocator(filterText));
     }
 
+    public void clearFilters(String columnName)
+    {
+        openFilterPanel(columnName);
+        _test.waitAndClick(CDSTest.Locators.cdsButtonLocator("Clear Filters"));
+        _test.waitForText("Filter removed.");
+    }
+
     public void waitForCount(int count)
     {
         String displayText = "Row Count: " + count;

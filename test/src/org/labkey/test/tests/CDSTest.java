@@ -490,8 +490,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public void verifyGrid()
     {
         log("Verify Grid");
-
-        final String GRID_CLEAR_FILTER = "Clear Filters";
         final int COLUMN_COUNT = 106;
 
         DataGridSelector grid = new DataGridSelector(this);
@@ -580,35 +578,18 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 //        log("Ensure filtering goes away when column does");
 //        gridColumnSelector.removeLookupColumn("NAb", "Lab", "PI");
 //        grid.waitForCount(999); // update to real count
-    }
 
-//    public void verifyGridOld()
-//    {
-//        final String GRID_CLEAR_FILTER = "Clear Filters";
-//        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
+        grid.setFilter("Point IC50", "Is Greater Than", "60");
+        grid.waitForCount(1);
+        grid.clearFilters("Ethnicity");
+        grid.waitForCount(5);
+        grid.clearFilters("Point IC50");
+        grid.waitForCount(650);
+        grid.clearFilters("PI");
+        grid.waitForCount(671);
+        assertTextPresent("All subjects"); // ensure there are no app filters remaining
 
-//        log("Ensure filtering goes away when column does");
-//        openFilterPanel("Lab");
-//        _ext4Helper.uncheckGridRowCheckbox("PI1");
-//        click(Locators.cdsButtonLocator("OK"));
-//        waitForGridCount(246);
-//
-//        setDataFilter("Point IC50", "Is Greater Than", "60");
-//        waitForGridCount(2);
-//        openFilterPanel("Ethnicity");
-//        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-//
-//        // TODO: Workaround for duplicate filters on Firefox
-//        List<WebElement> closers = Locator.tag("div").withClass("hierfilter").containing("Ethnicity").append("//img").findElements(getDriver());
-//        if (closers.size() > 0)
-//            closers.get(0).click();
-//
-//        waitForGridCount(5);
-//
-//        openFilterPanel("Point IC50");
-//        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-//        waitForGridCount(668);
-//
+        // TODO: Once citations are implemented, enable to following coverage cases
 //        log("Verify citation sources");
 //        click(Locators.cdsButtonLocator("Sources"));
 //        waitForText("References", CDS_WAIT);
@@ -647,7 +628,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 //
 //        openFilterPanel("Source");
 //        click(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-//    }
+    }
 
     @Test
     public void verifyCounts()
@@ -1456,9 +1437,16 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         makeNavigationSelection(NavigationLink.LEARN);
 
-        WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
-        click(Locator.tag("div").withClass("learn-header-container").append(Locator.tag("h1").withClass("lhdv").withText(learnAxis)));
-        shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
+        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-header-container");
+        Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
+        Locator.XPathLocator activeHeader = header.withClass("active");
+
+        if (!isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
+        {
+            WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
+            click(headerContainer.append(header.withText(learnAxis)));
+            shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
+        }
     }
 
     public void closeInfoPage()
