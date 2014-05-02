@@ -63,7 +63,6 @@ Ext.define('Connector.controller.Connector', {
             this.getCenter().add(this.viewMap['notfound']); // adds to tab map
         }
         this.showView('notfound');
-        this.updateHistory(controller, view, viewContext, title);
     },
 
     showFilterSaveView : function(xtype, cb) {

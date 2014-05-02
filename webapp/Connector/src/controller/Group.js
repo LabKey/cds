@@ -329,7 +329,7 @@ Ext.define('Connector.controller.Group', {
             scope: this,
             success: function(){
                 Connector.model.Group.getGroupStore().load();
-                this.getViewManager()._changeView('home');
+                this.getViewManager().changeView('home');
             },
             failure: function(){
                 console.error('Delete group failed.');

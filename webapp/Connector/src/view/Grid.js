@@ -79,6 +79,15 @@ Ext.define('Connector.view.Grid', {
                     },
                     scope: this
                 }]
+            },{
+                // This provides a row count on the screen for testing purposes
+                id: 'gridrowcountcmp',
+                xtype: 'box',
+                style: 'position: absolute; top: 50px; left: 27px; color: transparent;',
+                tpl: '<span id="gridrowcount">Row Count: {count}</span>',
+                data: {
+                    count: -1
+                }
             }
         ];
 
@@ -157,6 +166,7 @@ Ext.define('Connector.view.Grid', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
                     allColumns: true,
+                    displaySourceCounts: true,
                     sourceCls: this.axisSourceCls,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -300,8 +310,16 @@ Ext.define('Connector.view.Grid', {
                 schemaName: model.get('schemaName'),
                 queryName: model.get('queryName'),
                 columns: model.get('columnSet'),
-                filterArray: model.getFilterArray()
+                filterArray: model.getFilterArray(),
+                maxRows: 10000
             });
+
+            this.gridStore.on('load', function(store) {
+                var cmp = Ext.getCmp('gridrowcountcmp');
+                if (cmp) {
+                    cmp.update({count: store.getCount()});
+                }
+            }, this);
         }
 
         return this.gridStore;
@@ -467,51 +485,7 @@ Ext.define('Connector.view.Grid', {
         measureWindow.showAt(47, 128);
 
         // Run the query to determine current measure counts
-        this.runUniqueQuery();
-    },
-
-    runUniqueQuery : function(force) {
-        var store = this.getAxisSelector().getMeasurePicker().sourcesStore;
-
-        if (this.initialized || force) {
-            if (store.getCount() > 0) {
-                this._processQuery(store);
-            }
-            else {
-                store.on('load', function(s) {
-                    this._processQuery(s);
-                }, this, {single: true});
-            }
-        }
-        else if (!force) {
-            if (this.control) {
-                var me = this;
-                this.control.getParticipantIn(function(ptids) {
-                    if (!me.initialized) {
-                        me.queryPtids = ptids;
-                        me.runUniqueQuery(true);
-                    }
-                });
-            }
-        }
-    },
-
-    _processQuery : function(store) {
-        var sources = [], s;
-
-        for (s=0; s < store.getCount(); s++) {
-            sources.push(store.getAt(s).data['queryLabel'] || store.getAt(s).data['queryName']);
-        }
-
-        if (this.control) {
-            var me = this;
-            this.control.getParticipantIn(function(ids) {
-                me.control.requestCounts(sources, ids, me._postProcessQuery, me);
-            });
-        }
-    },
-
-    _postProcessQuery : function(response) {
-        this.control.displayCounts(response, this.axisSourceCls);
+        var picker = this.getAxisSelector().getMeasurePicker();
+        picker.setCountMemberSet(this.getModel().get('filterState').subjects);
     }
 });

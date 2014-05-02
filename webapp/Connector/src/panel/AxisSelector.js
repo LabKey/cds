@@ -101,7 +101,7 @@ Ext.define('Connector.panel.AxisSelector', {
             {
                 if (this.lastMeasure)
                 {
-                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure);
+                    this.getMeasurePicker().getMeasuresGrid().getSelectionModel().select(this.lastMeasure, true, false);
                 }
             }, this);
         }
@@ -136,7 +136,8 @@ Ext.define('Connector.panel.AxisSelector', {
         });
 
         Ext.apply(this.measureConfig, {
-            getSourcesViewTpl : this.getSourcesViewTpl,
+            sourceGroupHeader : 'Datasets',
+            measuresAllHeader : 'All columns for this assay',
             getAdditionalMeasuresArray : this.getAdditionalMeasuresArray,
             bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
         });
@@ -156,48 +157,37 @@ Ext.define('Connector.panel.AxisSelector', {
         return this.getVariableChooserPanel().getMeasurePicker();
     },
 
-    getSourcesViewTpl : function() {
-        return new Ext.XTemplate(
-            '<tpl for=".">',
-            '<tpl if="schemaName !=null && parent[xindex - 2] && parent[xindex - 2].schemaName == null">',
-            '<div class="groupheader groupheaderline" style="padding: 8px 6px 4px 6px; color: #808080">Datasets</div>',
-            '</tpl>',
-            '<div class="itemrow" style="padding: 3px 6px 4px 6px; cursor: pointer;">{queryLabel:htmlEncode}</div>',
-            '</tpl>'
-        );
-    },
-
     getAdditionalMeasuresArray : function() {
         var queryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
 
         return !this.includeTimpointMeasures ? [] :[{
-            sortOrder: -1,
+            sortOrder: -3,
             schemaName: null,
             queryName: null,
             queryLabel: 'Time points',
             queryDescription: queryDescription,
             isKeyVariable: true,
-            name: 'days',
+            name: 'SubjectVisit/Day',
             label: 'Study days',
-            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
+            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
             variableType: 'TIME'
         },{
-            sortOrder: -1,
+            sortOrder: -2,
             schemaName: null,
             queryName: null,
             queryLabel: 'User groups',
-            name: 'weeks',
+            name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
             label: 'Study weeks',
-            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
+            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
             variableType: 'TIME'
         },{
             sortOrder: -1,
             schemaName: null,
             queryName: null,
             queryLabel: 'Time points',
-            name: 'months',
+            name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
             label: 'Study months',
-            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
+            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
             variableType: 'TIME'
         }];
     },
@@ -322,6 +312,8 @@ Ext.define('Connector.panel.AxisSelector', {
         {
             var source = sources[0];
             this.updateDefinition(source);
+
+            this.down('button#gotoassaypage').setVisible(source.get('queryName') != null);
         }
 
         //select first variable in the list on source selection change, for singleSelect grid
@@ -400,6 +392,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             },{
                 xtype: 'panel',
                 itemId: 'variableoptions',
+                cls: 'variableoptions',
                 hidden: this.disableVariableOptions,
                 width: this.disableVariableOptions ? 0 : '50%',
                 bodyStyle: 'background-color: transparent;',
@@ -418,7 +411,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 border: false,
                 ui: 'custom',
                 cls: 'definitionpanel iScroll',
-                height: !this.disableScale ? 145 : 180,
+                height: !this.disableScale ? 140 : 180,
                 bodyStyle: 'background-color: transparent;',
                 padding: '10px 5px 5px 0',
                 data: {},
@@ -444,11 +437,12 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     itemId: 'scale',
                     ui: 'custom',
                     border: false, frame : false,
+                    width : 150,
                     fieldLabel: 'Scale',
                     labelAlign: 'top',
                     labelCls: 'curselauth',
                     items: [
-                        { boxLabel: 'Log', name : this.scalename, inputValue: 'log', width: 100 },
+                        { boxLabel: 'Log', name : this.scalename, inputValue: 'log', width: 80 },
                         { boxLabel: 'Linear', name : this.scalename, inputValue: 'linear', checked : true }
                     ]
                 }]
@@ -514,7 +508,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     store: this.getLookupColumnStore(measure),
                     ui: 'custom',
                     height: 200,
-                    cls: 'measuresgrid iScroll',
+                    cls: 'measuresgrid iScroll lookupgrid',
                     flex: 1,
                     hideHeaders: true,
                     columns: [{
@@ -644,9 +638,17 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     getAlignmentForm : function() {
         if (!this.alignmentForm)
         {
-            var visitTagRadios = [];
+            // the default option is 'Unaligned'
+            var visitTagRadios = [{
+                name : 'alignmentVisitTag',
+                boxLabel : 'Unaligned',
+                inputValue : null,
+                checked : true
+            }];
+
             Ext.each(this.visitTagStore.getRange(), function(record){
                 visitTagRadios.push({
+                    disabled : true,
                     name : 'alignmentVisitTag',
                     boxLabel: record.get('Caption'),
                     inputValue: record.get('Name')

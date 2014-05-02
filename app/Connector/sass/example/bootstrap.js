@@ -113,6 +113,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
+  "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
+  "Connector.view.module.ProductStudies": "../../../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyLabsAndClinicalData": "../../../../webapp/Connector/src/app/view/module/StudyLabsAndClinicalData.js",
@@ -246,6 +248,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
+  "Connector.view.module.ProductOtherProducts": [],
+  "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyLabsAndClinicalData": [],
@@ -1284,13 +1288,19 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.module.person"
   ],
   "Connector.view.module.ProductHeader": [
-    "widget.module.productheader"
+    "widget.app.module.productheader"
+  ],
+  "Connector.view.module.ProductOtherProducts": [
+    "widget.app.module.productotherproducts"
+  ],
+  "Connector.view.module.ProductStudies": [
+    "widget.app.module.productstudies"
   ],
   "Connector.view.module.StudyAssays": [
     "widget.app.module.studyassays"
   ],
   "Connector.view.module.StudyHeader": [
-    "widget.module.studyheader"
+    "widget.app.module.studyheader"
   ],
   "Connector.view.module.StudyLabsAndClinicalData": [
     "widget.app.module.studylabsandclinicaldata"

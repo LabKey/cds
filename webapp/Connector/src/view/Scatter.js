@@ -757,6 +757,18 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
+        // map the y-axis schema and query name for a time point x-axis variable
+        if (measures.x)
+        {
+            if (!measures.x.schemaName && !measures.x.queryName)
+            {
+                var x = Ext.clone(measures.x);
+                x.schemaName = measures.y.schemaName;
+                x.queryName = measures.y.queryName;
+                measures.x = x;
+            }
+        }
+
         return measures;
     },
 
@@ -1236,6 +1248,7 @@ Ext.define('Connector.view.Scatter', {
                 open : function() {},
                 measureConfig: {
                     allColumns: this.allColumns,
+                    displaySourceCounts: true,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
@@ -1316,7 +1329,7 @@ Ext.define('Connector.view.Scatter', {
             this.activeYSelection = this.axisPanelY.getSelection()[0];
         }
         this.ywin.show(null, function() {
-            this.runUniqueQuery(false, this.axisPanelY, 'yaxissource');
+            this.runUniqueQuery(this.axisPanelY);
         }, this);
     },
 
@@ -1333,6 +1346,7 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
                     allColumns : true,
+                    displaySourceCounts: true,
                     includeTimpointMeasures : true,
                     filter     : LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -1383,6 +1397,17 @@ Ext.define('Connector.view.Scatter', {
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
                             var xselect = this.axisPanelX.getSelection();
+
+                            // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
+                            if (xselect && xselect.length > 0)
+                            {
+                                if (xselect[0].data.variableType == "TIME" && xselect[0].data.name == null)
+                                {
+                                    this.showMessage('Time point ' + xselect[0].data.label.toLowerCase() + ' not yet supported.');
+                                    return;
+                                }
+                            }
+
                             if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);
@@ -1422,67 +1447,19 @@ Ext.define('Connector.view.Scatter', {
             this.activeXSelection = this.axisPanelX.getSelection()[0];
         }
         this.xwin.show(null, function() {
-            this.runUniqueQuery(false, this.axisPanelX, 'xaxissource');
+            this.runUniqueQuery(this.axisPanelX);
         }, this);
     },
 
-    runUniqueQuery : function(force, axisSelector, cls) {
+    runUniqueQuery : function(axisSelector) {
         var picker = axisSelector.getMeasurePicker();
 
         if (picker) {
-            var store = picker.getSourceStore();
-            if (force) {
-                if (store.getCount() > 0) {
-                    this._processQuery(store, cls);
-                }
-                else {
-                    store.on('load', function(s) {
-                        this._processQuery(s, cls);
-                    }, this, {single: true});
-                }
-            }
-            else if (!force) {
-                if (this.control) {
-                    var me = this;
-                    this.control.getParticipantIn(function(ptids){
-                        if (!me.initialized) {
-                            me.queryPtids = ptids;
-                            me.runUniqueQuery(true, axisSelector, cls);
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    _processQuery : function(store, cls) {
-        var sources = [], s;
-
-        for (s=0; s < store.getCount(); s++) {
-            var record = store.getAt(s);
-            if (record.data.schemaName != null)
-                sources.push(record.data['queryLabel'] || record.data['queryName']);
-        }
-
-        if (this.control) {
             var me = this;
-            if (this.state.getFilters().length == 0) {
-                me.control.requestCounts(sources, [], function(r){
-                    me._postProcessQuery(r, cls);
-                }, me);
-            }
-            else {
-                this.control.getParticipantIn(function(ids) {
-                    me.control.requestCounts(sources, ids, function(r){
-                        me._postProcessQuery(r, cls);
-                    }, me);
-                });
-            }
+            me.getParticipantIn(function(subjects) {
+                picker.setCountMemberSet(subjects);
+            });
         }
-    },
-
-    _postProcessQuery : function(response, cls) {
-        this.control.displayCounts(response, cls);
     },
 
     showMessage : function(msg, append) {

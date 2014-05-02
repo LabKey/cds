@@ -158,7 +158,7 @@ Ext.define('Connector.controller.Summary', {
         }
         else {
             var context = hierarchy.split('.');
-            this.getViewManager()._changeView('explorer', 'singleaxis', context);
+            this.getViewManager().changeView('explorer', 'singleaxis', context);
         }
 
         // Copy the group filter to the state filter
