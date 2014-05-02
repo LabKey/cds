@@ -487,7 +487,7 @@ Ext.define('Connector.view.Scatter', {
             this.setScale(plotConfig.scales.yLeft, 'y', config);
 
             // add brush handling
-            if (config.xaxis.isNumeric) {
+            if (config.xaxis.isContinuous) {
                 plotConfig.brushing = {
                     brushstart : function() {
                         layerScope.isBrushed = true;
@@ -592,6 +592,8 @@ Ext.define('Connector.view.Scatter', {
                         var transformVal = function(val, type, isMin, domain) {
                             if (type === 'INTEGER') {
                                 return isMin ? Math.floor(val) : Math.ceil(val);
+                            } else if (type === 'TIMESTAMP') {
+                                return isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
                             } else if (type === "DOUBLE"){
                                 var precision;
 
@@ -627,8 +629,13 @@ Ext.define('Connector.view.Scatter', {
                             xMin = transformVal(xExtent[0], xMeasure.measure.type, true, plot.scales.x.scale.domain());
                             xMax = transformVal(xExtent[1], xMeasure.measure.type, false, plot.scales.x.scale.domain());
 
-                            sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, xMin);
-                            sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, xMax);
+                            if (xMeasure.measure.type === 'TIMESTAMP') {
+                                sqlFilters[0] = new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.measure.colName, xMin.toISOString());
+                                sqlFilters[1] = new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.measure.colName, xMax.toISOString());
+                            } else {
+                                sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, xMin);
+                                sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, xMax);
+                            }
                         }
 
                         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
@@ -757,6 +764,18 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
+        // map the y-axis schema and query name for a time point x-axis variable
+        if (measures.x)
+        {
+            if (!measures.x.schemaName && !measures.x.queryName)
+            {
+                var x = Ext.clone(measures.x);
+                x.schemaName = measures.y.schemaName;
+                x.queryName = measures.y.queryName;
+                measures.x = x;
+            }
+        }
+
         return measures;
     },
 
@@ -783,6 +802,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.filterClear || !activeMeasures.y) {
+            this.state.clearSelections();
             this.filterClear = false;
             this.noPlot();
             return;
@@ -1385,6 +1405,17 @@ Ext.define('Connector.view.Scatter', {
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
                             var xselect = this.axisPanelX.getSelection();
+
+                            // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
+                            if (xselect && xselect.length > 0)
+                            {
+                                if (xselect[0].data.variableType == "TIME" && xselect[0].data.name == null)
+                                {
+                                    this.showMessage('Time point ' + xselect[0].data.label.toLowerCase() + ' not yet supported.');
+                                    return;
+                                }
+                            }
+
                             if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);

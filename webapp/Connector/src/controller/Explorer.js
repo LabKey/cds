@@ -169,28 +169,6 @@ Ext.define('Connector.controller.Explorer', {
         return context;
     },
 
-    /**
-     * Called whenever this controller would like to update the URL itself.
-     * NOTE: This should only be called from internal cases where external navigation has not been
-     * used. This will avoid history stacking (i.e. browser back doing nothing)
-     */
-    updateURL : function() {
-        var vm = this.getViewManager();
-        var control = 'explorer';
-        var view = 'singleaxis';
-        var viewContext = [];
-
-        if (this.dim) {
-            viewContext.push(this.dim.name);
-            if (this.hierarchy) {
-                var name = this.hierarchy.name.split('.');
-                viewContext.push(name[name.length-1]);
-            }
-        }
-
-        vm.updateHistory(control, view, viewContext);
-    },
-
     loadExplorerView : function(context, view) {
         var state = this.getStateManager();
         state.onMDXReady(function(mdx) {
@@ -232,29 +210,29 @@ Ext.define('Connector.controller.Explorer', {
 
     // fired when the dimension is changed via the menu
     onDimensionSelect : function(m, item) {
-        var state = this.getStateManager();
-
-        state.onMDXReady(function(mdx) {
-            var context = {
-                dimension: item.rec.data.hierarchy.split('.')[0]
-            };
-            this.loadExplorerView(context, null);
-        }, this);
-
-        this.updateURL();
+        this.goToExplorer(item.rec.data.hierarchy.split('.')[0], null);
     },
 
     // fired when the hierarchy is changed via the menu
     onHierarchySelect : function(m, item) {
-        this.hierarchy = this.dim.hierarchies[item.hierarchyIndex];
-        this.updateURL();
-        this.fireEvent('hierarchy', item.hierarchyIndex);
+        var hierarchy = this.dim.hierarchies[item.hierarchyIndex];
+        hierarchy = hierarchy.name.split('.')[1];
+        this.goToExplorer(this.dim.name, hierarchy);
     },
 
     onExplorerEnter : function(view, rec) {
         if (!view.loadLock) {
             this._hoverHelper(view, rec, true);
         }
+    },
+
+    goToExplorer : function(dim, hierarchy) {
+
+        var context = [dim];
+        if (hierarchy) {
+            context.push(hierarchy);
+        }
+        this.getViewManager().changeView('explorer', 'singleaxis', context);
     },
 
     onExplorerLeave : function(view, rec) {
@@ -278,8 +256,6 @@ Ext.define('Connector.controller.Explorer', {
     runSelectionAnimation : function(view, rec, node) {
 
         this.allowHover = false;
-
-        var me = this;
 
         Animation.floatTo(node, 'span.barlabel', ['.selectionpanel', '.filterpanel'], 'span', 'barlabel selected', function(view, rec, node) {
             this.allowHover = true;

@@ -15,7 +15,7 @@ Ext.define('Connector.controller.Navigation', {
         this.control('connectorheader', {
             // See Connector.panel.Header event 'headerclick'.
             headerclick : function() {
-                this.getViewManager()._changeView('summary');
+                this.getViewManager().changeView('summary');
             }
         });
 
@@ -23,7 +23,7 @@ Ext.define('Connector.controller.Navigation', {
             itemclick : function(v, rec) {
                 var controller = rec.get('controller');
                 if (controller) {
-                    this.getViewManager()._changeView(controller);
+                    this.getViewManager().changeView(controller);
                 }
             }
         });

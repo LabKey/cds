@@ -27,10 +27,6 @@ Ext.define('Connector.controller.State', {
         return 'Connector: ' + viewname;
     },
 
-    _getViewController : function() {
-        return this.application.getController('Connector');
-    },
-
     requestFilterUndo : function() {
         var index = this.getPreviousState();
         if (index > -1) {

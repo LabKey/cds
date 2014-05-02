@@ -205,6 +205,22 @@ ul {
   }
 }
 
+.nogridmsg h1 {
+  white-space: nowrap;
+}
+
+@media (max-width: 1415px) {
+  .nogridmsg h1 {
+    font-size: 20pt;
+  }
+}
+
+@media (max-width: 1280px) {
+  .nogridmsg h1 {
+    font-size: 18pt;
+  }
+}
+
 @media (max-width: 1175px) {
   .noplotmsg h1 {
     font-size: 18pt;
@@ -484,6 +500,12 @@ div.collapsed-member {
   font-size: 10pt;
 }
 
+div.plot-selection {
+  width: 90%;
+  padding: 4px 8px;
+  font-size: 10pt;
+}
+
 div.activefilter {
   position: relative;
   background-color: $light-color;
@@ -499,6 +521,11 @@ div.activefilter {
 
   div.collapsed-member {
     padding: 0 10px;
+  }
+
+  div.plot-selection {
+    padding: 0;
+    width: 100%;
   }
 
   div.selitem {

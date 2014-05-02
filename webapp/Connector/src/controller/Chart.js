@@ -47,7 +47,7 @@ Ext.define('Connector.controller.Chart', {
                 var win = btn.up('window');
                 if (win) win.hide();
 
-                this.getViewManager()._changeView('learn', 'learn', ['assay']);
+                this.getViewManager().changeView('learn', 'learn', ['assay']);
             }
         });
 

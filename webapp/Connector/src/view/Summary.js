@@ -118,7 +118,9 @@ Ext.define('Connector.view.SummaryDataView', {
                         else if (parent.sep.length == 0) {
                             parent.sep = ', ';
                         }
-                        var nav = (values.nav ? ' class="nav" nav="' + values.nav + '"' : '');
+
+                        // TODO: EncodeURI
+                        var nav = (values.nav ? ' class="nav" href="#' + values.nav + '"' : '');
                         return parent.sep + values.counter + ' <a' + nav + '>' + values.text + '</a>';
                     },
                     clearSep: function(p) {

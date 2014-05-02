@@ -161,33 +161,33 @@ Ext.define('Connector.panel.AxisSelector', {
         var queryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
 
         return !this.includeTimpointMeasures ? [] :[{
-            sortOrder: -1,
+            sortOrder: -3,
             schemaName: null,
             queryName: null,
             queryLabel: 'Time points',
             queryDescription: queryDescription,
             isKeyVariable: true,
-            name: 'days',
+            name: 'SubjectVisit/Day',
             label: 'Study days',
-            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
+            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
             variableType: 'TIME'
         },{
-            sortOrder: -1,
+            sortOrder: -2,
             schemaName: null,
             queryName: null,
             queryLabel: 'User groups',
-            name: 'weeks',
+            name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
             label: 'Study weeks',
-            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
+            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
             variableType: 'TIME'
         },{
             sortOrder: -1,
             schemaName: null,
             queryName: null,
             queryLabel: 'Time points',
-            name: 'months',
+            name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
             label: 'Study months',
-            description: queryDescription + 'Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
+            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
             variableType: 'TIME'
         }];
     },
@@ -638,9 +638,17 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     getAlignmentForm : function() {
         if (!this.alignmentForm)
         {
-            var visitTagRadios = [];
+            // the default option is 'Unaligned'
+            var visitTagRadios = [{
+                name : 'alignmentVisitTag',
+                boxLabel : 'Unaligned',
+                inputValue : null,
+                checked : true
+            }];
+
             Ext.each(this.visitTagStore.getRange(), function(record){
                 visitTagRadios.push({
+                    disabled : true,
                     name : 'alignmentVisitTag',
                     boxLabel: record.get('Caption'),
                     inputValue: record.get('Name')
