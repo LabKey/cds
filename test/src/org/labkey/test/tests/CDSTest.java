@@ -624,7 +624,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         goToAppHome();
 
         // Verify multi-select tooltip has dissappeared
-        assertTextNotPresent(TOOLTIP);
+        waitForTextToDisappear(TOOLTIP);
 
         clickBy("Studies");
         applySelection(STUDIES[0]);
@@ -1444,7 +1444,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         shortWait().until(ExpectedConditions.elementToBeClickable(Locator.tagWithClass("div", "nav-label").withText(name).toBy()));
         click(Locator.tagWithClass("div", "nav-label").withText(name));
-        waitForText(name);
+        waitForElement(Locators.cdsButtonLocator("delete"));
         click(Locators.cdsButtonLocator("delete"));
         waitForText("Are you sure you want to delete");
         click(Locator.linkContainingText("Delete"));
@@ -1471,14 +1471,16 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         Set<String> expectedDetailsSet = new HashSet<>(Arrays.asList(expectedDetails));
         String actualDetail = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
-                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
+                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' " + byNoun + "']]"+
                 "/div[contains(@class, 'detailcolumn')]"));
+
         Set<String> splitDetailsSet = new HashSet<>();
-        if (actualDetail.length() > 0) splitDetailsSet.addAll(Arrays.asList(actualDetail.split(", ?")));
+        if (actualDetail.length() > 0)
+            splitDetailsSet.addAll(Arrays.asList(actualDetail.split(", ?")));
         assertEquals("Wrong details for search by " + byNoun + ".", expectedDetailsSet, splitDetailsSet);
 
         String actualTotal = getText(Locator.xpath("//div[starts-with(@id, 'summarydataview')]/div["+
-                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' "+byNoun+"']]"+
+                "./div[contains(@class, 'bycolumn')]/span[@class = 'label' and text() = ' " + byNoun + "']]"+
                 "/div[contains(@class, 'totalcolumn')]"));
         assertEquals("Wrong total for search by " + byNoun + ".", expectedTotal, actualTotal);
     }

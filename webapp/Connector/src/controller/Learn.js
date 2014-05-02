@@ -214,7 +214,7 @@ Ext.define('Connector.controller.Learn', {
             if (this.context.id) {
                 context.push(this.context.id);
             }
-            this.getViewManager()._changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
+            this.getViewManager().changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
         }
     },
 
@@ -222,7 +222,7 @@ Ext.define('Connector.controller.Learn', {
         var id = item.getId();
 
         if (id) {
-            this.getViewManager()._changeView('learn', 'learn', [this.dimensionName, id]);
+            this.getViewManager().changeView('learn', 'learn', [this.dimensionName, id]);
         }
         else {
             console.warn('Unable to show item without an id property');
@@ -241,12 +241,12 @@ Ext.define('Connector.controller.Learn', {
             context += '/' + detail.value;
         }
 
-        this.getViewManager()._changeView(action, 'learn', context.split('/'));
+        this.getViewManager().changeView(action, 'learn', context.split('/'));
     },
 
     onBack : function() {
         if (this.dimensionName) {
-            this.getViewManager()._changeView('learn', 'learn', [this.dimensionName]);
+            this.getViewManager().changeView('learn', 'learn', [this.dimensionName]);
         }
     }
 });

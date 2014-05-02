@@ -15,7 +15,7 @@ Ext.define('Connector.controller.Citation', {
 
         this.control('#gridsources', {
             click : function(btn) {
-                this.getViewManager()._changeView('citation', 'citation', 'data citations');
+                this.getViewManager().changeView('citation', 'citation', 'data citations');
             }
         });
 
