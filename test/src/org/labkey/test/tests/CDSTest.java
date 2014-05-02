@@ -42,6 +42,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+//import org.labkey.test.tests.AbstractAssayTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -267,6 +268,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         assertElementNotPresent(Locator.linkWithText("Home"));
         assertElementNotPresent(Locator.linkWithText("Admin"));
+        Ext4Helper.setCssPrefix ("x-");
     }
 
     @Test
@@ -372,6 +374,49 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
+    public void verifyUserPermissions()
+    {
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        ensureAdminMode();
+        Ext4Helper.resetCssPrefix();
+        createPermissionsGroup("PermGroup1");
+        if (isElementPresent(Locator.permissionRendered()) && isNavButtonPresent("Save and Finish"))
+            clickButton("Save and Finish");
+        clickProject("CDSTest Project");
+        clickFolder("NotRV144");
+        enterPermissionsUI();
+        uncheckInheritedPermissions();
+        waitAndClickButton("Save", 0);
+        _ext4Helper.waitForMaskToDisappear();
+        waitForElement(Locator.permissionRendered());
+        _securityHelper.setProjectPerm("PermGroup1", "Reader");
+        clickButton("Save and Finish");
+        clickProject("CDSTest Project");
+        enterPermissionsUI();
+        _securityHelper.setProjectPerm("PermGroup1", "Reader");
+        clickButton("Save and Finish");
+        createPermissionsGroup("PermGroup2");
+        clickButton("Save and Finish");
+        enterPermissionsUI();
+        _securityHelper.setProjectPerm("PermGroup2", "Reader");
+        clickButton("Save and Finish");
+        impersonateGroup("PermGroup1", false);
+        enterApplication();
+        assertFilterStatusCounts(6, 1, 2);
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        clickUserMenuItem("Stop Impersonating");
+        assertSignOutAndMyAccountPresent();
+        impersonateGroup("PermGroup2", false);
+        enterApplication();
+        assertFilterStatusCounts(0, 0, 0);
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        Ext4Helper.resetCssPrefix();
+        clickUserMenuItem("Stop Impersonating");
+        assertSignOutAndMyAccountPresent();
+
+    }
+    @Test
     public void verifyFilterDisplays()
     {
         //ISSUE 20013
@@ -445,8 +490,6 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public void verifyGrid()
     {
         log("Verify Grid");
-
-        final String GRID_CLEAR_FILTER = "Clear Filters";
         final int COLUMN_COUNT = 106;
 
         DataGridSelector grid = new DataGridSelector(this);
@@ -535,35 +578,18 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 //        log("Ensure filtering goes away when column does");
 //        gridColumnSelector.removeLookupColumn("NAb", "Lab", "PI");
 //        grid.waitForCount(999); // update to real count
-    }
 
-//    public void verifyGridOld()
-//    {
-//        final String GRID_CLEAR_FILTER = "Clear Filters";
-//        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
+        grid.setFilter("Point IC50", "Is Greater Than", "60");
+        grid.waitForCount(1);
+        grid.clearFilters("Ethnicity");
+        grid.waitForCount(5);
+        grid.clearFilters("Point IC50");
+        grid.waitForCount(650);
+        grid.clearFilters("PI");
+        grid.waitForCount(671);
+        assertTextPresent("All subjects"); // ensure there are no app filters remaining
 
-//        log("Ensure filtering goes away when column does");
-//        openFilterPanel("Lab");
-//        _ext4Helper.uncheckGridRowCheckbox("PI1");
-//        click(Locators.cdsButtonLocator("OK"));
-//        waitForGridCount(246);
-//
-//        setDataFilter("Point IC50", "Is Greater Than", "60");
-//        waitForGridCount(2);
-//        openFilterPanel("Ethnicity");
-//        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-//
-//        // TODO: Workaround for duplicate filters on Firefox
-//        List<WebElement> closers = Locator.tag("div").withClass("hierfilter").containing("Ethnicity").append("//img").findElements(getDriver());
-//        if (closers.size() > 0)
-//            closers.get(0).click();
-//
-//        waitForGridCount(5);
-//
-//        openFilterPanel("Point IC50");
-//        waitAndClick(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-//        waitForGridCount(668);
-//
+        // TODO: Once citations are implemented, enable to following coverage cases
 //        log("Verify citation sources");
 //        click(Locators.cdsButtonLocator("Sources"));
 //        waitForText("References", CDS_WAIT);
@@ -602,7 +628,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 //
 //        openFilterPanel("Source");
 //        click(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
-//    }
+    }
 
     @Test
     public void verifyCounts()
@@ -1411,9 +1437,16 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         makeNavigationSelection(NavigationLink.LEARN);
 
-        WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
-        click(Locator.tag("div").withClass("learn-header-container").append(Locator.tag("h1").withClass("lhdv").withText(learnAxis)));
-        shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
+        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-header-container");
+        Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
+        Locator.XPathLocator activeHeader = header.withClass("active");
+
+        if (!isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
+        {
+            WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(getDriver(), WAIT_FOR_JAVASCRIPT);
+            click(headerContainer.append(header.withText(learnAxis)));
+            shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
+        }
     }
 
     public void closeInfoPage()
@@ -1509,7 +1542,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         waitForElement(Locators.getSelectionStatusLocator(subjectCount, "Subject"));
         waitForElement(Locators.getSelectionStatusLocator(studyCount, "Stud"));
-        waitForElement(Locators.getSelectionStatusLocator(assayCount, "Assay"));
+        waitForElement(Locators.getSelectionStatusLocator(assayCount, "Assays"));
     }
 
     private void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
