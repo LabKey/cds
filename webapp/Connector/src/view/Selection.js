@@ -174,7 +174,6 @@ Ext.define('Connector.view.Selection', {
                         }
 
                         var domString =
-//                                '<div class="status-over memberitem collapsed-member" style="width: 90%">' +
                                 '<div class="status-over memberitem plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
                                         measure.measure.label +
