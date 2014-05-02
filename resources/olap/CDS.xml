@@ -53,7 +53,6 @@
 
         <Annotations>
             <Annotation name="SchemaName">Study</Annotation>
-            <Annotation name="AllowMDX">FALSE</Annotation>
         </Annotations>
 
         <Table schema="cds" name="facts" >
