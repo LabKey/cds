@@ -484,6 +484,12 @@ div.collapsed-member {
   font-size: 10pt;
 }
 
+div.plot-selection {
+  width: 90%;
+  padding: 4px 8px;
+  font-size: 10pt;
+}
+
 div.activefilter {
   position: relative;
   background-color: $light-color;
@@ -499,6 +505,11 @@ div.activefilter {
 
   div.collapsed-member {
     padding: 0 10px;
+  }
+
+  div.plot-selection {
+    padding: 0;
+    width: 100%;
   }
 
   div.selitem {
