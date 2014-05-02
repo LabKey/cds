@@ -166,12 +166,20 @@ Ext.define('Connector.view.Selection', {
                 },
                 renderSelectionMeasure : function(measure, filters, id, idx) {
                     if (measure && filters && filters[0] && filters[1]) {
+                        var minVal = filters[0].getValue(),
+                            maxVal = filters[1].getValue();
+
+                        if (filters[0].getFilterType().getURLSuffix() === 'dategte') {
+                            minVal = new Date(minVal).toLocaleDateString();
+                            maxVal = new Date(maxVal).toLocaleDateString();
+                        }
+
                         var domString =
                                 '<div class="status-over memberitem collapsed-member" style="width: 90%">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
                                         measure.measure.label +
-                                        ': &gt;= ' + filters[0].getValue() +
-                                        ', &lt;= ' + filters[1].getValue() +
+                                        ': &gt;= ' + minVal +
+                                        ', &lt;= ' + maxVal +
                                 '</div>';
                         return domString;
                     } else {
