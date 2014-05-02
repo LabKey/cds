@@ -15,8 +15,8 @@ Ext.define('Connector.model.Grid', {
          */
         {name: 'foreignColumns', defaultValue: {}},
 
-        {name: 'subjectFilter', defaultValue: undefined},
         {name: 'filterArray', defaultValue: []},
+        {name: 'baseFilterArray', defaultValue: []},
         {name: 'filterState', defaultValue: {
             hasFilters: false,
             subjects: []
@@ -43,6 +43,18 @@ Ext.define('Connector.model.Grid', {
             Ext.iterate(names, function(column, val) {
                 columns.push(keyColumn.name + '/' + val.fieldKeyPath);
             });
+        },
+
+        createSubjectFilter : function(gridModel, filterState) {
+            var filter = undefined;
+
+            if (filterState.hasFilters) {
+                var subjectColumn = gridModel.get('columnSet')[0];
+                var subjects = filterState.subjects;
+                filter = LABKEY.Filter.create(subjectColumn, subjects.join(';'), LABKEY.Filter.Types.IN);
+            }
+
+            return filter;
         },
 
         findSourceMeasure : function(allMeasures, datasetName) {
@@ -352,6 +364,37 @@ Ext.define('Connector.model.Grid', {
         }];
     },
 
+    applyFilters : function(filterArray, callback, scope) {
+        //
+        // calculate the subject filter
+        //
+        Connector.model.Grid.getSubjectFilterState(this, function(filterState)
+        {
+            var subjectFilter = Connector.model.Grid.createSubjectFilter(this, filterState);
+            var baseFilterArray = [];
+            if (subjectFilter) {
+                baseFilterArray = [subjectFilter];
+            }
+
+            this.set('filterState', filterState);
+            this.set('baseFilterArray', baseFilterArray);
+            this.set('filterArray', filterArray);
+
+            if (this.isActive()) {
+                this.activeFilter = false;
+                this.fireEvent('filterchange', this, this.getFilterArray());
+            }
+            else {
+                this.activeFilter = true;
+            }
+
+            if (Ext.isFunction(callback)) {
+                callback.call(scope || this);
+            }
+
+        }, this);
+    },
+
     /**
      * Called when the set of application filters update. Note: This will fire even when
      * the bound view might not be active
@@ -374,57 +417,16 @@ Ext.define('Connector.model.Grid', {
             }
         }, this);
 
-        if (nonGridFilters.length > 0) {
-
-            // calculate the subject filter
-            Connector.model.Grid.getSubjectFilterState(this, function(filterState)
-            {
-                this.set('filterState', filterState);
-                this.setSubjectFilter(filterState);
-                this.set('filterArray', filterArray);
-                if (this.isActive()) {
-                    this.activeFilter = false;
-                    this.fireEvent('filterchange', this, this.getFilterArray());
-                }
-                else {
-                    this.activeFilter = true;
-                }
-            }, this);
-        }
-        else {
-
-            this.set('filterState', {hasFilters: false, subjects: []});
-            this.set('subjectFilter', undefined);
-            this.set('filterArray', filterArray);
-            if (this.isActive()) {
-                this.activeFilter = false;
-                this.fireEvent('filterchange', this, this.getFilterArray());
-            }
-            else {
-                this.activeFilter = true;
-            }
-        }
-
+        this.applyFilters(filterArray);
     },
 
-    setSubjectFilter : function(filterState) {
-        var filter = undefined;
+    getFilterArray : function(includeBaseFilters) {
 
-        if (filterState.hasFilters) {
-            var subjectColumn = this.get('columnSet')[0];
-            var subjects = filterState.subjects;
-            filter = LABKEY.Filter.create(subjectColumn, subjects.join(';'), LABKEY.Filter.Types.IN);
+        var _array = this.get('filterArray');
+
+        if (includeBaseFilters) {
+            _array = _array.concat(this.get('baseFilterArray'));
         }
-
-        this.set('subjectFilter', filter);
-    },
-
-    getFilterArray : function() {
-        var _array = [];
-        if (this.get('subjectFilter')) {
-            _array.push(this.get('subjectFilter'));
-        }
-        _array = _array.concat(this.get('filterArray'));
 
         return _array;
     },
@@ -661,11 +663,7 @@ Ext.define('Connector.model.Grid', {
 
         this.set('metadata', metadata);
 
-        Connector.model.Grid.getSubjectFilterState(gridModel, function(filterState)
-        {
-            this.set('filterState', filterState);
-            this.updateColumnModel();
-        }, this);
+        this.updateColumnModel();
     },
 
     updateColumnModel : function() {
@@ -677,7 +675,7 @@ Ext.define('Connector.model.Grid', {
         this.set('queryName', metadata.queryName);
         this.set('columnSet', columns);
 
-        this.setSubjectFilter(this.get('filterState'));
+        this.applyFilters(this.get('filterArray'));
 
         this.initialized = true;
 

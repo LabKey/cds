@@ -120,23 +120,14 @@ Ext.define('Connector.window.Filter', {
             items.push({xtype:'box', autoEl : {tag: 'div', cls:'x-body', html:Ext.htmlEncode(this.boundColumn.description)}});
         }
 
-        var schema, query;
-
-        if (Ext.isFunction(this.dataView.getModel)) {
-            schema = this.dataView.getModel().get('metadata').schemaName;
-            query = this.dataView.getModel().get('metadata').queryName;
-        }
-        else {
-            schema = this.dataView.queryMetadata.schemaName;
-            query = this.dataView.queryMetadata.queryName;
-        }
+        var model = this.dataView.getModel();
 
         items.push({
             xtype: 'labkey-default-filterpanel',
             boundColumn: this.boundColumn,
-            filterArray: this.store.filterArray,
-            schemaName: schema,
-            queryName: query
+            filterArray: model.getFilterArray(),
+            schemaName: model.get('metadata').schemaName,
+            queryName: model.get('metadata').queryName
         });
 
         return items;
@@ -147,7 +138,7 @@ Ext.define('Connector.window.Filter', {
         var filterArray = [];
         if (filterPanel.isValid()) {
             var colFilters = filterPanel.getFilters();
-            var fa = Ext.clone(this.dataView.getStore().filterArray);
+            var fa = Ext.clone(this.dataView.getModel().getFilterArray());
             fa = fa.slice(1);
             filterArray = LABKEY.Filter.merge(fa, this.boundColumn.displayField ? this.boundColumn.displayField : this.boundColumn.fieldKey, colFilters);
         }

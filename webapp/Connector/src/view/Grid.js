@@ -17,6 +17,8 @@ Ext.define('Connector.view.Grid', {
 
     initComponent : function() {
 
+        GV = this;
+
         this.columnMap = {};
 
         this.items = [
@@ -43,7 +45,7 @@ Ext.define('Connector.view.Grid', {
                     cls: 'gridexportbtn',
                     text: 'export',
                     margin: '27 0 0 5',
-                    handler: function() {},
+                    handler: this.requestExport,
                     scope: this
                 },{
                     xtype: 'button',
@@ -109,6 +111,56 @@ Ext.define('Connector.view.Grid', {
         this.on('resize', this.onViewResize, this);
     },
 
+    showMessage : function() {
+        if (!this.NO_SHOW) {
+
+            //
+            // Ensure we're in a proper state to show the overlay message
+            //
+            var valid = true;
+
+            if (this.getModel().get('columnSet').length > 3) {
+                valid = false;
+            }
+
+            if (valid) {
+                var nogrid = Ext.create('Ext.Component', {
+                    renderTo: this.getEl(),
+                    cls: 'nogridmsg',
+                    autoEl: {
+                        tag: 'div',
+                        style: 'position: absolute; left: 450px; top: 47%;',
+                        children: [{
+                            tag: 'h1',
+                            html: 'Add columns about your filtered subjects.'
+                        },{
+                            tag: 'h1',
+                            html: 'Sort, filter, and make subgroups.',
+                            style: 'color: #7a7a7a;'
+                        },{
+                            tag: 'h1',
+                            html: 'Export to your own tools.',
+                            style: 'color: #b5b5b5;'
+                        }]
+                    },
+                    listeners: {
+                        afterrender : function(c) {
+                            this.nogridmsg = c;
+                        },
+                        scope: this
+                    }
+                });
+            }
+        }
+    },
+
+    hideMessage : function() {
+        this.NO_SHOW = true;
+        if (this.nogridmsg) {
+            this.nogridmsg.hide();
+        }
+    },
+
     onViewResize : function() {
         Ext.defer(function() {
             if (this.getModel().isActive()) {
@@ -131,7 +183,7 @@ Ext.define('Connector.view.Grid', {
         this.getModel().setActive(view == 'groupdatagrid');
     },
 
-    onColumnUpdate : function(model) {
+    onColumnUpdate : function() {
 
         //
         // remove the old grid
@@ -143,6 +195,7 @@ Ext.define('Connector.view.Grid', {
 
             // reset the column mapping
             this.columnMap = {};
+            this.hideMessage();
         }
 
         //
@@ -153,7 +206,7 @@ Ext.define('Connector.view.Grid', {
 
     onFilterChange : function(model, filterArray) {
         if (this.gridStore) {
-            this.gridStore.filterArray = filterArray;
+            this.gridStore.filterArray = model.getFilterArray(true);
             this.gridStore.load();
             this.applyFilterColumnState(this.getGrid());
         }
@@ -242,6 +295,9 @@ Ext.define('Connector.view.Grid', {
                         var header = grid.down('headercontainer');
                         header.on('headertriggerclick', this.onTriggerClick, this);
                     },
+                    boxready : function(grid) {
+                        this.showMessage();
+                    },
                     reconfigure: function(grid) {
                         this.updateColumnMap(grid.down('headercontainer'));
 
@@ -310,7 +366,7 @@ Ext.define('Connector.view.Grid', {
                 schemaName: model.get('schemaName'),
                 queryName: model.get('queryName'),
                 columns: model.get('columnSet'),
-                filterArray: model.getFilterArray(),
+                filterArray: model.getFilterArray(true),
                 maxRows: 10000
             });
 
@@ -487,5 +543,38 @@ Ext.define('Connector.view.Grid', {
         // Run the query to determine current measure counts
         var picker = this.getAxisSelector().getMeasurePicker();
         picker.setCountMemberSet(this.getModel().get('filterState').subjects);
+    },
+
+    requestExport : function() {
+        if (this.gridStore) {
+
+            var store = this.gridStore;
+
+            // First POST the set of subjects -- can be too large for url
+            var filters = {
+                filters: LABKEY.Filter.appendFilterParams({}, store.filterArray)
+            };
+
+            FF = filters;
+
+            Ext.Ajax.request({
+                url: LABKEY.ActionURL.buildURL('cds', 'storeFilter'),
+                method: 'POST',
+                jsonData: filters,
+                success: function() {
+                    var config = store.getExportConfig("excel");
+
+                    // replace configured action with CDS version
+                    config.action = 'exportExcel';
+                    config.url = LABKEY.ActionURL.buildURL('cds', config.action, store.containerPath, config.params);
+
+                    CC = config;
+
+                    // Request file
+                    window.location = config.url;
+                },
+                failure: function() { /* No-op */ console.warn('Failed to store exported filters.'); }
+            });
+        }
     }
 });
