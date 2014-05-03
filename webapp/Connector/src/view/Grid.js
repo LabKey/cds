@@ -548,32 +548,39 @@ Ext.define('Connector.view.Grid', {
     requestExport : function() {
         if (this.gridStore) {
 
-            var store = this.gridStore;
+            var model = this.getModel();
 
-            // First POST the set of subjects -- can be too large for url
-            var filters = {
-                filters: LABKEY.Filter.appendFilterParams({}, store.filterArray)
+            var exportParams = {
+                "schemaName": [model.get('schemaName')],
+                "query.queryName": [model.get('queryName')],
+                "query.showRows": ["ALL"]
             };
 
-            FF = filters;
+            // apply filters
+            var filters = model.getFilterArray(true);
+            Ext.each(filters, function(filter) {
+                exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
+            });
+
+            /**
+             * Sometimes the GET URL gets too long, so use a POST instead. We have to create a separate <form>.
+             */
+            var newForm = document.createElement('form');
+            document.body.appendChild(newForm);
 
             Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('cds', 'storeFilter'),
+                url: LABKEY.ActionURL.buildURL('query', 'exportRowsXLSX'),
                 method: 'POST',
-                jsonData: filters,
-                success: function() {
-                    var config = store.getExportConfig("excel");
+                form: newForm,
+                isUpload: true,
+                params: exportParams,
+                callback: function(options, success, response) {
+                    document.body.removeChild(newForm);
 
-                    // replace configured action with CDS version
-                    config.action = 'exportExcel';
-                    config.url = LABKEY.ActionURL.buildURL('cds', config.action, store.containerPath, config.params);
-
-                    CC = config;
-
-                    // Request file
-                    window.location = config.url;
-                },
-                failure: function() { /* No-op */ console.warn('Failed to store exported filters.'); }
+                    if (!success) {
+                        // TODO: show error message
+                    }
+                }
             });
         }
     }
