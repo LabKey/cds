@@ -490,7 +490,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 106;
+        final int COLUMN_COUNT = 105;
 
         DataGridSelector grid = new DataGridSelector(this);
 
@@ -526,9 +526,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         grid.waitForCount(668);
         assertElementPresent(grid.cellLocator("Piehler/Eckels Lab"));
 
-        gridColumnSelector.addGridColumn("Demographics", "Gender", true, true);
-        gridColumnSelector.addGridColumn("Demographics", "Ethnicity", false, true);
-        grid.ensureColumnsPresent("Point IC50", "Lab", "Gender", "Ethnicity");
+        gridColumnSelector.addGridColumn("Demographics", "Sex", true, true);
+        gridColumnSelector.addGridColumn("Demographics", "Race", false, true);
+        grid.ensureColumnsPresent("Point IC50", "Lab", "Sex", "Race");
         grid.waitForCount(671); // Why does this change?
 
         log("Remove a column");
@@ -536,7 +536,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         grid.assertColumnsNotPresent("Point IC50");
         grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
 
-        grid.setFilter("Ethnicity", "White");
+        grid.setFilter("Race", "White");
         grid.waitForCount(246);
         assertFilterStatusCounts(11, 4, 4);
 
@@ -554,7 +554,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         log("Filter on a looked-up column");
         grid.setFilter("PI", "Mark I");
-        waitForElement(Locators.filterMemberLocator("Ethnicity: Starts With White"));
+        waitForElement(Locators.filterMemberLocator("Race: Starts With White"));
         waitForElement(Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
         grid.waitForCount(237);
         assertFilterStatusCounts(8, 3, 4);
@@ -565,13 +565,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         assertFilterStatusCounts(29, 4, 4);
 
         click(Locator.linkWithText("Undo"));
-        waitForElement(Locators.filterMemberLocator("Ethnicity: Starts With White"));
+        waitForElement(Locators.filterMemberLocator("Race: Starts With White"));
         waitForElement(Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
         grid.waitForCount(237);
         assertFilterStatusCounts(8, 3, 4);
 
         log("update a column filter that already has a filter");
-        grid.setFilter("Ethnicity", "Black");
+        grid.setFilter("Race", "Black");
         grid.waitForCount(128);
         assertFilterStatusCounts(5, 2, 3);
 
@@ -581,7 +581,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         grid.setFilter("Point IC50", "Is Greater Than", "60");
         grid.waitForCount(1);
-        grid.clearFilters("Ethnicity");
+        grid.clearFilters("Race");
         grid.waitForCount(5);
         grid.clearFilters("Point IC50");
         grid.waitForCount(650);

@@ -5,8 +5,7 @@ Ext.define('Connector.model.Grid', {
         {name: 'active', defaultValue: true},
         {name: 'columnSet', defaultValue: [
             'SubjectID', // Connector.studyContext.subjectColumn which unfortunately is not ready by definition time
-            'SubjectID/Study',
-            'StartDate'
+            'SubjectID/Study'
         ]},
 
         /**
@@ -83,7 +82,6 @@ Ext.define('Connector.model.Grid', {
             });
             colMeasure[metadata.measureToColumn[Connector.studyContext.subjectColumn]] = {label: "Subject ID"};
             colMeasure[metadata.measureToColumn[Connector.studyContext.subjectColumn + "/Study"]] = {label: "Study"};
-            colMeasure[metadata.measureToColumn[Connector.studyContext.subjectVisitColumn + "/VisitDate"]] = {label : "Visit Date"};
 
             var columns = [];
             var foreignColumns = gridModel.get('foreignColumns');
@@ -402,10 +400,6 @@ Ext.define('Connector.model.Grid', {
             schemaName: schema,
             queryName: query,
             name: Connector.studyContext.subjectColumn + '/Study'
-        },{
-            schemaName: schema,
-            queryName: query,
-            name: Connector.studyContext.subjectVisitColumn + '/VisitDate'
         }];
     },
 
