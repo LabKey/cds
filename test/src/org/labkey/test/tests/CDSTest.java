@@ -519,7 +519,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 105;
+        final int COLUMN_COUNT = 107;
 
         DataGridSelector grid = new DataGridSelector(this);
 
@@ -971,6 +971,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400";
         final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
         final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100";
+        Locator plotSelectionLoc = Locator.css(".selectionfilter .plot-selection");
+        Locator plotSelectionFilterLoc = Locator.css(".activefilter .plot-selection");
+        Locator plotSelectionX = Locator.css(".selectionfilter .plot-selection .closeitem");
 
         makeNavigationSelection(NavigationLink.PLOT);
 
@@ -1049,10 +1052,75 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
         }
 
+        // Brush the same area, then apply that selection as a filter.
+        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
+        waitForElement(plotSelectionLoc);
+
+        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelectionLoc.findElements(getDriver()).size());
+        assertSelectionStatusCounts(1, 1, 2);
+
+        plotSelectionX.findElement(getDriver()).click(); // remove the x variable from the selection.
+        assertSelectionStatusCounts(2, 1, 2);
+        plotSelectionX.findElement(getDriver()).click(); // remove the y variable from the selection.
+        assertElementNotPresent(plotSelectionLoc);
+
+        // Select them again and apply them as a filter.
+        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
+        waitForElement(plotSelectionLoc);
+
+        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelectionLoc.findElements(getDriver()).size());
+        assertSelectionStatusCounts(1, 1, 2);
+
+        useSelectionAsFilter();
+        assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilterLoc.findElements(getDriver()).size());
+        assertFilterStatusCounts(1, 1, 2);
+
         // Test that variable selectors are reset when filters are cleared (Issue 20138).
         clearFilter();
         waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
         waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
+    }
+
+    @Test
+    public void verifyBoxPlots()
+    {
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        Locator boxLoc = Locator.css("svg .box");
+        Locator tickLoc = Locator.css("g.tick-text a text");
+
+        makeNavigationSelection(NavigationLink.PLOT);
+
+        // Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("Lab Results", "CD4");
+        yaxis.confirmSelection();
+
+        waitForElement(boxLoc);
+        assertElementPresent(boxLoc, 1);
+
+        // Choose a categorical axis to verify that multiple box plots will appear.
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Demographics", "Sex");
+        xaxis.confirmSelection();
+
+        waitForElement(tickLoc.withText("f"));
+        assertElementPresent(boxLoc, 2);
+
+        // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Lab Results", "Hemoglobin");
+        xaxis.confirmSelection();
+
+        waitForElementToDisappear(boxLoc);
+
+        // Verify that we can go back to boxes after being in scatter mode.
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Demographics", "Race");
+        xaxis.confirmSelection();
+
+        waitForElement(tickLoc.withText("Asian"));
+        assertElementPresent(boxLoc, 6);
     }
 
     @Test
@@ -1519,7 +1587,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private void assertAllSubjectsPortalPage()
     {
         assertCDSPortalRow("Studies", "4 studies");
-        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 genders", "6 races & subtypes");
+        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 sexes", "6 races & subtypes");
         assertCDSPortalRow("Assays", "4 assays", "1 target areas", "3 methodologies");
         assertCDSPortalRow("Assay antigens", "31 assay antigens", "5 clades", "5 sample types", "5 tiers");
         assertCDSPortalRow("Labs", "3 labs");

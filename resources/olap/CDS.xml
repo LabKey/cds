@@ -82,6 +82,14 @@
                 <Table name="demographics" schema="study"/>
                 <Level name="Sex" visible="true" column="sex" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
+            <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Ethnicity" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
+            <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
         </Dimension>
 
         <Dimension visible="true" highCardinality="false" name="Vaccine" foreignKey="participantid">
