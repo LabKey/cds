@@ -1070,15 +1070,24 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         waitForElement(boxLoc);
         assertElementPresent(boxLoc, 1);
 
+        // Choose a categorical axis to verify that multiple box plots will appear.
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Demographics", "Gender");
+        xaxis.pickMeasure("Demographics", "Sex");
         xaxis.confirmSelection();
 
         waitForElement(tickLoc.withText("f"));
         assertElementPresent(boxLoc, 2);
 
+        // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Demographics", "Ethnicity");
+        xaxis.pickMeasure("Lab Results", "Hemoglobin");
+        xaxis.confirmSelection();
+
+        waitForElementToDisappear(boxLoc);
+
+        // Verify that we can go back to boxes after being in scatter mode.
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Demographics", "Race");
         xaxis.confirmSelection();
 
         waitForElement(tickLoc.withText("Asian"));
