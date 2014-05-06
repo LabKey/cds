@@ -1053,6 +1053,39 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
+    public void verifyBoxPlots()
+    {
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        Locator boxLoc = Locator.css("svg .box");
+        Locator tickLoc = Locator.css("g.tick-text a text");
+
+        makeNavigationSelection(NavigationLink.PLOT);
+
+        // Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("Lab Results", "CD4");
+        yaxis.confirmSelection();
+
+        waitForElement(boxLoc);
+        assertElementPresent(boxLoc, 1);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Demographics", "Gender");
+        xaxis.confirmSelection();
+
+        waitForElement(tickLoc.withText("f"));
+        assertElementPresent(boxLoc, 2);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Demographics", "Ethnicity");
+        xaxis.confirmSelection();
+
+        waitForElement(tickLoc.withText("Asian"));
+        assertElementPresent(boxLoc, 6);
+    }
+
+    @Test
     public void testSummaryPageSingleAxisLinks()
     {
         Locator dimensionGroup = Locator.css("div.dimgroup");
