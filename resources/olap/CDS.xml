@@ -68,13 +68,11 @@
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Race" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <!--<Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
+                <Level name="Race" visible="true" column="race" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
                 <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <!--<Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
             </Hierarchy>
             <!--<Hierarchy name="Treatment" visible="true" hasAll="true">-->
                 <!--<Table name="demographics" schema="study"/>-->
@@ -82,8 +80,15 @@
             <!--</Hierarchy>-->
             <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Sex" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <!--<Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
+                <Level name="Sex" visible="true" column="sex" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
+            <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Ethnicity" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
+            <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
         </Dimension>
 

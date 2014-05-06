@@ -49,8 +49,8 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Subject.Sex].[Sex]',
                         activeCount: true,
                         countPriority: 10,
-                        countSingular: 'Gender',
-                        countPlural: 'Genders'
+                        countSingular: 'Sex',
+                        countPlural: 'Sexes'
                     }]
                 },{
                     uniqueName: '[Subject.Race]',
@@ -69,6 +69,22 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Subject.Country].[Country]',
                         countSingular: 'Country',
                         countPlural: 'Countries'
+                    }]
+                },{
+                    uniqueName: '[Subject.Ethnicity]',
+                    supportsSummary: false,
+                    levels: [{
+                        uniqueName: '[Subject.Ethnicity].[Ethnicity]',
+                        countSingular: 'Ethnicity',
+                        countPlural: 'Ethnicities'
+                    }]
+                },{
+                    uniqueName: '[Subject.Gender]',
+                    supportsSummary: false,
+                    levels: [{
+                        uniqueName: '[Subject.Gender].[Gender]',
+                        countSingular: 'Gender',
+                        countPlural: 'Genders'
                     }]
                 }]
             },{

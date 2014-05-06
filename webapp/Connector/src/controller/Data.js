@@ -127,29 +127,10 @@ Ext.define('Connector.controller.Data', {
         var v;
 
         if (xtype == 'groupdatagrid') {
-            // When this is enabled, columns can be loaded from the saved view state
-//            var queryState = undefined; //this.getStateManager().getCustomState('groupdatagrid', 'queryState');
-//            var model;
-//
-//            // Optionally, load the model from state persistence
-//            if (Ext.isDefined(queryState)) {
-//                model = Ext.create('Connector.model.DataGrid', {
-//                    schemaName: queryState['schema'],
-//                    queryName: queryState['query'],
-//                    columnSet: queryState['columnSet']
-//                });
-//            }
-
-            var state = this.getStateManager();
-
-            var model = Ext.create('Connector.model.Grid', {});
-            model.setOlapProvider(state);
-
-            // bind model to application events
-            state.on('filterchange', model.onAppFilterChange, model);
-
             v = Ext.create('Connector.view.Grid', {
-                model: model
+                model: Ext.create('Connector.model.Grid', {
+                    olapProvider: this.getStateManager()
+                })
             });
 
             this.getViewManager().on('afterchangeview', v.onViewChange, v);

@@ -5,8 +5,7 @@ Ext.define('Connector.model.Grid', {
         {name: 'active', defaultValue: true},
         {name: 'columnSet', defaultValue: [
             'SubjectID', // Connector.studyContext.subjectColumn which unfortunately is not ready by definition time
-            'SubjectID/Study',
-            'StartDate'
+            'SubjectID/Study'
         ]},
 
         /**
@@ -15,8 +14,8 @@ Ext.define('Connector.model.Grid', {
          */
         {name: 'foreignColumns', defaultValue: {}},
 
-        {name: 'subjectFilter', defaultValue: undefined},
         {name: 'filterArray', defaultValue: []},
+        {name: 'baseFilterArray', defaultValue: []},
         {name: 'filterState', defaultValue: {
             hasFilters: false,
             subjects: []
@@ -45,6 +44,18 @@ Ext.define('Connector.model.Grid', {
             });
         },
 
+        createSubjectFilter : function(gridModel, filterState) {
+            var filter = undefined;
+
+            if (filterState.hasFilters) {
+                var subjectColumn = gridModel.get('columnSet')[0];
+                var subjects = filterState.subjects;
+                filter = LABKEY.Filter.create(subjectColumn, subjects.join(';'), LABKEY.Filter.Types.IN);
+            }
+
+            return filter;
+        },
+
         findSourceMeasure : function(allMeasures, datasetName) {
             Ext.each(allMeasures, function(measure) {
                 if (measure.name.toLowerCase() == "source/title" && measure.queryName == datasetName) {
@@ -71,7 +82,6 @@ Ext.define('Connector.model.Grid', {
             });
             colMeasure[metadata.measureToColumn[Connector.studyContext.subjectColumn]] = {label: "Subject ID"};
             colMeasure[metadata.measureToColumn[Connector.studyContext.subjectColumn + "/Study"]] = {label: "Study"};
-            colMeasure[metadata.measureToColumn[Connector.studyContext.subjectVisitColumn + "/VisitDate"]] = {label : "Visit Date"};
 
             var columns = [];
             var foreignColumns = gridModel.get('foreignColumns');
@@ -241,24 +251,69 @@ Ext.define('Connector.model.Grid', {
         this.filterMap = {}; // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance
         this.idMap = {}; // inverse of the filterMap
 
-        var columns = this.get('columnSet');
-        var schema = this.get('schemaName');
-        var query = this.get('queryName');
-
-        var measures = [];
-        Ext.each(columns, function(columnName) {
-            measures.push({
-                data: {
-                    schemaName: schema,
-                    queryName: query,
-                    name: columnName
-                }
-            });
-        });
-
-        this.bindMeasures(measures, [], [], true);
+        if (config.olapProvider) {
+            this.setOlapProvider(config.olapProvider);
+            this.olapProvider.on('filterchange', this.onAppFilterChange, this);
+            this.olapProvider.onReady(this.onProviderReady, this);
+        }
 
         this.addEvents('filterchange', 'updatecolumns');
+
+        this.on('updatecolumns', this.onUpdateColumns, this);
+    },
+
+    onProviderReady : function(provider) {
+        var measureState = provider.getCustomState('gridmodel', 'measures');
+        var measures = [];
+
+        if (Ext.isDefined(measureState)) {
+            Ext.each(measureState.measures, function(measure) {
+                measures.push({
+                    data: measure
+                });
+            });
+        }
+        else {
+            var columns = this.get('columnSet');
+            var schema = this.get('schemaName');
+            var query = this.get('queryName');
+
+            // Prepare default measurements from columns
+            Ext.each(columns, function(columnName) {
+                measures.push({
+                    data: {
+                        schemaName: schema,
+                        queryName: query,
+                        name: columnName
+                    }
+                });
+            });
+        }
+
+        this.bindMeasures(measures, [], [], true);
+    },
+
+    onUpdateColumns : function() {
+        var state = this.olapProvider;
+
+        var measures = this.get('measures');
+        var validMeasures = [];
+
+        Ext.each(measures, function(measure) {
+            if (Ext.isDefined(measure.type)) {
+                validMeasures.push(measure);
+            }
+        });
+
+        if (validMeasures.length > 0) {
+            state.setCustomState({
+                view: 'gridmodel',
+                key: 'measures'
+            },{
+                measures: validMeasures
+            });
+            state.updateState();
+        }
     },
 
     bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
@@ -345,11 +400,39 @@ Ext.define('Connector.model.Grid', {
             schemaName: schema,
             queryName: query,
             name: Connector.studyContext.subjectColumn + '/Study'
-        },{
-            schemaName: schema,
-            queryName: query,
-            name: Connector.studyContext.subjectVisitColumn + '/VisitDate'
         }];
+    },
+
+    applyFilters : function(filterArray, callback, scope) {
+        //
+        // calculate the subject filter
+        //
+        Connector.model.Grid.getSubjectFilterState(this, function(filterState)
+        {
+            var subjectFilter = Connector.model.Grid.createSubjectFilter(this, filterState);
+            var baseFilterArray = [];
+            if (subjectFilter) {
+                baseFilterArray = [subjectFilter];
+            }
+
+            this.set('filterState', filterState);
+            this.set('baseFilterArray', baseFilterArray);
+            this.set('filterArray', filterArray);
+
+            if (this.isActive()) {
+                this.activeFilter = false;
+                this.activeColumn = false;
+                this.fireEvent('filterchange', this, this.getFilterArray());
+            }
+            else {
+                this.activeFilter = true;
+            }
+
+            if (Ext.isFunction(callback)) {
+                callback.call(scope || this);
+            }
+
+        }, this);
     },
 
     /**
@@ -374,57 +457,16 @@ Ext.define('Connector.model.Grid', {
             }
         }, this);
 
-        if (nonGridFilters.length > 0) {
-
-            // calculate the subject filter
-            Connector.model.Grid.getSubjectFilterState(this, function(filterState)
-            {
-                this.set('filterState', filterState);
-                this.setSubjectFilter(filterState);
-                this.set('filterArray', filterArray);
-                if (this.isActive()) {
-                    this.activeFilter = false;
-                    this.fireEvent('filterchange', this, this.getFilterArray());
-                }
-                else {
-                    this.activeFilter = true;
-                }
-            }, this);
-        }
-        else {
-
-            this.set('filterState', {hasFilters: false, subjects: []});
-            this.set('subjectFilter', undefined);
-            this.set('filterArray', filterArray);
-            if (this.isActive()) {
-                this.activeFilter = false;
-                this.fireEvent('filterchange', this, this.getFilterArray());
-            }
-            else {
-                this.activeFilter = true;
-            }
-        }
-
+        this.applyFilters(filterArray);
     },
 
-    setSubjectFilter : function(filterState) {
-        var filter = undefined;
+    getFilterArray : function(includeBaseFilters) {
 
-        if (filterState.hasFilters) {
-            var subjectColumn = this.get('columnSet')[0];
-            var subjects = filterState.subjects;
-            filter = LABKEY.Filter.create(subjectColumn, subjects.join(';'), LABKEY.Filter.Types.IN);
+        var _array = this.get('filterArray');
+
+        if (includeBaseFilters) {
+            _array = _array.concat(this.get('baseFilterArray'));
         }
-
-        this.set('subjectFilter', filter);
-    },
-
-    getFilterArray : function() {
-        var _array = [];
-        if (this.get('subjectFilter')) {
-            _array.push(this.get('subjectFilter'));
-        }
-        _array = _array.concat(this.get('filterArray'));
 
         return _array;
     },
@@ -661,11 +703,7 @@ Ext.define('Connector.model.Grid', {
 
         this.set('metadata', metadata);
 
-        Connector.model.Grid.getSubjectFilterState(gridModel, function(filterState)
-        {
-            this.set('filterState', filterState);
-            this.updateColumnModel();
-        }, this);
+        this.updateColumnModel();
     },
 
     updateColumnModel : function() {
@@ -677,12 +715,13 @@ Ext.define('Connector.model.Grid', {
         this.set('queryName', metadata.queryName);
         this.set('columnSet', columns);
 
-        this.setSubjectFilter(this.get('filterState'));
+        this.applyFilters(this.get('filterArray'));
 
         this.initialized = true;
 
         if (this.isActive()) {
             this.activeColumn = false;
+            this.activeFilter = false;
             this.fireEvent('updatecolumns', this);
         }
         else {
