@@ -379,6 +379,35 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         beginAt("project/" + getProjectName() + "/begin.view?");
         ensureAdminMode();
         Ext4Helper.resetCssPrefix();
+
+        if (!isElementPresent(Locator.permissionRendered()))
+            enterPermissionsUI();
+        _ext4Helper.clickTabContainingText("Project Groups");
+       if(isTextPresent("PermGroup1"))
+       {
+           openGroupPermissionsDisplay("PermGroup1");
+           _extHelper.waitForExtDialog("PermGroup1 Information");
+           clickButton("Delete Empty Group",0);
+           waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
+           clickButton("Cancel");
+           if (!isElementPresent(Locator.permissionRendered()))
+               enterPermissionsUI();
+           _ext4Helper.clickTabContainingText("Project Groups");
+
+       }
+        if(isTextPresent("PermGroup2"))
+        {
+            openGroupPermissionsDisplay("PermGroup2");
+            _extHelper.waitForExtDialog("PermGroup2 Information");
+            clickButton("Delete Empty Group",0);
+            waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
+            clickButton("Cancel");
+            if (!isElementPresent(Locator.permissionRendered()))
+                enterPermissionsUI();
+            _ext4Helper.clickTabContainingText("Project Groups");
+
+        }
+
         createPermissionsGroup("PermGroup1");
         if (isElementPresent(Locator.permissionRendered()) && isNavButtonPresent("Save and Finish"))
             clickButton("Save and Finish");
@@ -386,7 +415,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         clickFolder("NotRV144");
         enterPermissionsUI();
         uncheckInheritedPermissions();
-        waitAndClickButton("Save", 0);
+        clickButton("Save",0);
         _ext4Helper.waitForMaskToDisappear();
         waitForElement(Locator.permissionRendered());
         _securityHelper.setProjectPerm("PermGroup1", "Reader");
