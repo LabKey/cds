@@ -4,8 +4,8 @@ Ext.define('Connector.model.Grid', {
     fields: [
         {name: 'active', defaultValue: true},
         {name: 'columnSet', defaultValue: [
-            'SubjectID', // Connector.studyContext.subjectColumn which unfortunately is not ready by definition time
-            'SubjectID/Study'
+            Connector.studyContext.subjectColumn,
+            Connector.studyContext.subjectColumn + '/Study'
         ]},
 
         /**

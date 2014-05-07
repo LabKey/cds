@@ -1287,10 +1287,9 @@ Ext.define('Connector.view.Scatter', {
                 closeAction: 'hide',
                 resizable: false,
                 minHeight: 500,
-                height: pos.height + 100,
-                width: pos.width,
-                x: pos.leftEdge,
-                y: pos.topEdge - 50,
+                maxHeight: 700,
+                minWidth: 600,
+                maxWidth: 975,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
@@ -1329,9 +1328,8 @@ Ext.define('Connector.view.Scatter', {
                 scope : this
             });
         }
-        else {
-            this.updateMeasureSelection(this.ywin);
-        }
+
+        this.updateMeasureSelection(this.ywin);
 
         if (this.axisPanelY.hasSelection()) {
             this.activeYSelection = this.axisPanelY.getSelection()[0];
@@ -1386,10 +1384,9 @@ Ext.define('Connector.view.Scatter', {
                 closeAction: 'hide',
                 resizable : false,
                 minHeight : 450,
-                height: pos.height + 100,
-                width: pos.width,
-                x: pos.leftEdge,
-                y: pos.topEdge - 50,
+                maxHeight: 700,
+                minWidth: 600,
+                maxWidth: 975,
                 layout : {
                     type : 'vbox',
                     align: 'stretch'
@@ -1447,9 +1444,8 @@ Ext.define('Connector.view.Scatter', {
                 scope : this
             });
         }
-        else {
-            this.updateMeasureSelection(this.xwin);
-        }
+
+        this.updateMeasureSelection(this.xwin);
 
         if (this.axisPanelX.hasSelection()) {
             this.activeXSelection = this.axisPanelX.getSelection()[0];

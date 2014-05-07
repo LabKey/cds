@@ -4,6 +4,8 @@ Ext.define('Connector.view.Grid', {
 
     alias: 'widget.groupdatagrid',
 
+    requires: ['Ext.menu.DatePicker'],
+
     axisSourceCls: 'rawdatasource',
 
     columnWidth: 125,
@@ -325,6 +327,7 @@ Ext.define('Connector.view.Grid', {
                 resizable: false,
                 closeAction: 'hide',
                 layout: 'fit',
+                maxWidth: 1400,
                 items: [ this.getAxisSelector() ],
                 dockedItems : [{
                     xtype : 'toolbar',

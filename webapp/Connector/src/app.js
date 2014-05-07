@@ -18,18 +18,12 @@ Ext.override(Ext.button.Button, {
 
 var launchApp = function(cube) {
     Ext.onReady(function() {
-
         Ext.application({
             name: 'Connector',
             extend: 'Connector.Application',
             autoCreateViewport: true,
             olap: cube
         });
-
-        Connector.studyContext = {
-            subjectColumn: 'SubjectID',
-            subjectVisitColumn: 'SubjectVisit'
-        };
     });
 };
 

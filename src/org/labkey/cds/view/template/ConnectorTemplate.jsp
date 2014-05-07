@@ -46,6 +46,14 @@
 
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
+    <script type="text/javascript">
+        var Connector = {
+            studyContext: {
+                subjectColumn: LABKEY.moduleContext.study.subject.columnName,
+                subjectVisitColumn: 'SubjectVisit'
+            }
+        };
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
     <script type="text/javascript">
