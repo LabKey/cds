@@ -45,7 +45,7 @@ Ext.define('Connector.app.model.DataSet', {
 
 		LABKEY.Query.executeSql({
 			schemaName: 'study',
-			sql: "SELECT COUNT(*) AS n FROM \""+this.get('Name')+"\" WHERE Study.Label = '"+id+"'",
+			sql: "SELECT COUNT(*) AS n FROM \""+this.get('Name')+"\" WHERE SubjectID.Study.Label = '"+id+"'",
 			success: function(data) {
 				var count = data.rows[0].n;
 				this.countsByStudy[id] = count;
