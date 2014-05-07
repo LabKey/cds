@@ -105,6 +105,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     public static void doSetup() throws Exception
     {
         CDSTest initTest = new CDSTest();
+
         initTest.doCleanup(false);
 
         initTest.setupProject();
@@ -405,9 +406,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
             if (!isElementPresent(Locator.permissionRendered()))
                 enterPermissionsUI();
             _ext4Helper.clickTabContainingText("Project Groups");
-
         }
 
+        //Here is where the issue occurs (Issue 20329)
         createPermissionsGroup("PermGroup1");
         if (isElementPresent(Locator.permissionRendered()) && isNavButtonPresent("Save and Finish"))
             clickButton("Save and Finish");
@@ -416,7 +417,12 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         enterPermissionsUI();
         uncheckInheritedPermissions();
         clickButton("Save",0);
-        _ext4Helper.waitForMaskToDisappear();
+
+        //This is the workaround for issue 20329
+        sleep(1000);
+        uncheckInheritedPermissions();
+        clickButton("Save",0);
+
         waitForElement(Locator.permissionRendered());
         _securityHelper.setProjectPerm("PermGroup1", "Reader");
         clickButton("Save and Finish");
