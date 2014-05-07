@@ -169,15 +169,17 @@ Ext.define('Connector.panel.AxisSelector', {
             isKeyVariable: true,
             name: 'SubjectVisit/Day',
             label: 'Study days',
+            type: 'INTEGER',
             description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
             variableType: 'TIME'
         },{
             sortOrder: -2,
             schemaName: null,
             queryName: null,
-            queryLabel: 'User groups',
+            queryLabel: 'Time points',
             name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
             label: 'Study weeks',
+            type: 'DOUBLE',
             description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
             variableType: 'TIME'
         },{
@@ -187,6 +189,7 @@ Ext.define('Connector.panel.AxisSelector', {
             queryLabel: 'Time points',
             name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
             label: 'Study months',
+            type: 'DOUBLE',
             description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
             variableType: 'TIME'
         }];

@@ -327,6 +327,7 @@ Ext.define('Connector.view.Grid', {
                 resizable: false,
                 closeAction: 'hide',
                 layout: 'fit',
+                maxWidth: 1400,
                 items: [ this.getAxisSelector() ],
                 dockedItems : [{
                     xtype : 'toolbar',
