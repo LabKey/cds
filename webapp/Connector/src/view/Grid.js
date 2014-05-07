@@ -4,6 +4,8 @@ Ext.define('Connector.view.Grid', {
 
     alias: 'widget.groupdatagrid',
 
+    requires: ['Ext.menu.DatePicker'],
+
     axisSourceCls: 'rawdatasource',
 
     columnWidth: 125,

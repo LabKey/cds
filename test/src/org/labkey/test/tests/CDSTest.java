@@ -111,7 +111,9 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         initTest.setupProject();
         initTest.importData();
         initTest.populateFactTable();
-        initTest.verifyFactTable();
+
+        // TODO: Re-enable this check once the verify query has been fixed and re-linked in the management webpart
+//        initTest.verifyFactTable();
 
         currentTest = initTest;
 
