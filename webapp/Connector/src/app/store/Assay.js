@@ -33,7 +33,7 @@ Ext.define('Connector.app.store.Assay', {
             };
 
             if (assay.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('Name', assay, LABKEY.Filter.Types.IN) ]
+                queryConfig.filterArray = [ LABKEY.Filter.create('Label', assay, LABKEY.Filter.Types.IN) ]
             }
 
             LABKEY.Query.selectRows(queryConfig);

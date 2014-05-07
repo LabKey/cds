@@ -62,7 +62,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     private static final String PROJECT_NAME = "CDSTest Project";
     private static final String STUDIES[] = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     private static final String LABS[] = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
-    private static final String[] ASSAYS = new String[]{"ADCC-Ferrari", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey"};
+    private static final String[] ASSAYS = new String[]{"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " +LABS[1]+ " and " + LABS[2];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
@@ -333,7 +333,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // add a filter, which should be blown away when a group filter is selected
         makeNavigationSelection(NavigationLink.SUMMARY);
         clickBy("Assays");
-        selectBars("Luminex-Sample-LabKey");
+        selectBars(ASSAYS[1]);
         useSelectionAsFilter();
         assertFilterStatusCounts(6, 1, 2);
 
@@ -489,35 +489,35 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         // verify multi-level filtering
         goToAppHome();
         clickBy("Assays");
-        selectBars("ADCC-Ferrari", "mRNA assay");
-        waitForElement(Locators.filterMemberLocator("ADCC-Ferrari"));
-        assertElementPresent(Locators.filterMemberLocator("mRNA assay"));
+        selectBars(ASSAYS[0], ASSAYS[2]);
+        waitForElement(Locators.filterMemberLocator(ASSAYS[0]));
+        assertElementPresent(Locators.filterMemberLocator(ASSAYS[2]));
 
         useSelectionAsFilter();
-        assertElementPresent(Locators.filterMemberLocator("ADCC-Ferrari"), 1);
-        assertElementPresent(Locators.filterMemberLocator("mRNA assay"), 1);
+        assertElementPresent(Locators.filterMemberLocator(ASSAYS[0]), 1);
+        assertElementPresent(Locators.filterMemberLocator(ASSAYS[2]), 1);
         assertFilterStatusCounts(0, 0, 0);
 
         // remove a subfilter
-        click(Locators.filterMemberLocator("ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        click(Locators.filterMemberLocator(ASSAYS[0]).append(Locator.tagWithClass("div", "closeitem")));
         waitForText("Filter removed.");
         assertFilterStatusCounts(5, 1, 2);
-        assertElementNotPresent(Locators.filterMemberLocator("ADCC-Ferrari"));
+        assertElementNotPresent(Locators.filterMemberLocator(ASSAYS[0]));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(Locators.filterMemberLocator("ADCC-Ferrari"));
+        waitForElement(Locators.filterMemberLocator(ASSAYS[0]));
         assertFilterStatusCounts(0, 0, 0);
 
         // remove a subfilter
-        click(Locators.filterMemberLocator("ADCC-Ferrari").append(Locator.tagWithClass("div", "closeitem")));
+        click(Locators.filterMemberLocator(ASSAYS[0]).append(Locator.tagWithClass("div", "closeitem")));
         waitForText("Filter removed.");
         assertFilterStatusCounts(5, 1, 2);
-        assertElementNotPresent(Locators.filterMemberLocator("ADCC-Ferrari"));
+        assertElementNotPresent(Locators.filterMemberLocator(ASSAYS[0]));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(Locators.filterMemberLocator("ADCC-Ferrari"));
+        waitForElement(Locators.filterMemberLocator(ASSAYS[0]));
         assertFilterStatusCounts(0, 0, 0);
 
         clearFilter();
@@ -722,13 +722,13 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
         //TODO: enable this and update counts when issue 20000 is resolved
         //applySelection("Unknown");
         //assertSelectionStatusCounts(23, 3, 5, 3, 31);
-        applySelection("ADCC-Ferrari");
+        applySelection(ASSAYS[0]);
         assertSelectionStatusCounts(12, 1, 2);
-        applySelection("Luminex-Sample-LabKey");
+        applySelection(ASSAYS[1]);
         assertSelectionStatusCounts(6, 1, 2);
-        applySelection("NAb-Sample-LabKey");
+        applySelection(ASSAYS[3]);
         assertSelectionStatusCounts(29, 4, 4);
-        applySelection("mRNA assay");
+        applySelection(ASSAYS[2]);
         assertSelectionStatusCounts(5, 1, 2);
         goToAppHome();
         clickBy("Labs");
@@ -828,7 +828,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
 
         log("Verify selection messaging");
         clickBy("Assays");
-        selectBars("ADCC-Ferrari", "Luminex-Sample-LabKey");
+        selectBars(ASSAYS[0], ASSAYS[1]);
         assertSelectionStatusCounts(0, 0, 0);
         pickCDSDimension("Studies");
         assertSelectionStatusCounts(0, 0, 0);
@@ -1173,7 +1173,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     {
         viewLearnAboutPage("Antigens");
 
-        List<String> assays = Arrays.asList("ADCC-Ferrari", "Lab Results", "Luminex-Sample-LabKey", "mRNA assay", "NAb-Sample-LabKey");
+        List<String> assays = Arrays.asList(ASSAYS[0], "Lab Results", ASSAYS[1], ASSAYS[2], ASSAYS[3]);
         assertElementPresent(Locator.tagWithClass("div", "detail-container"), assays.size());
 
         for (String assay : assays)
@@ -1266,7 +1266,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
-    public void testXAxisVariableSelectorDefinitionPanel()
+    public void verifyXAxisSelector()
     {
         makeNavigationSelection(NavigationLink.PLOT);
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -1293,7 +1293,7 @@ public class CDSTest extends BaseWebDriverMultipleTest implements PostgresOnlyTe
     }
 
     @Test
-    public void testYAxisVariableSelectorDefinitionPanel()
+    public void verifyYAxisSelector()
     {
         makeNavigationSelection(NavigationLink.PLOT);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);

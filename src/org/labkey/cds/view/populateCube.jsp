@@ -118,7 +118,7 @@ to be filled in by another mechanism.<br>
             area: 'Antigen Dimension'
         },{
             schema: 'study',
-            sql: 'SELECT target, name, methodology FROM StudyDesignAssays',
+            sql: 'SELECT target, name, label, methodology FROM StudyDesignAssays',
             area: 'Assay Dimension'
         },{
             schema: 'study',
