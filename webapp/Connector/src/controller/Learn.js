@@ -117,7 +117,7 @@ Ext.define('Connector.controller.Learn', {
         this.context = {
             dimension: ctx[0],
             id: ctx[1]
-        }
+        };
         return this.context;
     },
 
@@ -144,9 +144,7 @@ Ext.define('Connector.controller.Learn', {
                 if (dim) {
                     for (var d=0; d < dims.length; d++) {
                         if (dims[d].uniqueName == dim.uniqueName) {
-                            this.updateLock = true;
-                            v.selectDimension(dims[d]);
-                            this.updateLock = false;
+                            this.updateLearnView(context);
                             break;
                         }
                     }
@@ -162,7 +160,7 @@ Ext.define('Connector.controller.Learn', {
             if (defer) {
                 Ext.defer(select, 200, this);
             }
-        });
+        }, this);
     },
 
     updateView : function(xtype, context) {
