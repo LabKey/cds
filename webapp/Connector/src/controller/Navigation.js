@@ -95,7 +95,7 @@ Ext.define('Connector.controller.Navigation', {
     },
 
     onViewChange : function(controller, view, viewContext, title, skipState) {
-        this.active = controller;
+        this.active = controller.toLowerCase();
         this.markActiveSelection();
     }
 });

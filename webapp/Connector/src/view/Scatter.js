@@ -94,7 +94,6 @@ Ext.define('Connector.view.Scatter', {
             layout: {
                 type: 'hbox'
             },
-            bodyStyle: 'background: linear-gradient(#f0f0f0, #ebebeb) !important;',
             defaults: {
                 xtype: 'container',
                 width: '50%',
