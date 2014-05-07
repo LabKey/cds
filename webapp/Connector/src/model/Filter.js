@@ -89,6 +89,29 @@ Ext.define('Connector.model.Filter', {
 
                 Connector.model.Filter.loaded = true;
             }
+        },
+
+        plotMeasuresEqual : function(measuresA, measuresB){
+            var compareMeasures = function(measureA, measureB) {
+                if (!measureA && !measureB) {
+                    return true;
+                } else {
+                    if (measureA.visit === measureB.visit) {
+                        return measureA.hasOwnProperty('measure') && measureB.hasOwnProperty('measure') &&
+                                measureA.measure.hasOwnProperty('alias') && measureB.measure.hasOwnProperty('alias') &&
+                                measureA.measure.alias === measureB.measure.alias;
+                    }
+                }
+
+                return false;
+            };
+
+            if (measuresA.length === measuresB.length) {
+                return compareMeasures(measuresA[0], measuresB[0]) && compareMeasures(measuresA[1], measuresB[1]);
+            }
+
+            return false;
         }
+
     }
 });

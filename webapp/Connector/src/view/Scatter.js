@@ -660,7 +660,7 @@ Ext.define('Connector.view.Scatter', {
                     },
                     brushclear : function() {
                         layerScope.isBrushed = false;
-                        stateManager.clearSelections();
+                        stateManager.clearSelections(true);
                     }
                 };
             }
@@ -802,7 +802,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.filterClear || !activeMeasures.y) {
-            this.state.clearSelections();
+            this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
             return;
@@ -981,10 +981,17 @@ Ext.define('Connector.view.Scatter', {
                 this.plotLock = true;
                 var filters = this.state.getFilters(), found = false;
                 for (var f=0; f < filters.length; f++) {
-                    if (filters[f].get('isPlot') == true) {
+                    if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                        if (!Connector.model.Filter.plotMeasuresEqual(filters[f].get('plotMeasures'), measures)) {
+                            filters[f].set('plotMeasures', measures);
+                            // TODO: Before we update filter members check to see if the filters actually changed.
+                            // Call Filter.plotMeasuresEqual (see Filter.js).
+                            this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
+                        } else {
+                            this.state.updateFilterMembers(filters[f].get('id'), filter.members, true);
+                        }
+
                         found = true;
-                        filters[f].set('plotMeasures', measures);
-                        this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
                         break;
                     }
                 }
