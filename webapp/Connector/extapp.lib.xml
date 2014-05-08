@@ -119,6 +119,8 @@
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
+        <script path="Connector/src/view/Page.js"/>
+        <script path="Connector/src/view/PageHeader.js"/>
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
