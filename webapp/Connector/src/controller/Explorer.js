@@ -60,7 +60,7 @@ Ext.define('Connector.controller.Explorer', {
                         name = h[d].name.split('.')[1];
                         if (name) {
                             m.add({
-                                text : h[d].name.split('.')[1],
+                                text : name,
                                 hierarchyIndex : d
                             });
                         }

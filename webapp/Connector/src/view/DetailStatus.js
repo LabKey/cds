@@ -61,6 +61,13 @@ Ext.define('Connector.view.DetailStatus', {
         this.filterTask  = new Ext.util.DelayedTask(this.filterChange, this);
 
         this.callParent();
+
+        if (this.store.state) {
+            var state = this.store.state;
+            state.on('filtercount', this.onFilterChange, this);
+            state.on('filterchange', this.onFilterChange, this);
+            state.on('selectionchange', this.onFilterChange, this);
+        }
     },
 
     onFilterChange : function() {

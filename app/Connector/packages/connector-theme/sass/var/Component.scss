@@ -147,6 +147,7 @@ $tip-body-color: $info-color;
   - Connector.view.FilterSave
   - Connector.view.DetailStatus
   - Connector.view.Header
+  - Connector.view.InfoPane
   - Connector.view.GroupListView
   - Connector.view.Navigation
   - Connector.view.Selection
@@ -816,6 +817,16 @@ div.status-over {
 
 
 /* -- END Connector.view.Header */
+
+/* Connector.view.InfoPane */
+.infopane {
+
+  .sorter {
+    @include smallStandout;
+  }
+}
+
+/* -- END Connector.view.InfoPane */
 
 /* Connector.view.GroupListView */
 div.grouplist-view {

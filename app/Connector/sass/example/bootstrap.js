@@ -57,6 +57,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.FilterGroup": "../../../../webapp/Connector/src/model/FilterGroup.js",
   "Connector.model.Grid": "../../../../webapp/Connector/src/model/Grid.js",
   "Connector.model.Group": "../../../../webapp/Connector/src/model/Group.js",
+  "Connector.model.InfoPane": "../../../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
@@ -91,6 +92,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeBody": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/Home.js",
+  "Connector.view.InfoPane": "../../../../webapp/Connector/src/view/InfoPane.js",
   "Connector.view.Learn": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Learn.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
@@ -192,6 +194,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.Grid": [],
   "Connector.model.Group": [],
+  "Connector.model.InfoPane": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
@@ -226,6 +229,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Home": [],
   "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [],
+  "Connector.view.InfoPane": [],
   "Connector.view.Learn": [],
   "Connector.view.Learn.plugin.HeaderLock": [],
   "Connector.view.LearnColumnHeader": [],
@@ -1150,6 +1154,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.Grid": [],
   "Connector.model.Group": [],
+  "Connector.model.InfoPane": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
@@ -1234,6 +1239,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [],
+  "Connector.view.InfoPane": [
+    "widget.infopane"
+  ],
   "Connector.view.Learn": [
     "widget.learn"
   ],

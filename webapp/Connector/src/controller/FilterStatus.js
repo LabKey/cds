@@ -11,7 +11,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['DetailStatus', 'FilterSave', 'FilterStatus'],
+    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'InfoPane'],
 
     init : function() {
 
@@ -22,7 +22,7 @@ Ext.define('Connector.controller.FilterStatus', {
                     flex: 1,
                     items: [
                         this.createFilterStatus(),
-                        this.createFilterDetail()
+                        this.createDetail()
                     ]
                 });
                 navfilter.add(container);
@@ -81,6 +81,14 @@ Ext.define('Connector.controller.FilterStatus', {
             click : this.runSelectToFilterAnimation
         });
 
+        this.control('detailstatus', {
+            itemclick: this.onDetailSelect
+        });
+
+        this.control('#infosortdropdown', {
+            click: function(btn) { btn.showMenu(); }
+        });
+
         this.callParent();
     },
 
@@ -90,18 +98,13 @@ Ext.define('Connector.controller.FilterStatus', {
         return store;
     },
 
-    createFilterDetail : function() {
+    createDetail : function() {
         var store = this.getStateStore();
         store.load();
 
         var view = Ext.create('Connector.view.DetailStatus', {
             store: store
         });
-
-        var state = this.getStateManager();
-        state.on('filtercount', view.onFilterChange, view);
-        state.on('filterchange', view.onFilterChange, view);
-        state.on('selectionchange', view.onFilterChange, view);
 
         var vm = this.getViewManager();
         vm.on('afterchangeview', function(controller, view) {
@@ -112,6 +115,37 @@ Ext.define('Connector.controller.FilterStatus', {
         }, this);
 
         return view;
+    },
+
+    onDetailSelect : function(view, detail, element, index) {
+        var parent = view.up();
+        if (parent) {
+            var hidden = [];
+            Ext.iterate(parent.items.map, function(componentId, component) {
+                component.hide();
+                hidden.push(componentId);
+            });
+
+            parent.add({
+                xtype: 'infopane',
+                model: Ext.create('Connector.model.InfoPane', {
+                    olapProvider: this.getStateManager(),
+                    dimensionUniqueName: detail.get('dimension'),
+                    hierarchyUniqueName: detail.get('hierarchy')
+                }),
+                listeners: {
+                    hide: function() {
+                        Ext.each(hidden, function(componentId) {
+                            var h = Ext.getCmp(componentId);
+                            if (h) {
+                                h.show();
+                            }
+                        });
+                    },
+                    scope: this
+                }
+            });
+        }
     },
 
     createFilterStatus : function() {
