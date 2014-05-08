@@ -138,7 +138,7 @@ Ext.define('Connector.view.PageHeader', {
                 tabItems.push({
                     xtype: 'box',
                     cls: 'tabbutton',
-                    html: tab,
+                    html: tab + '<svg class="arrow" width="16" height="8" fill="#ffffff"><path d="M0 8 L8 0 L16 8 Z"></path></svg>',
                     listeners: {
                         click: function() {
                             self.tabClickCallback && self.tabClickCallback(i);
@@ -157,7 +157,7 @@ Ext.define('Connector.view.PageHeader', {
                 },
                 height: 42,
                 items: tabItems
-            });          
+            });
         } else {
             this.items.push({
                 xtype: 'box',
