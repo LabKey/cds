@@ -67,6 +67,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
+  "Connector.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Page.js",
   "Connector.plugin.Messaging": "../../../../webapp/Connector/src/plugin/Messaging.js",
   "Connector.store.Explorer": "../../../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../../../webapp/Connector/src/store/FilterStatus.js",
@@ -96,11 +97,12 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.LearnColumnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.LearnHeaderDataView": "../../../../webapp/Connector/src/view/Learn.js",
-  "Connector.view.LearnItemHeader": "../../../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Main": "../../../../webapp/Connector/src/view/Main.js",
   "Connector.view.Navigation": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NavigationView": "../../../../webapp/Connector/src/view/Navigation.js",
   "Connector.view.NotFound": "../../../../webapp/Connector/src/controller/Connector.js",
+  "Connector.view.Page": "../../../../webapp/Connector/src/view/Page.js",
+  "Connector.view.PageHeader": "../../../../webapp/Connector/src/view/PageHeader.js",
   "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.SingleAxisExplorer": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -202,6 +204,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
   "Connector.panel.Selection": [],
+  "Connector.plugin.HeaderLock": [],
   "Connector.plugin.Messaging": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
@@ -231,11 +234,12 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.LearnColumnHeader": [],
   "Connector.view.LearnHeader": [],
   "Connector.view.LearnHeaderDataView": [],
-  "Connector.view.LearnItemHeader": [],
   "Connector.view.Main": [],
   "Connector.view.Navigation": [],
   "Connector.view.NavigationView": [],
   "Connector.view.NotFound": [],
+  "Connector.view.Page": [],
+  "Connector.view.PageHeader": [],
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.SingleAxisExplorer": [],
@@ -1172,6 +1176,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.Selection": [
     "widget.selectionpanel"
   ],
+  "Connector.plugin.HeaderLock": [
+    "plugin.headerlock"
+  ],
   "Connector.plugin.Messaging": [
     "plugin.messaging"
   ],
@@ -1245,9 +1252,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
   ],
-  "Connector.view.LearnItemHeader": [
-    "widget.learnitemheaderview"
-  ],
   "Connector.view.Main": [
     "widget.app-main"
   ],
@@ -1258,6 +1262,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.NotFound": [
     "widget.notfound"
   ],
+  "Connector.view.Page": [],
+  "Connector.view.PageHeader": [],
   "Connector.view.Scatter": [
     "widget.plot"
   ],

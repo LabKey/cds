@@ -1982,3 +1982,30 @@ div.definition-overflow
   position: absolute;
   width: 100%;
 }
+
+.pageheadercontainer {
+  position: relative;
+  top: 0px;
+  z-index: 10;
+
+  .tabbutton {
+    //height: 100%;
+    padding: 5px 20px;
+    font-family: $bodycaps-font;
+    font-size: 14pt;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: $select-color;
+
+    &.selected {
+      color: $black;
+      cursor: inherit;
+    }
+  }
+}
+
+.pagecontentcontainer {
+  position: relative;
+  top: 0px;
+}

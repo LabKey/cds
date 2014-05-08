@@ -96,37 +96,41 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
                 detailView: 'Connector.app.view.StudyProducts',
-                detailItemView: 'Connector.app.view.ModuleContainer',
-                detailItemModules: [[{
-                    type: 'productheader'
-                }, {
-                    type: 'text',
-                    staticData: {
-                        title: 'Product production'
-                    },
-                    modelData: {
-                        text: 'Production'
-                    }
-                }, {
-                    type: 'text',
-                    staticData: {
-                        title: 'Description'
-                    },
-                    modelData: {
-                        text: 'Description'
-                    }
-                }], [{
-                    type: 'productotherproducts',
-                    staticData: {
-                        title: 'Used with other products'
-                    }
-                }, {
-                    type: 'productstudies',
-                    staticData: {
-                        title: 'Studies where used'
-                    }
-                }]],
 
+                itemDetail: {
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'productheader'
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Product production'
+                        },
+                        modelData: {
+                            text: 'Production'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'Description'
+                        }
+                    }], [{
+                        type: 'productotherproducts',
+                        staticData: {
+                            title: 'Used with other products'
+                        }
+                    }, {
+                        type: 'productstudies',
+                        staticData: {
+                            title: 'Studies where used'
+                        }
+                    }]],
+                },
+
+    
                 hierarchies: [{
                     uniqueName: '[Vaccine.Type]',
                     levels: [{
@@ -150,6 +154,44 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Assay',
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
+
+                itemDetail: [{
+                    label: 'Overview',
+                    content: {
+                        view: 'Connector.app.view.ModuleContainer',
+                        modules: [[{
+                            type: 'text',
+                            staticData: {
+                                title: 'Overview test module LEFT',
+                                text: 'This is some text content'
+                            }
+                        }], [{
+                            type: 'text',
+                            staticData: {
+                                title: 'Overview test module RIGHT',
+                                text: 'This is some text content'
+                            }
+                        }]]
+                    }
+                }, {
+                    label: 'Variables, Antigens, Analytes',
+                    content: {
+                        view: 'Connector.app.view.ModuleContainer',
+                        modules: [[{
+                            type: 'text',
+                            staticData: {
+                                title: 'Variables test module LEFT',
+                                text: 'This is some different text content'
+                            }
+                        }], [{
+                            type: 'text',
+                            staticData: {
+                                title: 'Variables test module RIGHT',
+                                text: 'This is some other content'
+                            }
+                        }]]
+                    }
+                }],
 
                 hierarchies: [{
                     uniqueName: '[Assay.Target Area]',
@@ -181,57 +223,59 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
 
-                detailItemView: 'Connector.app.view.ModuleContainer',
-                detailItemModules: [[{
-                    type: 'studyheader'
-                }, {
-                    type: 'text',
-                    staticData: {
-                        title: 'Data connector editorial'
-                    },
-                    modelData: {
-                        text: 'Editorial'
-                    }
-                }, {
-                    type: 'text',
-                    staticData: {
-                        title: 'Overview'
-                    },
-                    modelData: {
-                        text: 'Description'
-                    }
-                }, {
-                    type: 'studysites',
-                    staticData: {
-                        title: 'Cohort & sites'
-                    }
-                }], [{
-                    type: 'person',
-                    staticData: {
-                        title: 'Study point of contact'
-                    },
-                    modelData: {
-                        name: 'MainContact.Name',
-                        picture: 'MainContact.Portrait',
-                        line1: 'MainContact.Role',
-                        line2: 'MainContact.Team'
-                    }
-                }, {
-                    type: 'studyproducts',
-                    staticData: {
-                        title: 'Products'
-                    }
-                }, {
-                    type: 'studyassays',
-                    staticData: {
-                        title: 'Immune assays'
-                    }
-                }, {
-                    type: 'studylabsandclinicaldata',
-                    staticData: {
-                        title: "Lab & clinical data"
-                    }
-                }]],
+                itemDetail: {
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'studyheader'
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Data connector editorial'
+                        },
+                        modelData: {
+                            text: 'Editorial'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Overview'
+                        },
+                        modelData: {
+                            text: 'Description'
+                        }
+                    }, {
+                        type: 'studysites',
+                        staticData: {
+                            title: 'Cohort & sites'
+                        }
+                    }], [{
+                        type: 'person',
+                        staticData: {
+                            title: 'Study point of contact'
+                        },
+                        modelData: {
+                            name: 'MainContact.Name',
+                            picture: 'MainContact.Portrait',
+                            line1: 'MainContact.Role',
+                            line2: 'MainContact.Team'
+                        }
+                    }, {
+                        type: 'studyproducts',
+                        staticData: {
+                            title: 'Products'
+                        }
+                    }, {
+                        type: 'studyassays',
+                        staticData: {
+                            title: 'Immune assays'
+                        }
+                    }, {
+                        type: 'studylabsandclinicaldata',
+                        staticData: {
+                            title: "Lab & clinical data"
+                        }
+                    }]]
+                },
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -338,10 +382,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: undefined,
                 detailModel: undefined,
                 detailView: undefined,
-                detailItemCollection: undefined,
-                detailItemModel: undefined,
-                detailItemView: undefined,
-                detailItemModules: []
+                itemDetail: undefined
             };
 
             var hh = {
@@ -400,11 +441,25 @@ Ext4.define('Connector.cube.Configuration', {
                             detailCollection: Ext.isDefined(cd.detailCollection) ? cd.detailCollection : dd.detailCollection,
                             detailModel: Ext.isDefined(cd.detailModel) ? cd.detailModel : dd.detailModel,
                             detailView: Ext.isDefined(cd.detailView) ? cd.detailView : dd.detailView,
-                            detailItemCollection: Ext.isDefined(cd.detailItemCollection) ? cd.detailItemCollection : dd.detailItemCollection,
-                            detailItemModel: Ext.isDefined(cd.detailItemModel) ? cd.detailItemModel : dd.detailItemModel,
-                            detailItemView: Ext.isDefined(cd.detailItemView) ? cd.detailItemView : dd.detailItemView,
-                            detailItemModules: Ext.isDefined(cd.detailItemModules) ? cd.detailItemModules : dd.detailItemModules
+                            itemDetail: Ext.isDefined(cd.itemDetail) ? cd.itemDetail : dd.itemDetail
                         });
+
+                        if (_dim.itemDetail) {
+//                            debugger;
+                            if (Ext.isArray(_dim.itemDetail)) {
+                                // itemDetail is an array of composite data structures with detail page content and tab info.
+                                // Split it here
+                                var items = _dim.itemDetail;
+                                _dim.itemDetail = [];
+                                _dim.itemDetailTabs = [];
+                                Ext.each(items, function(item) {
+                                    _dim.itemDetail.push(item.content);
+                                    _dim.itemDetailTabs.push(item.label);
+                                })
+                            } else {
+                                _dim.itemDetail = [_dim.itemDetail];
+                            }
+                        }
 
                         //
                         // Iterate over the set of cube hierarchies applying context
