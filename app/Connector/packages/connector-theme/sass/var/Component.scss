@@ -128,6 +128,13 @@ $tip-body-color: $info-color;
   user-select: none;
 }
 
+@mixin rightFade {
+  // needs latest Compass, add '@import "compass"' to your scss
+  background-color: $secondary-color; // Old browsers
+  @include filter-gradient($secondary-color, $light-color, horizontal); // IE6-9
+  @include background-image(linear-gradient(left,  $secondary-color 85%,$light-color 95%));
+}
+
 // --- END DEFINE MIXINS ----
 
 /*
@@ -578,7 +585,7 @@ div.filtermember, span.hierarchylabel {
 
 /* Connector.view.Dimension */
 .dimensionview {
-  background-color : $secondary-color;
+  @include rightFade;
 }
 
 div.dimensionsort {
@@ -1321,7 +1328,7 @@ div.emptytext {
   padding: 0;
 
   .x-panel-body {
-    background-color : $light-color;
+    @include rightFade;
   }
 }
 
@@ -1860,7 +1867,7 @@ div.learnview {
 
 div.learnheader,
 div.learncolumnheader {
-  background-color: $secondary-color;
+  @include rightFade;
 }
 
 div.learncolumnheader {

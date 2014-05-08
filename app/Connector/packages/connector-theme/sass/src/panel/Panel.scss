@@ -110,6 +110,10 @@ div.measuresgrid .x-grid-view {
   background-image: url(images/form/checkbox2.gif);
 }
 
+.x-grid-body {
+  border-top-color: transparent;
+}
+
 /* Group selection panels */
 .x-border-box textarea.x-form-field {
   padding: 4px 3px;
