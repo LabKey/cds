@@ -159,17 +159,45 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Overview',
                     content: {
                         view: 'Connector.app.view.ModuleContainer',
-                        modules: [[{
+                            modules: [[{
+                            type: 'assayheader'
+                        }, {
                             type: 'text',
                             staticData: {
-                                title: 'Overview test module LEFT',
-                                text: 'This is some text content'
+                                title: 'Description'
+                            },
+                            modelData: {
+                                text: 'Summary'
+                            }
+                        }, {
+                            type: 'text',
+                            staticData: {
+                                title: 'Endpoint Description'
+                            },
+                            modelData: {
+                                text: 'Description'
                             }
                         }], [{
-                            type: 'text',
+                            type: 'person',
                             staticData: {
-                                title: 'Overview test module RIGHT',
-                                text: 'This is some text content'
+                                title: 'Contact'
+                            },
+                            modelData: {
+                                name: 'Contact'
+                                // picture: 'MainContact.Portrait',
+                                // line1: 'MainContact.Role',
+                                // line2: 'MainContact.Team'
+                            }
+                        }, {
+                            type: 'person',
+                            staticData: {
+                                title: 'Lead contributor'
+                            },
+                            modelData: {
+                                name: 'LeadContributor'
+                                // picture: 'MainContact.Portrait',
+                                // line1: 'MainContact.Role',
+                                // line2: 'MainContact.Team'
                             }
                         }]]
                     }
@@ -180,14 +208,24 @@ Ext4.define('Connector.cube.Configuration', {
                         modules: [[{
                             type: 'text',
                             staticData: {
-                                title: 'Variables test module LEFT',
-                                text: 'This is some different text content'
+                                title: 'Variables [FAKE DATA]',
+                                text: 'KEY MEASURE<br/>'+
+                                    'Percent of T-cells with positive cytokine response<br/>'+
+                                    'Positive / Negative<br/><br/>'+
+                                    'ALL MEASURES<br/>'+
+                                    'Percent of subjects with positive response'
                             }
                         }], [{
                             type: 'text',
                             staticData: {
-                                title: 'Variables test module RIGHT',
-                                text: 'This is some other content'
+                                title: 'Antigens [FAKE DATA]',
+                                text: 'CMV (control)'
+                            }
+                        }], [{
+                            type: 'text',
+                            staticData: {
+                                title: 'Analytes [FAKE DATA]',
+                                text: 'Interleukin-2 and / or Interferon-y'
                             }
                         }]]
                     }

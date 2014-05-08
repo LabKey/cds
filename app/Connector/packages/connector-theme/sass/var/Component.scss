@@ -2008,6 +2008,18 @@ div.definition-overflow
     &.selected {
       color: $black;
       cursor: inherit;
+
+      .arrow {
+        display: block;
+      }
+    }
+
+    .arrow {
+      display: none;
+      position: absolute;
+      bottom: 0px;
+      left: 50%;
+      margin-left: -8px;
     }
   }
 }
