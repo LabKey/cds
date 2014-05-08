@@ -18,6 +18,7 @@ Ext.define('Connector.controller.FilterStatus', {
         this.control('app-main > #eastview > #navfilter', {
             afterrender : function(navfilter) {
                 var container = Ext.create('Ext.container.Container', {
+                    itemId: 'filterstatuscontainer',
                     style: 'overflow-y: auto; overflow-x: hidden;',
                     flex: 1,
                     items: [
@@ -89,6 +90,12 @@ Ext.define('Connector.controller.FilterStatus', {
             click: function(btn) { btn.showMenu(); }
         });
 
+        this.control('selectionview', {
+            itemclick : function(view, filter) {
+                this.showFilterEditor(filter);
+            }
+        });
+
         this.callParent();
     },
 
@@ -117,34 +124,59 @@ Ext.define('Connector.controller.FilterStatus', {
         return view;
     },
 
-    onDetailSelect : function(view, detail, element, index) {
-        var parent = view.up();
-        if (parent) {
+    onDetailSelect : function(view, detail) {
+        this.showFilterEditor(detail);
+    },
+
+    showFilterEditor : function(filterOrDetail) {
+        var container = Ext.ComponentQuery.query('app-main > #eastview > #navfilter > #filterstatuscontainer');
+        if (Ext.isArray(container)) {
+            container = container[0];
+        }
+
+        if (container) {
+
+            var config = {
+                olapProvider: this.getStateManager()
+            };
+
+            if (filterOrDetail.$className === "Connector.model.Detail") {
+                config.dimensionUniqueName = filterOrDetail.get('dimension');
+                config.hierarchyUniqueName = filterOrDetail.get('hierarchy');
+            }
+            else if (filterOrDetail.$className === "Connector.model.Filter") {
+                var filter = filterOrDetail;
+                if (filter.isGrid() || filter.isPlot() || filter.isGroup()) {
+                    console.log('Plot/Grid/Group filters not yet supported.');
+                }
+                else {
+                    config.filter = filter;
+                }
+            }
+
             var hidden = [];
-            Ext.iterate(parent.items.map, function(componentId, component) {
+            Ext.iterate(container.items.map, function(componentId, component) {
                 component.hide();
                 hidden.push(componentId);
             });
 
-            parent.add({
-                xtype: 'infopane',
-                model: Ext.create('Connector.model.InfoPane', {
-                    olapProvider: this.getStateManager(),
-                    dimensionUniqueName: detail.get('dimension'),
-                    hierarchyUniqueName: detail.get('hierarchy')
-                }),
-                listeners: {
-                    hide: function() {
-                        Ext.each(hidden, function(componentId) {
-                            var h = Ext.getCmp(componentId);
-                            if (h) {
-                                h.show();
-                            }
-                        });
-                    },
-                    scope: this
-                }
+            var infoPane = Ext.create('Connector.view.InfoPane', {
+                model: Ext.create('Connector.model.InfoPane', config)
             });
+
+            infoPane.on('hide', function(ip) {
+
+                Ext.each(hidden, function(componentId) {
+                    var h = Ext.getCmp(componentId);
+                    if (h) {
+                        h.show();
+                    }
+                });
+                container.remove(ip, true);
+
+            }, this, {single: true});
+
+            container.add(infoPane);
         }
     },
 

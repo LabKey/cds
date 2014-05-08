@@ -12,12 +12,6 @@ Ext.define('Connector.view.InfoPane', {
 
     cls: 'infopane',
 
-    constructor : function(config) {
-        this.model = config.model;
-
-        this.callParent([config]);
-    },
-
     initComponent : function() {
 
         var btnId = Ext.id();
@@ -49,7 +43,7 @@ Ext.define('Connector.view.InfoPane', {
                     items: [{
                         xtype: 'box',
                         tpl: new Ext.XTemplate(
-                            '<div class="sorter" style="padding-top: 9px;"><span>{hierarchyLabel}</span></div>'
+                            '<div class="sorter" style="margin-top: 20px;"><span style="color: #A09C9C;">SORTED BY:&nbsp;</span><span>{hierarchyLabel}</span></div>'
                         ),
                         data: this.getModel().data,
                         listeners: {
@@ -65,7 +59,7 @@ Ext.define('Connector.view.InfoPane', {
                         xtype: 'imgbutton',
                         itemId: 'infosortdropdown',
                         cls: 'sortDropdown',
-                        margin: '7 0 0 8',
+                        margin: '17 0 0 8',
                         vector: 21,
                         menu: {
                             xtype: 'menu',
@@ -88,6 +82,70 @@ Ext.define('Connector.view.InfoPane', {
                         }
                     }]
                 },{
+                    xtype: 'box',
+                    style: 'margin-top: 20px;',
+                    hidden: true,
+                    autoEl: {
+                        tag: 'div',
+                        html: '<span>Subjects can fall into multiple Types.</span>'
+                    }
+                },{
+                    xtype: 'radiogroup',
+                    columns: 1,
+                    allowBlank: false,
+                    validateOnBlur: false,
+                    hidden: true,
+                    items: [
+                        { boxLabel: 'Subjects related to any (OR)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.UNION },
+                        { boxLabel: 'Subjects related to all (AND)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.INTERSECT, checked: true}
+                    ]
+                },{
+                    xtype: 'grid',
+                    itemId: 'membergrid',
+                    store: this.getMemberStore(),
+                    viewConfig : { stripeRows : false },
+
+                    /* Selection configuration */
+                    selType: 'checkboxmodel',
+                    selModel: {
+                        checkOnly: true,
+                        checkSelector: 'td.x-grid-cell-row-checker'
+                    },
+                    multiSelect: true,
+
+                    /* Column configuration */
+                    enableColumnHide: false,
+                    enableColumnResize: false,
+                    columns: [{
+                        header: 'All',
+                        dataIndex: 'name',
+                        flex: 1,
+                        sortable: false,
+                        menuDisabled: true
+                    }],
+
+                    /* Grouping configuration */
+                    requires: ['Ext.grid.feature.Grouping'],
+                    features: [{
+                        ftype: 'grouping',
+                        collapsible: false,
+                        groupTitleStyle: 'background-color: red;',
+                        groupHeaderTpl: new Ext.XTemplate(
+                            '{name:this.renderHeader}', // 'name' is actually the value of the groupField
+                            {
+                                renderHeader: function(v) {
+                                    return v ? 'Has data in current filters' : 'No data in current filters';
+                                }
+                            }
+                        )
+                    }],
+
+                    /* Styling configuration */
+                    border: false,
+                    flex: 1,
+                    ui: 'custom',
+                    cls : 'measuresgrid infopanegrid'
+                },{
                     xtype: 'toolbar',
                     dock: 'bottom',
                     ui: 'footer',
@@ -108,7 +166,7 @@ Ext.define('Connector.view.InfoPane', {
                         text: 'cancel',
 //                        itemId: 'cancelgroupsave',
                         cls: 'filterinfocancel', // tests
-                        handler: function() { this.hide(); this.destroy(); },
+                        handler: function() { this.hide(); },
                         scope: this
                     }]
                 }
@@ -116,6 +174,33 @@ Ext.define('Connector.view.InfoPane', {
         }];
 
         this.callParent();
+
+        this.getModel().on('ready', this.onModelReady, this);
+    },
+
+    onModelReady : function() {
+        this.updateSelections();
+    },
+
+    updateSelections : function() {
+
+        var grid = this.getContent().getComponent('membergrid');
+        grid.getSelectionModel().deselectAll();
+
+        var store = this.getMemberStore();
+        var selItems = this.getModel().get('selectedItems');
+
+        var members = [], idx;
+        Ext.each(selItems, function(uniqueName) {
+            idx = store.findExact('uniqueName', uniqueName);
+            if (idx > -1) {
+                members.push(store.getAt(idx));
+            }
+        });
+
+        if (members.length > 0) {
+            grid.getSelectionModel().select(members);
+        }
     },
 
     setMenuContent : function(menu, model) {
@@ -149,5 +234,9 @@ Ext.define('Connector.view.InfoPane', {
 
     getModel : function() {
         return this.model;
+    },
+
+    getMemberStore : function() {
+        return this.getModel().get('memberStore');
     }
 });

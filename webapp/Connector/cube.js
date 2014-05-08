@@ -127,7 +127,7 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Studies where used'
                         }
-                    }]],
+                    }]]
                 },
 
     

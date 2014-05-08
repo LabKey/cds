@@ -2,12 +2,15 @@ Ext.define('Connector.model.InfoPane', {
     extend: 'Ext.data.Model',
 
     fields: [
+        {name: 'filter', defaultValue: undefined}, // if bound to a filter
+        {name: 'memberStore'}, // type: Store
         {name: 'dimension'},
         {name: 'hierarchy'},
         {name: 'dimensionUniqueName'},
         {name: 'hierarchyUniqueName'},
         {name: 'hierarchyLabel'},
-        {name: 'hierarchyItems'}, // generated array of labels
+        {name: 'hierarchyItems', defaultValue: []}, // generated array of labels
+        {name: 'selectedItems', defaultValue: []},
         {name: 'title'}
     ],
 
@@ -19,10 +22,67 @@ Ext.define('Connector.model.InfoPane', {
 
         this.callParent([config]);
 
-        this.addEvents('change');
+        if (!Ext.ModelManager.isRegistered('Connector.model.Members')) {
+            Ext.define('Connector.model.Members', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'uniqueName'},
+                    {name: 'name'},
+                    {name: 'count', type: 'int'},
+                    {name: 'hasData', type: 'boolean', convert: function(val, rec){ return rec.data.count > 0; }}
+                ]
+            });
+        }
 
-        var dimName = this.get('dimensionUniqueName');
-        var hierName = this.get('hierarchyUniqueName');
+        var store = Ext.create('Ext.data.Store', {
+            model: 'Connector.model.Members',
+            groupField: 'hasData'
+        });
+        this.set('memberStore', store);
+
+        this.addEvents('change', 'ready');
+
+        //
+        // Determine if filter or detail based
+        //
+        if (this.isFilterBased()) {
+            // Connector.model.Filter
+            this.getOlapProvider().onMDXReady(function(mdx) {
+
+                var filter = this.get('filter');
+                var fHierarchy = filter.get('hierarchy');
+                if (fHierarchy) {
+                    if (fHierarchy.indexOf('[') == -1) {
+                        fHierarchy = '[' + fHierarchy + ']';
+                    }
+
+                    var hierarchy = mdx.getHierarchy(fHierarchy);
+
+                    if (hierarchy) {
+                        this.initializeModel(hierarchy.dimension.uniqueName, hierarchy.uniqueName);
+                    }
+                }
+            }, this);
+        }
+        else {
+            this.initializeModel(this.get('dimensionUniqueName'), this.get('hierarchyUniqueName'));
+        }
+    },
+
+    isFilterBased : function() {
+        return Ext.isDefined(this.get('filter'));
+    },
+
+    initializeModel : function(dimName, hierName) {
+
+        this.filterMemberMap = {};
+
+        if (this.isFilterBased()) {
+            var members = this.get('filter').get('members');
+            Ext.each(members, function(member) {
+                this.filterMemberMap[member.uniqueName] = true;
+            }, this);
+        }
 
         // clear out for initialization
         this.set('dimensionUniqueName', undefined);
@@ -97,22 +157,64 @@ Ext.define('Connector.model.InfoPane', {
 
             this.fireEvent('change', this);
 
-//            var config = {
-//                onRows: [{ hierarchy: hier.getName(), member: 'members' }],
-//                useNamedFilters: ['statefilter'],
-//                success: function(slice) {
-//                    console.log(slice);
-//                },
-//                scope: this
-//            };
-//            mdx.query(config);
+            var config = {
+                onRows: [{ hierarchy: hier.getName(), member: 'members' }],
+                useNamedFilters: ['statefilter'],
+                showEmpty: true,
+                success: this.processMembers,
+                scope: this
+            };
+            mdx.query(config);
         }, this);
     },
 
-    getHierarchyLabel: function(hierarchy) {
+    getHierarchyLabel : function(hierarchy) {
         if (hierarchy.name.indexOf('.') > -1) {
             return hierarchy.name.split('.')[1];
         }
         return hierarchy.name;
+    },
+
+    processMembers : function(cellset) {
+
+        // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
+        var memberDefinitions = cellset.axes[1].positions;
+        var counts = cellset.cells;
+
+        var modelDatas = [], selectedItems = [];
+        var filterBased = this.isFilterBased();
+
+        Ext.each(memberDefinitions, function(definition, idx) {
+            //
+            // Skip 0th index since it is the 'all' member
+            //
+            if (idx > 0) {
+                var def = definition[0];
+                var _count = counts[idx][0].value;
+                modelDatas.push({
+                    uniqueName: def.uniqueName,
+                    name: LABKEY.app.model.Filter.getMemberLabel(def.name),
+                    count: _count
+                });
+
+                if (filterBased) {
+                    if (def.uniqueName in this.filterMemberMap) {
+                        selectedItems.push(def.uniqueName);
+                    }
+                }
+                else {
+                    selectedItems.push(def.uniqueName);
+                }
+            }
+
+        }, this);
+
+        this.set('selectedItems', selectedItems);
+
+        var store = this.get('memberStore');
+        store.loadRawData(modelDatas);
+        store.group(store.groupField, 'DESC');
+
+        this.fireEvent('ready', this);
     }
 });
