@@ -2,7 +2,7 @@ package org.labkey.test.pages;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.util.CDSHelper;
 
 public class YAxisVariableSelector extends DataspaceVariableSelector
 {
@@ -26,7 +26,7 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSTest.Locators.cdsButtonLocator("set y axis"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("set y axis"));
     }
 
     public void setScale(Scale scale)
