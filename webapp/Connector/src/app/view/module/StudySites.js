@@ -135,7 +135,8 @@ Ext.define('Connector.app.view.module.StudySites', {
 			var mapOptions = {
 	          center: new google.maps.LatLng(0, 0),
 	          zoom: 1,
-	          styles: this.mapStyles
+	          styles: this.mapStyles,
+	          scrollwheel: false
 	        };
 	        var map = new google.maps.Map(div,
 	            mapOptions);
