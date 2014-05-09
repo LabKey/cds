@@ -54,6 +54,7 @@ Ext.define('Connector.view.PageHeader', {
                 button.removeCls('selected');
             }
         });
+        this.doLayout();
     },
 
     onTabClick : function(callback) {
@@ -138,7 +139,7 @@ Ext.define('Connector.view.PageHeader', {
                 tabItems.push({
                     xtype: 'box',
                     cls: 'tabbutton',
-                    html: tab + '<svg class="arrow" width="16" height="8" fill="#ffffff"><path d="M0 8 L8 0 L16 8 Z"></path></svg>',
+                    html: tab + '<svg class="arrow" width="16" height="8" fill="#ffffff"><path stroke="#ccc" d="M0 8 L8 0 L16 8"></path></svg>',
                     listeners: {
                         click: function() {
                             self.tabClickCallback && self.tabClickCallback(i);
@@ -155,13 +156,13 @@ Ext.define('Connector.view.PageHeader', {
                     type : 'hbox',
                     align: 'stretch'
                 },
-                height: 42,
+                height: 32,
                 items: tabItems
             });
         } else {
             this.items.push({
                 xtype: 'box',
-                height: 42
+                height: 32
             });          
         }
 

@@ -211,7 +211,7 @@ Ext.define('Connector.view.Learn', {
                             scope : self,
                             handlerParams : [dimension, model],
 //                            tabs : ["Overview", "Variables, Antigens, Analytes"],
-                            lockPixels : 80
+                            lockPixels : 70
                         }
                     });
 
