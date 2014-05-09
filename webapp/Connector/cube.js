@@ -259,7 +259,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
-                priority: 1,
+                priority: 60,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
@@ -340,7 +340,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Antigen]',
                 pluralName: 'Assay antigens',
-                priority: 50,
+                priority: 0,
                 supportsDetails: false,
                 summaryTargetLevel: '[Antigen.Clade].[Name]',
 
@@ -376,7 +376,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Lab]',
                 pluralName: 'Labs',
-                priority: 60,
+                priority: 20,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Labs',
                 detailModel: 'Connector.app.model.Labs',
