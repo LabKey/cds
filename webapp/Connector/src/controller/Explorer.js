@@ -265,23 +265,52 @@ Ext.define('Connector.controller.Explorer', {
 
     afterSelectionAnimation : function(view, rec, node) {
         var records = view.getSelectionModel().getSelection();
+        var state = this.getStateManager();
 
-        var selections = [];
-        Ext.each(records, function(rec) {
-            selections.push({
-                hierarchy: rec.get('hierarchy'),
-                members: [{ uniqueName: rec.get('uniqueName') }],
-                isGroup: rec.get('isGroup')
-            });
-        });
+        state.onMDXReady(function(mdx) {
 
-        if (selections.length > 0) {
-            this.getStateManager().removePrivateSelection('hoverSelectionFilter');
-            this.getStateManager().addSelection(selections, false, true, true);
-            var v = this.getViewManager().getViewInstance('singleaxis');
-            if (v) {
-                v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
+            var uniqueName = rec.get('hierarchy');
+            var hierarchy = mdx.getHierarchy(uniqueName);
+
+            if (!hierarchy) {
+                var dim = mdx.getDimension(uniqueName);
+                if (!dim) {
+                    console.error('unable to determine sourcing dimension/hierarchy');
+                }
+
+                Ext.each(dim.hierarchies, function(hier) {
+                    if (!hier.hidden) {
+                        hierarchy = hier;
+                        return false;
+                    }
+                });
             }
-        }
+
+            //
+            // Build Selections
+            //
+            var selections = [];
+            Ext.each(records, function(rec) {
+                selections.push({
+                    hierarchy: hierarchy.uniqueName,
+                    members: [{ uniqueName: rec.get('uniqueName') }],
+                    isGroup: rec.get('isGroup'),
+                    operator: hierarchy.defaultOperator
+                });
+            });
+
+            //
+            // Apply Selections
+            //
+            if (selections.length > 0) {
+                state.removePrivateSelection('hoverSelectionFilter');
+                state.addSelection(selections, false, true, true);
+                var v = this.getViewManager().getViewInstance('singleaxis');
+                if (v) {
+                    v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
+                }
+            }
+
+        }, this);
     }
 });

@@ -36,7 +36,7 @@ Ext.define('Connector.model.Filter', {
                         hierarchy: "Subject",
                         gridFilter: config.sqlFilters, // TODO: rename to sqlFilters
                         plotMeasures: config.measures,
-                        operator: LABKEY.app.model.Filter.Operators.UNION,
+                        operator: LABKEY.app.model.Filter.OperatorTypes.OR,
                         members: []
                     };
 
@@ -63,6 +63,7 @@ Ext.define('Connector.model.Filter', {
 
         loaded: false,
         subjectMap: {},
+
         getSubjectUniqueName : function(subjectID) {
             return '[Subject].[' + Connector.model.Filter.getContainer(subjectID) + '].[' + subjectID + ']';
         },
@@ -91,27 +92,29 @@ Ext.define('Connector.model.Filter', {
             }
         },
 
-        plotMeasuresEqual : function(measuresA, measuresB){
-            var compareMeasures = function(measureA, measureB) {
-                if (!measureA && !measureB) {
-                    return true;
-                } else {
-                    if (measureA.visit === measureB.visit) {
-                        return measureA.hasOwnProperty('measure') && measureB.hasOwnProperty('measure') &&
-                                measureA.measure.hasOwnProperty('alias') && measureB.measure.hasOwnProperty('alias') &&
-                                measureA.measure.alias === measureB.measure.alias;
-                    }
-                }
+        _compareMeasures : function(measureA, measureB) {
+            var ret = false;
 
-                return false;
-            };
+            if (!measureA && !measureB) {
+                ret = true; // shouldn't this be false?
+            }
+            else if (measureA.visit === measureB.visit) {
+                ret = measureA.hasOwnProperty('measure') && measureB.hasOwnProperty('measure') &&
+                        measureA.measure.hasOwnProperty('alias') && measureB.measure.hasOwnProperty('alias') &&
+                        measureA.measure.alias === measureB.measure.alias;
+            }
+
+            return ret;
+        },
+
+        plotMeasuresEqual : function(measuresA, measuresB) {
 
             if (measuresA.length === measuresB.length) {
-                return compareMeasures(measuresA[0], measuresB[0]) && compareMeasures(measuresA[1], measuresB[1]);
+                return Connector.model.Filter._compareMeasures(measuresA[0], measuresB[0])
+                        && Connector.model.Filter._compareMeasures(measuresA[1], measuresB[1]);
             }
 
             return false;
         }
-
     }
 });

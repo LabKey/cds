@@ -97,9 +97,11 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     onSelectionChange : function(selections, opChange) {
+        this.hideMessage(true);
         this.selections = selections;
-        if (!opChange && this.selectionpanel)
+        if (!opChange && this.selectionpanel) {
             this.selectionpanel.loadFilters(selections);
+        }
     },
 
     onUndo : function() {

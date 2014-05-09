@@ -15,6 +15,8 @@ Ext.define('Connector.view.InfoPane', {
     initComponent : function() {
 
         var btnId = Ext.id();
+        var model = this.getModel();
+        var filterBased = model.isFilterBased();
 
         this.items = [{
             xtype: 'container',
@@ -27,11 +29,11 @@ Ext.define('Connector.view.InfoPane', {
                     tpl: new Ext.XTemplate(
                         '<h2 style="font-size: 18pt;">{title}</h2>'
                     ),
-                    data: this.getModel().data,
+                    data: model.data,
                     listeners: {
                         afterrender: function(box) {
-                            this.getModel().on('change', function(model) {
-                                this.update(model.data);
+                            this.getModel().on('change', function(m) {
+                                this.update(m.data);
                             }, box);
                         },
                         scope: this
@@ -48,8 +50,8 @@ Ext.define('Connector.view.InfoPane', {
                         data: this.getModel().data,
                         listeners: {
                             afterrender: function(box) {
-                                this.getModel().on('change', function(model) {
-                                    this.update(model.data);
+                                this.getModel().on('change', function(m) {
+                                    this.update(m.data);
                                 }, box);
                             },
                             scope: this
@@ -61,6 +63,7 @@ Ext.define('Connector.view.InfoPane', {
                         cls: 'sortDropdown',
                         margin: '17 0 0 8',
                         vector: 21,
+                        hidden: filterBased,
                         menu: {
                             xtype: 'menu',
                             autoShow: true,
@@ -82,22 +85,22 @@ Ext.define('Connector.view.InfoPane', {
                         }
                     }]
                 },{
+                    itemId: 'operatorlabel',
                     xtype: 'box',
                     style: 'margin-top: 20px;',
-                    hidden: true,
                     autoEl: {
                         tag: 'div',
                         html: '<span>Subjects can fall into multiple Types.</span>'
                     }
                 },{
+                    itemId: 'operator',
                     xtype: 'radiogroup',
                     columns: 1,
                     allowBlank: false,
                     validateOnBlur: false,
-                    hidden: true,
                     items: [
                         { boxLabel: 'Subjects related to any (OR)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.UNION },
-                        { boxLabel: 'Subjects related to all (AND)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.INTERSECT, checked: true}
+                        { boxLabel: 'Subjects related to all (AND)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.INTERSECT }
                     ]
                 },{
                     xtype: 'grid',
@@ -159,9 +162,11 @@ Ext.define('Connector.view.InfoPane', {
 //                        disabled: true
 //                    },
                         {
-                        text: 'filter',
+                        text: filterBased ? 'update' : 'filter',
 //                        itemId: 'groupcreatesave',
-                        cls: 'filterinfoaction' // tests
+                        cls: 'filterinfoaction', // tests
+                        handler: this.onUpdate,
+                        scope: this
                     },{
                         text: 'cancel',
 //                        itemId: 'cancelgroupsave',
@@ -175,11 +180,24 @@ Ext.define('Connector.view.InfoPane', {
 
         this.callParent();
 
-        this.getModel().on('ready', this.onModelReady, this);
+        // bind view to model
+        model.on('ready', this.onModelReady, this);
+
+        // bind model to view
+        this.on('filtercomplete', model.onCompleteFilter, model);
     },
 
     onModelReady : function() {
         this.updateSelections();
+    },
+
+    onUpdate : function() {
+        var grid = this.getContent().getComponent('membergrid');
+
+        if (grid) {
+            this.fireEvent('filtercomplete', grid.getSelectionModel().getSelection());
+            this.hide();
+        }
     },
 
     updateSelections : function() {
@@ -201,6 +219,34 @@ Ext.define('Connector.view.InfoPane', {
         if (members.length > 0) {
             grid.getSelectionModel().select(members);
         }
+
+        //
+        // Configure default operator
+        //
+        var model = this.getModel();
+        var hierarchy = model.get('hierarchy');
+        var operator = hierarchy.defaultOperator;
+
+        if (operator === "AND" || operator === "OR") {
+            this.showOperator();
+        }
+        else {
+            this.hideOperator();
+        }
+
+        if (model.isFilterBased()) {
+
+        }
+    },
+
+    showOperator : function() {
+        this.getContent().getComponent('operator').show();
+        this.getContent().getComponent('operatorlabel').show();
+    },
+
+    hideOperator : function() {
+        this.getContent().getComponent('operator').hide();
+        this.getContent().getComponent('operatorlabel').hide();
     },
 
     setMenuContent : function(menu, model) {

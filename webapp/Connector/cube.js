@@ -18,10 +18,12 @@ Ext4.define('Connector.cube.Configuration', {
         //      supportsDetails - multinoun views are supported for this dimension. defaults to false.
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
         //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
+        //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
         //
         // Hierarchies:
         //      hidden          - declare whether a hierarchy is hidden. Defaults to false.
         //      supportsSummary - summary views are supported for this hierarchy. defaults to true but respects hidden.
+        //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to dimensions value.
         //
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
@@ -29,6 +31,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      countPriority   - Default is 0.
         //      countSingular   - Default is undefined.
         //      countPlural     - Default is undefined.
+        //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
         //
         context: {
             dimensions: [{
@@ -40,11 +43,13 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Subject characteristics',
                 summaryTargetLevel: '[Subject].[Subject]',
                 priority: 10,
+                defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Subject]',
                     hidden: true
                 },{
                     uniqueName: '[Subject.Sex]',
+                    defaultOperator: 'REQ_OR',
                     levels: [{
                         uniqueName: '[Subject.Sex].[Sex]',
                         activeCount: true,
@@ -54,7 +59,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 },{
                     uniqueName: '[Subject.Race]',
-                    sortable: true,
+                    defaultOperator: 'OR',
                     levels: [{
                         uniqueName: '[Subject.Race].[Race]',
                         activeCount: true,
@@ -64,7 +69,6 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 },{
                     uniqueName: '[Subject.Country]',
-                    sortable: true,
                     levels: [{
                         uniqueName: '[Subject.Country].[Country]',
                         countSingular: 'Country',
@@ -260,6 +264,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
+                defaultOperator: 'OR',
 
                 itemDetail: {
                     view: 'Connector.app.view.ModuleContainer',
@@ -406,6 +411,13 @@ Ext4.define('Connector.cube.Configuration', {
          */
         applyContext : function(mdx) {
 
+            var OPERATOR = {
+                AND: 'AND',
+                REQ_AND: 'REQ_AND',
+                OR: 'OR',
+                REQ_OR: 'REQ_OR'
+            };
+
             //
             // Apply dimension metadata (dimensionDefaults)
             //
@@ -420,12 +432,14 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: undefined,
                 detailModel: undefined,
                 detailView: undefined,
-                itemDetail: undefined
+                itemDetail: undefined,
+                defaultOperator: OPERATOR.AND
             };
 
             var hh = {
                 hidden: false,
-                supportsSummary: true
+                supportsSummary: true,
+                defaultOperator: dd.defaultOperator
             };
 
             var ll = {
@@ -434,7 +448,8 @@ Ext4.define('Connector.cube.Configuration', {
                 countPriority: 0,
                 countSingular: undefined,
                 countPlural: undefined,
-                cellbased: true
+                cellbased: true,
+                defaultOperator: hh.defaultOperator
             };
 
             var context = Connector.cube.Configuration.context, cd, ch;
@@ -479,11 +494,12 @@ Ext4.define('Connector.cube.Configuration', {
                             detailCollection: Ext.isDefined(cd.detailCollection) ? cd.detailCollection : dd.detailCollection,
                             detailModel: Ext.isDefined(cd.detailModel) ? cd.detailModel : dd.detailModel,
                             detailView: Ext.isDefined(cd.detailView) ? cd.detailView : dd.detailView,
-                            itemDetail: Ext.isDefined(cd.itemDetail) ? cd.itemDetail : dd.itemDetail
+                            itemDetail: Ext.isDefined(cd.itemDetail) ? cd.itemDetail : dd.itemDetail,
+                            defaultOperator: Ext.isDefined(cd.defaultOperator) ? cd.defaultOperator : dd.defaultOperator
                         });
 
                         if (_dim.itemDetail) {
-//                            debugger;
+
                             if (Ext.isArray(_dim.itemDetail)) {
                                 // itemDetail is an array of composite data structures with detail page content and tab info.
                                 // Split it here
@@ -507,24 +523,27 @@ Ext4.define('Connector.cube.Configuration', {
                         for (_h=0; _h < _hier.length; _h++) {
 
                             var ctx = Ext.clone(hh);
-                            var contextHierarchy = false;
+                            var ctxHier = false;
 
                             if (ch) {
-                                // order of the context hierarhcies might not match the dimension declarations
+                                // order of the context hierarchies might not match the dimension declarations
                                 // so find each one before overlaying
                                 for (h=0; h < ch.length; h++) {
                                     if (ch[h].uniqueName === _hier[_h].uniqueName) {
-                                        contextHierarchy = ch[h];
+                                        ctxHier = ch[h];
                                     }
                                 }
 
-                                if (contextHierarchy) {
+                                if (ctxHier) {
                                     ctx = {};
 
                                     Ext.apply(ctx, {
-                                        hidden: Ext.isDefined(contextHierarchy.hidden) ? contextHierarchy.hidden === true : hh.hidden,
-                                        supportsSummary: Ext.isDefined(contextHierarchy.supportsSummary) ? contextHierarchy.supportsSummary === true : hh.supportsSummary
+                                        hidden: Ext.isDefined(ctxHier.hidden) ? ctxHier.hidden === true : hh.hidden,
+                                        supportsSummary: Ext.isDefined(ctxHier.supportsSummary) ? ctxHier.supportsSummary === true : hh.supportsSummary,
+                                        defaultOperator: Ext.isDefined(ctxHier.defaultOperator) ? ctxHier.defaultOperator : _dim.defaultOperator
                                     });
+
+                                    ll.defaultOperator = ctx.defaultOperator;
                                 }
                             }
 
@@ -533,7 +552,7 @@ Ext4.define('Connector.cube.Configuration', {
                             //
                             // Apply hierarchy level context
                             //
-                            Connector.cube.Configuration.getLevels(_hier[_h], contextHierarchy, ll);
+                            Connector.cube.Configuration.getLevels(_hier[_h], ctxHier, ll);
                         }
                     }
                 }
@@ -568,7 +587,8 @@ Ext4.define('Connector.cube.Configuration', {
                                 countPriority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : defaults.countPriority,
                                 countSingular: Ext.isDefined(lvl.countSingular) ? lvl.countSingular : defaults.countSingular,
                                 countPlural: Ext.isDefined(lvl.countPlural) ? lvl.countPlural : defaults.countPlural,
-                                cellbased: Ext.isDefined(lvl.cellbased) ? lvl.cellbased : defaults.cellbased
+                                cellbased: Ext.isDefined(lvl.cellbased) ? lvl.cellbased : defaults.cellbased,
+                                defaultOperator: Ext.isDefined(lvl.defaultOperator) ? lvl.defaultOperator : defaults.defaultOperator
                             });
                             break;
                         }

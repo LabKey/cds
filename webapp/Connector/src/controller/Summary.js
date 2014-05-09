@@ -148,9 +148,7 @@ Ext.define('Connector.controller.Summary', {
     },
 
     onSummarySelect : function(view) {
-        var state = this.getStateManager(),
-                hierarchy = view.getSelectionModel().getSelection()[0].data.hierarchy,
-                group;
+        var hierarchy = view.getSelectionModel().getSelection()[0].data.hierarchy;
 
         // Display Explorer
         if (this.linkNavigate) {
@@ -159,25 +157,6 @@ Ext.define('Connector.controller.Summary', {
         else {
             var context = hierarchy.split('.');
             this.getViewManager().changeView('explorer', 'singleaxis', context);
-        }
-
-        // Copy the group filter to the state filter
-        if (state.getPrivateSelection('groupselection')) {
-            var filters = state.getPrivateSelection('groupselection');
-
-            if (filters.length > 0 && filters[0].groupLabel != 'Current Active Filters') {
-                var grp = Ext.create('Connector.model.FilterGroup', {
-                    name : filters[0].data.groupLabel,
-                    filters : filters
-                });
-
-                group = [grp];
-                state.removePrivateSelection('groupselection');
-            }
-        }
-
-        if (group) {
-            state.setFilters(group);
         }
     }
 });

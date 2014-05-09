@@ -9,55 +9,69 @@ Ext.define('Connector.view.Selection', {
 
     alias: 'widget.selectionview',
 
+    itemSelector: 'div.wrapitem',
+
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<tpl if="this.isPlotSelection(values) == true">',
+                '<tpl if="this.isPlotSelection(values) === true">',
                     // Plot Selection Filter
-                    '<div class="circle"></div>',
-                    '<div class="selitem sel-listing">Subjects with:</div>',
-                    '{[this.renderPlotSelection(values)]}',
+                    '<div class="wrapitem">',
+                        '<div class="circle"></div>',
+                        '<div class="selitem sel-listing">Subjects with:</div>',
+                        '{[this.renderPlotSelection(values)]}',
+                    '</div>',
                 '</tpl>',
-                '<tpl if="this.isGrid(values) == true">',
+                '<tpl if="this.isGrid(values) === true">',
                     // Grid Filter
-                    '<div class="circle"></div>',
-                    '<div class="selitem status-over memberitem">',
-                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                        '{[this.renderLabel(values)]}',
-                    '</div>',
-                '</tpl>',
-                '<tpl if="this.isPlot(values) == true">',
-                    // Plot Filter
-                    '<div class="circle"></div>',
-                    '<div class="selitem status-over memberitem">',
-                        '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                        '{[this.renderMeasures(values)]}',
-                    '</div>',
-                '</tpl>',
-                '<tpl if="this.isPlot(values) == false && this.isGrid(values) == false && this.isPlotSelection(values) == false">',
-                    // Normal Filter (and Group Filters)
-                    '<div class="circle"></div>',
-                    '<tpl if="members.length &gt; 1">',
-                        '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                        '<div class="opselect">',
-                            '<select>',
-                                '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
-                                '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
-                            '</select>',
+                    '<div class="wrapitem">',
+                        '<div class="circle"></div>',
+                        '<div class="selitem status-over memberitem">',
+                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                            '{[this.renderLabel(values)]}',
                         '</div>',
-                        '<div class="selitem sel-listing">{[this.renderType(values.members[0])]}</div>',
-                        '<tpl for="members">',
-                            '<div class="status-over memberitem collapsed-member">',
-                                '<div class="closeitem" data-id="{parent.id}" member-index="{[xindex-1]}"></div>',
-                                '{uniqueName:this.renderUniqueName}',
+                    '</div>',
+                '</tpl>',
+                '<tpl if="this.isPlot(values) === true">',
+                    // Plot Filter
+                    '<div class="wrapitem">',
+                        '<div class="circle"></div>',
+                        '<div class="selitem status-over memberitem">',
+                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                            '{[this.renderMeasures(values)]}',
+                        '</div>',
+                    '</div>',
+                '</tpl>',
+                '<tpl if="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
+                    // Normal Filter (and Group Filters)
+                    '<div class="wrapitem">',
+                        '<div class="circle"></div>',
+                        '<tpl if="members.length &gt; 1">',
+                            '<div class="closeitem wholeitem" data-id="{id}"></div>',
+                            '<tpl if="this.isRequiredOperator(values) === true">',
+                                '<div class="opselect">{operator:this.getOperatorLabel}</div>',
+                            '<tpl else>',
+                                '<div class="opselect">',
+                                    '<select>',
+                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
+                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
+                                    '</select>',
+                                '</div>',
+                            '</tpl>',
+                            '<div class="selitem sel-listing">{[this.renderType(values.members[0])]}</div>',
+                            '<tpl for="members">',
+                                '<div class="status-over memberitem collapsed-member">',
+                                    '<div class="closeitem" data-id="{parent.id}" member-index="{[xindex-1]}"></div>',
+                                    '{uniqueName:this.renderUniqueName}',
+                                '</div>',
+                            '</tpl>',
+                        '</tpl>',
+                        '<tpl if="members.length === 1">',
+                            '<div class="selitem status-over memberitem" title="{members:this.renderMember}">',
+                                '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                                '{members:this.renderMember}',
                             '</div>',
                         '</tpl>',
-                    '</tpl>',
-                    '<tpl if="members.length == 1">',
-                        '<div class="selitem status-over memberitem" title="{members:this.renderMember}">',
-                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                            '{members:this.renderMember}',
-                        '</div>',
-                    '</tpl>',
+                    '</div>',
                 '</tpl>',
             '</tpl>',
             {
@@ -74,16 +88,22 @@ Ext.define('Connector.view.Selection', {
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
                     return isPlot && !isGrid;
                 },
-                isPlotSelection: function(values) {
+                isPlotSelection : function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
                     return isPlot && isGrid;
                 },
+                isRequiredOperator : function(values) {
+                    return Ext.isDefined(values.operator) && values.operator.indexOf('REQ_') > -1;
+                },
+                getOperatorLabel : function(op) {
+                    return op.indexOf('AND') > -1 ? 'AND' : 'OR';
+                },
                 selectIntersect : function(op) {
-                    return op == LABKEY.app.model.Filter.Operators.INTERSECT ? 'selected="selected"' : '';
+                    return op.indexOf('AND') > -1 ? 'selected="selected"' : '';
                 },
                 selectUnion : function(op) {
-                    return op == LABKEY.app.model.Filter.Operators.UNION ? 'selected="selected"' : '';
+                    return op.indexOf('OR') > -1 ? 'selected="selected"' : '';
                 },
                 renderType : function(member) {
                     var u = LABKEY.app.view.Selection.uniqueNameAsArray(member['uniqueName']);

@@ -18,6 +18,9 @@ Ext.override(Ext.button.Button, {
 
 var launchApp = function(cube) {
     Ext.onReady(function() {
+
+        LABKEY.app.model.Filter.dynamicOperatorTypes = true;
+
         Ext.application({
             name: 'Connector',
             extend: 'Connector.Application',

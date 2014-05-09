@@ -91,7 +91,7 @@ Ext.define('Connector.controller.FilterStatus', {
         });
 
         this.control('selectionview', {
-            itemclick : function(view, filter) {
+            itemselect : function(view, filter) {
                 this.showFilterEditor(filter);
             }
         });
@@ -113,8 +113,7 @@ Ext.define('Connector.controller.FilterStatus', {
             store: store
         });
 
-        var vm = this.getViewManager();
-        vm.on('afterchangeview', function(controller, view) {
+        this.getViewManager().on('afterchangeview', function(controller, view) {
             store.clearFilter();
             if (view !== 'plot' && view !== 'datagrid') {
                 store.filter('dataBasedCount', false);
@@ -148,10 +147,12 @@ Ext.define('Connector.controller.FilterStatus', {
                 var filter = filterOrDetail;
                 if (filter.isGrid() || filter.isPlot() || filter.isGroup()) {
                     console.log('Plot/Grid/Group filters not yet supported.');
+                    return;
                 }
                 else {
                     config.filter = filter;
                 }
+                console.log('going with filter');
             }
 
             var hidden = [];

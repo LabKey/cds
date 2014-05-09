@@ -422,6 +422,11 @@ li.fadein {
 /* -- END Windows */
 
 /* Connector.panel.FilterPanel */
+div.wrapitem {
+  display: inline-block;
+  width: 100%;
+}
+
 div.selitem {
   width: 90%; /* remaining space for .circle */
   padding: 4px 6px;

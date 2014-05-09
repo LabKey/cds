@@ -45,22 +45,21 @@ Ext.define('Connector.model.InfoPane', {
         //
         // Determine if filter or detail based
         //
+        MM = this;
         if (this.isFilterBased()) {
             // Connector.model.Filter
             this.getOlapProvider().onMDXReady(function(mdx) {
 
                 var filter = this.get('filter');
+                FS = filter;
                 var fHierarchy = filter.get('hierarchy');
                 if (fHierarchy) {
                     if (fHierarchy.indexOf('[') == -1) {
                         fHierarchy = '[' + fHierarchy + ']';
                     }
 
-                    var hierarchy = mdx.getHierarchy(fHierarchy);
-
-                    if (hierarchy) {
-                        this.initializeModel(hierarchy.dimension.uniqueName, hierarchy.uniqueName);
-                    }
+                    // this is a little weird, some filters are initialized with dimensions in the 'hierarchy'
+                    this.initializeModel(fHierarchy, fHierarchy);
                 }
             }, this);
         }
@@ -68,6 +67,36 @@ Ext.define('Connector.model.InfoPane', {
             this.initializeModel(this.get('dimensionUniqueName'), this.get('hierarchyUniqueName'));
         }
     },
+
+    createFilter : function(memberUniqueNames) {
+        var members = [];
+        Ext.each(memberUniqueNames, function(m) {
+            members.push({
+                uniqueName: m
+            });
+        });
+
+        return Ext.create('Connector.model.Filter', {
+            hierarchy: this.get('hierarchyUniqueName'),
+            members: members
+        });
+    },
+
+    /**
+     * Can be called to have this model instance produce a set of Connector.model.Filter instances
+     * from it's current configuration
+     * @param members - Array of Connector.model.Members instance records
+     */
+    onCompleteFilter : function(members) {
+        var uniques = [];
+        Ext.each(members, function(m) {
+            uniques.push(m.get('uniqueName'));
+        });
+
+        var filter = this.createFilter(uniques);
+        this.getOlapProvider().addFilter(filter);
+    },
+
 
     isFilterBased : function() {
         return Ext.isDefined(this.get('filter'));
@@ -108,31 +137,9 @@ Ext.define('Connector.model.InfoPane', {
 
         this.getOlapProvider().onMDXReady(function(mdx) {
 
-            //
-            // lookup hierarchy first
-            //
-            var hier = mdx.getHierarchy(hierName), dim;
+            var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName);
+            var dim = dimHier.dim, hier = dimHier.hierarchy;
             var hierarchyItems = [];
-
-            if (hier && hier.dimension) {
-                // hidden hierarchy?
-                dim = hier.dimension;
-            }
-            else {
-                //
-                // lookup by dimension
-                //
-                dim = mdx.getDimension(dimName);
-
-                if (dim) {
-                    Ext.each(dim.hierarchies, function(h) {
-                        if (!h.hidden) {
-                            hier = h;
-                            return false;
-                        }
-                    });
-                }
-            }
 
             Ext.each(dim.hierarchies, function(h) {
                 if (!h.hidden) {
@@ -166,6 +173,45 @@ Ext.define('Connector.model.InfoPane', {
             };
             mdx.query(config);
         }, this);
+    },
+
+    getDimensionHierarchy : function(mdx, dName, hName) {
+        //
+        // lookup hierarchy first
+        //
+        var hier = mdx.getHierarchy(hName), dim;
+        var hierarchyItems = [];
+
+        if (hier && hier.dimension) {
+            // hidden hierarchy?
+            dim = hier.dimension;
+        }
+        else {
+            //
+            // lookup by dimension
+            //
+            dim = mdx.getDimension(dName);
+
+            if (dim) {
+                hier = this.getDefaultHierarchy(dim);
+            }
+        }
+
+        return {
+            dim: dim,
+            hierarchy: hier
+        };
+    },
+
+    getDefaultHierarchy : function(dimension) {
+        var hier;
+        Ext.each(dimension.hierarchies, function(h) {
+            if (!h.hidden) {
+                hier = h;
+                return false;
+            }
+        });
+        return hier;
     },
 
     getHierarchyLabel : function(hierarchy) {
