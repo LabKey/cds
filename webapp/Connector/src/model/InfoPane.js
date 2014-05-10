@@ -11,6 +11,7 @@ Ext.define('Connector.model.InfoPane', {
         {name: 'hierarchyLabel'},
         {name: 'hierarchyItems', defaultValue: []}, // generated array of labels
         {name: 'selectedItems', defaultValue: []},
+        {name: 'operatorType', defaultValue: LABKEY.app.model.Filter.OperatorTypes.AND},
         {name: 'title'}
     ],
 
@@ -45,13 +46,11 @@ Ext.define('Connector.model.InfoPane', {
         //
         // Determine if filter or detail based
         //
-        MM = this;
         if (this.isFilterBased()) {
             // Connector.model.Filter
             this.getOlapProvider().onMDXReady(function(mdx) {
 
                 var filter = this.get('filter');
-                FS = filter;
                 var fHierarchy = filter.get('hierarchy');
                 if (fHierarchy) {
                     if (fHierarchy.indexOf('[') == -1) {
@@ -78,7 +77,8 @@ Ext.define('Connector.model.InfoPane', {
 
         return Ext.create('Connector.model.Filter', {
             hierarchy: this.get('hierarchyUniqueName'),
-            members: members
+            members: members,
+            operator: this.get('operatorType')
         });
     },
 
@@ -158,7 +158,16 @@ Ext.define('Connector.model.InfoPane', {
             this.set('hierarchyUniqueName', hier.uniqueName);
             this.set('hierarchyLabel', this.getHierarchyLabel(hier));
             this.set('hierarchyItems', hierarchyItems);
+            this.set('operatorType', hier.defaultOperator);
             this.set('title', dim.pluralName);
+
+            if (this.isFilterBased()) {
+                var filterOperator = this.get('filter').get('operator');
+                if (filterOperator) {
+                    this.changeOperator(filterOperator);
+                }
+
+            }
 
             this.resumeEvents();
 
@@ -261,6 +270,29 @@ Ext.define('Connector.model.InfoPane', {
         store.loadRawData(modelDatas);
         store.group(store.groupField, 'DESC');
 
+        this._ready = true;
         this.fireEvent('ready', this);
+    },
+
+    isReady : function() {
+        return this._ready === true;
+    },
+
+    changeOperator : function(operatorType) {
+        if (!this.isREQ()) {
+            this.set('operatorType', operatorType);
+        }
+    },
+
+    isREQ : function() {
+        return this.get('operatorType').indexOf('REQ_') > -1;
+    },
+
+    isAND : function() {
+        return this.get('operatorType').indexOf('AND') > -1;
+    },
+
+    isOR : function() {
+        return this.get('operatorType').indexOf('OR') > -1;
     }
 });

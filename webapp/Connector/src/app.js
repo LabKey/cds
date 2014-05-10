@@ -19,6 +19,7 @@ Ext.override(Ext.button.Button, {
 var launchApp = function(cube) {
     Ext.onReady(function() {
 
+        LABKEY.app.view.Selection.supportMemberClose = false;
         LABKEY.app.model.Filter.dynamicOperatorTypes = true;
 
         Ext.application({

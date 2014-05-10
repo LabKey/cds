@@ -489,6 +489,20 @@ div.selectionfilter {
   background-repeat: no-repeat;
   background: url(images/close.png);
   background-size: 8px 8px;
+  cursor: pointer;
+}
+
+div.wrapitem {
+
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .memberitem {

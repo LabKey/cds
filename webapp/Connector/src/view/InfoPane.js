@@ -47,7 +47,7 @@ Ext.define('Connector.view.InfoPane', {
                         tpl: new Ext.XTemplate(
                             '<div class="sorter" style="margin-top: 20px;"><span style="color: #A09C9C;">SORTED BY:&nbsp;</span><span>{hierarchyLabel}</span></div>'
                         ),
-                        data: this.getModel().data,
+                        data: model.data,
                         listeners: {
                             afterrender: function(box) {
                                 this.getModel().on('change', function(m) {
@@ -99,9 +99,22 @@ Ext.define('Connector.view.InfoPane', {
                     allowBlank: false,
                     validateOnBlur: false,
                     items: [
-                        { boxLabel: 'Subjects related to any (OR)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.UNION },
-                        { boxLabel: 'Subjects related to all (AND)', name: 'operator', inputValue: LABKEY.app.model.Filter.Operators.INTERSECT }
-                    ]
+                        {
+                            boxLabel: 'Subjects related to any (OR)',
+                            name: 'operator',
+                            inputValue: LABKEY.app.model.Filter.OperatorTypes.OR,
+                            checked: model.isOR()
+                        },{
+                            boxLabel: 'Subjects related to all (AND)',
+                            name: 'operator',
+                            inputValue: LABKEY.app.model.Filter.OperatorTypes.AND,
+                            checked: model.isAND()
+                        }
+                    ],
+                    listeners: {
+                        change: this.onOperatorChange,
+                        scope: this
+                    }
                 },{
                     xtype: 'grid',
                     itemId: 'membergrid',
@@ -132,7 +145,6 @@ Ext.define('Connector.view.InfoPane', {
                     features: [{
                         ftype: 'grouping',
                         collapsible: false,
-                        groupTitleStyle: 'background-color: red;',
                         groupHeaderTpl: new Ext.XTemplate(
                             '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                             {
@@ -147,7 +159,14 @@ Ext.define('Connector.view.InfoPane', {
                     border: false,
                     flex: 1,
                     ui: 'custom',
-                    cls : 'measuresgrid infopanegrid'
+                    cls : 'measuresgrid infopanegrid',
+
+                    listeners: {
+                        viewready : function(grid) {
+                            this.gridready = true;
+                        },
+                        scope: this
+                    }
                 },{
                     xtype: 'toolbar',
                     dock: 'bottom',
@@ -179,16 +198,40 @@ Ext.define('Connector.view.InfoPane', {
         }];
 
         this.callParent();
+        this.bindModel();
+    },
+
+    bindModel : function() {
+        var model = this.getModel();
 
         // bind view to model
         model.on('ready', this.onModelReady, this);
+        if (model.isReady()) {
+            this.onModelReady();
+        }
 
         // bind model to view
         this.on('filtercomplete', model.onCompleteFilter, model);
     },
 
+    unbindModel : function() {
+        var model = this.getModel();
+
+        // bind view to model
+        model.un('ready', this.onModelReady, this);
+
+        // bind model to view
+        this.un('filtercomplete', model.onCompleteFilter, model);
+    },
+
     onModelReady : function() {
-        this.updateSelections();
+        if (this.gridready) {
+            this.updateSelections();
+        }
+        else {
+            var grid = this.getContent().getComponent('membergrid');
+            grid.on('viewready', this.updateSelections, this);
+        }
     },
 
     onUpdate : function() {
@@ -203,9 +246,13 @@ Ext.define('Connector.view.InfoPane', {
     updateSelections : function() {
 
         var grid = this.getContent().getComponent('membergrid');
-        grid.getSelectionModel().deselectAll();
+        var sm = grid.getSelectionModel();
+        if (sm.hasSelection()) {
+            sm.deselectAll();
+        }
 
-        var store = this.getMemberStore();
+        var store = grid.getStore();
+        var storeCount = store.getCount();
         var selItems = this.getModel().get('selectedItems');
 
         var members = [], idx;
@@ -217,7 +264,12 @@ Ext.define('Connector.view.InfoPane', {
         });
 
         if (members.length > 0) {
-            grid.getSelectionModel().select(members);
+            if (members.length == storeCount) {
+                sm.selectAll();
+            }
+            else {
+                sm.select(members);
+            }
         }
 
         //
@@ -227,16 +279,16 @@ Ext.define('Connector.view.InfoPane', {
         var hierarchy = model.get('hierarchy');
         var operator = hierarchy.defaultOperator;
 
-        if (operator === "AND" || operator === "OR") {
-            this.showOperator();
-        }
-        else {
+        if (model.isREQ()) {
             this.hideOperator();
         }
-
-        if (model.isFilterBased()) {
-
+        else {
+            this.showOperator();
         }
+    },
+
+    onOperatorChange : function(radio, newValue) {
+        this.getModel().changeOperator(newValue.operator);
     },
 
     showOperator : function() {

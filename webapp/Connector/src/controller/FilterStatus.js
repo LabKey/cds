@@ -152,32 +152,38 @@ Ext.define('Connector.controller.FilterStatus', {
                 else {
                     config.filter = filter;
                 }
-                console.log('going with filter');
             }
 
             var hidden = [];
             Ext.iterate(container.items.map, function(componentId, component) {
-                component.hide();
-                hidden.push(componentId);
+                if (component.$className === 'Connector.view.InfoPane') {
+                    container.remove(component, true);
+                }
+                else {
+                    component.hide();
+                    hidden.push(componentId);
+                }
             });
 
-            var infoPane = Ext.create('Connector.view.InfoPane', {
-                model: Ext.create('Connector.model.InfoPane', config)
-            });
-
-            infoPane.on('hide', function(ip) {
-
-                Ext.each(hidden, function(componentId) {
-                    var h = Ext.getCmp(componentId);
-                    if (h) {
-                        h.show();
+            container.add({
+                xtype: 'infopane',
+                model: Ext.create('Connector.model.InfoPane', config),
+                listeners: {
+                    hide: {
+                        fn: function(ip) {
+                            Ext.each(hidden, function(cid) {
+                                var h = Ext.getCmp(cid);
+                                if (h) {
+                                    h.show();
+                                }
+                            });
+                            ip.hide();
+                        },
+                        scope: this,
+                        single: true
                     }
-                });
-                container.remove(ip, true);
-
-            }, this, {single: true});
-
-            container.add(infoPane);
+                }
+            });
         }
     },
 
