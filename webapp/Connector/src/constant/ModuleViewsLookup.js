@@ -16,5 +16,6 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	studysites: 'app.module.studysites',
 	studyassays: 'app.module.studyassays',
 	studyproducts: 'app.module.studyproducts',
-	studylabsandclinicaldata: 'app.module.studylabsandclinicaldata'
+	studylabsandclinicaldata: 'app.module.studylabsandclinicaldata',
+	assayheader: 'app.module.assayheader'
 });

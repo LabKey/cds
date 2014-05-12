@@ -22,7 +22,8 @@ Ext.define('Connector.view.Learn', {
         // Multiple headers are added here but they are initially set to hidden. When the page
         // url changes the headers will be updated and made visible based on the type of view -
         // parent learn view or study/assay detail page etc
-        this.items = [this.getHeader(), this.getLearnDetailHeader()];
+        this.items = [this.getHeader()];
+//        this.items = [this.getHeader(), this.getLearnDetailHeader()];
 
         this.callParent();
     },
@@ -46,10 +47,10 @@ Ext.define('Connector.view.Learn', {
         }
         return this.headerViews.main;
     },
-
+/*
     getLearnDetailHeader : function(id) {
         if (!this.headerViews.learnDetail) {
-            this.headerViews.learnDetail = Ext.create('Connector.view.LearnItemHeader', {
+            this.headerViews.learnDetail = Ext.create('Connector.view.PageHeader', {
                 dimensions: this.getDimensions(),
 
                 hidden: true,
@@ -70,9 +71,10 @@ Ext.define('Connector.view.Learn', {
 
         return this.headerViews.learnDetail;
     },
-
+*/
     onFilterChange : function(filters) {
-        this.loadData(this.dataView.dimension, this.dataView.getStore());
+        var view = this.dataViews[0];
+        this.loadData(view.dimension, view.getStore());
     },
 
     loadData : function(dimension, store) {
@@ -97,68 +99,131 @@ Ext.define('Connector.view.Learn', {
 
     setHeader : function(dimension, id) {
         var listHeader = this.getHeader();
-        var learnDetailHeader = this.getLearnDetailHeader(id);
+        //var learnDetailHeader = this.getLearnDetailHeader(id);
         if (id) {
             listHeader.setVisible(false);
-            learnDetailHeader.setDetailType(dimension.singularName);
-            learnDetailHeader.setVisible(true);
+//            learnDetailHeader.setDetailType(dimension.singularName);
+//            learnDetailHeader.setVisible(true);
         } else {
             listHeader.setVisible(true);
-            learnDetailHeader.setVisible(false);
+//            learnDetailHeader.setVisible(false);
         }
     },
 
     loadDataView : function(dimension, id, animate) {
 
         this.setHeader(dimension, id);
-
-        if (this.dataView) {
+        if (this.dataViews && this.dataViews.length) {
+            var dataViews = this.dataViews;
+            delete this.dataViews;
             this.state.un('filterchange', this.onFilterChange, this);
-            var el = this.dataView.getEl();
-            if (animate && el) {
-                el.fadeOut({
-                    callback: function() {
-                        this.remove(this.dataView);
-                        this.dataView = undefined;
-                        this.completeLoad(dimension, id, animate);
-                    },
-                    scope: this
-                });
-            }
-            else {
-                this.remove(this.dataView);
-                this.dataView = undefined;
-                this.completeLoad(dimension, id, animate);
-            }
+            var views = dataViews.length;
+            var fadedViews = 0;
+            Ext.each(dataViews, function(dataView) {
+                var el = dataView.getEl();
+                if (animate && el) {
+                    el.fadeOut({
+                        callback: function() {
+                            if (++fadedViews == views) {
+                                this.remove(dataView);
+                                this.completeLoad(dimension, id, animate);
+                            }
+                        },
+                        scope: this
+                    });
+                }
+                else {
+                    this.remove(dataView);
+                    this.completeLoad(dimension, id, animate);
+                }            
+            }, this)
         }
         else {
             this.completeLoad(dimension, id, animate);
         }
     },
 
+    headerLabel : function(dimension,model) {
+        var content = '';
+        if (dimension.singularName) {
+            content += dimension.singularName;
+            if (model) {
+                content += ": ";
+            }
+            content = "<h1 class='lhdv'>" + content + "</h1>"
+        }
+        if (model) {
+            // TODO: Other models may have other label properties
+            content += "<h1>" + model.get('Label') + "</h1>";
+        }
+
+        return content;
+    },
+
+    headerButtonsByDimension : {
+        Study : [{
+            groupLabel: "Select",
+            buttonLabel: 'all study subjects',
+            handler: function(button, _, dimension, model) {
+                Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
+                    var selections = [{
+                        hierarchy: dimension.singularName,
+                        members: [{ uniqueName: '['+dimension.singularName+'].['+model.get('Label')+']' }],
+                        isGroup: false
+                    }];
+                    this.state.addSelection(selections, false, true, true);
+                }, this);
+            }
+        }]
+    },
+
     completeLoad : function(dimension, id, animate) {
 
         if (Ext.isDefined(dimension)) {
             var store;
-            if (id) {
+            if (id && dimension.itemDetail) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
                 var model = store.getById(id);
                 var self = this;
 
                 function modelLoaded(model) {
-                    if (dimension.detailItemView) {
-                        self.dataView = Ext.create(dimension.detailItemView, {
-                            state: self.state,
-                            model: model,
-                            modules: dimension.detailItemModules
-                        });
-                    }
+                    var tabViews = [];
+                    Ext.each(dimension.itemDetail, function(item) {
+                        if (item.view) {
+                            var view = Ext.create(item.view, {
+                                state: self.state,
+                                model: model,
+                                modules: item.modules
+                            });
+                            tabViews.push(view);
+//                            self.add(view);
+                        }
+                    });
 
-                    var learnDetailHeader = self.getLearnDetailHeader(id);
+                    var header = Ext.create('Connector.view.PageHeader', {
+                        data: {
+                            label : self.headerLabel(dimension,model),
+                            buttons : {
+                                back: true,
+                                group: self.headerButtonsByDimension[dimension.singularName]
+                            },
+                            tabs : dimension.itemDetailTabs,
+                            scope : self,
+                            handlerParams : [dimension, model],
+//                            tabs : ["Overview", "Variables, Antigens, Analytes"],
+                            lockPixels : 70
+                        }
+                    });
 
-                    learnDetailHeader.setModel(model);
+                    var pageView = Ext.create('Connector.view.Page', {
+                        contentViews: tabViews,
+                        header: header,
+                        initialSelectedTab: 0,
+                        pageID: 'learnDetail'+dimension.singularName
+                    });
 
-                    self.add(self.dataView);
+                    self.add(pageView);
+                    self.dataViews = [pageView];
                 }
 
                 if (!model) {
@@ -175,18 +240,20 @@ Ext.define('Connector.view.Learn', {
             else if (dimension.detailModel && dimension.detailView) {
                 store = StoreCache.getStore(dimension.detailCollection);
 
-                this.dataView = Ext.create(dimension.detailView, {
+                var view = Ext.create(dimension.detailView, {
                     dimension: dimension,
                     store: store,
                     plugins: ['learnheaderlock']
                 });
 
-                this.dataView.on('itemclick', function(view, model, el, idx) {
+                this.dataViews = [view];
+
+                view.on('itemclick', function(view, model, el, idx) {
                     this.fireEvent('selectitem', model);
                 }, this);
 
-                this.add(this.dataView);
-                this.loadData(dimension, this.dataView.getStore());
+                this.add(view);
+                this.loadData(dimension, view.getStore());
             }
 
             this.state.on('filterchange', this.onFilterChange, this);
@@ -228,180 +295,6 @@ Ext.define('Connector.view.Learn', {
     }
 });
 
-// This is a shared header class for an individual item detail. This will be the header for a single
-// Study, a single Assay or a single Lab etc.
-Ext.define('Connector.view.LearnItemHeader', {
-
-    extend: 'Ext.container.Container',
-
-    height: 161,
-
-    requires: ['Connector.button.Image'],
-
-    alias: 'widget.learnitemheaderview',
-
-    layout: {
-        type : 'vbox',
-        align: 'stretch'
-    },
-
-    cls: 'learnitemheaderview learnheader',
-
-    defaults: {
-        ui: 'custom',
-        flex: 1
-    },
-
-    selectorId: 'dimselect',
-
-    initComponent : function() {
-
-        var me = this;
-
-        this.items = [
-            {
-                xtype: 'box',
-                itemId: 'headerLabel',
-                autoEl: {
-                    tag: 'div',
-                    cls: 'titlepanel'
-                }
-            },
-            {
-                xtype: 'toolbar',
-                ui: 'footer',
-                // dock: 'bottom',
-                items: [{
-                    xtype: 'button',
-                    html: '<svg width="12" height="10" fill="#9b0d96">'+
-                        '<path d="M0 6 L5 10 L5 2 Z" />'+
-                    '</svg>back',
-                    cls: '',
-                    itemId: 'back',
-                    style: 'margin: 4px 2px 0 23px;'
-                }, {
-                    xtype: 'tbspacer',
-                    width: 50
-                }, {
-                    xtype: 'label',
-                    text: 'Select:',
-                    itemId: 'selectLabel'
-                }, {
-                    xtype: 'button',
-                    text: 'all study subjects',
-                    itemId: 'studyAllSubjects',
-                    handler: function(button) {
-                        Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
-//                            console.log(">>",this.detailType,this.dimension);
-                            var selections = [{
-                                hierarchy: this.detailType,
-                                members: [{ uniqueName: '['+this.detailType+'].['+this.model.get('Label')+']' }],
-                                isGroup: false
-                            }];
-                            this.state.addSelection(selections, false, true, true);
-                        }, me);
-                    },
-                    hidden: true,
-                    // TODO: Move to button class?
-                    style: 'margin: 4px 2px 0 23px;'
-                }, {
-                    xtype: 'button',
-                    ui: 'rounded-inverted-accent',
-                    text: 'all placebo',
-                    itemId: 'studyAllPlacebo',
-                    hidden: true,
-                    // TODO: Move to button class?
-                    style: 'margin: 4px 2px 0 2px;'
-                }, {
-                    xtype: 'button',
-                    ui: 'rounded-inverted-accent',
-                    text: 'all vaccinees',
-                    itemId: 'studyAllVaccinees',
-                    hidden: true,
-                    // TODO: Move to button class?
-                    style: 'margin: 4px 2px 0 2px;'
-                }, {
-                    xtype: 'button',
-                    ui: 'rounded-inverted-accent',
-                    text: 'subjects tested on this assay',
-                    itemId: 'assaySubjects',
-                    hidden: true,
-                    // TODO: Move to button class?
-                    style: 'margin: 4px 2px 0 2px;'
-                }]
-            }
-            //{ xtype: 'button', text: 'clear', cls: 'filterclear', ui: 'rounded-inverted-accent', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
-        ];
-
-        this.callParent();
-
-        this.dimSelector = this.getComponent(this.selectorId);
-    },
-
-    setDimension : function(dim, hierarchyIndex) {
-        if (this.dimSelector) {
-            this.dimSelector.setDimension(dim, hierarchyIndex);
-        }
-    },
-
-    setHierarchy : function(index) {
-        if (this.dimSelector) {
-            this.dimSelector.setHierarchy(index);
-        }
-    },
-
-    // Controls will only be shown when the detail type matches the given string (or array of strings)
-    controlFilters : {
-        studyAllSubjects: 'Study',
-//        studyAllPlacebo: 'Study',
-//        studyAllVaccinees: ['Study','Study product'],
-//        assaySubjects: 'Assay'
-        selectLabel: 'Study'
-    },
-
-    update : function() {
-        var cmp = this.getComponent('headerLabel');
-        var content = '';
-        if (this.detailType) {
-            content += this.detailType;
-            if (this.model) {
-                content += ": ";
-            }
-            content = "<h1 class='lhdv'>" + content + "</h1>"
-        }
-        if (this.model) {
-            // TODO: Other models may have other label properties
-            content += "<h1>" + this.model.get('Label') + "</h1>";
-        }
-        cmp.update(content);
-
-        // Only show the controls that are valid for this detail type
-        Ext.iterate(this.controlFilters, function(key, value) {
-            // Value can be an id or an array of ids so normalize to an array before iterating
-            var values = Ext.Array.from(value);
-            var cmp = this.queryById(key);
-            if (cmp) {
-                var visible = false;
-                Ext.each(values, function(value) {
-                    visible = visible || this.detailType == value;
-                }, this);
-                cmp.setVisible(visible);
-            }
-        }, this);
-    },
-
-    setDetailType : function(type) {
-        this.detailType = type;
-
-        this.update();
-    },
-
-    setModel : function(model) {
-        this.model = model;
-
-        this.update();
-    }
-});
 
 
 Ext.define('Connector.view.LearnHeader', {

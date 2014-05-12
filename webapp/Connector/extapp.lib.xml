@@ -117,6 +117,8 @@
         <script path="Connector/src/view/Learn.js"/>
         <script path="Connector/src/view/Main.js"/>
         <script path="Connector/src/view/Navigation.js"/>
+        <script path="Connector/src/view/Page.js"/>
+        <script path="Connector/src/view/PageHeader.js"/>
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
@@ -171,6 +173,7 @@
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
 
+        <script path="Connector/src/app/view/module/AssayHeader.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
