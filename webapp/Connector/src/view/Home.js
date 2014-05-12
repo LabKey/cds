@@ -59,7 +59,18 @@ Ext.define('Connector.view.HomeHeader', {
                 autoEl: {
                     tag: 'div',
                     cls: 'titlepanel',
-                    html: '<h1>Welcome to the HIV Vaccine Data Connector.</h1>'
+                    children: [{
+                        tag: 'h1',
+                        html: 'Welcome to the HIV Vaccine Data Connector.'
+                    },{
+                        tag: 'h1',
+                        html: '# studies connected together combining',
+                        style: 'color: #7a7a7a;'
+                    },{
+                        tag: 'h1',
+                        html: '# data points.',
+                        style: 'color: #b5b5b5;'
+                    }]
                 }
             }
         ];

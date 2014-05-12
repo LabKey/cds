@@ -8,7 +8,7 @@ $secondary-color: #F0F0F0;         // Light Gray
 $legend-color: #BAB4B4;            // 10% darker than $secondary-color
 $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
-
+$select-on-grey-color: #03ADB0;
 $interactive-color: #9B0D96;       // Interactive
 $link-color: #14C9CC;
 $info-color: #F5A73A;              // Info
@@ -126,6 +126,13 @@ $tip-body-color: $info-color;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+@mixin rightFade {
+  // needs latest Compass, add '@import "compass"' to your scss
+  background-color: $secondary-color; // Old browsers
+  @include filter-gradient($secondary-color, $light-color, horizontal); // IE6-9
+  @include background-image(linear-gradient(left,  $secondary-color 85%,$light-color 95%));
 }
 
 // --- END DEFINE MIXINS ----
@@ -578,7 +585,7 @@ div.filtermember, span.hierarchylabel {
 
 /* Connector.view.Dimension */
 .dimensionview {
-  background-color : $secondary-color;
+  @include rightFade;
 }
 
 div.dimensionsort {
@@ -1321,7 +1328,7 @@ div.emptytext {
   padding: 0;
 
   .x-panel-body {
-    background-color : $light-color;
+    @include rightFade;
   }
 }
 
@@ -1860,7 +1867,7 @@ div.learnview {
 
 div.learnheader,
 div.learncolumnheader {
-  background-color: $secondary-color;
+  @include rightFade;
 }
 
 div.learncolumnheader {
@@ -1981,4 +1988,44 @@ div.definition-overflow
   height: 40px;
   position: absolute;
   width: 100%;
+}
+
+.pageheadercontainer {
+  position: relative;
+  top: 0px;
+  z-index: 10;
+
+  .tabbutton {
+    //height: 100%;
+    padding: 5px 20px;
+    font-family: $bodycaps-font;
+    font-size: 12pt;
+    cursor: pointer;
+    text-transform: uppercase;
+    color: $black;
+    opacity: 0.6;
+
+    &.selected {
+      font-weight: bold;
+      cursor: inherit;
+      opacity: initial;
+
+      .arrow {
+        display: block;
+      }
+    }
+
+    .arrow {
+      display: none;
+      position: absolute;
+      bottom: 0px;
+      left: 50%;
+      margin-left: -8px;
+    }
+  }
+}
+
+.pagecontentcontainer {
+  position: relative;
+  top: 0px;
 }

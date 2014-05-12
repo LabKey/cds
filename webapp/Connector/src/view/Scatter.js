@@ -94,7 +94,6 @@ Ext.define('Connector.view.Scatter', {
             layout: {
                 type: 'hbox'
             },
-            bodyStyle: 'background: linear-gradient(#f0f0f0, #ebebeb) !important;',
             defaults: {
                 xtype: 'container',
                 width: '50%',
@@ -660,7 +659,7 @@ Ext.define('Connector.view.Scatter', {
                     },
                     brushclear : function() {
                         layerScope.isBrushed = false;
-                        stateManager.clearSelections();
+                        stateManager.clearSelections(true);
                     }
                 };
             }
@@ -802,7 +801,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.filterClear || !activeMeasures.y) {
-            this.state.clearSelections();
+            this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
             return;
@@ -981,10 +980,17 @@ Ext.define('Connector.view.Scatter', {
                 this.plotLock = true;
                 var filters = this.state.getFilters(), found = false;
                 for (var f=0; f < filters.length; f++) {
-                    if (filters[f].get('isPlot') == true) {
+                    if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                        if (!Connector.model.Filter.plotMeasuresEqual(filters[f].get('plotMeasures'), measures)) {
+                            filters[f].set('plotMeasures', measures);
+                            // TODO: Before we update filter members check to see if the filters actually changed.
+                            // Call Filter.plotMeasuresEqual (see Filter.js).
+                            this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
+                        } else {
+                            this.state.updateFilterMembers(filters[f].get('id'), filter.members, true);
+                        }
+
                         found = true;
-                        filters[f].set('plotMeasures', measures);
-                        this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
                         break;
                     }
                 }
@@ -1287,10 +1293,9 @@ Ext.define('Connector.view.Scatter', {
                 closeAction: 'hide',
                 resizable: false,
                 minHeight: 500,
-                height: pos.height + 100,
-                width: pos.width,
-                x: pos.leftEdge,
-                y: pos.topEdge - 50,
+                maxHeight: 700,
+                minWidth: 600,
+                maxWidth: 975,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
@@ -1329,9 +1334,8 @@ Ext.define('Connector.view.Scatter', {
                 scope : this
             });
         }
-        else {
-            this.updateMeasureSelection(this.ywin);
-        }
+
+        this.updateMeasureSelection(this.ywin);
 
         if (this.axisPanelY.hasSelection()) {
             this.activeYSelection = this.axisPanelY.getSelection()[0];
@@ -1386,10 +1390,9 @@ Ext.define('Connector.view.Scatter', {
                 closeAction: 'hide',
                 resizable : false,
                 minHeight : 450,
-                height: pos.height + 100,
-                width: pos.width,
-                x: pos.leftEdge,
-                y: pos.topEdge - 50,
+                maxHeight: 700,
+                minWidth: 600,
+                maxWidth: 975,
                 layout : {
                     type : 'vbox',
                     align: 'stretch'
@@ -1447,9 +1450,8 @@ Ext.define('Connector.view.Scatter', {
                 scope : this
             });
         }
-        else {
-            this.updateMeasureSelection(this.xwin);
-        }
+
+        this.updateMeasureSelection(this.xwin);
 
         if (this.axisPanelX.hasSelection()) {
             this.activeXSelection = this.axisPanelX.getSelection()[0];

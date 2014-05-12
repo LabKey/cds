@@ -27,7 +27,17 @@
 <%@ page import="org.labkey.cds.PopulateBehavior" %>
 <%@ page import="org.labkey.api.query.UserSchema" %>
 <%@ page import="org.labkey.api.query.QueryService" %>
+<%@ page import="org.labkey.api.view.template.ClientDependency" %>
+<%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
+<%!
+    public LinkedHashSet<ClientDependency> getClientDependencies()
+    {
+        LinkedHashSet<ClientDependency> resources = new LinkedHashSet<>();
+        resources.add(ClientDependency.fromFilePath("Ext4"));
+        return resources;
+    }
+%>
 <%
     ViewContext context = getViewContext();
     Container c = getContainer();
@@ -51,7 +61,7 @@ The columns used for mapping are shown below each table.<br>
 <b>Note</b> If the dataset contains lookups that are not in the cds dimension tables (e.g. Assays), rows will be added to the cds table automatically to preserve foreign keys. Details in those rows will need
 to be filled in by another mechanism.<br>
 <%=this.formatErrorsForPath("form")%>
-<form method="post">
+<form method="post" id="populatecubeform">
 
 <% for(DataSet ds : datasets) {
     if (ds.isDemographicData())
@@ -82,6 +92,96 @@ to be filled in by another mechanism.<br>
     SQL Used to populate table
     <%=h(mapper.getPopulateSql().toString(), true)%> -->
 <%} %>
-<input type=submit>
+    <div id="validatemessages" style="display: none;"></div>
+    <input type="submit" onclick="validatePopulate(); return false;">
 </form>
+<script type="text/javascript">
+
+    var validatePopulate = function() {
+        var VACCINE_INNER =
+                'SELECT' +
+                        ' treatmentId, productId, Product.rowId, label, type' +
+                        ' FROM TreatmentProductMap' +
+                        ' JOIN Product' +
+                        ' ON TreatmentProductMap.productId = Product.rowId';
+
+        var VACCINE_OUTER =
+                'SELECT' +
+                        ' ParticipantTreatments.treatmentId, T.label, T.type' +
+                        ' FROM ParticipantTreatments' +
+                        ' JOIN ( ' + VACCINE_INNER + ' ) AS T' +
+                        ' ON T.treatmentId = ParticipantTreatments.treatmentId';
+
+        var checks = [{
+            schema: 'cds',
+            sql: 'SELECT clade, id, countryoforigin, tier, specimensource FROM antigens',
+            area: 'Antigen Dimension'
+        },{
+            schema: 'study',
+            sql: 'SELECT target, name, label, methodology FROM StudyDesignAssays',
+            area: 'Assay Dimension'
+        },{
+            schema: 'study',
+            sql: 'SELECT SubjectID, SubjectID.ParticipantId, Folder, race, country, sex, ethnicity, gender FROM Demographics',
+            area: 'Subject Dimension'
+        },{
+            schema: 'study',
+            sql: VACCINE_INNER,
+            area: 'Vaccine Dimension Inner Query'
+        },{
+            schema: 'study',
+            sql: VACCINE_OUTER,
+            area: 'Vaccine Dimension Outer Query'
+        },{
+            schema: 'study',
+            sql: 'SELECT Name FROM StudyDesignLabs',
+            area: 'Lab Dimension'
+        },{
+            schema: 'study',
+            sql: 'SELECT container, label FROM StudyProperties',
+            area: 'Study Dimension'
+        },{
+            schema: 'cds',
+            sql: 'SELECT participantid, antigen, assay, lab, study FROM Facts',
+            area: 'Facts Table'
+        }];
+
+        var messageEl = Ext4.get('validatemessages');
+        messageEl.update('');
+
+        var doQuery = function(index) {
+            var target = checks[index];
+            LABKEY.Query.executeSql({
+                schemaName: target.schema,
+                sql: target.sql,
+                maxRows: 0,
+                success: function() {
+                    if (index+1 < checks.length) {
+                        doQuery(index+1);
+                    }
+                    else {
+                        var formEl = document.getElementById('populatecubeform');
+                        if (formEl) {
+                            formEl.submit();
+                        }
+                    }
+                },
+                failure: function(response) {
+                    messageEl.setStyle('display', 'block');
+
+                    var msg = '<p style="color: red;">CUBE SCHEMA VALIDATION</p>';
+                    msg += '<p style="color: red;">These generally mean that columns are missing from a table or a table is missing.<br/>These tables/columns are required by the Cube definition.</p>';
+                    msg += '<p style="color: red;">' + target.area + ': ' + response.exception + '</p>';
+
+                    messageEl.update(msg);
+                }
+            });
+        };
+
+        if (checks.length > 0) {
+            doQuery(0);
+        }
+    };
+
+</script>
 

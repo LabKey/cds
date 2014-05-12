@@ -36,13 +36,13 @@
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Target Area">
             <Table schema="study" name="StudyDesignAssays" />
             <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="name"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Methodology">
             <Table schema="study" name="StudyDesignAssays" />
             <Level name="Methodology" visible="true" column="methodology" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
             </Level>
         </Hierarchy>
     </Dimension>
@@ -67,22 +67,23 @@
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Race" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <!--<Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
+                <Level name="Race" visible="true" column="race" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
                 <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <!--<Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
             </Hierarchy>
-            <!--<Hierarchy name="Treatment" visible="true" hasAll="true">-->
-                <!--<Table name="demographics" schema="study"/>-->
-                <!--<Level name="Treatment" visible="true" column="TreatmentID" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
-            <!--</Hierarchy>-->
             <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Sex" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <!--<Level name="Subject" visible="true" column="subjectid" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>-->
+                <Level name="Sex" visible="true" column="sex" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
+            <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Ethnicity" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
+            <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
             </Hierarchy>
         </Dimension>
 
@@ -100,34 +101,12 @@
             </Hierarchy>
         </Dimension>
 
-        <!-- Can't put this in the vaccine hierarchy because we don't want this to appear when viewing data by vaccine
-        <Dimension visible="true" highCardinality="false" name="Vaccine Component" foreignKey="participantid">
-            <Hierarchy name="Vaccine Insert" hasAll="true" primaryKey="participantid" primaryKeyTable="ParticipantVaccines">
-                <Join leftKey="vaccinename" rightKey="vaccinename">
-                    <Table name="ParticipantVaccines" schema="study"/>
-                    <Table name="VaccineComponents" schema="CDS"/>
-                </Join>
-                <Level name="Vaccine Insert" table="VaccineComponents" visible="true" column="region" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Name" table="VaccineComponents" visible="true" column="vaccinecomponent" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-            </Hierarchy>
-        </Dimension>
-         -->
         <DimensionUsage source="Antigen" name="Antigen" visible="true" foreignKey="antigen" highCardinality="false">
         </DimensionUsage>
 
 
         <DimensionUsage source="Assay" name="Assay" visible="true" foreignKey="assay" highCardinality="false">
         </DimensionUsage>
-
-
-        <!--
-            <Dimension visible="true" highCardinality="false" name="Virus">
-              <Hierarchy visible="true" hasAll="true">
-                <Level name="Virus" visible="true" column="antigen" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
-                </Level>
-              </Hierarchy>
-            </Dimension>
-        -->
 
         <Dimension visible="true" highCardinality="false" name="Lab" foreignKey="lab">
             <Hierarchy visible="true" hasAll="true">
@@ -136,19 +115,6 @@
                 </Level>
             </Hierarchy>
         </Dimension>
-
-
-        <!--<Dimension visible="true" highCardinality="false" name="Site" foreignKey="participantid">-->
-            <!--<Hierarchy name="Sites" visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="Demographics">-->
-                <!--<Join leftKey="enrolledclinicalsite" rightKey="id">-->
-                    <!--<Table name="Demographics" schema="study"/>-->
-                    <!--<Table name="Sites" schema="CDS"/>-->
-                <!--</Join>-->
-                <!--<Level name="Site" visible="true" table="Sites" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">-->
-                <!--</Level>-->
-            <!--</Hierarchy>-->
-        <!--</Dimension>-->
-
 
         <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
             <Hierarchy visible="true" hasAll="true" primaryKey="container">
