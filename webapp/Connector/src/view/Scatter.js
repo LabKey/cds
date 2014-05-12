@@ -450,10 +450,32 @@ Ext.define('Connector.view.Scatter', {
             } else {
                 scales.x = {scaleType: 'discrete'};
             }
+
             scales.yLeft = {
                 scaleType: 'continuous',
                 tickFormat: numericTickFormat
             };
+
+            if (this.measures[2]) {
+                scales.color = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceColor()
+                };
+                scales.shape = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceShape()
+                };
+            }
+        }
+
+        var plotAes = {
+            x: function(row){return row.x;},
+            yLeft: function(row){return row.y},
+        };
+
+        if (this.measures[2]) {
+            plotAes.color = function(row) {return row.color};
+            plotAes.shape = function(row) {return row.color};
         }
 
         var plotConfig = {
@@ -466,10 +488,7 @@ Ext.define('Connector.view.Scatter', {
             height    : box.height,
             data      : rows,
             legendPos : 'none',
-            aes: {
-                x: function(row){return row.x;},
-                yLeft: function(row){return row.y}
-            },
+            aes: plotAes,
             bgColor: '#FFFFFF', // $light-color
             gridColor: '#FFFFFF', // $light-color
             gridLineColor: '#F0F0F0', // $secondary-color
@@ -1237,6 +1256,7 @@ Ext.define('Connector.view.Scatter', {
                 map.push({
                     x : xVal,
                     y : yVal,
+                    color : colorVal,
                     subjectId: rows[r][subjectCol],
                     xname : xa ? xa.label : '',
                     yname : ya.label
@@ -1294,6 +1314,7 @@ Ext.define('Connector.view.Scatter', {
             subjectColumn: subjectCol,
             xaxis: xa,
             yaxis: ya,
+            color: ca,
             rows : map,
             setXLinear : negX,
             setYLinear : negY
