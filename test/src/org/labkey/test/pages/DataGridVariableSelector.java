@@ -2,7 +2,7 @@ package org.labkey.test.pages;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -25,7 +25,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public Locator getOpenButton()
     {
-        return CDSTest.Locators.cdsButtonLocator("choose from " + columnCount +" columns", "gridcolumnsbtn");
+        return CDSHelper.Locators.cdsButtonLocator("choose from " + columnCount +" columns", "gridcolumnsbtn");
     }
 
     public void setColumnCount(int columnCount)
@@ -110,6 +110,6 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSTest.Locators.cdsButtonLocator("select"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
     }
 }
