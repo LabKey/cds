@@ -43,7 +43,7 @@ Ext.define('Connector.app.view.ModuleContainer', {
 
         this.callParent();
 
-//this.model && console.log("Model:",JSON.stringify(this.model.raw, undefined, 4));
+//this.model && console.log("Model:",this.model,JSON.stringify(this.model.raw, undefined, 4));
 
         for (i = 0; i < columns; ++i) {
             if (i < this.modules.length) {
