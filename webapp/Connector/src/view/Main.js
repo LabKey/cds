@@ -46,7 +46,8 @@ Ext.define('Connector.view.Main', {
             itemId: 'navfilter',
             layout: {
                 type: 'vbox',
-                align: 'stretch'
+                align: 'stretch',
+                pack: 'start'
             },
             items: [{
                 xtype: 'navigation',

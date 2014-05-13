@@ -840,24 +840,14 @@ div.status-over {
 /* Connector.view.InfoPane */
 .infopane {
 
+  background-color: $light-color;
+  border: 1px solid lightgrey;
+  border-radius: 15px;
+
   .sorter {
     @include smallStandout;
   }
-
-  .infopanegrid {
-    margin-top: 30px;
-
-    .x-grid-row-over .x-grid-cell-last {
-      background-color: transparent;
-    }
-
-    .x-column-header-over {
-      background-color: transparent;
-    }
-
-  }
 }
-
 /* -- END Connector.view.InfoPane */
 
 /* Connector.view.GroupListView */
@@ -1704,7 +1694,6 @@ div.cite-block {
 
 a.cite-src,
 a.cite-ref {
-  text-decoration: underline;
   font-size: 9pt;
 }
 

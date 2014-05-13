@@ -26,6 +26,18 @@ Ext.define('Connector.controller.FilterStatus', {
                         this.createDetail()
                     ]
                 });
+//                var infoContainer = Ext.create('Ext.container.Container', {
+//                    itemId: 'filterinfocontainer',
+//                    hidden: true,
+//                    flex: 10,
+//                    layout: {
+//                        type: 'vbox',
+//                        align: 'stretch',
+//                        pack: 'start'
+//                    },
+//                    margin: '10 10',
+//                    items: []
+//                });
                 navfilter.add(container);
             }
         });
@@ -128,13 +140,17 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     showFilterEditor : function(filterOrDetail) {
-        var container = Ext.ComponentQuery.query('app-main > #eastview > #navfilter > #filterstatuscontainer');
-        if (Ext.isArray(container)) {
-            container = container[0];
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter');
+        if (Ext.isArray(parent)) {
+            parent = parent[0];
         }
 
-        if (container) {
+        if (parent) {
 
+            //
+            // configure info pane view
+            //
             var config = {
                 olapProvider: this.getStateManager()
             };
@@ -154,36 +170,45 @@ Ext.define('Connector.controller.FilterStatus', {
                 }
             }
 
-            var hidden = [];
-            Ext.iterate(container.items.map, function(componentId, component) {
-                if (component.$className === 'Connector.view.InfoPane') {
-                    container.remove(component, true);
-                }
-                else {
-                    component.hide();
-                    hidden.push(componentId);
-                }
-            });
+            //
+            // prepare layout
+            //
+            var statusContainer = parent.getComponent('filterstatuscontainer');
+            if (statusContainer) {
+                statusContainer.hide();
+            }
 
-            container.add({
-                xtype: 'infopane',
+
+            var infoPane = Ext.create('Connector.view.InfoPane', {
                 model: Ext.create('Connector.model.InfoPane', config),
                 listeners: {
                     hide: {
-                        fn: function(ip) {
-                            Ext.each(hidden, function(cid) {
-                                var h = Ext.getCmp(cid);
-                                if (h) {
-                                    h.show();
-                                }
-                            });
-                            ip.hide();
-                        },
+                        fn: this.resetInfoPane,
                         scope: this,
                         single: true
                     }
                 }
             });
+
+            parent.add(infoPane);
+
+//            this.getStateManager().on('selectionchange', function() { this.resetInfoPane(infoPane); }, this, {single: true});
+//            this.getStateManager().on('filterchange', function() { this.resetInfoPane(infoPane); }, this, {single: true});
+//            this.getViewManager().on('afterchangeview', function() { this.resetInfoPane(infoPane); }, this, {single: true});
+        }
+    },
+
+    resetInfoPane : function(infoPane) {
+
+        if (infoPane) {
+            infoPane.hide();
+            if (infoPane.up())
+                infoPane.up().remove(infoPane);
+        }
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter > #filterstatuscontainer');
+        if (parent && parent.length > 0) {
+            parent[0].show();
         }
     },
 

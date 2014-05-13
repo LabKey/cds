@@ -14,6 +14,8 @@ Ext.define('Connector.button.Image', {
 
     overCls: 'imgbuttonover',
 
+    menuActiveCls: 'menubuttonover',
+
     vector: 30,
 
     menuAlign: 'tl-bl?',
@@ -81,11 +83,13 @@ Ext.define('Connector.button.Image', {
 
     onMenuShow : function() {
         var me = this;
+        me.addClsWithUI(me.menuActiveCls);
         me.fireEvent('menushow', me, me.menu);
     },
 
     onMenuHide : function() {
         var me = this;
+        me.removeClsWithUI(me.menuActiveCls);
         me.fireEvent('menuhide', me, me.menu);
     },
 

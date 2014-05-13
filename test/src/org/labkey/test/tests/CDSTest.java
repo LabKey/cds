@@ -255,7 +255,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
     }
 
-    @Test
+//    @Test
     public void verifyUserPermissions()
     {
         beginAt("project/" + getProjectName() + "/begin.view?");
@@ -377,10 +377,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
         _asserts.assertFilterStatusCounts(0, 0, 0);
 
-        // remove a subfilter
-        click(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]).append(Locator.tagWithClass("div", "closeitem")));
+        // remove filter
+        click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(5, 1, 2);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // verify undo
@@ -388,18 +388,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
         _asserts.assertFilterStatusCounts(0, 0, 0);
 
-        // remove a subfilter
-        click(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]).append(Locator.tagWithClass("div", "closeitem")));
+        // remove an undo filter
+        click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(5, 1, 2);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
-        // verify undo
-        click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-        _asserts.assertFilterStatusCounts(0, 0, 0);
-
-        cds.clearFilter();
+        // ensure undo is removed on view navigation
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        waitForTextToDisappear("Filter removed.", 5000);
     }
 
     @Test

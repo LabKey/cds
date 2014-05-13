@@ -83,45 +83,9 @@ div.measuresgrid .x-grid-view {
   color: $heat-scale-1;
 }
 
-/* Connector.grid.Panel */
-.connector-grid .x-column-header-trigger {
-  background-image: url(images/filter.svg);
-  background-position: 0px 28px;
-}
-
-.connector-grid .x-column-header-trigger:hover {
-  background-color: #E6E1E1 !important;
-  background-image: url(images/filter_selected.svg);
-  background-position: 0px 28px;
-}
-
-.connector-grid .filtered-column .x-column-header-trigger {
-  background-image: url(images/filter_selected.svg);
-  background-position: 0px 28px;
-}
-
 /* Ext.Grid*/
-.x-column-header {
-  border-color: transparent;
-}
-
 .x-column-header-text {
   font-size: 12px;
-}
-
-.x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC {
-  background-image: none !important;
-  background-color: $secondary-color;
-  border: none;
-}
-
-.x-column-header-trigger {
-  border-left: 1px solid $primary-color;
-  background-color: $heat-scale-4;
-
-  &:hover {
-    background-color: #F4F4F4 !important;
-  }
 }
 
 .x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
@@ -130,27 +94,80 @@ div.measuresgrid .x-grid-view {
   background-image: url(images/form/checkbox2.gif);
 }
 
-.x-grid-body {
-  border-top-color: transparent;
+/* Connector.grid.Panel */
+.connector-grid {
+  .x-column-header-trigger {
+    background-image: url(images/filter.svg);
+    background-position: 0px 28px;
+
+    &:hover {
+      background-color: #E6E1E1 !important;
+      background-image: url(images/filter_selected.svg);
+      background-position: 0px 28px;
+    }
+  }
+
+  .filtered-column .x-column-header-trigger {
+    background-image: url(images/filter_selected.svg);
+    background-position: 0px 28px;
+  }
 }
 
-.x-grid-header-ct {
-  border-color: transparent;
-}
+/* Connector.view.InfoPane */
+.infopanegrid {
 
-.x-grid-group-hd {
-  margin-top: 20px;
-  border-width: 0;
-  background-color: transparent;
-}
+  margin-top: 30px;
 
-.x-grid-group-title {
-  @include smallStandout;
-  color: $heat-scale-2;
-}
+  .x-grid-body {
+    border-top-color: transparent;
+  }
 
-.x-grid-with-row-lines .x-grid-table-over-first {
-  border-color: transparent;
+  .x-column-header {
+    border-color: transparent;
+  }
+
+  .x-column-header-over {
+    background-color: transparent;
+  }
+
+  .x-column-header-over,
+  .x-column-header-sort-ASC, .x-column-header-sort-DESC {
+    background-image: none !important;
+    background-color: $secondary-color;
+    border: none;
+  }
+
+  .x-column-header-trigger {
+    border-left: 1px solid $primary-color;
+    background-color: $heat-scale-4;
+
+    &:hover {
+      background-color: #F4F4F4 !important;
+    }
+  }
+
+  .x-grid-header-ct {
+    border-color: transparent;
+  }
+
+  .x-grid-group-hd {
+    margin-top: 20px;
+    border-width: 0;
+    background-color: transparent;
+  }
+
+  .x-grid-group-title {
+    @include smallStandout;
+    color: $heat-scale-2;
+  }
+
+  .x-grid-with-row-lines .x-grid-table-over-first {
+    border-color: transparent;
+  }
+
+  .x-grid-row-over .x-grid-cell-last {
+    background-color: transparent;
+  }
 }
 
 /* Group selection panels */
