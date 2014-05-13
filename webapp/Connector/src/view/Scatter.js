@@ -114,7 +114,7 @@ Ext.define('Connector.view.Scatter', {
             },{
                 items: [{
                     id: 'colorselector',
-                    xtype: 'variableselector',
+                    xtype: 'colorselector',
                     btnCls: 'colorbtn',
                     model: new Ext.create('Connector.model.Variable', {
                         typeLabel: 'color'
@@ -211,7 +211,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getPlotElement : function() {
-        var el = Ext.DomQuery.select('svg');
+        var el = Ext.query('#' + this.plot.renderTo);
         if (el.length > 0) {
             el = el[0];
         }
@@ -694,6 +694,10 @@ Ext.define('Connector.view.Scatter', {
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
+                if (this.measures[2]) {
+                    colorSelector = Ext.getCmp('colorselector');
+                    colorSelector.setLegend(this.plot.getLegendData());
+                }
             }
             catch(err) {
                 this.showMessage(err.message);
