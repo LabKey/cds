@@ -18,6 +18,7 @@ Ext.define('Connector.view.module.StudyProducts', {
             '<tpl for="items">',
                 '<div class="item-row">',
                     '<p><a href="#learn/learn/vaccine/{[encodeURIComponent(values)]}">{.}</a></p>',
+                    '<p><a class="popupLink">{.} (popup)</a></p>',
                 '</div>',
             '</tpl>',
         '</p></tpl>'),
@@ -44,6 +45,19 @@ Ext.define('Connector.view.module.StudyProducts', {
                 }
                 data.items = set;
                 this.update(data);
+
+                var links = this.getEl().query('a[cls~=popupLink]');
+                links = Ext.select('.popupLink', this.getEl().dom);
+                links.on('click', function(a,b,c) {
+                    var target = Ext.get(b);
+                    var container = target.up('.modulecontainer');
+                    var content = Connector.factory.Module.defineView({ type: 'text', staticData: {
+                        title: "Test",
+                        text: "Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum"
+                    }}, this.model, this.state);
+
+                    var popup = Ext.create('Connector.view.Popup', {container: container, anchor: target, content: content});
+                }, this);
             },
             scope: this
         };
@@ -53,4 +67,7 @@ Ext.define('Connector.view.module.StudyProducts', {
 
         this.callParent();
     }
+
+    // afterRender: function() {
+    // }
 });

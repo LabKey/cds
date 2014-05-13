@@ -103,6 +103,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.NotFound": "../../../../webapp/Connector/src/controller/Connector.js",
   "Connector.view.Page": "../../../../webapp/Connector/src/view/Page.js",
   "Connector.view.PageHeader": "../../../../webapp/Connector/src/view/PageHeader.js",
+  "Connector.view.Popup": "../../../../webapp/Connector/src/view/Popup.js",
   "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.SingleAxisExplorer": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -241,6 +242,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.NotFound": [],
   "Connector.view.Page": [],
   "Connector.view.PageHeader": [],
+  "Connector.view.Popup": [],
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.SingleAxisExplorer": [],
@@ -1266,6 +1268,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Page": [],
   "Connector.view.PageHeader": [],
+  "Connector.view.Popup": [],
   "Connector.view.Scatter": [
     "widget.plot"
   ],

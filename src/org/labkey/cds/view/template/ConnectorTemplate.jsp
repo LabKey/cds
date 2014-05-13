@@ -175,6 +175,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Popup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
