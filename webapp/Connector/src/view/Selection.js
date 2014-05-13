@@ -155,7 +155,9 @@ Ext.define('Connector.view.Selection', {
                     var label = 'In the plot: ';
                     var measures = values.plotMeasures, measureLabels = [];
                     for (var i=0; i < measures.length; i++) {
-                        measureLabels.push(measures[i].measure.label);
+                        if (measures[i]) {
+                            measureLabels.push(measures[i].measure.label);
+                        }
                     }
                     return Ext.htmlEncode(label + measureLabels.join(', '));
                 },
