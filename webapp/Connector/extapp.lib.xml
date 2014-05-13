@@ -74,6 +74,7 @@
         <script path="Connector/src/model/Grid.js"/>
         <script path="Connector/src/model/Variable.js"/>
         <script path="Connector/src/model/VisitTag.js"/>
+        <script path="Connector/src/model/Antigen.js"/>
 
         <!-- Application Widgets -->
         <script path="Connector/src/button/Image.js"/>
@@ -98,6 +99,7 @@
         <script path="Connector/src/factory/Module.js"></script>
 
         <!-- Application Stores -->
+        <script path="Connector/src/store/AssayAntigens.js"/>
         <script path="Connector/src/store/Explorer.js"/>
         <script path="Connector/src/store/FilterStatus.js"/>
         <script path="Connector/src/store/Summary.js"/>

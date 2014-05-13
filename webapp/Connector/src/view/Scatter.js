@@ -15,7 +15,6 @@ Ext.define('Connector.view.Scatter', {
     cls: 'scatterview',
 
     measures: [],
-    allColumns: false,
     canShowHidden: false,
 
     isActiveView: true,
@@ -724,38 +723,41 @@ Ext.define('Connector.view.Scatter', {
     getActiveMeasures : function() {
         this.fromFilter = false;
         var measures = {
-            x: null,
-            y: null
+            x: {measure: null, options: {}},
+            y: {measure: null, options: {}}
         };
 
         // first check the measure selections
         if (this.axisPanelX) {
             var sel = this.axisPanelX.getSelection();
-            if (sel && sel.length > 0) {
-                measures.x = sel[0].data;
+            if (sel && sel.length > 0)
+            {
+                measures.x = {
+                    measure: sel[0].data,
+                    options: this.axisPanelX.getVariableOptionValues()
+                };
             }
         }
         if (this.axisPanelY) {
             var sel = this.axisPanelY.getSelection();
-            if (sel && sel.length > 0) {
-                measures.y = sel[0].data;
+            if (sel && sel.length > 0)
+            {
+                measures.y = {
+                    measure: sel[0].data,
+                    options: this.axisPanelY.getVariableOptionValues()
+                };
             }
         }
 
         // second, check the set of active filters
-        if (!measures.x && !measures.y) {
+        if (!measures.x.measure && !measures.y.measure) {
             var filters = this.state.getFilters();
             for (var f=0; f < filters.length; f++) {
                 if (filters[f].get('isPlot') == true) {
                     var m = filters[f].get('plotMeasures');
 
-                    if (m.length > 1) {
-                        measures.x = m[0].measure;
-                        measures.y = m[1].measure;
-                    } else {
-                        measures.x = null;
-                        measures.y = m[0].measure;
-                    }
+                    measures.x = {measure: m[0] ? m[0].measure : null, options: {}};
+                    measures.y = {measure: m[1].measure, options: {}};
 
                     this.fromFilter = true;
                     break;
@@ -764,14 +766,14 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // map the y-axis schema and query name for a time point x-axis variable
-        if (measures.x)
+        if (measures.x.measure)
         {
-            if (!measures.x.schemaName && !measures.x.queryName)
+            if (!measures.x.measure.schemaName && !measures.x.measure.queryName)
             {
-                var x = Ext.clone(measures.x);
-                x.schemaName = measures.y.schemaName;
-                x.queryName = measures.y.queryName;
-                measures.x = x;
+                var x = Ext.clone(measures.x.measure);
+                x.schemaName = measures.y.measure.schemaName;
+                x.queryName = measures.y.measure.queryName;
+                measures.x.measure = x;
             }
         }
 
@@ -785,8 +787,8 @@ Ext.define('Connector.view.Scatter', {
 
         var activeMeasures = this.getActiveMeasures();
 
-        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
-        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
+        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y.measure ]);
+        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x.measure ]);
 
         if (this.filterClear) {
             if (this.axisPanelY) {
@@ -800,14 +802,14 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
-        if (this.filterClear || !activeMeasures.y) {
+        if (this.filterClear || !activeMeasures.y.measure) {
             this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
             return;
         }
 
-        this.measures = [ activeMeasures.x, activeMeasures.y ];
+        this.measures = [ activeMeasures.x.measure, activeMeasures.y.measure ];
 
         this.showLoad();
 
@@ -830,6 +832,9 @@ Ext.define('Connector.view.Scatter', {
             this.initialized = true;
         }
 
+        // add "subset" measures (ex. selecting subset of antigens to plot for an assay result)
+        var subsetMeasures = this.getSubsetMeasures(activeMeasures);
+
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
 
@@ -843,7 +848,7 @@ Ext.define('Connector.view.Scatter', {
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
                 method: 'POST',
                 jsonData: {
-                    measures: wrappedMeasures,
+                    measures: wrappedMeasures.concat(subsetMeasures),
                     sorts: sorts,
                     limit: (this.rowlimit+1)
                 },
@@ -854,6 +859,31 @@ Ext.define('Connector.view.Scatter', {
 
             this.requestCitations();
         });
+    },
+
+    getSubsetMeasures : function(activeMeasures) {
+        var subsetMeasures = [];
+
+        if (this.measures[0] && Ext.isDefined(activeMeasures.x.options.antigen))
+        {
+            subsetMeasures.push({measure : {
+                name: activeMeasures.x.options.antigen.columnInfo.name,
+                queryName: this.measures[0].queryName,
+                schemaName: this.measures[0].schemaName,
+                values: activeMeasures.x.options.antigen.values
+            }, time: 'visit'});
+        }
+        if (this.measures[1] && Ext.isDefined(activeMeasures.y.options.antigen))
+        {
+            subsetMeasures.push({measure : {
+                name: activeMeasures.y.options.antigen.columnInfo.name,
+                queryName: this.measures[1].queryName,
+                schemaName: this.measures[1].schemaName,
+                values: activeMeasures.y.options.antigen.values
+            }, time: 'visit'});
+        }
+
+        return subsetMeasures;
     },
 
     showLoad : function() {
@@ -877,7 +907,7 @@ Ext.define('Connector.view.Scatter', {
 
     requestCitations : function() {
         var measures = this.getActiveMeasures();
-        var x = measures.x, y = measures.y;
+        var x = measures.x.measure, y = measures.y.measure;
         var xy = [];
 
         if (x) {
@@ -1261,7 +1291,7 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 open : function() {},
                 measureConfig: {
-                    allColumns: this.allColumns,
+                    allColumns: false,
                     displaySourceCounts: true,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -1275,7 +1305,8 @@ Ext.define('Connector.view.Scatter', {
                 displayConfig: {
                     mainTitle : 'Choose a Variable for the Y Axis...'
                 },
-                scalename: 'yscale'
+                scalename: 'yscale',
+                disableAntigenFilter: false
             });
 
             var pos = this.getPlotPosition();
@@ -1373,7 +1404,8 @@ Ext.define('Connector.view.Scatter', {
                     mainTitle : 'Choose a Variable for the X Axis...'
                 },
                 scalename : 'xscale',
-                visitTagStore: this.visitTagStore
+                visitTagStore: this.visitTagStore,
+                disableAntigenFilter: false
             });
 
             var pos = this.getPlotPosition();
