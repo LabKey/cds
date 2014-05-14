@@ -3,11 +3,11 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.store.AssayAntigens', {
+Ext.define('Connector.store.AssayDistinctValue', {
 
     extend : 'Ext.data.Store',
 
-    alias: 'store.assayantigens',
+    alias: 'store.assaydistinctvalue',
 
     model : 'Connector.model.Antigen',
 

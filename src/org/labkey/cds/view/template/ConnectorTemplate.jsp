@@ -155,7 +155,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
 
     <!-- Application Stores -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayAntigens.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayDistinctValue.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>

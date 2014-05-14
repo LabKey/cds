@@ -47,7 +47,8 @@ div.antigensgrid {
   .x-grid-view,
   .x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC,
   .x-column-header,
-  .x-grid-cell, .x-grid-cell-special {
+  .x-grid-cell, .x-grid-cell-special,
+  .x-grid-empty {
     background-color: transparent;
   }
 
@@ -57,6 +58,15 @@ div.antigensgrid {
 
   .x-column-header {
     border-right-color: transparent;
+  }
+
+  .x-grid-body .x-grid-table-focused-first {
+    border-top: none;
+  }
+
+  .x-grid-empty {
+    color: $dark-color;
+    padding-left: 0;
   }
 }
 

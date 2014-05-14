@@ -404,7 +404,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 cls: 'variableoptions',
                 width: '50%',
                 bodyStyle: 'background-color: transparent;',
-                padding: '10px 0 0 0',
+                padding: '10px 5px 0 5px',
                 items: [] // items to be added/removed as variables are selected
             }]
         }];
@@ -477,9 +477,12 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
     clearVariableOptions : function() {
         this.getVariableOptionsPanel().removeAll(false);
+
+        // reset the source specific variable options
         this.alignmentForm = null;
+        this.assayOptionsPanel = null;
         this.antigensGrid = null;
-        this.variableOptionsTitle = null;
+        this.analytesGrid = null;
     },
 
     setVariableOptions : function(measure, source) {
@@ -491,7 +494,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
             if (measure.get('variableType') == 'TIME')
             {
-                this.updateVariableOptionsTitlePanel(optionsPanel, 'Align multiple studies by');
                 optionsPanel.add(this.getAlignmentForm());
             }
             else if (!this.disableLookups)
@@ -500,7 +502,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
                 if (Ext.isDefined(measure.get('lookup').queryName))
                 {
-                    this.updateVariableOptionsTitlePanel(optionsPanel, measure.get('name') + ' details');
+                    optionsPanel.add(this.getVariableOptionsTitlePanel(measure.get('name') + ' details'));
                     optionsPanel.add(this.getLookupGrid(measure));
                 }
             }
@@ -652,23 +654,14 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         return SS;
     },
 
-    updateVariableOptionsTitlePanel : function(parentPanel, title) {
-        if (!this.variableOptionsTitle)
-        {
-            this.variableOptionsTitle = Ext.create('Ext.Component', {
-                cls: 'curselauth',
-                autoEl: {
-                    tag: 'div',
-                    html: Ext.htmlEncode(title)
-                }
-            });
-
-            parentPanel.add(this.variableOptionsTitle);
-        }
-        else
-        {
-            this.variableOptionsTitle.update(Ext.htmlEncode(title));
-        }
+    getVariableOptionsTitlePanel : function(title) {
+        return Ext.create('Ext.Component', {
+            cls: 'curselauth',
+            autoEl: {
+                tag: 'div',
+                html: Ext.htmlEncode(title)
+            }
+        });
     },
 
     getAlignmentForm : function() {
@@ -701,7 +694,9 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 items: [{
                     xtype: 'radiogroup',
                     itemId: 'alignment',
-                    ui: 'custom',
+                    fieldLabel: 'Align multiple studies by',
+                    labelAlign: 'top',
+                    labelCls: 'curselauth',
                     height: 175,
                     autoScroll: true,
                     cls: 'iScroll',
@@ -717,10 +712,11 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     },
 
     determineAssayOptionsPanel : function(parentPanel, measure, source) {
-        // the first time a source is selected, determine if it contains a lookup to the cds.Antigen table
-        if (source.antigenLookup === undefined)
+        // the first time a source is selected, determine if it contains a lookup for Antigen and/or Analyte
+        if (source.antigenLookup === undefined && source.analyteLookup === undefined)
         {
             source.antigenLookup = null;
+            source.analyteLookup = null;
 
             LABKEY.Query.getQueryDetails({
                 schemaName: source.get('schemaName'),
@@ -732,84 +728,164 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                         {
                             source.antigenLookup = col;
                         }
+
+                        // TODO: determine if the source has an Analyte column
+                        // source.analyteLookup = col;
                     });
 
-                    this.addAntigensGrid(parentPanel, measure, source);
+                    parentPanel.add(this.getAssayOptionsPanel(source));
                 }
             });
         }
-        else
+        else if (source.antigenLookup != null || source.analyteLookup != null)
         {
-            this.addAntigensGrid(parentPanel, measure, source);
+            parentPanel.add(this.getAssayOptionsPanel(source));
         }
     },
 
-    addAntigensGrid : function(parentPanel, measure, source) {
-        if (source.antigenLookup != null)
+    getAssayOptionsPanel : function(source) {
+        if (!this.assayOptionsPanel)
         {
-            this.updateVariableOptionsTitlePanel(parentPanel, 'Antigens');
+            this.assayOptionsPanel = Ext.create('Ext.panel.Panel', {
+                layout: 'column',
+                items: []
+            });
 
-            // only add new antigens grid on source change (share across variables from the same source)
-            if (!this.antigensGrid)
+            var columnWidth = source.antigenLookup != null && source.analyteLookup != null ? 0.5 : 1.0;
+
+            if (source.antigenLookup != null)
             {
-                this.antigensGrid = Ext.create('Ext.grid.Panel', {
-                    xtype: 'grid',
-                    viewConfig : { stripeRows : false },
-                    cls: 'measuresgrid iScroll antigensgrid',
-                    border: false,
-                    height: 175,
-                    forceFit: true,
-                    enableColumnResize: false,
-                    enableColumnMove: false,
-                    multiSelect: true,
-                    selType: 'checkboxmodel',
-                    selModel: {
-                        checkOnly: true,
-                        checkSelector: 'td.x-grid-cell-row-checker'
-                    },
-                    store: Ext.create('Connector.store.AssayAntigens', {
-                        schemaName: source.get('schemaName'),
-                        queryName: source.get('queryName'),
-                        colName: source.antigenLookup.name,
-                        listeners: {
-                            scope: this,
-                            load: function() {
-                                this.antigensGrid.getSelectionModel().selectAll();
-                                this.antigensGrid.getView().focusRow(0);
-                            }
-                        }
-                    }),
-                    columns: [{ header: 'All', dataIndex: 'Name', menuDisabled: true, sortable: false }],
-                    antigenColumn: source.antigenLookup
+                this.assayOptionsPanel.add({
+                    columnWidth: columnWidth,
+                    items: [
+                        this.getVariableOptionsTitlePanel('Antigens'),
+                        this.getAntigensGrid(source)
+                    ]
                 });
+            }
 
-                parentPanel.add(this.antigensGrid);
+            if (source.analyteLookup != null)
+            {
+                this.assayOptionsPanel.add({
+                    columnWidth: columnWidth,
+                    items: [
+                        this.getVariableOptionsTitlePanel('Analytes'),
+                        this.getAnalytesGrid(source)
+                    ]
+                });
             }
         }
+
+        return this.assayOptionsPanel;
     },
 
-    getAntigensGrid : function() {
+    getAntigensGrid : function(source) {
+        if (!this.antigensGrid)
+        {
+            this.antigensGrid = this.getAssayValueGrid(source, 'antigenLookup');
+        }
+
         return this.antigensGrid;
     },
 
+    hasAntigensGrid : function() {
+        return this.antigensGrid != undefined;
+    },
+
+    getAnalytesGrid : function(source) {
+        if (!this.analytesGrid)
+        {
+            this.analytesGrid = this.getAssayValueGrid(source, 'analyteLookup');
+        }
+
+        return this.analytesGrid;
+    },
+
+    hasAnalytesGrid : function() {
+        return this.analytesGrid != undefined;
+    },
+
+    getAssayValueGrid : function(source, lookupProperty) {
+        var store = Ext.create('Connector.store.AssayDistinctValue', {
+            schemaName: source.get('schemaName'),
+            queryName: source.get('queryName'),
+            colName: source[lookupProperty].name
+        });
+
+        var grid = Ext.create('Ext.grid.Panel', {
+            viewConfig : { stripeRows : false },
+            cls: 'measuresgrid iScroll antigensgrid',
+            border: false,
+            height: 175,
+            forceFit: true,
+            hidden: true,
+            enableColumnResize: false,
+            enableColumnMove: false,
+            multiSelect: true,
+            emptyText: 'none',
+            selType: 'checkboxmodel',
+            selModel: {
+                checkOnly: true,
+                checkSelector: 'td.x-grid-cell-row-checker'
+            },
+            store: store,
+            columns: [{ header: 'All', dataIndex: 'Name', menuDisabled: true, sortable: false }],
+            valueColumn: source[lookupProperty]
+        });
+
+        store.on('load', function() {
+            grid.getSelectionModel().selectAll();
+            grid.getView().focusRow(0);
+
+            if (store.getCount() < 2)
+                grid.getEl().query('.x-grid-header-ct')[0].style.display = 'none';
+
+            grid.show();
+        });
+
+        return grid;
+    },
+
     getVariableOptionValues : function() {
+        var values = {};
+
         if (this.getAlignmentForm() && this.getAlignmentForm().isVisible())
         {
-            return this.getAlignmentForm().getForm().getFieldValues();
+            values = this.getAlignmentForm().getForm().getFieldValues();
         }
-        else if (this.getAntigensGrid() && this.getAntigensGrid().isVisible())
+
+        if (this.hasAntigensGrid() && this.getAntigensGrid().isVisible())
         {
             var antigensArr = [];
             Ext.each(this.getAntigensGrid().getSelectionModel().getSelection(), function(sel){
                 antigensArr.push(sel.get('Name'));
             });
 
-            return {antigen: {
-                columnInfo: this.getAntigensGrid().antigenColumn,
-                values: antigensArr
-            }};
+            if (antigensArr.length > 0)
+            {
+                values.antigen = {
+                    columnInfo: this.getAntigensGrid().valueColumn,
+                    values: antigensArr
+                };
+            }
         }
 
-        return {};
+        if (this.hasAnalytesGrid() && this.getAnalytesGrid().isVisible())
+        {
+            var analytesArr = [];
+            Ext.each(this.getAnalytesGrid().getSelectionModel().getSelection(), function(sel){
+                analytesArr.push(sel.get('Name'));
+            });
+
+            if (analytesArr.length > 0)
+            {
+                values.analyte = {
+                    columnInfo: this.getAnalytesGrid().valueColumn,
+                    values: analytesArr
+                };
+            }
+        }
+
+        return values;
     }
 });
