@@ -786,6 +786,20 @@ div.status-over {
   }
 }
 
+div.nolink.status-over {
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: default;
+
+  span {
+    background-color: #ebebeb;
+  }
+
+  &:hover li {
+    border-bottom: 2px dotted #ccc;
+  }
+}
+
 /* -- END Connector.view.DetailStatus */
 
 /* Connector.view.Header */

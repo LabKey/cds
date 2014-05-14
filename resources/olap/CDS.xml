@@ -2,6 +2,13 @@
 
 
     <Dimension visible="true" highCardinality="false" name="Antigen">
+        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Name">
+            <Table schema="cds" name="antigens">
+            </Table>
+            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+                <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
+            </Level>
+        </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Clade">
             <Table schema="cds" name="antigens">
             </Table>
@@ -33,6 +40,11 @@
 
 
     <Dimension visible="true" highCardinality="false" name="Assay">
+        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Name">
+            <Table schema="study" name="StudyDesignAssays" />
+            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            </Level>
+        </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Target Area">
             <Table schema="study" name="StudyDesignAssays" />
             <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
@@ -89,6 +101,16 @@
         </Dimension>
 
         <Dimension visible="true" highCardinality="false" name="Vaccine" foreignKey="participantid">
+            <Hierarchy name="Name" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantTreatments">
+                <Join leftKey="treatmentid" rightKey="treatmentid">
+                    <Table name="ParticipantTreatments" schema="study"/>
+                    <Join leftKey="productid" rightKey="rowid">
+                        <Table name="TreatmentProductMap" schema="study"/>
+                        <Table name="Product" schema="study"/>
+                    </Join>
+                </Join>
+                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+            </Hierarchy>
             <Hierarchy name="Type" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantTreatments">
                 <Join leftKey="treatmentid" rightKey="treatmentid">
                     <Table name="ParticipantTreatments" schema="study"/>
@@ -120,7 +142,7 @@
         <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
             <Hierarchy visible="true" hasAll="true" primaryKey="container">
                 <Table schema="study" name="StudyProperties" />
-                <Level name="Study" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="IfBlankName">
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="IfBlankName">
                 </Level>
             </Hierarchy>
         </Dimension>

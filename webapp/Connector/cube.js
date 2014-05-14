@@ -27,6 +27,7 @@ Ext4.define('Connector.cube.Configuration', {
         //
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
+        //      activeCountLink - declare whether an 'activeCount' level exposes navigation. false/true. Default is true.
         //      dataBasedCount  - false/true. Default is false.
         //      countPriority   - Default is 0.
         //      countSingular   - Default is undefined.
@@ -96,6 +97,7 @@ Ext4.define('Connector.cube.Configuration', {
                 singularName: 'Study product',
                 pluralName: 'Study products',
                 priority: 20,
+                summaryTargetLevel: '[Vaccine.Type].[Name]',
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
@@ -136,9 +138,10 @@ Ext4.define('Connector.cube.Configuration', {
 
     
                 hierarchies: [{
-                    uniqueName: '[Vaccine.Type]',
+                    uniqueName: '[Vaccine.Name]',
+                    hidden: true,
                     levels: [{
-                        uniqueName: '[Vaccine.Type].[Name]',
+                        uniqueName: '[Vaccine.Name].[Name]',
                         activeCount: true,
                         countPriority: 40,
                         countSingular: 'Study Product',
@@ -153,8 +156,8 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Assay]',
                 pluralName: 'Assays',
                 priority: 40,
-                supportsDetails: true,
                 summaryTargetLevel: '[Assay.Target Area].[Name]',
+                supportsDetails: true,
                 detailCollection: 'Connector.app.store.Assay',
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
@@ -236,17 +239,21 @@ Ext4.define('Connector.cube.Configuration', {
                 }],
 
                 hierarchies: [{
+                    uniqueName: '[Assay.Name]',
+                    hidden: true,
+                    levels: [{
+                        uniqueName: '[Assay.Name].[Name]',
+                        activeCount: 'highlight',
+                        countPriority: 50,
+                        countSingular: 'Assay',
+                        countPlural: 'Assays'
+                    }]
+                },{
                     uniqueName: '[Assay.Target Area]',
                     levels: [{
                         uniqueName: '[Assay.Target Area].[Target Area]',
                         countSingular: 'Target Area',
                         countPlural: 'Target Areas'
-                    },{
-                        uniqueName: '[Assay.Target Area].[Name]',
-                        activeCount: 'highlight',
-                        countPriority: 50,
-                        countSingular: 'Assay',
-                        countPlural: 'Assays'
                     }]
                 },{
                     uniqueName: '[Assay.Methodology]',
@@ -265,6 +272,25 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
                 defaultOperator: 'OR',
+
+                hierarchies: [{
+                    uniqueName: '[Study]',
+                    levels: [{
+                        uniqueName: '[Study].[(All)]',
+                        activeCount: 'highlight',
+                        activeCountLink: false,
+                        countPriority: 0,
+                        countSingular: 'Subject',
+                        countPlural: 'Subjects',
+                        cellbased: false
+                    },{
+                        uniqueName: '[Study].[Name]',
+                        activeCount: 'highlight',
+                        countPriority: 30,
+                        countSingular: 'Study',
+                        countPlural: 'Studies'
+                    }]
+                }],
 
                 itemDetail: {
                     view: 'Connector.app.view.ModuleContainer',
@@ -318,25 +344,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: "Lab & clinical data"
                         }
                     }]]
-                },
-
-                hierarchies: [{
-                    uniqueName: '[Study]',
-                    levels: [{
-                        uniqueName: '[Study].[(All)]',
-                        activeCount: 'highlight',
-                        countPriority: 0,
-                        countSingular: 'Subject',
-                        countPlural: 'Subjects',
-                        cellbased: false
-                    },{
-                        uniqueName: '[Study].[Study]',
-                        activeCount: 'highlight',
-                        countPriority: 30,
-                        countSingular: 'Study',
-                        countPlural: 'Studies'
-                    }]
-                }]
+                }
             },{
                 uniqueName: '[Antigen]',
                 pluralName: 'Assay antigens',
@@ -345,6 +353,9 @@ Ext4.define('Connector.cube.Configuration', {
                 summaryTargetLevel: '[Antigen.Clade].[Name]',
 
                 hierarchies: [{
+                    uniqueName: '[Antigen.Name]',
+                    supportsSummary: false
+                },{
                     uniqueName: '[Antigen.Clade]',
                     levels: [{
                         uniqueName: '[Antigen.Clade].[Clade]',
@@ -444,6 +455,7 @@ Ext4.define('Connector.cube.Configuration', {
 
             var ll = {
                 activeCount: false,
+                activeCountLink: true,
                 dataBasedCount: false,
                 countPriority: 0,
                 countSingular: undefined,
@@ -583,6 +595,7 @@ Ext4.define('Connector.cube.Configuration', {
                             ctx = {};
                             Ext.apply(ctx, {
                                 activeCount: Ext.isDefined(lvl.activeCount) ? lvl.activeCount : defaults.activeCount,
+                                activeCountLink: Ext.isDefined(lvl.activeCountLink) ? lvl.activeCountLink : defaults.activeCountLink,
                                 dataBasedCount: Ext.isDefined(lvl.dataBasedCount) ? lvl.dataBasedCount : defaults.dataBasedCount,
                                 countPriority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : defaults.countPriority,
                                 countSingular: Ext.isDefined(lvl.countSingular) ? lvl.countSingular : defaults.countSingular,

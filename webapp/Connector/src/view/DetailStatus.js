@@ -23,7 +23,7 @@ Ext.define('Connector.view.DetailStatus', {
     tpl: new Ext.XTemplate(
             '<ul class="detailstatus">',
                 '<tpl for=".">',
-                    '<div class="status-row {highlight:this.isHighlight}">',
+                    '<div class="status-row {highlight:this.isHighlight} {activeCountLink:this.isLink}">',
                         '<tpl if="highlight != undefined && highlight == true">',
                                 '<li>',
                                       '<span class="statme hl-status-label">{label:htmlEncode}</span>',
@@ -45,6 +45,9 @@ Ext.define('Connector.view.DetailStatus', {
                 '</tpl>',
             '<ul>',
             {
+                isLink : function(activeCountLink) {
+                    return (activeCountLink === true ? '' : 'nolink');
+                },
                 isHighlight : function(highlight) {
                     return (highlight === true ? 'hl-status-row' : '');
                 },

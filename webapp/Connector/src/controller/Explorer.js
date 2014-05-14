@@ -293,6 +293,7 @@ Ext.define('Connector.controller.Explorer', {
             Ext.each(records, function(rec) {
                 selections.push({
                     hierarchy: hierarchy.uniqueName,
+                    level: rec.get('levelUniqueName'),
                     members: [{ uniqueName: rec.get('uniqueName') }],
                     isGroup: rec.get('isGroup'),
                     operator: hierarchy.defaultOperator

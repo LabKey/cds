@@ -57,7 +57,10 @@ Ext.define('Connector.view.InfoPane', {
                 data: model.data,
                 listeners: {
                     afterrender: function(box) {
-                        this.getModel().on('change', function(m) {
+                        var model = this.getModel();
+                        box.update(model.data);
+
+                        model.on('change', function(m) {
                             this.update(m.data);
                         }, box);
                     },
@@ -277,6 +280,9 @@ Ext.define('Connector.view.InfoPane', {
             else {
                 sm.select(members);
             }
+
+            // prevent scrolling to bottom of selection
+            grid.getView().focusRow(0);
         }
 
         //
@@ -284,7 +290,6 @@ Ext.define('Connector.view.InfoPane', {
         //
         var model = this.getModel();
         var hierarchy = model.get('hierarchy');
-        var operator = hierarchy.defaultOperator;
 
         if (model.isREQ()) {
             this.hideOperator();

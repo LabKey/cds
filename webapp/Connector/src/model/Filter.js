@@ -64,6 +64,10 @@ Ext.define('Connector.model.Filter', {
         loaded: false,
         subjectMap: {},
 
+        factory : function(config) {
+
+        },
+
         getSubjectUniqueName : function(subjectID) {
             return '[Subject].[' + Connector.model.Filter.getContainer(subjectID) + '].[' + subjectID + ']';
         },

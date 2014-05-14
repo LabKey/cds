@@ -15,7 +15,9 @@ Ext.define('Connector.model.Detail', {
         {name: 'dataBasedCount', type: 'boolean'},
         {name: 'valueLabel'},
         {name: 'highlight'},
+        {name: 'activeCountLink', type: 'boolean'},
         {name: 'dimension'},
-        {name: 'hierarchy'}
+        {name: 'hierarchy'},
+        {name: 'level'}
     ]
 });

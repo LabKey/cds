@@ -69,11 +69,13 @@ Ext.define('Connector.store.FilterStatus', {
                                 useNamedFilters: ['statefilter'],
                                 dd: dims[d].uniqueName,
                                 hh: hiers[h].uniqueName,
+                                ll: lvl.uniqueName,
                                 label: {
                                     singular: lvl.countSingular,
                                     plural: lvl.countPlural
                                 },
                                 highlight: lvl.activeCount === 'highlight',
+                                activeCountLink: lvl.activeCountLink === true,
                                 dataBasedCount: lvl.dataBasedCount,
                                 cellbased: lvl.cellbased,
                                 priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
@@ -172,9 +174,11 @@ Ext.define('Connector.store.FilterStatus', {
             rec = {
                 dimension: ca.dd,
                 hierarchy: ca.hh,
+                level: ca.ll,
                 count: count,
                 subcount: hasSelections ? subcount : -1,
                 highlight: ca.highlight,
+                activeCountLink: ca.activeCountLink,
                 dataBasedCount: ca.dataBasedCount
             };
 

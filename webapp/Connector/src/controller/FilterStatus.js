@@ -26,18 +26,6 @@ Ext.define('Connector.controller.FilterStatus', {
                         this.createDetail()
                     ]
                 });
-//                var infoContainer = Ext.create('Ext.container.Container', {
-//                    itemId: 'filterinfocontainer',
-//                    hidden: true,
-//                    flex: 10,
-//                    layout: {
-//                        type: 'vbox',
-//                        align: 'stretch',
-//                        pack: 'start'
-//                    },
-//                    margin: '10 10',
-//                    items: []
-//                });
                 navfilter.add(container);
             }
         });
@@ -136,7 +124,9 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     onDetailSelect : function(view, detail) {
-        this.showFilterEditor(detail);
+        if (detail.get('activeCountLink') === true) {
+            this.showFilterEditor(detail);
+        }
     },
 
     showFilterEditor : function(filterOrDetail) {
@@ -158,6 +148,7 @@ Ext.define('Connector.controller.FilterStatus', {
             if (filterOrDetail.$className === "Connector.model.Detail") {
                 config.dimensionUniqueName = filterOrDetail.get('dimension');
                 config.hierarchyUniqueName = filterOrDetail.get('hierarchy');
+                config.level = filterOrDetail.get('level');
             }
             else if (filterOrDetail.$className === "Connector.model.Filter") {
                 var filter = filterOrDetail;
@@ -191,10 +182,6 @@ Ext.define('Connector.controller.FilterStatus', {
             });
 
             parent.add(infoPane);
-
-//            this.getStateManager().on('selectionchange', function() { this.resetInfoPane(infoPane); }, this, {single: true});
-//            this.getStateManager().on('filterchange', function() { this.resetInfoPane(infoPane); }, this, {single: true});
-//            this.getViewManager().on('afterchangeview', function() { this.resetInfoPane(infoPane); }, this, {single: true});
         }
     },
 
