@@ -2029,3 +2029,34 @@ div.definition-overflow
   position: relative;
   top: 0px;
 }
+
+.arrow-window {
+  position: absolute;
+  background-color: $light-color;
+  border: 1px solid $heat-scale-3;
+
+  &:after, &:before {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-color: rgba(0, 0, 0, 0); // Make the border invisible except for the bottom.
+    border-bottom-color: $light-color;
+    border-width: 15px;
+    margin-left: -15px;
+  }
+
+  &:before {
+    border-color: rgba(0, 0, 0, 0); // Make the border invisible except for the bottom.
+    border-bottom-color: $heat-scale-3;
+    border-width: 16px;
+    margin-left: -16px;
+  }
+}
