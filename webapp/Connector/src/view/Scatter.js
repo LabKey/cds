@@ -285,7 +285,19 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 hoverText : function(row) {
                     // TODO: figure out how to display subject id.
-                    return '' + row.xname + ': ' + row.x + ', ' + row.yname + ': ' + row.y;
+                    var text = 'Subject: ' + row.subjectId.value;
+
+                    if (row.xname) {
+                        text += ',\n' + row.xname + ': ' + row.x;
+                    }
+
+                    text += ',\n' + row.yname + ': ' + row.y;
+
+                    if (row.colorname) {
+                        text += ',\n' + row.colorname + ': ' + row.color;
+                    }
+
+                    return text;
                 },
                 mouseOverFn: function(event, pointData, layerSel){
                     if (!layerScope.isBrushed) {
@@ -1262,8 +1274,9 @@ Ext.define('Connector.view.Scatter', {
                     y : yVal,
                     color : colorVal,
                     subjectId: rows[r][subjectCol],
-                    xname : xa ? xa.label : '',
-                    yname : ya.label
+                    xname : xa ? xa.label : null,
+                    yname : ya.label,
+                    colorname : ca.label
                 });
             }
 
