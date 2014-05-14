@@ -51,12 +51,20 @@ Ext.define('Connector.view.module.StudyProducts', {
                 links.on('click', function(a,b,c) {
                     var target = Ext.get(b);
                     var container = target.up('.modulecontainer');
-                    var content = Connector.factory.Module.defineView({ type: 'text', staticData: {
-                        title: "Test",
-                        text: "Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum"
-                    }}, this.model, this.state);
+                    var content = Connector.factory.Module.defineView({
+                        type: 'text',
+                        staticData: {
+                            title: "Test",
+                            text: "Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum"
+                        }
+                    }, this.model, this.state);
 
-                    var popup = Ext.create('Connector.view.Popup', {container: container, anchor: target, content: content});
+                    var popup = Ext.create('Connector.view.Popup', {
+                        container: container,
+                        anchor: target,
+                        content: content,
+                        width: 300
+                    });
                 }, this);
             },
             scope: this

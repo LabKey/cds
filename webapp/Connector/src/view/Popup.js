@@ -9,8 +9,9 @@ Ext.define('Connector.view.Popup', {
 
     cls: 'popup',
 
-    width: 200,
-    height: 200,
+    initialWidth: 200,
+    initialHeight: 200,
+
     frame: false,
     border: false,
     bodyBorder: false,
@@ -31,9 +32,27 @@ Ext.define('Connector.view.Popup', {
         right : '<div class="popup-arrow left shadow"></div>'
     },
 
+    // added : function() {
+    //     console.log("POP: after render, W/H", this.contentComponent.getHeight(), this.contentComponent.getWidth());
+    //     this.relayout();
+    // },
+
+    relayout : function() {
+        var w = this.initialWidth;
+        var h = this.initialHeight;
+        try {
+            w = this.width || this.contentComponent.getWidth();
+            h = this.height || this.contentComponent.getHeight();
+        } catch (ex) {}
+
+        console.log("Layout",w,h);
+    },
+
     initComponent : function() {
-        var contentWidth = this.width;
-        var contentHeight = this.height;
+
+        console.log("POP: init component");
+        var contentWidth = this.initialWidth;
+        var contentHeight = this.initialHeight;
         var affordanceSize = 15;
         var container = {
             itemId: 'container',
@@ -52,9 +71,6 @@ Ext.define('Connector.view.Popup', {
                 backgroundColor: 'transparent'
             }
         }
-
-        container.region = 'east';
-        affordance.region = 'west';
 
         this.renderTo = this.container || Ext.getBody();
 
@@ -179,8 +195,10 @@ Ext.define('Connector.view.Popup', {
         this.callParent();
 
         var container = this.getComponent('container');
-        console.log("CONT",container);
-        container.add(this.content);
+        this.contentComponent = container.add(this.content);
+        this.on('afterrender', this.relayout, this);
+        this.relayout();
+        //console.log("ContentComponent",this.contentComponent);
 //        var center = this.getComponent('centerRegion');
     }
 
