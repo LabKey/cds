@@ -135,28 +135,70 @@ Ext.define('Connector.panel.ColorSelector', {
             }
     ),
 
-    setLegend : function(legendData) {
-        var legendEl = Ext4.query('#color-legend')[0];
-        legendEl.innerHTML = '';
+    showHover : function(d) {
+        var svgNS = "http://www.w3.org/2000/svg", bbox, winX, winY, hoverEl, svgEl, symbolEl, textEl;
 
-        if (!this.canvas) {
-            this.canvas = d3.select('#color-legend').append('svg');
-            this.canvas.attr('width', 75);
-            this.canvas.attr('height', 18);
+        bbox = this.getBoundingClientRect(); // this is the actual dom element.
+        winX = bbox.left - 125 + 9;
+        winY = bbox.top + 40;
+
+        hoverEl = document.createElement('div');
+        hoverEl.setAttribute('class', 'arrow-window');
+        hoverEl.style.top = winY + 'px';
+        hoverEl.style.left = winX + 'px';
+        hoverEl.style.width = '250px';
+        hoverEl.style.height = '35px';
+        hoverEl.style.padding = '5px';
+
+        symbolEl = document.createElementNS(svgNS, 'path');
+        symbolEl.setAttribute('fill', d.color);
+        symbolEl.setAttribute('d', d.shape());
+        symbolEl.setAttribute('transform', 'translate(8, 10)');
+
+        textEl = document.createElementNS(svgNS, 'text');
+        textEl.textContent = d.text;
+        textEl.setAttribute('x', '25');
+        textEl.setAttribute('y', '15');
+
+        svgEl = document.createElementNS(svgNS, 'svg');
+        svgEl.appendChild(symbolEl);
+        svgEl.appendChild(textEl);
+        hoverEl.appendChild(svgEl);
+
+        document.querySelector('body').appendChild(hoverEl);
+        d.hoverEl = hoverEl;
+    },
+
+    hideHover : function(d) {
+        if(d.hoverEl) {
+            d.hoverEl.remove();
+            delete d.hoverEl;
         }
+    },
 
-        var points = this.canvas.selectAll('.point').data(legendData);
-        points.exit().remove();
-        points.enter().append('path')
-                .attr('d', function(d){
-                    return d.shape();
-                })
-                .attr('fill', function(d){
-                    return d.color;
-                })
-                .attr('transform', function(d, i){
-                    return 'translate(' + (8 + i*20) + ',10)';
-                });
+    setLegend : function(legendData) {
+        var canvas, glyphs, rects;
+
+        Ext4.query('#color-legend')[0].innerHTML = ''; // Clear the current legend element.
+
+        canvas = d3.select('#color-legend').append('svg').attr('height', 18);
+        glyphs = canvas.selectAll('.legend-point').data(legendData).enter().append('path');
+        glyphs.attr('class', 'legend-point')
+                .attr('d', function(d){return d.shape();})
+                .attr('fill', function(d){return d.color;})
+                .attr('transform', function(d, i){return 'translate(' + (8 + i*20) + ',10)';});
+
+        rects = canvas.selectAll('.legend-rect').data(legendData).enter().append('rect');
+        rects.attr('class', 'legend-rect')
+                .attr('width', 18)
+                .attr('height', 18)
+                .attr('x', function(d, i){return i * 20})
+                .attr('y', 0)
+                .attr('fill', '#000')
+                .attr('fill-opacity', 0);
+
+        rects.on('mouseover', this.showHover);
+        rects.on('mouseout', this.hideHover);
     },
 
     onUpdateVariable : function(m) {
