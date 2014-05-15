@@ -227,26 +227,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
     runSelectToFilterAnimation : function(b) {
         this.getStateManager().moveSelectionToFilter();
-//        var p = b.up('panel');
-//        var me = this;
-//        p.dockedItems.items[0].getEl().fadeOut();
-//        Ext.get(Ext.query('.header', p.getEl().id)[0]).fadeOut({
-//            listeners : {
-//                afteranimate : function(){
-//                    p.getEl().slideOut('t', {
-//                        duration  : 250,
-//                        listeners : {
-//                            afteranimate : function() {
-//                                p.dockedItems.items[0].getEl().fadeIn();
-//                                me.getStateManager().moveSelectionToFilter();
-//                            },
-//                            scope : p
-//                        }
-//                    });
-//                },
-//                scope: p
-//            }
-//        });
     },
 
     createView : function(xtype, context) {
