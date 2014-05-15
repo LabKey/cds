@@ -114,8 +114,8 @@ Ext.define('Connector.view.Scatter', {
             },{
                 items: [{
                     id: 'colorselector',
-                    xtype: 'variableselector',
-                    disabled: true,
+                    xtype: 'colorselector',
+                    btnCls: 'colorbtn',
                     model: new Ext.create('Connector.model.Variable', {
                         typeLabel: 'color'
                     })
@@ -211,7 +211,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getPlotElement : function() {
-        var el = Ext.DomQuery.select('svg');
+        var el = Ext.query('#' + this.plot.renderTo);
         if (el.length > 0) {
             el = el[0];
         }
@@ -285,7 +285,19 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 hoverText : function(row) {
                     // TODO: figure out how to display subject id.
-                    return '' + row.xname + ': ' + row.x + ', ' + row.yname + ': ' + row.y;
+                    var text = 'Subject: ' + row.subjectId.value;
+
+                    if (row.xname) {
+                        text += ',\n' + row.xname + ': ' + row.x;
+                    }
+
+                    text += ',\n' + row.yname + ': ' + row.y;
+
+                    if (row.colorname) {
+                        text += ',\n' + row.colorname + ': ' + row.color;
+                    }
+
+                    return text;
                 },
                 mouseOverFn: function(event, pointData, layerSel){
                     if (!layerScope.isBrushed) {
@@ -450,10 +462,32 @@ Ext.define('Connector.view.Scatter', {
             } else {
                 scales.x = {scaleType: 'discrete'};
             }
+
             scales.yLeft = {
                 scaleType: 'continuous',
                 tickFormat: numericTickFormat
             };
+
+            if (this.measures[2]) {
+                scales.color = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceColor()
+                };
+                scales.shape = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceShape()
+                };
+            }
+        }
+
+        var plotAes = {
+            x: function(row){return row.x;},
+            yLeft: function(row){return row.y},
+        };
+
+        if (this.measures[2]) {
+            plotAes.color = function(row) {return row.color};
+            plotAes.shape = function(row) {return row.color};
         }
 
         var plotConfig = {
@@ -466,10 +500,7 @@ Ext.define('Connector.view.Scatter', {
             height    : box.height,
             data      : rows,
             legendPos : 'none',
-            aes: {
-                x: function(row){return row.x;},
-                yLeft: function(row){return row.y}
-            },
+            aes: plotAes,
             bgColor: '#FFFFFF', // $light-color
             gridColor: '#FFFFFF', // $light-color
             gridLineColor: '#F0F0F0', // $secondary-color
@@ -675,6 +706,10 @@ Ext.define('Connector.view.Scatter', {
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
+                if (this.measures[2]) {
+                    colorSelector = Ext.getCmp('colorselector');
+                    colorSelector.setLegend(this.plot.getLegendData());
+                }
             }
             catch(err) {
                 this.showMessage(err.message);
@@ -723,43 +758,77 @@ Ext.define('Connector.view.Scatter', {
 
     getActiveMeasures : function() {
         this.fromFilter = false;
-        var measures = {
+        var sel, measures = {
             x: null,
-            y: null
+            y: null,
+            color: null
         };
 
         // first check the measure selections
         if (this.axisPanelX) {
-            var sel = this.axisPanelX.getSelection();
+            sel = this.axisPanelX.getSelection();
             if (sel && sel.length > 0) {
                 measures.x = sel[0].data;
             }
         }
         if (this.axisPanelY) {
-            var sel = this.axisPanelY.getSelection();
+            sel = this.axisPanelY.getSelection();
             if (sel && sel.length > 0) {
                 measures.y = sel[0].data;
             }
         }
+        if (this.colorPanel) {
+            sel = this.colorPanel.getSelection();
+            if (sel && sel.length > 0) {
+                measures.color = sel[0].data;
+            }
+        }
 
-        // second, check the set of active filters
-        if (!measures.x && !measures.y) {
+        // first, check the set of active filters
+        if (!measures.x || !measures.y || !measures.color) {
             var filters = this.state.getFilters();
             for (var f=0; f < filters.length; f++) {
                 if (filters[f].get('isPlot') == true) {
                     var m = filters[f].get('plotMeasures');
 
-                    if (m.length > 1) {
+                    if (m[0]) {
                         measures.x = m[0].measure;
+                    }
+
+                    if (m[1]) {
                         measures.y = m[1].measure;
-                    } else {
-                        measures.x = null;
-                        measures.y = m[0].measure;
+                    }
+
+                    if (m[2]) {
+                        measures.color = m[2].measure;
                     }
 
                     this.fromFilter = true;
                     break;
                 }
+            }
+        }
+
+        // second check the measure selections
+        if (this.axisPanelX) {
+            sel = this.axisPanelX.getSelection();
+            if (sel && sel.length > 0) {
+                measures.x = sel[0].data;
+                this.fromFilter = false;
+            }
+        }
+        if (this.axisPanelY) {
+            sel = this.axisPanelY.getSelection();
+            if (sel && sel.length > 0) {
+                measures.y = sel[0].data;
+                this.fromFilter = false;
+            }
+        }
+        if (this.colorPanel) {
+            sel = this.colorPanel.getSelection();
+            if (sel && sel.length > 0) {
+                measures.color = sel[0].data;
+                this.fromFilter = false;
             }
         }
 
@@ -779,7 +848,6 @@ Ext.define('Connector.view.Scatter', {
     },
 
     onShowGraph : function() {
-
         this.hideMessage();
         this.refreshRequired = false;
 
@@ -787,6 +855,7 @@ Ext.define('Connector.view.Scatter', {
 
         this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
         this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
+        this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
 
         if (this.filterClear) {
             if (this.axisPanelY) {
@@ -798,6 +867,11 @@ Ext.define('Connector.view.Scatter', {
                 this.axisPanelX.clearSelection();
                 Ext.getCmp('xaxisselector').clearModel();
             }
+
+            if (this.colorPanel) {
+                this.colorPanel.clearSelection();
+                Ext.getCmp('colorselector').clearModel();
+            }
         }
 
         if (this.filterClear || !activeMeasures.y) {
@@ -807,23 +881,27 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        this.measures = [ activeMeasures.x, activeMeasures.y ];
+        this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
 
         this.showLoad();
 
         var sorts = this.getSorts();
 
-        var wrappedMeasures = [];
+        var wrappedMeasures = [null, null, null];
 
         if (this.measures[0]) {
-            wrappedMeasures.push({measure : this.measures[0], time: 'visit'});
+            wrappedMeasures[0] = {measure : this.measures[0], time: 'visit'};
         }
 
         if (this.measures[1]) {
-            wrappedMeasures.push({measure : this.measures[1], time: 'visit'});
+            wrappedMeasures[1] = {measure : this.measures[1], time: 'visit'};
         }
 
-        if (!this.fromFilter) {
+        if (this.measures[2]) {
+            wrappedMeasures[2] = {measure : this.measures[2], time: 'visit'};
+        }
+
+        if (!this.fromFilter && activeMeasures.y) {
             this.updatePlotBasedFilter(wrappedMeasures);
         }
         else {
@@ -832,6 +910,12 @@ Ext.define('Connector.view.Scatter', {
 
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
+            var nonNullMeasures = [];
+            for (var i =0; i < wrappedMeasures.length; i++) {
+                if (wrappedMeasures[i]) {
+                    nonNullMeasures.push(wrappedMeasures[i]);
+                }
+            }
 
             if (ptidList)
             {
@@ -843,7 +927,7 @@ Ext.define('Connector.view.Scatter', {
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
                 method: 'POST',
                 jsonData: {
-                    measures: wrappedMeasures,
+                    measures: nonNullMeasures,
                     sorts: sorts,
                     limit: (this.rowlimit+1)
                 },
@@ -939,16 +1023,24 @@ Ext.define('Connector.view.Scatter', {
     },
 
     updatePlotBasedFilter : function(measures) {
+        var nonNullMeasures = [];
+        for (var i =0; i < measures.length; i++) {
+            if (measures[i]) {
+                nonNullMeasures.push(measures[i]);
+            }
+        }
+
         // Request Distinct Participants
         Ext.Ajax.request({
             url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
             method: 'POST',
             jsonData: {
-                measures: measures,
+                measures: nonNullMeasures,
                 sorts: this.getSorts(),
                 limit: (this.rowlimit+1)
             },
             success: function(response) {
+                // Note: We intentionally pass in the measures object that might have nulls.
                 this.onFilterDataSuccess(Ext.decode(response.responseText), measures);
             },
             failure: this.onFailure,
@@ -1055,7 +1147,8 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _preprocessData : function(data) {
-        var x = this.measures[0], y = this.measures[1], xa = null, ya = null, _xid, _yid;
+        var x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null, ya = null, ca = null,
+            _xid, _yid, _cid, subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
 
         // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
@@ -1104,6 +1197,29 @@ Ext.define('Connector.view.Scatter', {
             isContinuous: y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'TIMESTAMP'
         };
 
+        if (color) {
+            _cid = data.measureToColumn[color.alias] || data.measureToColumn[color.name];
+            ca = {
+                schema : color.schemaName,
+                query  : color.queryName,
+                name   : color.name,
+                alias  : color.alias,
+                colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
+                label  : color.label,
+                type   : color.type,
+            };
+        } else {
+            ca = {
+                schema  : null,
+                query   : null,
+                name    : null,
+                alias   : null,
+                colName : null,
+                label   : "",
+                isNumeric: false
+            }
+        }
+
         var map = [], r,
                 rows = data.rows,
                 len = rows.length,
@@ -1117,14 +1233,21 @@ Ext.define('Connector.view.Scatter', {
             this.msg.hide();
         }
 
-        var xVal, yVal, xIsNum, yIsNum, negX = false, negY = false;
+        var xVal, yVal, colorVal, xIsNum, yIsNum, negX = false, negY = false;
         for (r = 0; r < len; r++) {
             if (x) {
                 xVal = this._getValue(x, _xid, rows[r]);
             } else {
                 xVal = "";
             }
+
             yVal = this._getValue(y, _yid, rows[r]);
+
+            if (color) {
+                colorVal = this._getValue(color, _cid, rows[r]);
+            } else {
+                colorVal = null;
+            }
 
             // allow any pair that does not contain a negative value.
             // NaN, null, and undefined are non-negative values.
@@ -1149,9 +1272,11 @@ Ext.define('Connector.view.Scatter', {
                 map.push({
                     x : xVal,
                     y : yVal,
+                    color : colorVal,
                     subjectId: rows[r][subjectCol],
-                    xname : xa ? xa.label : '',
-                    yname : ya.label
+                    xname : xa ? xa.label : null,
+                    yname : ya.label,
+                    colorname : ca.label
                 });
             }
 
@@ -1206,6 +1331,7 @@ Ext.define('Connector.view.Scatter', {
             subjectColumn: subjectCol,
             xaxis: xa,
             yaxis: ya,
+            color: ca,
             rows : map,
             setXLinear : negX,
             setYLinear : negY
@@ -1313,9 +1439,7 @@ Ext.define('Connector.view.Scatter', {
                             if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);
-                                this.ywin.hide(null, function() {
-                                    this.fireEvent('axisselect', this, 'y', yselect);
-                                }, this);
+                                this.ywin.hide();
                             }
                         },
                         scope: this
@@ -1407,7 +1531,7 @@ Ext.define('Connector.view.Scatter', {
                         text  : 'set x axis',
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
-                            var xselect = this.axisPanelX.getSelection();
+                            var xselect = this.axisPanelX.getSelection(), yHasSelection;
 
                             // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
                             if (xselect && xselect.length > 0)
@@ -1419,17 +1543,17 @@ Ext.define('Connector.view.Scatter', {
                                 }
                             }
 
-                            if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
+                            yModel = Ext.getCmp('yaxisselector').getModel().data;
+                            yHasSelection = ((yModel.schemaLabel !== "" && yModel.queryLabel !== "") || (this.hasOwnProperty('axisPanelY') && this.axisPanelY.hasSelection()));
+
+                            if (yHasSelection && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
+                                this.xwin.hide();
                                 this.showTask.delay(300);
-                                this.xwin.hide(null, function() {
-                                    this.fireEvent('axisselect', this, 'x', xselect);
-                                }, this);
                             }
                             else if (this.axisPanelX.hasSelection()) {
                                 this.xwin.hide(null, function() {
                                     this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
-                                    this.fireEvent('axisselect', this, 'x', xselect);
                                 }, this);
                             }
                         },
@@ -1458,6 +1582,100 @@ Ext.define('Connector.view.Scatter', {
         }
         this.xwin.show(null, function() {
             this.runUniqueQuery(this.axisPanelX);
+        }, this);
+    },
+
+    showColorSelection : function(targetEl) {
+        if (!this.colorwin) {
+            var sCls = 'colorsource';
+            TYPES = {};
+            this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
+                flex      : 1,
+                ui        : 'axispanel',
+                title     : 'Color',
+                bodyStyle: 'padding: 15px 27px 0 27px;',
+                measureConfig : {
+                    allColumns : true,
+                    displaySourceCounts: true,
+                    includeTimpointMeasures : false,
+                    filter     : LABKEY.Query.Visualization.Filter.create({
+                        schemaName: 'study',
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    }),
+                    userFilter : function(row) {
+                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                    },
+                    showHidden : this.canShowHidden,
+                    cls        : 'coloraxispicker',
+                    sourceCls  : sCls,
+                    multiSelect: false
+                },
+                displayConfig : {
+                    mainTitle : 'Choose a Color Variable...'
+                },
+                scalename : 'colorscale'
+            });
+
+            var pos = this.getPlotPosition();
+
+            this.colorwin = Ext.create('Ext.window.Window', {
+                id        : 'plotcolorwin',
+                cls       : 'axiswindow',
+                animateTarget : targetEl,
+                sourceCls : sCls,
+                axisPanel : this.colorPanel,
+                modal     : true,
+                draggable : false,
+                header : false,
+                closeAction: 'hide',
+                resizable : false,
+                minHeight : 450,
+                maxHeight: 700,
+                minWidth: 600,
+                maxWidth: 975,
+                layout : {
+                    type : 'vbox',
+                    align: 'stretch'
+                },
+                items   : [this.colorPanel],
+                dockedItems : [{
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    ui : 'footer',
+                    padding: 15,
+                    items : ['->', {
+                        text: 'set color variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            var colorselect = this.colorPanel.getSelection();
+                            // TODO: determine if I need to set this.initialized to true. I don't think so, as I think
+                            // that only deals with x or y measures.
+                            this.showTask.delay(300);
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }, {
+                        text: 'cancel',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            // TODO: reset active selection. See ~line 1442 in showXMeasureSelection
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }]
+                }],
+                scope: this
+            });
+        }
+
+        this.updateMeasureSelection(this.colorwin);
+
+        if (this.colorPanel.hasSelection()) {
+            this.activeColorSelection = this.colorPanel.getSelection()[0];
+        }
+
+        this.colorwin.show(null, function(){
+            // TODO: runUniqueQuery? see ~line 1460 in showXMeasureSelection
         }, this);
     },
 
