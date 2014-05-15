@@ -255,7 +255,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
     }
 
-//    @Test
+    @Test
     public void verifyUserPermissions()
     {
         beginAt("project/" + getProjectName() + "/begin.view?");

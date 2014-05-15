@@ -393,10 +393,6 @@ li.fadein {
     border-bottom-color: $secondary-color;
   }
 
-  /*&:before {*/
-    /*border-bottom-color: trans;*/
-  /*}*/
-
   .x-form-item {
     span {
       @include smallStandout;
@@ -642,6 +638,19 @@ div.label span {
 div.boldlabel {
   @include smallStandout;
   font-size: 10pt;
+}
+
+/* Currently used in the Plot pane but meant to be used more widely */
+.smallstandout {
+  @include smallStandout;
+}
+
+.soft {
+  color: $heat-scale-2;
+}
+
+.spacer {
+  margin-top: 20px;
 }
 
 div.boldlabel span {
@@ -2026,7 +2035,6 @@ div.definition-overflow
   z-index: 10;
 
   .tabbutton {
-    //height: 100%;
     padding: 5px 20px;
     font-family: $bodycaps-font;
     font-size: 12pt;

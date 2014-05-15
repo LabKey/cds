@@ -168,6 +168,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>

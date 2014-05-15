@@ -18,8 +18,6 @@ Ext.define('Connector.model.InfoPane', {
 
     constructor : function(config) {
 
-        IP = this;
-
         if (config.olapProvider) {
             this.setOlapProvider(config.olapProvider);
         }
@@ -54,7 +52,13 @@ Ext.define('Connector.model.InfoPane', {
             this.getOlapProvider().onMDXReady(function(mdx) {
 
                 var filter = this.get('filter');
-                this.initializeModel(null, filter.get('hierarchy'), filter.get('level'));
+
+                if (filter.isPlot()) {
+                    this.set('title', 'In the plot');
+                }
+                else {
+                    this.initializeModel(null, filter.get('hierarchy'), filter.get('level'));
+                }
 
             }, this);
         }
@@ -77,6 +81,13 @@ Ext.define('Connector.model.InfoPane', {
             members: members,
             operator: this.get('operatorType')
         });
+    },
+
+    clearFilter : function() {
+        if (this.isFilterBased()) {
+            var filter = this.get('filter');
+            this.getOlapProvider().removeFilter(filter.id);
+        }
     },
 
     /**

@@ -11,7 +11,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'InfoPane'],
+    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'InfoPane', 'PlotPane'],
 
     init : function() {
 
@@ -138,6 +138,8 @@ Ext.define('Connector.controller.FilterStatus', {
 
         if (parent) {
 
+            var clazz = 'Connector.view.InfoPane';
+
             //
             // configure info pane view
             //
@@ -151,14 +153,16 @@ Ext.define('Connector.controller.FilterStatus', {
                 config.level = filterOrDetail.get('level');
             }
             else if (filterOrDetail.$className === "Connector.model.Filter") {
-                var filter = filterOrDetail;
-                if (filter.isGrid() || filter.isPlot() || filter.isGroup()) {
-                    console.log('Plot/Grid/Group filters not yet supported.');
+
+                if (filterOrDetail.isGrid() || filterOrDetail.isGroup()) {
+                    console.log('Grid/Group filters not yet supported.');
                     return;
                 }
-                else {
-                    config.filter = filter;
+                else if (filterOrDetail.isPlot()) {
+                    clazz = 'Connector.view.PlotPane';
                 }
+
+                config.filter = filterOrDetail;
             }
 
             //
@@ -169,8 +173,7 @@ Ext.define('Connector.controller.FilterStatus', {
                 statusContainer.hide();
             }
 
-
-            var infoPane = Ext.create('Connector.view.InfoPane', {
+            var infoPane = Ext.create(clazz, {
                 model: Ext.create('Connector.model.InfoPane', config),
                 listeners: {
                     hide: {

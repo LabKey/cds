@@ -22,82 +22,98 @@ Ext.define('Connector.view.InfoPane', {
 
     autoScroll: true,
 
+    showTitle: true,
+
+    showSort: true,
+
+    showOperator: true,
+
     initComponent : function() {
 
         var btnId = Ext.id();
         var model = this.getModel();
         var filterBased = model.isFilterBased();
 
-        this.items = [{
-            xtype: 'box',
-            tpl: new Ext.XTemplate(
-                '<h2 style="font-size: 18pt;">{title:htmlEncode}</h2>'
-            ),
-            data: model.data,
-            listeners: {
-                afterrender: function(box) {
-                    this.getModel().on('change', function(m) {
-                        this.update(m.data);
-                    }, box);
-                },
-                scope: this
-            }
-        },{
-            xtype: 'container',
-            ui: 'custom',
-            layout: { type: 'hbox' },
-            items: [{
+        this.items = [];
+
+        if (this.showTitle) {
+            this.items.push({
                 xtype: 'box',
                 tpl: new Ext.XTemplate(
-                    '<div class="sorter" style="margin-top: 20px;">',
-                        '<span style="color: #A09C9C;">SORTED BY:&nbsp;</span>',
-                        '<span>{hierarchyLabel:htmlEncode}</span>',
-                    '</div>'
+                        '<h2 style="font-size: 18pt;">{title:htmlEncode}</h2>'
                 ),
                 data: model.data,
                 listeners: {
                     afterrender: function(box) {
-                        var model = this.getModel();
-                        box.update(model.data);
-
-                        model.on('change', function(m) {
+                        this.getModel().on('change', function(m) {
                             this.update(m.data);
                         }, box);
                     },
                     scope: this
-                },
-                flex: 10
-            },{
-                id: btnId,
-                xtype: 'imgbutton',
-                itemId: 'infosortdropdown',
-                cls: 'sortDropdown',
-                style: 'float: right;',
-                vector: 21,
-                width: 21,
-                margin: '17 10 0 0',
-                hidden: filterBased,
-                menu: {
-                    xtype: 'menu',
-                    autoShow: true,
-                    itemId: 'infosortedmenu',
-                    showSeparator: false,
-                    width: 265,
-                    ui: 'custom',
-                    btn: btnId,
+                }
+            });
+        }
+
+        if (this.showSort) {
+            this.items.push({
+                xtype: 'container',
+                ui: 'custom',
+                layout: { type: 'hbox' },
+                items: [{
+                    xtype: 'box',
+                    tpl: new Ext.XTemplate(
+                            '<div class="sorter" style="margin-top: 20px;">',
+                            '<span style="color: #A09C9C;">SORTED BY:&nbsp;</span>',
+                            '<span>{hierarchyLabel:htmlEncode}</span>',
+                            '</div>'
+                    ),
+                    data: model.data,
                     listeners: {
-                        afterrender: this.bindSortMenu,
+                        afterrender: function(box) {
+                            var model = this.getModel();
+                            box.update(model.data);
+
+                            model.on('change', function(m) {
+                                this.update(m.data);
+                            }, box);
+                        },
+                        scope: this
+                    },
+                    flex: 10
+                },{
+                    id: btnId,
+                    xtype: 'imgbutton',
+                    itemId: 'infosortdropdown',
+                    cls: 'sortDropdown',
+                    style: 'float: right;',
+                    vector: 21,
+                    width: 21,
+                    margin: '17 10 0 0',
+                    hidden: filterBased,
+                    menu: {
+                        xtype: 'menu',
+                        autoShow: true,
+                        itemId: 'infosortedmenu',
+                        showSeparator: false,
+                        width: 265,
+                        ui: 'custom',
+                        btn: btnId,
+                        listeners: {
+                            afterrender: this.bindSortMenu,
+                            scope: this
+                        }
+                    },
+                    listeners: {
+                        afterrender : function(b) {
+                            b.showMenu(); b.hideMenu();
+                        },
                         scope: this
                     }
-                },
-                listeners: {
-                    afterrender : function(b) {
-                        b.showMenu(); b.hideMenu();
-                    },
-                    scope: this
-                }
-            }]
-        },{
+                }]
+            });
+        }
+
+        var middleContent = {
             xtype: 'container',
             itemId: 'middle',
             flex: 10,
@@ -107,7 +123,11 @@ Ext.define('Connector.view.InfoPane', {
                 align: 'stretch',
                 pack: 'start'
             },
-            items: [{
+            items: []
+        };
+
+        if (this.showOperator) {
+            middleContent.items.push({
                 itemId: 'operatorlabel',
                 xtype: 'box',
                 style: 'margin-top: 20px;',
@@ -115,7 +135,8 @@ Ext.define('Connector.view.InfoPane', {
                     tag: 'div',
                     html: '<span>Subjects can fall into multiple Types.</span>'
                 }
-            },{
+            });
+            middleContent.items.push({
                 itemId: 'operator',
                 xtype: 'radiogroup',
                 columns: 1,
@@ -138,64 +159,87 @@ Ext.define('Connector.view.InfoPane', {
                     change: this.onOperatorChange,
                     scope: this
                 }
-            },{
-                xtype: 'grid',
-                itemId: 'membergrid',
-                store: this.getMemberStore(),
-                viewConfig : { stripeRows : false },
+            });
+        }
 
-                /* Selection configuration */
-                selType: 'checkboxmodel',
-                selModel: {
-                    checkSelector: 'td.x-grid-cell-row-checker'
-                },
-                multiSelect: true,
+        var contents = this.getMiddleContent(model);
+        Ext.each(contents, function(content) {
+            middleContent.items.push(content);
+        }, this);
 
-                /* Column configuration */
-                enableColumnHide: false,
-                enableColumnResize: false,
-                columns: [{
-                    header: 'All',
-                    dataIndex: 'name',
-                    flex: 1,
-                    sortable: false,
-                    menuDisabled: true
-                }],
+        this.items.push(middleContent);
 
-                /* Grouping configuration */
-                requires: ['Ext.grid.feature.Grouping'],
-                features: [{
-                    ftype: 'grouping',
-                    collapsible: false,
-                    groupHeaderTpl: new Ext.XTemplate(
-                            '{name:this.renderHeader}', // 'name' is actually the value of the groupField
-                            {
-                                renderHeader: function(v) {
-                                    return v ? 'Has data in current filters' : 'No data in current filters';
-                                }
+        //
+        // Toolbar configuration
+        //
+        this.items.push(this.getToolbarConfig(model));
+
+        this.callParent();
+        this.bindModel();
+    },
+
+    getMiddleContent : function(model) {
+        return [{
+            xtype: 'grid',
+            itemId: 'membergrid',
+            store: this.getMemberStore(),
+            viewConfig : { stripeRows : false },
+
+            /* Selection configuration */
+            selType: 'checkboxmodel',
+            selModel: {
+                checkSelector: 'td.x-grid-cell-row-checker'
+            },
+            multiSelect: true,
+
+            /* Column configuration */
+            enableColumnHide: false,
+            enableColumnResize: false,
+            columns: [{
+                header: 'All',
+                dataIndex: 'name',
+                flex: 1,
+                sortable: false,
+                menuDisabled: true
+            }],
+
+            /* Grouping configuration */
+            requires: ['Ext.grid.feature.Grouping'],
+            features: [{
+                ftype: 'grouping',
+                collapsible: false,
+                groupHeaderTpl: new Ext.XTemplate(
+                        '{name:this.renderHeader}', // 'name' is actually the value of the groupField
+                        {
+                            renderHeader: function(v) {
+                                return v ? 'Has data in current filters' : 'No data in current filters';
                             }
-                    )
-                }],
+                        }
+                )
+            }],
 
-                /* Styling configuration */
-                border: false,
-                ui: 'custom',
-                cls : 'measuresgrid infopanegrid',
+            /* Styling configuration */
+            border: false,
+            ui: 'custom',
+            cls : 'measuresgrid infopanegrid',
 
-                listeners: {
-                    viewready : function(grid) {
-                        this.gridready = true;
-                    },
-                    scope: this
-                }
-            }]
-        },{
+            listeners: {
+                viewready : function(grid) {
+                    this.gridready = true;
+                },
+                scope: this
+            }
+        }];
+    },
+
+    getToolbarConfig : function(model) {
+        return {
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'footer',
             items: ['->',
                 {
-                    text: filterBased ? 'update' : 'filter',
+                    text: model.isFilterBased() ? 'update' : 'filter',
                     cls: 'filterinfoaction', // tests
                     handler: this.onUpdate,
                     scope: this
@@ -206,10 +250,7 @@ Ext.define('Connector.view.InfoPane', {
                     scope: this
                 }
             ]
-        }];
-
-        this.callParent();
-        this.bindModel();
+        };
     },
 
     bindModel : function() {

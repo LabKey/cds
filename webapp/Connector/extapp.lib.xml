@@ -112,6 +112,7 @@
         <script path="Connector/src/view/FilterSave.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/InfoPane.js"/>
+        <script path="Connector/src/view/PlotPane.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/GroupSummary.js"/>
         <script path="Connector/src/view/Header.js"/>
