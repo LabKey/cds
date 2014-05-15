@@ -44,17 +44,6 @@ Ext.define('Connector.view.Popup', {
         var affordanceComponent = this.affordanceComponent;
 
         var affordanceSize = 15;
-        // var container = {
-        //     itemId: 'container',
-        //     xtype: 'container',
-        //     style: {
-        //         backgroundColor: '#fff',
-        //         padding: "10px"
-        //     },
-        //     cls: 'shadow'
-        // }
-
-        // this.renderTo = this.container || Ext.getBody();
 
         var haveX = Ext.isDefined(this.popupX);
         var haveY = Ext.isDefined(this.popupY);
@@ -181,20 +170,6 @@ Ext.define('Connector.view.Popup', {
         this.style.left = x + "px";
         this.style.top = y + "px";
         this.setPosition(x, y);
-//console.log("Layout is",layout);
-
-        //this.layout = layout;
-        // this.layout.type = layout.type;
-        // layout.defer = true;
-        // this.layout = layout;
-
-        //this.doLayout();
-        //this.content;
-
-//        this.callParent();
-
-//        this.contentComponent = containerComponent.add(this.content);
-
     },
 
     initComponent : function() {
@@ -224,6 +199,37 @@ Ext.define('Connector.view.Popup', {
             style: {
                 position: 'absolute',
                 backgroundColor: 'transparent'
+            }
+        }
+
+        var me = this;
+
+        var close = {
+            itemId: 'close',
+            xtype: 'box',
+            html: 'x',
+            listeners: {
+                click: function() {
+                    //me.fireEvent('closepopup', me);
+                    me.destroy();
+                },
+                element: 'el',
+                scope: this
+            },
+            //floating: true,
+            style: {
+                position: 'absolute',
+                margin: '10px',
+                paddingLeft: '4px',
+                width: '18px',
+                height: '18px',
+                right: '0px',
+                top: '0px',
+                border: '1px solid #9B0D96',
+                borderRadius: '9px',
+                cursor: 'pointer',
+                color: '#9B0D96',
+                fontWeight: 'bold'
             }
         }
 
@@ -335,7 +341,7 @@ POP=this;
 
 //        first.style.zIndex = 1;
 
-        this.items = [affordance, container];
+        this.items = [close, affordance, container];
 
         if (this.container) {
             var xy = this.container.getXY();
@@ -360,8 +366,15 @@ POP=this;
 
         this.containerComponent = this.getComponent('container');
         this.affordanceComponent = this.getComponent('affordance');
+        this.closeComponent = this.getComponent('close');
         this.contentComponent = this.containerComponent.add(this.content);
-        this.on('afterrender', this.relayout, this);
+        this.containerComponent.add(this.closeComponent);
+        this.mon(this, 'afterrender', this.relayout, this);
+        var self = this;
+        Ext.EventManager.onWindowResize(this.relayout,this);
+        this.mon(this, 'destroy', function() {
+            Ext.EventManager.removeResizeListener(this.relayout, this);
+        });
         //this.relayout();
     }
 

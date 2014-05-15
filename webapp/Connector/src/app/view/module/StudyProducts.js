@@ -54,8 +54,8 @@ Ext.define('Connector.view.module.StudyProducts', {
                     var content = Connector.factory.Module.defineView({
                         type: 'text',
                         staticData: {
-                            title: "Test",
-                            text: "Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum / Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum"
+                            title: "Popup test",
+                            text: "From thousands of spreadsheets scattered across computers to huge files generated in genomics and proteomics experiments, research teams face daunting data management challenges. LabKey Server is a secure, web-based data integration platform that can be customized to meet the evolving needs of translational research organizations."
                         }
                     }, this.model, this.state);
 
@@ -64,7 +64,6 @@ Ext.define('Connector.view.module.StudyProducts', {
                         anchor: target,
                         content: content,
                         width: 350
-//                        height: 200
                     });
                 }, this);
             },
