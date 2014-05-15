@@ -63,7 +63,8 @@ Ext.define('Connector.view.module.StudyProducts', {
                         container: container,
                         anchor: target,
                         content: content,
-                        width: 300
+                        width: 350
+//                        height: 200
                     });
                 }, this);
             },
