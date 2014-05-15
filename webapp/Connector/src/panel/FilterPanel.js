@@ -94,14 +94,13 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     createHierarchyFilter : function(filterset) {
-        var view = Ext.create('Connector.view.Selection', {
+        return Ext.create('Connector.view.Selection', {
             cls: 'activefilter',
             store: {
                 model: this.getModelClass(filterset),
                 data: [filterset]
             }
         });
-        return view;
     },
 
     getModelClass : function(filterset) {
