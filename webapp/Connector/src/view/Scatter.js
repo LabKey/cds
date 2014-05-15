@@ -832,7 +832,7 @@ Ext.define('Connector.view.Scatter', {
             this.initialized = true;
         }
 
-        // add "subset" measures (ex. selecting subset of antigens to plot for an assay result)
+        // add "subset" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
         var subsetMeasures = this.getSubsetMeasures(activeMeasures);
 
         // Request Participant List
@@ -862,28 +862,52 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getSubsetMeasures : function(activeMeasures) {
-        var subsetMeasures = [];
+        var subsetMeasuresMap = {}; // map key to schema, query, name, and values
 
-        if (this.measures[0] && Ext.isDefined(activeMeasures.x.options.antigen))
+        Ext.each(["x", "y"], function(axis)
         {
-            subsetMeasures.push({measure : {
-                name: activeMeasures.x.options.antigen.columnInfo.name,
-                queryName: this.measures[0].queryName,
-                schemaName: this.measures[0].schemaName,
-                values: activeMeasures.x.options.antigen.values
-            }, time: 'visit'});
-        }
-        if (this.measures[1] && Ext.isDefined(activeMeasures.y.options.antigen))
-        {
-            subsetMeasures.push({measure : {
-                name: activeMeasures.y.options.antigen.columnInfo.name,
-                queryName: this.measures[1].queryName,
-                schemaName: this.measures[1].schemaName,
-                values: activeMeasures.y.options.antigen.values
-            }, time: 'visit'});
-        }
+            if (activeMeasures[axis].measure)
+            {
+                var schema = activeMeasures[axis].measure.schemaName;
+                var query = activeMeasures[axis].measure.queryName;
 
-        return subsetMeasures;
+                if (Ext.isDefined(activeMeasures[axis].options.antigen))
+                {
+                    var name = activeMeasures[axis].options.antigen.columnInfo.name;
+                    var values = activeMeasures[axis].options.antigen.values;
+                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                }
+
+                if (Ext.isDefined(activeMeasures[axis].options.analyte))
+                {
+                    var name = activeMeasures[axis].options.analyte.columnInfo.name;
+                    var values = activeMeasures[axis].options.analyte.values;
+                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                }
+            }
+        }, this);
+
+        var subsetMeasuresArr = [];
+        for (var key in subsetMeasuresMap)
+        {
+            subsetMeasuresArr.push({measure : {
+                name: subsetMeasuresMap[key].name,
+                queryName: subsetMeasuresMap[key].queryName,
+                schemaName: subsetMeasuresMap[key].schemaName,
+                values: subsetMeasuresMap[key].values
+            }, time: 'visit'});
+
+        }
+        return subsetMeasuresArr;
+    },
+
+    addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
+        var key = schema + "|" + query + "|" + name;
+
+        if (!measureMap[key])
+            measureMap[key] = { schemaName: schema, queryName: query, name: name, values: [] };
+
+        measureMap[key].values = measureMap[key].values.concat(values);
     },
 
     showLoad : function() {
