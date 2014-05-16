@@ -247,14 +247,15 @@ public class CDSHelper
 
     public void deleteGroupFromSummaryPage(String name)
     {
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.tagWithClass("div", "nav-label").withText(name).toBy()));
-        _test.click(Locator.tagWithClass("div", "nav-label").withText(name));
+        Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").withText(name);
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing.toBy()));
+        _test.click(groupListing);
         _test.waitForElement(Locators.cdsButtonLocator("delete"));
         _test.click(Locators.cdsButtonLocator("delete"));
         _test.waitForText("Are you sure you want to delete");
         _test.click(Locator.linkContainingText("Delete"));
         _test.waitForText("Welcome to the HIV Vaccine Data Connector.");
-        _test.waitForElementToDisappear(Locator.tagWithClass("div", "nav-label").withText(name));
+        _test.waitForElementToDisappear(groupListing);
     }
 
     public void toggleExplorerBar(String largeBarText)

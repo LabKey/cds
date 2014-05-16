@@ -198,7 +198,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "nav-label").withText(STUDY_GROUP));
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
         // Verify that the description has changed.
         waitForText(studyGroupDescModified);
@@ -218,7 +218,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "nav-label").withText(STUDY_GROUP));
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
         // Verify that filters get replaced when viewing group.
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
@@ -230,7 +230,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(Locator.tagWithText("label", "Snapshot: Keep this group static"));
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "nav-label").withText(STUDY_GROUP));
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
         waitForText(studyGroupDescModified);
         Locator selectedRadio = Ext4Helper.Locators.radiobutton(this, "Snapshot: Keep this group static")
                 .withPredicate(Locator.xpath("ancestor-or-self::table").withClass("x-form-cb-checked"));

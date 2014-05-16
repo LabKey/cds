@@ -48,6 +48,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Summary": "../../webapp/Connector/src/controller/Summary.js",
   "Connector.factory.Module": "../../webapp/Connector/src/factory/Module.js",
   "Connector.grid.Panel": "../../webapp/Connector/src/grid/Panel.js",
+  "Connector.group.Templates": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.model.Citation": "../../webapp/Connector/src/model/Citation.js",
   "Connector.model.ColumnInfo": "../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../webapp/Connector/src/model/Detail.js",
@@ -186,6 +187,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [],
+  "Connector.group.Templates": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -1147,6 +1149,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.grid.Panel": [
     "widget.connector-gridpanel"
   ],
+  "Connector.group.Templates": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -1242,7 +1245,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.home"
   ],
   "Connector.view.HomeBody": [],
-  "Connector.view.HomeHeader": [],
+  "Connector.view.HomeHeader": [
+    "widget.homeheader"
+  ],
   "Connector.view.Learn": [
     "widget.learn"
   ],

@@ -42,18 +42,35 @@ Ext.define('Connector.view.GroupListView', {
 
     trackOver: true,
 
-    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span></div>',
+    deferEmptyText: false,
+
+    loadMask: false,
+
+    margin: '30 0 0 0',
 
     cls: 'grouplist-view',
 
-    overItemCls: 'grouplist-label-over',
+    overItemCls: 'grouplist-over',
 
-    itemSelector: 'div.nav-label',
+    itemSelector: 'div.grouprow',
 
     tpl: new Ext.XTemplate(
-            '<tpl for=".">',
-                '<div class="nav-label">{label:htmlEncode}</div>',
-            '</tpl>'
+        '<div class="grouplist-header">My Saved Groups and Plots</div>',
+        '<tpl if="this.isEmpty(values)">',
+            '<div class="grouplist-empty">Saved work will appear here</div>',
+        '</tpl>',
+        '<tpl for=".">',
+            '<div class="grouprow">',
+                '<div class="groupicon">&nbsp;</div>',
+                '<div class="grouplabel">{label:htmlEncode}</div>',
+                '<div class="closeitem"></div>',
+            '</div>',
+        '</tpl>',
+        {
+            isEmpty : function(v) {
+                return (!Ext.isArray(v) || v.length === 0);
+            }
+        }
     ),
 
     initComponent : function() {
