@@ -52,7 +52,7 @@ Ext.define('Connector.controller.Summary', {
 
         /* Controls for Group Selections */
         this.control('grouplistview', {
-            render    : function(view) {
+            render : function(view) {
                 this.registerSelectGroup(view);
             }
         });

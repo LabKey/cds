@@ -27,17 +27,23 @@ Ext.define('Connector.view.Home', {
     },
 
     getBody : function() {
-        return Ext.create('Connector.view.HomeBody', {
-            items: [{
-                xtype: 'grouplist'
-            }]
-        });
+        if (!this.content) {
+            this.content = Ext.create('Connector.view.HomeBody', {
+                items: [{
+                    xtype: 'grouplist'
+                }]
+            });
+        }
+
+        return this.content;
     }
 });
 
 Ext.define('Connector.view.HomeHeader', {
 
     extend : 'Ext.container.Container',
+
+    alias: 'widget.homeheader',
 
     layout: {
         type : 'hbox',
@@ -56,21 +62,23 @@ Ext.define('Connector.view.HomeHeader', {
         this.items = [
             {
                 xtype: 'box',
-                autoEl: {
-                    tag: 'div',
-                    cls: 'titlepanel',
-                    children: [{
-                        tag: 'h1',
-                        html: 'Welcome to the HIV Vaccine Data Connector.'
-                    },{
-                        tag: 'h1',
-                        html: '# studies connected together combining',
-                        style: 'color: #7a7a7a;'
-                    },{
-                        tag: 'h1',
-                        html: '# data points.',
-                        style: 'color: #b5b5b5;'
-                    }]
+                itemId: 'statdisplay',
+                tpl: new Ext.XTemplate(
+                    '<div class="titlepanel">',
+                        '<h1>Welcome to the HIV Vaccine Data Connector.</h1>',
+                        '<h1 style="color: #7a7a7a;">{nstudy:htmlEncode} studies connected together combining</h1>',
+                        '<h1 style="color: #b5b5b5;">{ndatapts:this.commaFormat} data points.</h1>',
+                    '</div>',
+                    '<a href="#about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Data Connector...</a>',
+                    {
+                        commaFormat : function(v) {
+                            return Ext.util.Format.number(v, '0,000');
+                        }
+                    }
+                ),
+                data: {
+                    nstudy: 0,
+                    ndatapts: 0
                 }
             }
         ];
@@ -81,6 +89,8 @@ Ext.define('Connector.view.HomeHeader', {
 
 Ext.define('Connector.view.HomeBody', {
     extend: 'Ext.container.Container',
+
+    plugins: ['messaging'],
 
     margin: '0 0 0 27',
 
