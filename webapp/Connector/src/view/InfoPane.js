@@ -196,11 +196,21 @@ Ext.define('Connector.view.InfoPane', {
             enableColumnHide: false,
             enableColumnResize: false,
             columns: [{
+                xtype: 'templatecolumn',
                 header: 'All',
                 dataIndex: 'name',
                 flex: 1,
                 sortable: false,
-                menuDisabled: true
+                menuDisabled: true,
+                tpl: new Ext.XTemplate(
+                    '{name:htmlEncode}',
+                    '<tpl if="hasDetails === true">',
+                        '<a class="expando" href="{detailLink}">',
+                            '<span class="icontext">View info</span>',
+                            '<img src="' + Connector.resourceContext.path + '/images/cleardot.gif" class="iconone">',
+                        '</a>',
+                    '</tpl>'
+                )
             }],
 
             /* Grouping configuration */
@@ -324,6 +334,15 @@ Ext.define('Connector.view.InfoPane', {
 
             // prevent scrolling to bottom of selection
             grid.getView().focusRow(0);
+
+            var anodes = Ext.DomQuery.select('a.expando');
+            var nodes = Ext.DomQuery.select('a.expando *');
+            anodes = anodes.concat(nodes);
+            Ext.each(anodes, function(node) {
+                Ext.get(node).on('click', function(evt) {
+                    evt.stopPropagation();
+                });
+            });
         }
 
         //

@@ -252,6 +252,31 @@ li.fadein {
   }
 }
 
+a {
+  color: $link-color;
+
+  text-decoration: none;
+
+  &.logout {
+    color: $light-color;
+  }
+
+  &.survey {
+    float: right;
+    vertical-align: middle;
+  }
+
+  &:hover, &:active {
+    text-decoration: underline;
+  }
+}
+
+svg a {
+  &:hover, &:active {
+    text-decoration: none;
+  }
+}
+
 .x-tab-bar {
   display: none;
 }
@@ -891,6 +916,57 @@ div.nolink.status-over {
     opacity: 0.6;
     right: 50%;
     bottom: 2px;
+  }
+}
+
+.x-grid-data-row:hover .expando {
+  visibility: visible;
+}
+
+a.expando {
+  -webkit-transition: width 0.5s;
+  -moz-transition: width 0.5s;
+  -ms-transition: width 0.5s;
+  -o-transition: width 0.5s;
+  transition: width 0.5s;
+
+  display: inline-block;
+  text-decoration: none;
+  position: absolute;
+  right: 10px;
+  visibility: hidden;
+  float: right;
+  border-radius: 15px;
+  border: 2px solid $info-color;
+  width: 17px;
+  height: 17px;
+  padding: 0px 0px 0px 8px;
+
+  .icontext {
+    display: none;
+    color: $info-color;
+  }
+
+  .iconone {
+    position: absolute;
+    right: 0px;
+    width: 14px;
+    height: 13px;
+    background-image: url(images/infoover.png);
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+  }
+
+  &:hover {
+    background-color: $info-color;
+    cursor: pointer;
+
+    width: 90px;
+
+    .icontext {
+      display: inline;
+      color: $light-color;
+    }
   }
 }
 /* -- END Connector.view.InfoPane */
@@ -1754,34 +1830,10 @@ a.cite-ref {
   a {
     color: $info-color;
     text-decoration: underline;
-  }
-  a:hover {
-    cursor: pointer;
-  }
-}
 
-a {
-  color: $link-color;
-
-  text-decoration: none;
-
-  &.logout {
-    color: $light-color;
-  }
-
-  &.survey {
-    float: right;
-    vertical-align: middle;
-  }
-
-  &:hover, &:active {
-    text-decoration: underline;
-  }
-}
-
-svg a {
-  &:hover, &:active {
-    text-decoration: none;
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 

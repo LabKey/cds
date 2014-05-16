@@ -451,11 +451,9 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         this.cancelShowLoad();
 
         // clean-up buttons
-        for (var btn in this.btnMap) {
-            if (this.btnMap.hasOwnProperty(btn)) {
-                this.btnMap[btn].destroy();
-            }
-        }
+        Ext.iterate(this.btnMap, function(id, btn) {
+            btn.destroy();
+        }, this);
         this.btnMap = {};
     }
 });

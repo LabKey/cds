@@ -31,7 +31,9 @@ Ext.define('Connector.model.InfoPane', {
                     {name: 'uniqueName'},
                     {name: 'name'},
                     {name: 'count', type: 'int'},
-                    {name: 'hasData', type: 'boolean', convert: function(val, rec){ return rec.data.count > 0; }}
+                    {name: 'hasData', type: 'boolean', convert: function(val, rec){ return rec.data.count > 0; }},
+                    {name: 'hasDetails', type: 'boolean', defaultValue: false},
+                    {name: 'detailLink'}
                 ]
             });
         }
@@ -269,14 +271,22 @@ Ext.define('Connector.model.InfoPane', {
         var modelDatas = [], selectedItems = [];
         var filterBased = this.isFilterBased();
 
+        var dim = this.get('dimension');
+        var hasDetails = this.get('dimension').supportsDetails;
+        var linkPrefix = '#learn/learn/' + encodeURIComponent(dim.name) + '/';
+
         Ext.each(memberDefinitions, function(definition, idx) {
 
             var def = definition[0];
             var _count = counts[idx][0].value;
+            var _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
+
             modelDatas.push({
                 uniqueName: def.uniqueName,
-                name: LABKEY.app.model.Filter.getMemberLabel(def.name),
-                count: _count
+                name: _name,
+                count: _count,
+                hasDetails: hasDetails,
+                detailLink: linkPrefix + encodeURIComponent(_name)
             });
 
             if (filterBased) {

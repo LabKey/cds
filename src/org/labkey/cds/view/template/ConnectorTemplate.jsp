@@ -51,6 +51,9 @@
             studyContext: {
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisitColumn: 'SubjectVisit'
+            },
+            resourceContext: {
+                path: <%=PageFlowUtil.jsString(resourcePath)%>
             }
         };
     </script>

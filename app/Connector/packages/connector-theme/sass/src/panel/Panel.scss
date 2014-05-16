@@ -168,6 +168,10 @@ div.measuresgrid .x-grid-view {
   .x-grid-row-over .x-grid-cell-last {
     background-color: transparent;
   }
+
+  .x-grid-cell-inner {
+    padding: 3px 6px 2px 6px;
+  }
 }
 
 /* Group selection panels */
