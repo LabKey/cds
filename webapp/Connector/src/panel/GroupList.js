@@ -15,6 +15,8 @@ Ext.define('Connector.panel.GroupList', {
 
     ui: 'custom',
 
+    bubbleEvents: ['deletegroup'],
+
     initComponent : function() {
 
         this.items = [this.getGroupListView()];
@@ -54,6 +56,8 @@ Ext.define('Connector.view.GroupListView', {
 
     itemSelector: 'div.grouprow',
 
+    bubbleEvents: ['deletegroup'],
+
     tpl: new Ext.XTemplate(
         '<div class="grouplist-header">My Saved Groups and Plots</div>',
         '<tpl if="this.isEmpty(values)">',
@@ -61,17 +65,28 @@ Ext.define('Connector.view.GroupListView', {
         '</tpl>',
         '<tpl for=".">',
             '<div class="grouprow">',
-                '<div class="groupicon">&nbsp;</div>',
+                '<div class="groupicon">{containsPlot:this.plotter}</div>',
                 '<div class="grouplabel">{label:htmlEncode}</div>',
-                '<div class="closeitem"></div>',
+                '<div class="closeitem" group-index="{[xindex-1]}"></div>',
             '</div>',
         '</tpl>',
         {
             isEmpty : function(v) {
                 return (!Ext.isArray(v) || v.length === 0);
+            },
+            // This will be replaced by a plot image
+            plotter : function(containsPlot) {
+                return containsPlot === true ? 'P' : '';
             }
         }
     ),
+
+    constructor: function(config) {
+
+        this.callParent([config]);
+
+        this.addEvents('deletegroup');
+    },
 
     initComponent : function() {
 
@@ -80,5 +95,56 @@ Ext.define('Connector.view.GroupListView', {
         this.store = Connector.model.Group.getGroupStore();
 
         this.callParent();
+
+        this.bindTask = new Ext.util.DelayedTask(this.bindItems, this);
+
+        this.on('refresh', this.doBind, this);
+    },
+
+    bindItems : function() {
+
+        var view = this;
+
+        if (!view || !view.getEl()) {
+            console.warn('unable to bind group listing events');
+            return;
+        }
+
+        var closes = view.getEl().select('.closeitem');
+        if (closes && Ext.isArray(closes.elements)) {
+            closes = closes.elements;
+
+            var el, modelId;
+
+            Ext.each(closes, function(close) {
+                el = Ext.get(close);
+                modelId = el.getAttribute('group-index');
+                modelId = parseInt(modelId);
+
+                if (Ext.isNumber(modelId)) {
+                    el.on('click', view.onRemoveClick, view);
+                }
+            });
+        }
+    },
+
+    onRemoveClick : function(evt, element) {
+
+        if (element) {
+            var el = Ext.get(element);
+            var index = el.getAttribute('group-index');
+            var store = this.getStore();
+            var group = store.getAt(index);
+
+            GG = group;
+            if (group) {
+                evt.stopPropagation();
+                this.fireEvent('deletegroup', group);
+            }
+        }
+    },
+
+    doBind : function() {
+        this.bindTask.delay(50);
     }
 });

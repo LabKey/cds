@@ -236,12 +236,6 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 
     deleteGroup : function() {
         this.fireEvent('deletegroup', this.group);
-//        Ext.MessageBox.confirm(
-//                'Delete Group?',
-//                'Are you sure you want to delete "' + this.group.get('label') + '"?',
-//                function(ans){ if (ans === 'yes') { this.fireEvent('requestgroupdelete', this.group.data.id); }},
-//                this
-//        );
     },
 
     updateView : function(group) {

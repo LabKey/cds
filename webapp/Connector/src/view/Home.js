@@ -30,7 +30,30 @@ Ext.define('Connector.view.Home', {
         if (!this.content) {
             this.content = Ext.create('Connector.view.HomeBody', {
                 items: [{
-                    xtype: 'grouplist'
+                    xtype: 'grouplist',
+                    listeners: {
+                        deletegroup: function(group) {
+                            var content = this.content;
+                            if (content && content.showMessage) {
+                                content.hideMessage(true);
+                                var id = Ext.id();
+                                var cancelId = Ext.id();
+                                content.showMessage('Are you sure you want to delete "' + group.get('label') + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
+                                var deleteLink = Ext.get(id);
+                                if (deleteLink) {
+                                    deleteLink.on('click', function() {
+                                        content.hideMessage(true);
+                                        this.fireEvent('requestgroupdelete', group.get('id'));
+                                    }, this, {single: true});
+                                }
+                                var cancelLink = Ext.get(cancelId);
+                                if (cancelLink) {
+                                    cancelLink.on('click', function() { content.hideMessage(true); }, this, {single: true});
+                                }
+                            }
+                        },
+                        scope: this
+                    },
                 }]
             });
         }

@@ -34,6 +34,10 @@ Ext.define('Connector.controller.Group', {
             requestback: this.doBack
         });
 
+        this.control('home', {
+            requestgroupdelete: this.doGroupDeleteFromSummary
+        });
+
         this.callParent();
     },
 
@@ -294,11 +298,6 @@ Ext.define('Connector.controller.Group', {
     onGroupSaved : function(grp, filters) {
 
         var name = grp.label ? grp.label : grp.category.label;
-//
-//        var group = Ext.create('Connector.model.FilterGroup', {
-//            name : name,
-//            filters : filters
-//        });
 
         this.getStateManager().setFilters(filters);
         this.getViewManager().hideView('groupsave');
