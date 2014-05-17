@@ -65,18 +65,20 @@ Ext.define('Connector.view.GroupListView', {
         '</tpl>',
         '<tpl for=".">',
             '<div class="grouprow">',
-                '<div class="groupicon">{containsPlot:this.plotter}</div>',
                 '<div class="grouplabel">{label:htmlEncode}</div>',
-                '<div class="closeitem" group-index="{[xindex-1]}"></div>',
+                '<tpl if="this.plotter(containsPlot)">',
+                    '<div class="groupicon"><img src="/labkey/production/Connector/resources/images/plot.png"></div>',
+                '</tpl>',
+//                '<div class="closeitem" group-index="{[xindex-1]}"></div>',
             '</div>',
         '</tpl>',
         {
             isEmpty : function(v) {
                 return (!Ext.isArray(v) || v.length === 0);
             },
-            // This will be replaced by a plot image
             plotter : function(containsPlot) {
-                return containsPlot === true ? 'P' : '';
+                console.log(containsPlot);
+                return containsPlot === true;
             }
         }
     ),
@@ -96,9 +98,9 @@ Ext.define('Connector.view.GroupListView', {
 
         this.callParent();
 
-        this.bindTask = new Ext.util.DelayedTask(this.bindItems, this);
-
-        this.on('refresh', this.doBind, this);
+        // disable close option for now
+//        this.bindTask = new Ext.util.DelayedTask(this.bindItems, this);
+//        this.on('refresh', this.doBind, this);
     },
 
     bindItems : function() {

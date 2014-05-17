@@ -832,9 +832,9 @@ div.status-over {
 /* Connector.view.GroupListView */
 div.grouplist-view {
   padding: 2px 0;
-  font-family: $data-font;
+  font-family: $bodycaps-font;
   font-size: 13pt;
-  color: black;
+  color: $dark-color;
 }
 
 .grouplist-header {
@@ -857,7 +857,11 @@ div.grouplist-view {
 
   .groupicon {
     display: inline-block;
-    width: 30px;
+    float: right;
+
+    img {
+      padding: 3px 0;
+    }
   }
 
   .grouplabel {
