@@ -48,6 +48,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Summary": "../../webapp/Connector/src/controller/Summary.js",
   "Connector.factory.Module": "../../webapp/Connector/src/factory/Module.js",
   "Connector.grid.Panel": "../../webapp/Connector/src/grid/Panel.js",
+  "Connector.model.Antigen": "../../webapp/Connector/src/model/Antigen.js",
   "Connector.model.Citation": "../../webapp/Connector/src/model/Citation.js",
   "Connector.model.ColumnInfo": "../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../webapp/Connector/src/model/Detail.js",
@@ -63,12 +64,14 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.VisitTag": "../../webapp/Connector/src/model/VisitTag.js",
   "Connector.panel.AxisSelectDisplay": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../webapp/Connector/src/panel/AxisSelector.js",
+  "Connector.panel.ColorSelector": "../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.panel.Selection": "../../webapp/Connector/src/panel/Selection.js",
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
   "Connector.plugin.Messaging": "../../webapp/Connector/src/plugin/Messaging.js",
+  "Connector.store.AssayDistinctValue": "../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
   "Connector.store.Summary": "../../webapp/Connector/src/store/Summary.js",
@@ -186,6 +189,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [],
+  "Connector.model.Antigen": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -201,12 +205,14 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
+  "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
   "Connector.panel.Selection": [],
   "Connector.plugin.HeaderLock": [],
   "Connector.plugin.Messaging": [],
+  "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
   "Connector.store.Summary": [],
@@ -1147,6 +1153,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.grid.Panel": [
     "widget.connector-gridpanel"
   ],
+  "Connector.model.Antigen": [],
   "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
@@ -1166,6 +1173,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],
+  "Connector.panel.ColorSelector": [
+    "widget.colorselector"
+  ],
   "Connector.panel.Feedback": [
     "widget.feedback"
   ],
@@ -1183,6 +1193,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.plugin.Messaging": [
     "plugin.messaging"
+  ],
+  "Connector.store.AssayDistinctValue": [
+    "store.assaydistinctvalue"
   ],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],

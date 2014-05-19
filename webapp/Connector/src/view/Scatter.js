@@ -15,7 +15,6 @@ Ext.define('Connector.view.Scatter', {
     cls: 'scatterview',
 
     measures: [],
-    allColumns: false,
     canShowHidden: false,
 
     isActiveView: true,
@@ -24,9 +23,12 @@ Ext.define('Connector.view.Scatter', {
     showAxisButtons: true,
 
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
-    rowlimit: 5000,
+    rowlimit: 0,
 
     layout: 'border',
+
+    defaultSortSchema: 'study',
+    defaultSortQuery: 'Demographics',
 
     initComponent : function() {
 
@@ -759,44 +761,24 @@ Ext.define('Connector.view.Scatter', {
     getActiveMeasures : function() {
         this.fromFilter = false;
         var sel, measures = {
-            x: null,
-            y: null,
+            x: {measure: null, options: {}},
+            y: {measure: null, options: {}},
             color: null
         };
 
-        // first check the measure selections
-        if (this.axisPanelX) {
-            sel = this.axisPanelX.getSelection();
-            if (sel && sel.length > 0) {
-                measures.x = sel[0].data;
-            }
-        }
-        if (this.axisPanelY) {
-            sel = this.axisPanelY.getSelection();
-            if (sel && sel.length > 0) {
-                measures.y = sel[0].data;
-            }
-        }
-        if (this.colorPanel) {
-            sel = this.colorPanel.getSelection();
-            if (sel && sel.length > 0) {
-                measures.color = sel[0].data;
-            }
-        }
-
         // first, check the set of active filters
-        if (!measures.x || !measures.y || !measures.color) {
+        if (!measures.x.measure || !measures.y.measure || !measures.color) {
             var filters = this.state.getFilters();
             for (var f=0; f < filters.length; f++) {
                 if (filters[f].get('isPlot') == true) {
                     var m = filters[f].get('plotMeasures');
 
                     if (m[0]) {
-                        measures.x = m[0].measure;
+                        measures.x = {measure: m[0].measure, options: {}};
                     }
 
                     if (m[1]) {
-                        measures.y = m[1].measure;
+                        measures.y = {measure: m[1].measure, options: {}};
                     }
 
                     if (m[2]) {
@@ -813,14 +795,25 @@ Ext.define('Connector.view.Scatter', {
         if (this.axisPanelX) {
             sel = this.axisPanelX.getSelection();
             if (sel && sel.length > 0) {
-                measures.x = sel[0].data;
+                measures.x = {
+                    measure: sel[0].data,
+                    options: this.axisPanelX.getVariableOptionValues()
+                };
+
+                // special case to look for userGroups as a variable option to use as filter values for the x measure
+                if (measures.x.options.userGroups)
+                    measures.x.measure.values = measures.x.options.userGroups;
+
                 this.fromFilter = false;
             }
         }
         if (this.axisPanelY) {
             sel = this.axisPanelY.getSelection();
             if (sel && sel.length > 0) {
-                measures.y = sel[0].data;
+                measures.y = {
+                    measure: sel[0].data,
+                    options: this.axisPanelY.getVariableOptionValues()
+                };
                 this.fromFilter = false;
             }
         }
@@ -833,14 +826,14 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // map the y-axis schema and query name for a time point x-axis variable
-        if (measures.x)
+        if (measures.x.measure && measures.y.measure)
         {
-            if (!measures.x.schemaName && !measures.x.queryName)
+            if (!measures.x.measure.schemaName && !measures.x.measure.queryName)
             {
-                var x = Ext.clone(measures.x);
-                x.schemaName = measures.y.schemaName;
-                x.queryName = measures.y.queryName;
-                measures.x = x;
+                var x = Ext.clone(measures.x.measure);
+                x.schemaName = measures.y.measure.schemaName;
+                x.queryName = measures.y.measure.queryName;
+                measures.x.measure = x;
             }
         }
 
@@ -853,8 +846,8 @@ Ext.define('Connector.view.Scatter', {
 
         var activeMeasures = this.getActiveMeasures();
 
-        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
-        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
+        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y.measure ]);
+        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x.measure ]);
         this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
 
         if (this.filterClear) {
@@ -874,14 +867,16 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
-        if (this.filterClear || !activeMeasures.y) {
+        if (this.filterClear || !activeMeasures.y.measure) {
             this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
             return;
         }
 
-        this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
+        this.measures = [ activeMeasures.x.measure, activeMeasures.y.measure, activeMeasures.color ];
+
+        this.rowlimit = activeMeasures.x.measure && this.isContinuousMeasure(activeMeasures.x.measure) ? 5000 : 100000; // selectRows server default limit is 100000
 
         this.showLoad();
 
@@ -908,6 +903,9 @@ Ext.define('Connector.view.Scatter', {
             this.initialized = true;
         }
 
+        // add "subset" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
+        var subsetMeasures = this.getSubsetMeasures(activeMeasures);
+
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
             var nonNullMeasures = [];
@@ -927,7 +925,7 @@ Ext.define('Connector.view.Scatter', {
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
                 method: 'POST',
                 jsonData: {
-                    measures: nonNullMeasures,
+                    measures: nonNullMeasures.concat(subsetMeasures),
                     sorts: sorts,
                     limit: (this.rowlimit+1)
                 },
@@ -938,6 +936,55 @@ Ext.define('Connector.view.Scatter', {
 
             this.requestCitations();
         });
+    },
+
+    getSubsetMeasures : function(activeMeasures) {
+        var subsetMeasuresMap = {}; // map key to schema, query, name, and values
+
+        Ext.each(["x", "y"], function(axis)
+        {
+            if (activeMeasures[axis].measure)
+            {
+                var schema = activeMeasures[axis].measure.schemaName;
+                var query = activeMeasures[axis].measure.queryName;
+
+                if (Ext.isDefined(activeMeasures[axis].options.antigen))
+                {
+                    var name = activeMeasures[axis].options.antigen.columnInfo.name;
+                    var values = activeMeasures[axis].options.antigen.values;
+                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                }
+
+                if (Ext.isDefined(activeMeasures[axis].options.analyte))
+                {
+                    var name = activeMeasures[axis].options.analyte.columnInfo.name;
+                    var values = activeMeasures[axis].options.analyte.values;
+                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                }
+            }
+        }, this);
+
+        var subsetMeasuresArr = [];
+        for (var key in subsetMeasuresMap)
+        {
+            subsetMeasuresArr.push({measure : {
+                name: subsetMeasuresMap[key].name,
+                queryName: subsetMeasuresMap[key].queryName,
+                schemaName: subsetMeasuresMap[key].schemaName,
+                values: subsetMeasuresMap[key].values
+            }, time: 'visit'});
+
+        }
+        return subsetMeasuresArr;
+    },
+
+    addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
+        var key = schema + "|" + query + "|" + name;
+
+        if (!measureMap[key])
+            measureMap[key] = { schemaName: schema, queryName: query, name: name, values: [] };
+
+        measureMap[key].values = measureMap[key].values.concat(values);
     },
 
     showLoad : function() {
@@ -961,7 +1008,7 @@ Ext.define('Connector.view.Scatter', {
 
     requestCitations : function() {
         var measures = this.getActiveMeasures();
-        var x = measures.x, y = measures.y;
+        var x = measures.x.measure, y = measures.y.measure;
         var xy = [];
 
         if (x) {
@@ -1111,6 +1158,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     onFailure : function(response) {
+        console.log(response);
         this.hideLoad();
         this.showMessage('Failed to Load');
     },
@@ -1170,7 +1218,7 @@ Ext.define('Connector.view.Scatter', {
                 label  : x.label,
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE',
-                isContinuous: x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'TIMESTAMP'
+                isContinuous: this.isContinuousMeasure(x)
             };
         } else {
             xa = {
@@ -1194,7 +1242,7 @@ Ext.define('Connector.view.Scatter', {
             label  : y.label,
             type   : y.type,
             isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE',
-            isContinuous: y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'TIMESTAMP'
+            isContinuous: this.isContinuousMeasure(y)
         };
 
         if (color) {
@@ -1206,7 +1254,7 @@ Ext.define('Connector.view.Scatter', {
                 alias  : color.alias,
                 colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : color.label,
-                type   : color.type,
+                type   : color.type
             };
         } else {
             ca = {
@@ -1338,6 +1386,10 @@ Ext.define('Connector.view.Scatter', {
         };
     },
 
+    isContinuousMeasure : function(measure) {
+        return measure.type === 'INTEGER' || measure.type === 'DOUBLE' || measure.type === 'TIMESTAMP';
+    },
+
     updateMeasureSelection : function(win) {
         if (win) {
             var pos = this.getPlotPosition();
@@ -1387,7 +1439,7 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 open : function() {},
                 measureConfig: {
-                    allColumns: this.allColumns,
+                    allColumns: false,
                     displaySourceCounts: true,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -1401,7 +1453,8 @@ Ext.define('Connector.view.Scatter', {
                 displayConfig: {
                     mainTitle : 'Choose a Variable for the Y Axis...'
                 },
-                scalename: 'yscale'
+                scalename: 'yscale',
+                disableAntigenFilter: false
             });
 
             var pos = this.getPlotPosition();
@@ -1497,7 +1550,8 @@ Ext.define('Connector.view.Scatter', {
                     mainTitle : 'Choose a Variable for the X Axis...'
                 },
                 scalename : 'xscale',
-                visitTagStore: this.visitTagStore
+                visitTagStore: this.visitTagStore,
+                disableAntigenFilter: false
             });
 
             var pos = this.getPlotPosition();
@@ -1811,7 +1865,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getSorts : function() {
-        var firstMeasure = this.measures[0];
+        var firstMeasure = undefined;
 
         // if we can help it, the sort should use the first non-demographic measure
         for (var i=0; i < this.measures.length; i++) {
@@ -1822,21 +1876,35 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
+        var sorts = [];
         if (firstMeasure) {
-            return [
-                {
-                    name: Connector.studyContext.subjectColumn,
-                    queryName: firstMeasure.queryName,
-                    schemaName: firstMeasure.schemaName
-                },{
-                    name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
-                    queryName: firstMeasure.queryName,
-                    schemaName: firstMeasure.schemaName
-                }
-            ];
-        } else {
-            return [];
+            // pull from the selected sources shared columns
+            sorts.push({
+                name: Connector.studyContext.subjectColumn,
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            });
+            sorts.push({
+                name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            });
         }
+        else {
+           // resort to the default columns
+           sorts.push({
+               name: Connector.studyContext.subjectColumn,
+               queryName: this.defaultSortQuery,
+               schemaName: this.defaultSortSchema
+           });
+           sorts.push({
+               name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+               queryName: this.defaultSortQuery,
+               schemaName: this.defaultSortSchema
+           });
+        }
+
+        return sorts;
     },
 
     onPlotSelectionRemoved : function(filterId, measureIdx) {

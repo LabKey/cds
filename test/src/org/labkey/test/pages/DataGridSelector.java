@@ -2,7 +2,7 @@ package org.labkey.test.pages;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.util.CDSHelper;
 
 /**
  * Created by Nick Arnold on 4/29/14.
@@ -60,15 +60,15 @@ public class DataGridSelector
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        _test.click(CDSTest.Locators.cdsButtonLocator("OK"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("OK"));
         String filterText = columnName.replace(" ", "");
-        _test.waitForElement(CDSTest.Locators.filterMemberLocator(filterText));
+        _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filterText));
     }
 
     public void clearFilters(String columnName)
     {
         openFilterPanel(columnName);
-        _test.waitAndClick(CDSTest.Locators.cdsButtonLocator("Clear Filters"));
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear Filters"));
         _test.waitForText("Filter removed.");
     }
 
