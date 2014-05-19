@@ -11,6 +11,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.CustomModules;
+import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
@@ -273,6 +274,33 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
                 .containing("Expression levels for CCL5"));
 
         click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
+        _asserts.verifyLearnAboutPage(Arrays.asList(CDSHelper.ASSAYS));
+    }
+
+    @Test
+    public void verifyColorAxisSelector()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        ColorAxisVariableSelector xaxis = new ColorAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+
+        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+
+        assertElementNotPresent(definitionPanel.notHidden());
+
+        xaxis.pickSource("ADCC");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: ADCC")
+                .containing("Contains up to one row of ADCC data for each Participant/visit/TARGET_CELL_PREP_ISOLATE combination."));
+
+        xaxis.pickMeasure("ADCC", "ACTIVITY PCT");
+        waitForElement(definitionPanel.notHidden()
+                .containing("Definition: ACTIVITY PCT")
+                .containing("Percent activity observed"));
+
+        click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
+
         _asserts.verifyLearnAboutPage(Arrays.asList(CDSHelper.ASSAYS));
     }
 
