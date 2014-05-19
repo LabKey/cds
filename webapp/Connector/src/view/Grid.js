@@ -234,8 +234,7 @@ Ext.define('Connector.view.Grid', {
                     mainTitle: 'Choose Measures for the Data Grid...'
                 },
                 disableLookups: false,
-                disableScale: true,
-                disableVariableOptions: false
+                disableScale: true
             });
         }
 
