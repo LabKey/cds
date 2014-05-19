@@ -52,7 +52,7 @@ Ext.define('Connector.view.GroupListView', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="nav-label">{label}</div>',
+                '<div class="nav-label">{label:htmlEncode}</div>',
             '</tpl>'
     ),
 

@@ -24,6 +24,7 @@ Ext.define('Connector.model.Group', {
                     pageSize : 100,
                     model    : 'Connector.model.Group',
                     autoLoad : true,
+                    sorters  : [{property: 'label'}],
                     proxy    : {
                         type   : 'ajax',
                         url: LABKEY.ActionURL.buildURL('participant-group', 'browseParticipantGroups.api', null, {

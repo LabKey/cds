@@ -23,7 +23,7 @@ Ext.define('Connector.view.Scatter', {
     showAxisButtons: true,
 
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
-    rowlimit: 5000,
+    rowlimit: 0,
 
     layout: 'border',
 
@@ -796,6 +796,11 @@ Ext.define('Connector.view.Scatter', {
                     measure: sel[0].data,
                     options: this.axisPanelX.getVariableOptionValues()
                 };
+
+                // special case to look for userGroups as a variable option to use as filter values for the x measure
+                if (measures.x.options.userGroups)
+                    measures.x.measure.values = measures.x.options.userGroups;
+
                 this.fromFilter = false;
             }
         }
@@ -867,6 +872,8 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.measures = [ activeMeasures.x.measure, activeMeasures.y.measure, activeMeasures.color ];
+
+        this.rowlimit = activeMeasures.x.measure && this.isContinuousMeasure(activeMeasures.x.measure) ? 5000 : 100000; // selectRows server default limit is 100000
 
         this.showLoad();
 
@@ -1148,6 +1155,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     onFailure : function(response) {
+        console.log(response);
         this.hideLoad();
         this.showMessage('Failed to Load');
     },
@@ -1207,7 +1215,7 @@ Ext.define('Connector.view.Scatter', {
                 label  : x.label,
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE',
-                isContinuous: x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'TIMESTAMP'
+                isContinuous: this.isContinuousMeasure(x)
             };
         } else {
             xa = {
@@ -1231,7 +1239,7 @@ Ext.define('Connector.view.Scatter', {
             label  : y.label,
             type   : y.type,
             isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE',
-            isContinuous: y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'TIMESTAMP'
+            isContinuous: this.isContinuousMeasure(y)
         };
 
         if (color) {
@@ -1243,7 +1251,7 @@ Ext.define('Connector.view.Scatter', {
                 alias  : color.alias,
                 colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : color.label,
-                type   : color.type,
+                type   : color.type
             };
         } else {
             ca = {
@@ -1373,6 +1381,10 @@ Ext.define('Connector.view.Scatter', {
             setXLinear : negX,
             setYLinear : negY
         };
+    },
+
+    isContinuousMeasure : function(measure) {
+        return measure.type === 'INTEGER' || measure.type === 'DOUBLE' || measure.type === 'TIMESTAMP';
     },
 
     updateMeasureSelection : function(win) {

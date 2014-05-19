@@ -160,40 +160,52 @@ Ext.define('Connector.panel.AxisSelector', {
     },
 
     getAdditionalMeasuresArray : function() {
-        var queryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
+        var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
 
         return !this.includeTimpointMeasures ? [] :[{
+            sortOrder: -4,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'Time points',
+            queryDescription: timePointQueryDescription,
+            isKeyVariable: true,
+            name: 'SubjectVisit/Visit/ProtocolDay',
+            label: 'Study days',
+            type: 'INTEGER',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
+            variableType: 'TIME'
+        },{
             sortOrder: -3,
             schemaName: null,
             queryName: null,
             queryLabel: 'Time points',
-            queryDescription: queryDescription,
-            isKeyVariable: true,
-            name: 'SubjectVisit/Day',
-            label: 'Study days',
-            type: 'INTEGER',
-            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
+            name: 'SubjectVisit/Visit/ProtocolDay',
+            label: 'Study weeks',
+            type: 'DOUBLE',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
             variableType: 'TIME'
         },{
             sortOrder: -2,
             schemaName: null,
             queryName: null,
             queryLabel: 'Time points',
-            name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
-            label: 'Study weeks',
+            name: 'SubjectVisit/Visit/ProtocolDay',
+            label: 'Study months',
             type: 'DOUBLE',
-            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
             variableType: 'TIME'
         },{
             sortOrder: -1,
-            schemaName: null,
-            queryName: null,
-            queryLabel: 'Time points',
-            name: null, // TODO: this needs to be changed once we correctly calculate timepoint via Visualization.getData API
-            label: 'Study months',
-            type: 'DOUBLE',
-            description: queryDescription + ' Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
-            variableType: 'TIME'
+            schemaName: 'study',
+            queryName: 'SubjectGroupMap',
+            queryLabel: 'User groups',
+            queryDescription: 'Creates a categorical x axis of the selected user groups',
+            name: 'GroupId',
+            label: 'My saved groups',
+            description: 'Creates a categorical x axis of the selected saved groups',
+            type: 'VARCHAR',
+            isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
+            variableType: 'USER_GROUPS'
         }];
     },
 
@@ -235,6 +247,7 @@ Ext.define('Connector.panel.AxisSelector', {
         {
             this.getSelectionDisplay().setMeasureSelection(measure);
             this.getSelectionDisplay().setVariableOptions(measure, this.selectedSource);
+            this.getSelectionDisplay().getScaleForm().setVisible(measure.get('variableType') == null);
             this.lastMeasure = measure;
         }
 
@@ -318,7 +331,7 @@ Ext.define('Connector.panel.AxisSelector', {
             this.selectedSource = sources[0];
             this.updateDefinition(this.selectedSource);
 
-            this.down('button#gotoassaypage').setVisible(this.selectedSource.get('queryName') != null);
+            this.down('button#gotoassaypage').setVisible(this.selectedSource.get('variableType') == null);
         }
 
         //select first variable in the list on source selection change, for singleSelect grid
@@ -495,6 +508,11 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             if (measure.get('variableType') == 'TIME')
             {
                 optionsPanel.add(this.getAlignmentForm());
+            }
+            else if (measure.get('variableType') == 'USER_GROUPS')
+            {
+                optionsPanel.add(this.getVariableOptionsTitlePanel(measure.get('label')));
+                optionsPanel.add(this.getUserGroupsGrid(true));
             }
             else if (!this.disableLookups)
             {
@@ -711,6 +729,50 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         return this.alignmentForm;
     },
 
+    getUserGroupsGrid : function(init) {
+        if (!this.userGroupsGrid)
+        {
+            var store = Connector.model.Group.getGroupStore();
+
+            this.userGroupsGrid =  Ext.create('Ext.grid.Panel', {
+                viewConfig : { stripeRows : false },
+                cls: 'measuresgrid iScroll variableoptionsgrid',
+                border: false,
+                height: 175,
+                forceFit: true,
+                hidden: true,
+                enableColumnResize: false,
+                enableColumnMove: false,
+                multiSelect: true,
+                emptyText: 'none',
+                selType: 'checkboxmodel',
+                selModel: {
+                    checkOnly: true,
+                    checkSelector: 'td.x-grid-cell-row-checker'
+                },
+                store: store,
+                columns: [{
+                    header: 'All',
+                    dataIndex: 'label',
+                    menuDisabled: true,
+                    sortable: false,
+                    renderer: Ext.String.htmlEncode
+                }]
+            });
+
+            if (init)
+            {
+                store.on('load', function() {
+                    this.selectAllInGrid(this.userGroupsGrid);
+                }, this, {single: true});
+
+                store.load();
+            }
+        }
+
+        return this.userGroupsGrid;
+    },
+
     determineAssayOptionsPanel : function(parentPanel, measure, source) {
         // the first time a source is selected, determine if it contains a lookup for Antigen and/or Analyte
         if (source.antigenLookup === undefined && source.analyteLookup === undefined)
@@ -814,7 +876,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
         var grid = Ext.create('Ext.grid.Panel', {
             viewConfig : { stripeRows : false },
-            cls: 'measuresgrid iScroll antigensgrid',
+            cls: 'measuresgrid iScroll variableoptionsgrid',
             border: false,
             height: 175,
             forceFit: true,
@@ -829,21 +891,34 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 checkSelector: 'td.x-grid-cell-row-checker'
             },
             store: store,
-            columns: [{ header: 'All', dataIndex: 'Name', menuDisabled: true, sortable: false }],
+            columns: [{
+                header: 'All',
+                dataIndex: 'Name',
+                menuDisabled: true,
+                sortable: false,
+                renderer: Ext.String.htmlEncode
+            }],
             valueColumn: source[lookupProperty]
         });
 
         store.on('load', function() {
-            grid.getSelectionModel().selectAll();
-            grid.getView().focusRow(0);
-
-            if (store.getCount() < 2)
-                grid.getEl().query('.x-grid-header-ct')[0].style.display = 'none';
-
-            grid.show();
-        });
+            this.selectAllInGrid(grid);
+        }, this);
 
         return grid;
+    },
+
+    selectAllInGrid : function(grid) {
+        if (grid.getStore().getCount() > 0)
+        {
+            grid.getSelectionModel().selectAll();
+            grid.getView().focusRow(0);
+        }
+
+        if (grid.getStore().getCount() < 2)
+            grid.getEl().query('.x-grid-header-ct')[0].style.display = 'none';
+
+        grid.show();
     },
 
     getVariableOptionValues : function() {
@@ -852,6 +927,17 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         if (this.getAlignmentForm() && this.getAlignmentForm().isVisible())
         {
             values = this.getAlignmentForm().getForm().getFieldValues();
+        }
+
+        if (this.getUserGroupsGrid() && this.getUserGroupsGrid().isVisible())
+        {
+            var groupsArr = [];
+            Ext.each(this.getUserGroupsGrid().getSelectionModel().getSelection(), function(sel){
+                groupsArr.push(sel.get('id'));
+            });
+
+            if (groupsArr.length > 0)
+                values.userGroups = groupsArr;
         }
 
         if (this.hasAntigensGrid() && this.getAntigensGrid().isVisible())
