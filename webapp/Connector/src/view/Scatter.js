@@ -823,7 +823,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // map the y-axis schema and query name for a time point x-axis variable
-        if (measures.x.measure)
+        if (measures.x.measure && measures.y.measure)
         {
             if (!measures.x.measure.schemaName && !measures.x.measure.queryName)
             {

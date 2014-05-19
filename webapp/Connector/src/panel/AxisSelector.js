@@ -496,6 +496,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         this.assayOptionsPanel = null;
         this.antigensGrid = null;
         this.analytesGrid = null;
+        this.userGroupsGrid = null;
     },
 
     setVariableOptions : function(measure, source) {
@@ -512,7 +513,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             else if (measure.get('variableType') == 'USER_GROUPS')
             {
                 optionsPanel.add(this.getVariableOptionsTitlePanel(measure.get('label')));
-                optionsPanel.add(this.getUserGroupsGrid(true));
+                optionsPanel.add(this.getUserGroupsGrid());
             }
             else if (!this.disableLookups)
             {
@@ -729,13 +730,20 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         return this.alignmentForm;
     },
 
-    getUserGroupsGrid : function(init) {
+    hasUserGroupsGrid : function() {
+        return this.userGroupsGrid != undefined;
+    },
+
+    getUserGroupsGrid : function() {
         if (!this.userGroupsGrid)
         {
             var store = Connector.model.Group.getGroupStore();
 
             this.userGroupsGrid =  Ext.create('Ext.grid.Panel', {
-                viewConfig : { stripeRows : false },
+                viewConfig : {
+                    stripeRows : false,
+                    emptyText: 'none'
+                },
                 cls: 'measuresgrid iScroll variableoptionsgrid',
                 border: false,
                 height: 175,
@@ -744,7 +752,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 enableColumnResize: false,
                 enableColumnMove: false,
                 multiSelect: true,
-                emptyText: 'none',
                 selType: 'checkboxmodel',
                 selModel: {
                     checkOnly: true,
@@ -760,17 +767,32 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 }]
             });
 
-            if (init)
-            {
-                store.on('load', function() {
-                    this.selectAllInGrid(this.userGroupsGrid);
-                }, this, {single: true});
+            store.on('load', function() {
+                this.selectAllInGrid(this.userGroupsGrid);
+            }, this, {single: true});
 
-                store.load();
-            }
+            store.load();
+
+            this.addDescriptionHoverListeners(this.userGroupsGrid, 'label', 'description');
         }
 
         return this.userGroupsGrid;
+    },
+
+    addDescriptionHoverListeners : function(grid, labelFieldName, descFieldName) {
+        grid.on('itemmouseenter', function(grid, record, item){
+            this.previousDefinitionData = this.getDefinitionPanel().data;
+
+            this.getDefinitionPanel().update({
+                label: record.get(labelFieldName),
+                description: record.get(descFieldName)
+            });
+        }, this);
+
+        grid.on('itemmouseleave', function(grid, record, item){
+            this.getDefinitionPanel().update(this.previousDefinitionData);
+            this.previousDefinitionData = null;
+        }, this);
     },
 
     determineAssayOptionsPanel : function(parentPanel, measure, source) {
@@ -929,7 +951,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             values = this.getAlignmentForm().getForm().getFieldValues();
         }
 
-        if (this.getUserGroupsGrid() && this.getUserGroupsGrid().isVisible())
+        if (this.hasUserGroupsGrid() && this.getUserGroupsGrid().isVisible())
         {
             var groupsArr = [];
             Ext.each(this.getUserGroupsGrid().getSelectionModel().getSelection(), function(sel){
