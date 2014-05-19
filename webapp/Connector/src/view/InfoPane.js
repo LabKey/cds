@@ -84,7 +84,7 @@ Ext.define('Connector.view.InfoPane', {
                     id: btnId,
                     xtype: 'imgbutton',
                     itemId: 'infosortdropdown',
-                    cls: 'sortDropdown',
+                    cls: 'sortDropdown ipdropdown', // tests
                     style: 'float: right;',
                     vector: 21,
                     width: 21,

@@ -154,6 +154,100 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Test
+    public void verifyFilterPane()
+    {
+        log("Verify Filter Pane");
+
+        String raceMemberType = "Subject (Race)";
+        String raceMember = "Black/African American";
+        String raceMember2 = "Native Hawaiian/Pacific Islander";
+        String raceMember3 = "Asian";
+        String raceMember4 = "White";
+
+        String compositeRaceMember = raceMemberType + ": " + raceMember;
+        String compositeRaceMember2 = raceMemberType + ": " + raceMember2;
+
+        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current filters");
+        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current filters");
+
+        //
+        // Open an filter pane and close it
+        //
+        cds.goToAppHome();
+        cds.clickBy("Assays");
+        cds.openStatusInfoPane("Races & Subtypes");
+        click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
+        _asserts.assertDefaultFilterStatusCounts(this);
+
+        //
+        // Open a filter pane and create filter
+        //
+        cds.openStatusInfoPane("Races & Subtypes");
+//        cds.changeInfoPaneSort("Race", "Country");
+        cds.selectInfoPaneItem(raceMember, true);
+        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        _asserts.assertFilterStatusCounts(8, 3, 3);
+
+        //
+        // Undo a info pane generated filter
+        //
+        click(Locator.tagWithClass("div", "closeitem"));
+        waitForText("Filter removed.");
+        _asserts.assertDefaultFilterStatusCounts(this);
+
+        // verify undo
+        click(Locator.linkWithText("Undo"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        _asserts.assertFilterStatusCounts(8, 3, 3);
+
+        //
+        // open the filter pane via a created filter
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        assertElementPresent(hasData);
+        assertElementPresent(noData);
+
+        cds.selectInfoPaneItem(raceMember2, true);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember2));
+        _asserts.assertFilterStatusCounts(3, 2, 3);
+
+        //
+        // update the current filter
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(compositeRaceMember2));
+        cds.selectInfoPaneItem(raceMember3, false);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
+        _asserts.assertFilterStatusCounts(5, 2, 3); // default is 'OR'
+
+        //
+        // change the operator
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        cds.selectInfoPaneOperator(true);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
+        _asserts.assertFilterStatusCounts(0, 0, 0); // now it's 'AND'
+
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        assertElementNotPresent(hasData);
+        assertElementPresent(noData);
+
+        cds.selectInfoPaneItem(raceMember4, true);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
+        _asserts.assertFilterStatusCounts(11, 4, 4);
+    }
+
+    @Test
     public void verifyGroups()
     {
         log("Verify Groups");
@@ -380,7 +474,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // remove filter
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(32, 4, 4);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // verify undo
@@ -391,7 +485,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // remove an undo filter
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(32, 4, 4);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // ensure undo is removed on view navigation
@@ -475,7 +569,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         log("Filter undo on grid");
         cds.clearFilter();
         grid.waitForCount(671);
-        _asserts.assertFilterStatusCounts(32, 4, 4);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: Starts With White"));
