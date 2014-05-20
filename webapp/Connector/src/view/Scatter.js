@@ -27,6 +27,9 @@ Ext.define('Connector.view.Scatter', {
 
     layout: 'border',
 
+    defaultSortSchema: 'study',
+    defaultSortQuery: 'Demographics',
+
     initComponent : function() {
 
         this.items = [
@@ -1862,7 +1865,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getSorts : function() {
-        var firstMeasure = this.measures[0];
+        var firstMeasure = undefined;
 
         // if we can help it, the sort should use the first non-demographic measure
         for (var i=0; i < this.measures.length; i++) {
@@ -1873,21 +1876,35 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
+        var sorts = [];
         if (firstMeasure) {
-            return [
-                {
-                    name: Connector.studyContext.subjectColumn,
-                    queryName: firstMeasure.queryName,
-                    schemaName: firstMeasure.schemaName
-                },{
-                    name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
-                    queryName: firstMeasure.queryName,
-                    schemaName: firstMeasure.schemaName
-                }
-            ];
-        } else {
-            return [];
+            // pull from the selected sources shared columns
+            sorts.push({
+                name: Connector.studyContext.subjectColumn,
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            });
+            sorts.push({
+                name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+                queryName: firstMeasure.queryName,
+                schemaName: firstMeasure.schemaName
+            });
         }
+        else {
+           // resort to the default columns
+           sorts.push({
+               name: Connector.studyContext.subjectColumn,
+               queryName: this.defaultSortQuery,
+               schemaName: this.defaultSortSchema
+           });
+           sorts.push({
+               name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+               queryName: this.defaultSortQuery,
+               schemaName: this.defaultSortSchema
+           });
+        }
+
+        return sorts;
     },
 
     onPlotSelectionRemoved : function(filterId, measureIdx) {
