@@ -28,6 +28,20 @@ Ext.define('Connector.view.Home', {
 
     getBody : function() {
         if (!this.content) {
+
+            Ext.define('Connector.model.News', {
+                extend: 'Ext.data.Model',
+
+                fields: [
+                    {name: 'title'},
+                    {name: 'description'},
+                    {name: 'pubDate', type: 'date'},
+                    {name: 'link'}
+                ]
+            });
+
+            var DateFormat = Ext.util.Format.dateRenderer('d M Y');
+
             this.content = Ext.create('Connector.view.HomeBody', {
                 items: [{
                     xtype: 'grouplist',
@@ -53,7 +67,64 @@ Ext.define('Connector.view.Home', {
                             }
                         },
                         scope: this
-                    },
+                    }
+                },{
+                    xtype: 'dataview',
+                    flex: 10,
+                    margin: '32 0 0 27',
+                    itemSelector: 'div.entry',
+                    autoScroll: true,
+                    tpl: new Ext.XTemplate(
+                        '<div class="grouplist-header">News</div>',
+                        '<tpl if="this.isEmpty(values)">',
+                            '<div class="grouplist-empty" style="font-size: 13pt; font-family: Arial;">Feeds not available</div>',
+                        '</tpl>',
+                        '<table style="font-size: 11pt;">',
+                            '<tpl for=".">',
+                                '<tr class="entry" style="margin-top: 10px;">',
+                                    '<td style="width: 110px; vertical-align: text-top; color: #a09c9c;">{pubDate:this.renderDate}</td>',
+                                    '<td style="padding-right: 10px;">',
+                                        '<div><a href="{link}" target="_blank">{title:htmlEncode}</a></div>',
+                                        '<div>{description:htmlEncode}</div>',
+                                    '</td>',
+                                '</tr>',
+                            '</tpl>',
+                        '</table>',
+                            {
+                                isEmpty : function(v) {
+                                    return (!Ext.isArray(v) || v.length === 0);
+                                },
+                                renderDate : function(date) {
+                                    return DateFormat(date);
+                                }
+                            }
+                    ),
+                    store: Ext.create('Ext.data.Store', {
+                        model: 'Connector.model.News',
+                        autoLoad: true,
+                        proxy: {
+                            type: 'ajax',
+                            url: LABKEY.ActionURL.buildURL('cds', 'news.api'),
+                            reader: {
+                                type: 'xml',
+                                record: 'item',
+                                root: 'channel'
+                            }
+                        }
+                    }),
+                    listeners: {
+                        resize: function(dv) {
+                            Ext.defer(function() {
+                                var component = Ext.getCmp(this.id);
+                                if (component) {
+                                    var box = component.getBox();
+                                    var trueHeight = box.height - 161 - 32;
+                                    dv.setHeight(trueHeight);
+                                }
+                            }, 50, this);
+                        },
+                        scope: this
+                    }
                 }]
             });
         }
@@ -118,6 +189,8 @@ Ext.define('Connector.view.HomeBody', {
     margin: '0 0 0 27',
 
     layout: {
-        type: 'vbox'
+        type: 'hbox',
+        align: 'stretch',
+        pack: 'start'
     }
 });

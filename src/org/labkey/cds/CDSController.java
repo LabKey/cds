@@ -55,6 +55,8 @@ import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.TempQuerySettings;
 import org.labkey.api.query.UserSchema;
+import org.labkey.api.rss.RSSFeed;
+import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresPermissionClass;
 import org.labkey.api.security.permissions.AdminPermission;
@@ -86,6 +88,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -129,6 +132,27 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return root.addChild("Dataspace Management");
+        }
+    }
+
+    @RequiresPermissionClass(ReadPermission.class)
+    public class NewsAction extends SimpleViewAction
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), getUser());
+
+            getViewContext().getResponse().setContentType("text/xml");
+            RSSService.get().aggregateFeeds(feeds, getViewContext().getResponse().getWriter());
+
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
         }
     }
 
