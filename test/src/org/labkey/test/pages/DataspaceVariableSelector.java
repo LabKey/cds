@@ -2,8 +2,8 @@ package org.labkey.test.pages;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
 import org.labkey.test.util.Ext4Helper;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -31,6 +31,11 @@ public abstract class DataspaceVariableSelector
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
     }
 
+    public Locator.CssLocator window()
+    {
+        return Locator.id("plotxmeasurewin").toCssLocator();
+    }
+
     public Locator.CssLocator pickerPanel()
     {
         return Locator.css("." + getPickerClass());
@@ -39,7 +44,7 @@ public abstract class DataspaceVariableSelector
     public Locator.CssLocator sourcePanelRow()
     {
         return Locator.CssLocator.union(pickerPanel().append(".sourcepanel div.itemrow span.val"), // selects rows with counts
-                                        pickerPanel().append(".sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
+                pickerPanel().append(".sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
     }
 
     public Locator.CssLocator measuresPanelRow()
@@ -47,6 +52,11 @@ public abstract class DataspaceVariableSelector
         return isMeasureMultiSelect() ?
                 pickerPanel().append(".measuresgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row"):
                 pickerPanel().append(".measuresgrid div.itemrow");
+    }
+
+    public Locator.CssLocator variableOptionsRow()
+    {
+        return window().append(".variableoptionsgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row");
     }
 
     public void pickSource(String source)
@@ -69,6 +79,31 @@ public abstract class DataspaceVariableSelector
             _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
             _test.click(measuresPanelRow().withText(measure));
         }
+    }
+
+    /**
+     * Only tested with saved groups
+     */
+    public void setVariableOptions(String... options)
+    {
+        _test._ext4Helper.clearGridSelection("variableoptionsgrid");
+
+        for (String option : options)
+        {
+            WebElement row = variableOptionsRow().withText(option).findElement(_test.getDriver());
+            WebElement rowChecker = row.findElement(By.cssSelector(String.format(".%sgrid-row-checker", Ext4Helper.getCssPrefix())));
+            rowChecker.click();
+        }
+    }
+
+    public void clearVariableOptions()
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void selectAllVariableOptions()
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public void pickMeasure(String source, String measure)
