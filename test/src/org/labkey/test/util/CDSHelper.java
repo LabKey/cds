@@ -280,7 +280,6 @@ public class CDSHelper
         _test.waitForElement(Locators.cdsButtonLocator("update", "filterinfoaction"));
     }
 
-    // TODO: Doesn't work -- cannot get menu to click the 'toSort' item
     public void changeInfoPaneSort(String fromSort, String toSort)
     {
         Locator.XPathLocator infoPane = Locator.tagWithClass("div", "infopane");
@@ -289,8 +288,11 @@ public class CDSHelper
         _test.waitForElement(infoPane);
         _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", fromSort)));
 
-        _test.click(Locator.tagWithClass("button", "ipdropdown"));
-        _test.waitAndClick(Locator.tagWithClass("div", "x-menu-item").withDescendant(Locator.tagWithClass("span", "x-menu-item-text").withText(toSort)));
+        _test.click(Locators.infoPaneSortButtonLocator());
+
+        Locator.XPathLocator sortItemLabel = Locator.tagWithClass("span", "x-menu-item-text").withText(toSort);
+        Locator.XPathLocator sortItem = Locator.tagWithClass("div", "infosortmenu").append(Locator.tagWithClass("div", "x-menu-item").withDescendant(sortItemLabel));
+        _test.waitAndClick(sortItem.notHidden());
         _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", toSort)));
     }
 
@@ -413,6 +415,11 @@ public class CDSHelper
         public static Locator.XPathLocator getSelectionStatusLocator(int count, String match)
         {
             return Locator.xpath("//li//span[contains(text(), '" + match + "')]/../span[contains(@class, 'status-subcount') and text()='" + count + "']");
+        }
+
+        public static Locator.XPathLocator infoPaneSortButtonLocator()
+        {
+            return Locator.tagWithClass("button", "ipdropdown");
         }
     }
 }

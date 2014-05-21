@@ -97,6 +97,7 @@ Ext.define('Connector.view.InfoPane', {
                         showSeparator: false,
                         width: 265,
                         ui: 'custom',
+                        cls: 'infosortmenu',
                         btn: btnId,
                         listeners: {
                             afterrender: this.bindSortMenu,
@@ -176,6 +177,11 @@ Ext.define('Connector.view.InfoPane', {
 
         this.callParent();
         this.bindModel();
+
+        if (Ext.isDefined(this.stateManager)) {
+            this.stateManager.on('selectionchange', function() { this.hide(); }, this, {single: true});
+            this.stateManager.on('filterchange', function() { this.hide(); }, this, {single: true});
+        }
     },
 
     getMiddleContent : function(model) {

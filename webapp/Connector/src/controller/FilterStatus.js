@@ -175,6 +175,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
             var infoPane = Ext.create(clazz, {
                 model: Ext.create('Connector.model.InfoPane', config),
+                stateManager: this.getStateManager(),
                 listeners: {
                     hide: {
                         fn: this.resetInfoPane,

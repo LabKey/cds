@@ -183,7 +183,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Open a filter pane and create filter
         //
         cds.openStatusInfoPane("Races & Subtypes");
-//        cds.changeInfoPaneSort("Race", "Country");
         cds.selectInfoPaneItem(raceMember, true);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
 
@@ -245,6 +244,24 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
         _asserts.assertFilterStatusCounts(11, 4, 4);
+        cds.clearAllFilters();
+
+        //
+        // Check sort menu
+        //
+        cds.openStatusInfoPane("Races & Subtypes");
+        cds.changeInfoPaneSort("Race", "Country");
+        cds.selectInfoPaneItem("South Africa", true);
+        cds.selectInfoPaneItem("Thailand", true);
+        cds.selectInfoPaneItem("USA", true);
+        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+
+        Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("Subject (Country): USA");
+        waitForElement(countryFilter);
+        _asserts.assertFilterStatusCounts(19, 3, 3);
+        cds.openFilterInfoPane(countryFilter);
+        assertElementNotPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
+        click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
     }
 
     @Test
