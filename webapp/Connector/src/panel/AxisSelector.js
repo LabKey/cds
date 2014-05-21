@@ -923,6 +923,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             valueColumn: source[lookupProperty]
         });
 
+        this.addDescriptionHoverListeners(grid, 'Name', 'Description');
+
         store.on('load', function() {
             this.selectAllInGrid(grid);
         }, this);
