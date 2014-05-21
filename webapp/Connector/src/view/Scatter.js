@@ -917,8 +917,8 @@ Ext.define('Connector.view.Scatter', {
             this.initialized = true;
         }
 
-        // add "subset" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
-        var subsetMeasures = this.getSubsetMeasures(activeMeasures);
+        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
+        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, measureType);
 
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
@@ -939,7 +939,7 @@ Ext.define('Connector.view.Scatter', {
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
                 method: 'POST',
                 jsonData: {
-                    measures: nonNullMeasures.concat(subsetMeasures),
+                    measures: nonNullMeasures.concat(additionalMeasures),
                     sorts: sorts,
                     limit: (this.rowlimit+1)
                 },
@@ -952,8 +952,8 @@ Ext.define('Connector.view.Scatter', {
         });
     },
 
-    getSubsetMeasures : function(activeMeasures) {
-        var subsetMeasuresMap = {}; // map key to schema, query, name, and values
+    getAdditionalMeasures : function(activeMeasures, measureType) {
+        var measuresMap = {}; // map key to schema, query, name, and values
 
         Ext.each(["x", "y"], function(axis)
         {
@@ -966,30 +966,35 @@ Ext.define('Connector.view.Scatter', {
                 {
                     var name = activeMeasures[axis].options.antigen.columnInfo.name;
                     var values = activeMeasures[axis].options.antigen.values;
-                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                 }
 
                 if (Ext.isDefined(activeMeasures[axis].options.analyte))
                 {
                     var name = activeMeasures[axis].options.analyte.columnInfo.name;
                     var values = activeMeasures[axis].options.analyte.values;
-                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
+                }
+
+                if (Ext.isDefined(activeMeasures[axis].options.alignmentVisitTag))
+                {
+                    this.addValuesToMeasureMap(measuresMap, schema, query, "SubjectVisit/Visit", []);
                 }
             }
         }, this);
 
-        var subsetMeasuresArr = [];
-        for (var key in subsetMeasuresMap)
+        var additionalMeasuresArr = [];
+        for (var key in measuresMap)
         {
-            subsetMeasuresArr.push({measure : {
-                name: subsetMeasuresMap[key].name,
-                queryName: subsetMeasuresMap[key].queryName,
-                schemaName: subsetMeasuresMap[key].schemaName,
-                values: subsetMeasuresMap[key].values
-            }, time: 'visit'});
+            additionalMeasuresArr.push({measure : {
+                name: measuresMap[key].name,
+                queryName: measuresMap[key].queryName,
+                schemaName: measuresMap[key].schemaName,
+                values: measuresMap[key].values
+            }, time: measureType});
 
         }
-        return subsetMeasuresArr;
+        return additionalMeasuresArr;
     },
 
     addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
