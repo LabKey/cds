@@ -443,11 +443,6 @@ svg a {
 /* -- END Windows */
 
 /* Connector.panel.FilterPanel */
-div.wrapitem {
-  display: inline-block;
-  width: 100%;
-}
-
 div.selitem {
   width: 90%; /* remaining space for .circle */
   padding: 4px 6px;
@@ -515,6 +510,10 @@ div.selectionfilter {
 
 div.wrapitem {
 
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+
   &:hover {
     .closeitem {
       opacity: 0.5;
@@ -523,6 +522,10 @@ div.wrapitem {
         opacity: 1;
       }
     }
+  }
+
+  .fader:hover {
+    cursor: pointer;
   }
 }
 

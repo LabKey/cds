@@ -114,6 +114,14 @@ div.measuresgrid .x-grid-view {
 }
 
 /* Connector.view.InfoPane */
+.x-grid-body .x-grid-table-focused-first {
+  border-top: 1px solid transparent;
+}
+
+.x-grid-with-row-lines .x-grid-table-over-first {
+  border-top-color: transparent;
+}
+
 .infopanegrid {
 
   margin-top: 30px;
@@ -133,7 +141,7 @@ div.measuresgrid .x-grid-view {
   .x-column-header-over,
   .x-column-header-sort-ASC, .x-column-header-sort-DESC {
     background-image: none !important;
-    background-color: $secondary-color;
+    background-color: transparent;
     border: none;
   }
 
