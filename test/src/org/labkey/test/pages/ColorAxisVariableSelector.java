@@ -14,7 +14,13 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     @Override
     protected String getPickerClass()
     {
-        return "colorpicker";
+        return "coloraxispicker";
+    }
+
+    @Override
+    protected boolean isMeasureMultiSelect()
+    {
+        return false;
     }
 
     @Override
@@ -26,11 +32,12 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("set x axis"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("set color variable"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void setScale(Scale scale)
     {
-        _test.click(Locator.xpath("//div[@id='plotxmeasurewin']//td[contains(@class, 'x-form-cb-wrap')][.//label[text()='" + scale + "']]//input"));
+        throw new UnsupportedOperationException("No log scale for color variable");
     }
 }
