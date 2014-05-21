@@ -884,16 +884,30 @@ Ext.define('Connector.view.Scatter', {
 
         var wrappedMeasures = [null, null, null];
 
+        var isVisitTagAlignment = activeMeasures.x.options && activeMeasures.x.options.alignmentVisitTag != undefined;
+        var measureType = isVisitTagAlignment ? 'date' : 'visit';
+
         if (this.measures[0]) {
-            wrappedMeasures[0] = {measure : this.measures[0], time: 'visit'};
+            wrappedMeasures[0] = {measure : this.measures[0], time: measureType};
+
+            if (isVisitTagAlignment)
+            {
+                var interval = this.measures[0].label.replace("Study ", "");
+                this.measures[0].interval = interval;
+                wrappedMeasures[0].dateOptions = {
+                    interval: interval,
+                    zeroDayVisitTag: activeMeasures.x.options.alignmentVisitTag,
+                    useProtocolDay: true
+                }
+            }
         }
 
         if (this.measures[1]) {
-            wrappedMeasures[1] = {measure : this.measures[1], time: 'visit'};
+            wrappedMeasures[1] = {measure : this.measures[1], time: measureType};
         }
 
         if (this.measures[2]) {
-            wrappedMeasures[2] = {measure : this.measures[2], time: 'visit'};
+            wrappedMeasures[2] = {measure : this.measures[2], time: measureType};
         }
 
         if (!this.fromFilter && activeMeasures.y) {
@@ -1208,7 +1222,7 @@ Ext.define('Connector.view.Scatter', {
         var subjectCol = data.measureToColumn[subjectNoun];
 
         if (x) {
-            _xid = data.measureToColumn[x.alias] || data.measureToColumn[x.name];
+            _xid = x.interval || data.measureToColumn[x.alias] || data.measureToColumn[x.name];
             xa = {
                 schema : x.schemaName,
                 query  : x.queryName,
@@ -1586,16 +1600,6 @@ Ext.define('Connector.view.Scatter', {
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
                             var xselect = this.axisPanelX.getSelection(), yHasSelection;
-
-                            // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
-                            if (xselect && xselect.length > 0)
-                            {
-                                if (xselect[0].data.variableType == "TIME" && xselect[0].data.name == null)
-                                {
-                                    this.showMessage('Time point ' + xselect[0].data.label.toLowerCase() + ' not yet supported.');
-                                    return;
-                                }
-                            }
 
                             yModel = Ext.getCmp('yaxisselector').getModel().data;
                             yHasSelection = ((yModel.schemaLabel !== "" && yModel.queryLabel !== "") || (this.hasOwnProperty('axisPanelY') && this.axisPanelY.hasSelection()));
