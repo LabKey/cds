@@ -159,11 +159,11 @@ Ext.define('Connector.view.HomeHeader', {
                 itemId: 'statdisplay',
                 tpl: new Ext.XTemplate(
                     '<div class="titlepanel">',
-                        '<h1>Welcome to the HIV Vaccine Data Connector.</h1>',
+                        '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
                         '<h1 style="color: #7a7a7a;">{nstudy:htmlEncode} studies connected together combining</h1>',
                         '<h1 style="color: #b5b5b5;">{ndatapts:this.commaFormat} data points.</h1>',
                     '</div>',
-                    '<a href="#about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Data Connector...</a>',
+                    '<a href="#about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Collaborative Dataspace...</a>',
                     {
                         commaFormat : function(v) {
                             return Ext.util.Format.number(v, '0,000');
