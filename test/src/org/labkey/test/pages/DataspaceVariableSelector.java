@@ -16,7 +16,10 @@ public abstract class DataspaceVariableSelector
         _test = test;
     }
 
+    public abstract void setScale(Scale scale);
+    public abstract void confirmSelection();
     protected abstract String getPickerClass();
+    protected abstract boolean isMeasureMultiSelect();
     protected abstract Locator getOpenButton();
 
     public void openSelectorWindow()
@@ -28,15 +31,22 @@ public abstract class DataspaceVariableSelector
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
     }
 
-    protected Locator.CssLocator pickerPanel()
+    public Locator.CssLocator pickerPanel()
     {
         return Locator.css("." + getPickerClass());
     }
 
-    protected Locator.CssLocator sourcePanelRow()
+    public Locator.CssLocator sourcePanelRow()
     {
         return Locator.CssLocator.union(pickerPanel().append(".sourcepanel div.itemrow span.val"), // selects rows with counts
                                         pickerPanel().append(".sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
+    }
+
+    public Locator.CssLocator measuresPanelRow()
+    {
+        return isMeasureMultiSelect() ?
+                pickerPanel().append(".measuresgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row"):
+                pickerPanel().append(".measuresgrid div.itemrow");
     }
 
     public void pickSource(String source)
@@ -45,32 +55,26 @@ public abstract class DataspaceVariableSelector
     }
 
     //Pick measure from one of multiple split panel measure pickers
-    public void pickMeasure(String source, String measure, boolean isMultiSelect, boolean keepSelection)
+    public void pickMeasure(String source, String measure, boolean keepSelection)
     {
         pickSource(source);
         //select measure
-        if (isMultiSelect)
+        if (isMeasureMultiSelect())
         {
-            Locator.CssLocator _variablePanelRow = pickerPanel().append(".measuresgrid ." + Ext4Helper.getCssPrefix() + "grid-row");
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow.toBy())); // if one row is ready, all should be
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
             _test._ext4Helper.selectGridItem("label", measure, -1, getPickerClass() + " .measuresgrid", keepSelection);
         }
         else
         {
-            Locator.CssLocator _variablePanelRow = pickerPanel().append(".measuresgrid div.itemrow");
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow.toBy())); // if one row is ready, all should be
-            _test.click(_variablePanelRow.withText(measure));
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
+            _test.click(measuresPanelRow().withText(measure));
         }
     }
 
     public void pickMeasure(String source, String measure)
     {
-        pickMeasure(source, measure, false, false);
+        pickMeasure(source, measure, false);
     }
-
-    public abstract void setScale(Scale scale);
-
-    public abstract void confirmSelection();
 
     public static enum Scale
     {
