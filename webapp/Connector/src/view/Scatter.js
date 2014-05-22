@@ -884,16 +884,30 @@ Ext.define('Connector.view.Scatter', {
 
         var wrappedMeasures = [null, null, null];
 
+        var isVisitTagAlignment = activeMeasures.x.options && activeMeasures.x.options.alignmentVisitTag != undefined;
+        var measureType = isVisitTagAlignment ? 'date' : 'visit';
+
         if (this.measures[0]) {
-            wrappedMeasures[0] = {measure : this.measures[0], time: 'visit'};
+            wrappedMeasures[0] = {measure : this.measures[0], time: measureType};
+
+            if (isVisitTagAlignment)
+            {
+                var interval = this.measures[0].label.replace("Study ", "");
+                this.measures[0].interval = interval;
+                wrappedMeasures[0].dateOptions = {
+                    interval: interval,
+                    zeroDayVisitTag: activeMeasures.x.options.alignmentVisitTag,
+                    useProtocolDay: true
+                }
+            }
         }
 
         if (this.measures[1]) {
-            wrappedMeasures[1] = {measure : this.measures[1], time: 'visit'};
+            wrappedMeasures[1] = {measure : this.measures[1], time: measureType};
         }
 
         if (this.measures[2]) {
-            wrappedMeasures[2] = {measure : this.measures[2], time: 'visit'};
+            wrappedMeasures[2] = {measure : this.measures[2], time: measureType};
         }
 
         if (!this.fromFilter && activeMeasures.y) {
@@ -903,8 +917,8 @@ Ext.define('Connector.view.Scatter', {
             this.initialized = true;
         }
 
-        // add "subset" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
-        var subsetMeasures = this.getSubsetMeasures(activeMeasures);
+        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
+        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, measureType);
 
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
@@ -925,7 +939,7 @@ Ext.define('Connector.view.Scatter', {
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
                 method: 'POST',
                 jsonData: {
-                    measures: nonNullMeasures.concat(subsetMeasures),
+                    measures: nonNullMeasures.concat(additionalMeasures),
                     sorts: sorts,
                     limit: (this.rowlimit+1)
                 },
@@ -938,8 +952,8 @@ Ext.define('Connector.view.Scatter', {
         });
     },
 
-    getSubsetMeasures : function(activeMeasures) {
-        var subsetMeasuresMap = {}; // map key to schema, query, name, and values
+    getAdditionalMeasures : function(activeMeasures, measureType) {
+        var measuresMap = {}; // map key to schema, query, name, and values
 
         Ext.each(["x", "y"], function(axis)
         {
@@ -952,30 +966,35 @@ Ext.define('Connector.view.Scatter', {
                 {
                     var name = activeMeasures[axis].options.antigen.columnInfo.name;
                     var values = activeMeasures[axis].options.antigen.values;
-                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                 }
 
                 if (Ext.isDefined(activeMeasures[axis].options.analyte))
                 {
                     var name = activeMeasures[axis].options.analyte.columnInfo.name;
                     var values = activeMeasures[axis].options.analyte.values;
-                    this.addValuesToMeasureMap(subsetMeasuresMap, schema, query, name, values);
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
+                }
+
+                if (Ext.isDefined(activeMeasures[axis].options.alignmentVisitTag))
+                {
+                    this.addValuesToMeasureMap(measuresMap, schema, query, "SubjectVisit/Visit", []);
                 }
             }
         }, this);
 
-        var subsetMeasuresArr = [];
-        for (var key in subsetMeasuresMap)
+        var additionalMeasuresArr = [];
+        for (var key in measuresMap)
         {
-            subsetMeasuresArr.push({measure : {
-                name: subsetMeasuresMap[key].name,
-                queryName: subsetMeasuresMap[key].queryName,
-                schemaName: subsetMeasuresMap[key].schemaName,
-                values: subsetMeasuresMap[key].values
-            }, time: 'visit'});
+            additionalMeasuresArr.push({measure : {
+                name: measuresMap[key].name,
+                queryName: measuresMap[key].queryName,
+                schemaName: measuresMap[key].schemaName,
+                values: measuresMap[key].values
+            }, time: measureType});
 
         }
-        return subsetMeasuresArr;
+        return additionalMeasuresArr;
     },
 
     addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
@@ -1208,7 +1227,7 @@ Ext.define('Connector.view.Scatter', {
         var subjectCol = data.measureToColumn[subjectNoun];
 
         if (x) {
-            _xid = data.measureToColumn[x.alias] || data.measureToColumn[x.name];
+            _xid = x.interval || data.measureToColumn[x.alias] || data.measureToColumn[x.name];
             xa = {
                 schema : x.schemaName,
                 query  : x.queryName,
@@ -1586,16 +1605,6 @@ Ext.define('Connector.view.Scatter', {
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
                             var xselect = this.axisPanelX.getSelection(), yHasSelection;
-
-                            // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
-                            if (xselect && xselect.length > 0)
-                            {
-                                if (xselect[0].data.variableType == "TIME" && xselect[0].data.name == null)
-                                {
-                                    this.showMessage('Time point ' + xselect[0].data.label.toLowerCase() + ' not yet supported.');
-                                    return;
-                                }
-                            }
 
                             yModel = Ext.getCmp('yaxisselector').getModel().data;
                             yHasSelection = ((yModel.schemaLabel !== "" && yModel.queryLabel !== "") || (this.hasOwnProperty('axisPanelY') && this.axisPanelY.hasSelection()));

@@ -170,9 +170,9 @@ Ext.define('Connector.panel.AxisSelector', {
             queryDescription: timePointQueryDescription,
             isKeyVariable: true,
             name: 'SubjectVisit/Visit/ProtocolDay',
-            label: 'Study days',
+            label: 'Study Days',
             type: 'INTEGER',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study, study day, and visit type.',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
             variableType: 'TIME'
         },{
             sortOrder: -3,
@@ -180,9 +180,9 @@ Ext.define('Connector.panel.AxisSelector', {
             queryName: null,
             queryLabel: 'Time points',
             name: 'SubjectVisit/Visit/ProtocolDay',
-            label: 'Study weeks',
+            label: 'Study Weeks',
             type: 'DOUBLE',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study, study week, and visit type.',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
             variableType: 'TIME'
         },{
             sortOrder: -2,
@@ -190,9 +190,9 @@ Ext.define('Connector.panel.AxisSelector', {
             queryName: null,
             queryLabel: 'Time points',
             name: 'SubjectVisit/Visit/ProtocolDay',
-            label: 'Study months',
+            label: 'Study Months',
             type: 'DOUBLE',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study, study month, and visit type.',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
             variableType: 'TIME'
         },{
             sortOrder: -1,
