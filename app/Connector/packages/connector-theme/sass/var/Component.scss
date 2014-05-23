@@ -2060,3 +2060,12 @@ div.definition-overflow
     margin-left: -16px;
   }
 }
+
+.study-axis-window {
+  position: absolute;
+  background-color: $info-color;
+  color: $light-color;
+  font-family: $font-family;
+  font-size: 12pt;
+  padding: 5px;
+}
