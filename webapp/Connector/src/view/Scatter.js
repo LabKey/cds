@@ -172,10 +172,12 @@ Ext.define('Connector.view.Scatter', {
                     })
                 },
                 {
+                    // FOR TESTING USE (add "_showPlotData" param to URL to show button)
                     id: 'plotshowdata',
                     xtype: 'button',
                     text: 'view data',
-                    hidden: true // SET THIS TO FALSE TO TEST PLOT DATA GRID
+                    style: 'left: 20px !important; top: 15px !important;',
+                    hidden: LABKEY.ActionURL.getParameter('_showPlotData') ? false : true
                 }]
             }]
         };
