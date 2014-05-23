@@ -38,6 +38,15 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
+        this.control('#plotshowdata', {
+            click: function(btn) {
+                var plot = btn.up('plot');
+                if (plot) {
+                    plot.showPlotDataGrid(btn.getEl());
+                }
+            }
+        });
+
         this.control('plot', {
             axisselect: function(plot, axis, selection) {
                 if (axis === 'y') {
