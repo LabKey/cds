@@ -94,14 +94,13 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     createHierarchyFilter : function(filterset) {
-        var view = Ext.create('Connector.view.Selection', {
+        return Ext.create('Connector.view.Selection', {
             cls: 'activefilter',
             store: {
                 model: this.getModelClass(filterset),
                 data: [filterset]
             }
         });
-        return view;
     },
 
     getModelClass : function(filterset) {
@@ -114,33 +113,43 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     displayFilters : function(filters) {
-        this.content.removeAll();
-        var panels = [];
 
-        for (var f=0; f < filters.length; f++) {
-            // add filter ids
-            filters[f].data.id = filters[f].id;
-            panels.push(this.createHierarchyFilter(filters[f]));
-        }
-
-        var isEmpty = (panels.length == 0);
-
-        if (!isEmpty) {
-            this.content.add(panels);
-            if (this.showEmptyText) {
-                this.getComponent('emptypanel').hide();
-            }
-        }
-        else {
+        if (filters.length === 0) {
             if (this.showEmptyText) {
                 this.getComponent('emptypanel').show();
             }
-        }
 
-        if (this.hideOnEmpty && isEmpty) {
-            this.hide();
+            if (this.hideOnEmpty) {
+                this.hide();
+            }
+            else {
+                this.show();
+            }
+
+            this.content.removeAll();
         }
         else {
+            if (this.showEmptyText) {
+                this.getComponent('emptypanel').hide();
+            }
+
+            var length = this.content.items.items.length;
+            Ext.each(filters, function(filter, idx) {
+                filter.data.id = filter.id;
+                if (idx < length) {
+                    this.content.items.items[idx].getStore().loadData([filter]);
+                }
+                else {
+                    this.content.add(this.createHierarchyFilter(filter));
+                }
+            }, this);
+
+            if (filters.length < length) {
+                for (var i=filters.length; i < length; i++) {
+                    this.content.remove(this.content.items.items[i].id);
+                }
+            }
+
             this.show();
         }
     }

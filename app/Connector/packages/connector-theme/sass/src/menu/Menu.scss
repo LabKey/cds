@@ -1,3 +1,15 @@
+$connector-menu-border-radius: 9px;
+
+.x-menu {
+  border-radius: $connector-menu-border-radius;
+
+  a {
+    &:hover, &:active {
+      text-decoration: none;
+    }
+  }
+}
+
 .x-menu-body {
   background: $light-color;
 }
@@ -6,22 +18,12 @@
   background-color: $select-color;
   background-image: none;
   background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(lighten($select-color, 5)), to($select-color));
+  border-radius: $connector-menu-border-radius;
 
   .x-menu-item-text {
     color: $light-color;
   }
 }
-
-//.x-menu-item-active .x-menu-item-link {
-//  background-color: $select-color;
-//  border: 1px solid $select-color;
-//  background-image: none;
-//  background: -webkit-gradient(linear, 0% 0%, 100% 0%, from(lighten($select-color, 5)), to($select-color));
-//
-//  .x-menu-item-text {
-//    color: $light-color;
-//  }
-//}
 
 .x-menu-item-text {
   font-size: 10pt;
