@@ -116,7 +116,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Time": "../../../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
+  "Connector.view.module.AssayAnalyteList": "../../../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
+  "Connector.view.module.AssayAntigenList": "../../../../webapp/Connector/src/app/view/module/AssayAntigenList.js",
   "Connector.view.module.AssayHeader": "../../../../webapp/Connector/src/app/view/module/AssayHeader.js",
+  "Connector.view.module.AssayVariableList": "../../../../webapp/Connector/src/app/view/module/AssayVariableList.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
@@ -258,7 +261,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
+  "Connector.view.module.AssayAnalyteList": [],
+  "Connector.view.module.AssayAntigenList": [],
   "Connector.view.module.AssayHeader": [],
+  "Connector.view.module.AssayVariableList": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
@@ -1305,8 +1311,17 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.variableselector"
   ],
   "Connector.view.Viewport": [],
+  "Connector.view.module.AssayAnalyteList": [
+    "widget.app.module.assayanalytelist"
+  ],
+  "Connector.view.module.AssayAntigenList": [
+    "widget.app.module.assayantigenlist"
+  ],
   "Connector.view.module.AssayHeader": [
     "widget.app.module.assayheader"
+  ],
+  "Connector.view.module.AssayVariableList": [
+    "widget.app.module.assayvariablelist"
   ],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.Person": [
