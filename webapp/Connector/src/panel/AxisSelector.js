@@ -170,7 +170,8 @@ Ext.define('Connector.panel.AxisSelector', {
             queryDescription: timePointQueryDescription,
             isKeyVariable: true,
             name: 'SubjectVisit/Visit/ProtocolDay',
-            label: 'Study Days',
+            alias: 'Days',
+            label: 'Study days',
             type: 'INTEGER',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
             variableType: 'TIME'
@@ -180,7 +181,8 @@ Ext.define('Connector.panel.AxisSelector', {
             queryName: null,
             queryLabel: 'Time points',
             name: 'SubjectVisit/Visit/ProtocolDay',
-            label: 'Study Weeks',
+            alias: 'Weeks',
+            label: 'Study weeks',
             type: 'DOUBLE',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
             variableType: 'TIME'
@@ -190,7 +192,8 @@ Ext.define('Connector.panel.AxisSelector', {
             queryName: null,
             queryLabel: 'Time points',
             name: 'SubjectVisit/Visit/ProtocolDay',
-            label: 'Study Months',
+            alias: 'Months',
+            label: 'Study months',
             type: 'DOUBLE',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
             variableType: 'TIME'
@@ -201,6 +204,7 @@ Ext.define('Connector.panel.AxisSelector', {
             queryLabel: 'User groups',
             queryDescription: 'Creates a categorical x axis of the selected user groups',
             name: 'GroupId',
+            alias: 'SavedGroups',
             label: 'My saved groups',
             description: 'Creates a categorical x axis of the selected saved groups',
             type: 'VARCHAR',

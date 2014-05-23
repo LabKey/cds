@@ -951,7 +951,7 @@ Ext.define('Connector.view.Scatter', {
 
         if (isVisitTagAlignment)
         {
-            var interval = measure.label.replace("Study ", "");
+            var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
                 interval: interval,
