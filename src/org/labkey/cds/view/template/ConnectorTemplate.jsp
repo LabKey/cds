@@ -51,6 +51,9 @@
             studyContext: {
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisitColumn: 'SubjectVisit'
+            },
+            resourceContext: {
+                path: <%=PageFlowUtil.jsString(resourcePath)%>
             }
         };
     </script>
@@ -125,6 +128,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
@@ -168,6 +172,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>

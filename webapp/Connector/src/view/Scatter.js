@@ -1196,6 +1196,7 @@ Ext.define('Connector.view.Scatter', {
                             filters[f].set('plotMeasures', measures);
                             // TODO: Before we update filter members check to see if the filters actually changed.
                             // Call Filter.plotMeasuresEqual (see Filter.js).
+                            // TODO: Call state.updateFilter instead. Figure out why we are skipping state.
                             this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
                         } else {
                             this.state.updateFilterMembers(filters[f].get('id'), filter.members, true);

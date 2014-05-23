@@ -8,7 +8,18 @@ Ext.define('Connector.controller.Group', {
 
     views: ['GroupSave', 'GroupSummary'],
 
+    selected: [],
+
     init : function() {
+
+        this.control('grouplistview', {
+            itemclick: function(v, grp) {
+                this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
+            },
+            render: function(view) {
+                this.registerSelectGroup(view);
+            }
+        });
 
         this.control('filterpanel > container > #savegroup', {
             click : this.onGroupSave
@@ -91,6 +102,24 @@ Ext.define('Connector.controller.Group', {
 
     getDefaultView : function() {
         return 'groupsummary';
+    },
+
+    registerSelectGroup : function(view) {
+        if (!this.selected[view.id]) {
+            this.selected[view.id] = view;
+            view.on('selectionchange', this.onSelectGroup, this);
+        }
+    },
+
+    onSelectGroup : function(selModel) {
+        Ext.iterate(this.selected, function(id, select) {
+            if (id != selModel.view.id) {
+                var model = select.getSelectionModel();
+                model.suspendEvents();
+                model.deselectAll();
+                model.resumeEvents();
+            }
+        });
     },
 
     undoFilter : function() {
@@ -294,11 +323,6 @@ Ext.define('Connector.controller.Group', {
     onGroupSaved : function(grp, filters) {
 
         var name = grp.label ? grp.label : grp.category.label;
-//
-//        var group = Ext.create('Connector.model.FilterGroup', {
-//            name : name,
-//            filters : filters
-//        });
 
         this.getStateManager().setFilters(filters);
         this.getViewManager().hideView('groupsave');

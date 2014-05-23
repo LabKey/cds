@@ -110,23 +110,7 @@ div.variableoptionsgrid {
   color: $heat-scale-1;
 }
 
-/* Connector.grid.Panel */
-.connector-grid .x-column-header-trigger {
-  background-image: url(images/filter.svg);
-  background-position: 0px 28px;
-}
-
-.connector-grid .x-column-header-trigger:hover {
-  background-color: #E6E1E1 !important;
-  background-image: url(images/filter_selected.svg);
-  background-position: 0px 28px;
-}
-
-.connector-grid .filtered-column .x-column-header-trigger {
-  background-image: url(images/filter_selected.svg);
-  background-position: 0px 28px;
-}
-
+/* Ext.Grid*/
 .x-column-header-text {
   font-size: 12px;
 }
@@ -137,8 +121,92 @@ div.variableoptionsgrid {
   background-image: url(images/form/checkbox2.gif);
 }
 
-.x-grid-body {
+/* Connector.grid.Panel */
+.connector-grid {
+  .x-column-header-trigger {
+    background-image: url(images/filter.svg);
+    background-position: 0px 28px;
+
+    &:hover {
+      background-color: #E6E1E1 !important;
+      background-image: url(images/filter_selected.svg);
+      background-position: 0px 28px;
+    }
+  }
+
+  .filtered-column .x-column-header-trigger {
+    background-image: url(images/filter_selected.svg);
+    background-position: 0px 28px;
+  }
+}
+
+/* Connector.view.InfoPane */
+.x-grid-body .x-grid-table-focused-first {
+  border-top: 1px solid transparent;
+}
+
+.x-grid-with-row-lines .x-grid-table-over-first {
   border-top-color: transparent;
+}
+
+.infopanegrid {
+
+  margin-top: 30px;
+
+  .x-grid-body {
+    border-top-color: transparent;
+  }
+
+  .x-column-header {
+    border-color: transparent;
+  }
+
+  .x-column-header-over {
+    background-color: transparent;
+  }
+
+  .x-column-header-over,
+  .x-column-header-sort-ASC, .x-column-header-sort-DESC {
+    background-image: none !important;
+    background-color: transparent;
+    border: none;
+  }
+
+  .x-column-header-trigger {
+    border-left: 1px solid $primary-color;
+    background-color: $heat-scale-4;
+
+    &:hover {
+      background-color: #F4F4F4 !important;
+    }
+  }
+
+  .x-grid-header-ct {
+    border-color: transparent;
+  }
+
+  .x-grid-group-hd {
+    margin-top: 20px;
+    border-width: 0;
+    background-color: transparent;
+  }
+
+  .x-grid-group-title {
+    @include smallStandout;
+    color: $heat-scale-2;
+  }
+
+  .x-grid-with-row-lines .x-grid-table-over-first {
+    border-color: transparent;
+  }
+
+  .x-grid-row-over .x-grid-cell-last {
+    background-color: transparent;
+  }
+
+  .x-grid-cell-inner {
+    padding: 3px 6px 2px 6px;
+  }
 }
 
 /* Group selection panels */
