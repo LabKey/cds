@@ -123,7 +123,7 @@ Ext.define('Connector.panel.ColorSelector', {
     modelTpl : new Ext.XTemplate(
             '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
-                '<li>{schemaLabel:this.elipseEncode}: {queryLabel:htmlEncode}</li>',
+                '<li>{[this.renderLabel(values)]}</li>',
                 // The legend is always an nbsp on first render because we have to wait till after we get the data to
                 // actually render it.
                 '<li id="color-legend">&nbsp;</li>',
@@ -131,6 +131,13 @@ Ext.define('Connector.panel.ColorSelector', {
             {
                 elipseEncode : function(v) {
                     return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
+                },
+                renderLabel : function(values) {
+                    if (values.schemaLabel !== '' && values.queryLabel !== '') {
+                        return this.elipseEncode(values.schemaLabel) + ': ' + Ext.htmlEncode(values.queryLabel);
+                    }
+
+                    return '';
                 }
             }
     ),

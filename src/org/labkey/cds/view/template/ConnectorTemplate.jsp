@@ -185,6 +185,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>
