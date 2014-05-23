@@ -92,6 +92,25 @@ Ext.define('Connector.model.Filter', {
         },
 
         plotMeasuresEqual : function(measuresA, measuresB){
+            var alignmentVisitTagMatch = function(measureAdateOptions, measureBdateOptions) {
+                return ((!measureAdateOptions && !measureAdateOptions) ||
+                        (measureAdateOptions && measureBdateOptions && measureAdateOptions.zeroDayVisitTag === measureBdateOptions.zeroDayVisitTag));
+            };
+
+            var userGroupsMatch = function(measureAvalues, measureBvalues) {
+                return ((!measureAvalues && !measureBvalues) ||
+                        (measureAvalues && measureBvalues &&
+                         measureAvalues.length == measureBvalues.length &&
+                         measureAvalues.join() === measureBvalues.join()));
+            };
+
+            var antigenValuesMatch = function(measureAoptions, measureBoptions) {
+                return ((!measureAoptions && !measureBoptions) ||
+                        (measureAoptions && measureAoptions.antigen && measureBoptions && measureBoptions.antigen &&
+                         measureAoptions.antigen.values.length == measureBoptions.antigen.values.length &&
+                         measureAoptions.antigen.values.join() === measureBoptions.antigen.values.join()));
+            };
+
             var compareMeasures = function(measureA, measureB) {
                 if (!measureA && !measureB) {
                     return true;
@@ -99,7 +118,10 @@ Ext.define('Connector.model.Filter', {
                     if (measureA !== null && measureB !== null && measureA.visit === measureB.visit) {
                         return measureA.hasOwnProperty('measure') && measureB.hasOwnProperty('measure') &&
                                 measureA.measure.hasOwnProperty('alias') && measureB.measure.hasOwnProperty('alias') &&
-                                measureA.measure.alias === measureB.measure.alias;
+                                measureA.measure.alias === measureB.measure.alias &&
+                                alignmentVisitTagMatch(measureA.dateOptions, measureB.dateOptions) &&
+                                userGroupsMatch(measureA.measure.values, measureB.measure.values) &&
+                                antigenValuesMatch(measureA.measure.options, measureB.measure.options);
                     }
                 }
 
