@@ -13,47 +13,27 @@ Ext.define('Connector.controller.Summary', {
 
     init : function() {
 
-        this.selected = {};
-
-        this.control('summarydataview', {
-            itemclick: this.onSummarySelect
-        });
-
         this.control('#dimensionmenu', {
             afterrender : function(m) {
-                var s = this.getSummaryStore();
-                if (s.getCount())
-                {
-                    for (var r=0; r < s.getCount(); r++) {
-                        var rec = s.getAt(r);
+                var updateDims = function(store) {
+                    for (var r=0; r < store.getCount(); r++) {
+                        var rec = store.getAt(r);
                         m.add({
-                            text : rec.data.label,
-                            rec  : rec
+                            text: rec.data.label,
+                            rec: rec
                         });
                     }
                     m.show();
+                };
+
+                var s = this.getSummaryStore();
+                if (s.getCount()) {
+                    updateDims(s);
                 }
-                else
-                {
-                    s.on('load', function(s) {
-                        for (var r=0; r < s.getCount(); r++) {
-                            var rec = s.getAt(r);
-                            m.add({
-                                text : rec.data.label,
-                                rec  : rec
-                            });
-                        }
-                        m.show();
-                    }, this, {single: true});
+                else {
+                    s.on('load', updateDims, this, {single: true});
                     s.load();
                 }
-            }
-        });
-
-        /* Controls for Group Selections */
-        this.control('grouplistview', {
-            render    : function(view) {
-                this.registerSelectGroup(view);
             }
         });
 
@@ -85,7 +65,8 @@ Ext.define('Connector.controller.Summary', {
         this.control('summarydataview', {
             refresh: function(view) {
                 this.summaryLinkTask.delay(100, null, null, [view]);
-            }
+            },
+            itemclick: this.onSummarySelect
         });
 
         this.callParent();
@@ -127,30 +108,8 @@ Ext.define('Connector.controller.Summary', {
         return this.summaryStore;
     },
 
-    registerSelectGroup : function(v) {
-        if (!this.selected[v.id]) {
-            this.selected[v.id] = v;
-            v.on('selectionchange', this.onSelectGroup, this);
-        }
-    },
-
-    onSelectGroup : function(selModel) {
-        var view = selModel.view, vid; // ugh: documentation states that 'selectionchange' on Ext.view.View hands back View instance. It does not.
-        for (vid in this.selected) {
-            if (vid != view.id && this.selected.hasOwnProperty(vid)) {
-                var model = this.selected[vid].getSelectionModel();
-
-                model.suspendEvents();
-                model.deselectAll();
-                model.resumeEvents();
-            }
-        }
-    },
-
     onSummarySelect : function(view) {
-        var state = this.getStateManager(),
-                hierarchy = view.getSelectionModel().getSelection()[0].data.hierarchy,
-                group;
+        var hierarchy = view.getSelectionModel().getSelection()[0].get('hierarchy');
 
         // Display Explorer
         if (this.linkNavigate) {
@@ -159,25 +118,6 @@ Ext.define('Connector.controller.Summary', {
         else {
             var context = hierarchy.split('.');
             this.getViewManager().changeView('explorer', 'singleaxis', context);
-        }
-
-        // Copy the group filter to the state filter
-        if (state.getPrivateSelection('groupselection')) {
-            var filters = state.getPrivateSelection('groupselection');
-
-            if (filters.length > 0 && filters[0].groupLabel != 'Current Active Filters') {
-                var grp = Ext.create('Connector.model.FilterGroup', {
-                    name : filters[0].data.groupLabel,
-                    filters : filters
-                });
-
-                group = [grp];
-                state.removePrivateSelection('groupselection');
-            }
-        }
-
-        if (group) {
-            state.setFilters(group);
         }
     }
 });

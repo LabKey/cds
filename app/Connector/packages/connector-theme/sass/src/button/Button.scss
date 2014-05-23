@@ -413,7 +413,8 @@ button.imgbutton {
   background-image: url(images/dropdown.svg);
 }
 
-button.imgbuttonover {
+button.imgbuttonover,
+button.imgbutton-menubuttonover {
   background-image: url(images/dropdown_hover.svg);
 }
 

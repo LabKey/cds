@@ -24,18 +24,6 @@ Ext.define('Connector.controller.Explorer', {
         });
 
         this.control('#dimensionmenu', {
-            afterrender : function(m) {
-                var summaryControl = this.application.getController('Summary');
-                if (summaryControl) {
-                    var s = summaryControl.getSummaryStore();
-                    if (s.getCount() > 0) {
-                        m.show();
-                    }
-                    else {
-                        s.load();
-                    }
-                }
-            },
             click : this.onDimensionSelect
         });
 
@@ -55,15 +43,11 @@ Ext.define('Connector.controller.Explorer', {
                         return;
                     }
 
-                    var name = '';
                     for (var d=0; d < h.length; d++) {
-                        name = h[d].name.split('.')[1];
-                        if (name) {
-                            m.add({
-                                text : h[d].name.split('.')[1],
-                                hierarchyIndex : d
-                            });
-                        }
+                        m.add({
+                            text: h[d].label,
+                            hierarchyIndex: d
+                        });
                     }
                     btn.show();
                 };
@@ -265,23 +249,53 @@ Ext.define('Connector.controller.Explorer', {
 
     afterSelectionAnimation : function(view, rec, node) {
         var records = view.getSelectionModel().getSelection();
+        var state = this.getStateManager();
 
-        var selections = [];
-        Ext.each(records, function(rec) {
-            selections.push({
-                hierarchy: rec.get('hierarchy'),
-                members: [{ uniqueName: rec.get('uniqueName') }],
-                isGroup: rec.get('isGroup')
-            });
-        });
+        state.onMDXReady(function(mdx) {
 
-        if (selections.length > 0) {
-            this.getStateManager().removePrivateSelection('hoverSelectionFilter');
-            this.getStateManager().addSelection(selections, false, true, true);
-            var v = this.getViewManager().getViewInstance('singleaxis');
-            if (v) {
-                v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
+            var uniqueName = rec.get('hierarchy');
+            var hierarchy = mdx.getHierarchy(uniqueName);
+
+            if (!hierarchy) {
+                var dim = mdx.getDimension(uniqueName);
+                if (!dim) {
+                    console.error('unable to determine sourcing dimension/hierarchy');
+                }
+
+                Ext.each(dim.hierarchies, function(hier) {
+                    if (!hier.hidden) {
+                        hierarchy = hier;
+                        return false;
+                    }
+                });
             }
-        }
+
+            //
+            // Build Selections
+            //
+            var selections = [];
+            Ext.each(records, function(rec) {
+                selections.push({
+                    hierarchy: hierarchy.uniqueName,
+                    level: rec.get('levelUniqueName'),
+                    members: [{ uniqueName: rec.get('uniqueName') }],
+                    isGroup: rec.get('isGroup'),
+                    operator: hierarchy.defaultOperator
+                });
+            });
+
+            //
+            // Apply Selections
+            //
+            if (selections.length > 0) {
+                state.removePrivateSelection('hoverSelectionFilter');
+                state.addSelection(selections, false, true, true);
+                var v = this.getViewManager().getViewInstance('singleaxis');
+                if (v) {
+                    v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
+                }
+            }
+
+        }, this);
     }
 });
