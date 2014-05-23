@@ -40,6 +40,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 {
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
+    private final String PGROUP1 = "visgroup 1";
+    private final String PGROUP2 = "visgroup 2";
+    private final String PGROUP3 = "visgroup 3";
+    private final String PGROUP3_COPY = "copy of visgroup 3";
 
     @BeforeClass
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -50,6 +54,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         initTest.doCleanup(false);
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+        initTest.createParticipantGroups();
 
         currentTest = initTest;
     }
@@ -231,6 +236,56 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     }
 
     @Test
+    public void verifySavedGroupPlot()
+    {
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        Locator boxLoc = Locator.css("svg .box");
+        Locator xtickLoc = Locator.css("g.tick-text > a > text");
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("Physical Exam", "Diastolic Blood Pressure");
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("User groups", "My saved groups");
+        xaxis.setVariableOptions(PGROUP1, PGROUP2, PGROUP3);
+        xaxis.confirmSelection();
+
+        waitForElement(xtickLoc.withText(PGROUP1));
+        waitForElement(xtickLoc.withText(PGROUP2));
+        waitForElement(xtickLoc.withText(PGROUP3));
+        assertElementPresent(boxLoc, 3);
+        waitForElement(xtickLoc.withText("115"));
+        waitForElement(xtickLoc.withText("70"));
+
+        xaxis.openSelectorWindow();
+        xaxis.setVariableOptions(PGROUP1, PGROUP2);
+        xaxis.confirmSelection();
+
+        waitForElement(xtickLoc.withText(PGROUP1));
+        waitForElement(xtickLoc.withText(PGROUP2));
+        waitForElementToDisappear(xtickLoc.withText(PGROUP3));
+        assertElementPresent(boxLoc, 2);
+        waitForElementToDisappear(xtickLoc.withText("115"));
+        waitForElementToDisappear(xtickLoc.withText("70"));
+
+        xaxis.openSelectorWindow();
+        xaxis.setVariableOptions(PGROUP3, PGROUP3_COPY);
+        xaxis.confirmSelection();
+
+        waitForElementToDisappear(xtickLoc.withText(PGROUP1));
+        waitForElementToDisappear(xtickLoc.withText(PGROUP2));
+        waitForElement(xtickLoc.withText(PGROUP3));
+        waitForElement(xtickLoc.withText(PGROUP3_COPY));
+        assertElementPresent(boxLoc, 2);
+        waitForElement(xtickLoc.withText("115"));
+        waitForElement(xtickLoc.withText("70"));
+    }
+
+    @Test
     public void verifyXAxisSelector()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -391,6 +446,16 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         return propertyMap.get(property);
     }
 
+    @LogMethod
+    private void createParticipantGroups()
+    {
+        Ext4Helper.resetCssPrefix();
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "249318596", "249320107");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "249320127", "249320489");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "249320897", "249325717");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3_COPY, "Subject", "249320897", "249325717");
+    }
+
     @Nullable
     @Override
     protected String getProjectName()
@@ -415,5 +480,4 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         return BrowserType.CHROME;
     }
-
 }
