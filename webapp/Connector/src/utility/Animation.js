@@ -45,9 +45,9 @@ Ext.define('Animation', {
             dom.innerHTML = child.dom.innerHTML;
             dom.setAttribute('class', animateElementClass);
             dom.setAttribute('style', 'position: absolute; width: ' + (child.getTextWidth()+20) + 'px; left: ' + cbox[0] + 'px; top: ' + cbox[1] + 'px;');
+
             // Append to Body
             var xdom = Ext.get(dom);
-//            xdom.setXY(child.getXY());
             xdom.appendTo(Ext.getBody());
 
             var y = box.y + 30;
@@ -72,7 +72,7 @@ Ext.define('Animation', {
 
         if (completionCallback) {
             var task = new Ext.util.DelayedTask(completionCallback, callbackScope, callbackParams);
-            task.delay(found ? 500 : 0);
+            task.delay(found ? 800 : 0);
         }
     }
 });

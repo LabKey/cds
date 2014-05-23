@@ -5,34 +5,34 @@
         <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Name">
             <Table schema="cds" name="antigens">
             </Table>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
                 <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Clade">
             <Table schema="cds" name="antigens">
             </Table>
-            <Level name="Clade" visible="true" column="clade" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Clade" visible="true" column="clade" type="String" uniqueMembers="true" >
             </Level>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
                 <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Tier">
             <Table schema="cds" name="antigens" >
             </Table>
-            <Level name="Tier" visible="true" column="tier" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Tier" visible="true" column="tier" type="String" uniqueMembers="true" >
             </Level>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
                 <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Sample Type">
             <Table schema="cds" name="antigens">
             </Table>
-            <Level name="Sample Type" visible="true" column="specimensource" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Sample Type" visible="true" column="specimensource" type="String" uniqueMembers="true" >
             </Level>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
                 <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
             </Level>
         </Hierarchy>
@@ -42,19 +42,19 @@
     <Dimension visible="true" highCardinality="false" name="Assay">
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Name">
             <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Target Area">
             <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true"  />
+            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
             </Level>
         </Hierarchy>
         <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Methodology">
             <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Methodology" visible="true" column="methodology" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+            <Level name="Methodology" visible="true" column="methodology" type="String" uniqueMembers="true"  />
+            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
             </Level>
         </Hierarchy>
     </Dimension>
@@ -75,28 +75,28 @@
         <Dimension visible="true" highCardinality="false" name="Subject" foreignKey="participantid">
             <Hierarchy visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Container" visible="true" column="Folder" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Subject" visible="true" column="SubjectID" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Container" visible="true" column="Folder" />
+                <Level name="Subject" visible="true" column="SubjectID" type="String" uniqueMembers="false" />
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Race" visible="true" column="race" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Race" visible="true" column="race" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Sex" visible="true" column="sex" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Sex" visible="true" column="sex" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Ethnicity" visible="true" column="ethnicity" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Ethnicity" visible="true" column="ethnicity" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="true" />
             </Hierarchy>
         </Dimension>
 
@@ -109,7 +109,7 @@
                         <Table name="Product" schema="study"/>
                     </Join>
                 </Join>
-                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="Type" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantTreatments">
                 <Join leftKey="treatmentid" rightKey="treatmentid">
@@ -119,8 +119,8 @@
                         <Table name="Product" schema="study"/>
                     </Join>
                 </Join>
-                <Level name="Type" table="Product" visible="true" column="type" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
-                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never"/>
+                <Level name="Type" table="Product" visible="true" column="type" type="String" uniqueMembers="true" />
+                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
         </Dimension>
 
@@ -134,7 +134,7 @@
         <Dimension visible="true" highCardinality="false" name="Lab" foreignKey="lab">
             <Hierarchy visible="true" hasAll="true">
                 <Table schema="study" name="StudyDesignLabs" />
-                <Level name="Lab" visible="true" column="Name" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+                <Level name="Name" visible="true" column="Name" type="String" uniqueMembers="true" >
                 </Level>
             </Hierarchy>
         </Dimension>
@@ -142,7 +142,7 @@
         <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
             <Hierarchy visible="true" hasAll="true" primaryKey="container">
                 <Table schema="study" name="StudyProperties" />
-                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="IfBlankName">
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" hideMemberIf="IfBlankName">
                 </Level>
             </Hierarchy>
         </Dimension>

@@ -57,7 +57,7 @@ Ext.define('Connector.view.Selection', {
                                     '</select>',
                                 '</div>',
                             '</tpl>',
-                            '<div class="selitem sel-listing">{[this.renderType(values.members[0])]}</div>',
+                            '<div class="selitem sel-listing">{level:this.renderType}</div>',
                             '<tpl for="members">',
                                 '{% if (xindex > 5) break; %}',
                                 '<div class="status-over memberitem collapsed-member">',
@@ -69,9 +69,9 @@ Ext.define('Connector.view.Selection', {
                             '</tpl>',
                         '</tpl>',
                         '<tpl if="members.length === 1">',
-                            '<div class="selitem status-over memberitem" title="{members:this.renderMember}">',
+                            '<div class="selitem status-over memberitem" title="{[ this.renderMember(values) ]}">',
                                 '<div class="closeitem" data-id="{id}"></div>',
-                                '{members:this.renderMember}',
+                                '{[ this.renderMember(values) ]}',
                             '</div>',
                         '</tpl>',
                     '</div>',
@@ -108,23 +108,23 @@ Ext.define('Connector.view.Selection', {
                 selectUnion : function(op) {
                     return op.indexOf('OR') > -1 ? 'selected="selected"' : '';
                 },
-                renderType : function(member) {
-                    var u = LABKEY.app.view.Selection.uniqueNameAsArray(member['uniqueName']);
-                    var area = u[0], type = '';
-
-                    // Determine if zero level
-                    if (area.indexOf('.') == -1) {
-                        type = area;
-                    }
-                    else {
-                        var areas = area.split('.');
-                        type = areas[0];
-                        if (u.length <= 2) {
-                            type += ' (' + areas[1] + ')';
+                renderType : function(lvl) {
+                    var label = '';
+                    Connector.STATE.onMDXReady(function(mdx) {
+                        var level = mdx.getLevel(lvl);
+                        if (level) {
+                            label = level.hierarchy.dimension.singularName;
+                            if (Ext.isDefined(level.countSingular)) {
+                                if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
+                                    label += ' (' + level.countSingular + ')';
+                                }
+                            }
+                            else {
+                                label += ' (' + level.name + ')';
+                            }
                         }
-                    }
-
-                    return Ext.htmlEncode(type);
+                    });
+                    return Ext.htmlEncode(label);
                 },
                 renderUniqueName : function(uniqueName) {
                     var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
@@ -134,45 +134,33 @@ Ext.define('Connector.view.Selection', {
                     }
                     return Ext.htmlEncode(member);
                 },
-                /**
-                 * Example of zero-level:
-                 * ["Study", "Not Actually CHAVI 001"]
-                 *
-                 * Example of single-level:
-                 * ["Assay.Methodology", "ICS"]
-                 *
-                 * Example of multi-level:
-                 * ["Assay.Methodology", "NAb", "NAb-Sample-LabKey"]
-                 */
-                renderMember : function(members) {
-                    var member = '', area = '';
-                    var levels = LABKEY.app.view.Selection.uniqueNameAsArray(members[0]['uniqueName']);
-
-                    // Determine if zero level
-                    if (levels[0].indexOf('.') == -1) {
-                        area = levels[0];
-                        member = levels[1];
-                    }
-                    else {
-                        var areas = levels[0].split('.');
-
-                        // multi-level
-                        if (levels.length > 2) {
-                            area = areas[0];
+                renderMember : function(data) {
+                    var label = '';
+                    Connector.STATE.onMDXReady(function(mdx) {
+                        var level = mdx.getLevel(data.level);
+                        if (level) {
+                            label = level.hierarchy.dimension.singularName;
+                            if (level.depth == 2) {
+                                if (Ext.isDefined(level.countSingular)) {
+                                    if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
+                                        label += ' (' + level.countSingular + ')';
+                                    }
+                                }
+                                else {
+                                    label += ' (' + level.name + ')';
+                                }
+                            }
                         }
-                        else {
-                            // single level
-                            area = areas[0] + ' (' + areas[1] + ')';
-                        }
+                    });
 
-                        member = levels[levels.length-1];
-                    }
+                    var member = LABKEY.app.view.Selection.uniqueNameAsArray(data.members[0]['uniqueName']);
+                    member = member[member.length-1];
 
                     if (member == '#null') {
                         member = 'Unknown';
                     }
 
-                    return Ext.htmlEncode(area + ': ' + member);
+                    return Ext.htmlEncode(label + ': ' + member);
                 },
                 renderMeasures : function(values) {
                     var label = 'In the plot: ';
@@ -189,6 +177,9 @@ Ext.define('Connector.view.Selection', {
                     return Ext.htmlEncode(type + ": " + LABKEY.app.model.Filter.getGridLabel(values));
                 },
                 renderSelectionMeasure : function(measure, filters, id, idx) {
+
+                    var domString = '';
+
                     if (measure && filters && filters[0] && filters[1]) {
                         var minVal = filters[0].getValue(),
                             maxVal = filters[1].getValue();
@@ -198,17 +189,16 @@ Ext.define('Connector.view.Selection', {
                             maxVal = new Date(maxVal).toLocaleDateString();
                         }
 
-                        var domString =
+                        domString =
                                 '<div class="status-over memberitem plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
                                         measure.measure.label +
                                         ': &gt;= ' + minVal +
                                         ', &lt;= ' + maxVal +
                                 '</div>';
-                        return domString;
-                    } else {
-                        return '';
                     }
+
+                    return domString;
                 },
                 renderPlotSelection: function(values) {
                     var measures = values.plotMeasures,

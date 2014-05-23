@@ -24,6 +24,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      hidden          - declare whether a hierarchy is hidden. Defaults to false.
         //      supportsSummary - summary views are supported for this hierarchy. defaults to true but respects hidden.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to dimensions value.
+        //      label           - Default is parsed name.
         //
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
@@ -61,6 +62,7 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Subject.Race]',
                     defaultOperator: 'OR',
+                    label: 'Race & Subtype',
                     levels: [{
                         uniqueName: '[Subject.Race].[Race]',
                         activeCount: true,
@@ -135,7 +137,6 @@ Ext4.define('Connector.cube.Configuration', {
                         }
                     }]]
                 },
-
     
                 hierarchies: [{
                     uniqueName: '[Vaccine.Name]',
@@ -275,6 +276,7 @@ Ext4.define('Connector.cube.Configuration', {
 
                 hierarchies: [{
                     uniqueName: '[Study]',
+                    label: 'Name',
                     levels: [{
                         uniqueName: '[Study].[(All)]',
                         activeCount: 'highlight',
@@ -395,8 +397,9 @@ Ext4.define('Connector.cube.Configuration', {
 
                 hierarchies: [{
                     uniqueName: '[Lab]',
+                    label: 'Name',
                     levels: [{
-                        uniqueName: '[Lab].[Lab]',
+                        uniqueName: '[Lab].[Name]',
                         activeCount: true,
                         dataBasedCount: true,
                         countPriority: 70,
@@ -450,7 +453,8 @@ Ext4.define('Connector.cube.Configuration', {
             var hh = {
                 hidden: false,
                 supportsSummary: true,
-                defaultOperator: dd.defaultOperator
+                defaultOperator: dd.defaultOperator,
+                label: '' // parsed later
             };
 
             var ll = {
@@ -531,11 +535,13 @@ Ext4.define('Connector.cube.Configuration', {
                         // Iterate over the set of cube hierarchies applying context
                         //
                         ch = cd.hierarchies;
+                        var ctx = Ext.clone(hh);
+                        var processed = false;
 
                         for (_h=0; _h < _hier.length; _h++) {
 
-                            var ctx = Ext.clone(hh);
                             var ctxHier = false;
+                            processed = false;
 
                             if (ch) {
                                 // order of the context hierarchies might not match the dimension declarations
@@ -549,14 +555,28 @@ Ext4.define('Connector.cube.Configuration', {
                                 if (ctxHier) {
                                     ctx = {};
 
+                                    processed = true;
                                     Ext.apply(ctx, {
                                         hidden: Ext.isDefined(ctxHier.hidden) ? ctxHier.hidden === true : hh.hidden,
                                         supportsSummary: Ext.isDefined(ctxHier.supportsSummary) ? ctxHier.supportsSummary === true : hh.supportsSummary,
-                                        defaultOperator: Ext.isDefined(ctxHier.defaultOperator) ? ctxHier.defaultOperator : _dim.defaultOperator
+                                        defaultOperator: Ext.isDefined(ctxHier.defaultOperator) ? ctxHier.defaultOperator : _dim.defaultOperator,
+                                        label: Ext.isDefined(ctxHier.label) ? ctxHier.label : Connector.cube.Configuration.parseLabel(_hier[_h])
                                     });
 
                                     ll.defaultOperator = ctx.defaultOperator;
                                 }
+                            }
+
+                            if (!processed) {
+                                ctx = {};
+                                Ext.apply(ctx, {
+                                    hidden: hh.hidden,
+                                    supportsSummary: hh.supportsSummary,
+                                    defaultOperator: _dim.defaultOperator,
+                                    label: Connector.cube.Configuration.parseLabel(_hier[_h])
+                                });
+
+                                ll.defaultOperator = hh.defaultOperator;
                             }
 
                             Ext.apply(_hier[_h], ctx);
@@ -571,6 +591,11 @@ Ext4.define('Connector.cube.Configuration', {
             }
 
             return mdx;
+        },
+
+        parseLabel : function(hierarchy) {
+            var label = hierarchy.name.split('.');
+            return label[label.length-1];
         },
 
         getLevels : function(cubeHierarchy, contextHierarchy, defaults) {

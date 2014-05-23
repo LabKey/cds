@@ -158,7 +158,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         log("Verify Filter Pane");
 
-        String raceMemberType = "Subject (Race)";
+        String raceMemberType = "Subject (Race & Subtype)";
         String raceMember = "Black/African American";
         String raceMember2 = "Native Hawaiian/Pacific Islander";
         String raceMember3 = "Asian";
@@ -961,7 +961,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         waitAndClick(Locator.linkWithText("races & subtypes"));
         waitForElement(dimensionGroup.withText("Subject characteristics"));
-        waitForElement(dimensionSort.withText("SORTED BY: RACE"));
+        waitForElement(dimensionSort.withText("SORTED BY: RACE & SUBTYPE"));
         cds.goToAppHome();
         sleep(250);
 

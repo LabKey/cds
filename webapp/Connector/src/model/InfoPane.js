@@ -164,7 +164,7 @@ Ext.define('Connector.model.InfoPane', {
 
             Ext.each(dim.hierarchies, function(h) {
                 hierarchyItems.push({
-                    text: this.getHierarchyLabel(h),
+                    text: h.label,
                     uniqueName: h.uniqueName
                 });
             }, this);
@@ -176,7 +176,7 @@ Ext.define('Connector.model.InfoPane', {
             this.set('dimensionUniqueName', dim.uniqueName);
             this.set('hierarchyUniqueName', hier.uniqueName);
             this.set('level', lvl.uniqueName);
-            this.set('hierarchyLabel', this.getHierarchyLabel(hier));
+            this.set('hierarchyLabel', hier.label);
             this.set('hierarchyItems', hierarchyItems);
             this.set('operatorType', hier.defaultOperator);
             this.set('title', dim.pluralName);
@@ -253,13 +253,6 @@ Ext.define('Connector.model.InfoPane', {
             return false;
         });
         return hier;
-    },
-
-    getHierarchyLabel : function(hierarchy) {
-        if (hierarchy.name.indexOf('.') > -1) {
-            return hierarchy.name.split('.')[1];
-        }
-        return hierarchy.name;
     },
 
     processMembers : function(cellset) {

@@ -24,18 +24,6 @@ Ext.define('Connector.controller.Explorer', {
         });
 
         this.control('#dimensionmenu', {
-            afterrender : function(m) {
-                var summaryControl = this.application.getController('Summary');
-                if (summaryControl) {
-                    var s = summaryControl.getSummaryStore();
-                    if (s.getCount() > 0) {
-                        m.show();
-                    }
-                    else {
-                        s.load();
-                    }
-                }
-            },
             click : this.onDimensionSelect
         });
 
@@ -55,15 +43,11 @@ Ext.define('Connector.controller.Explorer', {
                         return;
                     }
 
-                    var name = '';
                     for (var d=0; d < h.length; d++) {
-                        name = h[d].name.split('.')[1];
-                        if (name) {
-                            m.add({
-                                text : name,
-                                hierarchyIndex : d
-                            });
-                        }
+                        m.add({
+                            text: h[d].label,
+                            hierarchyIndex: d
+                        });
                     }
                     btn.show();
                 };

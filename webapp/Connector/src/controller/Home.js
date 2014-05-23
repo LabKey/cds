@@ -11,18 +11,6 @@ Ext.define('Connector.controller.Home', {
 
     views : ['Home'],
 
-    init : function() {
-
-        this.control('grouplistview', {
-            itemclick: function(v, grp) {
-
-                this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
-            }
-        });
-
-        this.callParent();
-    },
-
     createView : function(xtype, config, context) {
         var v;
 

@@ -234,16 +234,6 @@ Ext.define('Connector.view.DimensionSelector', {
 
     alias: 'widget.dimselectorview',
 
-    dimLabels : {
-        'Antigen' : 'Assay antigens',
-        'Assay'   : 'Assays',
-        'Lab'     : 'Labs',
-        'Study'   : 'Studies',
-        'Vaccine' : 'Study products',
-        'Vaccine Component' : 'Vaccine immunogens',
-        'Subject' : 'Subject characteristics'
-    },
-
     titleComponentId: 'dimtitle',
 
     sortComponentId: 'dimsort',
@@ -262,10 +252,13 @@ Ext.define('Connector.view.DimensionSelector', {
             items : [{
                 itemId: 'dimlabel',
                 xtype : 'box',
-                autoEl: {
-                    tag : 'div',
-                    cls : 'dimgroup',
-                    html: this.getDimensionLabel()
+                tpl: new Ext.XTemplate(
+                    '<div class="dimgroup">',
+                        '{content:htmlEncode}',
+                    '</div>'
+                ),
+                data: {
+                    content: 'Loading...'
                 }
             },{
                 itemId: 'dimensionbtn',
@@ -291,10 +284,13 @@ Ext.define('Connector.view.DimensionSelector', {
             items : [{
                 itemId: 'sortlabel',
                 xtype : 'box',
-                autoEl: {
-                    tag : 'div',
-                    cls : 'dimensionsort',
-                    html: 'Sorted by:  <span class="sorttype"></span>'
+                tpl: new Ext.XTemplate(
+                    '<div class="dimensionsort">',
+                        'Sorted by: <span class="sorttype">{sort:htmlEncode}</span>',
+                    '</div>'
+                ),
+                data: {
+                    sort: ''
                 }
             },{
                 id: btnId,
@@ -326,35 +322,16 @@ Ext.define('Connector.view.DimensionSelector', {
         this.sortComponent = this.getComponent(this.sortComponentId);
     },
 
-    getDimensionLabel : function() {
-
-        if (!this.dim)
-            return 'Loading...';
-
-        if (this.dimLabels[this.dim.name])
-            return this.dimLabels[this.dim.name];
-
-        return this.dim.name;
-    },
-
-    setDimension : function(dim, hierarchyIndex) {
+    setDimension : function(dim, hIdx) {
         this.dim  = dim;
-        this.hidx = hierarchyIndex;
-        var cmp = this.titleComponent.getComponent('dimlabel');
-        cmp.update(Ext.isString(dim) ? dim : this.getDimensionLabel());
-        this.renderSortedBy();
+        this.titleComponent.getComponent('dimlabel').update({ content: this.dim.pluralName });
+        this.setHierarchy(hIdx);
     },
 
     setHierarchy : function(index) {
         this.hidx = index;
-        this.renderSortedBy();
-    },
-
-    renderSortedBy : function() {
-        var value = Ext.isString(this.dim) ? this.dim : this.dim.getHierarchies()[this.hidx].getName().split('.');
-        value = (value.length > 1) ? value[1] : value[0];
-        var cmp = this.sortComponent.getComponent('sortlabel');
-        cmp.update('Sorted by:  <span class="sorttype">' + value + '</span>');
+        var hierarchy = this.dim.getHierarchies()[this.hidx];
+        this.sortComponent.getComponent('sortlabel').update({sort: hierarchy.label});
     }
 });
 
