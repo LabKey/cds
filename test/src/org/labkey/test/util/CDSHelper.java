@@ -30,9 +30,7 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("transition=false");
-
-        _test.assertElementNotPresent(Locator.linkWithText("Home"));
+        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         Ext4Helper.setCssPrefix("x-");
     }
@@ -157,7 +155,12 @@ public class CDSHelper
     public void goToAppHome()
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        _test.waitForElement(Locators.getByLocator("Studies"));
+        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
+    }
+
+    public void goToSummary()
+    {
+        NavigationLink.SUMMARY.makeNavigationSelection(_test);
     }
 
     public void clearFilter()

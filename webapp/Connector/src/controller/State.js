@@ -8,8 +8,6 @@ Ext.define('Connector.controller.State', {
 
     defaultTitle: 'HIV Vaccine Collaborative Dataspace',
 
-    defaultController: 'summary',
-
     subjectName: 'Subject',
 
     appVersion: '0.5',
