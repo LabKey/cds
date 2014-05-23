@@ -44,6 +44,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Main": "../../webapp/Connector/src/controller/Main.js",
   "Connector.controller.Navigation": "../../webapp/Connector/src/controller/Navigation.js",
   "Connector.controller.Router": "../../webapp/Connector/src/controller/Router.js",
+  "Connector.controller.Signin": "../../webapp/Connector/src/controller/Signin.js",
   "Connector.controller.State": "../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../webapp/Connector/src/controller/Summary.js",
   "Connector.factory.Module": "../../webapp/Connector/src/factory/Module.js",
@@ -76,6 +77,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.Summary": "../../webapp/Connector/src/store/Summary.js",
   "Connector.store.VisitTag": "../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
+  "Connector.view.About": "../../webapp/Connector/src/view/About.js",
   "Connector.view.Citation": "../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../webapp/Connector/src/view/Compare.js",
   "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
@@ -109,6 +111,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.PlotPane": "../../webapp/Connector/src/view/PlotPane.js",
   "Connector.view.Scatter": "../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../webapp/Connector/src/view/Selection.js",
+  "Connector.view.Signin": "../../webapp/Connector/src/view/Signin.js",
   "Connector.view.SingleAxisExplorer": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.SingleAxisExplorerView": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../webapp/Connector/src/view/Summary.js",
@@ -186,6 +189,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
   "Connector.controller.Router": [],
+  "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
@@ -218,6 +222,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.Summary": [],
   "Connector.store.VisitTag": [],
   "Connector.types.Filter": [],
+  "Connector.view.About": [],
   "Connector.view.Citation": [],
   "Connector.view.Compare": [],
   "Connector.view.DetailStatus": [],
@@ -251,6 +256,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.PlotPane": [],
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
+  "Connector.view.Signin": [],
   "Connector.view.SingleAxisExplorer": [],
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
@@ -1149,6 +1155,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
   "Connector.controller.Router": [],
+  "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
@@ -1203,6 +1210,9 @@ Ext.ClassManager.addNameAliasMappings({
     "store.visittag"
   ],
   "Connector.types.Filter": [],
+  "Connector.view.About": [
+    "widget.about"
+  ],
   "Connector.view.Citation": [
     "widget.citation"
   ],
@@ -1252,7 +1262,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.home"
   ],
   "Connector.view.HomeBody": [],
-  "Connector.view.HomeHeader": [],
+  "Connector.view.HomeHeader": [
+    "widget.homeheader"
+  ],
   "Connector.view.InfoPane": [
     "widget.infopane"
   ],
@@ -1285,6 +1297,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Selection": [
     "widget.selectionview"
+  ],
+  "Connector.view.Signin": [
+    "widget.signin"
   ],
   "Connector.view.SingleAxisExplorer": [
     "widget.singleaxis"

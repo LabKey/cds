@@ -62,6 +62,7 @@
         <script path="Connector/src/types/Filter.js"/>
 
         <!-- Application Models -->
+        <script path="Connector/src/model/About.js"/>
         <script path="Connector/src/model/Citation.js"/>
         <script path="Connector/src/model/ColumnInfo.js"/>
         <script path="Connector/src/model/Detail.js"/>
@@ -125,6 +126,7 @@
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
+        <script path="Connector/src/view/Signin.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
         <script path="Connector/src/view/Summary.js"/>
         <script path="Connector/src/view/Time.js"/>
@@ -149,6 +151,7 @@
         <script path="Connector/src/controller/Navigation.js"/>
         <script path="Connector/src/controller/Data.js"/>
         <script path="Connector/src/controller/Router.js"/>
+        <script path="Connector/src/controller/Signin.js"/>
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 

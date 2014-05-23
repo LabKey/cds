@@ -55,7 +55,9 @@ import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.TempQuerySettings;
 import org.labkey.api.query.UserSchema;
+import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresLogin;
+import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermissionClass;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
@@ -132,7 +134,8 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresNoPermission
+    @IgnoresTermsOfUse
     public class AppAction extends SimpleViewAction
     {
         @Override

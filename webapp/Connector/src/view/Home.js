@@ -39,10 +39,14 @@ Ext.define('Connector.view.HomeHeader', {
 
     extend : 'Ext.container.Container',
 
+    alias: 'widget.homeheader',
+
     layout: {
         type : 'hbox',
         align: 'stretch'
     },
+
+    height: 161,
 
     cls: 'dimensionview',
 
@@ -65,11 +69,11 @@ Ext.define('Connector.view.HomeHeader', {
                     },{
                         tag: 'h1',
                         html: '# studies connected together combining',
-                        style: 'color: #7a7a7a;'
+                        style: 'opacity: 0.7;'
                     },{
                         tag: 'h1',
                         html: '# data points.',
-                        style: 'color: #b5b5b5;'
+                        style: 'opacity: 0.4;'
                     }]
                 }
             }

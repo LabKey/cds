@@ -61,7 +61,7 @@ Ext.define("Connector.view.Header", {
                 },
                 scope: this
             }
-        },{
+        }, {
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
@@ -71,6 +71,7 @@ Ext.define("Connector.view.Header", {
             items: [{
                 xtype: 'box',
                 margin: '2 15 0 0',
+                hidden: !LABKEY.user.isSignedIn,
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',

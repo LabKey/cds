@@ -164,6 +164,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
 
     <!-- Application Views -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Compare.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
@@ -184,6 +185,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Signin.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
@@ -209,6 +211,7 @@
     
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Signin.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/State.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Summary.js"></script>
 
