@@ -46,6 +46,10 @@ Ext.define('Connector.view.module.StudyLabsAndClinicalData', {
             Ext.each(records, function(record) {
                 record.queryDataFromStudy(studyId, function(hasData) {
                     me.update(data);
+                });
+
+                record.getVariables(studyId, function(hasData) {
+                    console.log("GV");
                 })
             })
         }
