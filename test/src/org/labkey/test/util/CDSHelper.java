@@ -31,6 +31,7 @@ public class CDSHelper
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
         _test.addUrlParameter("transition=false");
+        _test.addUrlParameter("_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
