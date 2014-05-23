@@ -104,11 +104,11 @@ Ext.define('Connector.model.Filter', {
                          measureAvalues.join() === measureBvalues.join()));
             };
 
-            var antigenValuesMatch = function(measureAantigen, measureBantigen) {
-                return ((!measureAantigen && !measureBantigen) ||
-                        (measureAantigen && measureBantigen &&
-                         measureAantigen.values.length == measureBantigen.values.length &&
-                         measureAantigen.values.join() === measureBantigen.values.join()));
+            var antigenValuesMatch = function(measureAoptions, measureBoptions) {
+                return ((!measureAoptions && !measureBoptions) ||
+                        (measureAoptions && measureAoptions.antigen && measureBoptions && measureBoptions.antigen &&
+                         measureAoptions.antigen.values.length == measureBoptions.antigen.values.length &&
+                         measureAoptions.antigen.values.join() === measureBoptions.antigen.values.join()));
             };
 
             var compareMeasures = function(measureA, measureB) {
@@ -121,7 +121,7 @@ Ext.define('Connector.model.Filter', {
                                 measureA.measure.alias === measureB.measure.alias &&
                                 alignmentVisitTagMatch(measureA.dateOptions, measureB.dateOptions) &&
                                 userGroupsMatch(measureA.measure.values, measureB.measure.values) &&
-                                antigenValuesMatch(measureA.measure.options.antigen, measureB.measure.options.antigen);
+                                antigenValuesMatch(measureA.measure.options, measureB.measure.options);
                     }
                 }
 

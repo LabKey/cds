@@ -170,6 +170,12 @@ Ext.define('Connector.view.Scatter', {
                     model: new Ext.create('Connector.model.Variable', {
                         typeLabel: 'x'
                     })
+                },
+                {
+                    id: 'plotshowdata',
+                    xtype: 'button',
+                    text: 'view data',
+                    hidden: true // SET THIS TO FALSE TO TEST PLOT DATA GRID
                 }]
             }]
         };
@@ -799,8 +805,11 @@ Ext.define('Connector.view.Scatter', {
                 measures.x.options = this.axisPanelX.getVariableOptionValues();
 
                 // special case to look for userGroups as a variable option to use as filter values for the x measure
+                // and to user antigen filters for categorical x-axis which matches the antigen field
                 if (measures.x.options.userGroups)
                     measures.x.values = measures.x.options.userGroups;
+                else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name)
+                    measures.x.values = measures.x.options.antigen.values;
 
                 this.fromFilter = false;
             }
@@ -961,7 +970,7 @@ Ext.define('Connector.view.Scatter', {
         }
         else if (isSelfJoin && hasAntigens)
         {
-            wrappedMeasure.measure.aggregate = "AVG";
+            wrappedMeasure.measure.aggregate = "MAX";
             wrappedMeasure.dimension = this.getDimension(activeMeasures);
         }
 
@@ -970,6 +979,7 @@ Ext.define('Connector.view.Scatter', {
 
     isSelfJoin : function(xMeasure, yMeasure) {
         return xMeasure != null && yMeasure != null
+            && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
             && xMeasure.schemaName == yMeasure.schemaName
             && xMeasure.queryName == yMeasure.queryName
             && xMeasure.variableType == null && yMeasure.variableType == null;
@@ -1257,6 +1267,8 @@ Ext.define('Connector.view.Scatter', {
     _preprocessData : function(data) {
         var x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null, ya = null, ca = null,
             _xid, _yid, colorCol, subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
+
+        this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
         // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
         // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
@@ -2067,5 +2079,12 @@ Ext.define('Connector.view.Scatter', {
                 this.plot.clearBrush();
             }
         }
+    },
+
+    // FOR TESTING USE
+    showPlotDataGrid : function(targetEl) {
+        window.open(LABKEY.ActionURL.buildURL('query', 'executeQuery', null, {
+            schemaName: this.dataQWP.schema, 'query.queryName': this.dataQWP.query
+        }), '_blank');
     }
 });
