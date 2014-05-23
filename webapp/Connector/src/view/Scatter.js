@@ -1376,7 +1376,7 @@ Ext.define('Connector.view.Scatter', {
                 query  : color.queryName,
                 name   : color.name,
                 alias  : color.alias,
-                colName: colorCol, // Stash colName so we can query the getData temp table in the brushend handler.
+                colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : color.label,
                 type   : color.type
             };
@@ -1418,7 +1418,7 @@ Ext.define('Connector.view.Scatter', {
             yAntigen = rows[r][_yid].antigen;
 
             if (color) {
-                colorVal = this._getValue(color, colorCol, rows[r]);
+                colorVal = this._getValue(color, _cid, rows[r]);
             } else {
                 colorVal = null;
             }
