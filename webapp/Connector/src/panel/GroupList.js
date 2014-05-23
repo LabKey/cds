@@ -69,7 +69,6 @@ Ext.define('Connector.view.GroupListView', {
                 '<tpl if="this.plotter(containsPlot)">',
                     '<div class="groupicon"><img src="/labkey/production/Connector/resources/images/plot.png"></div>',
                 '</tpl>',
-//                '<div class="closeitem" group-index="{[xindex-1]}"></div>',
             '</div>',
         '</tpl>',
         {
@@ -77,7 +76,6 @@ Ext.define('Connector.view.GroupListView', {
                 return (!Ext.isArray(v) || v.length === 0);
             },
             plotter : function(containsPlot) {
-                console.log(containsPlot);
                 return containsPlot === true;
             }
         }
@@ -97,37 +95,6 @@ Ext.define('Connector.view.GroupListView', {
         this.store = Connector.model.Group.getGroupStore();
 
         this.callParent();
-
-        // disable close option for now
-//        this.bindTask = new Ext.util.DelayedTask(this.bindItems, this);
-//        this.on('refresh', this.doBind, this);
-    },
-
-    bindItems : function() {
-
-        var view = this;
-
-        if (!view || !view.getEl()) {
-            console.warn('unable to bind group listing events');
-            return;
-        }
-
-        var closes = view.getEl().select('.closeitem');
-        if (closes && Ext.isArray(closes.elements)) {
-            closes = closes.elements;
-
-            var el, modelId;
-
-            Ext.each(closes, function(close) {
-                el = Ext.get(close);
-                modelId = el.getAttribute('group-index');
-                modelId = parseInt(modelId);
-
-                if (Ext.isNumber(modelId)) {
-                    el.on('click', view.onRemoveClick, view);
-                }
-            });
-        }
     },
 
     onRemoveClick : function(evt, element) {
@@ -144,9 +111,5 @@ Ext.define('Connector.view.GroupListView', {
                 this.fireEvent('deletegroup', group);
             }
         }
-    },
-
-    doBind : function() {
-        this.bindTask.delay(50);
     }
 });

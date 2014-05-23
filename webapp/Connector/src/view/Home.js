@@ -29,51 +29,18 @@ Ext.define('Connector.view.Home', {
     getBody : function() {
         if (!this.content) {
 
-            Ext.define('Connector.model.News', {
-                extend: 'Ext.data.Model',
-
-                fields: [
-                    {name: 'title'},
-                    {name: 'description'},
-                    {name: 'pubDate', type: 'date'},
-                    {name: 'link'}
-                ]
-            });
-
             var DateFormat = Ext.util.Format.dateRenderer('d M Y');
 
             this.content = Ext.create('Connector.view.HomeBody', {
                 items: [{
-                    xtype: 'grouplist',
-                    listeners: {
-                        deletegroup: function(group) {
-                            var content = this.content;
-                            if (content && content.showMessage) {
-                                content.hideMessage(true);
-                                var id = Ext.id();
-                                var cancelId = Ext.id();
-                                content.showMessage('Are you sure you want to delete "' + group.get('label') + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
-                                var deleteLink = Ext.get(id);
-                                if (deleteLink) {
-                                    deleteLink.on('click', function() {
-                                        content.hideMessage(true);
-                                        this.fireEvent('requestgroupdelete', group.get('id'));
-                                    }, this, {single: true});
-                                }
-                                var cancelLink = Ext.get(cancelId);
-                                if (cancelLink) {
-                                    cancelLink.on('click', function() { content.hideMessage(true); }, this, {single: true});
-                                }
-                            }
-                        },
-                        scope: this
-                    }
+                    xtype: 'grouplist'
                 },{
                     xtype: 'dataview',
                     flex: 10,
                     margin: '32 0 0 27',
                     itemSelector: 'div.entry',
                     autoScroll: true,
+                    loadMask: false,
                     tpl: new Ext.XTemplate(
                         '<div class="grouplist-header">News</div>',
                         '<tpl if="this.isEmpty(values)">',
@@ -100,17 +67,8 @@ Ext.define('Connector.view.Home', {
                             }
                     ),
                     store: Ext.create('Ext.data.Store', {
-                        model: 'Connector.model.News',
-                        autoLoad: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: LABKEY.ActionURL.buildURL('cds', 'news.api'),
-                            reader: {
-                                type: 'xml',
-                                record: 'item',
-                                root: 'channel'
-                            }
-                        }
+                        model: 'Connector.model.RSSItem',
+                        autoLoad: true
                     }),
                     listeners: {
                         resize: function(dv) {

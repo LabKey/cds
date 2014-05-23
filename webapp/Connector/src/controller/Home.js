@@ -11,6 +11,8 @@ Ext.define('Connector.controller.Home', {
 
     views : ['Home'],
 
+    models : ['RSSItem'],
+
     init : function() {
 
         this.control('home > homeheader', {
