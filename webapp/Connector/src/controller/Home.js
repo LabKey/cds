@@ -19,13 +19,6 @@ Ext.define('Connector.controller.Home', {
             boxready: this.resolveStatistics
         });
 
-        this.control('grouplistview', {
-            itemclick: function(v, grp) {
-
-                this.getViewManager().changeView('group', 'groupsummary', [grp.get('id')]);
-            }
-        });
-
         this.callParent();
     },
 

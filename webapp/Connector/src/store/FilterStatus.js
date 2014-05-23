@@ -67,11 +67,15 @@ Ext.define('Connector.store.FilterStatus', {
                                 requestId: requestId,
                                 onRows: [ { level: lvl.uniqueName } ],
                                 useNamedFilters: ['statefilter'],
+                                dd: dims[d].uniqueName,
+                                hh: hiers[h].uniqueName,
+                                ll: lvl.uniqueName,
                                 label: {
                                     singular: lvl.countSingular,
                                     plural: lvl.countPlural
                                 },
                                 highlight: lvl.activeCount === 'highlight',
+                                activeCountLink: lvl.activeCountLink === true,
                                 dataBasedCount: lvl.dataBasedCount,
                                 cellbased: lvl.cellbased,
                                 priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
@@ -133,24 +137,27 @@ Ext.define('Connector.store.FilterStatus', {
             }
         }
 
-        var hasSelections = this.state.hasSelections();
+        var hasSelections = this.state.hasSelections(), qr, ca;
         for (i=0; i < qrArray.length; i++) {
 
-            if (configArray[i]['selectionBased'] === true) {
+            qr = qrArray[i];
+            ca = configArray[i];
+
+            if (ca['selectionBased'] === true) {
                 continue;
             }
 
             count = 0; subcount = 0;
-            if (configArray[i].cellbased) {
+            if (ca.cellbased) {
 
-                var t = qrArray[i];
+                var t = qr;
                 for (var c=0; c < t.cells.length; c++) {
 
                     if (t.cells[c][0].value > 0)
                         count++;
                 }
 
-                t = qrSels[configArray[i].requestId];
+                t = qrSels[ca.requestId];
                 for (c=0; c < t.cells.length; c++) {
 
                     if (t.cells[c][0].value > 0)
@@ -158,21 +165,24 @@ Ext.define('Connector.store.FilterStatus', {
                 }
             }
             else {
-                if (qrArray[i].cells.length > 0)
-                    count = qrArray[i].cells[0][0].value;
-                if (qrSels[configArray[i].requestId].cells.length > 0)
-                    subcount = qrSels[configArray[i].requestId].cells[0][0].value;
+                if (qr.cells.length > 0)
+                    count = qr.cells[0][0].value;
+                if (qrSels[ca.requestId].cells.length > 0)
+                    subcount = qrSels[ca.requestId].cells[0][0].value;
             }
 
             rec = {
-                hierarchy: configArray[i].label.singular,
+                dimension: ca.dd,
+                hierarchy: ca.hh,
+                level: ca.ll,
                 count: count,
                 subcount: hasSelections ? subcount : -1,
-                highlight: configArray[i].highlight,
-                dataBasedCount: configArray[i].dataBasedCount
+                highlight: ca.highlight,
+                activeCountLink: ca.activeCountLink,
+                dataBasedCount: ca.dataBasedCount
             };
 
-            rec.label = rec.count != 1 ? configArray[i].label.plural : configArray[i].label.singular;
+            rec.label = rec.count != 1 ? ca.label.plural : ca.label.singular;
 
             recs.push(rec);
         }
