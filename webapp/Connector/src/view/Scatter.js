@@ -127,26 +127,58 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getCenter : function() {
-        return {
-            itemId: 'plotdisplay',
-            xtype: 'box',
-            region: 'center',
-            border: false, frame: false,
-            id: Ext.id(),
-            autoEl : {
-                tag: 'div',
-                cls: 'emptyplot plot'
-            },
-            listeners: {
-                afterrender: {
-                    fn: function(box) {
-                        this.plotEl = box.getEl();
-                    },
-                    single: true,
-                    scope: this
+        if (!this.centerContainer) {
+            this.plotPanel = Ext.create('Ext.panel.Panel', {
+                flex: 10,
+                cls: 'plot',
+                style: {'background-color': '#fff'},
+                listeners: {
+                    afterrender: {
+                        fn: function(box) {
+                            this.plotEl = box.getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
                 }
-            }
-        };
+            });
+            this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
+                cls: 'study-axis',
+                border: false,
+                frame: false,
+                items: [{
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'div',
+                        cls: 'study-axis',
+                        style: {
+                            overflow: 'auto'
+                        },
+                        html: '<div id="study-axis" style="overflow: auto;"></div>'
+                    },
+                }],
+                listeners: {
+                    afterrender: {
+                        fn: function(b) {
+                            this.studyAxisEl = b.getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
+                }
+            });
+
+            this.centerContainer = Ext.create('Ext.container.Container', {
+                region: 'center',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch',
+                    pack: 'start'
+                },
+                items: [this.plotPanel,this.studyAxisPanel]
+            });
+        }
+        return this.centerContainer;
     },
 
     getSouth : function() {
@@ -213,11 +245,13 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getPlotElement : function() {
-        var el = Ext.query('#' + this.plot.renderTo);
-        if (el.length > 0) {
-            el = el[0];
+        if (this.plot) {
+            var el = Ext.query('#' + this.plot.renderTo);
+            if (el.length > 0) {
+                el = el[0];
+            }
+            return el;
         }
-        return el;
     },
 
     handleResize : function() {
@@ -246,7 +280,13 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.plot) {
-            this.plot.setSize(plotbox.width, plotbox.height, true);
+            this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
+        }
+
+        if (this.studyAxis) {
+            this.studyAxis.width(this.studyAxisPanel.getWidth());
+            this.studyAxis.scale(this.plot.scales.x.scale);
+            this.studyAxis();
         }
 
         var plotMsg = this.noplotmsg;
@@ -393,11 +433,12 @@ Ext.define('Connector.view.Scatter', {
         // Below vars needed for brush and mouse event handlers.
         var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
+        this.plotEl.update('');
+
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
             this.hideLoad();
             this.plot = null;
-            this.plotEl.update('');
             this.noPlot();
             return;
         }
@@ -407,7 +448,6 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.clearGrid();
-            this.plotEl.update('');
             this.plot = null;
         }
 
@@ -497,8 +537,8 @@ Ext.define('Connector.view.Scatter', {
             rendererType: 'd3',
             throwErrors: true,
             clipRect: false,
-            margins: {top: 25, left: 25+43, right: 25+10, bottom: 25+43},
-            width     : box.width,
+            margins: {top: 25, left: 25+43, right: 25+10, bottom: this.requireStudyAxis ? 43 : 25+43},
+            width     : this.requireStudyAxis ? box.width - 150 : box.width,
             height    : box.height,
             data      : rows,
             legendPos : 'none',
@@ -868,6 +908,8 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.filterClear || !activeMeasures.y.measure) {
+            this.requireStudyAxis = false;
+            this.studyAxisPanel.setVisible(false);
             this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
@@ -932,6 +974,12 @@ Ext.define('Connector.view.Scatter', {
             if (ptidList)
             {
                 this.applyFiltersToSorts(sorts, ptidList);
+            }
+
+            if (activeMeasures.x && activeMeasures.x.measure && activeMeasures.x.measure.queryLabel === "Time points") {
+                this.requireStudyAxis = true;
+            } else {
+                this.requireStudyAxis = false;
             }
 
             // Request Chart Data
@@ -1082,10 +1130,9 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // preprocess decoded data shape
-        var config = this._preprocessData(Ext.decode(response.responseText));
+        this.getDataResp = Ext.decode(response.responseText);
 
-        // call render
-        this.initPlot(config, false);
+        this._preprocessData(this.requireStudyAxis);
     },
 
     updatePlotBasedFilter : function(measures) {
@@ -1213,13 +1260,10 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    _preprocessData : function(data) {
-        var x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null, ya = null, ca = null,
-            _xid, _yid, _cid, subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
-
-        // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
-        // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
-        // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
+    _preprocessGetDataResp : function() {
+        var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
+                ya = null, ca = null,_xid, _yid, _cid,
+                subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
 
         var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
                                        // different value for the subjectNoun than the moduleContext. This is an issue
@@ -1391,7 +1435,7 @@ Ext.define('Connector.view.Scatter', {
             el.on('click', function() { this.hideMessage(); }, this);
         }
 
-        return {
+        this.plotData = {
             schemaName: data.schemaName,
             queryName: data.queryName,
             // We need the subject column as it appears in the temp query for the brushend handler.
@@ -1942,6 +1986,205 @@ Ext.define('Connector.view.Scatter', {
                 // Issue 20117.
                 this.plot.clearBrush();
             }
+        }
+    },
+
+    requestStudyAxisData : function() {
+        // TODO: Make query also return all the visit tags for each visit.
+        var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
+        var sql = 'SELECT\n' +
+                'StudyLabel,\n' +
+                'VisitLabel,\n' +
+                'SequenceNumMin,\n' +
+                'SequenceNumMax,\n' +
+                'ProtocolDay,\n' +
+                'VisitDescription,\n' +
+                'VisitRowId,\n' +
+                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
+                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
+                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
+            'FROM (\n' +
+                'SELECT\n' +
+                    'StudyProperties.Label as StudyLabel,\n' +
+                    'Visit.Label as VisitLabel,\n' +
+                    'Visit.SequenceNumMin,\n' +
+                    'Visit.SequenceNumMax,\n' +
+                    'Visit.ProtocolDay,\n' +
+                    'Visit.Description as VisitDescription,\n' +
+                    'Visit.Folder as VisitContainer,\n' +
+                    'Visit.RowId as VisitRowId,\n' +
+                    'StudyProperties.Container as StudyContainer\n' +
+                'FROM Visit, StudyProperties\n' +
+                'WHERE Visit.Folder = StudyProperties.Container AND\n' +
+                'Visit.RowId IN ' + inClause + '\n' +
+            ') as AllVisits\n' +
+            'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+
+        LABKEY.Query.executeSql({
+            schemaName: 'study',
+            requiredVersion: 9.1,
+            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
+            sql: sql,
+            success: function(resp){
+                if (!this.isActiveView) {
+                    return;
+                }
+
+                this.studyAxisResp = resp;
+                this._preprocessStudyAxisData();
+                this.resizePlotContainers();
+                this.initPlot(this.plotData, false);
+                this.initStudyAxis();
+            },
+            failure: function(resp) {console.error('Error retrieving study axis data')},
+            scope: this
+        });
+    },
+
+    _buildAlignmentMap : function() {
+        var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName, protocolDay, value;
+
+        xColName = this.getDataResp.measureToColumn[this.measures[0].name];
+        visitColName = this.getDataResp.measureToColumn['SubjectVisit/Visit'];
+
+        for (var i = 0; i < rows.length; i++) {
+            alignmentMap[rows[i][visitColName].value] = rows[i][xColName].value;
+        }
+
+        this.alignmentMap = alignmentMap;
+    },
+
+    _preprocessStudyAxisData : function() {
+        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, studyMap = {}, visitMap = {},
+                studyLabel, study, visitId, visit, visitTagName, visits;
+
+        this.studyAxisData = [];
+
+        for (var i = 0; i < rows.length; i++) {
+            studyLabel = rows[i].StudyLabel.value;
+            visitId = rows[i].VisitRowId.value;
+            visitTagName = rows[i].VisitTagName.value;
+
+            if (!studyMap.hasOwnProperty(studyLabel)) {
+                studyMap[studyLabel] = {
+                    label : studyLabel,
+                    visits: {}
+                };
+            }
+
+            study = studyMap[studyLabel];
+
+            if (!study.visits.hasOwnProperty(visitId)) {
+                study.visits[visitId] = {
+                    id: visitId,
+                    label: rows[i].VisitLabel.value,
+                    description: rows[i].VisitDescription.value,
+                    sequenceNumMin: rows[i].SequenceNumMin.value,
+                    sequenceNumMax: rows[i].SequenceNumMax.value,
+                    protocolDay: rows[i].ProtocolDay.value,
+                    alignedDay: alignmentMap[rows[i].VisitRowId.value],
+                    visitTagMap : {} // Each visit tag the visit is tagged with.
+                };
+            }
+
+            visit = study.visits[visitId];
+
+            if (!visit.alignedDay) {
+                visit.alignedDay = alignmentMap[rows[i].VisitRowId.value];
+            }
+
+            // TODO: Wire up visit tags.
+            if (visitTagName && !visit.visitTagMap.hasOwnProperty(visitTagName)) {
+                visit.visitTagMap[visitTagName] = {
+                    name: visitTagName,
+                    caption: rows[i].VisitTagCaption.value,
+                    description: rows[i].VisitTagDescription.value
+
+                };
+            }
+        }
+
+        // Convert study map and visit maps into arrays.
+        for (var studyName in studyMap) {
+            if (studyMap.hasOwnProperty(studyName)) {
+                study = studyMap[studyName];
+                visits = [];
+                for (visitId in study.visits) {
+                    if (study.visits.hasOwnProperty(visitId)) {
+                        visits.push(study.visits[visitId]);
+                        // TODO: flatten visit tag map????
+                    }
+                }
+
+                study.visits = visits;
+                this.studyAxisData.push(study);
+            }
+        }
+    },
+
+    showStudyAxisHover : function(data, rectEl) {
+        var plotEl = document.querySelector('div.plot svg'),
+            plotBBox = plotEl.getBoundingClientRect(),
+            hoverBBox, html, visiTagKey, visitTag;
+
+        this.visitHoverEl = document.createElement('div');
+        this.visitHoverEl.setAttribute('class', 'study-axis-window');
+        html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
+
+        for (visitTagKey in data.visitTagMap) {
+            if (data.visitTagMap.hasOwnProperty(visitTagKey)) {
+                visitTag = data.visitTagMap[visitTagKey];
+                html += '<p>' + visitTag.caption + '</p>';
+            }
+        }
+        this.visitHoverEl.innerHTML = html;
+        document.querySelector('body').appendChild(this.visitHoverEl);
+        hoverBBox = this.visitHoverEl.getBoundingClientRect();
+        this.visitHoverEl.style.left = rectEl.getAttribute('x') + 'px';
+        this.visitHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
+    },
+
+    removeStudyAxisHover : function(data, rectEl) {
+        if (this.visitHoverEl) {
+            this.visitHoverEl.remove();
+            this.visitHoverEl = null;
+        }
+    },
+
+    initStudyAxis : function(axisData) {
+        if (!this.studyAxis) {
+            this.studyAxis = Connector.view.StudyAxis().renderTo('study-axis');
+        }
+
+        this.studyAxis.studyData(this.studyAxisData)
+                .scale(this.plot.scales.x.scale)
+                .width(this.studyAxisPanel.getWidth())
+                .alignmentDay(0)
+                .mouseover(this.showStudyAxisHover, this)
+                .mouseout(this.removeStudyAxisHover, this);
+
+        this.studyAxis();
+    },
+
+    _preprocessData : function(withStudyAxis) {
+        this._preprocessGetDataResp();
+        if (withStudyAxis) {
+            this._buildAlignmentMap();
+            this.requestStudyAxisData();
+        } else {
+            this.resizePlotContainers();
+            this.initPlot(this.plotData, false);
+        }
+    },
+
+    resizePlotContainers : function() {
+        if (this.requireStudyAxis) {
+            this.plotEl.setStyle('padding', '0 0 0 150px');
+            this.studyAxisPanel.setVisible(true);
+            this.studyAxisPanel.setHeight(25 * this.studyAxisData.length);
+        } else {
+            this.plotEl.setStyle('padding', '0');
+            this.studyAxisPanel.setVisible(false);
         }
     }
 });
