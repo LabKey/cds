@@ -1,10 +1,9 @@
 package org.labkey.test.util;
 
 import org.jetbrains.annotations.Nullable;
-import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.WebTestHelper;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -17,6 +16,8 @@ public class CDSHelper
     public static final String[] STUDIES = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     public static final String[] ASSAYS = {"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
+    public static final String TEST_FEED = WebTestHelper.DEFAULT_TARGET_SERVER + ":" +
+            WebTestHelper.DEFAULT_WEB_PORT + WebTestHelper.DEFAULT_CONTEXT_PATH + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 1500;
     private final BaseWebDriverTest _test;
 

@@ -154,6 +154,34 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Test
+    public void verifyHomePage()
+    {
+        /**
+         * Things to test
+         *
+         * Header
+         * ------
+         * Counts (logged in and out)
+         * About link (once page is present)
+         *
+         * News
+         * ------
+         * Order of the stories
+         * Possibly load up a different feed mid test?
+         * Ensure empty case
+         *
+         * Group
+         * ------
+         * Plotted groups with plot icon
+         * Update group by removing it's plot filter
+         * Ensure empty case
+         */
+
+        log("Verify Home Page");
+        waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
+    }
+
+    @Test
     public void verifyFilterPane()
     {
         log("Verify Filter Pane");
