@@ -356,7 +356,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the HIV Vaccine Data Connector.");
+        waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
         waitForText(STUDY_GROUP);
 
         // Verify delete works.

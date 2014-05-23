@@ -59,6 +59,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Group": "../../../../webapp/Connector/src/model/Group.js",
   "Connector.model.InfoPane": "../../../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.Members": "../../../../webapp/Connector/src/model/InfoPane.js",
+  "Connector.model.RSSItem": "../../../../webapp/Connector/src/model/RSSItem.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
@@ -201,6 +202,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Group": [],
   "Connector.model.InfoPane": [],
   "Connector.model.Members": [],
+  "Connector.model.RSSItem": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
@@ -1166,6 +1168,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Group": [],
   "Connector.model.InfoPane": [],
   "Connector.model.Members": [],
+  "Connector.model.RSSItem": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
@@ -1252,7 +1255,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.home"
   ],
   "Connector.view.HomeBody": [],
-  "Connector.view.HomeHeader": [],
+  "Connector.view.HomeHeader": [
+    "widget.homeheader"
+  ],
   "Connector.view.InfoPane": [
     "widget.infopane"
   ],

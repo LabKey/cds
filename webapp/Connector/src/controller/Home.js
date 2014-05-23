@@ -66,7 +66,7 @@ Ext.define('Connector.controller.Home', {
 
             this.getStateManager().onMDXReady(function(mdx) {
                 mdx.query({
-                    onRows: [{ level: "[Study].[Study]"}],
+                    onRows: [{ level: "[Study].[Name]"}],
                     success: function(cellset) {
                         data.nstudy = cellset.cells.length;
                         check();

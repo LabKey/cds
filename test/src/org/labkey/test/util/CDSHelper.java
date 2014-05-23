@@ -254,7 +254,7 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("delete"));
         _test.waitForText("Are you sure you want to delete");
         _test.click(Locator.linkContainingText("Delete"));
-        _test.waitForText("Welcome to the HIV Vaccine Data Connector.");
+        _test.waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
         _test.waitForElementToDisappear(groupListing);
     }
 
