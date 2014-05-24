@@ -142,70 +142,68 @@ Ext.define('Connector.panel.ColorSelector', {
             }
     ),
 
-    showHover : function(d) {
-        var svgNS = "http://www.w3.org/2000/svg", bbox, winX, winY, hoverEl, svgEl, symbolEl, textEl;
-
-        bbox = this.getBoundingClientRect(); // this is the actual dom element.
-        winX = bbox.left - 125 + 9;
-        winY = bbox.top + 40;
-
-        hoverEl = document.createElement('div');
-        hoverEl.setAttribute('class', 'arrow-window');
-        hoverEl.style.top = winY + 'px';
-        hoverEl.style.left = winX + 'px';
-        hoverEl.style.width = '250px';
-        hoverEl.style.height = '35px';
-        hoverEl.style.padding = '5px';
-
-        symbolEl = document.createElementNS(svgNS, 'path');
-        symbolEl.setAttribute('fill', d.color);
-        symbolEl.setAttribute('d', d.shape());
-        symbolEl.setAttribute('transform', 'translate(8, 10)');
-
-        textEl = document.createElementNS(svgNS, 'text');
-        textEl.textContent = d.text;
-        textEl.setAttribute('x', '25');
-        textEl.setAttribute('y', '15');
-
-        svgEl = document.createElementNS(svgNS, 'svg');
-        svgEl.appendChild(symbolEl);
-        svgEl.appendChild(textEl);
-        hoverEl.appendChild(svgEl);
-
-        document.querySelector('body').appendChild(hoverEl);
-        d.hoverEl = hoverEl;
+    showHover : function() {
+        this.win.style.display = '';
     },
 
-    hideHover : function(d) {
-        if(d.hoverEl) {
-            d.hoverEl.remove();
-            delete d.hoverEl;
-        }
+    hideHover : function() {
+        this.win.style.display = 'none';
     },
 
     setLegend : function(legendData) {
-        var canvas, glyphs, rects;
+        var smallCanvas, largeCanvas, bbox, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
 
         Ext4.query('#color-legend')[0].innerHTML = ''; // Clear the current legend element.
 
-        canvas = d3.select('#color-legend').append('svg').attr('height', 18);
-        glyphs = canvas.selectAll('.legend-point').data(legendData).enter().append('path');
+        smallCanvas = d3.select('#color-legend').append('svg').attr('height', 18);
+        glyphs = smallCanvas.selectAll('.legend-point').data(legendData).enter().append('path');
         glyphs.attr('class', 'legend-point')
                 .attr('d', function(d){return d.shape();})
                 .attr('fill', function(d){return d.color;})
                 .attr('transform', function(d, i){return 'translate(' + (8 + i*20) + ',10)';});
 
-        rects = canvas.selectAll('.legend-rect').data(legendData).enter().append('rect');
-        rects.attr('class', 'legend-rect')
-                .attr('width', 18)
+        hoverRect = smallCanvas.selectAll('.legend-rect').data([legendData]).enter().append('rect');
+        hoverRect.attr('width', legendData.length * 18)
                 .attr('height', 18)
-                .attr('x', function(d, i){return i * 20})
-                .attr('y', 0)
                 .attr('fill', '#000')
                 .attr('fill-opacity', 0);
 
-        rects.on('mouseover', this.showHover);
-        rects.on('mouseout', this.hideHover);
+        hoverRect.on('mouseover', function(d){
+            scope.showHover.call(scope);
+        });
+        hoverRect.on('mouseout', function(d){
+            scope.hideHover.call(scope);
+        });
+
+        if (!this.win) {
+            this.win = document.createElement('div');
+            this.win.setAttribute('id', 'legend-window');
+            this.win.setAttribute('class', 'arrow-window');
+            this.win.style.width = '250px';
+            this.win.style.padding = '5px';
+            this.win.style.display = 'none';
+            document.querySelector('body').appendChild(this.win);
+            this.windowCanvas = d3.select('#legend-window').append('svg');
+        }
+
+        bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
+        this.win.style.top = (bbox.top + 40) + 'px';
+        this.win.style.left = (bbox.left - (bbox.width / 2)) + 'px';
+        this.win.style.height = (8 + legendData.length * 20) + 'px';
+
+        windowGlyphs = this.windowCanvas.selectAll('.legend-point').data(legendData);
+        windowGlyphs.enter().append('path').attr('class', 'legend-point');
+        windowGlyphs.exit().remove();
+        windowGlyphs.attr('d', function(d){return d.shape();})
+                .attr('fill', function(d){return d.color;})
+                .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
+
+        windowLabels = this.windowCanvas.selectAll('.legend-text').data(legendData);
+        windowLabels.enter().append('text').attr('class', 'legend-text');
+        windowLabels.exit().remove();
+        windowLabels.text(function(d){return d.text})
+                .attr('x', 25)
+                .attr('y', function(d, i){return 13 + i * 20});
     },
 
     onUpdateVariable : function(m) {
