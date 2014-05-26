@@ -974,7 +974,7 @@ Ext.define('Connector.view.Scatter', {
                 this.applyFiltersToSorts(sorts, ptidList);
             }
 
-            if (activeMeasures.x && activeMeasures.x.queryLabel === "Time points") {
+            if (activeMeasures.x && activeMeasures.x.variableType === "TIME") {
                 this.requireStudyAxis = true;
             } else {
                 this.requireStudyAxis = false;
@@ -1003,8 +1003,8 @@ Ext.define('Connector.view.Scatter', {
         var options = activeMeasures[axis].options;
         var wrappedMeasure = {measure : measure, time: measureType};
 
-        var isVisitTagAlignment = options && options.alignmentVisitTag != undefined;
-        var hasAntigens = options && options.antigen != undefined;
+        var isVisitTagAlignment = options && options.alignmentVisitTag !== undefined;
+        var hasAntigens = options && options.antigen !== undefined;
 
         if (isVisitTagAlignment)
         {
@@ -1079,8 +1079,7 @@ Ext.define('Connector.view.Scatter', {
                     this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                 }
 
-                if (Ext.isDefined(activeMeasures[axis].options.alignmentVisitTag) ||
-                        activeMeasures[axis].queryLabel == 'Time points')
+                if (activeMeasures[axis].variableType === "TIME")
                 {
                     var name = Connector.studyContext.subjectVisitColumn + "/Visit";
                     this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
@@ -1772,7 +1771,7 @@ Ext.define('Connector.view.Scatter', {
                 header : false,
                 closeAction: 'hide',
                 resizable : false,
-                minHeight : 450,
+                minHeight : 500,
                 maxHeight: 700,
                 minWidth: 600,
                 maxWidth: 975,
@@ -1878,7 +1877,7 @@ Ext.define('Connector.view.Scatter', {
                 header : false,
                 closeAction: 'hide',
                 resizable : false,
-                minHeight : 450,
+                minHeight : 500,
                 maxHeight: 700,
                 minWidth: 600,
                 maxWidth: 975,
@@ -2187,7 +2186,7 @@ Ext.define('Connector.view.Scatter', {
         var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName, protocolDay, value;
 
         xColName = this.getDataResp.measureToColumn[this.measures[0].name];
-        visitColName = this.getDataResp.measureToColumn['SubjectVisit/Visit'];
+        visitColName = this.getDataResp.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
 
         for (var i = 0; i < rows.length; i++) {
             alignmentMap[rows[i][visitColName].value] = rows[i][xColName].value;
