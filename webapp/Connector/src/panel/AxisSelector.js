@@ -916,6 +916,10 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         if (this.getAlignmentForm() && this.getAlignmentForm().isVisible())
         {
             values = this.getAlignmentForm().getForm().getFieldValues();
+
+            // manually set to null for 'Unaligned' case
+            if (!values.alignmentVisitTag)
+                values = {alignmentVisitTag : null};
         }
 
         if (this.hasUserGroupsGrid() && this.getUserGroupsGrid().isVisible())
