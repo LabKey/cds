@@ -384,14 +384,15 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 4);
+        assertElementPresent(colorLegendGlyph, 5);
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 42,
-                "Placebo", 22,
+                "N/A", 47,
+                "Placebo", 23,
                 "Prime-boost ALVAC HIV", 9,
-                "Prime-boost VRC-HIVADV014-00-VP", 22
+                "Prime-boost VRC-HIVADV014-00-VP", 22,
+                "null", 3
         );
 
         Set<String> foundTreatments = new HashSet<>();
@@ -417,12 +418,12 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
 
-        // TODO: Verify that plot doesn't change after reshow
-//        color.openSelectorWindow();
-//        color.pickMeasure("Demographics", "TreatmentID");
-//        color.confirmSelection();
-//        assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
-//        assertElementPresent(colorLegendGlyph, 4);
+        // issue 20446
+        color.openSelectorWindow();
+        color.pickMeasure("Demographics", "TreatmentID");
+        color.confirmSelection();
+        assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
+        assertElementPresent(colorLegendGlyph, 5);
     }
 
     @AfterClass
