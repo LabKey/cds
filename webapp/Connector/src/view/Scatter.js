@@ -695,13 +695,13 @@ Ext.define('Connector.view.Scatter', {
 
                         if (measures.length > 1) {
                             xMeasure = {measure: measures[0]};
-                            xMeasure.measure.colName = config.xaxis.colName;
+                            xMeasure.measure.colName = requiresPivot ? config.xaxis.name : config.xaxis.colName;
                             yMeasure = {measure: measures[1]};
 
                         } else {
                             yMeasure = {measure: measures[0]};
                         }
-                        yMeasure.measure.colName = config.yaxis.colName;
+                        yMeasure.measure.colName = requiresPivot ? config.yaxis.name : config.yaxis.colName;
 
                         plotMeasures = [xMeasure, yMeasure];
 
@@ -727,9 +727,9 @@ Ext.define('Connector.view.Scatter', {
                         }
 
                         Connector.model.Filter.sqlToMdx({
-                            schemaName: config.schemaName,
-                            queryName: config.queryName,
-                            subjectColumn: config.subjectColumn,
+                            schemaName: requiresPivot ? yMeasure.measure.schemaName : config.schemaName,
+                            queryName: requiresPivot ? yMeasure.measure.queryName : config.queryName,
+                            subjectColumn: requiresPivot ? Connector.studyContext.subjectColumn : config.subjectColumn,
                             measures: plotMeasures,
                             sqlFilters: sqlFilters,
                             success: function(filterConfig){
@@ -750,6 +750,7 @@ Ext.define('Connector.view.Scatter', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
         var measures = this.measures; // hoisted for brushend.
         var stateManager = this.state; // hoisted for brushend and brushclear.
+        var requiresPivot = this.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
 
         if (this.plot) {
             this.plot.addLayer(layer);
@@ -935,17 +936,14 @@ Ext.define('Connector.view.Scatter', {
 
         var measureType = 'date';
 
-        // handle scenario where we are plotting either the same variable,
-        // with different antigen subsets, from the same source
-        // or different variables from the same source
-        var isSelfJoin = this.isSelfJoin(activeMeasures.x, activeMeasures.y);
+        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
 
         if (activeMeasures.x) {
-            wrappedMeasures[0] = this.getAxisWrappedMeasure('x', activeMeasures, measureType, isSelfJoin);
+            wrappedMeasures[0] = this.getAxisWrappedMeasure('x', activeMeasures, measureType, requiresPivot);
         }
 
         if (activeMeasures.y) {
-            wrappedMeasures[1] = this.getAxisWrappedMeasure('y', activeMeasures, measureType, isSelfJoin);
+            wrappedMeasures[1] = this.getAxisWrappedMeasure('y', activeMeasures, measureType, requiresPivot);
         }
 
         if (activeMeasures.color) {
@@ -960,7 +958,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
-        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, isSelfJoin, measureType);
+        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot, measureType);
 
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
@@ -1000,7 +998,7 @@ Ext.define('Connector.view.Scatter', {
         });
     },
 
-    getAxisWrappedMeasure : function(axis, activeMeasures, measureType, isSelfJoin) {
+    getAxisWrappedMeasure : function(axis, activeMeasures, measureType, requiresPivot) {
         var measure = activeMeasures[axis];
         var options = activeMeasures[axis].options;
         var wrappedMeasure = {measure : measure, time: measureType};
@@ -1018,7 +1016,7 @@ Ext.define('Connector.view.Scatter', {
                 useProtocolDay: true
             }
         }
-        else if (isSelfJoin && hasAntigens)
+        else if (requiresPivot && hasAntigens)
         {
             wrappedMeasure.measure.aggregate = "MAX";
             wrappedMeasure.dimension = this.getDimension(activeMeasures);
@@ -1027,9 +1025,15 @@ Ext.define('Connector.view.Scatter', {
         return wrappedMeasure;
     },
 
-    isSelfJoin : function(xMeasure, yMeasure) {
+    requiresPivot : function(xMeasure, yMeasure) {
+        // handle scenario where we are plotting either the same variable,
+        // with different antigen subsets, from the same source
+        // or different variables from the same source and the results will
+        // be pivoted by the getData API
+
         return xMeasure != null && yMeasure != null
             && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
+            && xMeasure.options.antigen && yMeasure.options.antigen
             && xMeasure.schemaName == yMeasure.schemaName
             && xMeasure.queryName == yMeasure.queryName
             && xMeasure.variableType == null && yMeasure.variableType == null;
@@ -1059,7 +1063,7 @@ Ext.define('Connector.view.Scatter', {
         };
     },
 
-    getAdditionalMeasures : function(activeMeasures, isSelfJoin, measureType) {
+    getAdditionalMeasures : function(activeMeasures, requiresPivot, measureType) {
         var measuresMap = {}; // map key to schema, query, name, and values
         Ext.each(["x", "y"], function(axis)
         {
@@ -1068,7 +1072,7 @@ Ext.define('Connector.view.Scatter', {
                 var schema = activeMeasures[axis].schemaName;
                 var query = activeMeasures[axis].queryName;
 
-                if (!isSelfJoin && Ext.isDefined(activeMeasures[axis].options.antigen))
+                if (!requiresPivot && Ext.isDefined(activeMeasures[axis].options.antigen))
                 {
                     var name = activeMeasures[axis].options.antigen.name;
                     var values = activeMeasures[axis].options.antigen.values;
@@ -1516,8 +1520,7 @@ Ext.define('Connector.view.Scatter', {
         // when we are plotting subsets of antigens from the same source against each other, we pivot the data
         // so we need to unpivot it here for each combination of x-axis antigen by y-axis antigen
 
-        var isPivotedData = this.isSelfJoin(x, y);
-        if (isPivotedData && x.options.antigen != null && x.options.antigen.values.length > 0
+        if (this.requiresPivot(x, y) && x.options.antigen != null && x.options.antigen.values.length > 0
             && y.options.antigen != null && y.options.antigen.values.length > 0)
         {
             var xColName = x.name;
