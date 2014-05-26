@@ -154,6 +154,117 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Test
+    public void verifyFilterPane()
+    {
+        log("Verify Filter Pane");
+
+        String raceMemberType = "Subject (Race & Subtype)";
+        String raceMember = "Black/African American";
+        String raceMember2 = "Native Hawaiian/Pacific Islander";
+        String raceMember3 = "Asian";
+        String raceMember4 = "White";
+
+        String compositeRaceMember = raceMemberType + ": " + raceMember;
+        String compositeRaceMember2 = raceMemberType + ": " + raceMember2;
+
+        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current filters");
+        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current filters");
+
+        //
+        // Open an filter pane and close it
+        //
+        cds.goToAppHome();
+        cds.clickBy("Assays");
+        cds.openStatusInfoPane("Races & Subtypes");
+        click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
+        _asserts.assertDefaultFilterStatusCounts(this);
+
+        //
+        // Open a filter pane and create filter
+        //
+        cds.openStatusInfoPane("Races & Subtypes");
+        cds.selectInfoPaneItem(raceMember, true);
+        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        _asserts.assertFilterStatusCounts(8, 3, 3);
+
+        //
+        // Undo a info pane generated filter
+        //
+        click(Locator.tagWithClass("div", "closeitem"));
+        waitForText("Filter removed.");
+        _asserts.assertDefaultFilterStatusCounts(this);
+
+        // verify undo
+        click(Locator.linkWithText("Undo"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        _asserts.assertFilterStatusCounts(8, 3, 3);
+
+        //
+        // open the filter pane via a created filter
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        assertElementPresent(hasData);
+        assertElementPresent(noData);
+
+        cds.selectInfoPaneItem(raceMember2, true);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember2));
+        _asserts.assertFilterStatusCounts(3, 2, 3);
+
+        //
+        // update the current filter
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(compositeRaceMember2));
+        cds.selectInfoPaneItem(raceMember3, false);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
+        _asserts.assertFilterStatusCounts(5, 2, 3); // default is 'OR'
+
+        //
+        // change the operator
+        //
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        cds.selectInfoPaneOperator(true);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
+        _asserts.assertFilterStatusCounts(0, 0, 0); // now it's 'AND'
+
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
+        assertElementNotPresent(hasData);
+        assertElementPresent(noData);
+
+        cds.selectInfoPaneItem(raceMember4, true);
+        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
+        _asserts.assertFilterStatusCounts(11, 4, 4);
+        cds.clearAllFilters();
+
+        //
+        // Check sort menu
+        //
+        cds.openStatusInfoPane("Races & Subtypes");
+        cds.changeInfoPaneSort("Race", "Country");
+        cds.selectInfoPaneItem("South Africa", true);
+        cds.selectInfoPaneItem("Thailand", true);
+        cds.selectInfoPaneItem("USA", true);
+        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+
+        Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("Subject (Country): USA");
+        waitForElement(countryFilter);
+        _asserts.assertFilterStatusCounts(19, 3, 3);
+        cds.openFilterInfoPane(countryFilter);
+        assertElementNotPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
+        click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
+    }
+
+    @Test
     public void verifyGroups()
     {
         log("Verify Groups");
@@ -267,7 +378,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _ext4Helper.clickTabContainingText("Project Groups");
        if(isTextPresent("PermGroup1"))
        {
-           openGroupPermissionsDisplay("PermGroup1");
+           _permissionsHelper.openGroupPermissionsDisplay("PermGroup1");
            _extHelper.waitForExtDialog("PermGroup1 Information");
            clickButton("Delete Empty Group",0);
            waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
@@ -279,7 +390,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
        }
         if(isTextPresent("PermGroup2"))
         {
-            openGroupPermissionsDisplay("PermGroup2");
+            _permissionsHelper.openGroupPermissionsDisplay("PermGroup2");
             _extHelper.waitForExtDialog("PermGroup2 Information");
             clickButton("Delete Empty Group",0);
             waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
@@ -377,10 +488,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
         _asserts.assertFilterStatusCounts(0, 0, 0);
 
-        // remove a subfilter
-        click(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]).append(Locator.tagWithClass("div", "closeitem")));
+        // remove filter
+        click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(5, 1, 2);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // verify undo
@@ -388,18 +499,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
         _asserts.assertFilterStatusCounts(0, 0, 0);
 
-        // remove a subfilter
-        click(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]).append(Locator.tagWithClass("div", "closeitem")));
+        // remove an undo filter
+        click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(5, 1, 2);
+        _asserts.assertFilterStatusCounts(29, 4, 4);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
-        // verify undo
-        click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-        _asserts.assertFilterStatusCounts(0, 0, 0);
-
-        cds.clearFilter();
+        // ensure undo is removed on view navigation
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        waitForTextToDisappear("Filter removed.", 5000);
     }
 
     @Test
@@ -853,7 +961,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         waitAndClick(Locator.linkWithText("races & subtypes"));
         waitForElement(dimensionGroup.withText("Subject characteristics"));
-        waitForElement(dimensionSort.withText("SORTED BY: RACE"));
+        waitForElement(dimensionSort.withText("SORTED BY: RACE & SUBTYPE"));
         cds.goToAppHome();
         sleep(250);
 

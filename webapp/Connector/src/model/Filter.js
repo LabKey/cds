@@ -36,7 +36,7 @@ Ext.define('Connector.model.Filter', {
                         hierarchy: "Subject",
                         gridFilter: config.sqlFilters, // TODO: rename to sqlFilters
                         plotMeasures: config.measures,
-                        operator: LABKEY.app.model.Filter.Operators.UNION,
+                        operator: LABKEY.app.model.Filter.OperatorTypes.OR,
                         members: []
                     };
 
@@ -63,6 +63,11 @@ Ext.define('Connector.model.Filter', {
 
         loaded: false,
         subjectMap: {},
+
+        factory : function(config) {
+
+        },
+
         getSubjectUniqueName : function(subjectID) {
             return '[Subject].[' + Connector.model.Filter.getContainer(subjectID) + '].[' + subjectID + ']';
         },
@@ -100,15 +105,15 @@ Ext.define('Connector.model.Filter', {
             var userGroupsMatch = function(measureAvalues, measureBvalues) {
                 return ((!measureAvalues && !measureBvalues) ||
                         (measureAvalues && measureBvalues &&
-                         measureAvalues.length == measureBvalues.length &&
-                         measureAvalues.join() === measureBvalues.join()));
+                                measureAvalues.length == measureBvalues.length &&
+                                measureAvalues.join() === measureBvalues.join()));
             };
 
             var antigenValuesMatch = function(measureAoptions, measureBoptions) {
                 return ((!measureAoptions && !measureBoptions) ||
                         (measureAoptions && measureAoptions.antigen && measureBoptions && measureBoptions.antigen &&
-                         measureAoptions.antigen.values.length == measureBoptions.antigen.values.length &&
-                         measureAoptions.antigen.values.join() === measureBoptions.antigen.values.join()));
+                                measureAoptions.antigen.values.length == measureBoptions.antigen.values.length &&
+                                measureAoptions.antigen.values.join() === measureBoptions.antigen.values.join()));
             };
 
             var compareMeasures = function(measureA, measureB) {
@@ -136,6 +141,5 @@ Ext.define('Connector.model.Filter', {
 
             return false;
         }
-
     }
 });
