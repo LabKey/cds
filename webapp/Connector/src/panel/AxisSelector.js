@@ -920,6 +920,10 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             // manually set to null for 'Unaligned' case
             if (!values.alignmentVisitTag)
                 values = {alignmentVisitTag : null};
+
+            // get the caption for the visit tag and add it to the values for the sublabel display
+            var record = this.visitTagStore.findRecord('Name', values.alignmentVisitTag, 0, false, false, true);
+            values.alignmentVisitTagLabel = record ? record.get('Caption') : 'Unaligned';
         }
 
         if (this.hasUserGroupsGrid() && this.getUserGroupsGrid().isVisible())

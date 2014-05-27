@@ -1101,7 +1101,8 @@ Ext.define('Connector.view.Scatter', {
                 name: measuresMap[key].name,
                 queryName: measuresMap[key].queryName,
                 schemaName: measuresMap[key].schemaName,
-                values: measuresMap[key].values
+                values: measuresMap[key].values,
+                allowNullResults: false
             }, time: 'date'});
 
         }
