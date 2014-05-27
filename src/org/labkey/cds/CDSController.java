@@ -17,6 +17,7 @@
 package org.labkey.cds;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,8 @@ import org.labkey.api.action.CustomApiForm;
 import org.labkey.api.action.ExtendedApiQueryResponse;
 import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.HasBindParameters;
+import org.labkey.api.action.Marshal;
+import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.MutatingApiAction;
 import org.labkey.api.action.NullSafeBindException;
 import org.labkey.api.action.SimpleViewAction;
@@ -321,6 +324,12 @@ public class CDSController extends SpringActionController
             _dataCount = dataCount;
         }
 
+        public String getContainerId()
+        {
+            return _container.getId();
+        }
+
+        @JsonIgnore
         public Container getContainer()
         {
             return _container;
@@ -333,6 +342,7 @@ public class CDSController extends SpringActionController
     }
 
     @RequiresNoPermission
+    @Marshal(Marshaller.Jackson)
     public class PropertiesAction extends ApiAction<PropertiesForm>
     {
         @Override
@@ -352,22 +362,7 @@ public class CDSController extends SpringActionController
             //
             // Generate the reponse by querying for this containers result
             //
-            ApiResponseWriter writer = new ApiJsonWriter(getViewContext().getResponse());
-            writer.startResponse();
-
-            boolean success = model != null && model.getContainer() != null;
-            writer.writeProperty("success", success);
-
-            if (success)
-            {
-                writer.writeProperty("rowId", model.getRowId());
-                writer.writeProperty("container", model.getContainer().getEntityId());
-                writer.writeProperty("primaryCount", model.getPrimaryCount());
-                writer.writeProperty("dataCount", model.getDataCount());
-            }
-
-            writer.endResponse();
-            return null;
+            return model;
         }
 
         @Override
