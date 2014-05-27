@@ -18,6 +18,14 @@ Ext.define('Connector.view.Home', {
         ];
 
         this.callParent();
+
+        this.on('resize', this.onViewResize, this);
+    },
+
+    onViewResize : function() {
+        if (Ext.isDefined(this.content)) {
+            this.content.getEl().setHeight(this.getBox().height - this.homeHeaderHeight);
+        }
     },
 
     getHeader : function() {
@@ -31,7 +39,16 @@ Ext.define('Connector.view.Home', {
 
             var DateFormat = Ext.util.Format.dateRenderer('d M Y');
 
-            this.content = Ext.create('Connector.view.HomeBody', {
+            this.content = Ext.create('Ext.container.Container', {
+                plugins: ['messaging'],
+                margin: '0 0 0 27',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch',
+                    pack: 'start'
+                },
+                overflowX: 'hidden',
+                overflowY: 'auto',
                 items: [{
                     xtype: 'grouplist'
                 },{
@@ -39,7 +56,6 @@ Ext.define('Connector.view.Home', {
                     flex: 10,
                     margin: '32 0 0 27',
                     itemSelector: 'div.entry',
-                    autoScroll: true,
                     loadMask: false,
                     tpl: new Ext.XTemplate(
                         '<div class="grouplist-header">News</div>',
@@ -136,19 +152,5 @@ Ext.define('Connector.view.HomeHeader', {
         ];
 
         this.callParent();
-    }
-});
-
-Ext.define('Connector.view.HomeBody', {
-    extend: 'Ext.container.Container',
-
-    plugins: ['messaging'],
-
-    margin: '0 0 0 27',
-
-    layout: {
-        type: 'hbox',
-        align: 'stretch',
-        pack: 'start'
     }
 });
