@@ -46,13 +46,10 @@ div.measuresgrid .x-grid-view {
 div.variableoptionsgrid {
   .x-grid-view,
   .x-column-header-over, .x-column-header-sort-ASC, .x-column-header-sort-DESC,
-  .x-column-header,
+  .x-column-header, .x-column-header-sort-ASC .x-column-header-text,
   .x-grid-cell, .x-grid-cell-special,
   .x-grid-empty {
     background-color: transparent;
-  }
-
-  .x-column-header-sort-ASC .x-column-header-text {
     background-image: none;
   }
 
@@ -60,7 +57,7 @@ div.variableoptionsgrid {
     border-right-color: transparent;
   }
 
-  .x-grid-body .x-grid-table-focused-first {
+  .x-grid-table, .x-grid-body .x-grid-table-focused-first {
     border-top: none;
   }
 
