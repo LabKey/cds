@@ -131,11 +131,12 @@ Ext.define('Connector.view.InfoPane', {
             middleContent.items.push({
                 itemId: 'operatorlabel',
                 xtype: 'box',
-                style: 'margin-top: 20px;',
-                autoEl: {
-                    tag: 'div',
-                    html: '<span>Subjects can fall into multiple Types.</span>'
-                }
+                tpl: new Ext.XTemplate(
+                    '<div style="margin-top: 20px;">',
+                        '<span>Subjects can fall into multiple Types.</span>',
+                    '</div>'
+                ),
+                data: {}
             });
             middleContent.items.push({
                 itemId: 'operator',
@@ -255,6 +256,7 @@ Ext.define('Connector.view.InfoPane', {
             ui: 'footer',
             items: ['->',
                 {
+                    id: 'filtertaskbtn',
                     text: model.isFilterBased() ? 'update' : 'filter',
                     cls: 'filterinfoaction', // tests
                     handler: this.onUpdate,
@@ -305,7 +307,7 @@ Ext.define('Connector.view.InfoPane', {
         var grid = this.getGrid();
 
         if (grid) {
-            this.fireEvent('filtercomplete', grid.getSelectionModel().getSelection());
+            this.fireEvent('filtercomplete', grid.getSelectionModel().getSelection(), grid.getStore().getCount());
             this.hide();
         }
     },

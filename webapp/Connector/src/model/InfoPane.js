@@ -96,30 +96,37 @@ Ext.define('Connector.model.InfoPane', {
      * Can be called to have this model instance produce a set of Connector.model.Filter instances
      * from it's current configuration
      * @param members - Array of Connector.model.Members instance records
+     * @param totalCount - Number of total Connector.model.Members instance records
      */
-    onCompleteFilter : function(members) {
+    onCompleteFilter : function(members, totalCount) {
         var uniques = [];
         Ext.each(members, function(m) {
             uniques.push(m.get('uniqueName'));
         });
 
         var filter = this.createFilter(uniques);
+        var noopFilter = (uniques.length === totalCount) && this.isOR();
 
         if (this.isFilterBased()) {
             var staleFilter = this.get('filter');
             if (staleFilter) {
-                this.getOlapProvider().updateFilter(staleFilter.id, {
-                    hierarchy: filter.get('hierarchy'),
-                    level: filter.get('level'),
-                    members: filter.get('members'),
-                    operator: filter.get('operator')
-                });
+                if (uniques.length > 0 && !noopFilter) {
+                    this.getOlapProvider().updateFilter(staleFilter.id, {
+                        hierarchy: filter.get('hierarchy'),
+                        level: filter.get('level'),
+                        members: filter.get('members'),
+                        operator: filter.get('operator')
+                    });
+                }
+                else {
+                    this.clearFilter();
+                }
             }
             else {
                 console.warn('Invalid filter state. Filter not available');
             }
         }
-        else {
+        else if (!noopFilter) {
             this.getOlapProvider().addFilter(filter);
         }
     },
