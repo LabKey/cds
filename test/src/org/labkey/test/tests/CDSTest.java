@@ -378,7 +378,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _ext4Helper.clickTabContainingText("Project Groups");
        if(isTextPresent("PermGroup1"))
        {
-           openGroupPermissionsDisplay("PermGroup1");
+           _permissionsHelper.openGroupPermissionsDisplay("PermGroup1");
            _extHelper.waitForExtDialog("PermGroup1 Information");
            clickButton("Delete Empty Group",0);
            waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
@@ -390,7 +390,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
        }
         if(isTextPresent("PermGroup2"))
         {
-            openGroupPermissionsDisplay("PermGroup2");
+            _permissionsHelper.openGroupPermissionsDisplay("PermGroup2");
             _extHelper.waitForExtDialog("PermGroup2 Information");
             clickButton("Delete Empty Group",0);
             waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);

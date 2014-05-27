@@ -19,11 +19,15 @@ Ext.define('Connector.view.Variable', {
             '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
                 '<li>{schemaLabel:this.elipseEncode}</li>',
-                '<li>{queryLabel:htmlEncode}</li>',
+                '<li>{[this.renderLabel(values)]}</li>',
             '</ul>',
             {
                 elipseEncode : function(v) {
                     return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
+                },
+                renderLabel : function(values) {
+                    var label = values.queryLabel + (values.subLabel.length > 0 ? " (" + values.subLabel + ")" : "");
+                    return this.elipseEncode(label);
                 }
             }
     ),
