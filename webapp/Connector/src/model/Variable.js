@@ -18,7 +18,7 @@ Ext.define('Connector.model.Variable', {
             sel = selections;
         }
 
-        var schema = '', query = '';
+        var schema = '', query = '', sub = '';
         if (sel) {
             if (sel.$className === 'Measure') {
                 schema = sel.get('queryLabel');
@@ -29,10 +29,19 @@ Ext.define('Connector.model.Variable', {
                 schema = sel['queryLabel'];
                 query = sel['label'];
             }
+
+            if (sel['options'])
+            {
+                if (sel['options'].antigen)
+                    sub = sel['options'].antigen.values.join(', ');
+                else if (sel['options'].alignmentVisitTagLabel)
+                    sub = sel['options'].alignmentVisitTagLabel;
+            }
         }
 
         this.set('schemaLabel', schema);
         this.set('queryLabel', query);
+        this.set('subLabel', sub);
         this.fireEvent('updatevariable', this);
     }
 });
