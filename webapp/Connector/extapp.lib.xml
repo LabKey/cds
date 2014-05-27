@@ -62,7 +62,6 @@
         <script path="Connector/src/types/Filter.js"/>
 
         <!-- Application Models -->
-        <script path="Connector/src/model/About.js"/>
         <script path="Connector/src/model/Citation.js"/>
         <script path="Connector/src/model/ColumnInfo.js"/>
         <script path="Connector/src/model/Detail.js"/>
@@ -106,6 +105,7 @@
         <script path="Connector/src/store/VisitTag.js"/>
 
         <!-- Application Views -->
+        <script path="Connector/src/view/About.js"/>
         <script path="Connector/src/view/Citation.js"/>
         <script path="Connector/src/view/Compare.js"/>
         <script path="Connector/src/view/DetailStatus.js"/>
