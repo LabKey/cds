@@ -66,7 +66,7 @@ Ext.define('Connector.view.Home', {
                             '<tpl for=".">',
                                 '<tr class="entry" style="margin-top: 10px;">',
                                     '<td style="width: 110px; vertical-align: text-top; color: #a09c9c;">{pubDate:this.renderDate}</td>',
-                                    '<td style="padding-right: 10px;">',
+                                    '<td style="padding-right: 15px;">',
                                         '<div><a href="{link}" target="_blank">{title:htmlEncode}</a></div>',
                                         '<div>{description:htmlEncode}</div>',
                                     '</td>',
@@ -85,20 +85,7 @@ Ext.define('Connector.view.Home', {
                     store: Ext.create('Ext.data.Store', {
                         model: 'Connector.model.RSSItem',
                         autoLoad: true
-                    }),
-                    listeners: {
-                        resize: function(dv) {
-                            Ext.defer(function() {
-                                var component = Ext.getCmp(this.id);
-                                if (component) {
-                                    var box = component.getBox();
-                                    var trueHeight = box.height - 161 - 32;
-                                    dv.setHeight(trueHeight);
-                                }
-                            }, 50, this);
-                        },
-                        scope: this
-                    }
+                    })
                 }]
             });
         }
