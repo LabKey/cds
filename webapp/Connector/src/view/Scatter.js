@@ -800,7 +800,7 @@ Ext.define('Connector.view.Scatter', {
 
             Ext.apply(scale, {
                 trans : axisValue,
-                domain: [axisValue == 'log' ? 1 : null, null] // allow negative values in linear plots
+                domain: [null, null]
             });
         }
 
