@@ -35,7 +35,7 @@ Ext.define('Connector.view.Signin', {
     	cls: 'signin-right',
 	    html : new Ext.XTemplate(
 	        '<tpl>',
-	        	'<input type="checkbox" style="float: left;"/>',
+	        	'<input id="termsCheck" type="checkbox" style="float: left;"/>',
 	            '<div style="padding-left: 30px;" class="terms">',
 	            	'<p>I agree to protect restricted data, credit others, and obtain official approval to publish.</p>',
 	            	'<p>I have read, understood, and agree to the terms of use available below.</p>',
@@ -51,7 +51,7 @@ Ext.define('Connector.view.Signin', {
 				            '<input disabled type="password"/>',
 			            '</div>',
 		            '</div>',
-		        	'<input disabled type="checkbox" style="float: left;"/>',
+		        	'<input id="rememberMeCheck" disabled type="checkbox" style="float: left;"/>',
 		            '<div style="padding-left: 30px;">',
 		            	'<div>Remember my email address</div>',
 		            	'<a href="">Forgot your password?</a>',
@@ -65,9 +65,17 @@ Ext.define('Connector.view.Signin', {
 	    width: 450
     }],
 
-    initComponent : function() {
+    afterRender : function() {
     	this.callParent();
 
+    	var el = this.getEl();
+    	console.log("EL",el);
 
+    	this.termsCheckbox = el.getById("termsCheck");
+    	this.rememberMeCheckbox = el.getById("rememberMeCheck");
+
+    	this.termsCheckbox.on('change', function() {
+    		console.log("Checkbox changed");
+    	})
     }
 });
