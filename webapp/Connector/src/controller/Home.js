@@ -42,37 +42,18 @@ Ext.define('Connector.controller.Home', {
         var statDisplay = view.getComponent('statdisplay');
         if (statDisplay) {
 
-            var data = {
-                nstudy: 0,
-                ndatapts: 0
-            };
-
-            var check = function() {
-                if (data.nstudy > 0 && data.ndatapts > 0) {
-                    statDisplay.update(data);
-                }
-            };
-
-            LABKEY.Query.selectRows({
-                schemaName: 'study',
-                queryName: 'StudyData',
-                requiredVersion: 9.1,
-                maxRows: 1,
-                success: function(_data) {
-                    data.ndatapts = _data.rowCount;
-                    check();
+            Ext.Ajax.request({
+                url: LABKEY.ActionURL.buildURL('cds', 'properties'),
+                method: 'GET',
+                success: function(response) {
+                    var json = Ext.decode(response.responseText);
+                    statDisplay.update({
+                        nstudy: json.primaryCount,
+                        ndatapts: json.dataCount
+                    });
                 }
             });
 
-            this.getStateManager().onMDXReady(function(mdx) {
-                mdx.query({
-                    onRows: [{ level: "[Study].[Name]"}],
-                    success: function(cellset) {
-                        data.nstudy = cellset.cells.length;
-                        check();
-                    }
-                });
-            }, this);
         }
     }
 });

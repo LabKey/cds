@@ -124,5 +124,6 @@ public class CDSInitializer
         _test.assertElementPresent(Locator.linkWithText("Luminex"));
         _test.assertElementPresent(Locator.linkWithText("MRNA"));
         _test.assertElementPresent(Locator.linkWithText("ADCC"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 }

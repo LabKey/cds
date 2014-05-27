@@ -65,7 +65,7 @@ Ext.define('Connector.view.GroupListView', {
         '</tpl>',
         '<tpl for=".">',
             '<div class="grouprow">',
-                '<div class="grouplabel">{label:htmlEncode}</div>',
+                '<div title="{label:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
                 '<tpl if="this.plotter(containsPlot)">',
                     '<div class="groupicon"><img src="/labkey/production/Connector/resources/images/plot.png"></div>',
                 '</tpl>',
@@ -74,6 +74,9 @@ Ext.define('Connector.view.GroupListView', {
         {
             isEmpty : function(v) {
                 return (!Ext.isArray(v) || v.length === 0);
+            },
+            groupLabel : function(label) {
+                return Ext.String.ellipsis(Ext.htmlEncode(label), 35, true);
             },
             plotter : function(containsPlot) {
                 return containsPlot === true;
