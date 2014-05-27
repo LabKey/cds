@@ -374,57 +374,57 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         Ext4Helper.resetCssPrefix();
 
         if (!isElementPresent(Locator.permissionRendered()))
-            enterPermissionsUI();
+            _permissionsHelper.enterPermissionsUI();
         _ext4Helper.clickTabContainingText("Project Groups");
        if(isTextPresent("PermGroup1"))
        {
-           openGroupPermissionsDisplay("PermGroup1");
+           _permissionsHelper.openGroupPermissionsDisplay("PermGroup1");
            _extHelper.waitForExtDialog("PermGroup1 Information");
            clickButton("Delete Empty Group",0);
            waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
            clickButton("Cancel");
            if (!isElementPresent(Locator.permissionRendered()))
-               enterPermissionsUI();
+               _permissionsHelper.enterPermissionsUI();
            _ext4Helper.clickTabContainingText("Project Groups");
 
        }
         if(isTextPresent("PermGroup2"))
         {
-            openGroupPermissionsDisplay("PermGroup2");
+            _permissionsHelper.openGroupPermissionsDisplay("PermGroup2");
             _extHelper.waitForExtDialog("PermGroup2 Information");
             clickButton("Delete Empty Group",0);
             waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
             clickButton("Cancel");
             if (!isElementPresent(Locator.permissionRendered()))
-                enterPermissionsUI();
+                _permissionsHelper.enterPermissionsUI();
             _ext4Helper.clickTabContainingText("Project Groups");
         }
 
         //Here is where the issue occurs (Issue 20329)
-        createPermissionsGroup("PermGroup1");
+        _permissionsHelper.createPermissionsGroup("PermGroup1");
         if (isElementPresent(Locator.permissionRendered()) && isNavButtonPresent("Save and Finish"))
             clickButton("Save and Finish");
         clickProject("CDSTest Project");
         clickFolder("NotRV144");
-        enterPermissionsUI();
-        uncheckInheritedPermissions();
+        _permissionsHelper.enterPermissionsUI();
+        _permissionsHelper.uncheckInheritedPermissions();
         clickButton("Save",0);
 
         //This is the workaround for issue 20329
         sleep(1000);
-        uncheckInheritedPermissions();
+        _permissionsHelper.uncheckInheritedPermissions();
         clickButton("Save",0);
 
         waitForElement(Locator.permissionRendered());
         _securityHelper.setProjectPerm("PermGroup1", "Reader");
         clickButton("Save and Finish");
         clickProject("CDSTest Project");
-        enterPermissionsUI();
+        _permissionsHelper.enterPermissionsUI();
         _securityHelper.setProjectPerm("PermGroup1", "Reader");
         clickButton("Save and Finish");
-        createPermissionsGroup("PermGroup2");
+        _permissionsHelper.createPermissionsGroup("PermGroup2");
         clickButton("Save and Finish");
-        enterPermissionsUI();
+        _permissionsHelper.enterPermissionsUI();
         _securityHelper.setProjectPerm("PermGroup2", "Reader");
         clickButton("Save and Finish");
         impersonateGroup("PermGroup1", false);
