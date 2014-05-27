@@ -251,7 +251,7 @@ Ext.define('Connector.panel.AxisSelector', {
         {
             this.getSelectionDisplay().setMeasureSelection(measure);
             this.getSelectionDisplay().setVariableOptions(measure, this.selectedSource);
-            this.getSelectionDisplay().getScaleForm().setVisible(measure.get('variableType') == null);
+            this.getSelectionDisplay().getScaleForm().setVisible(measure.get('variableType') == null && measure.get('type') !== 'VARCHAR');
             this.lastMeasure = measure;
         }
 
