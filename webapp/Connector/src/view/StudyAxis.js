@@ -20,19 +20,19 @@ Connector.view.StudyAxis = function(){
         xFn = function(d) { return xScale(d.sequenceNumMin); };
         yFn = function(d) { return yScale(d.studyLabel) - 8; };
         widthFn = function(d) {
-            if (d.sequenceNumMax == d.sequenceNumMin) {
+            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
                 return 8.5;
             }
             return xScale(d.sequenceNumMax) - xScale(d.sequenceNumMin);
         };
         heightFn = function(d) {
-            if (d.sequenceNumMax == d.sequenceNumMin) {
+            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
                 return 8.5;
             }
             return 10;
         };
         transformFn = function(d) {
-            if (d.sequenceNumMax == d.sequenceNumMin) {
+            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
                 return 'rotate(45,' + xFn(d) + ',' + yFn(d) +  ')';
             }
             return '';
@@ -48,6 +48,7 @@ Connector.view.StudyAxis = function(){
             var visits = d.visits;
             for (var i = 0; i < d.visits.length; i++) {
                 d.visits[i].studyLabel = d.label;
+                d.visits[i].timepointType = d.timepointType;
             }
             return visits;
         });

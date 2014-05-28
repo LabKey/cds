@@ -2191,6 +2191,7 @@ Ext.define('Connector.view.Scatter', {
         var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
         var sql = 'SELECT\n' +
                 'StudyLabel,\n' +
+                'TimepointType,\n' +
                 'VisitLabel,\n' +
                 'SequenceNumMin,\n' +
                 'SequenceNumMax,\n' +
@@ -2203,6 +2204,7 @@ Ext.define('Connector.view.Scatter', {
             'FROM (\n' +
                 'SELECT\n' +
                     'StudyProperties.Label as StudyLabel,\n' +
+                    'StudyProperties.TimepointType as TimepointType,\n' +
                     'Visit.Label as VisitLabel,\n' +
                     'Visit.SequenceNumMin,\n' +
                     'Visit.SequenceNumMax,\n' +
@@ -2264,6 +2266,7 @@ Ext.define('Connector.view.Scatter', {
             if (!studyMap.hasOwnProperty(studyLabel)) {
                 studyMap[studyLabel] = {
                     label : studyLabel,
+                    timepointType : rows[i].TimepointType.value,
                     visits: {}
                 };
             }
