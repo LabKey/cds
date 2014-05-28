@@ -11,18 +11,19 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['DetailStatus', 'FilterSave', 'FilterStatus'],
+    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'InfoPane', 'PlotPane'],
 
     init : function() {
 
         this.control('app-main > #eastview > #navfilter', {
             afterrender : function(navfilter) {
                 var container = Ext.create('Ext.container.Container', {
+                    itemId: 'filterstatuscontainer',
                     style: 'overflow-y: auto; overflow-x: hidden;',
                     flex: 1,
                     items: [
                         this.createFilterStatus(),
-                        this.createFilterDetail()
+                        this.createDetail()
                     ]
                 });
                 navfilter.add(container);
@@ -81,6 +82,20 @@ Ext.define('Connector.controller.FilterStatus', {
             click : this.runSelectToFilterAnimation
         });
 
+        this.control('detailstatus', {
+            itemclick: this.onDetailSelect
+        });
+
+        this.control('#infosortdropdown', {
+            click: function(btn) { btn.showMenu(); }
+        });
+
+        this.control('selectionview', {
+            itemselect : function(view, filter) {
+                this.showFilterEditor(filter);
+            }
+        });
+
         this.callParent();
     },
 
@@ -90,7 +105,7 @@ Ext.define('Connector.controller.FilterStatus', {
         return store;
     },
 
-    createFilterDetail : function() {
+    createDetail : function() {
         var store = this.getStateStore();
         store.load();
 
@@ -98,13 +113,7 @@ Ext.define('Connector.controller.FilterStatus', {
             store: store
         });
 
-        var state = this.getStateManager();
-        state.on('filtercount', view.onFilterChange, view);
-        state.on('filterchange', view.onFilterChange, view);
-        state.on('selectionchange', view.onFilterChange, view);
-
-        var vm = this.getViewManager();
-        vm.on('afterchangeview', function(controller, view) {
+        this.getViewManager().on('afterchangeview', function(controller, view) {
             store.clearFilter();
             if (view !== 'plot' && view !== 'datagrid') {
                 store.filter('dataBasedCount', false);
@@ -112,6 +121,86 @@ Ext.define('Connector.controller.FilterStatus', {
         }, this);
 
         return view;
+    },
+
+    onDetailSelect : function(view, detail) {
+        if (detail.get('activeCountLink') === true) {
+            this.showFilterEditor(detail);
+        }
+    },
+
+    showFilterEditor : function(filterOrDetail) {
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter');
+        if (Ext.isArray(parent)) {
+            parent = parent[0];
+        }
+
+        if (parent) {
+
+            var clazz = 'Connector.view.InfoPane';
+
+            //
+            // configure info pane view
+            //
+            var config = {
+                olapProvider: this.getStateManager()
+            };
+
+            if (filterOrDetail.$className === "Connector.model.Detail") {
+                config.dimensionUniqueName = filterOrDetail.get('dimension');
+                config.hierarchyUniqueName = filterOrDetail.get('hierarchy');
+                config.level = filterOrDetail.get('level');
+            }
+            else if (filterOrDetail.$className === "Connector.model.Filter") {
+
+                if (filterOrDetail.isGrid() || filterOrDetail.isGroup()) {
+                    console.log('Grid/Group filters not yet supported.');
+                    return;
+                }
+                else if (filterOrDetail.isPlot()) {
+                    clazz = 'Connector.view.PlotPane';
+                }
+
+                config.filter = filterOrDetail;
+            }
+
+            //
+            // prepare layout
+            //
+            var statusContainer = parent.getComponent('filterstatuscontainer');
+            if (statusContainer) {
+                statusContainer.hide();
+            }
+
+            var infoPane = Ext.create(clazz, {
+                model: Ext.create('Connector.model.InfoPane', config),
+                stateManager: this.getStateManager(),
+                listeners: {
+                    hide: {
+                        fn: this.resetInfoPane,
+                        scope: this,
+                        single: true
+                    }
+                }
+            });
+
+            parent.add(infoPane);
+        }
+    },
+
+    resetInfoPane : function(infoPane) {
+
+        if (infoPane) {
+            infoPane.hide();
+            if (infoPane.up())
+                infoPane.up().remove(infoPane);
+        }
+
+        var parent = Ext.ComponentQuery.query('app-main > #eastview > #navfilter > #filterstatuscontainer');
+        if (parent && parent.length > 0) {
+            parent[0].show();
+        }
     },
 
     createFilterStatus : function() {
@@ -139,26 +228,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
     runSelectToFilterAnimation : function(b) {
         this.getStateManager().moveSelectionToFilter();
-//        var p = b.up('panel');
-//        var me = this;
-//        p.dockedItems.items[0].getEl().fadeOut();
-//        Ext.get(Ext.query('.header', p.getEl().id)[0]).fadeOut({
-//            listeners : {
-//                afteranimate : function(){
-//                    p.getEl().slideOut('t', {
-//                        duration  : 250,
-//                        listeners : {
-//                            afteranimate : function() {
-//                                p.dockedItems.items[0].getEl().fadeIn();
-//                                me.getStateManager().moveSelectionToFilter();
-//                            },
-//                            scope : p
-//                        }
-//                    });
-//                },
-//                scope: p
-//            }
-//        });
     },
 
     createView : function(xtype, context) {

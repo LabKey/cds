@@ -264,6 +264,67 @@ public class CDSHelper
         _test.sleep(500);
     }
 
+    public void openStatusInfoPane(String label)
+    {
+        _test.assertElementPresent(Locator.tagWithClass("ul", "detailstatus"));
+        _test.waitAndClick(Locator.tagWithClass("span", "statme").withText(label));
+
+        _test.waitForElement(Locator.tagWithClass("div", "infopane"));
+    }
+
+    public void openFilterInfoPane(Locator.XPathLocator filterMember)
+    {
+        _test.click(Locator.tagWithClass("div", "wrapitem").withDescendant(filterMember));
+
+        // 'update' button represents the update of a filter
+        _test.waitForElement(Locators.cdsButtonLocator("update", "filterinfoaction"));
+    }
+
+    public void changeInfoPaneSort(String fromSort, String toSort)
+    {
+        Locator.XPathLocator infoPane = Locator.tagWithClass("div", "infopane");
+        Locator.XPathLocator sorter = infoPane.withDescendant(Locator.tagWithClass("div", "sorter"));
+
+        _test.waitForElement(infoPane);
+        _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", fromSort)));
+
+        _test.click(Locators.infoPaneSortButtonLocator());
+
+        Locator.XPathLocator sortItemLabel = Locator.tagWithClass("span", "x-menu-item-text").withText(toSort);
+        Locator.XPathLocator sortItem = Locator.tagWithClass("div", "infosortmenu").append(Locator.tagWithClass("div", "x-menu-item").withDescendant(sortItemLabel));
+        _test.waitAndClick(sortItem.notHidden());
+        _test.waitForElement(sorter.withDescendant(Locator.tagContainingText("span", toSort)));
+    }
+
+    public void selectInfoPaneItem(String label, boolean onlyThisItem)
+    {
+        Locator.XPathLocator memberLabel = Locator.tagWithClass("div", "x-grid-cell-inner").withText(label);
+
+        if (onlyThisItem)
+        {
+            // click the label
+            _test.click(memberLabel);
+        }
+        else
+        {
+            Locator.XPathLocator row = Locator.tagWithClass("tr", "x-grid-data-row");
+            Locator.XPathLocator check = Locator.tagWithClass("td", "x-grid-cell-row-checker");
+
+            // click the checkbox
+            _test.click(row.withDescendant(memberLabel).child(check));
+        }
+    }
+
+    /**
+     * Call this with the info pane display open.
+     * @param setAND - Exclusive flag that will select either 'AND' or 'OR' depending on the value.
+     */
+    public void selectInfoPaneOperator(boolean setAND)
+    {
+        String radioLabel = (setAND ? "(AND)" : "(OR)");
+        _test.click(Locator.tagWithClass("label", "x-form-cb-label").containing(radioLabel));
+    }
+
     public enum NavigationLink
     {
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
@@ -354,6 +415,11 @@ public class CDSHelper
         public static Locator.XPathLocator getSelectionStatusLocator(int count, String match)
         {
             return Locator.xpath("//li//span[contains(text(), '" + match + "')]/../span[contains(@class, 'status-subcount') and text()='" + count + "']");
+        }
+
+        public static Locator.XPathLocator infoPaneSortButtonLocator()
+        {
+            return Locator.tagWithClass("button", "ipdropdown");
         }
     }
 }

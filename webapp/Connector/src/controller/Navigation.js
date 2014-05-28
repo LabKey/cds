@@ -70,7 +70,6 @@ Ext.define('Connector.controller.Navigation', {
             var sview = this.getViewManager().getViewInstance('summary');
             if (sview) {
                 var state = this.getStateManager();
-                state.removePrivateSelection('groupselection');
 
                 if (recs[0].data.value == 1) // All Subjects -- reset to default
                 {
