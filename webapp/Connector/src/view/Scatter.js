@@ -442,6 +442,7 @@ Ext.define('Connector.view.Scatter', {
         var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
         this.plotEl.update('');
+        this.resizePlotContainers();
 
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
@@ -2228,7 +2229,6 @@ Ext.define('Connector.view.Scatter', {
 
                 this.studyAxisResp = resp;
                 this._preprocessStudyAxisData();
-                this.resizePlotContainers();
                 this.initPlot(this.plotData, false);
                 this.initStudyAxis();
             },
@@ -2368,7 +2368,6 @@ Ext.define('Connector.view.Scatter', {
             this._buildAlignmentMap();
             this.requestStudyAxisData();
         } else {
-            this.resizePlotContainers();
             this.initPlot(this.plotData, false);
         }
     },
