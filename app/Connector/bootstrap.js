@@ -93,7 +93,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSummaryHeader": "../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../webapp/Connector/src/view/Home.js",
-  "Connector.view.HomeBody": "../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../webapp/Connector/src/view/Home.js",
   "Connector.view.InfoPane": "../../webapp/Connector/src/view/InfoPane.js",
   "Connector.view.Learn": "../../webapp/Connector/src/view/Learn.js",
@@ -236,7 +235,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSummaryHeader": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
-  "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [],
   "Connector.view.InfoPane": [],
   "Connector.view.Learn": [],
@@ -1254,7 +1252,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Home": [
     "widget.home"
   ],
-  "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [
     "widget.homeheader"
   ],
