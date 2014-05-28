@@ -89,6 +89,15 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
     }
 
+    public void saveOverGroup(String name)
+    {
+        _test.click(Locators.cdsButtonLocator("save", "filtersave"));
+        _test.waitForText("Live: Update group with new data");
+        _test.click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
+        _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
+        _test.click(Locators.cdsButtonLocator("save", "groupupdatesave"));
+    }
+
     public void selectBarsHelper(boolean isShift, String... bars)
     {
         if (bars == null || bars.length == 0)
@@ -105,8 +114,6 @@ public class CDSHelper
         waitForBarToAnimate(bars[0]);
 
         String subselect = bars[0];
-        if (subselect.length() > 10)
-            subselect = subselect.substring(0, 9);
         WebElement el = _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[0] + "']").toBy()));
         _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(subselect), CDS_WAIT);
@@ -251,7 +258,7 @@ public class CDSHelper
 
     public void deleteGroupFromSummaryPage(String name)
     {
-        Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").withText(name);
+        Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing.toBy()));
         _test.click(groupListing);
         _test.waitForElement(Locators.cdsButtonLocator("delete"));

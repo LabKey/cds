@@ -29,6 +29,7 @@ import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.DataGridSelector;
 import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
@@ -58,7 +59,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
-    
+    private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
+
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
@@ -138,6 +140,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         groups.add(GROUP_LIVE_FILTER);
         groups.add(GROUP_STATIC_FILTER);
         groups.add(STUDY_GROUP);
+        groups.add(HOME_PAGE_GROUP);
         ensureGroupsDeleted(groups);
 
         cds.clearAllFilters();
@@ -157,28 +160,81 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyHomePage()
     {
         /**
-         * Things to test
-         *
          * Header
          * ------
-         * Counts (logged in and out)
-         * About link (once page is present)
-         *
-         * News
-         * ------
-         * Order of the stories
-         * Possibly load up a different feed mid test?
-         * Ensure empty case
-         *
-         * Group
-         * ------
-         * Plotted groups with plot icon
-         * Update group by removing it's plot filter
-         * Ensure empty case
+         * Counts (logged out -- once ajax login is present)
          */
 
         log("Verify Home Page");
+
+        //
+        // Validate counts and about link
+        //
+        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", CDSHelper.STUDIES.length + " studies connected together combining");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "1,106 data points.");
+        waitForElement(studyPoints);
+        waitForElement(dataPoints);
+
+        click(Locator.tagContainingText("a", "About the Co"));
+        waitForText("404: View Not Found");
+        getDriver().navigate().back();
+        waitForElement(dataPoints.notHidden());
+
+        //
+        // Validate News feed
+        //
         waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
+        assertTextPresentInThisOrder("08 May 2014", "09 Jan 2014", "16 Oct 2013");
+
+        //
+        // Validate Groups
+        //
+        assertTextPresent("My Saved Groups and Plots");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("Lab Results", "CD4");
+        yaxis.confirmSelection();
+        waitForElement(CDSHelper.Locators.filterMemberLocator("In the plot: CD4"));
+
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0]);
+        cds.useSelectionAsFilter();
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Study: " + CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(6, 1, 2);
+
+        final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
+        final String saveLabel = "Group \"A Plotted...\" saved.";
+        Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
+
+        cds.saveGroup(HOME_PAGE_GROUP, "A Plottable group");
+        waitForText(saveLabel);
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForElement(Locator.css("div.groupicon img"));
+        assertElementPresent(clippedLabel);
+        cds.clearAllFilters();
+
+        getDriver().navigate().refresh();
+        waitAndClick(clippedLabel);
+        waitForText("Your filters have been");
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: CD4"));
+        _asserts.assertFilterStatusCounts(6, 1, 2);
+
+        // TODO: Enable this once fb_plots is merged
+//        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        // assert the SVG element and plot build properly
+
+        // remove just the plot filter
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(Locator.tagWithClass("div", "closeitem").index(0));
+        cds.saveOverGroup(HOME_PAGE_GROUP);
+        waitForText(saveLabel);
+        _asserts.assertFilterStatusCounts(6, 1, 2);
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForElementToDisappear(Locator.css("div.groupicon img"));
     }
 
     @Test
@@ -1118,8 +1174,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         List<String> deletable = new ArrayList<>();
         for (String group : groups)
         {
-            if (isTextPresent(group))
-                deletable.add(group);
+            String subName = group.substring(0, 10);
+            if (isTextPresent(subName))
+                deletable.add(subName);
         }
 
         if (deletable.size() > 0)
