@@ -444,4 +444,15 @@
             <ns:column columnName="Network"/>
         </ns:columns>
     </ns:table>
+    <ns:table tableName="Properties" tableDbType="TABLE">
+        <ns:description>Collection of Application properties.</ns:description>
+        <ns:columns>
+            <ns:column columnName="RowId"/>
+            <ns:column columnName="Container">
+                <ns:isKeyField>false</ns:isKeyField>
+            </ns:column>
+            <ns:column columnName="PrimaryCount"/>
+            <ns:column columnName="DataCount"/>
+        </ns:columns>
+    </ns:table>
 </ns:tables>

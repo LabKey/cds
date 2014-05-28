@@ -60,6 +60,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Group": "../../../../webapp/Connector/src/model/Group.js",
   "Connector.model.InfoPane": "../../../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.Members": "../../../../webapp/Connector/src/model/InfoPane.js",
+  "Connector.model.RSSItem": "../../../../webapp/Connector/src/model/RSSItem.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
@@ -94,7 +95,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSummaryHeader": "../../../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../../../webapp/Connector/src/view/Home.js",
-  "Connector.view.HomeBody": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.HomeHeader": "../../../../webapp/Connector/src/view/Home.js",
   "Connector.view.InfoPane": "../../../../webapp/Connector/src/view/InfoPane.js",
   "Connector.view.Learn": "../../../../webapp/Connector/src/view/Learn.js",
@@ -112,6 +112,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.Signin": "../../../../webapp/Connector/src/view/Signin.js",
+  "Connector.view.SigninForm": "../../../../webapp/Connector/src/view/Signin.js",
   "Connector.view.SingleAxisExplorer": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.SingleAxisExplorerView": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../../../webapp/Connector/src/view/Summary.js",
@@ -205,6 +206,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Group": [],
   "Connector.model.InfoPane": [],
   "Connector.model.Members": [],
+  "Connector.model.RSSItem": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
@@ -239,7 +241,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.GroupSummaryHeader": [],
   "Connector.view.Header": [],
   "Connector.view.Home": [],
-  "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [],
   "Connector.view.InfoPane": [],
   "Connector.view.Learn": [],
@@ -257,6 +258,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.Signin": [],
+  "Connector.view.SigninForm": [],
   "Connector.view.SingleAxisExplorer": [],
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
@@ -1173,6 +1175,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Group": [],
   "Connector.model.InfoPane": [],
   "Connector.model.Members": [],
+  "Connector.model.RSSItem": [],
   "Connector.model.State": [],
   "Connector.model.Summary": [],
   "Connector.model.Variable": [],
@@ -1261,7 +1264,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Home": [
     "widget.home"
   ],
-  "Connector.view.HomeBody": [],
   "Connector.view.HomeHeader": [
     "widget.homeheader"
   ],
@@ -1300,6 +1302,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Signin": [
     "widget.signin"
+  ],
+  "Connector.view.SigninForm": [
+    "widget.signinform"
   ],
   "Connector.view.SingleAxisExplorer": [
     "widget.singleaxis"

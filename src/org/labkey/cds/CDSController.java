@@ -17,6 +17,7 @@
 package org.labkey.cds;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,8 @@ import org.labkey.api.action.CustomApiForm;
 import org.labkey.api.action.ExtendedApiQueryResponse;
 import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.HasBindParameters;
+import org.labkey.api.action.Marshal;
+import org.labkey.api.action.Marshaller;
 import org.labkey.api.action.MutatingApiAction;
 import org.labkey.api.action.NullSafeBindException;
 import org.labkey.api.action.SimpleViewAction;
@@ -42,20 +45,20 @@ import org.labkey.api.cache.Cache;
 import org.labkey.api.cache.CacheLoader;
 import org.labkey.api.cache.CacheManager;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
+import org.labkey.api.data.Container;
 import org.labkey.api.data.DataRegion;
-import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.ShowRows;
 import org.labkey.api.data.Table;
 import org.labkey.api.files.FileContentService;
-import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.TempQuerySettings;
 import org.labkey.api.query.UserSchema;
-import org.labkey.api.security.IgnoresTermsOfUse;
+import org.labkey.api.rss.RSSFeed;
+import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermissionClass;
@@ -79,20 +82,17 @@ import org.labkey.cds.model.Citable;
 import org.labkey.cds.model.CitableAuthor;
 import org.labkey.cds.model.Citation;
 import org.labkey.cds.view.template.ConnectorTemplate;
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,8 +134,28 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresNoPermission
-    @IgnoresTermsOfUse
+    @RequiresPermissionClass(ReadPermission.class)
+    public class NewsAction extends SimpleViewAction
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            List<RSSFeed> feeds = RSSService.get().getFeeds(getContainer(), getUser());
+
+            getViewContext().getResponse().setContentType("text/xml");
+            RSSService.get().aggregateFeeds(feeds, getViewContext().getResponse().getWriter());
+
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+    @RequiresPermissionClass(ReadPermission.class)
     public class AppAction extends SimpleViewAction
     {
         @Override
@@ -266,6 +286,91 @@ public class CDSController extends SpringActionController
         }
     }
 
+
+    public static class PropertiesForm
+    {
+        private int _rowId = -1;
+        private Container _container;
+        private int _primaryCount = -1;
+        private int _dataCount = -1;
+
+        public int getRowId()
+        {
+            return _rowId;
+        }
+
+        public void setRowId(int rowId)
+        {
+            _rowId = rowId;
+        }
+
+        public int getPrimaryCount()
+        {
+            return _primaryCount;
+        }
+
+        public void setPrimaryCount(int primaryCount)
+        {
+            _primaryCount = primaryCount;
+        }
+
+        public int getDataCount()
+        {
+            return _dataCount;
+        }
+
+        public void setDataCount(int dataCount)
+        {
+            _dataCount = dataCount;
+        }
+
+        public String getContainerId()
+        {
+            return _container.getId();
+        }
+
+        @JsonIgnore
+        public Container getContainer()
+        {
+            return _container;
+        }
+
+        public void setContainer(Container container)
+        {
+            _container = container;
+        }
+    }
+
+    @RequiresNoPermission
+    @Marshal(Marshaller.Jackson)
+    public class PropertiesAction extends ApiAction<PropertiesForm>
+    {
+        @Override
+        public Object execute(PropertiesForm form, BindException errors) throws Exception
+        {
+            Container container = getContainer();
+            PropertiesForm model = CDSManager.get().getProperties(container);
+
+            //
+            // Check if the user is attempting to update the values via POST
+            //
+            if (isPost())
+            {
+                model = CDSManager.get().ensureProperties(model, form, container, getUser());
+            }
+
+            //
+            // Generate the reponse by querying for this containers result
+            //
+            return model;
+        }
+
+        @Override
+        public ModelAndView handlePost() throws Exception
+        {
+            return super.handlePost();
+        }
+    }
 
     @RequiresPermissionClass(AdminPermission.class)
     public class ResetAction extends SimpleViewAction

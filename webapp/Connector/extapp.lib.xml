@@ -73,6 +73,7 @@
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
         <script path="Connector/src/model/Grid.js"/>
+        <script path="Connector/src/model/RSSItem.js"/>
         <script path="Connector/src/model/Variable.js"/>
         <script path="Connector/src/model/VisitTag.js"/>
 

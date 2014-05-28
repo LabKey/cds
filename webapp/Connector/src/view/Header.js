@@ -66,7 +66,6 @@ Ext.define("Connector.view.Header", {
             layout: 'hbox',
             itemId: 'search',
             margin: '25 0 0 0',
-//            width  : 300, with search
             width: 100,
             items: [{
                 xtype: 'box',
@@ -83,27 +82,9 @@ Ext.define("Connector.view.Header", {
 
         this.callParent();
 
-//        if (!this.expanded) {
-//        this.on('afterrender', function() { this.collapse(true); }, this, {single: true});
-//        }
-
         this.on('afterrender', function(p) {
 
             this.collapse(true);
-
-//            var cmp = Ext.getCmp('search-container');
-//            if (cmp && cmp.getEl()) {
-//                Ext.create('Ext.tip.ToolTip', {
-//                    target : cmp.getEl(),
-//                    anchor : 'left',
-//                    autoHide: true,
-//                    contentEl : 'searchtip',
-//                    maxWidth : 500,
-//                    minWidth : 200,
-//                    bodyPadding: 0,
-//                    padding: 0
-//                });
-//            }
 
         }, this, {single: true});
     },

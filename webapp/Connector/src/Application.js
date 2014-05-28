@@ -48,7 +48,7 @@ Ext.define('Connector.Application', {
 
     defaultLoginController: 'Signin',
 
-    defaultController: 'Summary',
+    defaultController: 'Home',
 
     views: [],
 
