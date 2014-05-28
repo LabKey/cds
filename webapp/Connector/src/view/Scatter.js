@@ -1800,7 +1800,7 @@ Ext.define('Connector.view.Scatter', {
                     dock : 'bottom',
                     ui : 'footer',
                     padding : 15,
-                    items : ['->',{
+                    items : ['->', {
                         text  : 'set x axis',
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
@@ -1821,7 +1821,26 @@ Ext.define('Connector.view.Scatter', {
                             }
                         },
                         scope: this
-                    },{
+                    }, {
+                        text: 'remove variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            var filters = this.state.getFilters();
+                            // Need to remove the color measure from the plot filter or we'll pull it down again.
+                            for (var f=0; f < filters.length; f++) {
+                                var m = filters[f].get('plotMeasures');
+                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                                    m[0] = null;
+                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+                                }
+                            }
+
+                            this.activeXSelection = undefined;
+                            this.axisPanelX.clearSelection();
+                            this.xwin.hide();
+                        },
+                        scope: this
+                    }, {
                         text  : 'cancel',
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
@@ -1913,6 +1932,25 @@ Ext.define('Connector.view.Scatter', {
                         ui: 'rounded-inverted-accent',
                         handler: function(){
                             this.showTask.delay(300);
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }, {
+                        text: 'remove variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            var filters = this.state.getFilters();
+                            // Need to remove the color measure from the plot filter or we'll pull it down again.
+                            for (var f=0; f < filters.length; f++) {
+                                var m = filters[f].get('plotMeasures');
+                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                                    m[2] = null;
+                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+                                }
+                            }
+
+                            this.activeColorSelection = undefined;
+                            this.colorPanel.clearSelection();
                             this.colorwin.hide();
                         },
                         scope: this
