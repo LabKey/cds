@@ -46,7 +46,7 @@ Ext.define('Connector.Application', {
         'Signin'
     ],
 
-    requireLoginController: 'Signin',
+    defaultLoginController: 'Signin',
 
     defaultController: 'Summary',
 

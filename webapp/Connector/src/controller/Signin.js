@@ -12,7 +12,7 @@ Ext.define('Connector.controller.Signin', {
     createView : function(xtype, context) {
         var c = { ctx: context };
 
-        if (true) {//(xtype == 'learn') {
+        if (true) {
             type = 'Connector.view.Signin';
 
             Ext.applyIf(c, {
@@ -22,7 +22,11 @@ Ext.define('Connector.controller.Signin', {
 
             var v = Ext.create(type, c);
 
-            v.on('afterrender', function(v) {}, this);
+            v.on('userSignedIn', function() {
+                // Start loading
+                this.application.olap.load();
+                window.location.href = window.location.href;
+            }, this);
 
             return v;
         }
