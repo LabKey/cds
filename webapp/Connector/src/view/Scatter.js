@@ -1719,6 +1719,8 @@ Ext.define('Connector.view.Scatter', {
                             if (this.activeYSelection) {
                                 this.axisPanelY.setSelection(this.activeYSelection);
                                 this.activeYSelection = undefined;
+                            } else {
+                                this.axisPanelY.clearSelection();
                             }
                             this.ywin.hide();
                         },
@@ -1826,6 +1828,8 @@ Ext.define('Connector.view.Scatter', {
                             if (this.activeXSelection) {
                                 this.axisPanelX.setSelection(this.activeXSelection);
                                 this.activeXSelection = undefined;
+                            } else {
+                                this.axisPanelX.clearSelection();
                             }
                             this.xwin.hide();
                         },
@@ -1908,9 +1912,6 @@ Ext.define('Connector.view.Scatter', {
                         text: 'set color variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var colorselect = this.colorPanel.getSelection();
-                            // TODO: determine if I need to set this.initialized to true. I don't think so, as I think
-                            // that only deals with x or y measures.
                             this.showTask.delay(300);
                             this.colorwin.hide();
                         },
@@ -1919,7 +1920,12 @@ Ext.define('Connector.view.Scatter', {
                         text: 'cancel',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            // TODO: reset active selection. See ~line 1442 in showXMeasureSelection
+                            if (this.activeColorSelection) {
+                                this.colorPanel.setSelection(this.activeColorSelection);
+                                this.activeColorSelection = undefined;
+                            } else {
+                                this.colorPanel.clearSelection();
+                            }
                             this.colorwin.hide();
                         },
                         scope: this
@@ -1935,9 +1941,7 @@ Ext.define('Connector.view.Scatter', {
             this.activeColorSelection = this.colorPanel.getSelection()[0];
         }
 
-        this.colorwin.show(null, function(){
-            // TODO: runUniqueQuery? see ~line 1460 in showXMeasureSelection
-        }, this);
+        this.colorwin.show();
     },
 
     runUniqueQuery : function(axisSelector) {
