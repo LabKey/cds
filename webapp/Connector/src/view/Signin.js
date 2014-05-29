@@ -104,7 +104,6 @@ Ext.define('Connector.view.SigninForm', {
             success: LABKEY.Utils.getCallbackWrapper(function(response) {
             	if (response && response.user && response.user.isSignedIn) {
 	            	LABKEY.user = response.user || LABKEY.user;
-	            	console.log("FIRE EVENT");
 	            	this.fireEvent('userSignedIn');
 	            } else {
 	            	this.context.error = "Unexpected response from server";
@@ -116,7 +115,6 @@ Ext.define('Connector.view.SigninForm', {
             	this.context.error = response.exception;
 	    		this.update(this.context);
             	this.viewRendered();
-            	//console.log("LOGIN F",arguments);
             }, this)
         });
 	},

@@ -16,6 +16,20 @@ Ext.define('Connector.controller.Navigation', {
             // See Connector.panel.Header event 'headerclick'.
             headerclick : function() {
                 this.getViewManager().changeView(this.application.defaultController);
+            },
+            userSignedOut : function() {
+                LABKEY.user.isSignedIn = false;
+                this.application.fireEvent('userChanged');
+                window.location.href = window.location.href;
+            },
+            afterrender : function(view) {
+                this.connectorheader = view;
+            }
+        });
+
+        this.control('app-main', {
+            afterrender : function(view) {
+                this.mainView = view;
             }
         });
 
@@ -46,6 +60,11 @@ Ext.define('Connector.controller.Navigation', {
 
         this.getViewManager().on('afterchangeview', this.onViewChange, this);
         this.getStateManager().on('filterchange', this.onFilterChange, this);
+
+        this.application.on('userChanged', function() {
+            this.connectorheader && this.connectorheader.userChanged();
+            this.mainView && this.mainView.userChanged();
+        }, this);
     },
 
     createView : function(xtype, context) { },

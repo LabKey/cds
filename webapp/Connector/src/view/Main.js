@@ -74,5 +74,16 @@ Ext.define('Connector.view.Main', {
                 }
             }]
         }]
-    }]
+    }],
+
+    initComponent : function() {
+
+        this.callParent();
+
+        this.eastPanel = this.getComponent('eastview');
+    },
+
+    userChanged : function() {
+        this.eastPanel && this.eastPanel.setVisible(LABKEY.user.isSignedIn);
+    }
 });
