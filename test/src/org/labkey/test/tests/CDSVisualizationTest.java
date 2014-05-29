@@ -82,7 +82,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         //getText(Locator.css("svg")) on Chrome
         final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400";
         final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
-        final String WT_PLSE_LOG = "1\n10\n100\n1\n10\n100";
+        final String WT_PLSE_LOG = "60\n70\n80\n90\n100\n50\n60\n70\n80\n90\n100";
         Locator plotSelectionLoc = Locator.css(".selectionfilter .plot-selection");
         Locator plotSelectionFilterLoc = Locator.css(".activefilter .plot-selection");
         Locator plotSelectionX = Locator.css(".selectionfilter .plot-selection .closeitem");
@@ -147,7 +147,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
 
         // Test brush events.
-        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
+        builder.moveToElement(points.get(10)).moveByOffset(-45, -75).clickAndHold().moveByOffset(130, 160).release().perform();
 
         for (int i = 10; i < 15; i++)
         {
@@ -165,7 +165,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
 
         // Brush the same area, then apply that selection as a filter.
-        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
+        builder.moveToElement(points.get(10)).moveByOffset(-45, -75).clickAndHold().moveByOffset(130, 160).release().perform();
         waitForElement(plotSelectionLoc);
 
         assertEquals("An unexpected number of plot selections were visible.", 2, plotSelectionLoc.findElements(getDriver()).size());
