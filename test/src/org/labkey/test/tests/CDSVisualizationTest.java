@@ -67,7 +67,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         Ext4Helper.setCssPrefix("x-");
 
-        windowMaximize(); // Provides more useful screenshots on failure
         cds.enterApplication();
         cds.clearAllFilters();
         cds.clearAllSelections();
