@@ -74,8 +74,27 @@ Ext.define("Connector.view.Header", {
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
-                    href: LABKEY.ActionURL.buildURL('login', 'logout'),
+                    //href: LABKEY.ActionURL.buildURL('login', 'logout'),
                     html: 'Logout'
+                },
+                listeners: {
+                    click : function() {
+                        //console.log("Clicked logout");
+                        Ext.Ajax.request({
+                            url : LABKEY.ActionURL.buildURL("login", "logoutAPI.api"),
+                            method: 'POST',
+                            success: LABKEY.Utils.getCallbackWrapper(function(response) {
+                                if (response.success) {
+                                    LABKEY.user.isSignedIn = false;
+                                    window.location.href = window.location.href;
+                                }
+                            }, this),
+                            failure: LABKEY.Utils.getCallbackWrapper(function(response) {
+                            }, this)
+                        });
+                    },
+                    element: 'el',
+                    scope: this
                 }
             }]
         }];
