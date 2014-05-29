@@ -911,6 +911,7 @@ div.nolink.status-over {
   background-color: $light-color;
   border: 1px solid lightgrey;
   border-radius: 15px;
+  font-size: 10pt;
 
   .sorter {
     @include smallStandout;
