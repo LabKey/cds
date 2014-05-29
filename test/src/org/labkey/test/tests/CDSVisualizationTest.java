@@ -476,7 +476,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     }
 
     @Test
-    public void verifyAntigensVaribleSelector()
+    public void verifyAntigensVariableSelector()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
