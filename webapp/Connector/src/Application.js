@@ -45,7 +45,7 @@ Ext.define('Connector.Application', {
         'Summary'
     ],
 
-    defaultController: 'Summary',
+    defaultController: 'Home',
 
     views: [],
 

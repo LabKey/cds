@@ -34,6 +34,6 @@ Ext.define('Connector.view.module.StudyHeader', {
                 s += type;
             }
             return s;
-        },
+        }
     })
 });
