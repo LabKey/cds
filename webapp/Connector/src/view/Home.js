@@ -124,7 +124,7 @@ Ext.define('Connector.view.HomeHeader', {
                     '<div class="titlepanel">',
                         '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
                         '<h1 style="opacity: 0.7;">{nstudy:htmlEncode} studies connected together combining</h1>',
-                        '<h1 style="opacity: 0.4;">{ndatapts:this.commaFormat} data points.</h1>',
+                        '<h1 style="opacity: 0.4; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
                     '</div>',
                     '<a href="#about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Collaborative Dataspace...</a>',
                     {

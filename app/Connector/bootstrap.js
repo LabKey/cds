@@ -148,6 +148,7 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.store.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.OlapExplorer": "../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.Selection": "../../../../internal/webapp/app/Selection.js",
+  "Statistics": "../../webapp/Connector/src/utility/Statistics.js",
   "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
@@ -1107,6 +1108,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [],
   "LABKEY.app.view.Selection": [],
+  "Statistics": [],
   "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
@@ -2360,6 +2362,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.olapexplorerview"
   ],
   "LABKEY.app.view.Selection": [],
+  "Statistics": [],
   "StoreCache": []
 });
 Ext.setVersion("connector-theme", "1.0.0");
