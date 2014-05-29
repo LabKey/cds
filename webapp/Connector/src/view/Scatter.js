@@ -442,6 +442,7 @@ Ext.define('Connector.view.Scatter', {
         var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
         this.plotEl.update('');
+        this.resizePlotContainers();
 
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
@@ -2190,6 +2191,7 @@ Ext.define('Connector.view.Scatter', {
         var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
         var sql = 'SELECT\n' +
                 'StudyLabel,\n' +
+                'TimepointType,\n' +
                 'VisitLabel,\n' +
                 'SequenceNumMin,\n' +
                 'SequenceNumMax,\n' +
@@ -2202,6 +2204,7 @@ Ext.define('Connector.view.Scatter', {
             'FROM (\n' +
                 'SELECT\n' +
                     'StudyProperties.Label as StudyLabel,\n' +
+                    'StudyProperties.TimepointType as TimepointType,\n' +
                     'Visit.Label as VisitLabel,\n' +
                     'Visit.SequenceNumMin,\n' +
                     'Visit.SequenceNumMax,\n' +
@@ -2228,7 +2231,6 @@ Ext.define('Connector.view.Scatter', {
 
                 this.studyAxisResp = resp;
                 this._preprocessStudyAxisData();
-                this.resizePlotContainers();
                 this.initPlot(this.plotData, false);
                 this.initStudyAxis();
             },
@@ -2264,6 +2266,7 @@ Ext.define('Connector.view.Scatter', {
             if (!studyMap.hasOwnProperty(studyLabel)) {
                 studyMap[studyLabel] = {
                     label : studyLabel,
+                    timepointType : rows[i].TimepointType.value,
                     visits: {}
                 };
             }
@@ -2321,13 +2324,18 @@ Ext.define('Connector.view.Scatter', {
     showStudyAxisHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
             plotBBox = plotEl.getBoundingClientRect(),
-            hoverBBox, html, visiTagKey, visitTag;
+            hoverBBox, html, visitTagKeys, visitTagKey, visitTag, i;
 
         this.visitHoverEl = document.createElement('div');
         this.visitHoverEl.setAttribute('class', 'study-axis-window');
         html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
 
-        for (visitTagKey in data.visitTagMap) {
+        // Sort visit tags so they're consistent.
+        visitTagKeys = Object.keys(data.visitTagMap);
+        visitTagKeys.sort();
+
+        for (i = 0; i < visitTagKeys.length; i++) {
+            visitTagKey = visitTagKeys[i];
             if (data.visitTagMap.hasOwnProperty(visitTagKey)) {
                 visitTag = data.visitTagMap[visitTagKey];
                 html += '<p>' + visitTag.caption + '</p>';
@@ -2368,7 +2376,6 @@ Ext.define('Connector.view.Scatter', {
             this._buildAlignmentMap();
             this.requestStudyAxisData();
         } else {
-            this.resizePlotContainers();
             this.initPlot(this.plotData, false);
         }
     },

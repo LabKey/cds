@@ -107,6 +107,13 @@ public abstract class DataspaceVariableSelector
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    public void setVariableRadio(String text)
+    {
+        Locator radioRows = Locator.css(".variableoptions .x-checkboxgroup-form-item");
+        WebElement row = radioRows.withText(text).findElement(_test.getDriver());
+        row.findElement(Locator.css("input").toBy()).click();
+    }
+
     public void pickMeasure(String source, String measure)
     {
         pickMeasure(source, measure, false);
