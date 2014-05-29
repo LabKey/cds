@@ -2,6 +2,7 @@ package org.labkey.test.pages;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -109,6 +110,12 @@ public abstract class DataspaceVariableSelector
     public void pickMeasure(String source, String measure)
     {
         pickMeasure(source, measure, false);
+    }
+
+    public void cancelSelection()
+    {
+        _test.click(CDSHelper.Locators.cdsButtonLocator("cancel"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public static enum Scale

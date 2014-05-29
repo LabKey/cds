@@ -426,6 +426,30 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertElementPresent(colorLegendGlyph, 5);
     }
 
+    @Test
+    public void verifyAntigensVaribleSelector()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+    }
+
+    @Test
+    public void verifyAntigenScatterPlot()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+
+        color.openSelectorWindow();
+        assertElementNotPresent(color.variableOptionsRow());
+        color.cancelSelection();
+    }
+
     @AfterClass
     public static void postTest()
     {
