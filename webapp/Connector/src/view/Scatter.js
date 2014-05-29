@@ -2324,13 +2324,18 @@ Ext.define('Connector.view.Scatter', {
     showStudyAxisHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
             plotBBox = plotEl.getBoundingClientRect(),
-            hoverBBox, html, visiTagKey, visitTag;
+            hoverBBox, html, visitTagKeys, visitTagKey, visitTag, i;
 
         this.visitHoverEl = document.createElement('div');
         this.visitHoverEl.setAttribute('class', 'study-axis-window');
         html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
 
-        for (visitTagKey in data.visitTagMap) {
+        // Sort visit tags so they're consistent.
+        visitTagKeys = Object.keys(data.visitTagMap);
+        visitTagKeys.sort();
+
+        for (i = 0; i < visitTagKeys.length; i++) {
+            visitTagKey = visitTagKeys[i];
             if (data.visitTagMap.hasOwnProperty(visitTagKey)) {
                 visitTag = data.visitTagMap[visitTagKey];
                 html += '<p>' + visitTag.caption + '</p>';
