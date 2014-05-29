@@ -1663,6 +1663,7 @@ div.filterheader {
     text-transform: uppercase;
     font-size: 12px;
     font-family: $bodycaps-font;
+    font-weight: normal;
   }
 
   .groupheaderline {
@@ -1676,6 +1677,15 @@ div.filterheader {
 
   .itemdisabled {
     color: $primary-color;
+  }
+
+  .x-grid-group-hd {
+    border: none;
+    padding: 0;
+  }
+
+  .x-grid-group-title .groupheader {
+    padding: 8px 6px 4px 6px !important;
   }
 }
 
