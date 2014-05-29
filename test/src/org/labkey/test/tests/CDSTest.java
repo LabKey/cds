@@ -58,6 +58,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
+    private static final String[] DESIRED_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144"};
     
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
@@ -93,6 +94,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         initTest.doCleanup(false);
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
 
         currentTest = initTest;
