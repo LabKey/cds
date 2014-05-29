@@ -8,12 +8,17 @@ public class CDSInitializer
     private final BaseWebDriverTest _test;
     private final CDSHelper _cds;
     private final String _project;
+    private String[] _desiredStudies;
 
     public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
         _test = test;
         _cds = new CDSHelper(_test);
         _project = projectName;
+    }
+
+    public void setDesiredStudies(String[] studies) {
+        _desiredStudies = studies;
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -56,10 +61,10 @@ public class CDSInitializer
     @LogMethod
     public void importData()
     {
-        importComponentStudy(CDSHelper.STUDIES[0]);
-        importComponentStudy("NotCHAVI001");
-        importComponentStudy(CDSHelper.STUDIES[2]);
-        importComponentStudy(CDSHelper.STUDIES[3]);
+        for (String study : _desiredStudies)
+        {
+            importComponentStudy(study);
+        }
 
         //Can't add web part until we actually have the datasets imported above
         _test.clickProject(_project);
