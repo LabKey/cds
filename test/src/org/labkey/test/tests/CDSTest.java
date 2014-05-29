@@ -126,7 +126,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         Ext4Helper.setCssPrefix("x-");
 
-        windowMaximize(); // Provides more useful screenshots on failure
         cds.enterApplication();
 
         // clean up groups
