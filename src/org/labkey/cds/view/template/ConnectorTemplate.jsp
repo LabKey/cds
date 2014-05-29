@@ -132,6 +132,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Grid.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/RSSItem.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
 

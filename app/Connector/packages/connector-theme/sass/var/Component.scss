@@ -545,6 +545,18 @@ div.wrapitem {
   }
 }
 
+.grouprow {
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 div.collapsed-member {
   width: 77%;
   padding: 4px 8px;
@@ -977,30 +989,49 @@ a.expando {
 /* Connector.view.GroupListView */
 div.grouplist-view {
   padding: 2px 0;
-  font-family: $data-font;
+  font-family: $bodycaps-font;
   font-size: 13pt;
-  color: black;
+  color: $dark-color;
 }
 
-.grouplist-label-over {
+.grouplist-header {
+  border-bottom: 1px solid $primary-color;
+  padding-bottom: 3px;
+  color: $heat-scale-2;
+  @include smallStandout;
+}
+
+.grouplist-empty {
+  color: #b5b5b5;
+  padding: 2px 0;
+  border-bottom: 1px solid $primary-color;
+  text-align: center;
+}
+
+.grouprow {
+  padding: 2px 0;
+  border-bottom: 1px solid $primary-color;
+
+  .groupicon {
+    display: inline-block;
+    float: right;
+
+    img {
+      padding: 3px 0;
+    }
+  }
+
+  .grouplabel {
+    display: inline;
+  }
+
+  .closeitem {
+    margin-top: -13px;
+  }
+}
+
+.grouplist-over {
   cursor: pointer;
-  background-color: $primary-color;
-}
-
-div.emptytext.grouplist-label-over {
-  cursor: default;
-  background-color: transparent;
-}
-
-div.grouplist {
-  .x-panel-header {
-    padding-left: 23px;
-    padding-top: 30px;
-    padding-bottom: 10px;
-  }
-  span.x-panel-header-text {
-    @include smallStandout;
-  }
 }
 
 .save-label {

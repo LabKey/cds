@@ -110,7 +110,7 @@ Ext.define('Connector.view.GroupSummary', {
             this.hideMessage(true);
             var id = Ext.id();
             var cancelId = Ext.id();
-            this.showMessage('Are you sure you want to delete "' + group.get('label') + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
+            this.showMessage('Are you sure you want to delete "' + Ext.String.ellipsis(Ext.htmlEncode(group.get('label')), 35, true) + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
             var deleteLink = Ext.get(id);
             if (deleteLink) {
 //                this.fireEvent('requestgroupdelete', this.group.data.id);
@@ -236,12 +236,6 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 
     deleteGroup : function() {
         this.fireEvent('deletegroup', this.group);
-//        Ext.MessageBox.confirm(
-//                'Delete Group?',
-//                'Are you sure you want to delete "' + this.group.get('label') + '"?',
-//                function(ans){ if (ans === 'yes') { this.fireEvent('requestgroupdelete', this.group.data.id); }},
-//                this
-//        );
     },
 
     updateView : function(group) {
