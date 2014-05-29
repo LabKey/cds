@@ -147,6 +147,9 @@ Ext.define('Connector.panel.ColorSelector', {
     ),
 
     showHover : function() {
+        var bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
+        this.win.style.top = (bbox.top + 40) + 'px';
+        this.win.style.left = (bbox.left - (bbox.width / 2)) + 'px';
         this.win.style.display = '';
     },
 
@@ -155,7 +158,7 @@ Ext.define('Connector.panel.ColorSelector', {
     },
 
     setLegend : function(legendData) {
-        var smallCanvas, largeCanvas, bbox, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
+        var smallCanvas, bbox, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
 
         Ext4.query('#color-legend')[0].innerHTML = ''; // Clear the current legend element.
 
