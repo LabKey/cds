@@ -76,7 +76,6 @@ Ext.define("Connector.view.Header", {
                 xtype: 'box',
                 margin: '2 15 0 0',
                 itemId: 'logout',
-                hidden: !LABKEY.user.isSignedIn,
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -111,11 +110,6 @@ Ext.define("Connector.view.Header", {
             this.logout = this.getComponent('search').queryById('logout');
 
         }, this, {single: true});
-    },
-
-    userChanged : function() {
-
-        this.logout && this.logout.setVisible(LABKEY.user.isSignedIn);
     },
 
     expand : function() {
