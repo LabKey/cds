@@ -4,14 +4,20 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.CustomModules;
+import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
 
 import static org.junit.Assert.*;
+import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 
+@Category({CustomModules.class, CDS.class})
 public class CDSLoginTest extends BaseWebDriverTest
 {
     private final CDSHelper _cds = new CDSHelper(this);
@@ -42,24 +48,30 @@ public class CDSLoginTest extends BaseWebDriverTest
     @Test
     public void testLoginPage()
     {
-        assertFalse(Locator.id("emailField").findElement(getDriver()).isEnabled());
-        assertFalse(Locator.id("passwordField").findElement(getDriver()).isEnabled());
-        assertFalse(Locator.id("rememberMeCheck").findElement(getDriver()).isEnabled());
-        assertTrue(Locator.id("rememberMeCheck").findElement(getDriver()).isSelected());
+        assertFalse(emailField.findElement(getDriver()).isEnabled());
+        assertFalse(passwordField.findElement(getDriver()).isEnabled());
+        assertFalse(rememberMeCheckbox.findElement(getDriver()).isEnabled());
+        assertTrue(rememberMeCheckbox.findElement(getDriver()).isSelected());
         assertElementNotPresent(Locator.linkWithText("Logout"));
 
+        checkCheckbox(termsCheckbox);
+
+        CDSLoginPage loginPage = new CDSLoginPage(this);
+        loginPage.logIn();
+
+        waitForElement(Locator.linkWithText("Logout"));
     }
 
     @Nullable
     @Override
     protected String getProjectName()
     {
-        return "Empty Dataspace Project";
+        return "CDSLoginTest Project";
     }
 
     @Override
     public String getAssociatedModuleDirectory()
     {
-        return null;
+        return "CDS";
     }
 }
