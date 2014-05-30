@@ -20,9 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.RuntimeSQLException;
+import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.Sort;
 import org.labkey.api.data.SqlExecutor;
+import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.Table;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.data.TableSelector;
@@ -30,6 +32,7 @@ import org.labkey.api.exp.list.ListDefinition;
 import org.labkey.api.exp.list.ListService;
 import org.labkey.api.query.FieldKey;
 import org.labkey.api.security.User;
+import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.InsertPermission;
 import org.labkey.api.security.permissions.UpdatePermission;
 import org.labkey.api.view.UnauthorizedException;
@@ -205,7 +208,7 @@ public class CDSManager
                               "CitableAuthors", "Citations", "Citable",
                               "AssayPublications", "Assays",
                               "VaccineComponents", "Vaccines",
-                              "Labs", "Studies", "Sites", "People", "Feedback"})
+                              "Labs", "Studies", "Sites", "People", "Feedback", "Properties"})
             {
                 TableInfo t = CDSSchema.getInstance().getSchema().getTable(s);
                 new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("DELETE FROM " + t.getSelectName() + " WHERE Container = ?", c);
@@ -217,5 +220,48 @@ public class CDSManager
         {
             throw new RuntimeSQLException(e);
         }
+    }
+
+    public CDSController.PropertiesForm getProperties(Container container)
+    {
+        SQLFragment sql = new SQLFragment("SELECT * FROM cds.Properties WHERE Container = ?", container);
+        return new SqlSelector(CDSSchema.getInstance().getSchema(), sql).getObject(CDSController.PropertiesForm.class);
+    }
+
+    public CDSController.PropertiesForm ensureProperties(CDSController.PropertiesForm oldModel, CDSController.PropertiesForm newModel, Container container, User user)
+    {
+        SQLFragment mutateSQL;
+
+        if (container.hasPermission(user, AdminPermission.class) || container.hasPermission(user, UpdatePermission.class))
+        {
+            if (oldModel == null || oldModel.getRowId() < 0)
+            {
+                // insert
+                mutateSQL = new SQLFragment("INSERT INTO cds.Properties(container, primarycount, datacount) ");
+                mutateSQL.append("VALUES (?, ?, ?);");
+                mutateSQL.add(container.getEntityId());
+                mutateSQL.add(newModel.getPrimaryCount());
+                mutateSQL.add(newModel.getDataCount());
+            }
+            else
+            {
+                // update
+                mutateSQL = new SQLFragment("UPDATE cds.Properties");
+                mutateSQL.append(" SET rowid=?, container=?, primarycount=?, datacount=?");
+                mutateSQL.append(" WHERE rowid=?");
+                mutateSQL.add(oldModel.getRowId());
+                mutateSQL.add(oldModel.getContainer());
+                mutateSQL.add(newModel.getPrimaryCount());
+                mutateSQL.add(newModel.getDataCount());
+                mutateSQL.add(oldModel.getRowId());
+            }
+
+            new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(mutateSQL);
+        }
+
+        //
+        // Return the model associated with this container whether or not the model was mutated
+        //
+        return getProperties(container);
     }
 }

@@ -35,7 +35,12 @@ Ext.define("Connector.view.Header", {
              * fired
              * @param {Ext.Component} panel The Component object
              */
-            'headerclick'
+            'headerclick',
+            /**
+             * @event userSignedOut
+             * Fires when the header's logout button is clicked.
+             */
+            'userSignedOut'
         );
     },
 
@@ -61,48 +66,48 @@ Ext.define("Connector.view.Header", {
                 },
                 scope: this
             }
-        },{
+        }, {
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
             margin: '25 0 0 0',
-//            width  : 300, with search
             width: 100,
             items: [{
                 xtype: 'box',
                 margin: '2 15 0 0',
+                itemId: 'logout',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
-                    href: LABKEY.ActionURL.buildURL('login', 'logout'),
+                    //href: LABKEY.ActionURL.buildURL('login', 'logout'),
                     html: 'Logout'
+                },
+                listeners: {
+                    click : function() {
+                        Ext.Ajax.request({
+                            url : LABKEY.ActionURL.buildURL("login", "logoutAPI.api"),
+                            method: 'POST',
+                            success: LABKEY.Utils.getCallbackWrapper(function(response) {
+                                if (response.success) {
+                                    this.fireEvent('userSignedOut');
+                                }
+                            }, this),
+                            failure: LABKEY.Utils.getCallbackWrapper(function(response) {
+                            }, this)
+                        });
+                    },
+                    element: 'el',
+                    scope: this
                 }
             }]
         }];
 
         this.callParent();
 
-//        if (!this.expanded) {
-//        this.on('afterrender', function() { this.collapse(true); }, this, {single: true});
-//        }
-
         this.on('afterrender', function(p) {
 
             this.collapse(true);
-
-//            var cmp = Ext.getCmp('search-container');
-//            if (cmp && cmp.getEl()) {
-//                Ext.create('Ext.tip.ToolTip', {
-//                    target : cmp.getEl(),
-//                    anchor : 'left',
-//                    autoHide: true,
-//                    contentEl : 'searchtip',
-//                    maxWidth : 500,
-//                    minWidth : 200,
-//                    bodyPadding: 0,
-//                    padding: 0
-//                });
-//            }
+            this.logout = this.getComponent('search').queryById('logout');
 
         }, this, {single: true});
     },

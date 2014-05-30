@@ -45,6 +45,10 @@ Ext.define('Connector.controller.Group', {
             requestback: this.doBack
         });
 
+        this.control('home', {
+            requestgroupdelete: this.doGroupDeleteFromSummary
+        });
+
         this.callParent();
     },
 
