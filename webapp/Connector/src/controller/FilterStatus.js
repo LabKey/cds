@@ -151,7 +151,6 @@ Ext.define('Connector.controller.FilterStatus', {
                 config.dimension = filterOrDetail.get('dimension');
                 config.hierarchy = filterOrDetail.get('hierarchy');
                 config.level = filterOrDetail.get('level');
-                console.log(config.dimension, config.hierarchy, config.level);
             }
             else if (filterOrDetail.$className === "Connector.model.Filter") {
 

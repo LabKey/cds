@@ -45,39 +45,32 @@ Ext.define('Connector.view.Selection', {
                     // Normal Filter (and Group Filters)
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<tpl if="members.length &gt; 1">',
+                        '<tpl if="members.length &gt; 0">',
                             '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                            '<tpl if="this.isRequiredOperator(values) === true">',
-                                '<div class="opselect" style="padding: 2px 6px;">{operator:this.getOperatorLabel}</div>',
-                            '<tpl else>',
-                                '<div class="opselect">',
-                                    '<select>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>AND</option>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>OR</option>',
-                                    '</select>',
-                                '</div>',
-                            '</tpl>',
                             '<div class="selitem sel-listing">{level:this.renderType}</div>',
                             '<tpl for="members">',
-                                '{% if (xindex > 5) break; %}',
+                                '<tpl if="xindex == 1 && xcount &gt; 1">',
+                                    '<select>',
+                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
+                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
+                                    '</select>',
+                                '</tpl>',
+                                '{% if (parent.dofade === true && xindex > 5) break; %}',
                                 '<div class="status-over memberitem collapsed-member">',
-                                    '{uniqueName:this.renderUniqueName}',
+                                    '<span>{uniqueName:this.renderUniqueName}</span>',
                                 '</div>',
                             '</tpl>',
                             '<tpl if="members.length &gt; 5">',
                                 '<div class="fader"><img class="ellipse"></div>',
                             '</tpl>',
                         '</tpl>',
-                        '<tpl if="members.length === 1">',
-                            '<div class="selitem status-over memberitem" title="{[ this.renderMember(values) ]}">',
-                                '<div class="closeitem" data-id="{id}"></div>',
-                                '{[ this.renderMember(values) ]}',
-                            '</div>',
-                        '</tpl>',
                     '</div>',
                 '</tpl>',
             '</tpl>',
             {
+                doFade : function(dofade) {
+                    return true === dofade;
+                },
                 isGrid : function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
@@ -96,31 +89,34 @@ Ext.define('Connector.view.Selection', {
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
                     return isPlot && isGrid;
                 },
-                isRequiredOperator : function(values) {
-                    return Ext.isDefined(values.operator) && values.operator.indexOf('REQ_') > -1;
-                },
-                getOperatorLabel : function(op) {
-                    return op.indexOf('AND') > -1 ? 'AND' : 'OR';
-                },
                 selectIntersect : function(op) {
-                    return op.indexOf('AND') > -1 ? 'selected="selected"' : '';
+                    var markup = op.indexOf('AND') > -1 ? 'selected="selected"' : '';
+                    if (op.indexOf('REQ_OR') > -1) { markup += ' disabled'; }
+                    return markup;
                 },
                 selectUnion : function(op) {
-                    return op.indexOf('OR') > -1 ? 'selected="selected"' : '';
+                    var markup = op.indexOf('OR') > -1 ? 'selected="selected"' : '';
+                    if (op.indexOf('REQ_AND') > -1) { markup += ' disabled'; }
+                    return markup;
                 },
                 renderType : function(lvl) {
                     var label = '';
                     Connector.STATE.onMDXReady(function(mdx) {
                         var level = mdx.getLevel(lvl);
                         if (level) {
-                            label = level.hierarchy.dimension.singularName;
-                            if (Ext.isDefined(level.countSingular)) {
-                                if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
-                                    label += ' (' + level.countSingular + ')';
+                            label = level.hierarchy.dimension.friendlyName;
+
+                            // friendlyName was not overidden so compose label with lvl info
+                            if (label === level.hierarchy.dimension.singularName) {
+                                if (Ext.isDefined(level.countSingular)) {
+                                    // escape redundant dim/lvl naming (e.g. Study (Study))
+                                    if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
+                                        label += ' (' + level.countSingular + ')';
+                                    }
                                 }
-                            }
-                            else {
-                                label += ' (' + level.name + ')';
+                                else {
+                                    label += ' (' + level.name + ')';
+                                }
                             }
                         }
                     });
@@ -133,34 +129,6 @@ Ext.define('Connector.view.Selection', {
                         member = 'Unknown';
                     }
                     return Ext.htmlEncode(member);
-                },
-                renderMember : function(data) {
-                    var label = '';
-                    Connector.STATE.onMDXReady(function(mdx) {
-                        var level = mdx.getLevel(data.level);
-                        if (level) {
-                            label = level.hierarchy.dimension.singularName;
-                            if (level.depth == 2) {
-                                if (Ext.isDefined(level.countSingular)) {
-                                    if (level.countSingular.toLowerCase() !== label.toLowerCase()) {
-                                        label += ' (' + level.countSingular + ')';
-                                    }
-                                }
-                                else {
-                                    label += ' (' + level.name + ')';
-                                }
-                            }
-                        }
-                    });
-
-                    var member = LABKEY.app.view.Selection.uniqueNameAsArray(data.members[0]['uniqueName']);
-                    member = member[member.length-1];
-
-                    if (member == '#null') {
-                        member = 'Unknown';
-                    }
-
-                    return Ext.htmlEncode(label + ': ' + member);
                 },
                 renderMeasures : function(values) {
                     var label = 'In the plot: ';

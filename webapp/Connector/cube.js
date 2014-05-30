@@ -12,6 +12,7 @@ Ext4.define('Connector.cube.Configuration', {
         // Dimensions:
         //      singularName    - Declaure a singluar name for this dimension. Defaults to name value.
         //      pluralName      - Declaure a plural name for this dimension. Defaults to name value.
+        //      friendlyName    - Declaure a friendly, possibly more contextual, name for this dimension. Defaults to singularName value.
         //      hidden          - declare whether a dimension is hidden. Defaults to false.
         //      priority        - relative priority to be shown in displays. Default is 0.
         //      querySchema     - metadata member query schema. Defaults to undefined.
@@ -98,6 +99,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Vaccine]',
                 singularName: 'Study product',
                 pluralName: 'Study products',
+                friendlyName: 'Subjects given study product',
                 priority: 20,
                 summaryTargetLevel: '[Vaccine.Type].[Name]',
                 supportsDetails: true,
@@ -439,6 +441,7 @@ Ext4.define('Connector.cube.Configuration', {
             var dd = {
                 singularName: undefined, // defaults to dim.name
                 pluralName: undefined, // defaults to dim.name
+                friendlyName: undefined, // defaults to dim.singularName
                 hidden: false,
                 priority: 0,
                 querySchema: undefined,
@@ -502,6 +505,7 @@ Ext4.define('Connector.cube.Configuration', {
                         Ext.apply(_dim, {
                             singularName: Ext.isDefined(cd.singularName) ? cd.singularName : _dim.name,
                             pluralName: Ext.isDefined(cd.pluralName) ? cd.pluralName : _dim.name,
+                            friendlyName: Ext.isDefined(cd.friendlyName) ? cd.friendlyName : (Ext.isDefined(cd.singularName) ? cd.singularName : _dim.name),
                             hidden: Ext.isDefined(cd.hidden) ? cd.hidden : dd.hidden,
                             priority: Ext.isDefined(cd.priority) ? cd.priority : dd.priority,
                             querySchema: Ext.isDefined(cd.querySchema) ? cd.querySchema : dd.querySchema,
