@@ -59,6 +59,7 @@ import org.labkey.api.query.TempQuerySettings;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
+import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermissionClass;
@@ -155,7 +156,8 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresNoPermission
+    @IgnoresTermsOfUse
     public class AppAction extends SimpleViewAction
     {
         @Override

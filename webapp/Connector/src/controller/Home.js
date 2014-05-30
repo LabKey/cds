@@ -42,18 +42,12 @@ Ext.define('Connector.controller.Home', {
         var statDisplay = view.getComponent('statdisplay');
         if (statDisplay) {
 
-            Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('cds', 'properties'),
-                method: 'GET',
-                success: function(response) {
-                    var json = Ext.decode(response.responseText);
-                    statDisplay.update({
-                        nstudy: json.primaryCount,
-                        ndatapts: json.dataCount
-                    });
-                }
-            });
-
+            Statistics.resolve(function(stats) {
+                statDisplay.update({
+                    nstudy: stats.primaryCount,
+                    ndatapts: stats.dataCount
+                });
+            }, this);
         }
     }
 });
