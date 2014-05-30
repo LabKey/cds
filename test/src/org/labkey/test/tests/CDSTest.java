@@ -833,9 +833,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitAndClick(Locator.linkWithText("tiers"));
         waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: TIER"));
-        cds.waitForBarToAnimate("Unknown");
+        cds.waitForBarToAnimate("SF162.LS");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarToAnimate("Unknown");
+        cds.waitForBarToAnimate("SF162.LS");
         cds.toggleExplorerBar("1A");
         cds.toggleExplorerBar("1B");
         cds.shiftSelectBars("SF162.LS", "DJ263.8");
@@ -946,7 +946,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         // placeholder pages
         cds.clickBy("Assay antigens");
-        cds.waitForBarToAnimate("Unknown");
+        cds.waitForBarToAnimate("SF162.LS");
         cds.pickSort("Tier", "1A");
         cds.toggleExplorerBar("1A");
         _asserts.assertNounInfoPage("MW965.26", Arrays.asList("Clade", "Tier", "MW965.26", "U08455"));
@@ -1015,7 +1015,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         cds.viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
+        List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "Placebo", "VRC-HIVDNA016-00-VP");
         _asserts.verifyLearnAboutPage(studyProducts);
     }
 
