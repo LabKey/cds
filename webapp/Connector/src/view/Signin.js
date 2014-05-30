@@ -44,7 +44,7 @@ Ext.define('Connector.view.SigninForm', {
 		            		'{error}',
 		            	'</p>',
 		            '</tpl>',
-		            '<input type="submit" id="signin" value="sign in">',
+		            '<input type="submit" {[this.disabledAttr(values)]} id="signin" value="sign in">',
 		        '</div>',
 		        '<p>',
 		        	'To access and view data in this site you must agree to the Terms of Use for HIV Vaccine Data Connector, which are available for review by clicking the link below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.',
