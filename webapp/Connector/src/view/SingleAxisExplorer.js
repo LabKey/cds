@@ -18,11 +18,9 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
     dimViewHeight: 161,
 
-    initComponent : function() {
+    showEmpty: true,
 
-        Ext.applyIf(this, {
-            showEmpty: true
-        });
+    initComponent : function() {
 
         this.items = [
             this.getDimensionView(),

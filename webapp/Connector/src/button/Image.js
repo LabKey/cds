@@ -106,10 +106,7 @@ Ext.define('Connector.button.Image', {
             if (menu.isVisible()) {
                 menu.hide();
             }
-
-//            if (!fromEvent || me.showEmptyMenu || menu.items.getCount() > 0) {
             menu.showBy(me.el, me.menuAlign);
-//            }
         }
         return me;
     },

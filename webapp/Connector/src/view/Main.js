@@ -35,7 +35,7 @@ Ext.define('Connector.view.Main', {
         region: 'east',
         ui: 'east-view',
         width : 305,
-        hidden : false,
+        hidden : !LABKEY.user.isSignedIn,
         plain : true,
         hideCollapseTool : true,
         defaults: {
@@ -74,5 +74,16 @@ Ext.define('Connector.view.Main', {
                 }
             }]
         }]
-    }]
+    }],
+
+    initComponent : function() {
+
+        this.callParent();
+
+        this.eastPanel = this.getComponent('eastview');
+    },
+
+    userChanged : function() {
+        this.eastPanel && this.eastPanel.setVisible(LABKEY.user.isSignedIn);
+    }
 });

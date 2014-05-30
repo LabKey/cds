@@ -352,11 +352,19 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Assay antigens',
                 priority: 0,
                 supportsDetails: false,
-                summaryTargetLevel: '[Antigen.Clade].[Name]',
+                summaryTargetLevel: '[Antigen.Name].[Name]',
 
                 hierarchies: [{
                     uniqueName: '[Antigen.Name]',
-                    supportsSummary: false
+                    supportsSummary: false,
+                    levels: [{
+                        uniqueName: '[Antigen.Name].[Name]',
+                        activeCount: true,
+                        dataBasedCount: true,
+                        countPriority: 60,
+                        countSingular: 'Antigen',
+                        countPlural: 'Antigens'
+                    }]
                 },{
                     uniqueName: '[Antigen.Clade]',
                     levels: [{
@@ -370,13 +378,6 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Antigen.Tier].[Tier]',
                         countSingular: 'Tier',
                         countPlural: 'Tiers'
-                    },{
-                        uniqueName: '[Antigen.Tier].[Name]',
-                        activeCount: true,
-                        dataBasedCount: true,
-                        countPriority: 60,
-                        countSingular: 'Antigen',
-                        countPlural: 'Antigens'
                     }]
                 },{
                     uniqueName: '[Antigen.Sample Type]',

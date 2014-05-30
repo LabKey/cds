@@ -106,6 +106,7 @@
         <script path="Connector/src/store/VisitTag.js"/>
 
         <!-- Application Views -->
+        <script path="Connector/src/view/About.js"/>
         <script path="Connector/src/view/Citation.js"/>
         <script path="Connector/src/view/Compare.js"/>
         <script path="Connector/src/view/DetailStatus.js"/>
@@ -126,6 +127,7 @@
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/Scatter.js"/>
+        <script path="Connector/src/view/Signin.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
         <script path="Connector/src/view/Summary.js"/>
         <script path="Connector/src/view/Time.js"/>
@@ -150,10 +152,12 @@
         <script path="Connector/src/controller/Navigation.js"/>
         <script path="Connector/src/controller/Data.js"/>
         <script path="Connector/src/controller/Router.js"/>
+        <script path="Connector/src/controller/Signin.js"/>
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 
         <script path="Connector/src/utility/Animation.js"/>
+        <script path="Connector/src/utility/Statistics.js"/>
         <script path="Connector/src/utility/StoreCache.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>

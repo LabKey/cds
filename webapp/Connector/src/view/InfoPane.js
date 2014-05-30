@@ -106,7 +106,12 @@ Ext.define('Connector.view.InfoPane', {
                     },
                     listeners: {
                         afterrender : function(b) {
-                            b.showMenu(); b.hideMenu();
+                            b.showMenu(); b.hideMenu(); // allows the menu to layout/render
+
+                            // we don't want to show the dropdown if there is only one item to select (current one)
+                            if (!b.hidden && Ext.isDefined(b.menu) && b.menu.items.items.length < 2) {
+                                b.hide();
+                            }
                         },
                         scope: this
                     }
@@ -333,15 +338,24 @@ Ext.define('Connector.view.InfoPane', {
         });
 
         if (members.length > 0) {
+
+            // prevent scrolling to bottom of selection
+            sm.on('selectionchange', function() {
+                var middle = this.getComponent('middle');
+                if (middle) {
+                    var oplabel = middle.getComponent('operatorlabel');
+                    if (oplabel) {
+                        oplabel.getEl().scrollIntoView(middle.getEl());
+                    }
+                }
+            }, this, {single: true});
+
             if (members.length == storeCount) {
                 sm.selectAll();
             }
             else {
                 sm.select(members);
             }
-
-            // prevent scrolling to bottom of selection
-            grid.getView().focusRow(0);
 
             var anodes = Ext.DomQuery.select('a.expando');
             var nodes = Ext.DomQuery.select('a.expando *');

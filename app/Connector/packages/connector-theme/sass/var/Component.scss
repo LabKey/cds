@@ -79,6 +79,10 @@ $tip-background-color: $light-color;
 $tip-border-color: $info-color;
 $tip-body-color: $info-color;
 
+@mixin paragraphSpacing {
+  padding-bottom: 8px;
+}
+
 @mixin header {
   font-family: $data-font;
   font-weight: normal;
@@ -259,6 +263,7 @@ a {
 
   &.logout {
     color: $light-color;
+    cursor: pointer;
   }
 
   &.survey {
@@ -906,6 +911,7 @@ div.nolink.status-over {
   background-color: $light-color;
   border: 1px solid lightgrey;
   border-radius: 15px;
+  font-size: 10pt;
 
   .sorter {
     @include smallStandout;
@@ -2184,4 +2190,96 @@ div.definition-overflow
 .pagecontentcontainer {
   position: relative;
   top: 0px;
+}
+
+.signin-content, .signin-right {
+  padding: 25px;
+}
+
+.signin-left {
+  background-color: $light-color;
+
+  p {
+    @include paragraphSpacing;
+  }
+
+  .dimensionview {
+    background-color: $select-color;
+    background-image: none;
+
+    h1 {
+      color: $light-color;
+    }
+
+    #about {
+      display: none;
+    }
+  }
+
+  .logoContainer {
+    position: relative;
+    left: 50%;
+    width: 500px;
+    margin: 25px 0px 25px -250px;
+    height: 90px;
+
+    img {
+      position: absolute;
+      top: 0px;
+    }
+
+    .logo1 {
+      left: 10px;
+    }
+
+    .logo2 {
+      left: 50%;
+      margin-left: -50px;
+    }
+
+    .logo3 {
+      right: 0px;
+    }
+  }
+}
+
+.signin-right {
+  background-color: $secondary-color;
+
+  p {
+    @include paragraphSpacing;
+  }
+
+  a {
+    padding-top: 3px;
+  }
+
+  .terms {
+    font-weight: bold;
+  }
+
+  .signin {
+    padding: 35px 0px 14px;
+
+    div {
+      padding-bottom: 2px;
+    }
+
+    span {
+      width: 98px;
+      display: inline-block;
+    }
+
+    input {
+      width: 300px;
+    }
+  }
+
+  input[type='checkbox'] {
+    margin-top: 1px;
+  }
+
+  .controls {
+    padding-bottom: 20px;
+  }
 }

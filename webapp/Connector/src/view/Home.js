@@ -105,6 +105,8 @@ Ext.define('Connector.view.HomeHeader', {
         align: 'stretch'
     },
 
+    height: 161,
+
     cls: 'dimensionview',
 
     defaults: {
@@ -121,8 +123,8 @@ Ext.define('Connector.view.HomeHeader', {
                 tpl: new Ext.XTemplate(
                     '<div class="titlepanel">',
                         '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
-                        '<h1 style="color: #7a7a7a;">{nstudy:htmlEncode} studies connected together combining</h1>',
-                        '<h1 style="color: #b5b5b5;">{ndatapts:this.commaFormat} data points.</h1>',
+                        '<h1 style="opacity: 0.7;">{nstudy:htmlEncode} studies connected together combining</h1>',
+                        '<h1 style="opacity: 0.4; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
                     '</div>',
                     '<a href="#about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Collaborative Dataspace...</a>',
                     {
