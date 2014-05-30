@@ -2283,3 +2283,7 @@ div.definition-overflow
     padding-bottom: 20px;
   }
 }
+
+input:-webkit-autofill {
+    background-color: #fff !important;
+}
