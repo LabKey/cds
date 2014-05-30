@@ -2287,3 +2287,18 @@ div.definition-overflow
 input:-webkit-autofill {
     background-color: #fff !important;
 }
+
+input.x-btn-rounded-inverted-accent-small {
+  padding: 2px 8px 3px;
+  color: $interactive-color;
+  font-weight: bold;
+  font-size: 8pt;
+  font-family: $info-font;
+
+  &:hover {
+    &.enabled {
+      background-color: $interactive-color;
+      color: white;
+    }
+  }
+}
