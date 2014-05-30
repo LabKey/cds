@@ -18,10 +18,7 @@ Ext.define('Connector.view.Page', {
 		itemId: 'northRegion',
 		height: 10,
 
-		cls: 'pageheadercontainer',
-		style: {
-			backgroundColor: '#ffff00'
-		}
+		cls: 'pageheadercontainer'
 	}, {
 		xtype: 'container',
 		itemId: 'centerRegion'

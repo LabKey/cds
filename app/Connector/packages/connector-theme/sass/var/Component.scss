@@ -2024,6 +2024,10 @@ div.learnview {
 }
 
 .modulecontainer {
+  position: relative;
+}
+
+.modulecontainercolumn {
   @include sectionPaddingTop;
   @include pagePaddingLeft;
 }
@@ -2153,6 +2157,49 @@ div.definition-overflow
   width: 100%;
 }
 
+.arrow, .arrow-top, .arrow-bottom {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  margin-left: -8px;
+}
+
+.popup-arrow {
+  background-color: #fff;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 15px;
+  height: 15px;
+  position: relative;
+  &.up {
+    left: 50%;
+    margin-left: -8px;
+    bottom: -8px;
+  }
+  &.down {
+    left: 50%;
+    margin-left: -8px;
+    top: -8px;
+  }
+  &.left {
+    top: 50%;
+    margin-top: -8px;
+    right: -8px;
+  }
+  &.right {
+    top: 50%;
+    margin-top: -8px;
+    left: -8px;
+  }
+}
+
+.shadow {
+  box-shadow: -5px 5px 5px rgba(0,0,0,0.2);
+}
+
 .pageheadercontainer {
   position: relative;
   top: 0px;
@@ -2167,6 +2214,10 @@ div.definition-overflow
     color: $black;
     opacity: 0.6;
 
+    .arrow {
+      display: none;
+    }
+
     &.selected {
       font-weight: bold;
       cursor: inherit;
@@ -2175,14 +2226,6 @@ div.definition-overflow
       .arrow {
         display: block;
       }
-    }
-
-    .arrow {
-      display: none;
-      position: absolute;
-      bottom: 0px;
-      left: 50%;
-      margin-left: -8px;
     }
   }
 }
@@ -2281,5 +2324,15 @@ div.definition-overflow
 
   .controls {
     padding-bottom: 20px;
+  }
+}
+
+.popup {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  overflow: visible!important;
+  * {
+    overflow: visible!important;
   }
 }
