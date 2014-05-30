@@ -825,14 +825,17 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyFilters()
     {
         log("Verify multi-select");
+        Locator dimensionGroup = Locator.css("div.dimgroup");
+        Locator dimensionSort = Locator.css("div.dimensionsort");
 
         // 14910
         cds.goToSummary();
-        cds.clickBy("Assay antigens");
+        waitAndClick(Locator.linkWithText("tiers"));
+        waitForElement(dimensionGroup.withText("Assay antigens"));
+        waitForElement(dimensionSort.withText("SORTED BY: TIER"));
         cds.waitForBarToAnimate("Unknown");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         cds.waitForBarToAnimate("Unknown");
-        cds.pickSort("Tier", "1A");
         cds.toggleExplorerBar("1A");
         cds.toggleExplorerBar("1B");
         cds.shiftSelectBars("SF162.LS", "DJ263.8");
