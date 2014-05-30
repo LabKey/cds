@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @Category({CustomModules.class, CDS.class})
 public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest
@@ -44,6 +45,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     private final String PGROUP2 = "visgroup 2";
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
+    private static final String[] DESIRED_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144", "StudyAxisTest1", "StudyAxisTest11", "StudyAxisTest2", "StudyAxisTestA", "StudyAxisTestB"};
 
     @BeforeClass
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -53,6 +55,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         initTest.doCleanup(false);
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
         initTest.createParticipantGroups();
 
@@ -388,7 +391,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 47,
+                "N/A", 137,
                 "Placebo", 23,
                 "Prime-boost ALVAC HIV", 9,
                 "Prime-boost VRC-HIVADV014-00-VP", 22,
@@ -423,7 +426,55 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         color.pickMeasure("Demographics", "TreatmentID");
         color.confirmSelection();
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
+        waitForElement(colorLegendGlyph);
         assertElementPresent(colorLegendGlyph, 5);
+    }
+
+    @Test
+    public void verifyStudyAxis()
+    {
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        Locator studyAxisLoc = Locator.css("div.study-axis svg");
+        Locator studyVisits = Locator.css("rect.visit");
+        Locator visitHover = Locator.css("div.study-axis-window");
+        List<WebElement> studyVisitEls;
+        Actions builder = new Actions(getDriver());
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Time points", "Study days");
+        xaxis.confirmSelection();
+
+        // yaxis window opens automatically
+        yaxis.pickMeasure("MRNA", "CCL5");
+        yaxis.confirmSelection();
+
+        // Check to make sure study axis appears.
+        waitForElement(studyAxisLoc);
+        studyVisitEls = studyVisits.findElements(getDriver());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
+
+        // Check that study axis hovers appear when hovered over.
+        builder.moveToElement(studyVisitEls.get(21)).perform();
+        waitForElement(visitHover);
+        assertElementPresent(visitHover.withText("Study Axis Test 1\nMonth 1\nDay 0 (meaning varies)\nFirst Vaccination"));
+
+        // Check that hovers disappear
+        builder.moveToElement(studyVisitEls.get(21)).moveByOffset(0, -500).perform();
+        waitForElementToDisappear(visitHover);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Time points", "Study days");
+        xaxis.setVariableRadio("Day 0 (meaning varies)");
+        xaxis.confirmSelection();
+        waitForTextToDisappear("NotRV144");
+
+        studyVisitEls = studyVisits.findElements(getDriver());
+        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisitEls.size());
+        assertTrue("Visit didnt have a transform as expected.", !studyVisitEls.get(0).getAttribute("transform").equals(""));
+        assertTrue("Visit had a transform.", studyVisitEls.get(25).getAttribute("transform").equals(""));
     }
 
     @AfterClass
