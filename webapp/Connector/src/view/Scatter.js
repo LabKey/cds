@@ -870,6 +870,7 @@ Ext.define('Connector.view.Scatter', {
             sel = this.colorPanel.getSelection();
             if (sel && sel.length > 0) {
                 measures.color = sel[0].data;
+                //measures.color.allowNullResults = false;
                 this.fromFilter = false;
             }
         }
@@ -1041,7 +1042,8 @@ Ext.define('Connector.view.Scatter', {
 
         return xMeasure != null && yMeasure != null
             && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
-            && xMeasure.options.antigen && yMeasure.options.antigen
+            && xMeasure.options && xMeasure.options.antigen
+            && yMeasure.options && yMeasure.options.antigen
             && xMeasure.schemaName == yMeasure.schemaName
             && xMeasure.queryName == yMeasure.queryName
             && xMeasure.variableType == null && yMeasure.variableType == null;
@@ -1080,7 +1082,7 @@ Ext.define('Connector.view.Scatter', {
                 var schema = activeMeasures[axis].schemaName;
                 var query = activeMeasures[axis].queryName;
 
-                if (!requiresPivot && Ext.isDefined(activeMeasures[axis].options.antigen))
+                if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen)
                 {
                     var name = activeMeasures[axis].options.antigen.name;
                     var values = activeMeasures[axis].options.antigen.values;
@@ -1102,8 +1104,7 @@ Ext.define('Connector.view.Scatter', {
                 name: measuresMap[key].name,
                 queryName: measuresMap[key].queryName,
                 schemaName: measuresMap[key].schemaName,
-                values: measuresMap[key].values,
-                allowNullResults: false
+                values: measuresMap[key].values
             }, time: 'date'});
 
         }
