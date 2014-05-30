@@ -144,7 +144,7 @@ Ext.define('Connector.controller.FilterStatus', {
             // configure info pane view
             //
             var config = {
-                olapProvider: this.getStateManager()
+                state: this.getStateManager()
             };
 
             if (filterOrDetail.$className === "Connector.model.Detail") {
@@ -175,7 +175,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
             var infoPane = Ext.create(clazz, {
                 model: Ext.create('Connector.model.InfoPane', config),
-                stateManager: this.getStateManager(),
                 listeners: {
                     hide: {
                         fn: this.resetInfoPane,
