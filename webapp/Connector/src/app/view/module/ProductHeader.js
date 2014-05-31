@@ -30,6 +30,6 @@ Ext.define('Connector.view.module.ProductHeader', {
                 s += type;
             }
             return s;
-        },
+        }
     })
 });

@@ -10,6 +10,8 @@ Ext.define('Connector.view.Grid', {
 
     columnWidth: 125,
 
+    headerHeight: 161,
+
     constructor : function(config) {
 
         this.callParent([config]);
@@ -19,14 +21,12 @@ Ext.define('Connector.view.Grid', {
 
     initComponent : function() {
 
-        GV = this;
-
         this.columnMap = {};
 
         this.items = [
             {
                 xtype: 'container',
-                height: 161,
+                height: this.headerHeight,
                 ui: 'custom',
                 cls: 'dimensionview',
                 layout: {
@@ -290,6 +290,9 @@ Ext.define('Connector.view.Grid', {
                 defaultColumnWidth: this.columnWidth,
                 margin: '-93 0 0 27',
                 ui: 'custom',
+                viewConfig: {
+                    loadMask: false
+                },
                 listeners: {
                     columnmodelcustomize: this.onColumnModelCustomize,
                     columnmove: this.updateColumnMap,
@@ -387,13 +390,8 @@ Ext.define('Connector.view.Grid', {
     getWidthHeight : function() {
 
         var box = this.getBox();
-
-//        var colBasedWidth = (this.getModel().getColumnSet().length * this.columnWidth);
-        var viewBasedWidth = box.width - 27;
-        var width = viewBasedWidth; //Math.min(colBasedWidth, viewBasedWidth);
-
-        var viewHeight = box.height;
-        var height = viewHeight - 161 + 93;
+        var width = box.width - 27;
+        var height = box.height - this.headerHeight + 93;
 
         return {
             width: width,

@@ -12,6 +12,21 @@ Ext.define('Connector.model.Group', {
         {name : 'label'},
         {name : 'description'},
         {name : 'filters'},
+        {name : 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+            var raw = partial.raw.filters;
+            var containsPlot = false;
+            if (Ext.isString(raw)) {
+                var filterArray = LABKEY.app.model.Filter.fromJSON(raw);
+                if (Ext.isArray(filterArray)) {
+                    Ext.each(filterArray, function(filter) {
+                        if (filter.isPlot === true) {
+                            containsPlot = true;
+                        }
+                    });
+                }
+            }
+            return containsPlot;
+        }},
         {name : 'type'},
         {name : 'participantIds'} // array
     ],

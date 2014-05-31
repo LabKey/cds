@@ -11,6 +11,17 @@ Ext.define('Connector.controller.Home', {
 
     views : ['Home'],
 
+    models : ['RSSItem'],
+
+    init : function() {
+
+        this.control('home > homeheader', {
+            boxready: this.resolveStatistics
+        });
+
+        this.callParent();
+    },
+
     createView : function(xtype, config, context) {
         var v;
 
@@ -25,5 +36,18 @@ Ext.define('Connector.controller.Home', {
 
     getDefaultView : function() {
         return 'home';
+    },
+
+    resolveStatistics : function(view) {
+        var statDisplay = view.getComponent('statdisplay');
+        if (statDisplay) {
+
+            Statistics.resolve(function(stats) {
+                statDisplay.update({
+                    nstudy: stats.primaryCount,
+                    ndatapts: stats.dataCount
+                });
+            }, this);
+        }
     }
 });

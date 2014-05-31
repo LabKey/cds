@@ -18,6 +18,14 @@ Ext.define('Connector.view.Home', {
         ];
 
         this.callParent();
+
+        this.on('resize', this.onViewResize, this);
+    },
+
+    onViewResize : function() {
+        if (Ext.isDefined(this.content)) {
+            this.content.getEl().setHeight(this.getBox().height - this.homeHeaderHeight);
+        }
     },
 
     getHeader : function() {
@@ -27,11 +35,62 @@ Ext.define('Connector.view.Home', {
     },
 
     getBody : function() {
-        return Ext.create('Connector.view.HomeBody', {
-            items: [{
-                xtype: 'grouplist'
-            }]
-        });
+        if (!this.content) {
+
+            var DateFormat = Ext.util.Format.dateRenderer('d M Y');
+
+            this.content = Ext.create('Ext.container.Container', {
+                plugins: ['messaging'],
+                margin: '0 0 0 27',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch',
+                    pack: 'start'
+                },
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                items: [{
+                    xtype: 'grouplist'
+                },{
+                    xtype: 'dataview',
+                    flex: 10,
+                    margin: '32 0 0 27',
+                    itemSelector: 'div.entry',
+                    loadMask: false,
+                    tpl: new Ext.XTemplate(
+                        '<div class="grouplist-header">News</div>',
+                        '<tpl if="this.isEmpty(values)">',
+                            '<div class="grouplist-empty" style="font-size: 13pt; font-family: Arial;">Feeds not available</div>',
+                        '</tpl>',
+                        '<table style="font-size: 11pt;">',
+                            '<tpl for=".">',
+                                '<tr class="entry" style="margin-top: 10px;">',
+                                    '<td style="width: 110px; vertical-align: text-top; color: #a09c9c;">{pubDate:this.renderDate}</td>',
+                                    '<td style="padding-right: 15px;">',
+                                        '<div><a href="{link}" target="_blank">{title:htmlEncode}</a></div>',
+                                        '<div>{description:htmlEncode}</div>',
+                                    '</td>',
+                                '</tr>',
+                            '</tpl>',
+                        '</table>',
+                            {
+                                isEmpty : function(v) {
+                                    return (!Ext.isArray(v) || v.length === 0);
+                                },
+                                renderDate : function(date) {
+                                    return DateFormat(date);
+                                }
+                            }
+                    ),
+                    store: Ext.create('Ext.data.Store', {
+                        model: 'Connector.model.RSSItem',
+                        autoLoad: true
+                    })
+                }]
+            });
+        }
+
+        return this.content;
     }
 });
 
@@ -39,10 +98,14 @@ Ext.define('Connector.view.HomeHeader', {
 
     extend : 'Ext.container.Container',
 
+    alias: 'widget.homeheader',
+
     layout: {
         type : 'hbox',
         align: 'stretch'
     },
+
+    height: 161,
 
     cls: 'dimensionview',
 
@@ -56,35 +119,27 @@ Ext.define('Connector.view.HomeHeader', {
         this.items = [
             {
                 xtype: 'box',
-                autoEl: {
-                    tag: 'div',
-                    cls: 'titlepanel',
-                    children: [{
-                        tag: 'h1',
-                        html: 'Welcome to the HIV Vaccine Data Connector.'
-                    },{
-                        tag: 'h1',
-                        html: '# studies connected together combining',
-                        style: 'color: #7a7a7a;'
-                    },{
-                        tag: 'h1',
-                        html: '# data points.',
-                        style: 'color: #b5b5b5;'
-                    }]
+                itemId: 'statdisplay',
+                tpl: new Ext.XTemplate(
+                    '<div class="titlepanel">',
+                        '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
+                        '<h1 style="opacity: 0.7;">{nstudy:htmlEncode} studies connected together combining</h1>',
+                        '<h1 style="opacity: 0.4; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
+                    '</div>',
+                    '<a href="#about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Collaborative Dataspace...</a>',
+                    {
+                        commaFormat : function(v) {
+                            return Ext.util.Format.number(v, '0,000');
+                        }
+                    }
+                ),
+                data: {
+                    nstudy: 0,
+                    ndatapts: 0
                 }
             }
         ];
 
         this.callParent();
-    }
-});
-
-Ext.define('Connector.view.HomeBody', {
-    extend: 'Ext.container.Container',
-
-    margin: '0 0 0 27',
-
-    layout: {
-        type: 'vbox'
     }
 });

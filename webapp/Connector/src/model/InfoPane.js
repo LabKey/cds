@@ -6,8 +6,6 @@ Ext.define('Connector.model.InfoPane', {
         {name: 'memberStore'}, // type: Store
         {name: 'dimension'},
         {name: 'hierarchy'},
-        {name: 'dimensionUniqueName'},
-        {name: 'hierarchyUniqueName'},
         {name: 'level'},
         {name: 'hierarchyLabel'},
         {name: 'hierarchyItems', defaultValue: []}, // generated array of labels
@@ -18,8 +16,8 @@ Ext.define('Connector.model.InfoPane', {
 
     constructor : function(config) {
 
-        if (config.olapProvider) {
-            this.setOlapProvider(config.olapProvider);
+        if (config.state) {
+            this.setStateManager(config.state);
         }
 
         this.callParent([config]);
@@ -51,7 +49,7 @@ Ext.define('Connector.model.InfoPane', {
         //
         if (this.isFilterBased()) {
             // Connector.model.Filter
-            this.getOlapProvider().onMDXReady(function(mdx) {
+            this.getStateManager().onMDXReady(function(mdx) {
 
                 var filter = this.get('filter');
 
@@ -65,7 +63,7 @@ Ext.define('Connector.model.InfoPane', {
             }, this);
         }
         else {
-            this.initializeModel(this.get('dimensionUniqueName'), this.get('hierarchyUniqueName'), this.get('level'));
+            this.initializeModel(this.get('dimension'), this.get('hierarchy'), this.get('level'));
         }
     },
 
@@ -78,49 +76,61 @@ Ext.define('Connector.model.InfoPane', {
         });
 
         return Ext.create('Connector.model.Filter', {
-            hierarchy: this.get('hierarchyUniqueName'),
-            level: this.get('level'),
+            hierarchy: this.get('hierarchy').uniqueName,
+            level: this.get('level').getUniqueName(),
             members: members,
             operator: this.get('operatorType')
         });
     },
 
-    clearFilter : function() {
-        if (this.isFilterBased()) {
-            var filter = this.get('filter');
-            this.getOlapProvider().removeFilter(filter.id);
-        }
+    clearFilter : function(isFilter) {
+        var filter = this.get('filter'), state = this.getStateManager();
+        isFilter ? state.removeFilter(filter.id) : state.removeSelection(filter.id);
     },
 
     /**
      * Can be called to have this model instance produce a set of Connector.model.Filter instances
      * from it's current configuration
      * @param members - Array of Connector.model.Members instance records
+     * @param totalCount - Number of total Connector.model.Members instance records
      */
-    onCompleteFilter : function(members) {
+    onCompleteFilter : function(members, totalCount) {
         var uniques = [];
         Ext.each(members, function(m) {
             uniques.push(m.get('uniqueName'));
         });
 
         var filter = this.createFilter(uniques);
+        var noopFilter = (uniques.length === totalCount) && this.isOR();
+        var state = this.getStateManager();
 
         if (this.isFilterBased()) {
             var staleFilter = this.get('filter');
             if (staleFilter) {
-                this.getOlapProvider().updateFilter(staleFilter.id, {
-                    hierarchy: filter.get('hierarchy'),
-                    level: filter.get('level'),
-                    members: filter.get('members'),
-                    operator: filter.get('operator')
-                });
+
+                var isFilter = state.isFilter(staleFilter.id);
+
+                if (uniques.length > 0 && !noopFilter) {
+
+                    var config = {
+                        hierarchy: filter.get('hierarchy'),
+                        level: filter.get('level'),
+                        members: filter.get('members'),
+                        operator: filter.get('operator')
+                    };
+
+                    isFilter ? state.updateFilter(staleFilter.id, config) : state.updateSelection(staleFilter.id, config);
+                }
+                else {
+                    this.clearFilter(isFilter);
+                }
             }
             else {
                 console.warn('Invalid filter state. Filter not available');
             }
         }
-        else {
-            this.getOlapProvider().addFilter(filter);
+        else if (!noopFilter) {
+            state.addFilter(filter);
         }
     },
 
@@ -141,22 +151,22 @@ Ext.define('Connector.model.InfoPane', {
         }
 
         // clear out for initialization
-        this.set('dimensionUniqueName', undefined);
-        this.set('hierarchyUniqueName', undefined);
+        this.set('dimension', undefined);
+        this.set('hierarchy', undefined);
         this.set('level', undefined);
 
         this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
 
-    getOlapProvider : function() { return this.olapProvider; },
+    getStateManager : function() { return this.state; },
 
-    setOlapProvider : function(olapProvider) {
-        this.olapProvider = olapProvider;
+    setStateManager : function(state) {
+        this.state = state;
     },
 
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
-        this.getOlapProvider().onMDXReady(function(mdx) {
+        this.getStateManager().onMDXReady(function(mdx) {
 
             var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName);
             var dim = dimHier.dim, hier = dimHier.hierarchy, lvl = dimHier.lvl;
@@ -173,9 +183,7 @@ Ext.define('Connector.model.InfoPane', {
 
             this.set('dimension', dim);
             this.set('hierarchy', hier);
-            this.set('dimensionUniqueName', dim.uniqueName);
-            this.set('hierarchyUniqueName', hier.uniqueName);
-            this.set('level', lvl.uniqueName);
+            this.set('level', lvl);
             this.set('hierarchyLabel', hier.label);
             this.set('hierarchyItems', hierarchyItems);
             this.set('operatorType', hier.defaultOperator);
@@ -210,8 +218,10 @@ Ext.define('Connector.model.InfoPane', {
         //
         // lookup level first
         //
+//        console.log(arguments);
         var lvl = mdx.getLevel(lvlName), hier, dim;
         if (lvl && lvl.hierarchy) {
+//            console.log('found by lvl:', lvl.uniqueName);
             hier = lvl.hierarchy;
             dim = hier.dimension;
         }
@@ -222,6 +232,8 @@ Ext.define('Connector.model.InfoPane', {
             hier = mdx.getHierarchy(hName);
 
             if (hier && hier.dimension) {
+//                console.log('found by hier:', hier.uniqueName);
+
                 // hidden hierarchy?
                 lvl = hier.levels[1];
                 dim = hier.dimension;
@@ -233,6 +245,7 @@ Ext.define('Connector.model.InfoPane', {
                 dim = mdx.getDimension(dName);
 
                 if (dim) {
+//                    console.log('found by dim:', dim.uniqueName);
                     hier = this.getDefaultHierarchy(dim);
                     lvl = hier.levels[1];
                 }

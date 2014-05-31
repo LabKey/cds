@@ -29,6 +29,7 @@ import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.DataGridSelector;
 import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
@@ -58,7 +59,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
-    
+    private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
+
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
@@ -124,11 +126,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         Ext4Helper.setCssPrefix("x-");
 
-        windowMaximize(); // Provides more useful screenshots on failure
         cds.enterApplication();
 
         // clean up groups
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        cds.goToAppHome();
         sleep(500); // let the group display load
 
         List<String> groups = new ArrayList<>();
@@ -138,19 +139,101 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         groups.add(GROUP_LIVE_FILTER);
         groups.add(GROUP_STATIC_FILTER);
         groups.add(STUDY_GROUP);
+        groups.add(HOME_PAGE_GROUP);
         ensureGroupsDeleted(groups);
 
         cds.clearAllFilters();
         cds.clearAllSelections();
 
         // go back to app starting location
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.goToAppHome();
     }
 
     @AfterClass
     public static void postTest()
     {
         Ext4Helper.resetCssPrefix();
+    }
+
+    @Test
+    public void verifyHomePage()
+    {
+        /**
+         * Header
+         * ------
+         * Counts (logged out -- once ajax login is present)
+         */
+
+        log("Verify Home Page");
+
+        //
+        // Validate counts and about link
+        //
+        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", CDSHelper.STUDIES.length + " studies connected together combining");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "1,106 data points.");
+        waitForElement(studyPoints);
+        waitForElement(dataPoints);
+
+        click(Locator.tagContainingText("a", "About the Co"));
+        waitForText("404: View Not Found");
+        getDriver().navigate().back();
+        waitForElement(dataPoints.notHidden());
+
+        //
+        // Validate News feed
+        //
+        waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
+        assertTextPresentInThisOrder("08 May 2014", "09 Jan 2014", "16 Oct 2013");
+
+        //
+        // Validate Groups
+        //
+        assertTextPresent("My Saved Groups and Plots");
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("Lab Results", "CD4");
+        yaxis.confirmSelection();
+        waitForElement(CDSHelper.Locators.filterMemberLocator("In the plot: CD4"));
+
+        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.clickBy("Studies");
+        cds.selectBars(CDSHelper.STUDIES[0]);
+        cds.useSelectionAsFilter();
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(6, 1, 2);
+
+        final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
+        final String saveLabel = "Group \"A Plotted...\" saved.";
+        Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
+
+        cds.saveGroup(HOME_PAGE_GROUP, "A Plottable group");
+        waitForText(saveLabel);
+
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForElement(Locator.css("div.groupicon img"));
+        assertElementPresent(clippedLabel);
+        cds.clearAllFilters();
+
+        getDriver().navigate().refresh();
+        waitAndClick(clippedLabel);
+        waitForText("Your filters have been");
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: CD4"));
+        _asserts.assertFilterStatusCounts(6, 1, 2);
+
+        // TODO: Enable this once fb_plots is merged
+//        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        // assert the SVG element and plot build properly
+
+        // remove just the plot filter
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        click(Locator.tagWithClass("div", "closeitem").index(0));
+        cds.saveOverGroup(HOME_PAGE_GROUP);
+        waitForText(saveLabel);
+        _asserts.assertFilterStatusCounts(6, 1, 2);
+        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
+        waitForElementToDisappear(Locator.css("div.groupicon img"));
     }
 
     @Test
@@ -164,16 +247,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         String raceMember3 = "Asian";
         String raceMember4 = "White";
 
-        String compositeRaceMember = raceMemberType + ": " + raceMember;
-        String compositeRaceMember2 = raceMemberType + ": " + raceMember2;
-
         Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current filters");
         Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current filters");
 
         //
         // Open an filter pane and close it
         //
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Assays");
         cds.openStatusInfoPane("Races & Subtypes");
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
@@ -186,7 +266,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectInfoPaneItem(raceMember, true);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
 
-        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
         _asserts.assertFilterStatusCounts(8, 3, 3);
 
         //
@@ -198,26 +278,26 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
         _asserts.assertFilterStatusCounts(8, 3, 3);
 
         //
         // open the filter pane via a created filter
         //
-        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(compositeRaceMember));
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember));
         assertElementPresent(hasData);
         assertElementPresent(noData);
 
         cds.selectInfoPaneItem(raceMember2, true);
         click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
 
-        waitForElement(CDSHelper.Locators.filterMemberLocator(compositeRaceMember2));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         _asserts.assertFilterStatusCounts(3, 2, 3);
 
         //
         // update the current filter
         //
-        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(compositeRaceMember2));
+        cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
         cds.selectInfoPaneItem(raceMember3, false);
         click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
 
@@ -256,7 +336,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectInfoPaneItem("USA", true);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
 
-        Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("Subject (Country): USA");
+        Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("USA");
         waitForElement(countryFilter);
         _asserts.assertFilterStatusCounts(19, 3, 3);
         cds.openFilterInfoPane(countryFilter);
@@ -278,7 +358,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Compose Groups
         //
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsFilter();
@@ -309,7 +389,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "nav-label").withText(STUDY_GROUP));
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
         // Verify that the description has changed.
         waitForText(studyGroupDescModified);
@@ -321,7 +401,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clearFilter();
 
         // add a filter, which should be blown away when a group filter is selected
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsFilter();
@@ -329,7 +409,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "nav-label").withText(STUDY_GROUP));
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
 
         // Verify that filters get replaced when viewing group.
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
@@ -341,7 +421,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(Locator.tagWithText("label", "Snapshot: Keep this group static"));
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "nav-label").withText(STUDY_GROUP));
+        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
         waitForText(studyGroupDescModified);
         Locator selectedRadio = Ext4Helper.Locators.radiobutton(this, "Snapshot: Keep this group static")
                 .withPredicate(Locator.xpath("ancestor-or-self::table").withClass("x-form-cb-checked"));
@@ -356,14 +436,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the HIV Vaccine Data Connector.");
+        waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
         cds.deleteGroupFromSummaryPage(STUDY_GROUP);
 
         cds.clearFilter();
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
     }
 
     @Test
@@ -449,12 +528,12 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //ISSUE 20013
         log("verify filter displays");
 
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0]);
 
         // verify "Study: Demo Study" selection
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Study: " + CDSHelper.STUDIES[0]));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
 
         // verify buttons available
         assertElementPresent(CDSHelper.Locators.cdsButtonLocator("use as filter"));
@@ -463,7 +542,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // verify split display
         cds.clearSelection();
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
@@ -473,11 +552,11 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // clear by selection
         cds.selectBars(CDSHelper.STUDIES[1]);
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Study: " + CDSHelper.STUDIES[1]));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
         _asserts.assertSelectionStatusCounts(12, 1, 2);
 
         // verify multi-level filtering
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[2]);
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
@@ -532,14 +611,14 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Navigate to Summary to apply a filter
         //
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.goToSummary();
         cds.clickBy("Studies");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         cds.waitForBarToAnimate(CDSHelper.STUDIES[0]);
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.useSelectionAsFilter();
 
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Study: " + CDSHelper.STUDIES[0]));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
 
         //
         // Check to see if grid is properly filtering based on explorer filter
@@ -657,6 +736,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Test
     public void verifyCounts()
     {
+        cds.goToSummary();
         _asserts.assertAllSubjectsPortalPage();
 
         // 14902
@@ -671,7 +751,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
         _asserts.assertFilterStatusCounts(6, 1, 2);
-        cds.goToAppHome();
+        cds.goToSummary();
 
         // Verify multi-select tooltip has dissappeared
         waitForTextToDisappear(TOOLTIP);
@@ -682,7 +762,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         sleep(500);
         cds.clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
-        cds.goToAppHome();
+        cds.goToSummary();
         // end 14902
 
         cds.clickBy("Studies");
@@ -691,7 +771,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertTextNotPresent(TOOLTIP);
         cds.applySelection(CDSHelper.STUDIES[2]);
         _asserts.assertSelectionStatusCounts(5, 1, 1);
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clearSelection();
         cds.clickBy("Assay antigens");
         cds.pickSort("Tier", "1A");
@@ -704,7 +784,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.toggleExplorerBar("1B");
         cds.applySelection("ZM109F.PB4");
         _asserts.assertSelectionStatusCounts(6, 1, 2);
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Assays");
         //TODO: enable this and update counts when issue 20000 is resolved
         //applySelection("Unknown");
@@ -717,7 +797,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertSelectionStatusCounts(29, 4, 4);
         cds.applySelection(CDSHelper.ASSAYS[2]);
         _asserts.assertSelectionStatusCounts(5, 1, 2);
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Labs");
         cds.applySelection(CDSHelper.LABS[0]);
         _asserts.assertSelectionStatusCounts(6, 1, 2);
@@ -725,7 +805,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertSelectionStatusCounts(23, 3, 4);
         cds.applySelection(CDSHelper.LABS[2]);
         _asserts.assertSelectionStatusCounts(18, 3, 2);
-        cds.goToAppHome();
+        cds.goToSummary();
         cds.clickBy("Subject characteristics");
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts(this);
@@ -742,13 +822,17 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyFilters()
     {
         log("Verify multi-select");
+        Locator dimensionGroup = Locator.css("div.dimgroup");
+        Locator dimensionSort = Locator.css("div.dimensionsort");
 
         // 14910
-        cds.clickBy("Assay antigens");
-        cds.waitForBarToAnimate("Unknown");
+        cds.goToSummary();
+        waitAndClick(Locator.linkWithText("tiers"));
+        waitForElement(dimensionGroup.withText("Assay antigens"));
+        waitForElement(dimensionSort.withText("SORTED BY: TIER"));
+        cds.waitForBarToAnimate("SF162.LS");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarToAnimate("Unknown");
-        cds.pickSort("Tier", "1A");
+        cds.waitForBarToAnimate("SF162.LS");
         cds.toggleExplorerBar("1A");
         cds.toggleExplorerBar("1B");
         cds.shiftSelectBars("SF162.LS", "DJ263.8");
@@ -757,7 +841,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertSelectionStatusCounts(6, 1, 2);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts(this);
-        cds.goToAppHome();
+        cds.goToSummary();
         // end 14910
 
         cds.clickBy("Labs");
@@ -775,7 +859,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.LABS[0]), CDSHelper.CDS_WAIT);
         _asserts.assertDefaultFilterStatusCounts(this);
 
-        cds.goToAppHome();
+        cds.goToSummary();
         _asserts.assertAllSubjectsPortalPage();
 
         log("Verify operator filtering");
@@ -801,7 +885,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         selectOptionByValue(selector, "UNION");
         _asserts.assertFilterStatusCounts(18, 2, 3);  // or
         assertElementPresent(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
-        cds.goToAppHome();
+        cds.goToSummary();
         waitForText(CDSHelper.STUDIES[1], CDSHelper.CDS_WAIT);
         cds.clickBy("Labs");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
@@ -811,7 +895,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForText("All subjects");
         _asserts.assertDefaultFilterStatusCounts(this);
         assertTextPresent("All subjects");
-        cds.goToAppHome();
+        cds.goToSummary();
 
         log("Verify selection messaging");
         cds.clickBy("Assays");
@@ -825,7 +909,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.pickDimension("Assays");
         _asserts.assertSelectionStatusCounts(6, 1, 2);
         cds.useSelectionAsFilter();
-        cds.goToAppHome();
+        cds.goToSummary();
 
         //test more group saving
         cds.clickBy("Subject characteristics");
@@ -851,7 +935,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.saveGroup(GROUP_NAME3, null);
 
         cds.clearFilter();
-        cds.goToAppHome();
     }
 
     @Test
@@ -860,7 +943,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         // placeholder pages
         cds.clickBy("Assay antigens");
-        cds.waitForBarToAnimate("Unknown");
+        cds.waitForBarToAnimate("SF162.LS");
         cds.pickSort("Tier", "1A");
         cds.toggleExplorerBar("1A");
         _asserts.assertNounInfoPage("MW965.26", Arrays.asList("Clade", "Tier", "MW965.26", "U08455"));
@@ -868,20 +951,20 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.toggleExplorerBar("1B");
         _asserts.assertNounInfoPage("ZM109F.PB4", Arrays.asList("Zambia", "Tier", "AY424138"));
 
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.goToSummary();
         cds.clickBy("Studies");
         _asserts.assertNounInfoPage(CDSHelper.STUDIES[0], Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
         _asserts.assertNounInfoPage(CDSHelper.STUDIES[1], Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
         _asserts.assertNounInfoPage(CDSHelper.STUDIES[3], Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
 
         // Labs info pages are currently disabled
-//        goToAppHome();
+//        goToSummary();
 //        clickBy("Labs");
 //        assertNounInfoPage("Arnold/Bellew Lab", Arrays.asList("Description", "PI", "Nick Arnold"));
 //        assertNounInfoPage("LabKey Lab", Arrays.asList("Description", "PI", "Mark Igra"));
 //        assertNounInfoPage("Piehler/Eckels Lab", Arrays.asList("Description", "PI", "Britt Piehler"));
 
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.goToSummary();
         cds.clickBy("Assays");
 
         AssayDetailsPage labResults = AssayDetailsPage.labResults(this);
@@ -899,8 +982,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         AssayDetailsPage nabSampleLabKey = AssayDetailsPage.nabSampleLabKey(this);
         _asserts.verifyAssayInfo(nabSampleLabKey);
 
-
-        CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
+        cds.goToSummary();
         cds.clickBy("Study products");
 
         _asserts.assertVaccineTypeInfoPage("VRC-HIVADV014-00-VP", "The recombinant adenoviral vector product VRC-HIVADV014-00-VP (Ad5)");
@@ -930,7 +1012,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         cds.viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "VRC-HIVADV014-00-VP", "VRC-HIVDNA016-00-VP");
+        List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "Placebo", "VRC-HIVDNA016-00-VP");
         _asserts.verifyLearnAboutPage(studyProducts);
     }
 
@@ -959,34 +1041,35 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         Locator dimensionGroup = Locator.css("div.dimgroup");
         Locator dimensionSort = Locator.css("div.dimensionsort");
 
+        cds.goToSummary();
         waitAndClick(Locator.linkWithText("races & subtypes"));
         waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: RACE & SUBTYPE"));
-        cds.goToAppHome();
+        cds.goToSummary();
         sleep(250);
 
         waitAndClick(Locator.linkWithText("countries"));
         waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
-        cds.goToAppHome();
+        cds.goToSummary();
         sleep(250);
 
         waitAndClick(Locator.linkWithText("clades"));
         waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: CLADE"));
-        cds.goToAppHome();
+        cds.goToSummary();
         sleep(250);
 
         waitAndClick(Locator.linkWithText("tiers"));
         waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: TIER"));
-        cds.goToAppHome();
+        cds.goToSummary();
         sleep(250);
 
         waitAndClick(Locator.linkWithText("sample types"));
         waitForElement(dimensionGroup.withText("Assay antigens"));
         waitForElement(dimensionSort.withText("SORTED BY: SAMPLE TYPE"));
-        cds.goToAppHome();
+        cds.goToSummary();
     }
 
     @Test
@@ -1032,8 +1115,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
                 "102", "103", "105",
                 "3006", "3007", "3008", "3009", "3012"};
 
-        int participantCount = liveGroupMembersBefore.length;
-
         // exit the app and verify no live filter groups exist
         beginAt("/cds/" + getProjectName() + "/begin.view?");
         updateParticipantGroups();
@@ -1043,7 +1124,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // create two groups one that is a live filter and one that is not
         cds.enterApplication();
-        cds.goToAppHome();
+        cds.goToSummary();
 
         // create live filter group
         cds.clickBy("Subject characteristics");
@@ -1092,8 +1173,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         List<String> deletable = new ArrayList<>();
         for (String group : groups)
         {
-            if (isTextPresent(group))
-                deletable.add(group);
+            String subName = group.substring(0, 10);
+            if (isTextPresent(subName))
+                deletable.add(subName);
         }
 
         if (deletable.size() > 0)

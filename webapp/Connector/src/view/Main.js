@@ -35,7 +35,6 @@ Ext.define('Connector.view.Main', {
         region: 'east',
         ui: 'east-view',
         width : 305,
-        hidden : false,
         plain : true,
         hideCollapseTool : true,
         defaults: {
@@ -74,5 +73,12 @@ Ext.define('Connector.view.Main', {
                 }
             }]
         }]
-    }]
+    }],
+
+    initComponent : function() {
+
+        this.callParent();
+
+        this.eastPanel = this.getComponent('eastview');
+    }
 });

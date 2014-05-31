@@ -43,4 +43,6 @@ var cube = LABKEY.query.olap.CubeManager.getCube({
 launchApp(cube);
 
 // call to getCube in olap.js to initialize cube
-cube.load();
+if (LABKEY.user.isSignedIn) {
+    cube.load();
+}

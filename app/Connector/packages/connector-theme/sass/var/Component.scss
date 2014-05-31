@@ -79,6 +79,10 @@ $tip-background-color: $light-color;
 $tip-border-color: $info-color;
 $tip-body-color: $info-color;
 
+@mixin paragraphSpacing {
+  padding-bottom: 8px;
+}
+
 @mixin header {
   font-family: $data-font;
   font-weight: normal;
@@ -259,6 +263,7 @@ a {
 
   &.logout {
     color: $light-color;
+    cursor: pointer;
   }
 
   &.survey {
@@ -514,6 +519,10 @@ div.wrapitem {
   width: 100%;
   overflow: hidden;
 
+  select {
+    margin: 0;
+  }
+
   &:hover {
     .closeitem {
       opacity: 0.5;
@@ -545,10 +554,27 @@ div.wrapitem {
   }
 }
 
+.grouprow {
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 div.collapsed-member {
   width: 77%;
   padding: 4px 8px;
   font-size: 10pt;
+
+  span {
+    display: block;
+    overflow: hidden;
+  }
 }
 
 div.plot-selection {
@@ -581,12 +607,16 @@ div.activefilter {
 
   div.selitem {
     border: 1px solid transparent;
-    padding: 2px 0;
+    padding: 2px 5px 2px 0;
     width: 100%;
   }
 
   div.status-over {
     border-color: transparent;
+  }
+
+  .fader {
+    display: block;
   }
 
   &:hover {
@@ -894,6 +924,7 @@ div.nolink.status-over {
   background-color: $light-color;
   border: 1px solid lightgrey;
   border-radius: 15px;
+  font-size: 10pt;
 
   .sorter {
     @include smallStandout;
@@ -902,6 +933,7 @@ div.nolink.status-over {
 
 .fader {
   position: absolute;
+  display: none;
   bottom: 0;
   left: 0;
   height: 60px;
@@ -977,30 +1009,49 @@ a.expando {
 /* Connector.view.GroupListView */
 div.grouplist-view {
   padding: 2px 0;
-  font-family: $data-font;
+  font-family: $bodycaps-font;
   font-size: 13pt;
-  color: black;
+  color: $dark-color;
 }
 
-.grouplist-label-over {
+.grouplist-header {
+  border-bottom: 1px solid $primary-color;
+  padding-bottom: 3px;
+  color: $heat-scale-2;
+  @include smallStandout;
+}
+
+.grouplist-empty {
+  color: #b5b5b5;
+  padding: 2px 0;
+  border-bottom: 1px solid $primary-color;
+  text-align: center;
+}
+
+.grouprow {
+  padding: 2px 0;
+  border-bottom: 1px solid $primary-color;
+
+  .groupicon {
+    display: inline-block;
+    float: right;
+
+    img {
+      padding: 3px 0;
+    }
+  }
+
+  .grouplabel {
+    display: inline;
+  }
+
+  .closeitem {
+    margin-top: -13px;
+  }
+}
+
+.grouplist-over {
   cursor: pointer;
-  background-color: $primary-color;
-}
-
-div.emptytext.grouplist-label-over {
-  cursor: default;
-  background-color: transparent;
-}
-
-div.grouplist {
-  .x-panel-header {
-    padding-left: 23px;
-    padding-top: 30px;
-    padding-bottom: 10px;
-  }
-  span.x-panel-header-text {
-    @include smallStandout;
-  }
 }
 
 .save-label {
@@ -1087,7 +1138,7 @@ div.grouplist-label-selected, div.nav-label-selected {
 
 /* Connector.view.Selection */
 .sel-listing {
-  padding: 5px 0 5px 30px;
+  padding: 5px 1px 5px 30px;
 }
 /* -- END Connector.view.Selection */
 
@@ -1627,6 +1678,7 @@ div.filterheader {
     text-transform: uppercase;
     font-size: 12px;
     font-family: $bodycaps-font;
+    font-weight: normal;
   }
 
   .groupheaderline {
@@ -1640,6 +1692,15 @@ div.filterheader {
 
   .itemdisabled {
     color: $primary-color;
+  }
+
+  .x-grid-group-hd {
+    border: none;
+    padding: 0;
+  }
+
+  .x-grid-group-title .groupheader {
+    padding: 8px 6px 4px 6px !important;
   }
 }
 
@@ -2143,4 +2204,115 @@ div.definition-overflow
 .pagecontentcontainer {
   position: relative;
   top: 0px;
+}
+
+.signin-content, .signin-right {
+  padding: 25px;
+}
+
+.signin-left {
+  background-color: $light-color;
+
+  p {
+    @include paragraphSpacing;
+  }
+
+  .dimensionview {
+    background-color: $select-color;
+    background-image: none;
+
+    h1 {
+      color: $light-color;
+    }
+
+    #about {
+      display: none;
+    }
+  }
+
+  .logoContainer {
+    position: relative;
+    left: 50%;
+    width: 500px;
+    margin: 25px 0px 25px -250px;
+    height: 90px;
+
+    img {
+      position: absolute;
+      top: 0px;
+    }
+
+    .logo1 {
+      left: 10px;
+    }
+
+    .logo2 {
+      left: 50%;
+      margin-left: -50px;
+    }
+
+    .logo3 {
+      right: 0px;
+    }
+  }
+}
+
+.signin-right {
+  background-color: $secondary-color;
+
+  p {
+    @include paragraphSpacing;
+  }
+
+  a {
+    padding-top: 3px;
+  }
+
+  .terms {
+    font-weight: bold;
+  }
+
+  .signin {
+    padding: 35px 0px 14px;
+
+    div {
+      padding-bottom: 2px;
+    }
+
+    span {
+      width: 98px;
+      display: inline-block;
+    }
+
+    input {
+      width: 180px;
+    }
+  }
+
+  input[type='checkbox'] {
+    margin-top: 1px;
+  }
+
+  .controls {
+    padding-bottom: 20px;
+  }
+}
+
+input:-webkit-autofill {
+    background-color: #fff !important;
+}
+
+input.x-btn-rounded-inverted-accent-small {
+  padding: 2px 8px 3px;
+  color: $interactive-color;
+  font-weight: bold;
+  font-size: 8pt;
+  font-family: $info-font;
+
+  &:hover {
+    &.enabled {
+      background-color: $interactive-color;
+      color: white;
+    }
+  }
 }
