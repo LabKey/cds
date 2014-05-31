@@ -1,10 +1,9 @@
 package org.labkey.test.util;
 
 import org.jetbrains.annotations.Nullable;
-import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.tests.CDSTest;
+import org.labkey.test.WebTestHelper;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -17,6 +16,7 @@ public class CDSHelper
     public static final String[] STUDIES = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     public static final String[] ASSAYS = {"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
+    public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 1500;
     private final BaseWebDriverTest _test;
 
@@ -34,6 +34,7 @@ public class CDSHelper
         _test.addUrlParameter("_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
+        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         Ext4Helper.setCssPrefix("x-");
     }
@@ -91,6 +92,15 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
     }
 
+    public void saveOverGroup(String name)
+    {
+        _test.click(Locators.cdsButtonLocator("save", "filtersave"));
+        _test.waitForText("Live: Update group with new data");
+        _test.click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
+        _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
+        _test.click(Locators.cdsButtonLocator("save", "groupupdatesave"));
+    }
+
     public void selectBarsHelper(boolean isShift, String... bars)
     {
         if (bars == null || bars.length == 0)
@@ -107,8 +117,6 @@ public class CDSHelper
         waitForBarToAnimate(bars[0]);
 
         String subselect = bars[0];
-        if (subselect.length() > 10)
-            subselect = subselect.substring(0, 9);
         WebElement el = _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[0] + "']").toBy()));
         _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(subselect), CDS_WAIT);
@@ -158,7 +166,12 @@ public class CDSHelper
     public void goToAppHome()
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        _test.waitForElement(Locators.getByLocator("Studies"));
+        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
+    }
+
+    public void goToSummary()
+    {
+        NavigationLink.SUMMARY.makeNavigationSelection(_test);
     }
 
     public void clearFilter()
@@ -248,14 +261,15 @@ public class CDSHelper
 
     public void deleteGroupFromSummaryPage(String name)
     {
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.tagWithClass("div", "nav-label").withText(name).toBy()));
-        _test.click(Locator.tagWithClass("div", "nav-label").withText(name));
+        Locator.XPathLocator groupListing = Locator.tagWithClass("div", "grouplabel").containing(name);
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(groupListing.toBy()));
+        _test.click(groupListing);
         _test.waitForElement(Locators.cdsButtonLocator("delete"));
         _test.click(Locators.cdsButtonLocator("delete"));
         _test.waitForText("Are you sure you want to delete");
         _test.click(Locator.linkContainingText("Delete"));
-        _test.waitForText("Welcome to the HIV Vaccine Data Connector.");
-        _test.waitForElementToDisappear(Locator.tagWithClass("div", "nav-label").withText(name));
+        _test.waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
+        _test.waitForElementToDisappear(groupListing);
     }
 
     public void toggleExplorerBar(String largeBarText)

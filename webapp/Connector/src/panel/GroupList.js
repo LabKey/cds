@@ -15,6 +15,8 @@ Ext.define('Connector.panel.GroupList', {
 
     ui: 'custom',
 
+    bubbleEvents: ['deletegroup'],
+
     initComponent : function() {
 
         this.items = [this.getGroupListView()];
@@ -42,19 +44,52 @@ Ext.define('Connector.view.GroupListView', {
 
     trackOver: true,
 
-    emptyText: '<div class="emptytext"><span class="left-label">No groups defined</span></div>',
+    deferEmptyText: false,
+
+    loadMask: false,
+
+    margin: '30 0 0 0',
 
     cls: 'grouplist-view',
 
-    overItemCls: 'grouplist-label-over',
+    overItemCls: 'grouplist-over',
 
-    itemSelector: 'div.nav-label',
+    itemSelector: 'div.grouprow',
+
+    bubbleEvents: ['deletegroup'],
 
     tpl: new Ext.XTemplate(
-            '<tpl for=".">',
-                '<div class="nav-label">{label:htmlEncode}</div>',
-            '</tpl>'
+        '<div class="grouplist-header">My Saved Groups and Plots</div>',
+        '<tpl if="this.isEmpty(values)">',
+            '<div class="grouplist-empty">Saved work will appear here</div>',
+        '</tpl>',
+        '<tpl for=".">',
+            '<div class="grouprow">',
+                '<div title="{label:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
+                '<tpl if="this.plotter(containsPlot)">',
+                    '<div class="groupicon"><img src="/labkey/production/Connector/resources/images/plot.png"></div>',
+                '</tpl>',
+            '</div>',
+        '</tpl>',
+        {
+            isEmpty : function(v) {
+                return (!Ext.isArray(v) || v.length === 0);
+            },
+            groupLabel : function(label) {
+                return Ext.String.ellipsis(Ext.htmlEncode(label), 35, true);
+            },
+            plotter : function(containsPlot) {
+                return containsPlot === true;
+            }
+        }
     ),
+
+    constructor: function(config) {
+
+        this.callParent([config]);
+
+        this.addEvents('deletegroup');
+    },
 
     initComponent : function() {
 
@@ -63,5 +98,21 @@ Ext.define('Connector.view.GroupListView', {
         this.store = Connector.model.Group.getGroupStore();
 
         this.callParent();
+    },
+
+    onRemoveClick : function(evt, element) {
+
+        if (element) {
+            var el = Ext.get(element);
+            var index = el.getAttribute('group-index');
+            var store = this.getStore();
+            var group = store.getAt(index);
+
+            GG = group;
+            if (group) {
+                evt.stopPropagation();
+                this.fireEvent('deletegroup', group);
+            }
+        }
     }
 });
