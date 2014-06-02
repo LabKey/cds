@@ -19,7 +19,6 @@ Ext.define('Connector.controller.Navigation', {
             },
             userSignedOut : function() {
                 LABKEY.user.isSignedIn = false;
-                this.application.fireEvent('userChanged');
                 window.location.href = window.location.href;
             },
             afterrender : function(view) {
@@ -60,11 +59,6 @@ Ext.define('Connector.controller.Navigation', {
 
         this.getViewManager().on('afterchangeview', this.onViewChange, this);
         this.getStateManager().on('filterchange', this.onFilterChange, this);
-
-        this.application.on('userChanged', function() {
-            this.connectorheader && this.connectorheader.userChanged();
-            this.mainView && this.mainView.userChanged();
-        }, this);
     },
 
     createView : function(xtype, context) { },

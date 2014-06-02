@@ -28,11 +28,12 @@ public class CDSAsserts
 
     public void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Studies", "4 studies");
-        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 sexes", "6 races & subtypes");
-        assertCDSPortalRow("Assays", "4 assays", "1 target areas", "3 methodologies");
         assertCDSPortalRow("Assay antigens", "32 assay antigens", "5 clades", "5 sample types", "5 tiers");
+        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 sexes", "6 races & subtypes");
+        assertCDSPortalRow("Study products", "3 study products");
         assertCDSPortalRow("Labs", "3 labs");
+        assertCDSPortalRow("Assays", "4 assays", "3 target areas", "3 methodologies");
+        assertCDSPortalRow("Studies", "4 studies");
     }
 
     private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)

@@ -287,10 +287,14 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 scope: this,
                 change: function(rg, newValue, oldValue) {
                     var isLive = newValue.updates;
-                    var group = Ext.clone(this.group.data);
-                    var filters = Ext.JSON.decode(group.filters).filters;
-                    group.filters = LABKEY.app.model.Filter.toJSON(filters, isLive);
-                    this.fireEvent('requestgroupupdate', group);
+                    var grp = Ext.clone(this.group.data);
+                    var fil = Ext.decode(grp.filters).filters;
+                    var models = [];
+                    Ext.each(fil, function(f) {
+                        models.push(Ext.create('Connector.model.Filter', f));
+                    });
+                    grp.filters = LABKEY.app.model.Filter.toJSON(models, isLive);
+                    this.fireEvent('requestgroupupdate', grp);
                 }
             },
             items: [{

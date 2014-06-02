@@ -198,7 +198,7 @@ Ext.define('Connector.controller.Group', {
                     group : {
                         label: values['groupname'],
                         description: values['groupdescription'],
-                        filters: state.getFlatFilters(),
+                        filters: state.getFilters(),
                         isLive: isLiveFilter
                     }
                 });
@@ -222,9 +222,6 @@ Ext.define('Connector.controller.Group', {
                 // Update the target group
                 targetGroup.set('description', values['groupdescription']);
                 targetGroup.set('isLive', values['groupselect'] == 'live');
-
-                // Request filters directly from state
-                var filters = state.getFilters(true);
 
                 state.onMDXReady(function(mdx) {
 
@@ -255,7 +252,7 @@ Ext.define('Connector.controller.Group', {
                                 id: targetGroup.get('id'),
                                 ids: ids,
                                 description: description,
-                                filters: LABKEY.app.model.Filter.toJSON(filters, isLive),
+                                filters: LABKEY.app.model.Filter.toJSON(state.getFilters(), isLive),
                                 success: updateSuccess,
                                 failure: updateFailure
                             });
@@ -281,9 +278,6 @@ Ext.define('Connector.controller.Group', {
                 success: function(cs) {
                     var updateSuccess = function(group) {
                         mdx.clearNamedFilter('groupfilter');
-                        if (LABKEY.app.model.Filter) {
-
-                        }
                         Connector.model.Group.getGroupStore().load();
                     };
 
