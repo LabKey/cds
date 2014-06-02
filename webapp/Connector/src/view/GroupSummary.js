@@ -110,7 +110,7 @@ Ext.define('Connector.view.GroupSummary', {
             this.hideMessage(true);
             var id = Ext.id();
             var cancelId = Ext.id();
-            this.showMessage('Are you sure you want to delete "' + group.get('label') + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
+            this.showMessage('Are you sure you want to delete "' + Ext.String.ellipsis(Ext.htmlEncode(group.get('label')), 35, true) + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
             var deleteLink = Ext.get(id);
             if (deleteLink) {
 //                this.fireEvent('requestgroupdelete', this.group.data.id);
@@ -236,12 +236,6 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 
     deleteGroup : function() {
         this.fireEvent('deletegroup', this.group);
-//        Ext.MessageBox.confirm(
-//                'Delete Group?',
-//                'Are you sure you want to delete "' + this.group.get('label') + '"?',
-//                function(ans){ if (ans === 'yes') { this.fireEvent('requestgroupdelete', this.group.data.id); }},
-//                this
-//        );
     },
 
     updateView : function(group) {
@@ -294,10 +288,14 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 scope: this,
                 change: function(rg, newValue, oldValue) {
                     var isLive = newValue.updates;
-                    var group = Ext.clone(this.group.data);
-                    var filters = Ext.JSON.decode(group.filters).filters;
-                    group.filters = LABKEY.app.model.Filter.toJSON(filters, isLive);
-                    this.fireEvent('requestgroupupdate', group);
+                    var grp = Ext.clone(this.group.data);
+                    var fil = Ext.decode(grp.filters).filters;
+                    var models = [];
+                    Ext.each(fil, function(f) {
+                        models.push(Ext.create('Connector.model.Filter', f));
+                    });
+                    grp.filters = LABKEY.app.model.Filter.toJSON(models, isLive);
+                    this.fireEvent('requestgroupupdate', grp);
                 }
             },
             items: [{

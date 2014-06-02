@@ -74,7 +74,7 @@ Connector.view.StudyAxis = function(){
 
         pathFn = function(d){
             var y = Math.floor(yScale(d.label) + 7) + 0.5;
-            return 'M 25 ' + y + ' L ' + (width - 25) + ' ' + y + ' Z';
+            return 'M 25 ' + y + ' L ' + width + ' ' + y + ' Z';
         };
 
         lines = selection.selectAll('path.separator').data(studyData.slice(0,studyData.length-1));

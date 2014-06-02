@@ -94,6 +94,7 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     createHierarchyFilter : function(filterset) {
+        filterset.data.dofade = true;
         return Ext.create('Connector.view.Selection', {
             cls: 'activefilter',
             store: {

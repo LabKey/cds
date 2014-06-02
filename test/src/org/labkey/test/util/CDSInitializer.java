@@ -38,6 +38,7 @@ public class CDSInitializer
     private void preCacheCube()
     {
         _cds.enterApplication();
+        _cds.goToSummary();
         _test.waitForElement(CDSHelper.Locators.getByLocator("Studies"));
         _test.goToProjectHome();
     }
@@ -79,6 +80,19 @@ public class CDSInitializer
         importCDSData("AssayPublications", "assay_publications.tsv");
         importCDSData("Vaccines", "vaccines.tsv");
         importCDSData("VaccineComponents", "vaccinecomponents.tsv");
+
+        // prepare RSS news feed
+        _test.goToSchemaBrowser();
+        _test.selectQuery("announcement", "RSSFeeds");
+        _test.waitForText("view data");
+        _test.clickAndWait(Locator.linkContainingText("view data"));
+
+        // insert test data feed
+        _test.clickButton("Insert New");
+        _test.setFormElement(Locator.name("quf_FeedName"), "Dataspace Test Feed");
+        _test.setFormElement(Locator.name("quf_FeedURL"), CDSHelper.TEST_FEED);
+        _test.clickButton("Submit");
+        _test.assertTextPresent(CDSHelper.TEST_FEED);
     }
 
     @LogMethod
@@ -115,5 +129,6 @@ public class CDSInitializer
         _test.assertElementPresent(Locator.linkWithText("Luminex"));
         _test.assertElementPresent(Locator.linkWithText("MRNA"));
         _test.assertElementPresent(Locator.linkWithText("ADCC"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 }

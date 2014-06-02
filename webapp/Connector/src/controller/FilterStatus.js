@@ -144,12 +144,12 @@ Ext.define('Connector.controller.FilterStatus', {
             // configure info pane view
             //
             var config = {
-                olapProvider: this.getStateManager()
+                state: this.getStateManager()
             };
 
             if (filterOrDetail.$className === "Connector.model.Detail") {
-                config.dimensionUniqueName = filterOrDetail.get('dimension');
-                config.hierarchyUniqueName = filterOrDetail.get('hierarchy');
+                config.dimension = filterOrDetail.get('dimension');
+                config.hierarchy = filterOrDetail.get('hierarchy');
                 config.level = filterOrDetail.get('level');
             }
             else if (filterOrDetail.$className === "Connector.model.Filter") {
@@ -175,7 +175,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
             var infoPane = Ext.create(clazz, {
                 model: Ext.create('Connector.model.InfoPane', config),
-                stateManager: this.getStateManager(),
                 listeners: {
                     hide: {
                         fn: this.resetInfoPane,

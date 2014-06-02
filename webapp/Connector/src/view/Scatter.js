@@ -145,6 +145,8 @@ Ext.define('Connector.view.Scatter', {
             this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
                 cls: 'study-axis',
                 border: false,
+                overflowX: 'hidden',
+                overflowY: 'auto',
                 frame: false,
                 items: [{
                     xtype: 'box',
@@ -292,7 +294,7 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.studyAxis) {
-            this.studyAxis.width(this.studyAxisPanel.getWidth());
+            this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
         }
@@ -546,7 +548,7 @@ Ext.define('Connector.view.Scatter', {
             rendererType: 'd3',
             throwErrors: true,
             clipRect: false,
-            margins: {top: 25, left: 25+43, right: 25+10, bottom: this.requireStudyAxis ? 43 : 25+43},
+            margins: {top: 25, left: 25+43, right: 25+25, bottom: this.requireStudyAxis ? 43 : 25+43},
             width     : this.requireStudyAxis ? box.width - 150 : box.width,
             height    : box.height,
             data      : rows,
@@ -870,6 +872,7 @@ Ext.define('Connector.view.Scatter', {
             sel = this.colorPanel.getSelection();
             if (sel && sel.length > 0) {
                 measures.color = sel[0].data;
+                //measures.color.allowNullResults = false;
                 this.fromFilter = false;
             }
         }
@@ -1041,7 +1044,8 @@ Ext.define('Connector.view.Scatter', {
 
         return xMeasure != null && yMeasure != null
             && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
-            && xMeasure.options.antigen && yMeasure.options.antigen
+            && xMeasure.options && xMeasure.options.antigen
+            && yMeasure.options && yMeasure.options.antigen
             && xMeasure.schemaName == yMeasure.schemaName
             && xMeasure.queryName == yMeasure.queryName
             && xMeasure.variableType == null && yMeasure.variableType == null;
@@ -1080,7 +1084,7 @@ Ext.define('Connector.view.Scatter', {
                 var schema = activeMeasures[axis].schemaName;
                 var query = activeMeasures[axis].queryName;
 
-                if (!requiresPivot && Ext.isDefined(activeMeasures[axis].options.antigen))
+                if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen)
                 {
                     var name = activeMeasures[axis].options.antigen.name;
                     var values = activeMeasures[axis].options.antigen.values;
@@ -1102,8 +1106,7 @@ Ext.define('Connector.view.Scatter', {
                 name: measuresMap[key].name,
                 queryName: measuresMap[key].queryName,
                 schemaName: measuresMap[key].schemaName,
-                values: measuresMap[key].values,
-                allowNullResults: false
+                values: measuresMap[key].values
             }, time: 'date'});
 
         }
@@ -2362,7 +2365,7 @@ Ext.define('Connector.view.Scatter', {
 
         this.studyAxis.studyData(this.studyAxisData)
                 .scale(this.plot.scales.x.scale)
-                .width(this.studyAxisPanel.getWidth())
+                .width(this.studyAxisPanel.getWidth() - 40)
                 .alignmentDay(0)
                 .mouseover(this.showStudyAxisHover, this)
                 .mouseout(this.removeStudyAxisHover, this);
@@ -2384,7 +2387,7 @@ Ext.define('Connector.view.Scatter', {
         if (this.requireStudyAxis) {
             this.plotEl.setStyle('padding', '0 0 0 150px');
             this.studyAxisPanel.setVisible(true);
-            this.studyAxisPanel.setHeight(25 * this.studyAxisData.length);
+            this.studyAxisPanel.setHeight(Math.min(100, 25 * this.studyAxisData.length));
         } else {
             this.plotEl.setStyle('padding', '0');
             this.studyAxisPanel.setVisible(false);
