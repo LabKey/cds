@@ -15,7 +15,6 @@ Ext.define('Connector.view.Scatter', {
     cls: 'scatterview',
 
     measures: [],
-    allColumns: false,
     canShowHidden: false,
 
     isActiveView: true,
@@ -24,7 +23,7 @@ Ext.define('Connector.view.Scatter', {
     showAxisButtons: true,
 
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
-    rowlimit: 5000,
+    rowlimit: 0,
 
     layout: 'border',
 
@@ -117,8 +116,8 @@ Ext.define('Connector.view.Scatter', {
             },{
                 items: [{
                     id: 'colorselector',
-                    xtype: 'variableselector',
-                    disabled: true,
+                    xtype: 'colorselector',
+                    btnCls: 'colorbtn',
                     model: new Ext.create('Connector.model.Variable', {
                         typeLabel: 'color'
                     })
@@ -128,26 +127,60 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getCenter : function() {
-        return {
-            itemId: 'plotdisplay',
-            xtype: 'box',
-            region: 'center',
-            border: false, frame: false,
-            id: Ext.id(),
-            autoEl : {
-                tag: 'div',
-                cls: 'emptyplot plot'
-            },
-            listeners: {
-                afterrender: {
-                    fn: function(box) {
-                        this.plotEl = box.getEl();
-                    },
-                    single: true,
-                    scope: this
+        if (!this.centerContainer) {
+            this.plotPanel = Ext.create('Ext.panel.Panel', {
+                flex: 10,
+                cls: 'plot',
+                style: {'background-color': '#fff'},
+                listeners: {
+                    afterrender: {
+                        fn: function(box) {
+                            this.plotEl = box.getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
                 }
-            }
-        };
+            });
+            this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
+                cls: 'study-axis',
+                border: false,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                frame: false,
+                items: [{
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'div',
+                        cls: 'study-axis',
+                        style: {
+                            overflow: 'auto'
+                        },
+                        html: '<div id="study-axis" style="overflow: auto;"></div>'
+                    },
+                }],
+                listeners: {
+                    afterrender: {
+                        fn: function(b) {
+                            this.studyAxisEl = b.getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
+                }
+            });
+
+            this.centerContainer = Ext.create('Ext.container.Container', {
+                region: 'center',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch',
+                    pack: 'start'
+                },
+                items: [this.plotPanel,this.studyAxisPanel]
+            });
+        }
+        return this.centerContainer;
     },
 
     getSouth : function() {
@@ -171,6 +204,14 @@ Ext.define('Connector.view.Scatter', {
                     model: new Ext.create('Connector.model.Variable', {
                         typeLabel: 'x'
                     })
+                },
+                {
+                    // FOR TESTING USE (add "_showPlotData" param to URL to show button)
+                    id: 'plotshowdata',
+                    xtype: 'button',
+                    text: 'view data',
+                    style: 'left: 20px !important; top: 15px !important;',
+                    hidden: LABKEY.ActionURL.getParameter('_showPlotData') ? false : true
                 }]
             }]
         };
@@ -214,11 +255,13 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getPlotElement : function() {
-        var el = Ext.DomQuery.select('svg');
-        if (el.length > 0) {
-            el = el[0];
+        if (this.plot) {
+            var el = Ext.query('#' + this.plot.renderTo);
+            if (el.length > 0) {
+                el = el[0];
+            }
+            return el;
         }
-        return el;
     },
 
     handleResize : function() {
@@ -247,7 +290,13 @@ Ext.define('Connector.view.Scatter', {
         }
 
         if (this.plot) {
-            this.plot.setSize(plotbox.width, plotbox.height, true);
+            this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
+        }
+
+        if (this.studyAxis) {
+            this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
+            this.studyAxis.scale(this.plot.scales.x.scale);
+            this.studyAxis();
         }
 
         var plotMsg = this.noplotmsg;
@@ -288,7 +337,19 @@ Ext.define('Connector.view.Scatter', {
             aes: {
                 hoverText : function(row) {
                     // TODO: figure out how to display subject id.
-                    return '' + row.xname + ': ' + row.x + ', ' + row.yname + ': ' + row.y;
+                    var text = 'Subject: ' + row.subjectId.value;
+
+                    if (row.xname) {
+                        text += ',\n' + row.xname + ': ' + row.x;
+                    }
+
+                    text += ',\n' + row.yname + ': ' + row.y;
+
+                    if (row.colorname) {
+                        text += ',\n' + row.colorname + ': ' + row.color;
+                    }
+
+                    return text;
                 },
                 mouseOverFn: function(event, pointData, layerSel){
                     if (!layerScope.isBrushed) {
@@ -382,11 +443,13 @@ Ext.define('Connector.view.Scatter', {
         // Below vars needed for brush and mouse event handlers.
         var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
+        this.plotEl.update('');
+        this.resizePlotContainers();
+
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
             this.hideLoad();
             this.plot = null;
-            this.plotEl.update('');
             this.noPlot();
             return;
         }
@@ -396,7 +459,6 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.clearGrid();
-            this.plotEl.update('');
             this.plot = null;
         }
 
@@ -453,10 +515,32 @@ Ext.define('Connector.view.Scatter', {
             } else {
                 scales.x = {scaleType: 'discrete'};
             }
+
             scales.yLeft = {
                 scaleType: 'continuous',
                 tickFormat: numericTickFormat
             };
+
+            if (this.measures[2]) {
+                scales.color = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceColor()
+                };
+                scales.shape = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceShape()
+                };
+            }
+        }
+
+        var plotAes = {
+            x: function(row){return row.x;},
+            yLeft: function(row){return row.y},
+        };
+
+        if (this.measures[2]) {
+            plotAes.color = function(row) {return row.color};
+            plotAes.shape = function(row) {return row.color};
         }
 
         var plotConfig = {
@@ -464,15 +548,12 @@ Ext.define('Connector.view.Scatter', {
             rendererType: 'd3',
             throwErrors: true,
             clipRect: false,
-            margins: {top: 25, left: 25+43, right: 25+10, bottom: 25+43},
-            width     : box.width,
+            margins: {top: 25, left: 25+43, right: 25+25, bottom: this.requireStudyAxis ? 43 : 25+43},
+            width     : this.requireStudyAxis ? box.width - 150 : box.width,
             height    : box.height,
             data      : rows,
             legendPos : 'none',
-            aes: {
-                x: function(row){return row.x;},
-                yLeft: function(row){return row.y}
-            },
+            aes: plotAes,
             bgColor: '#FFFFFF', // $light-color
             gridColor: '#FFFFFF', // $light-color
             gridLineColor: '#F0F0F0', // $secondary-color
@@ -617,13 +698,13 @@ Ext.define('Connector.view.Scatter', {
 
                         if (measures.length > 1) {
                             xMeasure = {measure: measures[0]};
-                            xMeasure.measure.colName = config.xaxis.colName;
+                            xMeasure.measure.colName = requiresPivot ? config.xaxis.name : config.xaxis.colName;
                             yMeasure = {measure: measures[1]};
 
                         } else {
                             yMeasure = {measure: measures[0]};
                         }
-                        yMeasure.measure.colName = config.yaxis.colName;
+                        yMeasure.measure.colName = requiresPivot ? config.yaxis.name : config.yaxis.colName;
 
                         plotMeasures = [xMeasure, yMeasure];
 
@@ -649,9 +730,9 @@ Ext.define('Connector.view.Scatter', {
                         }
 
                         Connector.model.Filter.sqlToMdx({
-                            schemaName: config.schemaName,
-                            queryName: config.queryName,
-                            subjectColumn: config.subjectColumn,
+                            schemaName: requiresPivot ? yMeasure.measure.schemaName : config.schemaName,
+                            queryName: requiresPivot ? yMeasure.measure.queryName : config.queryName,
+                            subjectColumn: requiresPivot ? Connector.studyContext.subjectColumn : config.subjectColumn,
                             measures: plotMeasures,
                             sqlFilters: sqlFilters,
                             success: function(filterConfig){
@@ -672,12 +753,17 @@ Ext.define('Connector.view.Scatter', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
         var measures = this.measures; // hoisted for brushend.
         var stateManager = this.state; // hoisted for brushend and brushclear.
+        var requiresPivot = this.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
 
         if (this.plot) {
             this.plot.addLayer(layer);
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
+                if (this.measures[2]) {
+                    colorSelector = Ext.getCmp('colorselector');
+                    colorSelector.setLegend(this.plot.getLegendData());
+                }
             }
             catch(err) {
                 this.showMessage(err.message);
@@ -717,7 +803,7 @@ Ext.define('Connector.view.Scatter', {
 
             Ext.apply(scale, {
                 trans : axisValue,
-                domain: [axisValue == 'log' ? 1 : null, null] // allow negative values in linear plots
+                domain: [null, null]
             });
         }
 
@@ -726,38 +812,29 @@ Ext.define('Connector.view.Scatter', {
 
     getActiveMeasures : function() {
         this.fromFilter = false;
-        var measures = {
+        var sel, measures = {
             x: null,
-            y: null
+            y: null,
+            color: null
         };
 
-        // first check the measure selections
-        if (this.axisPanelX) {
-            var sel = this.axisPanelX.getSelection();
-            if (sel && sel.length > 0) {
-                measures.x = sel[0].data;
-            }
-        }
-        if (this.axisPanelY) {
-            var sel = this.axisPanelY.getSelection();
-            if (sel && sel.length > 0) {
-                measures.y = sel[0].data;
-            }
-        }
-
-        // second, check the set of active filters
-        if (!measures.x && !measures.y) {
+        // first, check the set of active filters
+        if (!measures.x || !measures.y || !measures.color) {
             var filters = this.state.getFilters();
             for (var f=0; f < filters.length; f++) {
                 if (filters[f].get('isPlot') == true) {
                     var m = filters[f].get('plotMeasures');
 
-                    if (m.length > 1) {
+                    if (m[0]) {
                         measures.x = m[0].measure;
+                    }
+
+                    if (m[1]) {
                         measures.y = m[1].measure;
-                    } else {
-                        measures.x = null;
-                        measures.y = m[0].measure;
+                    }
+
+                    if (m[2]) {
+                        measures.color = m[2].measure;
                     }
 
                     this.fromFilter = true;
@@ -766,8 +843,42 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
+        // second check the measure selections
+        if (this.axisPanelX) {
+            sel = this.axisPanelX.getSelection();
+            if (sel && sel.length > 0) {
+                measures.x = sel[0].data;
+                measures.x.options = this.axisPanelX.getVariableOptionValues();
+
+                // special case to look for userGroups as a variable option to use as filter values for the x measure
+                // and to user antigen filters for categorical x-axis which matches the antigen field
+                if (measures.x.options.userGroups)
+                    measures.x.values = measures.x.options.userGroups;
+                else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name)
+                    measures.x.values = measures.x.options.antigen.values;
+
+                this.fromFilter = false;
+            }
+        }
+        if (this.axisPanelY) {
+            sel = this.axisPanelY.getSelection();
+            if (sel && sel.length > 0) {
+                measures.y = sel[0].data;
+                measures.y.options = this.axisPanelY.getVariableOptionValues();
+                this.fromFilter = false;
+            }
+        }
+        if (this.colorPanel) {
+            sel = this.colorPanel.getSelection();
+            if (sel && sel.length > 0) {
+                measures.color = sel[0].data;
+                //measures.color.allowNullResults = false;
+                this.fromFilter = false;
+            }
+        }
+
         // map the y-axis schema and query name for a time point x-axis variable
-        if (measures.x)
+        if (measures.x && measures.y)
         {
             if (!measures.x.schemaName && !measures.x.queryName)
             {
@@ -782,7 +893,6 @@ Ext.define('Connector.view.Scatter', {
     },
 
     onShowGraph : function() {
-
         this.hideMessage();
         this.refreshRequired = false;
 
@@ -790,6 +900,7 @@ Ext.define('Connector.view.Scatter', {
 
         this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
         this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
+        this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
 
         if (this.filterClear) {
             if (this.axisPanelY) {
@@ -801,44 +912,83 @@ Ext.define('Connector.view.Scatter', {
                 this.axisPanelX.clearSelection();
                 Ext.getCmp('xaxisselector').clearModel();
             }
+
+            if (this.colorPanel) {
+                this.colorPanel.clearSelection();
+                Ext.getCmp('colorselector').clearModel();
+            }
         }
 
         if (this.filterClear || !activeMeasures.y) {
+            this.requireStudyAxis = false;
+            this.studyAxisPanel.setVisible(false);
             this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
             return;
         }
 
-        this.measures = [ activeMeasures.x, activeMeasures.y ];
+        this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
+
+        this.rowlimit = activeMeasures.x && this.isContinuousMeasure(activeMeasures.x) ? 5000 : 100000; // selectRows server default limit is 100000
 
         this.showLoad();
 
-        var sorts = this.getSorts();
-
-        var wrappedMeasures = [];
-
-        if (this.measures[0]) {
-            wrappedMeasures.push({measure : this.measures[0], time: 'visit'});
-        }
-
-        if (this.measures[1]) {
-            wrappedMeasures.push({measure : this.measures[1], time: 'visit'});
-        }
-
-        if (!this.fromFilter) {
-            this.updatePlotBasedFilter(wrappedMeasures);
+        if (!this.fromFilter && activeMeasures.y) {
+            this.updatePlotBasedFilter(activeMeasures);
         }
         else {
             this.initialized = true;
+            this.requestChartData(activeMeasures);
         }
+    },
+
+    getWrappedMeasures : function(activeMeasures) {
+
+        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
+
+        var wrappedMeasures = [null, null, null];
+        if (activeMeasures.x) {
+            wrappedMeasures[0] = this.getAxisWrappedMeasure('x', activeMeasures, requiresPivot);
+        }
+        if (activeMeasures.y) {
+            wrappedMeasures[1] = this.getAxisWrappedMeasure('y', activeMeasures, requiresPivot);
+        }
+        if (activeMeasures.color) {
+            wrappedMeasures[2] = {measure : activeMeasures.color, time: 'date'};
+        }
+
+        return wrappedMeasures;
+    },
+
+    requestChartData : function(activeMeasures) {
+
+        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
+
+        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
+        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
 
         // Request Participant List
         this.getParticipantIn(function(ptidList) {
 
+            var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
+            var nonNullMeasures = [];
+            for (var i =0; i < wrappedMeasures.length; i++) {
+                if (wrappedMeasures[i]) {
+                    nonNullMeasures.push(wrappedMeasures[i]);
+                }
+            }
+
+            var sorts = this.getSorts();
             if (ptidList)
             {
                 this.applyFiltersToSorts(sorts, ptidList);
+            }
+
+            if (activeMeasures.x && activeMeasures.x.variableType === "TIME") {
+                this.requireStudyAxis = true;
+            } else {
+                this.requireStudyAxis = false;
             }
 
             // Request Chart Data
@@ -846,7 +996,7 @@ Ext.define('Connector.view.Scatter', {
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
                 method: 'POST',
                 jsonData: {
-                    measures: wrappedMeasures,
+                    measures: nonNullMeasures.concat(additionalMeasures),
                     sorts: sorts,
                     limit: (this.rowlimit+1)
                 },
@@ -857,6 +1007,119 @@ Ext.define('Connector.view.Scatter', {
 
             this.requestCitations();
         });
+    },
+
+    getAxisWrappedMeasure : function(axis, activeMeasures, requiresPivot) {
+        var measure = activeMeasures[axis];
+        var options = activeMeasures[axis].options;
+        var wrappedMeasure = {measure : measure, time: 'date'};
+
+        var isVisitTagAlignment = options && options.alignmentVisitTag !== undefined;
+        var hasAntigens = options && options.antigen !== undefined;
+
+        if (isVisitTagAlignment)
+        {
+            var interval = measure.alias;
+            measure.interval = interval;
+            wrappedMeasure.dateOptions = {
+                interval: interval,
+                zeroDayVisitTag: options.alignmentVisitTag,
+                useProtocolDay: true
+            }
+        }
+        else if (requiresPivot && hasAntigens)
+        {
+            wrappedMeasure.measure.aggregate = "MAX";
+            wrappedMeasure.dimension = this.getDimension(activeMeasures);
+        }
+
+        return wrappedMeasure;
+    },
+
+    requiresPivot : function(xMeasure, yMeasure) {
+        // handle scenario where we are plotting either the same variable,
+        // with different antigen subsets, from the same source
+        // or different variables from the same source and the results will
+        // be pivoted by the getData API
+
+        return xMeasure != null && yMeasure != null
+            && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
+            && xMeasure.options && xMeasure.options.antigen
+            && yMeasure.options && yMeasure.options.antigen
+            && xMeasure.schemaName == yMeasure.schemaName
+            && xMeasure.queryName == yMeasure.queryName
+            && xMeasure.variableType == null && yMeasure.variableType == null;
+    },
+
+    getDimension : function(activeMeasures) {
+        // NOTE: only used when plotting antigens from the same source against each other
+        // so we can assume that the x and y axis measures are the same schema, query, colName
+
+        var schema = activeMeasures.x.schemaName || activeMeasures.y.schemaName;
+        var query = activeMeasures.x.queryName || activeMeasures.y.queryName;
+
+        var xAntigen = activeMeasures.x.options.antigen;
+        var yAntigen = activeMeasures.y.options.antigen;
+
+        var colName = xAntigen != undefined ? xAntigen.name : yAntigen.name;
+
+        var values = xAntigen != undefined ? xAntigen.values : [];
+        if (yAntigen != undefined)
+            values = values.concat(yAntigen.values);
+
+        return {
+            schemaName: schema,
+            queryName: query,
+            name: colName,
+            values: values
+        };
+    },
+
+    getAdditionalMeasures : function(activeMeasures, requiresPivot) {
+        var measuresMap = {}; // map key to schema, query, name, and values
+        Ext.each(["x", "y"], function(axis)
+        {
+            if (activeMeasures[axis])
+            {
+                var schema = activeMeasures[axis].schemaName;
+                var query = activeMeasures[axis].queryName;
+
+                if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen)
+                {
+                    var name = activeMeasures[axis].options.antigen.name;
+                    var values = activeMeasures[axis].options.antigen.values;
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
+                }
+
+                if (activeMeasures[axis].variableType === "TIME")
+                {
+                    var name = Connector.studyContext.subjectVisitColumn + "/Visit";
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
+                }
+            }
+        }, this);
+
+        var additionalMeasuresArr = [];
+        for (var key in measuresMap)
+        {
+            additionalMeasuresArr.push({measure : {
+                name: measuresMap[key].name,
+                queryName: measuresMap[key].queryName,
+                schemaName: measuresMap[key].schemaName,
+                values: measuresMap[key].values
+            }, time: 'date'});
+
+        }
+        return additionalMeasuresArr;
+    },
+
+    addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
+        var key = schema + "|" + query + "|" + name;
+
+        if (!measureMap[key])
+            measureMap[key] = { schemaName: schema, queryName: query, name: name, values: [] };
+
+        measureMap[key].values = measureMap[key].values.concat(values);
     },
 
     showLoad : function() {
@@ -935,31 +1198,41 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // preprocess decoded data shape
-        var config = this._preprocessData(Ext.decode(response.responseText));
+        this.getDataResp = Ext.decode(response.responseText);
 
-        // call render
-        this.initPlot(config, false);
+        this._preprocessData(this.requireStudyAxis);
     },
 
-    updatePlotBasedFilter : function(measures) {
+    updatePlotBasedFilter : function(activeMeasures) {
+        var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
+        var nonNullMeasures = [];
+        for (var i =0; i < wrappedMeasures.length; i++) {
+            if (wrappedMeasures[i]) {
+                nonNullMeasures.push(wrappedMeasures[i]);
+            }
+        }
+
         // Request Distinct Participants
         Ext.Ajax.request({
             url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
             method: 'POST',
             jsonData: {
-                measures: measures,
+                measures: nonNullMeasures,
                 sorts: this.getSorts(),
                 limit: (this.rowlimit+1)
             },
             success: function(response) {
-                this.onFilterDataSuccess(Ext.decode(response.responseText), measures);
+                // Note: We intentionally pass in the measures object that might have nulls.
+                this.onFilterDataSuccess(Ext.decode(response.responseText), activeMeasures);
             },
             failure: this.onFailure,
             scope: this
         });
     },
 
-    onFilterDataSuccess : function(r, measures) {
+    onFilterDataSuccess : function(r, activeMeasures) {
+        var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
+
         LABKEY.Query.selectDistinctRows({
             schemaName: r.schemaName,
             queryName: r.queryName,
@@ -969,7 +1242,7 @@ Ext.define('Connector.view.Scatter', {
                 var filter = {
                     hierarchy: 'Subject',
                     isPlot: true,
-                    plotMeasures: measures,
+                    plotMeasures: wrappedMeasures,
                     plotScales: [this.getScale('x'), this.getScale('y')],
                     members: []
                 };
@@ -984,8 +1257,8 @@ Ext.define('Connector.view.Scatter', {
                 var filters = this.state.getFilters(), found = false;
                 for (var f=0; f < filters.length; f++) {
                     if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                        if (!Connector.model.Filter.plotMeasuresEqual(filters[f].get('plotMeasures'), measures)) {
-                            filters[f].set('plotMeasures', measures);
+                        if (!Connector.model.Filter.plotMeasuresEqual(filters[f].get('plotMeasures'), wrappedMeasures)) {
+                            filters[f].set('plotMeasures', wrappedMeasures);
                             // TODO: Before we update filter members check to see if the filters actually changed.
                             // Call Filter.plotMeasuresEqual (see Filter.js).
                             // TODO: Call state.updateFilter instead. Figure out why we are skipping state.
@@ -1002,6 +1275,8 @@ Ext.define('Connector.view.Scatter', {
                     this.state.prependFilter(filter);
                 }
                 this.plotLock = false;
+
+                this.requestChartData(activeMeasures);
             },
             scope: this
         });
@@ -1023,6 +1298,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     onFailure : function(response) {
+        console.log(response);
         this.hideLoad();
         this.showMessage('Failed to Load');
     },
@@ -1058,20 +1334,26 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    _preprocessData : function(data) {
-        var x = this.measures[0], y = this.measures[1], xa = null, ya = null, _xid, _yid;
+    _preprocessGetDataResp : function() {
+        var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
+                ya = null, ca = null,_xid, _yid, _cid,
+                subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
 
-        // TODO: In the future we will have data from multiple studies, meaning we might have more than one valid
-        // subject columName value. We'll need to make sure that when we get to that point we have some way to coalesce
-        // that information into one value for the SubjectId (i.e. MouseId, ParticipantId get renamed to SubjectId).
+        this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
         var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
                                        // different value for the subjectNoun than the moduleContext. This is an issue
                                        // with multi-study getDataAPI calls.
         var subjectCol = data.measureToColumn[subjectNoun];
 
+        if (color) {
+            _cid = data.measureToColumn[color.alias] || data.measureToColumn[color.name];
+        }
+
+        data = this.processPivotedData(data, x, y, subjectCol, _cid);
+
         if (x) {
-            _xid = data.measureToColumn[x.alias] || data.measureToColumn[x.name];
+            _xid = x.interval || data.measureToColumn["xAxis"] || data.measureToColumn[x.alias] || data.measureToColumn[x.name];
             xa = {
                 schema : x.schemaName,
                 query  : x.queryName,
@@ -1081,7 +1363,7 @@ Ext.define('Connector.view.Scatter', {
                 label  : x.label,
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE',
-                isContinuous: x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'TIMESTAMP'
+                isContinuous: this.isContinuousMeasure(x)
             };
         } else {
             xa = {
@@ -1095,7 +1377,7 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
-        _yid = data.measureToColumn[y.alias] || data.measureToColumn[y.name];
+        _yid = data.measureToColumn["yAxis"] || data.measureToColumn[y.alias] || data.measureToColumn[y.name];
         ya = {
             schema : y.schemaName,
             query  : y.queryName,
@@ -1105,8 +1387,30 @@ Ext.define('Connector.view.Scatter', {
             label  : y.label,
             type   : y.type,
             isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE',
-            isContinuous: y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'TIMESTAMP'
+            isContinuous: this.isContinuousMeasure(y)
         };
+
+        if (color) {
+            ca = {
+                schema : color.schemaName,
+                query  : color.queryName,
+                name   : color.name,
+                alias  : color.alias,
+                colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
+                label  : color.label,
+                type   : color.type
+            };
+        } else {
+            ca = {
+                schema  : null,
+                query   : null,
+                name    : null,
+                alias   : null,
+                colName : null,
+                label   : "",
+                isNumeric: false
+            }
+        }
 
         var map = [], r,
                 rows = data.rows,
@@ -1121,14 +1425,23 @@ Ext.define('Connector.view.Scatter', {
             this.msg.hide();
         }
 
-        var xVal, yVal, xIsNum, yIsNum, negX = false, negY = false;
+        var xVal, yVal, colorVal, xIsNum, yIsNum, negX = false, negY = false, xAntigen, yAntigen;
         for (r = 0; r < len; r++) {
             if (x) {
                 xVal = this._getValue(x, _xid, rows[r]);
+                xAntigen = rows[r][_xid].antigen;
             } else {
                 xVal = "";
             }
+
             yVal = this._getValue(y, _yid, rows[r]);
+            yAntigen = rows[r][_yid].antigen;
+
+            if (color) {
+                colorVal = this._getValue(color, _cid, rows[r]);
+            } else {
+                colorVal = null;
+            }
 
             // allow any pair that does not contain a negative value.
             // NaN, null, and undefined are non-negative values.
@@ -1153,9 +1466,11 @@ Ext.define('Connector.view.Scatter', {
                 map.push({
                     x : xVal,
                     y : yVal,
+                    color : colorVal,
                     subjectId: rows[r][subjectCol],
-                    xname : xa ? xa.label : '',
-                    yname : ya.label
+                    xname : (xa ? xa.label : null) + (xAntigen ? " (" + xAntigen + ")" : ''),
+                    yname : ya.label + (yAntigen ? " (" + yAntigen + ")" : ''),
+                    colorname : ca.label
                 });
             }
 
@@ -1203,17 +1518,97 @@ Ext.define('Connector.view.Scatter', {
             el.on('click', function() { this.hideMessage(); }, this);
         }
 
-        return {
+        this.plotData = {
             schemaName: data.schemaName,
             queryName: data.queryName,
             // We need the subject column as it appears in the temp query for the brushend handler.
             subjectColumn: subjectCol,
             xaxis: xa,
             yaxis: ya,
+            color: ca,
             rows : map,
             setXLinear : negX,
             setYLinear : negY
         };
+    },
+
+    processPivotedData : function(data, x, y, subjectCol, colorCol) {
+        // when we are plotting subsets of antigens from the same source against each other, we pivot the data
+        // so we need to unpivot it here for each combination of x-axis antigen by y-axis antigen
+
+        if (this.requiresPivot(x, y) && x.options.antigen != null && x.options.antigen.values.length > 0
+            && y.options.antigen != null && y.options.antigen.values.length > 0)
+        {
+            var xColName = x.name;
+            var yColName = y.name;
+
+            // get the mapping of the column aliases in the data object in an easier format to reference
+            var columnAliasMap = {};
+            Ext.each(data.columnAliases, function(alias){
+                columnAliasMap[alias.measureName + "::" + alias.pivotValue] = alias.columnName;
+            });
+
+            // create an array of antigen pairs (of the data object column aliases)
+            var antigenColumnAliasPairs = [];
+            for (i = 0; i < x.options.antigen.values.length; i++)
+            {
+                var xAntigenVal = x.options.antigen.values[i];
+                for (j = 0; j < y.options.antigen.values.length; j++)
+                {
+                    var yAntigenVal = y.options.antigen.values[j];
+                    antigenColumnAliasPairs.push({
+                        xAlias: columnAliasMap[xColName + "::" + xAntigenVal],
+                        xAntigen: xAntigenVal,
+                        yAlias: columnAliasMap[yColName + "::" + yAntigenVal],
+                        yAntigen: yAntigenVal
+                    });
+                }
+            }
+
+            // special case for having the same measure on both axis
+            if (xColName == yColName)
+            {
+                xColName += '-x';
+                yColName += '-y';
+
+                // remap the column names to what we will set them to
+                data.measureToColumn['xAxis'] = xColName;
+                data.measureToColumn['yAxis'] = yColName;
+            }
+            else
+            {
+                // remap the column names to what we will set them to
+                data.measureToColumn[xColName] = xColName;
+                data.measureToColumn[yColName] = yColName;
+            }
+
+            // create the new data.rows array with a row for each ptid/visit/antigenPair
+            var newRowsArr = [];
+            for (var i = 0; i < data.rows.length; i++)
+            {
+                var row = data.rows[i];
+                for (var j = 0; j < antigenColumnAliasPairs.length; j++)
+                {
+                    var dataRow = {};
+                    dataRow[subjectCol] = row[subjectCol];
+                    dataRow[colorCol] = row[colorCol];
+
+                    dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
+                    dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
+                    dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
+                    dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
+
+                    newRowsArr.push(dataRow);
+                }
+            }
+            data.rows = newRowsArr;
+        }
+
+        return data;
+    },
+
+    isContinuousMeasure : function(measure) {
+        return measure.type === 'INTEGER' || measure.type === 'DOUBLE' || measure.type === 'TIMESTAMP';
     },
 
     updateMeasureSelection : function(win) {
@@ -1265,7 +1660,7 @@ Ext.define('Connector.view.Scatter', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 open : function() {},
                 measureConfig: {
-                    allColumns: this.allColumns,
+                    allColumns: false,
                     displaySourceCounts: true,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -1279,7 +1674,8 @@ Ext.define('Connector.view.Scatter', {
                 displayConfig: {
                     mainTitle : 'Choose a Variable for the Y Axis...'
                 },
-                scalename: 'yscale'
+                scalename: 'yscale',
+                disableAntigenFilter: false
             });
 
             var pos = this.getPlotPosition();
@@ -1317,9 +1713,7 @@ Ext.define('Connector.view.Scatter', {
                             if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
                                 this.showTask.delay(300);
-                                this.ywin.hide(null, function() {
-                                    this.fireEvent('axisselect', this, 'y', yselect);
-                                }, this);
+                                this.ywin.hide();
                             }
                         },
                         scope: this
@@ -1329,6 +1723,8 @@ Ext.define('Connector.view.Scatter', {
                             if (this.activeYSelection) {
                                 this.axisPanelY.setSelection(this.activeYSelection);
                                 this.activeYSelection = undefined;
+                            } else {
+                                this.axisPanelY.clearSelection();
                             }
                             this.ywin.hide();
                         },
@@ -1377,7 +1773,8 @@ Ext.define('Connector.view.Scatter', {
                     mainTitle : 'Choose a Variable for the X Axis...'
                 },
                 scalename : 'xscale',
-                visitTagStore: this.visitTagStore
+                visitTagStore: this.visitTagStore,
+                disableAntigenFilter: false
             });
 
             var pos = this.getPlotPosition();
@@ -1393,7 +1790,7 @@ Ext.define('Connector.view.Scatter', {
                 header : false,
                 closeAction: 'hide',
                 resizable : false,
-                minHeight : 450,
+                minHeight : 500,
                 maxHeight: 700,
                 minWidth: 600,
                 maxWidth: 975,
@@ -1407,44 +1804,55 @@ Ext.define('Connector.view.Scatter', {
                     dock : 'bottom',
                     ui : 'footer',
                     padding : 15,
-                    items : ['->',{
+                    items : ['->', {
                         text  : 'set x axis',
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
-                            var xselect = this.axisPanelX.getSelection();
+                            var xselect = this.axisPanelX.getSelection(), yHasSelection;
 
-                            // TODO: to be removed once we implement calculation of aligned timepoints on x-axis
-                            if (xselect && xselect.length > 0)
-                            {
-                                if (xselect[0].data.variableType == "TIME" && xselect[0].data.name == null)
-                                {
-                                    this.showMessage('Time point ' + xselect[0].data.label.toLowerCase() + ' not yet supported.');
-                                    return;
-                                }
-                            }
+                            yModel = Ext.getCmp('yaxisselector').getModel().data;
+                            yHasSelection = ((yModel.schemaLabel !== "" && yModel.queryLabel !== "") || (this.hasOwnProperty('axisPanelY') && this.axisPanelY.hasSelection()));
 
-                            if (this.axisPanelY && this.axisPanelY.hasSelection() && this.axisPanelX.hasSelection()) {
+                            if (yHasSelection && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
+                                this.xwin.hide();
                                 this.showTask.delay(300);
-                                this.xwin.hide(null, function() {
-                                    this.fireEvent('axisselect', this, 'x', xselect);
-                                }, this);
                             }
                             else if (this.axisPanelX.hasSelection()) {
                                 this.xwin.hide(null, function() {
                                     this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
-                                    this.fireEvent('axisselect', this, 'x', xselect);
                                 }, this);
                             }
                         },
                         scope: this
-                    },{
+                    }, {
+                        text: 'remove variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            var filters = this.state.getFilters();
+                            // Need to remove the color measure from the plot filter or we'll pull it down again.
+                            for (var f=0; f < filters.length; f++) {
+                                var m = filters[f].get('plotMeasures');
+                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                                    m[0] = null;
+                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+                                }
+                            }
+
+                            this.activeXSelection = undefined;
+                            this.axisPanelX.clearSelection();
+                            this.xwin.hide();
+                        },
+                        scope: this
+                    }, {
                         text  : 'cancel',
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
                             if (this.activeXSelection) {
                                 this.axisPanelX.setSelection(this.activeXSelection);
                                 this.activeXSelection = undefined;
+                            } else {
+                                this.axisPanelX.clearSelection();
                             }
                             this.xwin.hide();
                         },
@@ -1463,6 +1871,119 @@ Ext.define('Connector.view.Scatter', {
         this.xwin.show(null, function() {
             this.runUniqueQuery(this.axisPanelX);
         }, this);
+    },
+
+    showColorSelection : function(targetEl) {
+        if (!this.colorwin) {
+            var sCls = 'colorsource';
+            TYPES = {};
+            this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
+                flex      : 1,
+                ui        : 'axispanel',
+                title     : 'Color',
+                bodyStyle: 'padding: 15px 27px 0 27px;',
+                measureConfig : {
+                    allColumns : true,
+                    displaySourceCounts: true,
+                    includeTimpointMeasures : false,
+                    filter     : LABKEY.Query.Visualization.Filter.create({
+                        schemaName: 'study',
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    }),
+                    userFilter : function(row) {
+                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                    },
+                    showHidden : this.canShowHidden,
+                    cls        : 'coloraxispicker',
+                    sourceCls  : sCls,
+                    multiSelect: false
+                },
+                displayConfig : {
+                    mainTitle : 'Choose a Color Variable...'
+                },
+                scalename : 'colorscale'
+            });
+
+            var pos = this.getPlotPosition();
+
+            this.colorwin = Ext.create('Ext.window.Window', {
+                id        : 'plotcolorwin',
+                cls       : 'axiswindow',
+                animateTarget : targetEl,
+                sourceCls : sCls,
+                axisPanel : this.colorPanel,
+                modal     : true,
+                draggable : false,
+                header : false,
+                closeAction: 'hide',
+                resizable : false,
+                minHeight : 500,
+                maxHeight: 700,
+                minWidth: 600,
+                maxWidth: 975,
+                layout : {
+                    type : 'vbox',
+                    align: 'stretch'
+                },
+                items   : [this.colorPanel],
+                dockedItems : [{
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    ui : 'footer',
+                    padding: 15,
+                    items : ['->', {
+                        text: 'set color variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            this.showTask.delay(300);
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }, {
+                        text: 'remove variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            var filters = this.state.getFilters();
+                            // Need to remove the color measure from the plot filter or we'll pull it down again.
+                            for (var f=0; f < filters.length; f++) {
+                                var m = filters[f].get('plotMeasures');
+                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                                    m[2] = null;
+                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+                                }
+                            }
+
+                            this.activeColorSelection = undefined;
+                            this.colorPanel.clearSelection();
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }, {
+                        text: 'cancel',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            if (this.activeColorSelection) {
+                                this.colorPanel.setSelection(this.activeColorSelection);
+                                this.activeColorSelection = undefined;
+                            } else {
+                                this.colorPanel.clearSelection();
+                            }
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }]
+                }],
+                scope: this
+            });
+        }
+
+        this.updateMeasureSelection(this.colorwin);
+
+        if (this.colorPanel.hasSelection()) {
+            this.activeColorSelection = this.colorPanel.getSelection()[0];
+        }
+
+        this.colorwin.show();
     },
 
     runUniqueQuery : function(axisSelector) {
@@ -1666,5 +2187,234 @@ Ext.define('Connector.view.Scatter', {
                 this.plot.clearBrush();
             }
         }
+    },
+
+    requestStudyAxisData : function() {
+        // TODO: Make query also return all the visit tags for each visit.
+        var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
+        var sql = 'SELECT\n' +
+                'StudyLabel,\n' +
+                'TimepointType,\n' +
+                'VisitLabel,\n' +
+                'SequenceNumMin,\n' +
+                'SequenceNumMax,\n' +
+                'ProtocolDay,\n' +
+                'VisitDescription,\n' +
+                'VisitRowId,\n' +
+                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
+                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
+                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
+            'FROM (\n' +
+                'SELECT\n' +
+                    'StudyProperties.Label as StudyLabel,\n' +
+                    'StudyProperties.TimepointType as TimepointType,\n' +
+                    'Visit.Label as VisitLabel,\n' +
+                    'Visit.SequenceNumMin,\n' +
+                    'Visit.SequenceNumMax,\n' +
+                    'Visit.ProtocolDay,\n' +
+                    'Visit.Description as VisitDescription,\n' +
+                    'Visit.Folder as VisitContainer,\n' +
+                    'Visit.RowId as VisitRowId,\n' +
+                    'StudyProperties.Container as StudyContainer\n' +
+                'FROM Visit, StudyProperties\n' +
+                'WHERE Visit.Folder = StudyProperties.Container AND\n' +
+                'Visit.RowId IN ' + inClause + '\n' +
+            ') as AllVisits\n' +
+            'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+
+        LABKEY.Query.executeSql({
+            schemaName: 'study',
+            requiredVersion: 9.1,
+            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
+            sql: sql,
+            success: function(resp){
+                if (!this.isActiveView) {
+                    return;
+                }
+
+                this.studyAxisResp = resp;
+                this._preprocessStudyAxisData();
+                this.initPlot(this.plotData, false);
+                this.initStudyAxis();
+            },
+            failure: function(resp) {console.error('Error retrieving study axis data')},
+            scope: this
+        });
+    },
+
+    _buildAlignmentMap : function() {
+        var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName, protocolDay, value;
+
+        xColName = this.getDataResp.measureToColumn[this.measures[0].name];
+        visitColName = this.getDataResp.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
+
+        for (var i = 0; i < rows.length; i++) {
+            alignmentMap[rows[i][visitColName].value] = rows[i][xColName].value;
+        }
+
+        this.alignmentMap = alignmentMap;
+    },
+
+    _preprocessStudyAxisData : function() {
+        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, studyMap = {}, studyLabel, study, visitId,
+                visit, visitTagName, visits, interval, convertInterval;
+
+        interval = this.measures[0].interval.toLowerCase();
+        convertInterval = function(d) {
+            // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
+            if (interval == 'days') {
+                return d;
+            } else if (interval == 'weeks') {
+                return d / 7;
+            } else if (interval == 'months') {
+                return d / (365.25/12);
+            }
+        };
+
+        this.studyAxisData = [];
+
+        for (var i = 0; i < rows.length; i++) {
+            studyLabel = rows[i].StudyLabel.value;
+            visitId = rows[i].VisitRowId.value;
+            visitTagName = rows[i].VisitTagName.value;
+
+            if (!studyMap.hasOwnProperty(studyLabel)) {
+                studyMap[studyLabel] = {
+                    label : studyLabel,
+                    timepointType : rows[i].TimepointType.value,
+                    visits: {}
+                };
+            }
+
+            study = studyMap[studyLabel];
+
+            if (!study.visits.hasOwnProperty(visitId)) {
+                study.visits[visitId] = {
+                    id: visitId,
+                    label: rows[i].VisitLabel.value,
+                    description: rows[i].VisitDescription.value,
+                    sequenceNumMin: rows[i].SequenceNumMin.value,
+                    sequenceNumMax: rows[i].SequenceNumMax.value,
+                    protocolDay: convertInterval(rows[i].ProtocolDay.value),
+                    alignedDay: alignmentMap[rows[i].VisitRowId.value],
+                    visitTagMap : {} // Each visit tag the visit is tagged with.
+                };
+
+                if (study.timepointType !== 'VISIT') {
+                    study.visits[visitId].sequenceNumMin = convertInterval(study.visits[visitId].sequenceNumMin);
+                    study.visits[visitId].sequenceNumMax = convertInterval(study.visits[visitId].sequenceNumMax);
+                }
+            }
+
+            visit = study.visits[visitId];
+
+            if (!visit.alignedDay) {
+                visit.alignedDay = alignmentMap[rows[i].VisitRowId.value];
+            }
+
+            // TODO: Wire up visit tags.
+            if (visitTagName && !visit.visitTagMap.hasOwnProperty(visitTagName)) {
+                visit.visitTagMap[visitTagName] = {
+                    name: visitTagName,
+                    caption: rows[i].VisitTagCaption.value,
+                    description: rows[i].VisitTagDescription.value
+
+                };
+            }
+        }
+
+        // Convert study map and visit maps into arrays.
+        for (var studyName in studyMap) {
+            if (studyMap.hasOwnProperty(studyName)) {
+                study = studyMap[studyName];
+                visits = [];
+                for (visitId in study.visits) {
+                    if (study.visits.hasOwnProperty(visitId)) {
+                        visits.push(study.visits[visitId]);
+                        // TODO: flatten visit tag map????
+                    }
+                }
+
+                study.visits = visits;
+                this.studyAxisData.push(study);
+            }
+        }
+    },
+
+    showStudyAxisHover : function(data, rectEl) {
+        var plotEl = document.querySelector('div.plot svg'),
+            plotBBox = plotEl.getBoundingClientRect(),
+            hoverBBox, html, visitTagKeys, visitTagKey, visitTag, i;
+
+        this.visitHoverEl = document.createElement('div');
+        this.visitHoverEl.setAttribute('class', 'study-axis-window');
+        html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
+
+        // Sort visit tags so they're consistent.
+        visitTagKeys = Object.keys(data.visitTagMap);
+        visitTagKeys.sort();
+
+        for (i = 0; i < visitTagKeys.length; i++) {
+            visitTagKey = visitTagKeys[i];
+            if (data.visitTagMap.hasOwnProperty(visitTagKey)) {
+                visitTag = data.visitTagMap[visitTagKey];
+                html += '<p>' + visitTag.caption + '</p>';
+            }
+        }
+        this.visitHoverEl.innerHTML = html;
+        document.querySelector('body').appendChild(this.visitHoverEl);
+        hoverBBox = this.visitHoverEl.getBoundingClientRect();
+        this.visitHoverEl.style.left = rectEl.getAttribute('x') + 'px';
+        this.visitHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
+    },
+
+    removeStudyAxisHover : function() {
+        if (this.visitHoverEl) {
+            this.visitHoverEl.remove();
+            this.visitHoverEl = null;
+        }
+    },
+
+    initStudyAxis : function() {
+        if (!this.studyAxis) {
+            this.studyAxis = Connector.view.StudyAxis().renderTo('study-axis');
+        }
+
+        this.studyAxis.studyData(this.studyAxisData)
+                .scale(this.plot.scales.x.scale)
+                .width(this.studyAxisPanel.getWidth() - 40)
+                .alignmentDay(0)
+                .mouseover(this.showStudyAxisHover, this)
+                .mouseout(this.removeStudyAxisHover, this);
+
+        this.studyAxis();
+    },
+
+    _preprocessData : function(withStudyAxis) {
+        this._preprocessGetDataResp();
+        if (withStudyAxis) {
+            this._buildAlignmentMap();
+            this.requestStudyAxisData();
+        } else {
+            this.initPlot(this.plotData, false);
+        }
+    },
+
+    resizePlotContainers : function() {
+        if (this.requireStudyAxis) {
+            this.plotEl.setStyle('padding', '0 0 0 150px');
+            this.studyAxisPanel.setVisible(true);
+            this.studyAxisPanel.setHeight(Math.min(100, 25 * this.studyAxisData.length));
+        } else {
+            this.plotEl.setStyle('padding', '0');
+            this.studyAxisPanel.setVisible(false);
+        }
+    },
+
+    // FOR TESTING USE
+    showPlotDataGrid : function(targetEl) {
+        window.open(LABKEY.ActionURL.buildURL('query', 'executeQuery', null, {
+            schemaName: this.dataQWP.schema, 'query.queryName': this.dataQWP.query
+        }), '_blank');
     }
 });
