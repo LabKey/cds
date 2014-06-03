@@ -22,6 +22,7 @@ public abstract class DataspaceVariableSelector
     protected abstract String getPickerClass();
     protected abstract boolean isMeasureMultiSelect();
     protected abstract Locator getOpenButton();
+    public abstract Locator.CssLocator window();
 
     public void openSelectorWindow()
     {
@@ -30,11 +31,6 @@ public abstract class DataspaceVariableSelector
         openButton.click();
 
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
-    }
-
-    public Locator.CssLocator window()
-    {
-        return Locator.id("plotxmeasurewin").toCssLocator();
     }
 
     public Locator.CssLocator pickerPanel()
@@ -121,7 +117,7 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("cancel"));
+        _test.click(window().append("a.x-btn").withText("cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
 

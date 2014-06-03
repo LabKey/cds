@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category({CustomModules.class, CDS.class})
@@ -476,13 +477,45 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     }
 
     @Test
-    public void verifyAntigensVariableSelector()
+    public void verifyAntigenVariableSelector()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+        yaxis.openSelectorWindow();
+        yaxis.pickSource("Luminex");
+        waitForElement(yaxis.variableOptionsRow().withText("gp41"));
+        assertEquals("Wrong number of antigens for Luminex", 1, getElementCount(yaxis.variableOptionsRow()));
+        yaxis.pickSource("NAb");
+        waitForElement(yaxis.variableOptionsRow().withText("BaL.01"));
+        assertEquals("Wrong number of antigens for NAb", 26, getElementCount(yaxis.variableOptionsRow()));
+        yaxis.cancelSelection();
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        xaxis.openSelectorWindow();
+        xaxis.pickSource("Luminex");
+        waitForElement(xaxis.variableOptionsRow().withText("gp41"));
+        assertEquals("Wrong number of antigens for Luminex", 1, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.pickSource("NAb");
+        waitForElement(xaxis.variableOptionsRow().withText("BaL.01"));
+        assertEquals("Wrong number of antigens for NAb", 26, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.pickSource("ADCC");
+        waitForElement(xaxis.variableOptionsRow().withText("pCenvFs2_Pt1086_B2"));
+        assertEquals("Wrong number of antigens for ADCC", 4, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.cancelSelection();
+
+        final ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+        color.openSelectorWindow();
+        color.pickSource("Luminex");
+        assertFalse("Antigen picker found in color variable selector", doesElementAppear(new Checker()
+        {
+            @Override
+            public boolean check()
+            {
+                return isElementPresent(color.variableOptionsRow());
+            }
+        }, 1000));
+        color.cancelSelection();
     }
 
     @Test
