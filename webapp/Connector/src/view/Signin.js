@@ -95,7 +95,6 @@ Ext.define('Connector.view.SigninForm', {
 
 	signin : function(evt) {
 		evt.stopEvent();
-		console.log("CLICKED");
         Ext.Ajax.request({
             url : LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
             method: 'POST',
