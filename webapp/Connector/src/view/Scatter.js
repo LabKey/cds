@@ -2370,7 +2370,7 @@ Ext.define('Connector.view.Scatter', {
 
     removeStudyAxisHover : function() {
         if (this.visitHoverEl) {
-            this.visitHoverEl.remove();
+            this.visitHoverEl.parentNode.removeChild(this.visitHoverEl);
             this.visitHoverEl = null;
         }
     },
