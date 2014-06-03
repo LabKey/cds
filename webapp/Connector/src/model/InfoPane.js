@@ -16,8 +16,8 @@ Ext.define('Connector.model.InfoPane', {
 
     constructor : function(config) {
 
-        if (config.olapProvider) {
-            this.setOlapProvider(config.olapProvider);
+        if (config.state) {
+            this.setStateManager(config.state);
         }
 
         this.callParent([config]);
@@ -49,7 +49,7 @@ Ext.define('Connector.model.InfoPane', {
         //
         if (this.isFilterBased()) {
             // Connector.model.Filter
-            this.getOlapProvider().onMDXReady(function(mdx) {
+            this.getStateManager().onMDXReady(function(mdx) {
 
                 var filter = this.get('filter');
 
@@ -83,11 +83,9 @@ Ext.define('Connector.model.InfoPane', {
         });
     },
 
-    clearFilter : function() {
-        if (this.isFilterBased()) {
-            var filter = this.get('filter');
-            this.getOlapProvider().removeFilter(filter.id);
-        }
+    clearFilter : function(isFilter) {
+        var filter = this.get('filter'), state = this.getStateManager();
+        isFilter ? state.removeFilter(filter.id) : state.removeSelection(filter.id);
     },
 
     /**
@@ -104,20 +102,27 @@ Ext.define('Connector.model.InfoPane', {
 
         var filter = this.createFilter(uniques);
         var noopFilter = (uniques.length === totalCount) && this.isOR();
+        var state = this.getStateManager();
 
         if (this.isFilterBased()) {
             var staleFilter = this.get('filter');
             if (staleFilter) {
+
+                var isFilter = state.isFilter(staleFilter.id);
+
                 if (uniques.length > 0 && !noopFilter) {
-                    this.getOlapProvider().updateFilter(staleFilter.id, {
+
+                    var config = {
                         hierarchy: filter.get('hierarchy'),
                         level: filter.get('level'),
                         members: filter.get('members'),
                         operator: filter.get('operator')
-                    });
+                    };
+
+                    isFilter ? state.updateFilter(staleFilter.id, config) : state.updateSelection(staleFilter.id, config);
                 }
                 else {
-                    this.clearFilter();
+                    this.clearFilter(isFilter);
                 }
             }
             else {
@@ -125,7 +130,7 @@ Ext.define('Connector.model.InfoPane', {
             }
         }
         else if (!noopFilter) {
-            this.getOlapProvider().addFilter(filter);
+            state.addFilter(filter);
         }
     },
 
@@ -153,17 +158,15 @@ Ext.define('Connector.model.InfoPane', {
         this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
 
-    getOlapProvider : function() { return this.olapProvider; },
+    getStateManager : function() { return this.state; },
 
-    setOlapProvider : function(olapProvider) {
-        this.olapProvider = olapProvider;
+    setStateManager : function(state) {
+        this.state = state;
     },
 
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
-        IPM = this;
-
-        this.getOlapProvider().onMDXReady(function(mdx) {
+        this.getStateManager().onMDXReady(function(mdx) {
 
             var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName);
             var dim = dimHier.dim, hier = dimHier.hierarchy, lvl = dimHier.lvl;

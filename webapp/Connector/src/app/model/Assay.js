@@ -11,6 +11,7 @@ Ext.define('Connector.app.model.Assay', {
     
     fields: [
         {name: 'Name'},
+        {name: 'Category'},
         {name: 'Contact'},
         {name: 'LeadContributor'},
         {name: 'Summary'},

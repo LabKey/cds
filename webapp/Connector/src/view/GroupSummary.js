@@ -195,7 +195,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
                 cls: 'titlepanel',
                 children: [{
                     tag: 'h1',
-                    html: this.groupLabel
+                    html: Ext.String.htmlEncode(this.groupLabel)
                 }]
             }
         },{
@@ -241,7 +241,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
     updateView : function(group) {
         this.group = group;
         this.groupLabel = group.get('label');
-        this.getComponent('grouplabel').update('<h1>' + this.groupLabel + '</h1>');
+        this.getComponent('grouplabel').update('<h1>' + Ext.String.htmlEncode(this.groupLabel) + '</h1>');
         this.doLayout();
     }
 });
@@ -275,6 +275,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
             margin: '10 0 20 0',
             bodyPadding: 10,
             width: '50%',
+            htmlEncode: true,
             value: desc
         });
 

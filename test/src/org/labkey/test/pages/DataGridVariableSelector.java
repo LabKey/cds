@@ -28,6 +28,12 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         return CDSHelper.Locators.cdsButtonLocator("choose from " + columnCount +" columns", "gridcolumnsbtn");
     }
 
+    @Override
+    protected boolean isMeasureMultiSelect()
+    {
+        return true;
+    }
+
     public void setColumnCount(int columnCount)
     {
         this.columnCount = columnCount;
@@ -44,7 +50,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             _test.waitForElement(Locator.id("gridmeasurewin").notHidden());
         }
 
-        pickMeasure(source, measure, true, keepSelection);
+        pickMeasure(source, measure, keepSelection);
 
         if (!keepOpen)
         {
@@ -111,5 +117,6 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     public void confirmSelection()
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 }
