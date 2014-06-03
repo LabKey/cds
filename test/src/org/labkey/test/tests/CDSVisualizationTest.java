@@ -474,6 +474,16 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("Unexpected number of visits on the study axis.", 37, studyVisitEls.size());
         assertTrue("Visit didnt have a transform as expected.", !studyVisitEls.get(0).getAttribute("transform").equals(""));
         assertTrue("Visit had a transform.", studyVisitEls.get(25).getAttribute("transform").equals(""));
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Time points", "Study weeks");
+        xaxis.setVariableRadio("Unaligned");
+        xaxis.confirmSelection();
+        waitForText("NotRV144");
+
+        // Assert that we have the same amount of visits even with study weeks.
+        studyVisitEls = studyVisits.findElements(getDriver());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
     }
 
     @AfterClass
