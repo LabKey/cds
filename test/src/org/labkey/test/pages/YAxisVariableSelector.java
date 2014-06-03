@@ -24,9 +24,16 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     }
 
     @Override
+    protected boolean isMeasureMultiSelect()
+    {
+        return false;
+    }
+
+    @Override
     public void confirmSelection()
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("set y axis"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void setScale(Scale scale)
