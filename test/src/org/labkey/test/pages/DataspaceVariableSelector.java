@@ -78,12 +78,9 @@ public abstract class DataspaceVariableSelector
         }
     }
 
-    /**
-     * Only tested with saved groups
-     */
     public void setVariableOptions(String... options)
     {
-        _test._ext4Helper.clearGridSelection("variableoptionsgrid");
+        clearVariableOptions();
 
         for (String option : options)
         {
@@ -95,7 +92,8 @@ public abstract class DataspaceVariableSelector
 
     public void clearVariableOptions()
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        // TODO: remove 'x-body' once helper takes a css selector
+        _test._ext4Helper.clearGridSelection("x-body " + window().getLocatorString() + " .variableoptionsgrid");
     }
 
     public void selectAllVariableOptions()
