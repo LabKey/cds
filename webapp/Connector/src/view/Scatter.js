@@ -2256,8 +2256,20 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _preprocessStudyAxisData : function() {
-        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, studyMap = {}, visitMap = {},
-                studyLabel, study, visitId, visit, visitTagName, visits;
+        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, studyMap = {}, studyLabel, study, visitId,
+                visit, visitTagName, visits, interval, convertInterval;
+
+        interval = this.measures[0].interval.toLowerCase();
+        convertInterval = function(d) {
+            // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
+            if (interval == 'days') {
+                return d;
+            } else if (interval == 'weeks') {
+                return d / 7;
+            } else if (interval == 'months') {
+                return d / (365.25/12);
+            }
+        };
 
         this.studyAxisData = [];
 
@@ -2283,10 +2295,15 @@ Ext.define('Connector.view.Scatter', {
                     description: rows[i].VisitDescription.value,
                     sequenceNumMin: rows[i].SequenceNumMin.value,
                     sequenceNumMax: rows[i].SequenceNumMax.value,
-                    protocolDay: rows[i].ProtocolDay.value,
+                    protocolDay: convertInterval(rows[i].ProtocolDay.value),
                     alignedDay: alignmentMap[rows[i].VisitRowId.value],
                     visitTagMap : {} // Each visit tag the visit is tagged with.
                 };
+
+                if (study.timepointType !== 'VISIT') {
+                    study.visits[visitId].sequenceNumMin = convertInterval(study.visits[visitId].sequenceNumMin);
+                    study.visits[visitId].sequenceNumMax = convertInterval(study.visits[visitId].sequenceNumMax);
+                }
             }
 
             visit = study.visits[visitId];
@@ -2351,14 +2368,14 @@ Ext.define('Connector.view.Scatter', {
         this.visitHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
     },
 
-    removeStudyAxisHover : function(data, rectEl) {
+    removeStudyAxisHover : function() {
         if (this.visitHoverEl) {
             this.visitHoverEl.remove();
             this.visitHoverEl = null;
         }
     },
 
-    initStudyAxis : function(axisData) {
+    initStudyAxis : function() {
         if (!this.studyAxis) {
             this.studyAxis = Connector.view.StudyAxis().renderTo('study-axis');
         }
