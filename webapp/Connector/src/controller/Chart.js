@@ -29,15 +29,34 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
+        this.control('#colorselector', {
+            requestvariable: function(view, model) {
+                var plot = view.up('plot');
+                if (plot) {
+                    plot.showColorSelection(view.getEl());
+                }
+            }
+        });
+
+        this.control('#plotshowdata', {
+            click: function(btn) {
+                var plot = btn.up('plot');
+                if (plot) {
+                    plot.showPlotDataGrid(btn.getEl());
+                }
+            }
+        });
+
         this.control('plot', {
             axisselect: function(plot, axis, selection) {
                 if (axis === 'y') {
                     Ext.getCmp('yaxisselector').getModel().updateVariable(selection);
-                    Ext.getCmp('xaxisselector').enable();
                 }
                 else if (axis === 'x') {
                     Ext.getCmp('xaxisselector').getModel().updateVariable(selection);
-                    Ext.getCmp('yaxisselector').enable();
+                }
+                else if (axis === 'color') {
+                    Ext.getCmp('colorselector').getModel().updateVariable(selection);
                 }
             }
         });

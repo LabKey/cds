@@ -50,7 +50,7 @@ Ext.define('Connector.view.PlotPane', {
                     xtype: 'box',
                     autoEl: {
                         tag: 'div',
-                        html: measures[1].measure.label
+                        html: measures[1].measure.label + this.getSublabel(measures[1].measure)
                     }
                 });
             }
@@ -75,7 +75,7 @@ Ext.define('Connector.view.PlotPane', {
                     xtype: 'box',
                     autoEl: {
                         tag: 'div',
-                        html: measures[0].measure.label
+                        html: measures[0].measure.label + this.getSublabel(measures[0].measure)
                     }
                 });
             }
@@ -107,5 +107,17 @@ Ext.define('Connector.view.PlotPane', {
     onUpdate : function() {
         this.getModel().clearFilter();
         this.hide();
+    },
+
+    getSublabel : function(measure) {
+        var sub = '';
+        if (measure.options)
+        {
+            if (measure.options.antigen)
+                sub = " (" + measure.options.antigen.values.join(", ") + ")";
+            else if (measure.options.alignmentVisitTagLabel)
+                sub = " (" + measure.options.alignmentVisitTagLabel + ")";
+        }
+        return sub;
     }
 });
