@@ -390,7 +390,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 137,
+                "N/A", 107,
                 "Placebo", 23,
                 "Prime-boost ALVAC HIV", 9,
                 "Prime-boost VRC-HIVADV014-00-VP", 22,

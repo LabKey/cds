@@ -17,7 +17,7 @@ Connector.view.StudyAxis = function(){
     var renderVisits = function(selection){
         var visits, widthFn, heightFn, xFn, yFn, transformFn, opacityFn;
 
-        xFn = function(d) { return xScale(d.sequenceNumMin); };
+        xFn = function(d) { return xScale(d.alignedDay); };
         yFn = function(d) { return yScale(d.studyLabel) - 8; };
         widthFn = function(d) {
             if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {

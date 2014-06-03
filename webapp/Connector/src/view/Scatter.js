@@ -2245,7 +2245,7 @@ Ext.define('Connector.view.Scatter', {
     _buildAlignmentMap : function() {
         var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName, protocolDay, value;
 
-        xColName = this.getDataResp.measureToColumn[this.measures[0].name];
+        xColName = this.measures[0].interval;
         visitColName = this.getDataResp.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
 
         for (var i = 0; i < rows.length; i++) {
