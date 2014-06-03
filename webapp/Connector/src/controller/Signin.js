@@ -25,7 +25,7 @@ Ext.define('Connector.controller.Signin', {
             v.on('userSignedIn', function() {
                 // Start loading
                 this.application.olap.load();
-                window.location.href = window.location.href;
+                window.location.reload();
             }, this);
 
             return v;
