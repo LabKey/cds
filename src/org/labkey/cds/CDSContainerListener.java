@@ -17,14 +17,31 @@
 package org.labkey.cds;
 
 import org.labkey.api.data.Container;
-import org.labkey.api.data.ContainerManager;
+import org.labkey.api.data.ContainerManager.ContainerListener;
 import org.labkey.api.security.User;
 
-public class CDSContainerListener extends ContainerManager.AbstractContainerListener
+import java.beans.PropertyChangeEvent;
+
+public class CDSContainerListener implements ContainerListener
 {
+    @Override
+    public void containerCreated(Container c, User user)
+    {
+    }
+
     @Override
     public void containerDeleted(Container c, User user)
     {
         CDSManager.get().cleanContainer(c);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt)
+    {
+    }
+
+    @Override
+    public void containerMoved(Container c, Container oldParent, User user)
+    {
     }
 }
