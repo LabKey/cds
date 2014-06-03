@@ -72,10 +72,10 @@ Ext.define('Connector.view.Learn', {
         return this.headerViews.learnDetail;
     },
 */
-    onFilterChange : function(filters) {
-        var view = this.dataViews[0];
-        this.loadData(view.dimension, view.getStore());
-    },
+    // onFilterChange : function(filters) {
+    //     var view = this.dataViews[0];
+    //     this.loadData(view.dimension, view.getStore());
+    // },
 
     loadData : function(dimension, store) {
 
@@ -116,7 +116,7 @@ Ext.define('Connector.view.Learn', {
         if (this.dataViews && this.dataViews.length) {
             var dataViews = this.dataViews;
             delete this.dataViews;
-            this.state.un('filterchange', this.onFilterChange, this);
+//            this.state.un('filterchange', this.onFilterChange, this);
             var views = dataViews.length;
             var fadedViews = 0;
             Ext.each(dataViews, function(dataView) {
@@ -248,7 +248,7 @@ Ext.define('Connector.view.Learn', {
 
                 this.dataViews = [view];
 
-                view.on('itemclick', function(view, model, el, idx) {
+                this.mon(view, 'itemclick', function(view, model, el, idx) {
                     this.fireEvent('selectitem', model);
                 }, this);
 
@@ -256,7 +256,7 @@ Ext.define('Connector.view.Learn', {
                 this.loadData(dimension, view.getStore());
             }
 
-            this.state.on('filterchange', this.onFilterChange, this);
+            //this.state.on('filterchange', this.onFilterChange, this);
         }
         else {
             //

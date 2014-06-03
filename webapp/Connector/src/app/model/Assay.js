@@ -7,7 +7,7 @@ Ext.define('Connector.app.model.Assay', {
 
     extend : 'Ext.data.Model',
 
-    idProperty: 'Name',
+    idProperty: 'Label',
     
     fields: [
         {name: 'Name'},

@@ -135,6 +135,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/RSSItem.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Antigen.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
@@ -159,6 +160,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/factory/Module.js"></script>
 
     <!-- Application Stores -->
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/AssayDistinctValue.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
@@ -186,6 +188,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Popup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Signin.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>

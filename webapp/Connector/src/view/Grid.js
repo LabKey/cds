@@ -234,8 +234,7 @@ Ext.define('Connector.view.Grid', {
                     mainTitle: 'Choose Measures for the Data Grid...'
                 },
                 disableLookups: false,
-                disableScale: true,
-                disableVariableOptions: false
+                disableScale: true
             });
         }
 
@@ -290,6 +289,9 @@ Ext.define('Connector.view.Grid', {
                 defaultColumnWidth: this.columnWidth,
                 margin: '-93 0 0 27',
                 ui: 'custom',
+                viewConfig: {
+                    loadMask: false
+                },
                 listeners: {
                     columnmodelcustomize: this.onColumnModelCustomize,
                     columnmove: this.updateColumnMap,
