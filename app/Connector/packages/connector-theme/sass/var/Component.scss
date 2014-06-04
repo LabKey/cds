@@ -2251,26 +2251,9 @@ div.definition-overflow
 
 .signin-content, .signin-right {
   padding: 25px;
-}
-
-.signin-left {
-  background-color: $light-color;
 
   p {
     @include paragraphSpacing;
-  }
-
-  .dimensionview {
-    background-color: $select-color;
-    background-image: none;
-
-    h1 {
-      color: $light-color;
-    }
-
-    #about {
-      display: none;
-    }
   }
 
   .logoContainer {
@@ -2296,6 +2279,23 @@ div.definition-overflow
 
     .logo3 {
       right: 0px;
+    }
+  }
+}
+
+.signin-left {
+  background-color: $light-color;
+
+  .dimensionview {
+    background-color: $select-color;
+    background-image: none;
+
+    h1 {
+      color: $light-color;
+    }
+
+    #about {
+      display: none;
     }
   }
 }
