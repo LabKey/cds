@@ -2,6 +2,7 @@ package org.labkey.test.pages;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -21,6 +22,7 @@ public abstract class DataspaceVariableSelector
     protected abstract String getPickerClass();
     protected abstract boolean isMeasureMultiSelect();
     protected abstract Locator getOpenButton();
+    public abstract Locator.CssLocator window();
 
     public void openSelectorWindow()
     {
@@ -29,11 +31,6 @@ public abstract class DataspaceVariableSelector
         openButton.click();
 
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
-    }
-
-    public Locator.CssLocator window()
-    {
-        return Locator.id("plotxmeasurewin").toCssLocator();
     }
 
     public Locator.CssLocator pickerPanel()
@@ -81,12 +78,9 @@ public abstract class DataspaceVariableSelector
         }
     }
 
-    /**
-     * Only tested with saved groups
-     */
     public void setVariableOptions(String... options)
     {
-        _test._ext4Helper.clearGridSelection("variableoptionsgrid");
+        clearVariableOptions();
 
         for (String option : options)
         {
@@ -98,7 +92,8 @@ public abstract class DataspaceVariableSelector
 
     public void clearVariableOptions()
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        // TODO: remove 'x-body' once helper takes a css selector
+        _test._ext4Helper.clearGridSelection("x-body " + window().getLocatorString() + " .variableoptionsgrid");
     }
 
     public void selectAllVariableOptions()
@@ -116,6 +111,12 @@ public abstract class DataspaceVariableSelector
     public void pickMeasure(String source, String measure)
     {
         pickMeasure(source, measure, false);
+    }
+
+    public void cancelSelection()
+    {
+        _test.click(window().append("a.x-btn").withText("cancel"));
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public static enum Scale

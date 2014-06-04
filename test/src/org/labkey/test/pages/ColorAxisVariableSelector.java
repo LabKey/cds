@@ -17,6 +17,11 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
         return "coloraxispicker";
     }
 
+    public Locator.CssLocator window()
+    {
+        return Locator.id("plotcolorwin").toCssLocator();
+    }
+
     @Override
     protected boolean isMeasureMultiSelect()
     {
