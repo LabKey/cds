@@ -35,6 +35,6 @@ public class CDSLoginPage
         public static Locator passwordField = Locator.id("passwordField");
         public static Locator rememberMeCheckbox = Locator.checkboxById("rememberMeCheck");
         public static Locator termsCheckbox = Locator.checkboxById("termsCheck");
-        public static Locator signInButton = Locator.tagWithId("button", "signin");
+        public static Locator signInButton = Locator.tagWithId("input", "signin");
     }
 }

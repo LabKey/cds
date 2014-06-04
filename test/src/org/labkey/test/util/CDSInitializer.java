@@ -44,7 +44,7 @@ public class CDSInitializer
     }
 
     @LogMethod
-    public void setupProject()
+    private void setupProject()
     {
         _test._containerHelper.createProject(_project, "Dataspace");
         _test.enableModule(_project, "CDS");
@@ -60,7 +60,7 @@ public class CDSInitializer
     }
 
     @LogMethod
-    public void importData()
+    private void importData()
     {
         for (String study : _desiredStudies)
         {

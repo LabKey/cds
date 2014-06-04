@@ -22,6 +22,11 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         return "gridcolumnpicker";
     }
 
+    public Locator.CssLocator window()
+    {
+        return Locator.id("gridmeasurewin").toCssLocator();
+    }
+
     @Override
     public Locator getOpenButton()
     {
