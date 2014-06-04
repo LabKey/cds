@@ -80,7 +80,9 @@
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Race" visible="true" column="race" type="String" uniqueMembers="true" />
+                <Level name="Race" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(race)</SQL></KeyExpression>
+                </Level>
             </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
@@ -88,15 +90,21 @@
             </Hierarchy>
             <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Sex" visible="true" column="sex" type="String" uniqueMembers="true" />
+                <Level name="Sex" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(sex)</SQL></KeyExpression>
+                </Level>
             </Hierarchy>
             <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Ethnicity" visible="true" column="ethnicity" type="String" uniqueMembers="true" />
+                <Level name="Ethnicity" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(ethnicity)</SQL></KeyExpression>
+                </Level>
             </Hierarchy>
             <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="true" />
+                <Level name="Gender" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(gender)</SQL></KeyExpression>
+                </Level>
             </Hierarchy>
         </Dimension>
 
