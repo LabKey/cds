@@ -1829,16 +1829,8 @@ Ext.define('Connector.view.Scatter', {
                         text: 'remove variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var filters = this.state.getFilters();
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            for (var f=0; f < filters.length; f++) {
-                                var m = filters[f].get('plotMeasures');
-                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                                    m[0] = null;
-                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
-                                }
-                            }
-
+                            this.removeVariableFromFilter(0);
                             this.activeXSelection = undefined;
                             this.axisPanelX.clearSelection();
                             this.xwin.hide();
@@ -1942,16 +1934,8 @@ Ext.define('Connector.view.Scatter', {
                         text: 'remove variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var filters = this.state.getFilters();
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            for (var f=0; f < filters.length; f++) {
-                                var m = filters[f].get('plotMeasures');
-                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                                    m[2] = null;
-                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
-                                }
-                            }
-
+                            this.removeVariableFromFilter(2);
                             this.activeColorSelection = undefined;
                             this.colorPanel.clearSelection();
                             this.colorwin.hide();
@@ -1983,6 +1967,18 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.colorwin.show();
+    },
+
+    removeVariableFromFilter : function(measureIdx) {
+        var filters = this.state.getFilters();
+
+        for (var f=0; f < filters.length; f++) {
+            var m = filters[f].get('plotMeasures');
+            if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                m[measureIdx] = null;
+                this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+            }
+        }
     },
 
     runUniqueQuery : function(axisSelector) {
