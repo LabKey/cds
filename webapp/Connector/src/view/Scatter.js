@@ -819,27 +819,25 @@ Ext.define('Connector.view.Scatter', {
         };
 
         // first, check the set of active filters
-        if (!measures.x || !measures.y || !measures.color) {
-            var filters = this.state.getFilters();
-            for (var f=0; f < filters.length; f++) {
-                if (filters[f].get('isPlot') == true) {
-                    var m = filters[f].get('plotMeasures');
+        var filters = this.state.getFilters();
+        for (var f=0; f < filters.length; f++) {
+            if (filters[f].get('isPlot') == true) {
+                var m = filters[f].get('plotMeasures');
 
-                    if (m[0]) {
-                        measures.x = m[0].measure;
-                    }
-
-                    if (m[1]) {
-                        measures.y = m[1].measure;
-                    }
-
-                    if (m[2]) {
-                        measures.color = m[2].measure;
-                    }
-
-                    this.fromFilter = true;
-                    break;
+                if (m[0]) {
+                    measures.x = m[0].measure;
                 }
+
+                if (m[1]) {
+                    measures.y = m[1].measure;
+                }
+
+                if (m[2]) {
+                    measures.color = m[2].measure;
+                }
+
+                this.fromFilter = true;
+                break;
             }
         }
 
