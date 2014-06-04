@@ -362,7 +362,29 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
         this.msgTask = new Ext.util.DelayedTask(this._loadMsg, this);
 
-        this.on('itemmouseenter', this.renderInfoButton, this);
+        this.on('refresh', function() { this.cancelShowLoad(); }, this);
+
+        // Disabled for now until layout can be adjusted
+//        this.on('itemmouseenter', this.renderInfoButton, this);
+    },
+
+    getCountTemplate : function() {
+        return new Ext.XTemplate(
+            '<tpl if="count &gt; 0">',
+                '<span class="count" style="left: {[ this.calcLeft(values)]}%">',
+                    '{[ this.displayCount(values)]}',
+                '</span>',
+            '</tpl>',
+            {
+                calcLeft : function(v) {
+                    return (v.count / v.maxcount) * 100 + 3;
+                },
+                displayCount : function(values) {
+                    // TODO: Enable showing selected highlights
+                    return values.count;
+                }
+            }
+        );
     },
 
     _loadMsg : function() {
@@ -383,20 +405,12 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         }
     },
 
-    positionText : function(collapseMode) {
-        this.callParent();
-        this.cancelShowLoad();
-    },
-
     renderInfoButton : function(view, rec, element) {
         if (rec && !rec.data.isGroup && this.dimension.supportsDetails) {
-            var el = Ext.get(Ext.query(".info", element)[0]);
-
-            if (this.btnMap[rec.id]) {
-                this.btnMap[rec.id].show();
-            }
-            else {
-                this.btnMap[rec.id] = Ext.create('Connector.button.InfoButton', {
+            var el = Ext.query(".info", element);
+            if (el.length > 0) {
+                el = Ext.get(el[0]);
+                var btn = Ext.create('Connector.button.InfoButton', {
                     renderTo : el,
                     text : 'view info',
                     record : rec,
@@ -404,8 +418,9 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
                     handler : function(e) {
                         this.btnclick = true;
                     },
-                    scope   : this
+                    scope: this
                 });
+                btn.show();
             }
         }
     },

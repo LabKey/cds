@@ -18,6 +18,11 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         return "xaxispicker";
     }
 
+    public Locator.CssLocator window()
+    {
+        return Locator.id("plotxmeasurewin").toCssLocator();
+    }
+
     @Override
     public Locator getOpenButton()
     {

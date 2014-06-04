@@ -17,6 +17,11 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         return "yaxispicker";
     }
 
+    public Locator.CssLocator window()
+    {
+        return Locator.id("plotymeasurewin").toCssLocator();
+    }
+
     @Override
     public Locator getOpenButton()
     {

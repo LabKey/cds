@@ -275,7 +275,7 @@ public class CDSHelper
     public void toggleExplorerBar(String largeBarText)
     {
         _test.sleep(500);
-        _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]"));
+        _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
         _test.sleep(500);
     }
 
