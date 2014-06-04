@@ -561,6 +561,54 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         switchToMainWindow();
     }
 
+    @Test
+    public void verifyAntigenScatterPlot()
+    {
+        String xVirus = "BaL.01";
+        String yVirus = "SUMA.LucR.T2A.ecto";
+        String yVirus2 = "H061.14";
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("NAb", "AUC");
+        xaxis.setVariableOptions(xVirus);
+        xaxis.confirmSelection();
+        yaxis.pickMeasure("NAb", "AUC");
+        yaxis.setVariableOptions(yVirus);
+        yaxis.confirmSelection();
+
+        waitForElement(plotTick.withText("0.06"));
+        assertElementPresent(plotPoint, 86); // TODO: Possibly wrong; null-null points in bottom bottom left
+
+        click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        switchToWindow(1);
+        DataRegionTable plotDataTable = new DataRegionTable("query", this);
+        assertEquals(86, plotDataTable.getDataRowCount());
+        getDriver().close();
+        switchToMainWindow();
+
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("NAb", "AUC");
+        yaxis.setVariableOptions(yVirus, yVirus2);
+        yaxis.confirmSelection();
+
+        waitForElement(plotTick.withText("0.08"));
+        assertElementPresent(plotPoint, 172); // TODO: Possibly wrong; null-null points in bottom bottom left
+
+        click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        switchToWindow(1);
+        plotDataTable = new DataRegionTable("query", this);
+        assertEquals(86, plotDataTable.getDataRowCount());
+        getDriver().close();
+        switchToMainWindow();
+
+    }
+
     @AfterClass
     public static void postTest()
     {
@@ -624,5 +672,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         public static Locator plotSelectionX = Locator.css(".selectionfilter .plot-selection .closeitem");
         public static Locator plotBox = Locator.css("svg .box");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
+        public static Locator plotPoint = Locator.css("svg a.point");
     }
 }
