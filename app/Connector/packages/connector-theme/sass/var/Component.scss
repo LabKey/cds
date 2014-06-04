@@ -1154,6 +1154,21 @@ div.activefilterstatus {
 /* -- END Connector.view.SelectionStatus */
 
 /* Connector.view.SingleAxisExplorer */
+@keyframes indexframe {
+  0% { width: 0; }
+}
+
+@-webkit-keyframes indexframe {
+  0% { width: 0; }
+}
+
+span.animator {
+  animation-duration: .5s;
+  animation-name: indexframe;
+  -webkit-animation-duration: .5s;
+  -webkit-animation-name: indexframe;
+}
+
 .barchart {
   width: 78%;
   padding: 2px;
