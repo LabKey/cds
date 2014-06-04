@@ -2257,7 +2257,7 @@ Ext.define('Connector.view.Scatter', {
 
     _preprocessStudyAxisData : function() {
         var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, studyMap = {}, studyLabel, study, visitId,
-                visit, visitTagName, visits, interval, convertInterval;
+                visit, visitTagName, visits, interval, convertInterval, visitKeys, visitKey, i;
 
         interval = this.measures[0].interval.toLowerCase();
         convertInterval = function(d) {
@@ -2273,7 +2273,7 @@ Ext.define('Connector.view.Scatter', {
 
         this.studyAxisData = [];
 
-        for (var i = 0; i < rows.length; i++) {
+        for (i = 0; i < rows.length; i++) {
             studyLabel = rows[i].StudyLabel.value;
             visitId = rows[i].VisitRowId.value;
             visitTagName = rows[i].VisitTagName.value;
@@ -2312,7 +2312,6 @@ Ext.define('Connector.view.Scatter', {
                 visit.alignedDay = alignmentMap[rows[i].VisitRowId.value];
             }
 
-            // TODO: Wire up visit tags.
             if (visitTagName && !visit.visitTagMap.hasOwnProperty(visitTagName)) {
                 visit.visitTagMap[visitTagName] = {
                     name: visitTagName,
@@ -2327,11 +2326,12 @@ Ext.define('Connector.view.Scatter', {
         for (var studyName in studyMap) {
             if (studyMap.hasOwnProperty(studyName)) {
                 study = studyMap[studyName];
+                visitKeys = Object.keys(study.visits).sort();
                 visits = [];
-                for (visitId in study.visits) {
-                    if (study.visits.hasOwnProperty(visitId)) {
-                        visits.push(study.visits[visitId]);
-                        // TODO: flatten visit tag map????
+                for (i = 0; i < visitKeys.length; i++) {
+                    visitKey = visitKeys[i];
+                    if (study.visits.hasOwnProperty(visitKey)) {
+                        visits.push(study.visits[visitKey]);
                     }
                 }
 
