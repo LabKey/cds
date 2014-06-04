@@ -2383,7 +2383,6 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis.studyData(this.studyAxisData)
                 .scale(this.plot.scales.x.scale)
                 .width(this.studyAxisPanel.getWidth() - 40)
-                .alignmentDay(0)
                 .mouseover(this.showStudyAxisHover, this)
                 .mouseout(this.removeStudyAxisHover, this);
 
