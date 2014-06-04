@@ -19,7 +19,7 @@ Ext.define('Connector.controller.Navigation', {
             },
             userSignedOut : function() {
                 LABKEY.user.isSignedIn = false;
-                window.location.href = window.location.href;
+                window.location.reload();
             },
             afterrender : function(view) {
                 this.connectorheader = view;

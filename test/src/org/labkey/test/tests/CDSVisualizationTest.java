@@ -18,6 +18,7 @@ import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
+import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
@@ -34,7 +35,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.labkey.test.tests.CDSVisualizationTest.Locators.*;
 
 @Category({CustomModules.class, CDS.class})
 public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest
@@ -85,9 +88,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200\n2400";
         final String HEMO_CD4_UNFILTERED = "6\n8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
         final String WT_PLSE_LOG = "60\n70\n80\n90\n100\n50\n60\n70\n80\n90\n100";
-        Locator plotSelectionLoc = Locator.css(".selectionfilter .plot-selection");
-        Locator plotSelectionFilterLoc = Locator.css(".activefilter .plot-selection");
-        Locator plotSelectionX = Locator.css(".selectionfilter .plot-selection .closeitem");
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -168,25 +168,25 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Brush the same area, then apply that selection as a filter.
         builder.moveToElement(points.get(10)).moveByOffset(-45, -75).clickAndHold().moveByOffset(130, 160).release().perform();
-        waitForElement(plotSelectionLoc);
+        waitForElement(plotSelection);
 
-        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelectionLoc.findElements(getDriver()).size());
+        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
         _asserts.assertSelectionStatusCounts(1, 1, 2);
 
         plotSelectionX.findElement(getDriver()).click(); // remove the x variable from the selection.
         _asserts.assertSelectionStatusCounts(2, 1, 2);
         plotSelectionX.findElement(getDriver()).click(); // remove the y variable from the selection.
-        assertElementNotPresent(plotSelectionLoc);
+        assertElementNotPresent(plotSelection);
 
         // Select them again and apply them as a filter.
         builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
-        waitForElement(plotSelectionLoc);
+        waitForElement(plotSelection);
 
-        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelectionLoc.findElements(getDriver()).size());
+        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
         _asserts.assertSelectionStatusCounts(1, 1, 2);
 
         cds.useSelectionAsFilter();
-        assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilterLoc.findElements(getDriver()).size());
+        assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilter.findElements(getDriver()).size());
         _asserts.assertFilterStatusCounts(1, 1, 2);
 
         // Test that variable selectors are reset when filters are cleared (Issue 20138).
@@ -200,8 +200,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        Locator boxLoc = Locator.css("svg .box");
-        Locator tickLoc = Locator.css("g.tick-text a text");
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -210,31 +208,31 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.pickMeasure("Lab Results", "CD4");
         yaxis.confirmSelection();
 
-        waitForElement(boxLoc);
-        assertElementPresent(boxLoc, 1);
+        waitForElement(plotBox);
+        assertElementPresent(plotBox, 1);
 
         // Choose a categorical axis to verify that multiple box plots will appear.
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Demographics", "Sex");
         xaxis.confirmSelection();
 
-        waitForElement(tickLoc.withText("f"));
-        assertElementPresent(boxLoc, 2);
+        waitForElement(Locators.plotTick.withText("f"));
+        assertElementPresent(plotBox, 2);
 
         // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Lab Results", "Hemoglobin");
         xaxis.confirmSelection();
 
-        waitForElementToDisappear(boxLoc);
+        waitForElementToDisappear(plotBox);
 
         // Verify that we can go back to boxes after being in scatter mode.
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Demographics", "Race");
         xaxis.confirmSelection();
 
-        waitForElement(tickLoc.withText("Asian"));
-        assertElementPresent(boxLoc, 6);
+        waitForElement(Locators.plotTick.withText("Asian"));
+        assertElementPresent(plotBox, 6);
     }
 
     @Test
@@ -242,8 +240,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        Locator boxLoc = Locator.css("svg .box");
-        Locator xtickLoc = Locator.css("g.tick-text > a > text");
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -256,35 +252,35 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.setVariableOptions(PGROUP1, PGROUP2, PGROUP3);
         xaxis.confirmSelection();
 
-        waitForElement(xtickLoc.withText(PGROUP1));
-        waitForElement(xtickLoc.withText(PGROUP2));
-        waitForElement(xtickLoc.withText(PGROUP3));
-        assertElementPresent(boxLoc, 3);
-        waitForElement(xtickLoc.withText("115"));
-        waitForElement(xtickLoc.withText("70"));
+        waitForElement(plotTick.withText(PGROUP1));
+        waitForElement(plotTick.withText(PGROUP2));
+        waitForElement(plotTick.withText(PGROUP3));
+        assertElementPresent(plotBox, 3);
+        waitForElement(plotTick.withText("115"));
+        waitForElement(plotTick.withText("70"));
 
         xaxis.openSelectorWindow();
         xaxis.setVariableOptions(PGROUP1, PGROUP2);
         xaxis.confirmSelection();
 
-        waitForElement(xtickLoc.withText(PGROUP1));
-        waitForElement(xtickLoc.withText(PGROUP2));
-        waitForElementToDisappear(xtickLoc.withText(PGROUP3));
-        assertElementPresent(boxLoc, 2);
-        waitForElementToDisappear(xtickLoc.withText("115"));
-        waitForElementToDisappear(xtickLoc.withText("70"));
+        waitForElement(plotTick.withText(PGROUP1));
+        waitForElement(plotTick.withText(PGROUP2));
+        waitForElementToDisappear(plotTick.withText(PGROUP3));
+        assertElementPresent(plotBox, 2);
+        waitForElementToDisappear(plotTick.withText("115"));
+        waitForElementToDisappear(plotTick.withText("70"));
 
         xaxis.openSelectorWindow();
         xaxis.setVariableOptions(PGROUP3, PGROUP3_COPY);
         xaxis.confirmSelection();
 
-        waitForElementToDisappear(xtickLoc.withText(PGROUP1));
-        waitForElementToDisappear(xtickLoc.withText(PGROUP2));
-        waitForElement(xtickLoc.withText(PGROUP3));
-        waitForElement(xtickLoc.withText(PGROUP3_COPY));
-        assertElementPresent(boxLoc, 2);
-        waitForElement(xtickLoc.withText("115"));
-        waitForElement(xtickLoc.withText("70"));
+        waitForElementToDisappear(plotTick.withText(PGROUP1));
+        waitForElementToDisappear(plotTick.withText(PGROUP2));
+        waitForElement(plotTick.withText(PGROUP3));
+        waitForElement(plotTick.withText(PGROUP3_COPY));
+        assertElementPresent(plotBox, 2);
+        waitForElement(plotTick.withText("115"));
+        waitForElement(plotTick.withText("70"));
     }
 
     @Test
@@ -428,7 +424,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(colorLegendGlyph);
         assertElementPresent(colorLegendGlyph, 5);
     }
-
     @Test
     public void verifyStudyAxis()
     {
@@ -486,6 +481,144 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
     }
 
+    @Test
+    public void verifyAntigenVariableSelector()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        yaxis.openSelectorWindow();
+        yaxis.pickSource("Luminex");
+        waitForElement(yaxis.variableOptionsRow().withText("gp41"));
+        assertEquals("Wrong number of antigens for Luminex", 1, getElementCount(yaxis.variableOptionsRow()));
+        yaxis.pickSource("NAb");
+        waitForElement(yaxis.variableOptionsRow().withText("BaL.01"));
+        assertEquals("Wrong number of antigens for NAb", 26, getElementCount(yaxis.variableOptionsRow()));
+        yaxis.cancelSelection();
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        xaxis.openSelectorWindow();
+        xaxis.pickSource("Luminex");
+        waitForElement(xaxis.variableOptionsRow().withText("gp41"));
+        assertEquals("Wrong number of antigens for Luminex", 1, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.pickSource("NAb");
+        waitForElement(xaxis.variableOptionsRow().withText("BaL.01"));
+        assertEquals("Wrong number of antigens for NAb", 26, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.pickSource("ADCC");
+        waitForElement(xaxis.variableOptionsRow().withText("pCenvFs2_Pt1086_B2"));
+        assertEquals("Wrong number of antigens for ADCC", 4, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.cancelSelection();
+
+        final ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+        color.openSelectorWindow();
+        color.pickSource("Luminex");
+        assertFalse("Antigen picker found in color variable selector", doesElementAppear(new Checker()
+        {
+            @Override
+            public boolean check()
+            {
+                return isElementPresent(color.variableOptionsRow());
+            }
+        }, 1000));
+        color.cancelSelection();
+    }
+
+    @Test
+    public void verifyAntigenBoxPlot()
+    {
+        String sharedVirus = "T271-11";
+        String uniqueVirus = "BaL.01";
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("NAb", "Lab");
+        xaxis.setVariableOptions(uniqueVirus);
+        xaxis.confirmSelection();
+        yaxis.pickMeasure("NAb", "AUC");
+        yaxis.setVariableOptions(uniqueVirus);
+        yaxis.confirmSelection();
+
+        waitForElement(plotTick.withText(CDSHelper.LABS[1]));
+        assertElementPresent(plotBox, 1);
+
+        click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        switchToWindow(1);
+        DataRegionTable plotDataTable = new DataRegionTable("query", this);
+        assertEquals(42, plotDataTable.getDataRowCount());
+        assertEquals(42, getElementCount(Locator.linkWithText(uniqueVirus)));
+        assertTextNotPresent(sharedVirus, CDSHelper.LABS[2]);
+        getDriver().close();
+        switchToMainWindow();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource("NAb");
+        xaxis.setVariableOptions(uniqueVirus, sharedVirus);
+        xaxis.confirmSelection();
+
+        waitForElement(plotTick.withText(CDSHelper.LABS[2]));
+        assertElementPresent(plotBox, 2);
+
+        click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        switchToWindow(1);
+        plotDataTable = new DataRegionTable("query", this);
+        assertEquals(63, plotDataTable.getDataRowCount());
+        assertEquals(63, getElementCount(Locator.linkWithText(uniqueVirus)) + getElementCount(Locator.linkWithText(sharedVirus)));
+        getDriver().close();
+        switchToMainWindow();
+    }
+
+    @Test
+    public void verifyAntigenScatterPlot()
+    {
+        String xVirus = "BaL.01";
+        String yVirus = "SUMA.LucR.T2A.ecto";
+        String yVirus2 = "H061.14";
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("NAb", "AUC");
+        xaxis.setVariableOptions(xVirus);
+        xaxis.confirmSelection();
+        yaxis.pickMeasure("NAb", "AUC");
+        yaxis.setVariableOptions(yVirus);
+        yaxis.confirmSelection();
+
+        waitForElement(plotTick.withText("0.06"));
+        assertElementPresent(plotPoint, 86); // TODO: Possibly wrong; null-null points in bottom bottom left
+
+        click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        switchToWindow(1);
+        DataRegionTable plotDataTable = new DataRegionTable("query", this);
+        assertEquals(86, plotDataTable.getDataRowCount());
+        getDriver().close();
+        switchToMainWindow();
+
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("NAb", "AUC");
+        yaxis.setVariableOptions(yVirus, yVirus2);
+        yaxis.confirmSelection();
+
+        waitForElement(plotTick.withText("0.08"));
+        assertElementPresent(plotPoint, 172); // TODO: Possibly wrong; null-null points in bottom bottom left
+
+        click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        switchToWindow(1);
+        plotDataTable = new DataRegionTable("query", this);
+        assertEquals(86, plotDataTable.getDataRowCount());
+        getDriver().close();
+        switchToMainWindow();
+
+    }
+
     @AfterClass
     public static void postTest()
     {
@@ -540,5 +673,15 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     public BrowserType bestBrowser()
     {
         return BrowserType.CHROME;
+    }
+
+    public static class Locators
+    {
+        public static Locator plotSelection = Locator.css(".selectionfilter .plot-selection");
+        public static Locator plotSelectionFilter = Locator.css(".activefilter .plot-selection");
+        public static Locator plotSelectionX = Locator.css(".selectionfilter .plot-selection .closeitem");
+        public static Locator plotBox = Locator.css("svg .box");
+        public static Locator plotTick = Locator.css("g.tick-text > a > text");
+        public static Locator plotPoint = Locator.css("svg a.point");
     }
 }
