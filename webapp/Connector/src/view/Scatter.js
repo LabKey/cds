@@ -1876,7 +1876,6 @@ Ext.define('Connector.view.Scatter', {
     showColorSelection : function(targetEl) {
         if (!this.colorwin) {
             var sCls = 'colorsource';
-            TYPES = {};
             this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
                 flex      : 1,
                 ui        : 'axispanel',
