@@ -1336,14 +1336,11 @@ Ext.define('Connector.view.Scatter', {
 
     _preprocessGetDataResp : function() {
         var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
-                ya = null, ca = null,_xid, _yid, _cid,
-                subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
+                ca = null,_xid, _yid, _cid;
 
         this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
-        var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
-                                       // different value for the subjectNoun than the moduleContext. This is an issue
-                                       // with multi-study getDataAPI calls.
+        var subjectNoun = Connector.studyContext.subjectColumn;
         var subjectCol = data.measureToColumn[subjectNoun];
 
         if (color) {

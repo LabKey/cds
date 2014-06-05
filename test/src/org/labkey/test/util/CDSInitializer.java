@@ -54,6 +54,7 @@ public class CDSInitializer
         _test._ext4Helper.selectRadioButton("DATE");
         //We need to set the root study name to blank to hide it from mondrian (issue 19996)
         _test.setFormElement(Locator.name("Label"), "");
+        _test.setFormElement(Locator.name("SubjectColumnName"), "SubjectId");
         _test.clickButton("Submit");
 
         _test.goToProjectHome();
