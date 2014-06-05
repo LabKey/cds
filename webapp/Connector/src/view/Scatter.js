@@ -293,7 +293,7 @@ Ext.define('Connector.view.Scatter', {
             this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
         }
 
-        if (this.studyAxis) {
+        if (this.studyAxis  && this.studyAxisData && this.studyAxisData.length > 0) {
             this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
@@ -2183,22 +2183,27 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestStudyAxisData : function() {
-        // TODO: Make query also return all the visit tags for each visit.
-        var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
-        var sql = 'SELECT\n' +
-                'StudyLabel,\n' +
-                'TimepointType,\n' +
-                'VisitLabel,\n' +
-                'SequenceNumMin,\n' +
-                'SequenceNumMax,\n' +
-                'ProtocolDay,\n' +
-                'VisitDescription,\n' +
-                'VisitRowId,\n' +
-                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
-                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
-                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
-            'FROM (\n' +
-                'SELECT\n' +
+        var visits = Object.keys(this.alignmentMap), inClause, sql;
+
+        if (visits.length === 0) {
+            this.studyAxisData = null;
+            this.initPlot(this.plotData, false);
+        } else {
+            inClause = '(' + visits.join(',') + ')';
+            sql = 'SELECT\n' +
+                    'StudyLabel,\n' +
+                    'TimepointType,\n' +
+                    'VisitLabel,\n' +
+                    'SequenceNumMin,\n' +
+                    'SequenceNumMax,\n' +
+                    'ProtocolDay,\n' +
+                    'VisitDescription,\n' +
+                    'VisitRowId,\n' +
+                    'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
+                    'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
+                    'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
+                    'FROM (\n' +
+                    'SELECT\n' +
                     'StudyProperties.Label as StudyLabel,\n' +
                     'StudyProperties.TimepointType as TimepointType,\n' +
                     'Visit.Label as VisitLabel,\n' +
@@ -2209,30 +2214,31 @@ Ext.define('Connector.view.Scatter', {
                     'Visit.Folder as VisitContainer,\n' +
                     'Visit.RowId as VisitRowId,\n' +
                     'StudyProperties.Container as StudyContainer\n' +
-                'FROM Visit, StudyProperties\n' +
-                'WHERE Visit.Folder = StudyProperties.Container AND\n' +
-                'Visit.RowId IN ' + inClause + '\n' +
-            ') as AllVisits\n' +
-            'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+                    'FROM Visit, StudyProperties\n' +
+                    'WHERE Visit.Folder = StudyProperties.Container AND\n' +
+                    'Visit.RowId IN ' + inClause + '\n' +
+                    ') as AllVisits\n' +
+                    'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
 
-        LABKEY.Query.executeSql({
-            schemaName: 'study',
-            requiredVersion: 9.1,
-            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
-            sql: sql,
-            success: function(resp){
-                if (!this.isActiveView) {
-                    return;
-                }
+            LABKEY.Query.executeSql({
+                schemaName: 'study',
+                requiredVersion: 9.1,
+                containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
+                sql: sql,
+                success: function(resp){
+                    if (!this.isActiveView) {
+                        return;
+                    }
 
-                this.studyAxisResp = resp;
-                this._preprocessStudyAxisData();
-                this.initPlot(this.plotData, false);
-                this.initStudyAxis();
-            },
-            failure: function(resp) {console.error('Error retrieving study axis data')},
-            scope: this
-        });
+                    this.studyAxisResp = resp;
+                    this._preprocessStudyAxisData();
+                    this.initPlot(this.plotData, false);
+                    this.initStudyAxis();
+                },
+                failure: function(resp) {console.error('Error retrieving study axis data')},
+                scope: this
+            });
+        }
     },
 
     _buildAlignmentMap : function() {
@@ -2393,7 +2399,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     resizePlotContainers : function() {
-        if (this.requireStudyAxis) {
+        if (this.requireStudyAxis && this.studyAxisData && this.studyAxisData.length > 0) {
             this.plotEl.setStyle('padding', '0 0 0 150px');
             this.studyAxisPanel.setVisible(true);
             this.studyAxisPanel.setHeight(Math.min(100, 25 * this.studyAxisData.length));
