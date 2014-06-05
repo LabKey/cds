@@ -13,12 +13,13 @@ import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.PostgresOnlyTest;
 
 import static org.junit.Assert.*;
 import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 
 @Category({CustomModules.class, CDS.class})
-public class CDSLoginTest extends BaseWebDriverTest
+public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private final CDSHelper _cds = new CDSHelper(this);
     private static String _cdsAppURL;
@@ -30,7 +31,8 @@ public class CDSLoginTest extends BaseWebDriverTest
 
         initTest.doCleanup(false);
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setupProject();
+        _initializer.setDesiredStudies(new String[] {"DemoSubset"});
+        _initializer.setupDataspace();
         initTest._cds.enterApplication();
         _cdsAppURL = initTest.getCurrentRelativeURL();
 
