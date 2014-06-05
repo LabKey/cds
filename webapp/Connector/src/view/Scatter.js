@@ -1597,12 +1597,16 @@ Ext.define('Connector.view.Scatter', {
                     dataRow[subjectCol] = row[subjectCol];
                     dataRow[colorCol] = row[colorCol];
 
-                    dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
-                    dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
-                    dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
-                    dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
+                    // issue 20589: skip null-null points produced by pivot
+                    if (row[antigenColumnAliasPairs[j].xAlias].value != null || row[antigenColumnAliasPairs[j].yAlias].value != null)
+                    {
+                        dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
+                        dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
+                        dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
+                        dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
 
-                    newRowsArr.push(dataRow);
+                        newRowsArr.push(dataRow);
+                    }
                 }
             }
             data.rows = newRowsArr;
