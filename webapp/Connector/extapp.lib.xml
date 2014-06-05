@@ -134,6 +134,7 @@
         <script path="Connector/src/view/Signin.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
         <script path="Connector/src/view/Summary.js"/>
+        <script path="Connector/src/view/TermsOfUse.js"/>
         <script path="Connector/src/view/Time.js"/>
         <script path="Connector/src/view/Viewport.js"/>
         <script path="Connector/src/view/search/Container.js"/>

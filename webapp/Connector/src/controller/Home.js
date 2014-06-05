@@ -21,7 +21,7 @@ Ext.define('Connector.controller.Home', {
 
         this.control('#back', {
             click : function() {
-                this.getViewManager().changeView('home');
+                history.back();
             }
         });
 

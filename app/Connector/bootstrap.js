@@ -121,6 +121,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.SingleAxisExplorerView": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../webapp/Connector/src/view/Summary.js",
+  "Connector.view.TermsOfUse": "../../webapp/Connector/src/view/TermsOfUse.js",
   "Connector.view.Time": "../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
@@ -275,6 +276,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
+  "Connector.view.TermsOfUse": [],
   "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
@@ -1341,6 +1343,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.SummaryDataView": [
     "widget.summarydataview"
+  ],
+  "Connector.view.TermsOfUse": [
+    "widget.terms"
   ],
   "Connector.view.Time": [
     "widget.timeview"

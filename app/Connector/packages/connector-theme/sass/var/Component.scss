@@ -2015,12 +2015,14 @@ img.tutorialclose {
 
 /* Connector.view.Learn */
 div.learnview {
-  overflow-y: auto;
-  overflow-x: hidden;
-
   .module {
     padding-bottom: 20px;
   }
+}
+
+.auto-scroll-y {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .module {
@@ -2264,7 +2266,22 @@ div.definition-overflow
   top: 0px;
 }
 
-.signin-content, .signin-right {
+section.terms-block {
+  margin: 35px 0px;
+
+  p {
+    font-size: 10pt;
+  }
+
+  h4 {
+    font-size: 12pt;
+    text-transform: uppercase;
+    font-weight: normal;
+    padding-bottom: 15px;
+  }
+}
+
+.signin-content, .terms-of-use, .signin-right {
   padding: 25px;
 
   p {
@@ -2428,3 +2445,4 @@ input.x-btn-rounded-inverted-accent-small {
   font-size: 12pt;
   padding: 5px;
 }
+

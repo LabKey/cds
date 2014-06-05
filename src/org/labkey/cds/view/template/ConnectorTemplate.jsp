@@ -193,6 +193,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Signin.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/TermsOfUse.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
