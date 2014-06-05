@@ -157,17 +157,8 @@ Ext.define('Connector.view.Scatter', {
                             overflow: 'auto'
                         },
                         html: '<div id="study-axis" style="overflow: auto;"></div>'
-                    },
-                }],
-                listeners: {
-                    afterrender: {
-                        fn: function(b) {
-                            this.studyAxisEl = b.getEl();
-                        },
-                        single: true,
-                        scope: this
                     }
-                }
+                }]
             });
 
             this.centerContainer = Ext.create('Ext.container.Container', {
@@ -535,7 +526,7 @@ Ext.define('Connector.view.Scatter', {
 
         var plotAes = {
             x: function(row){return row.x;},
-            yLeft: function(row){return row.y},
+            yLeft: function(row){return row.y}
         };
 
         if (this.measures[2]) {
@@ -2402,7 +2393,7 @@ Ext.define('Connector.view.Scatter', {
         if (this.requireStudyAxis && this.studyAxisData && this.studyAxisData.length > 0) {
             this.plotEl.setStyle('padding', '0 0 0 150px');
             this.studyAxisPanel.setVisible(true);
-            this.studyAxisPanel.setHeight(Math.min(100, 25 * this.studyAxisData.length));
+            this.studyAxisPanel.setHeight(Math.min(100, 27 * this.studyAxisData.length));
         } else {
             this.plotEl.setStyle('padding', '0');
             this.studyAxisPanel.setVisible(false);
