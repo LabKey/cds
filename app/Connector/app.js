@@ -3,19 +3,8 @@
  needed for your application, but these edits will have to be merged by
  Sencha Cmd when upgrading.
  */
-Ext.override(Ext.button.Button, {
-    ui: 'rounded-inverted-accent'
-});
-
-// This is a bug in setting the style so IE can render.
-// See line #14789 in ext-all-sandbox-dev.js
-// The IECheck function code is part of ExtJS and subject to the ExtJS license
-
 var launchApp = function(cube) {
     Ext.onReady(function() {
-
-        LABKEY.app.view.Selection.supportMemberClose = false;
-        LABKEY.app.model.Filter.dynamicOperatorTypes = true;
 
         Ext.application({
             name: 'Connector',
@@ -23,6 +12,7 @@ var launchApp = function(cube) {
             autoCreateViewport: true,
             olap: cube
         });
+
     });
 };
 
@@ -38,6 +28,4 @@ var cube = LABKEY.query.olap.CubeManager.getCube({
 launchApp(cube);
 
 // call to getCube in olap.js to initialize cube
-if (LABKEY.user.isSignedIn) {
-    cube.load();
-}
+cube.load();

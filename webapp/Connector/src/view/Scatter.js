@@ -157,17 +157,8 @@ Ext.define('Connector.view.Scatter', {
                             overflow: 'auto'
                         },
                         html: '<div id="study-axis" style="overflow: auto;"></div>'
-                    },
-                }],
-                listeners: {
-                    afterrender: {
-                        fn: function(b) {
-                            this.studyAxisEl = b.getEl();
-                        },
-                        single: true,
-                        scope: this
                     }
-                }
+                }]
             });
 
             this.centerContainer = Ext.create('Ext.container.Container', {
@@ -293,7 +284,7 @@ Ext.define('Connector.view.Scatter', {
             this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
         }
 
-        if (this.studyAxis) {
+        if (this.studyAxis  && this.studyAxisData && this.studyAxisData.length > 0) {
             this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
@@ -535,7 +526,7 @@ Ext.define('Connector.view.Scatter', {
 
         var plotAes = {
             x: function(row){return row.x;},
-            yLeft: function(row){return row.y},
+            yLeft: function(row){return row.y}
         };
 
         if (this.measures[2]) {
@@ -819,27 +810,25 @@ Ext.define('Connector.view.Scatter', {
         };
 
         // first, check the set of active filters
-        if (!measures.x || !measures.y || !measures.color) {
-            var filters = this.state.getFilters();
-            for (var f=0; f < filters.length; f++) {
-                if (filters[f].get('isPlot') == true) {
-                    var m = filters[f].get('plotMeasures');
+        var filters = this.state.getFilters();
+        for (var f=0; f < filters.length; f++) {
+            if (filters[f].get('isPlot') == true) {
+                var m = filters[f].get('plotMeasures');
 
-                    if (m[0]) {
-                        measures.x = m[0].measure;
-                    }
-
-                    if (m[1]) {
-                        measures.y = m[1].measure;
-                    }
-
-                    if (m[2]) {
-                        measures.color = m[2].measure;
-                    }
-
-                    this.fromFilter = true;
-                    break;
+                if (m[0]) {
+                    measures.x = m[0].measure;
                 }
+
+                if (m[1]) {
+                    measures.y = m[1].measure;
+                }
+
+                if (m[2]) {
+                    measures.color = m[2].measure;
+                }
+
+                this.fromFilter = true;
+                break;
             }
         }
 
@@ -1837,16 +1826,8 @@ Ext.define('Connector.view.Scatter', {
                         text: 'remove variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var filters = this.state.getFilters();
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            for (var f=0; f < filters.length; f++) {
-                                var m = filters[f].get('plotMeasures');
-                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                                    m[0] = null;
-                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
-                                }
-                            }
-
+                            this.removeVariableFromFilter(0);
                             this.activeXSelection = undefined;
                             this.axisPanelX.clearSelection();
                             this.xwin.hide();
@@ -1884,7 +1865,6 @@ Ext.define('Connector.view.Scatter', {
     showColorSelection : function(targetEl) {
         if (!this.colorwin) {
             var sCls = 'colorsource';
-            TYPES = {};
             this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
                 flex      : 1,
                 ui        : 'axispanel',
@@ -1951,16 +1931,8 @@ Ext.define('Connector.view.Scatter', {
                         text: 'remove variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var filters = this.state.getFilters();
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            for (var f=0; f < filters.length; f++) {
-                                var m = filters[f].get('plotMeasures');
-                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                                    m[2] = null;
-                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
-                                }
-                            }
-
+                            this.removeVariableFromFilter(2);
                             this.activeColorSelection = undefined;
                             this.colorPanel.clearSelection();
                             this.colorwin.hide();
@@ -1992,6 +1964,18 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.colorwin.show();
+    },
+
+    removeVariableFromFilter : function(measureIdx) {
+        var filters = this.state.getFilters();
+
+        for (var f=0; f < filters.length; f++) {
+            var m = filters[f].get('plotMeasures');
+            if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                m[measureIdx] = null;
+                this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+            }
+        }
     },
 
     runUniqueQuery : function(axisSelector) {
@@ -2198,22 +2182,27 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestStudyAxisData : function() {
-        // TODO: Make query also return all the visit tags for each visit.
-        var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
-        var sql = 'SELECT\n' +
-                'StudyLabel,\n' +
-                'TimepointType,\n' +
-                'VisitLabel,\n' +
-                'SequenceNumMin,\n' +
-                'SequenceNumMax,\n' +
-                'ProtocolDay,\n' +
-                'VisitDescription,\n' +
-                'VisitRowId,\n' +
-                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
-                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
-                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
-            'FROM (\n' +
-                'SELECT\n' +
+        var visits = Object.keys(this.alignmentMap), inClause, sql;
+
+        if (visits.length === 0) {
+            this.studyAxisData = null;
+            this.initPlot(this.plotData, false);
+        } else {
+            inClause = '(' + visits.join(',') + ')';
+            sql = 'SELECT\n' +
+                    'StudyLabel,\n' +
+                    'TimepointType,\n' +
+                    'VisitLabel,\n' +
+                    'SequenceNumMin,\n' +
+                    'SequenceNumMax,\n' +
+                    'ProtocolDay,\n' +
+                    'VisitDescription,\n' +
+                    'VisitRowId,\n' +
+                    'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
+                    'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
+                    'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
+                    'FROM (\n' +
+                    'SELECT\n' +
                     'StudyProperties.Label as StudyLabel,\n' +
                     'StudyProperties.TimepointType as TimepointType,\n' +
                     'Visit.Label as VisitLabel,\n' +
@@ -2224,30 +2213,31 @@ Ext.define('Connector.view.Scatter', {
                     'Visit.Folder as VisitContainer,\n' +
                     'Visit.RowId as VisitRowId,\n' +
                     'StudyProperties.Container as StudyContainer\n' +
-                'FROM Visit, StudyProperties\n' +
-                'WHERE Visit.Folder = StudyProperties.Container AND\n' +
-                'Visit.RowId IN ' + inClause + '\n' +
-            ') as AllVisits\n' +
-            'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+                    'FROM Visit, StudyProperties\n' +
+                    'WHERE Visit.Folder = StudyProperties.Container AND\n' +
+                    'Visit.RowId IN ' + inClause + '\n' +
+                    ') as AllVisits\n' +
+                    'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
 
-        LABKEY.Query.executeSql({
-            schemaName: 'study',
-            requiredVersion: 9.1,
-            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
-            sql: sql,
-            success: function(resp){
-                if (!this.isActiveView) {
-                    return;
-                }
+            LABKEY.Query.executeSql({
+                schemaName: 'study',
+                requiredVersion: 9.1,
+                containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
+                sql: sql,
+                success: function(resp){
+                    if (!this.isActiveView) {
+                        return;
+                    }
 
-                this.studyAxisResp = resp;
-                this._preprocessStudyAxisData();
-                this.initPlot(this.plotData, false);
-                this.initStudyAxis();
-            },
-            failure: function(resp) {console.error('Error retrieving study axis data')},
-            scope: this
-        });
+                    this.studyAxisResp = resp;
+                    this._preprocessStudyAxisData();
+                    this.initPlot(this.plotData, false);
+                    this.initStudyAxis();
+                },
+                failure: function(resp) {console.error('Error retrieving study axis data')},
+                scope: this
+            });
+        }
     },
 
     _buildAlignmentMap : function() {
@@ -2391,7 +2381,6 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis.studyData(this.studyAxisData)
                 .scale(this.plot.scales.x.scale)
                 .width(this.studyAxisPanel.getWidth() - 40)
-                .alignmentDay(0)
                 .mouseover(this.showStudyAxisHover, this)
                 .mouseout(this.removeStudyAxisHover, this);
 
@@ -2409,10 +2398,10 @@ Ext.define('Connector.view.Scatter', {
     },
 
     resizePlotContainers : function() {
-        if (this.requireStudyAxis) {
+        if (this.requireStudyAxis && this.studyAxisData && this.studyAxisData.length > 0) {
             this.plotEl.setStyle('padding', '0 0 0 150px');
             this.studyAxisPanel.setVisible(true);
-            this.studyAxisPanel.setHeight(Math.min(100, 25 * this.studyAxisData.length));
+            this.studyAxisPanel.setHeight(Math.min(100, 27 * this.studyAxisData.length));
         } else {
             this.plotEl.setStyle('padding', '0');
             this.studyAxisPanel.setVisible(false);
