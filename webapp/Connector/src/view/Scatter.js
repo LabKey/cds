@@ -872,7 +872,6 @@ Ext.define('Connector.view.Scatter', {
             sel = this.colorPanel.getSelection();
             if (sel && sel.length > 0) {
                 measures.color = sel[0].data;
-                //measures.color.allowNullResults = false;
                 this.fromFilter = false;
             }
         }
@@ -887,6 +886,14 @@ Ext.define('Connector.view.Scatter', {
                 x.queryName = measures.y.queryName;
                 measures.x = x;
             }
+        }
+
+        // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
+        if (measures.y != null && measures.x !=null && measures.color != null)
+        {
+            var queryMatch = ((measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
+                              (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName));
+            measures.color.allowNullResults = queryMatch;
         }
 
         return measures;

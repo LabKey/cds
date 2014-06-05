@@ -382,15 +382,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 5);
+        assertElementPresent(colorLegendGlyph, 4);
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 107,
-                "Placebo", 23,
+                "N/A", 42,
+                "Placebo", 22,
                 "Prime-boost ALVAC HIV", 9,
-                "Prime-boost VRC-HIVADV014-00-VP", 22,
-                "null", 3
+                "Prime-boost VRC-HIVADV014-00-VP", 22
         );
 
         Set<String> foundTreatments = new HashSet<>();
@@ -422,7 +421,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         color.confirmSelection();
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
         waitForElement(colorLegendGlyph);
-        assertElementPresent(colorLegendGlyph, 5);
+        assertElementPresent(colorLegendGlyph, 4);
     }
     @Test
     public void verifyStudyAxis()
