@@ -382,15 +382,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 5);
+        assertElementPresent(colorLegendGlyph, 4);
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 107,
-                "Placebo", 23,
+                "N/A", 42,
+                "Placebo", 22,
                 "Prime-boost ALVAC HIV", 9,
-                "Prime-boost VRC-HIVADV014-00-VP", 22,
-                "null", 3
+                "Prime-boost VRC-HIVADV014-00-VP", 22
         );
 
         Set<String> foundTreatments = new HashSet<>();
@@ -422,7 +421,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         color.confirmSelection();
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
         waitForElement(colorLegendGlyph);
-        assertElementPresent(colorLegendGlyph, 5);
+        assertElementPresent(colorLegendGlyph, 4);
     }
     @Test
     public void verifyStudyAxis()
@@ -593,12 +592,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText("0.06"));
-        assertElementPresent(plotPoint, 86); // TODO: Possibly wrong; null-null points in bottom bottom left
+        assertElementPresent(plotPoint, 42);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         switchToWindow(1);
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
         assertEquals(86, plotDataTable.getDataRowCount());
+        plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
+        waitForElement(Locator.paginationText(42));
         getDriver().close();
         switchToMainWindow();
 
@@ -608,12 +609,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText("0.08"));
-        assertElementPresent(plotPoint, 172); // TODO: Possibly wrong; null-null points in bottom bottom left
+        assertElementPresent(plotPoint, 84);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         switchToWindow(1);
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(86, plotDataTable.getDataRowCount());
+        plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
+        waitForElement(Locator.paginationText(42));
         getDriver().close();
         switchToMainWindow();
 

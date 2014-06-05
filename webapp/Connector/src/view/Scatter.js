@@ -872,7 +872,6 @@ Ext.define('Connector.view.Scatter', {
             sel = this.colorPanel.getSelection();
             if (sel && sel.length > 0) {
                 measures.color = sel[0].data;
-                //measures.color.allowNullResults = false;
                 this.fromFilter = false;
             }
         }
@@ -887,6 +886,14 @@ Ext.define('Connector.view.Scatter', {
                 x.queryName = measures.y.queryName;
                 measures.x = x;
             }
+        }
+
+        // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
+        if (measures.y != null && measures.x !=null && measures.color != null)
+        {
+            var queryMatch = ((measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
+                              (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName));
+            measures.color.allowNullResults = queryMatch;
         }
 
         return measures;
@@ -1336,14 +1343,11 @@ Ext.define('Connector.view.Scatter', {
 
     _preprocessGetDataResp : function() {
         var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
-                ya = null, ca = null,_xid, _yid, _cid,
-                subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
+                ca = null,_xid, _yid, _cid;
 
         this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
-        var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
-                                       // different value for the subjectNoun than the moduleContext. This is an issue
-                                       // with multi-study getDataAPI calls.
+        var subjectNoun = Connector.studyContext.subjectColumn;
         var subjectCol = data.measureToColumn[subjectNoun];
 
         if (color) {
@@ -1593,12 +1597,16 @@ Ext.define('Connector.view.Scatter', {
                     dataRow[subjectCol] = row[subjectCol];
                     dataRow[colorCol] = row[colorCol];
 
-                    dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
-                    dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
-                    dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
-                    dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
+                    // issue 20589: skip null-null points produced by pivot
+                    if (row[antigenColumnAliasPairs[j].xAlias].value != null || row[antigenColumnAliasPairs[j].yAlias].value != null)
+                    {
+                        dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
+                        dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
+                        dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
+                        dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
 
-                    newRowsArr.push(dataRow);
+                        newRowsArr.push(dataRow);
+                    }
                 }
             }
             data.rows = newRowsArr;
