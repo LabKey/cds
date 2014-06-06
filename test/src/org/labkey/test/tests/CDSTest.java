@@ -484,7 +484,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         //Here is where the issue occurs (Issue 20329)
         _permissionsHelper.createPermissionsGroup("PermGroup1");
-        if (isElementPresent(Locator.permissionRendered()) && isNavButtonPresent("Save and Finish"))
+        if (isElementPresent(Locator.permissionRendered()) && isButtonPresent("Save and Finish"))
             clickButton("Save and Finish");
         clickProject("CDSTest Project");
         clickFolder("NotRV144");
