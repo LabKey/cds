@@ -354,6 +354,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Assay antigens',
                 priority: 0,
                 supportsDetails: false,
+                supportsSummary: false,
                 summaryTargetLevel: '[Antigen.Name].[Name]',
 
                 hierarchies: [{

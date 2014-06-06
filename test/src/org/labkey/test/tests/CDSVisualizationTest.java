@@ -28,6 +28,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -428,7 +430,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        Locator studyAxisLoc = Locator.css("div.study-axis svg");
+        Locator studyAxisLoc = Locator.css("#study-axis svg");
+        Locator studyGroups = Locator.css("g.study");
         Locator studyVisits = Locator.css("rect.visit");
         Locator visitHover = Locator.css("div.study-axis-window");
         List<WebElement> studyVisitEls;
@@ -446,16 +449,29 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Check to make sure study axis appears.
         waitForElement(studyAxisLoc);
-        studyVisitEls = studyVisits.findElements(getDriver());
-        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
+
+        WebElement studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
+        studyVisitEls = studyAxisTest1.findElements(studyVisits.toBy());
+
+        // Sort the visits for Study Axis Test 1 by x location because DOM insertion varies by platform and browser
+        // version, so this is the only accurate way to actually get the first visit for that study.
+        Collections.sort(studyVisitEls, new Comparator<WebElement>()
+        {
+            @Override
+            public int compare(WebElement o1, WebElement o2)
+            {
+                return o1.getLocation().getX() - o2.getLocation().getX();
+            }
+        });
 
         // Check that study axis hovers appear when hovered over.
-        builder.moveToElement(studyVisitEls.get(21)).perform();
+        builder.moveToElement(studyVisitEls.get(0)).perform();
         waitForElement(visitHover);
         assertElementPresent(visitHover.withText("Study Axis Test 1\nMonth 1\nDay 0 (meaning varies)\nFirst Vaccination"));
 
         // Check that hovers disappear
-        builder.moveToElement(studyVisitEls.get(21)).moveByOffset(0, -500).perform();
+        builder.moveToElement(studyVisitEls.get(0)).moveByOffset(0, -500).perform();
         waitForElementToDisappear(visitHover);
 
         xaxis.openSelectorWindow();
@@ -464,10 +480,15 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         waitForTextToDisappear("NotRV144");
 
-        studyVisitEls = studyVisits.findElements(getDriver());
-        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisitEls.size());
-        assertTrue("Visit didnt have a transform as expected.", !studyVisitEls.get(0).getAttribute("transform").equals(""));
-        assertTrue("Visit had a transform.", studyVisitEls.get(25).getAttribute("transform").equals(""));
+        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
+
+        WebElement notRV144 = studyGroups.findElements(getDriver()).get(0);
+        WebElement diamondVisit = notRV144.findElement(studyVisits.toBy());
+        assertTrue("Visit didnt have a transform as expected.", !diamondVisit.getAttribute("transform").equals(""));
+
+        studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
+        WebElement rectVisit = studyAxisTest1.findElement(studyVisits.toBy());
+        assertTrue("Visit had a transform.", rectVisit.getAttribute("transform").equals(""));
 
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Time points", "Study weeks");
@@ -476,8 +497,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForText("NotRV144");
 
         // Assert that we have the same amount of visits even with study weeks.
-        studyVisitEls = studyVisits.findElements(getDriver());
-        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
     }
 
     @Test

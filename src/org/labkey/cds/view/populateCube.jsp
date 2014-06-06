@@ -98,6 +98,9 @@ to be filled in by another mechanism.<br>
 <script type="text/javascript">
 
     var validatePopulate = function() {
+
+        var SUBJECT_COLUMN = LABKEY.moduleContext.study.subject.columnName;
+
         var VACCINE_INNER =
                 'SELECT' +
                         ' treatmentId, productId, Product.rowId, label, type' +
@@ -122,7 +125,7 @@ to be filled in by another mechanism.<br>
             area: 'Assay Dimension'
         },{
             schema: 'study',
-            sql: 'SELECT SubjectID, SubjectID.ParticipantId, Folder, race, country, sex, ethnicity, gender FROM Demographics',
+            sql: 'SELECT ' + SUBJECT_COLUMN + ', ' + SUBJECT_COLUMN + '.ParticipantId AS Inner' + SUBJECT_COLUMN +', Folder, race, country, sex, ethnicity, gender FROM Demographics',
             area: 'Subject Dimension'
         },{
             schema: 'study',
