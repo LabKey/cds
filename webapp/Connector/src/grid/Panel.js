@@ -15,7 +15,7 @@ Ext.define('Connector.grid.Panel', {
     config: {
         defaultFieldWidth: 200,
         editable: true,
-        pageSize: 10000,
+        pageSize: 800,
         autoSave: false,
         multiSelect: true,
         clicksToEdit: 2,
