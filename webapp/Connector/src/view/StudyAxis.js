@@ -1,12 +1,12 @@
 Connector.view.StudyAxis = function(){
-    var width, height, studyData, alignmentDay, renderTo, xScale, yScale = d3.scale.ordinal(), mouseover, mouseout,
+    var width, height, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(), mouseover, mouseout,
             canvas = null, mouseoverScope, mouseoutScope;
 
     var renderAlignment = function(selection) {
         var alignmentPath, x, pathStr;
-        x = xScale(alignmentDay);
+        x = xScale(ALIGNMENT_DAY);
         pathStr = 'M ' + x + ' 0 L ' + x + ' ' + height + 'Z';
-        alignmentPath = selection.selectAll('path.alignment-line').data([alignmentDay]);
+        alignmentPath = selection.selectAll('path.alignment-line').data([ALIGNMENT_DAY]);
         alignmentPath.enter().append('path').attr('class', 'alignment-line');
         alignmentPath.attr('stroke', '#000')
                 .attr('stroke', '#cccccc')
@@ -149,7 +149,6 @@ Connector.view.StudyAxis = function(){
     studyAxis.renderTo = function(id) { renderTo = id; return studyAxis; };
     studyAxis.width = function(w) { width = w; return studyAxis; };
     studyAxis.studyData = function(d) { studyData = d; return studyAxis; };
-    studyAxis.alignmentDay = function(d) { alignmentDay = d; return studyAxis; };
     studyAxis.mouseover = function(m, s) { mouseover = m; mouseoverScope = s; return studyAxis; };
     studyAxis.mouseout = function(m, s) { mouseout = m; mouseoutScope = s; return studyAxis; };
     studyAxis.scale = function(s) {

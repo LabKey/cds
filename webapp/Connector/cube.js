@@ -296,7 +296,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
-                            title: 'Data connector editorial'
+                            title: 'CDS editorial'
                         },
                         modelData: {
                             text: 'Editorial'
@@ -304,7 +304,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
-                            title: 'Overview'
+                            title: 'Study Objectives'
                         },
                         modelData: {
                             text: 'Description'
@@ -312,7 +312,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'studysites',
                         staticData: {
-                            title: 'Cohort & sites'
+                            title: 'Population & sites'
                         }
                     }], [{
                         type: 'person',
@@ -347,6 +347,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Assay antigens',
                 priority: 0,
                 supportsDetails: false,
+                supportsSummary: false,
                 summaryTargetLevel: '[Antigen.Name].[Name]',
 
                 hierarchies: [{

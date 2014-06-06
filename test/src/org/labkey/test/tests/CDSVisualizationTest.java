@@ -28,6 +28,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -382,15 +384,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 5);
+        assertElementPresent(colorLegendGlyph, 4);
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 107,
-                "Placebo", 23,
+                "N/A", 42,
+                "Placebo", 22,
                 "Prime-boost ALVAC HIV", 9,
-                "Prime-boost VRC-HIVADV014-00-VP", 22,
-                "null", 3
+                "Prime-boost VRC-HIVADV014-00-VP", 22
         );
 
         Set<String> foundTreatments = new HashSet<>();
@@ -422,14 +423,15 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         color.confirmSelection();
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
         waitForElement(colorLegendGlyph);
-        assertElementPresent(colorLegendGlyph, 5);
+        assertElementPresent(colorLegendGlyph, 4);
     }
     @Test
     public void verifyStudyAxis()
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        Locator studyAxisLoc = Locator.css("div.study-axis svg");
+        Locator studyAxisLoc = Locator.css("#study-axis svg");
+        Locator studyGroups = Locator.css("g.study");
         Locator studyVisits = Locator.css("rect.visit");
         Locator visitHover = Locator.css("div.study-axis-window");
         List<WebElement> studyVisitEls;
@@ -447,16 +449,29 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Check to make sure study axis appears.
         waitForElement(studyAxisLoc);
-        studyVisitEls = studyVisits.findElements(getDriver());
-        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
+
+        WebElement studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
+        studyVisitEls = studyAxisTest1.findElements(studyVisits.toBy());
+
+        // Sort the visits for Study Axis Test 1 by x location because DOM insertion varies by platform and browser
+        // version, so this is the only accurate way to actually get the first visit for that study.
+        Collections.sort(studyVisitEls, new Comparator<WebElement>()
+        {
+            @Override
+            public int compare(WebElement o1, WebElement o2)
+            {
+                return o1.getLocation().getX() - o2.getLocation().getX();
+            }
+        });
 
         // Check that study axis hovers appear when hovered over.
-        builder.moveToElement(studyVisitEls.get(21)).perform();
+        builder.moveToElement(studyVisitEls.get(0)).perform();
         waitForElement(visitHover);
         assertElementPresent(visitHover.withText("Study Axis Test 1\nMonth 1\nDay 0 (meaning varies)\nFirst Vaccination"));
 
         // Check that hovers disappear
-        builder.moveToElement(studyVisitEls.get(21)).moveByOffset(0, -500).perform();
+        builder.moveToElement(studyVisitEls.get(0)).moveByOffset(0, -500).perform();
         waitForElementToDisappear(visitHover);
 
         xaxis.openSelectorWindow();
@@ -465,10 +480,15 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         waitForTextToDisappear("NotRV144");
 
-        studyVisitEls = studyVisits.findElements(getDriver());
-        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisitEls.size());
-        assertTrue("Visit didnt have a transform as expected.", !studyVisitEls.get(0).getAttribute("transform").equals(""));
-        assertTrue("Visit had a transform.", studyVisitEls.get(25).getAttribute("transform").equals(""));
+        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
+
+        WebElement notRV144 = studyGroups.findElements(getDriver()).get(0);
+        WebElement diamondVisit = notRV144.findElement(studyVisits.toBy());
+        assertTrue("Visit didnt have a transform as expected.", !diamondVisit.getAttribute("transform").equals(""));
+
+        studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
+        WebElement rectVisit = studyAxisTest1.findElement(studyVisits.toBy());
+        assertTrue("Visit had a transform.", rectVisit.getAttribute("transform").equals(""));
 
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Time points", "Study weeks");
@@ -477,8 +497,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForText("NotRV144");
 
         // Assert that we have the same amount of visits even with study weeks.
-        studyVisitEls = studyVisits.findElements(getDriver());
-        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisitEls.size());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
     }
 
     @Test
@@ -593,12 +612,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText("0.06"));
-        assertElementPresent(plotPoint, 86); // TODO: Possibly wrong; null-null points in bottom bottom left
+        assertElementPresent(plotPoint, 42);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         switchToWindow(1);
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
         assertEquals(86, plotDataTable.getDataRowCount());
+        plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
+        waitForElement(Locator.paginationText(42));
         getDriver().close();
         switchToMainWindow();
 
@@ -608,12 +629,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText("0.08"));
-        assertElementPresent(plotPoint, 172); // TODO: Possibly wrong; null-null points in bottom bottom left
+        assertElementPresent(plotPoint, 84);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         switchToWindow(1);
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(86, plotDataTable.getDataRowCount());
+        plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
+        waitForElement(Locator.paginationText(42));
         getDriver().close();
         switchToMainWindow();
 

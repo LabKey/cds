@@ -235,7 +235,7 @@ ul {
 
 @media (max-width: 1175px) {
   .noplotmsg h1 {
-    font-size: 18pt;
+    font-size: 16pt;
   }
 }
 
@@ -1360,7 +1360,7 @@ div.saeempty {
   height: 19%;
   min-height: 50px;
   white-space: nowrap;
-  min-width: 800px;
+  min-width: 715px; /* 1024 - right pane width (305) */
 
   &:hover {
     @include transition(background-color 0.2s ease-out);
@@ -1403,6 +1403,12 @@ div.bycolumn {
 @media (max-width: 1200px) {
   div.bycolumn {
     font-size: 20pt;
+  }
+}
+
+@media (max-width: 1100px) {
+  div.bycolumn {
+    font-size: 18pt;
   }
 }
 
@@ -1637,6 +1643,10 @@ div.filterheader {
 
   }
 
+  .x-grid-view {
+    z-index: 5;
+  }
+
   .x-column-header-trigger {
     display: inline-block;
     border-left: 1px solid transparent;
@@ -1662,6 +1672,10 @@ div.filterheader {
 
       .x-column-header-trigger {
         display: block;
+        position: absolute;
+        bottom: 0;
+        top: inherit;
+        height: 15px;
       }
 
       .x-column-header-inner {
@@ -2444,5 +2458,6 @@ input.x-btn-rounded-inverted-accent-small {
   font-family: $font-family;
   font-size: 12pt;
   padding: 5px;
+  z-index: 9999999999;
 }
 

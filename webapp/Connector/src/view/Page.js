@@ -17,8 +17,12 @@ Ext.define('Connector.view.Page', {
 		xtype: 'container',
 		itemId: 'northRegion',
 		height: 10,
-
-		cls: 'pageheadercontainer'
+		cls: 'pageheadercontainer',
+		style: {
+            position: 'absolute',
+            top: '0px',
+			backgroundColor: '#ffff00'
+		}
 	}, {
 		xtype: 'container',
 		itemId: 'centerRegion'
@@ -70,9 +74,12 @@ Ext.define('Connector.view.Page', {
         }
 
 		this.items[0].height = this.header.height;
+        this.items[1].style = this.items[1].style || {};
+        this.items[1].style.marginTop = this.header.height + 'px';
 
         this.callParent();
 
+        this.doLayout();
         var center = this.getComponent('centerRegion');
         var north = this.getHeader();
 
@@ -125,10 +132,11 @@ Ext.define('Connector.plugin.HeaderLock', {
     	var cmp = Ext.get(event.target);
     	var scrollTop = cmp.getScrollTop();
     	var allowedScroll = this.cmp.header.height - (this.cmp.header.lockPixels || 0);
-    	var scroll = 0;
-    	if (scrollTop > allowedScroll) {
-    		scroll = scrollTop - allowedScroll;
-    	}
-		this.cmp.getHeader().el.setStyle('top', scroll + "px");
+        var top = 0;
+        top -= Math.min(scrollTop, allowedScroll);
+		this.cmp.getHeader().el.setStyle({
+            top: top + "px",
+            position: 'absolute'
+        });
     }
 });
