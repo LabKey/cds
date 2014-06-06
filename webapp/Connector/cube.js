@@ -429,6 +429,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Labs',
                 priority: 20,
                 supportsDetails: true,
+                supportsSummary: false,
                 detailCollection: 'Connector.app.store.Labs',
                 detailModel: 'Connector.app.model.Labs',
                 detailView: 'Connector.app.view.Labs',

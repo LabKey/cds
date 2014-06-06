@@ -786,14 +786,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.applySelection(CDSHelper.ASSAYS[2]);
         _asserts.assertSelectionStatusCounts(5, 1, 2);
         cds.goToSummary();
-        cds.clickBy("Labs");
-        cds.applySelection(CDSHelper.LABS[0]);
-        _asserts.assertSelectionStatusCounts(6, 1, 2);
-        cds.applySelection(CDSHelper.LABS[1]);
-        _asserts.assertSelectionStatusCounts(23, 3, 4);
-        cds.applySelection(CDSHelper.LABS[2]);
-        _asserts.assertSelectionStatusCounts(18, 3, 2);
-        cds.goToSummary();
         cds.clickBy("Subject characteristics");
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts(this);
@@ -819,30 +811,25 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(dimensionGroup.withText("Assays"));
         waitForElement(dimensionSort.withText("SORTED BY: TARGET AREA"));
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.shiftSelectBars("Fake NAb data", "Fake ADCC data");
+        cds.waitForBarToAnimate(CDSHelper.ASSAYS[0]);
+        cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
         waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
         _asserts.assertSelectionStatusCounts(12, 1, 2);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts(this);
-        cds.goToSummary();
         // end 14910
 
-        cds.clickBy("Labs");
-        cds.selectBars(CDSHelper.LABS[0], CDSHelper.LABS[1]);
-        _asserts.assertSelectionStatusCounts(6, 1, 2);
-        cds.selectBars(CDSHelper.LABS[0], CDSHelper.LABS[2]);
-        _asserts.assertSelectionStatusCounts(0, 0, 0);
-        cds.selectBars(CDSHelper.LABS[1], CDSHelper.LABS[2]);
-        _asserts.assertSelectionStatusCounts(12, 1, 2);
-        cds.useSelectionAsFilter();
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        cds.openStatusInfoPane("Labs");
+        waitForText(CDSHelper.LABS[1]);
+        cds.selectInfoPaneItem(CDSHelper.LABS[1], true);
+        cds.selectInfoPaneItem(CDSHelper.LABS[2], false);
+        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
         cds.saveGroup(GROUP_NAME, GROUP_DESC);
-        waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.LABS[0]), CDSHelper.CDS_WAIT);
         _asserts.assertFilterStatusCounts(12, 1, 2);
         cds.clearFilter();
-        waitForElement(Locator.css("span.barlabel").withText(CDSHelper.LABS[0]), CDSHelper.CDS_WAIT);
         _asserts.assertDefaultFilterStatusCounts(this);
-
         cds.goToSummary();
         _asserts.assertAllSubjectsPortalPage();
 
@@ -871,7 +858,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertElementPresent(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
         cds.goToSummary();
         waitForText(CDSHelper.STUDIES[1], CDSHelper.CDS_WAIT);
-        cds.clickBy("Labs");
+        cds.clickBy("Assays");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(Locator.css("option").withText("OR"));
         _asserts.assertFilterStatusCounts(18, 2, 3);  // and
@@ -942,13 +929,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertNounInfoPage(CDSHelper.STUDIES[0], Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
         _asserts.assertNounInfoPage(CDSHelper.STUDIES[1], Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
         _asserts.assertNounInfoPage(CDSHelper.STUDIES[3], Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
-
-        // Labs info pages are currently disabled
-//        goToSummary();
-//        clickBy("Labs");
-//        assertNounInfoPage("Arnold/Bellew Lab", Arrays.asList("Description", "PI", "Nick Arnold"));
-//        assertNounInfoPage("LabKey Lab", Arrays.asList("Description", "PI", "Mark Igra"));
-//        assertNounInfoPage("Piehler/Eckels Lab", Arrays.asList("Description", "PI", "Britt Piehler"));
 
         cds.goToSummary();
         cds.clickBy("Assays");
