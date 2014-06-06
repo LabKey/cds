@@ -128,46 +128,17 @@ Ext.define('Connector.view.Scatter', {
 
     getCenter : function() {
         if (!this.centerContainer) {
-            this.plotPanel = Ext.create('Ext.panel.Panel', {
-                flex: 10,
-                cls: 'plot',
-                style: {'background-color': '#fff'},
-                listeners: {
-                    afterrender: {
-                        fn: function(box) {
-                            this.plotEl = box.getEl();
-                        },
-                        single: true,
-                        scope: this
-                    }
-                }
-            });
+
             this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
-                cls: 'study-axis',
                 border: false,
                 overflowX: 'hidden',
                 overflowY: 'auto',
                 frame: false,
                 items: [{
                     xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        cls: 'study-axis',
-                        style: {
-                            overflow: 'auto'
-                        },
-                        html: '<div id="study-axis" style="overflow: auto;"></div>'
-                    },
-                }],
-                listeners: {
-                    afterrender: {
-                        fn: function(b) {
-                            this.studyAxisEl = b.getEl();
-                        },
-                        single: true,
-                        scope: this
-                    }
-                }
+                    tpl: new Ext.XTemplate('<div id="study-axis"></div>'),
+                    data: {}
+                }]
             });
 
             this.centerContainer = Ext.create('Ext.container.Container', {
@@ -177,7 +148,21 @@ Ext.define('Connector.view.Scatter', {
                     align: 'stretch',
                     pack: 'start'
                 },
-                items: [this.plotPanel,this.studyAxisPanel]
+                items: [{
+                    xtype: 'panel',
+                    flex: 10,
+                    cls: 'plot',
+                    style: {'background-color': '#fff'},
+                    listeners: {
+                        afterrender: {
+                            fn: function(box) {
+                                this.plotEl = box.getEl();
+                            },
+                            single: true,
+                            scope: this
+                        }
+                    }
+                },this.studyAxisPanel]
             });
         }
         return this.centerContainer;
@@ -293,7 +278,7 @@ Ext.define('Connector.view.Scatter', {
             this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
         }
 
-        if (this.studyAxis) {
+        if (this.studyAxis  && this.studyAxisData && this.studyAxisData.length > 0) {
             this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
@@ -535,7 +520,7 @@ Ext.define('Connector.view.Scatter', {
 
         var plotAes = {
             x: function(row){return row.x;},
-            yLeft: function(row){return row.y},
+            yLeft: function(row){return row.y}
         };
 
         if (this.measures[2]) {
@@ -819,27 +804,25 @@ Ext.define('Connector.view.Scatter', {
         };
 
         // first, check the set of active filters
-        if (!measures.x || !measures.y || !measures.color) {
-            var filters = this.state.getFilters();
-            for (var f=0; f < filters.length; f++) {
-                if (filters[f].get('isPlot') == true) {
-                    var m = filters[f].get('plotMeasures');
+        var filters = this.state.getFilters();
+        for (var f=0; f < filters.length; f++) {
+            if (filters[f].get('isPlot') == true) {
+                var m = filters[f].get('plotMeasures');
 
-                    if (m[0]) {
-                        measures.x = m[0].measure;
-                    }
-
-                    if (m[1]) {
-                        measures.y = m[1].measure;
-                    }
-
-                    if (m[2]) {
-                        measures.color = m[2].measure;
-                    }
-
-                    this.fromFilter = true;
-                    break;
+                if (m[0]) {
+                    measures.x = m[0].measure;
                 }
+
+                if (m[1]) {
+                    measures.y = m[1].measure;
+                }
+
+                if (m[2]) {
+                    measures.color = m[2].measure;
+                }
+
+                this.fromFilter = true;
+                break;
             }
         }
 
@@ -872,7 +855,6 @@ Ext.define('Connector.view.Scatter', {
             sel = this.colorPanel.getSelection();
             if (sel && sel.length > 0) {
                 measures.color = sel[0].data;
-                //measures.color.allowNullResults = false;
                 this.fromFilter = false;
             }
         }
@@ -887,6 +869,14 @@ Ext.define('Connector.view.Scatter', {
                 x.queryName = measures.y.queryName;
                 measures.x = x;
             }
+        }
+
+        // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
+        if (measures.y != null && measures.x !=null && measures.color != null)
+        {
+            var queryMatch = ((measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
+                              (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName));
+            measures.color.allowNullResults = queryMatch;
         }
 
         return measures;
@@ -1336,14 +1326,11 @@ Ext.define('Connector.view.Scatter', {
 
     _preprocessGetDataResp : function() {
         var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
-                ya = null, ca = null,_xid, _yid, _cid,
-                subjectCol = data.measureToColumn[Connector.studyContext.subjectColumn];
+                ca = null,_xid, _yid, _cid;
 
         this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
-        var subjectNoun = 'SubjectID'; // TODO: this is hard-coded because the measureToColumn object is returning a
-                                       // different value for the subjectNoun than the moduleContext. This is an issue
-                                       // with multi-study getDataAPI calls.
+        var subjectNoun = Connector.studyContext.subjectColumn;
         var subjectCol = data.measureToColumn[subjectNoun];
 
         if (color) {
@@ -1593,12 +1580,16 @@ Ext.define('Connector.view.Scatter', {
                     dataRow[subjectCol] = row[subjectCol];
                     dataRow[colorCol] = row[colorCol];
 
-                    dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
-                    dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
-                    dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
-                    dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
+                    // issue 20589: skip null-null points produced by pivot
+                    if (row[antigenColumnAliasPairs[j].xAlias].value != null || row[antigenColumnAliasPairs[j].yAlias].value != null)
+                    {
+                        dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
+                        dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
+                        dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
+                        dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
 
-                    newRowsArr.push(dataRow);
+                        newRowsArr.push(dataRow);
+                    }
                 }
             }
             data.rows = newRowsArr;
@@ -1829,16 +1820,8 @@ Ext.define('Connector.view.Scatter', {
                         text: 'remove variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var filters = this.state.getFilters();
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            for (var f=0; f < filters.length; f++) {
-                                var m = filters[f].get('plotMeasures');
-                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                                    m[0] = null;
-                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
-                                }
-                            }
-
+                            this.removeVariableFromFilter(0);
                             this.activeXSelection = undefined;
                             this.axisPanelX.clearSelection();
                             this.xwin.hide();
@@ -1876,7 +1859,6 @@ Ext.define('Connector.view.Scatter', {
     showColorSelection : function(targetEl) {
         if (!this.colorwin) {
             var sCls = 'colorsource';
-            TYPES = {};
             this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
                 flex      : 1,
                 ui        : 'axispanel',
@@ -1943,16 +1925,8 @@ Ext.define('Connector.view.Scatter', {
                         text: 'remove variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            var filters = this.state.getFilters();
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            for (var f=0; f < filters.length; f++) {
-                                var m = filters[f].get('plotMeasures');
-                                if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                                    m[2] = null;
-                                    this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
-                                }
-                            }
-
+                            this.removeVariableFromFilter(2);
                             this.activeColorSelection = undefined;
                             this.colorPanel.clearSelection();
                             this.colorwin.hide();
@@ -1984,6 +1958,18 @@ Ext.define('Connector.view.Scatter', {
         }
 
         this.colorwin.show();
+    },
+
+    removeVariableFromFilter : function(measureIdx) {
+        var filters = this.state.getFilters();
+
+        for (var f=0; f < filters.length; f++) {
+            var m = filters[f].get('plotMeasures');
+            if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
+                m[measureIdx] = null;
+                this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+            }
+        }
     },
 
     runUniqueQuery : function(axisSelector) {
@@ -2190,22 +2176,27 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestStudyAxisData : function() {
-        // TODO: Make query also return all the visit tags for each visit.
-        var inClause = '(' + Object.keys(this.alignmentMap).join(',') + ')';
-        var sql = 'SELECT\n' +
-                'StudyLabel,\n' +
-                'TimepointType,\n' +
-                'VisitLabel,\n' +
-                'SequenceNumMin,\n' +
-                'SequenceNumMax,\n' +
-                'ProtocolDay,\n' +
-                'VisitDescription,\n' +
-                'VisitRowId,\n' +
-                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
-                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
-                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
-            'FROM (\n' +
-                'SELECT\n' +
+        var visits = Object.keys(this.alignmentMap), inClause, sql;
+
+        if (visits.length === 0) {
+            this.studyAxisData = null;
+            this.initPlot(this.plotData, false);
+        } else {
+            inClause = '(' + visits.join(',') + ')';
+            sql = 'SELECT\n' +
+                    'StudyLabel,\n' +
+                    'TimepointType,\n' +
+                    'VisitLabel,\n' +
+                    'SequenceNumMin,\n' +
+                    'SequenceNumMax,\n' +
+                    'ProtocolDay,\n' +
+                    'VisitDescription,\n' +
+                    'VisitRowId,\n' +
+                    'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
+                    'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
+                    'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
+                    'FROM (\n' +
+                    'SELECT\n' +
                     'StudyProperties.Label as StudyLabel,\n' +
                     'StudyProperties.TimepointType as TimepointType,\n' +
                     'Visit.Label as VisitLabel,\n' +
@@ -2216,30 +2207,31 @@ Ext.define('Connector.view.Scatter', {
                     'Visit.Folder as VisitContainer,\n' +
                     'Visit.RowId as VisitRowId,\n' +
                     'StudyProperties.Container as StudyContainer\n' +
-                'FROM Visit, StudyProperties\n' +
-                'WHERE Visit.Folder = StudyProperties.Container AND\n' +
-                'Visit.RowId IN ' + inClause + '\n' +
-            ') as AllVisits\n' +
-            'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+                    'FROM Visit, StudyProperties\n' +
+                    'WHERE Visit.Folder = StudyProperties.Container AND\n' +
+                    'Visit.RowId IN ' + inClause + '\n' +
+                    ') as AllVisits\n' +
+                    'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
 
-        LABKEY.Query.executeSql({
-            schemaName: 'study',
-            requiredVersion: 9.1,
-            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
-            sql: sql,
-            success: function(resp){
-                if (!this.isActiveView) {
-                    return;
-                }
+            LABKEY.Query.executeSql({
+                schemaName: 'study',
+                requiredVersion: 9.1,
+                containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
+                sql: sql,
+                success: function(resp){
+                    if (!this.isActiveView) {
+                        return;
+                    }
 
-                this.studyAxisResp = resp;
-                this._preprocessStudyAxisData();
-                this.initPlot(this.plotData, false);
-                this.initStudyAxis();
-            },
-            failure: function(resp) {console.error('Error retrieving study axis data')},
-            scope: this
-        });
+                    this.studyAxisResp = resp;
+                    this._preprocessStudyAxisData();
+                    this.initPlot(this.plotData, false);
+                    this.initStudyAxis();
+                },
+                failure: function(resp) {console.error('Error retrieving study axis data')},
+                scope: this
+            });
+        }
     },
 
     _buildAlignmentMap : function() {
@@ -2383,7 +2375,6 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis.studyData(this.studyAxisData)
                 .scale(this.plot.scales.x.scale)
                 .width(this.studyAxisPanel.getWidth() - 40)
-                .alignmentDay(0)
                 .mouseover(this.showStudyAxisHover, this)
                 .mouseout(this.removeStudyAxisHover, this);
 
@@ -2401,10 +2392,10 @@ Ext.define('Connector.view.Scatter', {
     },
 
     resizePlotContainers : function() {
-        if (this.requireStudyAxis) {
+        if (this.requireStudyAxis && this.studyAxisData && this.studyAxisData.length > 0) {
             this.plotEl.setStyle('padding', '0 0 0 150px');
             this.studyAxisPanel.setVisible(true);
-            this.studyAxisPanel.setHeight(Math.min(100, 25 * this.studyAxisData.length));
+            this.studyAxisPanel.setHeight(Math.min(100, 27 * this.studyAxisData.length));
         } else {
             this.plotEl.setStyle('padding', '0');
             this.studyAxisPanel.setVisible(false);

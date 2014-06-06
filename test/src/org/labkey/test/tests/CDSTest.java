@@ -776,22 +776,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertSelectionStatusCounts(5, 1, 1);
         cds.goToSummary();
         cds.clearSelection();
-        cds.clickBy("Assay antigens");
-        cds.pickSort("Tier", "1A");
-        cds.toggleExplorerBar("3");
-        cds.applySelection("H061.14");
-        _asserts.assertSelectionStatusCounts(12, 1, 2);
-        cds.toggleExplorerBar("1A");
-        cds.applySelection("SF162.LS");
-        _asserts.assertSelectionStatusCounts(6, 1, 2);
-        cds.toggleExplorerBar("1B");
-        cds.applySelection("ZM109F.PB4");
-        _asserts.assertSelectionStatusCounts(6, 1, 2);
-        cds.goToSummary();
         cds.clickBy("Assays");
-        //TODO: enable this and update counts when issue 20000 is resolved
-        //applySelection("Unknown");
-        //assertSelectionStatusCounts(23, 3, 5, 3, 31);
         cds.applySelection(CDSHelper.ASSAYS[0]);
         _asserts.assertSelectionStatusCounts(12, 1, 2);
         cds.applySelection(CDSHelper.ASSAYS[1]);
@@ -830,18 +815,14 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // 14910
         cds.goToSummary();
-        waitAndClick(Locator.linkWithText("tiers"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: TIER"));
-        cds.waitForBarToAnimate("SF162.LS");
+        waitAndClick(Locator.linkWithText("target areas"));
+        waitForElement(dimensionGroup.withText("Assays"));
+        waitForElement(dimensionSort.withText("SORTED BY: TARGET AREA"));
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarToAnimate("SF162.LS");
-        cds.toggleExplorerBar("1A");
-        cds.toggleExplorerBar("1B");
-        cds.shiftSelectBars("SF162.LS", "DJ263.8");
-        waitForElement(CDSHelper.Locators.filterMemberLocator("DJ263.8"), WAIT_FOR_JAVASCRIPT);
+        cds.shiftSelectBars("Fake NAb data", "Fake ADCC data");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
-        _asserts.assertSelectionStatusCounts(6, 1, 2);
+        _asserts.assertSelectionStatusCounts(12, 1, 2);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts(this);
         cds.goToSummary();
@@ -902,6 +883,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         log("Verify selection messaging");
         cds.clickBy("Assays");
+        cds.pickSort("Name");
+        cds.waitForBarToAnimate(CDSHelper.ASSAYS[0]);
         cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
         _asserts.assertSelectionStatusCounts(0, 0, 0);
         cds.pickDimension("Studies");
@@ -1055,49 +1038,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(dimensionGroup.withText("Subject characteristics"));
         waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
         cds.goToSummary();
-        sleep(250);
-
-        waitAndClick(Locator.linkWithText("clades"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: CLADE"));
-        cds.goToSummary();
-        sleep(250);
-
-        waitAndClick(Locator.linkWithText("tiers"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: TIER"));
-        cds.goToSummary();
-        sleep(250);
-
-        waitAndClick(Locator.linkWithText("sample types"));
-        waitForElement(dimensionGroup.withText("Assay antigens"));
-        waitForElement(dimensionSort.withText("SORTED BY: SAMPLE TYPE"));
-        cds.goToSummary();
-    }
-
-    @Test
-    @Ignore("Multi-noun details for antigens NYI")
-    public void testMultiAntigenInfoPage()
-    {
-        cds.viewLearnAboutPage("Antigens");
-
-        List<String> assays = Arrays.asList(CDSHelper.ASSAYS[0], "Lab Results", CDSHelper.ASSAYS[1], CDSHelper.ASSAYS[2], CDSHelper.ASSAYS[3]);
-        assertElementPresent(Locator.tagWithClass("div", "detail-container"), assays.size());
-
-        for (String assay : assays)
-        {
-            assertElementPresent(Locator.tagWithClass("div", "study-description").append(Locator.tag("h2").withText(assay)));
-        }
-
-        // just do simple checks for the placeholder noun pages for now, layout will change so there is no use
-        // investing too much automation right now.
-        List<String> labels = Arrays.asList("96ZM651.02", "CAP210.2.00.E8", "BaL.01",
-                "Zambia", "S. Africa", "USA",
-                "AF286224", "DQ435683", "AF063223");
-        waitForText(labels.get(0));
-        assertTextPresent(labels);
-
-        cds.closeInfoPage();
     }
 
     @Test

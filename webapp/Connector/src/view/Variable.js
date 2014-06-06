@@ -13,24 +13,9 @@ Ext.define('Connector.view.Variable', {
 
     btnCls: 'varselectbtn',
 
-    layout: { type: 'fit' },
-
-    modelTpl : new Ext.XTemplate(
-            '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
-            '<ul>',
-                '<li>{schemaLabel:this.elipseEncode}</li>',
-                '<li>{[this.renderLabel(values)]}</li>',
-            '</ul>',
-            {
-                elipseEncode : function(v) {
-                    return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
-                },
-                renderLabel : function(values) {
-                    var label = values.queryLabel + (values.subLabel.length > 0 ? " (" + values.subLabel + ")" : "");
-                    return this.elipseEncode(label);
-                }
-            }
-    ),
+    layout: {
+        type: 'hbox'
+    },
 
     constructor : function(config) {
 
@@ -45,7 +30,7 @@ Ext.define('Connector.view.Variable', {
             itemId: 'modelcomponent',
             xtype: 'box',
             cls: 'variable',
-            tpl: this.modelTpl
+            tpl: this.getModelTpl()
         };
 
         if (this.model) {
@@ -58,7 +43,7 @@ Ext.define('Connector.view.Variable', {
             xtype: 'button',
             itemId: 'cvbutton',
             cls: this.btnCls,
-            margin: '-13 0 0 0',
+            margin: '10 0 0 0',
             text: this.buttonText,
             handler: this.onBtnClick,
             scope: this
@@ -66,7 +51,7 @@ Ext.define('Connector.view.Variable', {
             xtype: 'imgbutton',
             itemId: 'ddbutton',
             hidden: true,
-            vector: 27,
+            vector: 29,
             cls: this.btnCls + ' ddbutton',
             margin: '4 0 0 10',
             handler: this.onBtnClick,
@@ -74,6 +59,25 @@ Ext.define('Connector.view.Variable', {
         }];
 
         this.callParent();
+    },
+
+    getModelTpl : function() {
+        return new Ext.XTemplate(
+            '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
+            '<ul>',
+                '<li>{schemaLabel:this.elipseEncode}</li>',
+                '<li>{[this.renderLabel(values)]}</li>',
+            '</ul>',
+            {
+                elipseEncode : function(v) {
+                    return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
+                },
+                renderLabel : function(values) {
+                    var label = values.queryLabel + (values.subLabel.length > 0 ? " (" + values.subLabel + ")" : "");
+                    return this.elipseEncode(label);
+                }
+            }
+        );
     },
 
     getModel : function() {
@@ -124,7 +128,8 @@ Ext.define('Connector.panel.ColorSelector', {
 
     alias : 'widget.colorselector',
 
-    modelTpl : new Ext.XTemplate(
+    getModelTpl : function() {
+        return new Ext.XTemplate(
             '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
                 '<li>{[this.renderLabel(values)]}</li>',
@@ -144,7 +149,8 @@ Ext.define('Connector.panel.ColorSelector', {
                     return '';
                 }
             }
-    ),
+        );
+    },
 
     showHover : function() {
         var bbox = document.querySelector('#color-legend svg').getBoundingClientRect();

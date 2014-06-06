@@ -122,18 +122,14 @@ div.variableoptionsgrid {
 .connector-grid {
   .x-column-header-trigger {
     background-image: url(images/filter.svg);
-    background-position: 0px 28px;
 
     &:hover {
-      background-color: #E6E1E1 !important;
       background-image: url(images/filter_selected.svg);
-      background-position: 0px 28px;
     }
   }
 
   .filtered-column .x-column-header-trigger {
     background-image: url(images/filter_selected.svg);
-    background-position: 0px 28px;
   }
 }
 
