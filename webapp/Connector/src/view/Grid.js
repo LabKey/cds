@@ -372,7 +372,7 @@ Ext.define('Connector.view.Grid', {
                 queryName: model.get('queryName'),
                 columns: model.get('columnSet'),
                 filterArray: model.getFilterArray(true),
-                maxRows: 10000
+                maxRows: 750
             });
 
             this.gridStore.on('load', function(store) {

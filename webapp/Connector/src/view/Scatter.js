@@ -128,36 +128,16 @@ Ext.define('Connector.view.Scatter', {
 
     getCenter : function() {
         if (!this.centerContainer) {
-            this.plotPanel = Ext.create('Ext.panel.Panel', {
-                flex: 10,
-                cls: 'plot',
-                style: {'background-color': '#fff'},
-                listeners: {
-                    afterrender: {
-                        fn: function(box) {
-                            this.plotEl = box.getEl();
-                        },
-                        single: true,
-                        scope: this
-                    }
-                }
-            });
+
             this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
-                cls: 'study-axis',
                 border: false,
                 overflowX: 'hidden',
                 overflowY: 'auto',
                 frame: false,
                 items: [{
                     xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        cls: 'study-axis',
-                        style: {
-                            overflow: 'auto'
-                        },
-                        html: '<div id="study-axis" style="overflow: auto;"></div>'
-                    }
+                    tpl: new Ext.XTemplate('<div id="study-axis"></div>'),
+                    data: {}
                 }]
             });
 
@@ -168,7 +148,21 @@ Ext.define('Connector.view.Scatter', {
                     align: 'stretch',
                     pack: 'start'
                 },
-                items: [this.plotPanel,this.studyAxisPanel]
+                items: [{
+                    xtype: 'panel',
+                    flex: 10,
+                    cls: 'plot',
+                    style: {'background-color': '#fff'},
+                    listeners: {
+                        afterrender: {
+                            fn: function(box) {
+                                this.plotEl = box.getEl();
+                            },
+                            single: true,
+                            scope: this
+                        }
+                    }
+                },this.studyAxisPanel]
             });
         }
         return this.centerContainer;

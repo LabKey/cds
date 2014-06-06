@@ -430,7 +430,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        Locator studyAxisLoc = Locator.css("div.study-axis svg");
+        Locator studyAxisLoc = Locator.css("#study-axis svg");
         Locator studyGroups = Locator.css("g.study");
         Locator studyVisits = Locator.css("rect.visit");
         Locator visitHover = Locator.css("div.study-axis-window");
