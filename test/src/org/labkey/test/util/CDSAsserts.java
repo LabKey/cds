@@ -28,7 +28,7 @@ public class CDSAsserts
 
     public void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 sexes", "6 races & subtypes");
+        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "3 countries", "2 sexes", "2 hiv infection statuses", "1 species", "6 races & subtypes");
         assertCDSPortalRow("Study products", "3 study products");
         assertCDSPortalRow("Labs", "3 labs");
         assertCDSPortalRow("Assays", "4 assays", "3 target areas", "3 methodologies");

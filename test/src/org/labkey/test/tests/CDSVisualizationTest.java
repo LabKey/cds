@@ -378,23 +378,24 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.pickMeasure("Lab Results", "Hemoglobin");
         yaxis.confirmSelection();
         color.openSelectorWindow();
-        color.pickMeasure("Demographics", "TreatmentID");
+        color.pickMeasure("Demographics", "Race");
         color.confirmSelection();
 
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 4);
+        assertElementPresent(colorLegendGlyph, 6);
 
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
-        Map<String, Integer> treatmentCounts = Maps.of(
-                "N/A", 42,
-                "Placebo", 22,
-                "Prime-boost ALVAC HIV", 9,
-                "Prime-boost VRC-HIVADV014-00-VP", 22
-        );
+        Map<String, Integer> raceCounts = new HashMap<>();
+        raceCounts.put("American Indian/Alaskan Native", 6);
+        raceCounts.put("Asian", 6);
+        raceCounts.put("Black/African American", 23);
+        raceCounts.put("Indian", 19);
+        raceCounts.put("Native Hawaiian/Pacific Islander", 9);
+        raceCounts.put("White", 32);
 
-        Set<String> foundTreatments = new HashSet<>();
+        Set<String> foundRaces = new HashSet<>();
 
         for (WebElement el : legendGlyphs)
         {
@@ -402,28 +403,28 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             String path = el.getAttribute("d");
             List<WebElement> points = Locator.css(String.format("a.point > path[fill='%s'][d='%s']", fill, path)).findElements(getDriver());
 
-            String treatmentId = getPointProperty("TreatmentID", points.get(0).findElement(By.xpath("..")));
-            assertEquals("Wrong number of points for treatment: " + treatmentId, treatmentCounts.get(treatmentId), (Integer)points.size());
+            String race = getPointProperty("Race", points.get(0).findElement(By.xpath("..")));
+            assertEquals("Wrong number of points for race: " + race, raceCounts.get(race), (Integer)points.size());
 
-            foundTreatments.add(treatmentId);
+            foundRaces.add(race);
         }
 
-        assertEquals("Found incorrect TreatmentIds", treatmentCounts.keySet(), foundTreatments);
+        assertEquals("Found incorrect Races", raceCounts.keySet(), foundRaces);
 
         int expectedPointCount = 0;
-        for (Map.Entry<String, Integer> treatmentCount : treatmentCounts.entrySet())
+        for (Map.Entry<String, Integer> raceCount : raceCounts.entrySet())
         {
-            expectedPointCount += treatmentCount.getValue();
+            expectedPointCount += raceCount.getValue();
         }
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
 
         // issue 20446
         color.openSelectorWindow();
-        color.pickMeasure("Demographics", "TreatmentID");
+        color.pickMeasure("Demographics", "Race");
         color.confirmSelection();
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
         waitForElement(colorLegendGlyph);
-        assertElementPresent(colorLegendGlyph, 4);
+        assertElementPresent(colorLegendGlyph, 6);
     }
     @Test
     public void verifyStudyAxis()
