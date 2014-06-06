@@ -256,15 +256,16 @@ a.x-btn {
   $border-width : 1px,
   $border-color: #CC87C9,
   $border-color-over: $interactive-color,
+  $border-color-disabled: rgba(#CC87C9, 0.7),
 
   $background-color: $light-color,
-  $background-color-over: opacify($interactive-color, 0.4),
+  $background-color-over: $interactive-color,
 
   $text-padding: 0px,
 
   $color: $interactive-color,
   $color-over: $light-color,
-  $color-disabled: $heat-scale-4,
+  $color-disabled: rgba($interactive-color, 0.4),
 
   $font-weight: bold,
 
