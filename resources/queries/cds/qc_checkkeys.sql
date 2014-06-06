@@ -33,13 +33,13 @@ WHERE Facts.Antigen IS NOT NULL AND Facts.Antigen.Id IS NULL
 
 UNION
 
-SELECT Container, 'FAILED - missing assay' as qc, Facts.Assay as value
+SELECT Container, 'FAILED - missing assay. Likely means Study.StudyDesignAssays does not have a listing by this name.' as qc, Facts.Assay as value
 FROM Facts
 WHERE Facts.Assay IS NOT NULL AND Facts.Assay.Name IS NULL
 
 UNION
 
-SELECT Container, 'FAILED - missing lab' as qc, Facts.Lab as value
+SELECT Container, 'FAILED - missing lab. Likely means Study.StudyDesignLabs does not have a listing by this name.' as qc, Facts.Lab as value
 FROM Facts
 WHERE Facts.Lab IS NOT NULL AND Facts.Lab.Name IS NULL
 
