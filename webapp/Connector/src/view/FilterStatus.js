@@ -55,7 +55,7 @@ Ext.define('Connector.view.FilterStatus', {
             id: 'selection-panel',
             tbarButtons : [
                 { text: 'use as filter', itemId: 'overlap' },
-                { text: 'label as subgroup', itemId: 'subgroup' },
+                { text: 'label as subgroup', itemId: 'subgroup', disabled: true },
                 { text: 'clear', cls: 'selectionclear', itemId: 'sClear' }
             ],
             filters: this.selections

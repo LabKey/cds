@@ -1672,6 +1672,10 @@ div.filterheader {
 
       .x-column-header-trigger {
         display: block;
+        position: absolute;
+        bottom: 0;
+        top: inherit;
+        height: 15px;
       }
 
       .x-column-header-inner {

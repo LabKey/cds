@@ -54,6 +54,7 @@ Ext.define('Connector.view.Grid', {
                     cls: 'gridcitationsbtn',
                     text: 'citations',
                     margin: '27 0 0 5',
+                    disabled: true,
                     handler: function() {},
                     scope: this
                 },{
