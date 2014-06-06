@@ -635,7 +635,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         gridColumnSelector.addGridColumn("Demographics", "Sex", true, true);
         gridColumnSelector.addGridColumn("Demographics", "Race", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab", "Sex", "Race");
-        grid.waitForCount(671); // Why does this change?
+        grid.waitForCount(668);
 
         log("Remove a column");
         gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
@@ -667,7 +667,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         log("Filter undo on grid");
         cds.clearFilter();
-        grid.waitForCount(671);
+        grid.waitForCount(668);
         _asserts.assertFilterStatusCounts(29, 4, 4);
 
         click(Locator.linkWithText("Undo"));
@@ -692,7 +692,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.clearFilters("Point IC50");
         grid.waitForCount(650);
         grid.clearFilters("PI");
-        grid.waitForCount(671);
+        grid.waitForCount(668);
         assertTextPresent("All subjects"); // ensure there are no app filters remaining
 
         // TODO: Once citations are implemented, enable to following coverage cases
