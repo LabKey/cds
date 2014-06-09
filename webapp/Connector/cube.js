@@ -79,21 +79,55 @@ Ext4.define('Connector.cube.Configuration', {
                         countPlural: 'Countries'
                     }]
                 },{
-                    uniqueName: '[Subject.Ethnicity]',
+                    uniqueName: '[Subject.Randomization]',
+                    label: 'Randomization',
                     supportsSummary: false,
                     levels: [{
-                        uniqueName: '[Subject.Ethnicity].[Ethnicity]',
-                        countSingular: 'Ethnicity',
-                        countPlural: 'Ethnicities'
+                        uniqueName: '[Subject.Randomization].[Randomization]',
+                        countSingular: 'Randomization',
+                        countPlural: 'Randomizations'
                     }]
                 },{
-                    uniqueName: '[Subject.Gender]',
+                    uniqueName: '[Subject.Ad5grp]',
+                    label: 'Baseline Ad5 titer category',
                     supportsSummary: false,
                     levels: [{
-                        uniqueName: '[Subject.Gender].[Gender]',
-                        countSingular: 'Gender',
-                        countPlural: 'Genders'
+                        uniqueName: '[Subject.Ad5grp].[Ad5grp]',
+                        countSingular: 'Baseline Ad5 titer category',
+                        countPlural: 'Baseline Ad5 titer categories'
                     }]
+                },{
+                    uniqueName: '[Subject.Circumcised]',
+                    label: 'Circumcision Status',
+                    supportsSummary: false
+                },{
+                    uniqueName: '[Subject.Hivinf]',
+                    label: 'HIV infection status',
+                    levels: [{
+                        uniqueName: '[Subject.Hivinf].[Hivinf]',
+                        countSingular: 'HIV infection status',
+                        countPlural: 'HIV infection statuses'
+                    }]
+                },{
+                    uniqueName: '[Subject.PerProtocol]',
+                    label: 'Protocol completion',
+                    supportsSummary: false,
+                    levels: [{
+                        uniqueName: '[Subject.PerProtocol].[PerProtocol]',
+                        countSingular: 'Protocol completion',
+                        countPlural: 'Protocol completions'
+                    }]
+                },{
+                    uniqueName: '[Subject.BmiGrp]',
+                    label: 'Baseline BMI category',
+                    supportsSummary: false,
+                    levels: [{
+                        uniqueName: '[Subject.BmiGrp].[BmiGrp]',
+                        countSingular: 'Baseline BMI category',
+                        countPlural: 'Baseline BMI categories'
+                    }]
+                },{
+                    uniqueName: '[Subject.Species]'
                 }]
             },{
                 uniqueName: '[Vaccine]',
@@ -395,6 +429,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Labs',
                 priority: 20,
                 supportsDetails: true,
+                supportsSummary: false,
                 detailCollection: 'Connector.app.store.Labs',
                 detailModel: 'Connector.app.model.Labs',
                 detailView: 'Connector.app.view.Labs',

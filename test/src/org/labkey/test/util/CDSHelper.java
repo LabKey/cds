@@ -313,7 +313,7 @@ public class CDSHelper
 
     public void selectInfoPaneItem(String label, boolean onlyThisItem)
     {
-        Locator.XPathLocator memberLabel = Locator.tagWithClass("div", "x-grid-cell-inner").withText(label);
+        Locator.XPathLocator memberLabel = Locator.tagWithClass("div", "x-grid-cell-inner").containing(label);
 
         if (onlyThisItem)
         {

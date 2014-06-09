@@ -260,7 +260,7 @@
 
     <% } else {  %>
     <!-- PRODUCTION -->
-    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js"></script>
+    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js?v="<%=text(serverHash)%>></script>
     <% } %>
 </head>
 <body>

@@ -94,16 +94,46 @@
                     <KeyExpression><SQL>IFDEFINED(sex)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
-            <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
+            <Hierarchy name="Randomization" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Ethnicity" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(ethnicity)</SQL></KeyExpression>
+                <Level name="Randomization" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(randomization)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
-            <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="subjectid">
+            <Hierarchy name="Ad5grp" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Gender" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(gender)</SQL></KeyExpression>
+                <Level name="Ad5grp" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(ad5_grp)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
+            <Hierarchy name="Circumcised" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Circumcised" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(circumcised)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
+            <Hierarchy name="Hivinf" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Hivinf" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(hivinf)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
+            <Hierarchy name="PerProtocol" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="PerProtocol" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(per_protocol)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
+            <Hierarchy name="BmiGrp" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="BmiGrp" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(bmi_grp)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
+            <Hierarchy name="Species" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographics" schema="study"/>
+                <Level name="Species" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(species)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
         </Dimension>
