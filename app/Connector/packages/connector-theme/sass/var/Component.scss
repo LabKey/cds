@@ -2059,11 +2059,12 @@ div.learnview {
   .checkbox {
     color: $unselect-black;
     width: 11px;
-    min-height: 10px;
+    height: 19px;
     float: left;
   }
 
   .item-row {
+    min-height: 19px;
     padding: 2px 0px;
   }
 }

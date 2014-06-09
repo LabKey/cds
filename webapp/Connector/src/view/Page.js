@@ -28,6 +28,8 @@ Ext.define('Connector.view.Page', {
 		itemId: 'centerRegion'
 	}],
 
+    cls: 'auto-scroll-y',
+    
 	plugins: ['headerlock'],
 
 	selectedView : 0,

@@ -130,6 +130,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayHeader": "../../../../webapp/Connector/src/app/view/module/AssayHeader.js",
   "Connector.view.module.AssayVariableList": "../../../../webapp/Connector/src/app/view/module/AssayVariableList.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
+  "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/view/module/ContactCDS.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../../../webapp/Connector/src/app/view/module/ProductHeader.js",
   "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
@@ -285,6 +286,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.AssayHeader": [],
   "Connector.view.module.AssayVariableList": [],
   "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ContactCDS": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
   "Connector.view.module.ProductOtherProducts": [],
@@ -1367,6 +1369,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.app.module.assayvariablelist"
   ],
   "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ContactCDS": [
+    "widget.module.contactcds"
+  ],
   "Connector.view.module.Person": [
     "widget.module.person"
   ],

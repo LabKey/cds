@@ -191,18 +191,20 @@ Ext.define('Connector.view.Signin', {
 
     ui: 'custom',
 
+
     items: [{
     	xtype: 'container',
     	cls: 'signin-left',
     	layout: {
     		type: 'vbox',
     		align: 'stretch'
-    	}, 
+    	},
     	flex: 1,
     	items: [{
-    		xtype: 'homeheader'
+    		xtype: 'homeheader',
     	}, {
 	    	xtype: 'about',
+	    	cls: 'auto-scroll-y',
 	    	flex: 1
 	    }]
     }, {
