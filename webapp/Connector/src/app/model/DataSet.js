@@ -64,7 +64,7 @@ Ext.define('Connector.app.model.DataSet', {
                 filters: [LABKEY.Query.Visualization.Filter.create({schemaName: "study", queryName: this.get('Name')})]
             },
             success: function(data){
-                console.log(LABKEY.Utils.decode(data.response));
+                //console.log(LABKEY.Utils.decode(data.response));
             }
         });
 
