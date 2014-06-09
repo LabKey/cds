@@ -321,7 +321,6 @@ Ext.define('Connector.view.Scatter', {
             }),
             aes: {
                 hoverText : function(row) {
-                    // TODO: figure out how to display subject id.
                     var text = 'Subject: ' + row.subjectId.value;
 
                     if (row.xname) {
@@ -419,7 +418,32 @@ Ext.define('Connector.view.Scatter', {
 
     getBoxLayer : function() {
         return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.Boxplot({})
+            geom: new LABKEY.vis.Geom.DataspaceBoxPlot({}),
+            aes: {
+                pointHoverText : function(row) {
+                    var text = 'Subject: ' + row.subjectId.value;
+
+                    if (row.xname) {
+                        text += ',\n' + row.xname + ': ' + row.x;
+                    }
+
+                    text += ',\n' + row.yname + ': ' + row.y;
+
+                    if (row.colorname) {
+                        text += ',\n' + row.colorname + ': ' + row.color;
+                    }
+
+                    return text;
+                },
+                hoverText: function(name, summary){
+                    var text = name + '\n';
+                    text += 'Q1: ' + summary.Q1 + '\n';
+                    text += 'Q2: ' + summary.Q2 + '\n';
+                    text += 'Q3: ' + summary.Q3 + '\n';
+
+                    return text;
+                }
+            }
         });
     },
 
@@ -746,7 +770,7 @@ Ext.define('Connector.view.Scatter', {
                 this.noplotmsg.hide();
                 this.plot.render();
                 if (this.measures[2]) {
-                    colorSelector = Ext.getCmp('colorselector');
+                    var colorSelector = Ext.getCmp('colorselector');
                     colorSelector.setLegend(this.plot.getLegendData());
                 }
             }
@@ -1326,7 +1350,7 @@ Ext.define('Connector.view.Scatter', {
 
     _preprocessGetDataResp : function() {
         var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
-                ca = null,_xid, _yid, _cid;
+                ya = null, ca = null,_xid, _yid, _cid;
 
         this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
