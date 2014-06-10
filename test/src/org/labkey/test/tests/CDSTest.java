@@ -178,7 +178,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(dataPoints);
 
         click(Locator.tagContainingText("a", "About the Co"));
-        waitForText("404: View Not Found");
+        waitForText("About the HIV Collaborative");
         getDriver().navigate().back();
         waitForElement(dataPoints.notHidden());
 

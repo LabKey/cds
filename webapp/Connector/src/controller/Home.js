@@ -9,7 +9,7 @@ Ext.define('Connector.controller.Home', {
 
     stores : [],
 
-    views : ['Home'],
+    views : ['Home', 'About'],
 
     models : ['RSSItem'],
 
@@ -17,6 +17,12 @@ Ext.define('Connector.controller.Home', {
 
         this.control('home > homeheader', {
             boxready: this.resolveStatistics
+        });
+
+        this.control('#back', {
+            click : function() {
+                history.back();
+            }
         });
 
         this.callParent();
@@ -27,6 +33,27 @@ Ext.define('Connector.controller.Home', {
 
         if (xtype == 'home') {
             v = Ext.create('Connector.view.Home', {});
+        }
+        else if (xtype == 'about') {
+            var about = Ext.create('Connector.view.About', {});
+
+            var header = Ext.create('Connector.view.PageHeader', {
+                data: {
+                    label : "<h1>About the HIV Collaborative DataSpace</h1>",
+                    buttons : {
+                        back: true
+                    },
+                    scope : this
+                }
+            });
+
+            var pageView = Ext.create('Connector.view.Page', {
+                contentViews: [about],
+                header: header,
+                pageID: 'homeAbout'
+            });
+
+            v = pageView;
         }
 
         return v;

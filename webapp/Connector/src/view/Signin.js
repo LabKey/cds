@@ -11,7 +11,7 @@ Ext.define('Connector.view.SigninForm', {
 
     bubbleEvents: ['userSignedIn'],
 
-	cls: 'signin-right',
+	cls: 'signin-right auto-scroll-y',
 
     width: 450,
 
@@ -49,7 +49,7 @@ Ext.define('Connector.view.SigninForm', {
 		        '<p>',
 		        	'To access and view data in this site you must agree to the Terms of Use for HIV Collaborative DataSpace, which are available for review by clicking the link below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.',
 		        '</p>',
-		        '<a href="">Terms of Use of the HIV Collaborative DataSpace</a>',
+		        '<a href="#signin/terms">Terms of Use of the HIV Collaborative DataSpace</a>',
 	    	'</form>',
 	    '</tpl>', {
 	    	disabledAttr : function(model) {
@@ -191,18 +191,20 @@ Ext.define('Connector.view.Signin', {
 
     ui: 'custom',
 
+
     items: [{
     	xtype: 'container',
     	cls: 'signin-left',
     	layout: {
     		type: 'vbox',
     		align: 'stretch'
-    	}, 
+    	},
     	flex: 1,
     	items: [{
-    		xtype: 'homeheader'
+    		xtype: 'homeheader',
     	}, {
 	    	xtype: 'about',
+	    	cls: 'auto-scroll-y',
 	    	flex: 1
 	    }]
     }, {

@@ -11,7 +11,7 @@ Ext.define('Connector.view.Learn', {
 
     requires : ['Connector.model.Dimension'],
 
-    cls: 'learnview',
+    cls: 'learnview auto-scroll-y',
 
     bubbleEvents: ['selectdimension'],
 
