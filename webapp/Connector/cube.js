@@ -330,6 +330,14 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
+                            title: 'Title'
+                        },
+                        modelData: {
+                            text: 'Title'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
                             title: 'CDS editorial'
                         },
                         modelData: {
@@ -349,16 +357,10 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Population & sites'
                         }
                     }], [{
-                        type: 'person',
                         staticData: {
-                            title: 'Study point of contact'
+                            title: 'Contact information'
                         },
-                        modelData: {
-                            name: 'MainContact.Name',
-                            picture: 'MainContact.Portrait',
-                            line1: 'MainContact.Role',
-                            line2: 'MainContact.Team'
-                        }
+                        type: 'contactcds'
                     }, {
                         type: 'studyproducts',
                         staticData: {
