@@ -28,6 +28,8 @@ Ext.define('Connector.view.Page', {
 		itemId: 'centerRegion'
 	}],
 
+    cls: 'auto-scroll-y',
+    
 	plugins: ['headerlock'],
 
 	selectedView : 0,
@@ -50,9 +52,14 @@ Ext.define('Connector.view.Page', {
 
         var data = this.data;
 
-        TESTPAGE = this;
-
         this.selectTab = Ext.bind(this.selectTab, this);
+
+        // if (this.scrollContent) {
+        //     this.items[1].layout = {
+        //         type: 'hbox',
+        //         align: 'stretch'
+        //     }
+        // }
 
         // Initialize page state
         this.state = {};

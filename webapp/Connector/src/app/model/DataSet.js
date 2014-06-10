@@ -53,6 +53,20 @@ Ext.define('Connector.app.model.DataSet', {
 			},
 			scope: this
 		});
+    },
+
+    getVariables: function(id, callback) {
+        LABKEY.Ajax.request({
+            url : LABKEY.ActionURL.buildURL("visualization", "getMeasures"),
+            method : 'GET',
+            params : {
+                allColumns: true,
+                filters: [LABKEY.Query.Visualization.Filter.create({schemaName: "study", queryName: this.get('Name')})]
+            },
+            success: function(data){
+                //console.log(LABKEY.Utils.decode(data.response));
+            }
+        });
 
     }
 });

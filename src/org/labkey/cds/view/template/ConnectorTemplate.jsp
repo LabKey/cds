@@ -185,6 +185,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Popup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
@@ -192,6 +193,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Signin.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/TermsOfUse.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
@@ -244,7 +246,10 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
 
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayVariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
@@ -260,7 +265,7 @@
 
     <% } else {  %>
     <!-- PRODUCTION -->
-    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js"></script>
+    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js?v="<%=text(serverHash)%>></script>
     <% } %>
 </head>
 <body>

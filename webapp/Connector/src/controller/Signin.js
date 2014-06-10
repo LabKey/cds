@@ -7,12 +7,15 @@ Ext.define('Connector.controller.Signin', {
 
     extend: 'Connector.controller.AbstractViewController',
 
-    views: ['Signin'],
+    views: ['Signin', 'TermsOfUse'],
 
     createView : function(xtype, context) {
         var c = { ctx: context };
+        var type;
+        var v;
 
-        if (true) {
+        switch (xtype) {
+        case 'signin':
             type = 'Connector.view.Signin';
 
             Ext.applyIf(c, {
@@ -20,16 +23,40 @@ Ext.define('Connector.controller.Signin', {
                 state: this.getStateManager()
             });
 
-            var v = Ext.create(type, c);
+            v = Ext.create(type, c);
 
             v.on('userSignedIn', function() {
                 // Start loading
                 this.application.olap.load();
                 window.location.reload();
             }, this);
+            break;
+        case 'terms':
+            var terms = Ext.create('Connector.view.TermsOfUse', {});
 
-            return v;
+            var header = Ext.create('Connector.view.PageHeader', {
+                data: {
+                    label : "<h1>Full Terms of Use Agreement: HIV Collaborative DataSpace</h1>",
+                    buttons : {
+                        back: true
+                    },
+                    scope : this
+                }
+            });
+
+            var pageView = Ext.create('Connector.view.Page', {
+                // scrollContent: true,
+                contentViews: [terms],
+                header: header,
+                pageID: 'terms'
+            });
+
+            v = pageView;
+
+            break;
         }
+
+        return v;
     },
 
     updateView : function(xtype, context) { },
