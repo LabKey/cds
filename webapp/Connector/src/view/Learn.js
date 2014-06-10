@@ -11,7 +11,7 @@ Ext.define('Connector.view.Learn', {
 
     requires : ['Connector.model.Dimension'],
 
-    cls: 'learnview',
+    cls: 'learnview auto-scroll-y',
 
     bubbleEvents: ['selectdimension'],
 
@@ -167,8 +167,13 @@ Ext.define('Connector.view.Learn', {
             handler: function(button, _, dimension, model) {
                 Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
                     var selections = [{
-                        hierarchy: dimension.singularName,
+                        // "[Study]"
+                        hierarchy: "["+dimension.singularName+"]",
+                        // "[Study].[Not Actually CHAVI 001]"
                         members: [{ uniqueName: '['+dimension.singularName+'].['+model.get('Label')+']' }],
+                        // "[Study].[Name]"
+                        level: "["+dimension.singularName + "].[Name]",
+                        operator: "OR",
                         isGroup: false
                     }];
                     this.state.addSelection(selections, false, true, true);

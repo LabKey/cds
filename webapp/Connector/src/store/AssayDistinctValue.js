@@ -21,10 +21,13 @@ Ext.define('Connector.store.AssayDistinctValue', {
             var rows = [];
             for (var i = 0; i < data.rows.length; i++)
             {
-                rows.push(Ext.create('Connector.model.Antigen', {
-                    Name: data.rows[i]['Id'],
-                    Description: data.rows[i]['ShortDescription']
-                }));
+                if (data.rows[i]['Id'] != null)
+                {
+                    rows.push(Ext.create('Connector.model.Antigen', {
+                        Name: data.rows[i]['Id'],
+                        Description: data.rows[i]['ShortDescription']
+                    }));
+                }
             }
 
             this.removeAll();

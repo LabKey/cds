@@ -31,7 +31,7 @@ Ext.define('Connector.controller.Learn', {
 
         this.control('#back', {
             click : function() {
-                this.onBack();
+                history.back();
             }
         });
 
@@ -240,11 +240,5 @@ Ext.define('Connector.controller.Learn', {
         }
 
         this.getViewManager().changeView(action, 'learn', context.split('/'));
-    },
-
-    onBack : function() {
-        if (this.dimensionName) {
-            this.getViewManager().changeView('learn', 'learn', [this.dimensionName]);
-        }
     }
 });

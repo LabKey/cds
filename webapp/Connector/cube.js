@@ -250,26 +250,19 @@ Ext4.define('Connector.cube.Configuration', {
                     content: {
                         view: 'Connector.app.view.ModuleContainer',
                         modules: [[{
-                            type: 'text',
+                            type: 'assayvariablelist',
                             staticData: {
-                                title: 'Variables [FAKE DATA]',
-                                text: 'KEY MEASURE<br/>'+
-                                    'Percent of T-cells with positive cytokine response<br/>'+
-                                    'Positive / Negative<br/><br/>'+
-                                    'ALL MEASURES<br/>'+
-                                    'Percent of subjects with positive response'
+                                title: 'Variables'
                             }
                         }], [{
-                            type: 'text',
+                            type: 'assayantigenlist',
                             staticData: {
-                                title: 'Antigens [FAKE DATA]',
-                                text: 'CMV (control)'
+                                title: 'Antigens'
                             }
                         }], [{
-                            type: 'text',
+                            type: 'assayanalytelist',
                             staticData: {
-                                title: 'Analytes [FAKE DATA]',
-                                text: 'Interleukin-2 and / or Interferon-y'
+                                title: 'Analytes'
                             }
                         }]]
                     }
@@ -337,6 +330,14 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
+                            title: 'Title'
+                        },
+                        modelData: {
+                            text: 'Title'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
                             title: 'CDS editorial'
                         },
                         modelData: {
@@ -356,16 +357,10 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Population & sites'
                         }
                     }], [{
-                        type: 'person',
                         staticData: {
-                            title: 'Study point of contact'
+                            title: 'Contact information'
                         },
-                        modelData: {
-                            name: 'MainContact.Name',
-                            picture: 'MainContact.Portrait',
-                            line1: 'MainContact.Role',
-                            line2: 'MainContact.Team'
-                        }
+                        type: 'contactcds'
                     }, {
                         type: 'studyproducts',
                         staticData: {

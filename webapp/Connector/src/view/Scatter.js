@@ -278,7 +278,7 @@ Ext.define('Connector.view.Scatter', {
             this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
         }
 
-        if (this.studyAxis  && this.studyAxisData && this.studyAxisData.length > 0) {
+        if (this.studyAxisPanel.isVisible() && this.studyAxis  && this.studyAxisData && this.studyAxisData.length > 0) {
             this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
@@ -312,6 +312,114 @@ Ext.define('Connector.view.Scatter', {
         });
     },
 
+    getLayerAes : function(layerScope, isBoxPlot) {
+        var aes, hoverText;
+
+        hoverText = function(row) {
+            var text = 'Subject: ' + row.subjectId.value;
+
+            if (row.xname) {
+                text += ',\n' + row.xname + ': ' + row.x;
+            }
+
+            text += ',\n' + row.yname + ': ' + row.y;
+
+            if (row.colorname) {
+                text += ',\n' + row.colorname + ': ' + row.color;
+            }
+
+            return text;
+        };
+
+        aes = {
+            mouseOverFn: function(event, pointData, layerSel){
+                if (!layerScope.isBrushed) {
+                    var plot = layerScope.plot, colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+
+                    if (plot.scales.color && plot.scales.color.scale) {
+                        colorScale = plot.scales.color.scale;
+                        colorAcc = plot.aes.color;
+                    }
+
+                    colorFn = function(d) {
+                        if (d.subjectId.value === pointData.subjectId.value) {
+                            return '#01BFC2';
+                        } else {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        }
+                    };
+
+                    strokeFn = function(d) {
+                        if (d.subjectId.value === pointData.subjectId.value) {
+                            return '#00EAFF';
+                        } else {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        }
+                    };
+
+                    opacityFn = function(d) {
+                        return  d.subjectId.value === pointData.subjectId.value ? 1 : .5;
+                    };
+
+                    var points = layerSel.selectAll('.point path');
+
+                    points.attr('fill', colorFn)
+                            .attr('stroke', strokeFn)
+                            .attr('fill-opacity', opacityFn)
+                            .attr('stroke-opacity', opacityFn);
+
+                    points.each(function(d) {
+                        // Re-append the node so it is on top of all the other nodes, this way highlighted points
+                        // are always visible.
+                        var node = this.parentNode;
+                        if (d.subjectId.value === pointData.subjectId.value) {
+                            node.parentNode.appendChild(node);
+                        }
+                    });
+                }
+            },
+            mouseOutFn: function(event, pointData, layerSel){
+                if (!layerScope.isBrushed) {
+                    var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
+
+                    if (plot.scales.color && plot.scales.color.scale) {
+                        colorScale = plot.scales.color.scale;
+                        colorAcc = plot.aes.color;
+                    }
+
+                    colorFn = function(d) {
+                        if (colorScale && colorAcc) {
+                            return colorScale(colorAcc.getValue(d));
+                        }
+
+                        return '#000000';
+                    };
+
+                    layerSel.selectAll('.point path').attr('fill', colorFn)
+                            .attr('stroke', colorFn)
+                            .attr('fill-opacity', .5)
+                            .attr('stroke-opacity', .5);
+                }
+            }
+        };
+
+        if (isBoxPlot) {
+            aes.pointHoverText = hoverText;
+        } else {
+            aes.hoverText = hoverText;
+        }
+
+        return aes;
+    },
+
     getPointLayer : function(layerScope) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Point({
@@ -319,107 +427,24 @@ Ext.define('Connector.view.Scatter', {
                 plotNullPoints: true,
                 opacity: 0.5
             }),
-            aes: {
-                hoverText : function(row) {
-                    // TODO: figure out how to display subject id.
-                    var text = 'Subject: ' + row.subjectId.value;
-
-                    if (row.xname) {
-                        text += ',\n' + row.xname + ': ' + row.x;
-                    }
-
-                    text += ',\n' + row.yname + ': ' + row.y;
-
-                    if (row.colorname) {
-                        text += ',\n' + row.colorname + ': ' + row.color;
-                    }
-
-                    return text;
-                },
-                mouseOverFn: function(event, pointData, layerSel){
-                    if (!layerScope.isBrushed) {
-                        var plot = layerScope.plot, colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-
-                        if (plot.scales.color && plot.scales.color.scale) {
-                            colorScale = plot.scales.color.scale;
-                            colorAcc = plot.aes.color;
-                        }
-
-                        colorFn = function(d) {
-                            if (d.subjectId.value === pointData.subjectId.value) {
-                                return '#01BFC2';
-                            } else {
-                                if (colorScale && colorAcc) {
-                                    return colorScale(colorAcc.getValue(d));
-                                }
-
-                                return '#000000';
-                            }
-                        };
-
-                        strokeFn = function(d) {
-                            if (d.subjectId.value === pointData.subjectId.value) {
-                                return '#00EAFF';
-                            } else {
-                                if (colorScale && colorAcc) {
-                                    return colorScale(colorAcc.getValue(d));
-                                }
-
-                                return '#000000';
-                            }
-                        };
-
-                        opacityFn = function(d) {
-                            return  d.subjectId.value === pointData.subjectId.value ? 1 : .5;
-                        };
-
-                        var points = layerSel.selectAll('.point path');
-
-                        points.attr('fill', colorFn)
-                                .attr('stroke', strokeFn)
-                                .attr('fill-opacity', opacityFn)
-                                .attr('stroke-opacity', opacityFn);
-
-                        points.each(function(d) {
-                            // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                            // are always visible.
-                            var node = this.parentNode;
-                            if (d.subjectId.value === pointData.subjectId.value) {
-                                node.parentNode.appendChild(node);
-                            }
-                        });
-                    }
-                },
-                mouseOutFn: function(event, pointData, layerSel){
-                    if (!layerScope.isBrushed) {
-                        var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
-
-                        if (plot.scales.color && plot.scales.color.scale) {
-                            colorScale = plot.scales.color.scale;
-                            colorAcc = plot.aes.color;
-                        }
-
-                        colorFn = function(d) {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
-                            }
-
-                            return '#000000';
-                        };
-
-                        layerSel.selectAll('.point path').attr('fill', colorFn)
-                                .attr('stroke', colorFn)
-                                .attr('fill-opacity', .5)
-                                .attr('stroke-opacity', .5);
-                    }
-                }
-            }
+            aes: this.getLayerAes(layerScope, false)
         });
     },
 
-    getBoxLayer : function() {
+    getBoxLayer : function(layerScope) {
+        var aes = this.getLayerAes(layerScope, true);
+        aes.hoverText = function(name, summary){
+            var text = name + '\n';
+            text += 'Q1: ' + summary.Q1 + '\n';
+            text += 'Q2: ' + summary.Q2 + '\n';
+            text += 'Q3: ' + summary.Q3 + '\n';
+
+            return text;
+        };
+
         return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.Boxplot({})
+            geom: new LABKEY.vis.Geom.DataspaceBoxPlot({}),
+            aes: aes
         });
     },
 
@@ -454,7 +479,7 @@ Ext.define('Connector.view.Scatter', {
             layer = this.getPointLayer(layerScope);
         } else if (config.xaxis && !config.xaxis.isContinuous) {
             // Box plot (aka 1D).
-            layer = this.getBoxLayer();
+            layer = this.getBoxLayer(layerScope);
         }
 
         var box = this.plotEl.getSize(); // maintain ratio 1:1
@@ -555,183 +580,179 @@ Ext.define('Connector.view.Scatter', {
             this.setScale(plotConfig.scales.yLeft, 'y', config);
 
             // add brush handling
-            if (config.xaxis.isContinuous) {
-                plotConfig.brushing = {
-                    brushstart : function() {
-                        layerScope.isBrushed = true;
-                    },
-                    brush : function(event, layerData, extent, plot, layerSelections) {
-                        var sel = layerSelections[0]; // We only have one layer, so grab the first one.
-                        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-                        var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-                        var isX, isY, xExtent, yExtent, assocColorFn, assocOpacityFn, assocStrokeFn;
+            plotConfig.brushing = {
+                dimension: config.xaxis.isContinuous ? 'both' : 'y',
+                brushstart : function() {
+                    layerScope.isBrushed = true;
+                },
+                brush : function(event, layerData, extent, plot, layerSelections) {
+                    var sel = layerSelections[0]; // We only have one layer, so grab the first one.
+                    var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+                    var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+                    var isX, isY, xExtent, yExtent, assocColorFn, assocOpacityFn, assocStrokeFn;
 
-                        xExtent = [extent[0][0], extent[1][0]];
-                        yExtent = [extent[0][1], extent[1][1]];
-                        isX = xExtent[0] !== null && xExtent[1] !== null;
-                        isY = yExtent[0] !== null && yExtent[1] !== null;
+                    xExtent = [extent[0][0], extent[1][0]];
+                    yExtent = [extent[0][1], extent[1][1]];
+                    isX = xExtent[0] !== null && xExtent[1] !== null;
+                    isY = yExtent[0] !== null && yExtent[1] !== null;
 
-                        if (plot.scales.color && plot.scales.color.scale) {
-                            colorScale = plot.scales.color.scale;
-                            colorAcc = plot.aes.color;
-                        }
-
-                        colorFn = function(d) {
-                            var x = d.x, y = d.y;
-
-                            // Issue 20116
-                            if (isX && isY) { // 2D
-                                d.isSelected = (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
-                            } else if (isX) { // 1D
-                                d.isSelected = (x > xExtent[0] && x < xExtent[1]);
-                            } else if (isY) { // 1D
-                                d.isSelected = (y > yExtent[0] && y < yExtent[1]);
-                            } else { // Just incase.
-                                d.isSelected = false;
-                            }
-
-                            if (d.isSelected) {
-                                subjects[d.subjectId.value] = true;
-                                return '#14C9CC';
-                            } else {
-                                if (colorScale && colorAcc) {
-                                    return colorScale(colorAcc.getValue(d));
-                                }
-
-                                return '#000000';
-                            }
-                        };
-
-                        strokeFn = function(d) {
-                            if (d.isSelected) {
-                                return '#00393A';
-                            } else {
-                                if (colorScale && colorAcc) {
-                                    return colorScale(colorAcc.getValue(d));
-                                }
-
-                                return '#000000';
-                            }
-                        };
-
-                        opacityFn = function(d) {
-                            return d.isSelected ? 1 : .5;
-                        };
-
-                        sel.selectAll('.point path').attr('fill', colorFn)
-                                .attr('stroke', strokeFn)
-                                .attr('fill-opacity', opacityFn)
-                                .attr('stroke-opacity', opacityFn);
-
-                        assocColorFn = function(d) {
-                            if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                                return '#01BFC2';
-                            } else{
-                                return this.getAttribute('fill');
-                            }
-                        };
-
-                        assocStrokeFn = function(d) {
-                            if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                                return '#00EAFF';
-                            } else {
-                                return this.getAttribute('stroke');
-                            }
-                        };
-
-                        assocOpacityFn = function(d) {
-                            if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                                return 1;
-                            } else {
-                                return this.getAttribute('fill-opacity');
-                            }
-                        };
-
-                        sel.selectAll('.point path').attr('fill', assocColorFn)
-                                .attr('stroke', assocStrokeFn)
-                                .attr('fill-opacity', assocOpacityFn)
-                                .attr('stroke-opacity', assocOpacityFn);
-                    },
-                    brushend: function(event, layerData, extent, plot, layerSelections) {
-                        var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
-                                plotMeasures = [null, null], xMeasure = null, yMeasure = null,
-                                sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
-
-                        var transformVal = function(val, type, isMin, domain) {
-                            if (type === 'INTEGER') {
-                                return isMin ? Math.floor(val) : Math.ceil(val);
-                            } else if (type === 'TIMESTAMP') {
-                                return isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
-                            } else if (type === "DOUBLE"){
-                                var precision;
-
-                                if (domain[1] >= 1000) {
-                                    precision = 0;
-                                } else if (domain[1] >= 100) {
-                                    precision = 1;
-                                } else if (domain[1] >= 10) {
-                                    precision = 2;
-                                } else {
-                                    precision = 3;
-                                }
-
-                                return parseFloat(val.toFixed(precision));
-                            }
-
-                            return val;
-                        };
-
-                        if (measures.length > 1) {
-                            xMeasure = {measure: measures[0]};
-                            xMeasure.measure.colName = requiresPivot ? config.xaxis.name : config.xaxis.colName;
-                            yMeasure = {measure: measures[1]};
-
-                        } else {
-                            yMeasure = {measure: measures[0]};
-                        }
-                        yMeasure.measure.colName = requiresPivot ? config.yaxis.name : config.yaxis.colName;
-
-                        plotMeasures = [xMeasure, yMeasure];
-
-                        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
-                            xMin = transformVal(xExtent[0], xMeasure.measure.type, true, plot.scales.x.scale.domain());
-                            xMax = transformVal(xExtent[1], xMeasure.measure.type, false, plot.scales.x.scale.domain());
-
-                            if (xMeasure.measure.type === 'TIMESTAMP') {
-                                sqlFilters[0] = new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.measure.colName, xMin.toISOString());
-                                sqlFilters[1] = new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.measure.colName, xMax.toISOString());
-                            } else {
-                                sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.measure.colName, xMin);
-                                sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.measure.colName, xMax);
-                            }
-                        }
-
-                        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
-                            yMin = transformVal(yExtent[0], yMeasure.measure.type, true, plot.scales.yLeft.scale.domain());
-                            yMax = transformVal(yExtent[1], yMeasure.measure.type, false, plot.scales.yLeft.scale.domain());
-
-                            sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.measure.colName, yMin);
-                            sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.measure.colName, yMax);
-                        }
-
-                        Connector.model.Filter.sqlToMdx({
-                            schemaName: requiresPivot ? yMeasure.measure.schemaName : config.schemaName,
-                            queryName: requiresPivot ? yMeasure.measure.queryName : config.queryName,
-                            subjectColumn: requiresPivot ? Connector.studyContext.subjectColumn : config.subjectColumn,
-                            measures: plotMeasures,
-                            sqlFilters: sqlFilters,
-                            success: function(filterConfig){
-                                stateManager.addSelection([filterConfig], true, false, true);
-                            },
-                            scope: this
-                        });
-                    },
-                    brushclear : function() {
-                        layerScope.isBrushed = false;
-                        stateManager.clearSelections(true);
+                    if (plot.scales.color && plot.scales.color.scale) {
+                        colorScale = plot.scales.color.scale;
+                        colorAcc = plot.aes.color;
                     }
-                };
-            }
+
+                    colorFn = function(d) {
+                        var x = d.x, y = d.y;
+
+                        // Issue 20116
+                        if (isX && isY) { // 2D
+                            d.isSelected = (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
+                        } else if (isX) { // 1D
+                            d.isSelected = (x > xExtent[0] && x < xExtent[1]);
+                        } else if (isY) { // 1D
+                            d.isSelected = (y > yExtent[0] && y < yExtent[1]);
+                        } else { // Just incase.
+                            d.isSelected = false;
+                        }
+
+                        if (d.isSelected) {
+                            subjects[d.subjectId.value] = true;
+                            return '#14C9CC';
+                        } else {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        }
+                    };
+
+                    strokeFn = function(d) {
+                        if (d.isSelected) {
+                            return '#00393A';
+                        } else {
+                            if (colorScale && colorAcc) {
+                                return colorScale(colorAcc.getValue(d));
+                            }
+
+                            return '#000000';
+                        }
+                    };
+
+                    opacityFn = function(d) {
+                        return d.isSelected ? 1 : .5;
+                    };
+
+                    sel.selectAll('.point path').attr('fill', colorFn)
+                            .attr('stroke', strokeFn)
+                            .attr('fill-opacity', opacityFn)
+                            .attr('stroke-opacity', opacityFn);
+
+                    assocColorFn = function(d) {
+                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                            return '#01BFC2';
+                        } else{
+                            return this.getAttribute('fill');
+                        }
+                    };
+
+                    assocStrokeFn = function(d) {
+                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                            return '#00EAFF';
+                        } else {
+                            return this.getAttribute('stroke');
+                        }
+                    };
+
+                    assocOpacityFn = function(d) {
+                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                            return 1;
+                        } else {
+                            return this.getAttribute('fill-opacity');
+                        }
+                    };
+
+                    sel.selectAll('.point path').attr('fill', assocColorFn)
+                            .attr('stroke', assocStrokeFn)
+                            .attr('fill-opacity', assocOpacityFn)
+                            .attr('stroke-opacity', assocOpacityFn);
+                },
+                brushend: function(event, layerData, extent, plot, layerSelections) {
+                    var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]], plotMeasures,
+                            xMeasure, yMeasure, sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
+
+                    var transformVal = function(val, type, isMin, domain) {
+                        if (type === 'INTEGER') {
+                            return isMin ? Math.floor(val) : Math.ceil(val);
+                        } else if (type === 'TIMESTAMP') {
+                            return isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
+                        } else if (type === "DOUBLE"){
+                            var precision;
+
+                            if (domain[1] >= 1000) {
+                                precision = 0;
+                            } else if (domain[1] >= 100) {
+                                precision = 1;
+                            } else if (domain[1] >= 10) {
+                                precision = 2;
+                            } else {
+                                precision = 3;
+                            }
+
+                            return parseFloat(val.toFixed(precision));
+                        }
+
+                        return val;
+                    };
+
+                    xMeasure = measures[0];
+                    yMeasure = measures[1];
+                    yMeasure.colName = requiresPivot ? config.yaxis.name : config.yaxis.colName;
+
+                    if (xMeasure) {
+                        xMeasure.colName = requiresPivot ? config.xaxis.name : config.xaxis.colName;
+                    }
+
+                    plotMeasures = [xMeasure, yMeasure];
+
+                    if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
+                        xMin = transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
+                        xMax = transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
+
+                        if (xMeasure.type === 'TIMESTAMP') {
+                            sqlFilters[0] = new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.colName, xMin.toISOString());
+                            sqlFilters[1] = new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.colName, xMax.toISOString());
+                        } else {
+                            sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.colName, xMin);
+                            sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.colName, xMax);
+                        }
+                    }
+
+                    if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
+                        yMin = transformVal(yExtent[0], yMeasure.type, true, plot.scales.yLeft.scale.domain());
+                        yMax = transformVal(yExtent[1], yMeasure.type, false, plot.scales.yLeft.scale.domain());
+
+                        sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.colName, yMin);
+                        sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.colName, yMax);
+                    }
+
+                    Connector.model.Filter.sqlToMdx({
+                        schemaName: requiresPivot ? yMeasure.schemaName : config.schemaName,
+                        queryName: requiresPivot ? yMeasure.queryName : config.queryName,
+                        subjectColumn: requiresPivot ? Connector.studyContext.subjectColumn : config.subjectColumn,
+                        measures: plotMeasures,
+                        sqlFilters: sqlFilters,
+                        success: function(filterConfig){
+                            stateManager.addSelection([filterConfig], true, false, true);
+                        },
+                        scope: this
+                    });
+                },
+                brushclear : function() {
+                    layerScope.isBrushed = false;
+                    stateManager.clearSelections(true);
+                }
+            };
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
@@ -746,7 +767,7 @@ Ext.define('Connector.view.Scatter', {
                 this.noplotmsg.hide();
                 this.plot.render();
                 if (this.measures[2]) {
-                    colorSelector = Ext.getCmp('colorselector');
+                    var colorSelector = Ext.getCmp('colorselector');
                     colorSelector.setLegend(this.plot.getLegendData());
                 }
             }
@@ -1326,7 +1347,7 @@ Ext.define('Connector.view.Scatter', {
 
     _preprocessGetDataResp : function() {
         var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
-                ca = null,_xid, _yid, _cid;
+                ya = null, ca = null,_xid, _yid, _cid;
 
         this.dataQWP = {schema: data.schemaName, query: data.queryName};
 
@@ -1468,7 +1489,7 @@ Ext.define('Connector.view.Scatter', {
 
         this.percentOverlap = validCount / len;
 
-        if(this.percentOverlap < 1){
+        if(this.percentOverlap < 1 && xa.isContinuous){
             var id = Ext.id();
             var id2 = Ext.id();
             var msg = 'Points outside the plotting area have no match on the other axis.';

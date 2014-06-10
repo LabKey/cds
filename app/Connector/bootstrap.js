@@ -112,6 +112,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Page": "../../webapp/Connector/src/view/Page.js",
   "Connector.view.PageHeader": "../../webapp/Connector/src/view/PageHeader.js",
   "Connector.view.PlotPane": "../../webapp/Connector/src/view/PlotPane.js",
+  "Connector.view.Popup": "../../webapp/Connector/src/view/Popup.js",
   "Connector.view.Scatter": "../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../webapp/Connector/src/view/Selection.js",
   "Connector.view.Signin": "../../webapp/Connector/src/view/Signin.js",
@@ -120,11 +121,16 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.SingleAxisExplorerView": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../webapp/Connector/src/view/Summary.js",
+  "Connector.view.TermsOfUse": "../../webapp/Connector/src/view/TermsOfUse.js",
   "Connector.view.Time": "../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
+  "Connector.view.module.AssayAnalyteList": "../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
+  "Connector.view.module.AssayAntigenList": "../../webapp/Connector/src/app/view/module/AssayAntigenList.js",
   "Connector.view.module.AssayHeader": "../../webapp/Connector/src/app/view/module/AssayHeader.js",
+  "Connector.view.module.AssayVariableList": "../../webapp/Connector/src/app/view/module/AssayVariableList.js",
   "Connector.view.module.BaseModule": "../../webapp/Connector/src/view/module/BaseModule.js",
+  "Connector.view.module.ContactCDS": "../../webapp/Connector/src/view/module/ContactCDS.js",
   "Connector.view.module.Person": "../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../webapp/Connector/src/app/view/module/ProductHeader.js",
   "Connector.view.module.ProductOtherProducts": "../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
@@ -262,6 +268,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Page": [],
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
+  "Connector.view.Popup": [],
   "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.Signin": [],
@@ -270,11 +277,16 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
+  "Connector.view.TermsOfUse": [],
   "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
+  "Connector.view.module.AssayAnalyteList": [],
+  "Connector.view.module.AssayAntigenList": [],
   "Connector.view.module.AssayHeader": [],
+  "Connector.view.module.AssayVariableList": [],
   "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ContactCDS": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
   "Connector.view.module.ProductOtherProducts": [],
@@ -1309,6 +1321,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Page": [],
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
+  "Connector.view.Popup": [],
   "Connector.view.Scatter": [
     "widget.plot"
   ],
@@ -1333,6 +1346,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.SummaryDataView": [
     "widget.summarydataview"
   ],
+  "Connector.view.TermsOfUse": [
+    "widget.terms"
+  ],
   "Connector.view.Time": [
     "widget.timeview"
   ],
@@ -1340,10 +1356,22 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.variableselector"
   ],
   "Connector.view.Viewport": [],
+  "Connector.view.module.AssayAnalyteList": [
+    "widget.app.module.assayanalytelist"
+  ],
+  "Connector.view.module.AssayAntigenList": [
+    "widget.app.module.assayantigenlist"
+  ],
   "Connector.view.module.AssayHeader": [
     "widget.app.module.assayheader"
   ],
+  "Connector.view.module.AssayVariableList": [
+    "widget.app.module.assayvariablelist"
+  ],
   "Connector.view.module.BaseModule": [],
+  "Connector.view.module.ContactCDS": [
+    "widget.module.contactcds"
+  ],
   "Connector.view.module.Person": [
     "widget.module.person"
   ],

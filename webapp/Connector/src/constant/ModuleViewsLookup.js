@@ -9,6 +9,7 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	// Lookup table from module view types to view names
 	text: 'module.text',
 	person: 'module.person',
+	contactcds: 'module.contactcds',
 	productheader: 'app.module.productheader',
 	productstudies: 'app.module.productstudies',
 	productotherproducts: 'app.module.productotherproducts',
@@ -17,5 +18,8 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	studyassays: 'app.module.studyassays',
 	studyproducts: 'app.module.studyproducts',
 	studylabsandclinicaldata: 'app.module.studylabsandclinicaldata',
-	assayheader: 'app.module.assayheader'
+	assayheader: 'app.module.assayheader',
+	assayanalytelist: 'app.module.assayanalytelist',
+	assayantigenlist: 'app.module.assayantigenlist',
+	assayvariablelist: 'app.module.assayvariablelist'
 });

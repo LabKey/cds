@@ -160,7 +160,7 @@ Ext.define('Connector.view.Selection', {
                         domString =
                                 '<div class="status-over memberitem plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
-                                        measure.measure.label +
+                                        measure.label +
                                         ': &gt;= ' + minVal +
                                         ', &lt;= ' + maxVal +
                                 '</div>';
