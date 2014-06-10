@@ -719,6 +719,11 @@ Ext.define('Connector.view.Scatter', {
                         xMin = transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
                         xMax = transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
 
+                        if (xMeasure.name == "SubjectVisit/Visit/ProtocolDay") {
+                            xMin = Math.floor(xMin);
+                            xMax = Math.ceil(xMax);
+                        }
+
                         if (xMeasure.type === 'TIMESTAMP') {
                             sqlFilters[0] = new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.colName, xMin.toISOString());
                             sqlFilters[1] = new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.colName, xMax.toISOString());
