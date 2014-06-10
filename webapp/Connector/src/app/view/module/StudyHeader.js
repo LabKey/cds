@@ -27,16 +27,7 @@ Ext.define('Connector.view.module.StudyHeader', {
         typeString : function(model) {
             var phase = model.get('Phase');
             var type = model.get('Type');
-//            var start = model.get('StartDate');
-//            var end = model.get('EndDate');
-            var s = '';
-            if (phase) {
-                s = "Phase " + phase + " ";
-            }
-            if (type) {
-                s += type;
-            }
-            return s;
+            return type;
         }
     })
 });
