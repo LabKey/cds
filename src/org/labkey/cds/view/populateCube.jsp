@@ -125,7 +125,7 @@ to be filled in by another mechanism.<br>
             area: 'Assay Dimension'
         },{
             schema: 'study',
-            sql: 'SELECT ' + SUBJECT_COLUMN + ', ' + SUBJECT_COLUMN + '.ParticipantId AS Inner' + SUBJECT_COLUMN +', Folder, prot, rx, rx_code, arm, age, bmi, baseline_ad5_titer, hivcutoffday, race, country, sex, randomization, ad5_grp, circumcised, hivinf, per_protocol, bmi_grp, species FROM Demographics',
+            sql: 'SELECT ' + SUBJECT_COLUMN + ', ' + SUBJECT_COLUMN + '.ParticipantId AS Inner' + SUBJECT_COLUMN +', Folder, race, country, sex, randomization, ad5_grp, circumcised, hivinf, per_protocol, bmi_grp, species FROM Demographics',
             area: 'Subject Dimension'
         },{
             schema: 'study',
