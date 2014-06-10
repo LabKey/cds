@@ -12,11 +12,11 @@ Ext.define('Connector.app.view.module.StudySites', {
 	tpl : new Ext.XTemplate(
         '<tpl>',
 			Connector.constant.Templates.module.title,
+			'<tpl if="model.get(\'Population\')">',
+				'<p>{[values.model.get("Population")]}</p>',
+			'</tpl>',
 			'<tpl if="model.get(\'SiteLocations\')">',
 				'<div class="learn-map-container"></div>',
-			'</tpl>',
-			'<tpl if="model.get(\'SitesSummary\')">',
-				'<p>{[values.model.get("SitesSummary")]}</p>',
 			'</tpl>',
 		'</tpl>'),
 

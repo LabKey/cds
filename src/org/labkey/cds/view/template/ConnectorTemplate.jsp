@@ -199,6 +199,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ContactCDS.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Text.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/Person.js"></script>
 

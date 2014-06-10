@@ -176,7 +176,6 @@ Ext.define('Connector.view.Learn', {
                         operator: "OR",
                         isGroup: false
                     }];
-                    debugger;
                     this.state.addSelection(selections, false, true, true);
                 }, this);
             }
