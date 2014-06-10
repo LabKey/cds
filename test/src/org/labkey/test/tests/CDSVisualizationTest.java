@@ -212,7 +212,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         waitForElement(plotBox);
         assertElementPresent(plotBox, 1);
-        assertElementPresent(plotBoxPoint, 95);
+        assertElementPresent(plotPoint, 95);
 
         // Choose a categorical axis to verify that multiple box plots will appear.
         xaxis.openSelectorWindow();
@@ -221,7 +221,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         waitForElement(Locators.plotTick.withText("f"));
         assertElementPresent(plotBox, 2);
-        assertElementPresent(plotBoxPoint, 95);
+        assertElementPresent(plotPoint, 95);
 
         // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
         xaxis.openSelectorWindow();
@@ -237,7 +237,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         waitForElement(Locators.plotTick.withText("Asian"));
         assertElementPresent(plotBox, 6);
-        assertElementPresent(plotBoxPoint, 95);
+        assertElementPresent(plotPoint, 95);
     }
 
     @Test
@@ -710,6 +710,5 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");
-        public static Locator plotBoxPoint = Locator.css("svg a.dataspace-point");
     }
 }
