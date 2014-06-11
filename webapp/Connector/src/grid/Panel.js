@@ -238,7 +238,6 @@ Ext.define('Connector.grid.Panel', {
         var studyTime = [], remainder = [], plotted = [];
         var studyCols = {
             subjectid: true,
-            container: true,
             study: true,
             startdate: true,
             visit: true,

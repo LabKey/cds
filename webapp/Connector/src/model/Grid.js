@@ -28,7 +28,7 @@ Ext.define('Connector.model.Grid', {
             data: {
                 schemaName: 'study',
                 queryName: 'SubjectVisit',
-                name: 'Container'
+                name: Connector.studyContext.subjectColumn + '/Study'
             }
         },{
             data: {
@@ -46,7 +46,7 @@ Ext.define('Connector.model.Grid', {
 
         {name: 'metadata', defaultValue: undefined},
         {name: 'schemaName', defaultValue: 'study'},
-        {name: 'queryName', defaultValue: 'SubjectVisit' }, // default value is provided by study context
+        {name: 'queryName', defaultValue: 'SubjectVisit' },
         {name: 'sorts', defaultValue: []}
     ],
 
@@ -404,13 +404,14 @@ Ext.define('Connector.model.Grid', {
         Ext.each(measures, function(measure) {
             item = Ext.clone(measure.data);
 
+//            console.log('measure name (alias):', item.name, '(' + item.alias + ')');
+            if (!(item.queryName in sourceMeasuresRequired))
+                sourceMeasuresRequired[item.queryName] = true;
+
             if (item.variableType === "TIME") {
                 item = this.convertTimeMeasure(item);
             }
             else {
-                if (!(item.queryName in sourceMeasuresRequired))
-                    sourceMeasuresRequired[item.queryName] = true;
-
                 // We don't want to lose foreign key info -- measure picker follows these by default
                 if (item.name.indexOf("/") != -1) {
                     if (item.name.toLowerCase() == "source/title") {
@@ -418,8 +419,10 @@ Ext.define('Connector.model.Grid', {
                         item.isSourceURI = true;
                     }
 
-                    item.name = item.name.substring(0, item.name.indexOf("/"));
-                    item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
+                    if (Ext.isDefined(item.alias)) {
+                        item.name = item.name.substring(0, item.name.indexOf("/"));
+                        item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
+                    }
                 }
             }
 
@@ -554,6 +557,10 @@ Ext.define('Connector.model.Grid', {
             schemaName: schema,
             queryName: query,
             name: Connector.studyContext.subjectColumn
+        },{
+            schemaName: schema,
+            queryName: query,
+            name: Connector.studyContext.subjectColumn + '/Study'
         }];
     },
 
@@ -858,11 +865,6 @@ Ext.define('Connector.model.Grid', {
      * @param metadata
      */
     onMetaData : function(gridModel, metadata) {
-
-        if (metadata.measureToColumn['Container']) {
-            metadata.measureToColumn['Container'] = 'study_SubjectVisit_Container';
-        }
-
         this.set('metadata', metadata);
 
         this.updateColumnModel();
