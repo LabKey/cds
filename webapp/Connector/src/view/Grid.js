@@ -223,6 +223,7 @@ Ext.define('Connector.view.Grid', {
                 measureConfig : {
                     allColumns: true,
                     displaySourceCounts: true,
+                    includeTimpointMeasures: true,
                     sourceCls: this.axisSourceCls,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -281,6 +282,7 @@ Ext.define('Connector.view.Grid', {
             var size = this.getWidthHeight();
 
             this.grid = Ext.create('Connector.grid.Panel', {
+                model: this.getModel(),
                 itemId: 'gridcomponent',
                 height: size.height,
                 width: size.width,
@@ -373,7 +375,7 @@ Ext.define('Connector.view.Grid', {
                 queryName: model.get('queryName'),
                 columns: model.get('columnSet'),
                 filterArray: model.getFilterArray(true),
-                maxRows: 750
+                maxRows: 1000
             });
 
             this.gridStore.on('load', function(store) {

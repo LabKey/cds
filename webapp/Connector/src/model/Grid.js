@@ -3,10 +3,7 @@ Ext.define('Connector.model.Grid', {
 
     fields: [
         {name: 'active', defaultValue: true},
-        {name: 'columnSet', defaultValue: [
-            Connector.studyContext.subjectColumn,
-            Connector.studyContext.subjectColumn + '/Study'
-        ]},
+        {name: 'columnSet', defaultValue: []},
 
         /**
          * columns not reachable via getData API but joined in via the grid API.
@@ -21,14 +18,39 @@ Ext.define('Connector.model.Grid', {
             subjects: []
         }},
 
+        {name: 'defaultMeasures', defaultValue: [{
+            data: {
+                schemaName: 'study',
+                queryName: 'SubjectVisit',
+                name: Connector.studyContext.subjectColumn
+            }
+        },{
+            data: {
+                schemaName: 'study',
+                queryName: 'SubjectVisit',
+                name: 'Container'
+            }
+        },{
+            data: {
+                schemaName: 'study',
+                queryName: 'SubjectVisit',
+                name: 'Visit'
+            }
+        }]},
+
         {name: 'measures', defaultValue: []},
+        {name: 'wrappedMeasures', defaultValue: []},
+
+        {name: 'plotMeasures', defaultValue: []},
+        {name: 'wrappedPlotMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
-        {name: 'wrappedMeasures', defaultValue: []},
         {name: 'schemaName', defaultValue: 'study'},
-        {name: 'queryName'}, // default value is provided by study context
+        {name: 'queryName', defaultValue: 'SubjectVisit' }, // default value is provided by study context
         {name: 'sorts', defaultValue: []}
     ],
+
+    plotKeys: {},
 
     statics: {
         addLookupColumns : function(gridModel, keyColumn, columns) {
@@ -72,16 +94,30 @@ Ext.define('Connector.model.Grid', {
             });
         },
 
+        /**
+         * These columns can be used to populate a models 'columnSet'
+         * @param gridModel
+         * @returns {Array}
+         */
         getColumnList : function(gridModel) {
-            var measures = gridModel.get('measures');
+            var measures = gridModel.get('plotMeasures').concat(gridModel.get('measures'));
             var metadata = gridModel.get('metadata');
 
             var colMeasure = {};
             Ext.each(measures, function(measure) {
-                colMeasure[measure.alias] = measure;
+
+                if (metadata.measureToColumn[measure.name]) {
+                    if (Ext.isDefined(measure.interval)) {
+                        colMeasure[measure.interval] = measure;
+                    }
+                    else {
+                        colMeasure[metadata.measureToColumn[measure.name]] = measure;
+                    }
+                }
+                else {
+                    colMeasure[measure.alias] = measure;
+                }
             });
-            colMeasure[metadata.measureToColumn[Connector.studyContext.subjectColumn]] = {label: "Subject ID"};
-            colMeasure[metadata.measureToColumn[Connector.studyContext.subjectColumn + "/Study"]] = {label: "Study"};
 
             var columns = [];
             var foreignColumns = gridModel.get('foreignColumns');
@@ -100,7 +136,7 @@ Ext.define('Connector.model.Grid', {
 
         getMetaData : function(gridModel, config) {
 
-            var measures = gridModel.get('wrappedMeasures');
+            var measures = gridModel.get('wrappedPlotMeasures').concat(gridModel.get('wrappedMeasures'));
             var sorts = gridModel.getSorts();
 
             if (measures.length > 0 && sorts.length > 0) {
@@ -279,6 +315,7 @@ Ext.define('Connector.model.Grid', {
             this.setOlapProvider(config.olapProvider);
             this.olapProvider.onReady(function(provider) {
                 this.providerReady = provider;
+                this.applyFilters(this.bindFilters(this.olapProvider.getFilters()));
                 this._init();
             }, this);
         }
@@ -291,16 +328,7 @@ Ext.define('Connector.model.Grid', {
     _init : function() {
         if (this.viewReady && this.providerReady) {
             var provider = this.providerReady;
-            if (this.get('queryName').length == 0) {
-                Connector.model.Grid.getDefaultDatasetName(function(datasetName) {
-                    this.set('queryName', datasetName);
-                    this.fields.map['queryName'].defaultValue = datasetName;
-                    this.onProviderReady(provider);
-                }, this);
-            }
-            else {
-                this.onProviderReady(provider);
-            }
+            this.onProviderReady(provider);
         }
     },
 
@@ -311,9 +339,10 @@ Ext.define('Connector.model.Grid', {
 
             // hook listeners
             this.olapProvider.on('filterchange', this.onAppFilterChange, this);
+            this.olapProvider.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
 
-            var measureState = provider.getCustomState('gridmodel', 'measures');
-            var measures = [];
+            var measureState = undefined;
+            var measures = this.get('defaultMeasures');
 
             if (Ext.isDefined(measureState)) {
                 Ext.each(measureState.measures, function(measure) {
@@ -322,26 +351,15 @@ Ext.define('Connector.model.Grid', {
                     });
                 });
             }
-            else {
-                var columns = this.get('columnSet');
-                var schema = this.get('schemaName');
-                var query = this.get('queryName');
 
-                // Prepare default measurements from columns
-                Ext.each(columns, function(columnName) {
-                    measures.push({
-                        data: {
-                            schemaName: schema,
-                            queryName: query,
-                            name: columnName
-                        }
-                    });
-                });
-            }
-
-            this.bindMeasures(measures, [], [], true);
+            this.bindMeasures([], [], [], true);
+            this.bindApplicationMeasures(this.olapProvider.getFilters());
         }
         this.requestMetaData();
+    },
+
+    onPlotMeasureChange : function() {
+        this.bindApplicationMeasures(this.olapProvider.getFilters());
     },
 
     onUpdateColumns : function() {
@@ -367,7 +385,17 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
+    convertTimeMeasure : function(measure) {
+        measure.schemaName = "study";
+        measure.queryName = "SubjectVisit";
+        measure.name = "Visit/ProtocolDay";
+
+        return measure;
+    },
+
     bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
+
+        measures = this.get('defaultMeasures').concat(measures);
 
         var measureSet = [], sourceMeasure,
                 item,
@@ -375,21 +403,28 @@ Ext.define('Connector.model.Grid', {
 
         Ext.each(measures, function(measure) {
             item = Ext.clone(measure.data);
-            if (!(item.queryName in sourceMeasuresRequired))
-                sourceMeasuresRequired[item.queryName] = true;
 
-            //We don't want to lose foreign key info -- measure picker follows these by default
-            if (item.name.indexOf("/") != -1) {
-                if (item.name.toLowerCase() == "source/title") {
-                    sourceMeasuresRequired[item.queryName] = false;
-                    item.isSourceURI = true;
-                }
-
-                item.name = item.name.substring(0, item.name.indexOf("/"));
-                item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
+            if (item.variableType === "TIME") {
+                item = this.convertTimeMeasure(item);
             }
+            else {
+                if (!(item.queryName in sourceMeasuresRequired))
+                    sourceMeasuresRequired[item.queryName] = true;
+
+                // We don't want to lose foreign key info -- measure picker follows these by default
+                if (item.name.indexOf("/") != -1) {
+                    if (item.name.toLowerCase() == "source/title") {
+                        sourceMeasuresRequired[item.queryName] = false;
+                        item.isSourceURI = true;
+                    }
+
+                    item.name = item.name.substring(0, item.name.indexOf("/"));
+                    item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
+                }
+            }
+
             measureSet.push(item);
-        });
+        }, this);
 
         Ext.iterate(sourceMeasuresRequired, function(queryName, value) {
             if (value) {
@@ -401,10 +436,21 @@ Ext.define('Connector.model.Grid', {
 
         var wrapped = [];
         Ext.each(measureSet, function(measure) {
-            wrapped.push({
+            var w = {
                 measure: measure,
-                time: 'visit'
-            });
+                time: 'date'
+            };
+
+            if (w.measure.variableType === "TIME") {
+                w.measure.interval = w.measure.alias;
+                w.dateOptions = {
+                    interval: w.measure.alias,
+                    zeroDayVisitTag: null,
+                    useProtocolDay: true
+                }
+            }
+
+            wrapped.push(w);
         });
 
         // set the raw measures
@@ -420,6 +466,67 @@ Ext.define('Connector.model.Grid', {
         {
             this.requestMetaData();
         }
+    },
+
+    bindApplicationMeasures : function(filterSet) {
+        //
+        // Cross-reference application measures
+        //
+        var filters = filterSet;
+
+        var oldKeys = this.plotKeys;
+        var newKeys = {};
+        var plotMeasures = [], wrappedPlotMeasures = [];
+        Ext.each(filters, function(filter) {
+
+            // respect plotted measures
+            if (filter.isPlot()) {
+                var plotMeasureSet = filter.get('plotMeasures');
+                Ext.each(plotMeasureSet, function(pm) {
+                    if (Ext.isObject(pm)) {
+                        var p = {
+                            dateOptions: pm.dateOptions,
+                            measure: pm.measure,
+                            time: 'date'
+                        };
+                        if (p.measure.variableType === "TIME") {
+                            p.measure = this.convertTimeMeasure(p.measure);
+                        }
+                        newKeys[p.measure.alias] = true;
+                        plotMeasures.push(p.measure);
+                        wrappedPlotMeasures.push(p);
+                    }
+                }, this);
+            }
+        }, this);
+
+        var change = false;
+        Ext.iterate(oldKeys, function(k,v) {
+            if (!newKeys[k]) {
+                change = true;
+                return false;
+            }
+        });
+        if (!change) {
+            Ext.iterate(newKeys, function(k,v) {
+                if (!oldKeys[k]) {
+                    change = true;
+                    return false;
+                }
+            });
+        }
+        if (change) {
+            this.plotKeys = newKeys;
+            this.set('plotMeasures', plotMeasures);
+            this.set('wrappedPlotMeasures', wrappedPlotMeasures);
+
+            if (!this.isActive())
+            {
+                this.activeMeasure = true;
+            }
+        }
+
+        return change;
     },
 
     getSorts : function() {
@@ -447,10 +554,6 @@ Ext.define('Connector.model.Grid', {
             schemaName: schema,
             queryName: query,
             name: Connector.studyContext.subjectColumn
-        },{
-            schemaName: schema,
-            queryName: query,
-            name: Connector.studyContext.subjectColumn + '/Study'
         }];
     },
 
@@ -473,6 +576,7 @@ Ext.define('Connector.model.Grid', {
             if (this.isActive()) {
                 this.activeFilter = false;
                 this.activeColumn = false;
+                this.activeMeasure = false;
                 this.fireEvent('filterchange', this, this.getFilterArray());
             }
             else {
@@ -492,10 +596,22 @@ Ext.define('Connector.model.Grid', {
      * @param appFilters
      */
     onAppFilterChange : function(appFilters) {
+        if (this._ready === true)
+        {
+            var filterArray = this.bindFilters(appFilters);
+            this.applyFilters(filterArray, function ()
+            {
+                if (this.bindApplicationMeasures(appFilters))
+                {
+                    this.requestMetaData();
+                }
+            }, this);
+        }
+    },
 
+    bindFilters : function(appFilters) {
         var filterArray = [], nonGridFilters = [];
         Ext.each(appFilters, function(filter) {
-
             if (filter.isGrid()) {
                 var gridFilters = filter.get('gridFilter');
                 Ext.each(gridFilters, function(gf) {
@@ -507,8 +623,7 @@ Ext.define('Connector.model.Grid', {
                 nonGridFilters.push(filter);
             }
         }, this);
-
-        this.applyFilters(filterArray);
+        return filterArray;
     },
 
     getFilterArray : function(includeBaseFilters) {
@@ -643,23 +758,14 @@ Ext.define('Connector.model.Grid', {
                 }, this);
 
                 appFilters = appFilters.concat(newFilters);
+
                 this.olapProvider.setFilters(appFilters);
-
-                var allFilters = this.olapProvider.getFilters();
-
                 this.filterMap = {};
                 this.idMap = {};
 
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                Ext.each(allFilters, function(filter) {
-                    if (filter.isGrid()) {
-                        var gridFilters = filter.get('gridFilter');
-                        Ext.each(gridFilters, function(gf) {
-                            this.addToFilters(gf, filter.id);
-                        }, this);
-                    }
-                }, this);
+                this.bindFilters(this.olapProvider.getFilters());
 
             }, null, this);
         }
@@ -753,6 +859,10 @@ Ext.define('Connector.model.Grid', {
      */
     onMetaData : function(gridModel, metadata) {
 
+        if (metadata.measureToColumn['Container']) {
+            metadata.measureToColumn['Container'] = 'study_SubjectVisit_Container';
+        }
+
         this.set('metadata', metadata);
 
         this.updateColumnModel();
@@ -774,6 +884,7 @@ Ext.define('Connector.model.Grid', {
         if (this.isActive()) {
             this.activeColumn = false;
             this.activeFilter = false;
+            this.activeMeasure = false;
             this.fireEvent('updatecolumns', this);
         }
         else {
@@ -789,8 +900,13 @@ Ext.define('Connector.model.Grid', {
         this.set('active', active);
 
         if (active) {
-            if (this.activeColumn) {
-                this.updateColumnModel();
+            if (this.activeColumn || this.activeMeasure) {
+                if (this.activeMeasure) {
+                    this.requestMetaData();
+                }
+                else {
+                    this.updateColumnModel();
+                }
             }
             else if (this.activeFilter) {
                 this.onAppFilterChange(this.olapProvider.getFilters());
