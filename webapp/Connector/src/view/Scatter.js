@@ -978,7 +978,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestChartData : function(r) {
-        LABKEY.Query.selectRows({
+        var config = {
             schemaName: r.schemaName,
             queryName: r.queryName,
             filterArray: this.timeFilters ? this.timeFilters : null,
@@ -986,7 +986,13 @@ Ext.define('Connector.view.Scatter', {
             failure: this.onFailure,
             requiredVersion: '9.1',
             scope: this
-        });
+        };
+
+        if (Ext.isArray(this.timeFilters)) {
+            config.filterArray = this.timeFilters;
+        }
+
+        LABKEY.Query.selectRows(config);
     },
 
     createTempQuery : function(activeMeasures) {
@@ -1148,16 +1154,24 @@ Ext.define('Connector.view.Scatter', {
                 if (filterData.isGrid && !filterData.isPlot) {
                     // gridFilter is an array of filters, it needs to be renamed.
                     if (filterData.gridFilter[0]) {
-                        var colName = filterData.gridFilter[0].getColumnName();
-                        if (colName === 'Days' || colName === 'Weeks' || colName === 'Months') {
+                        var colName = filterData.gridFilter[0].getColumnName().toLowerCase();
+                        if (colName === 'days' || colName === 'weeks' || colName === 'months') {
                             this.timeFilters = filterData.gridFilter;
 
-                            additionalMeasuresArr.push({measure: {
-                                name: Connector.studyContext.subjectVisitColumn + "/Visit",
-                                queryName: activeMeasures.y.queryName,
-                                schemaName: activeMeasures.y.schemaName,
-                                values: []
-                            }, time: 'date'});
+                            additionalMeasuresArr.push({
+                                dateOptions: {
+                                    interval: colName,
+                                    zeroDayVisitTag: null,
+                                    useProtocolDay: true
+                                },
+                                measure: {
+                                    name: Connector.studyContext.subjectVisitColumn + "/Visit",
+                                    queryName: activeMeasures.y.queryName,
+                                    schemaName: activeMeasures.y.schemaName,
+                                    values: []
+                                },
+                                time: 'date'
+                            });
 
                             break;
                         }
