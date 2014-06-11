@@ -15,12 +15,14 @@ Ext.define('Connector.grid.Panel', {
     config: {
         defaultFieldWidth: 200,
         editable: true,
-        pageSize: 800,
+        pageSize: 1000,
         autoSave: false,
         multiSelect: true,
         clicksToEdit: 2,
         editingPluginId: 'editingplugin'
     },
+
+    model: undefined,
 
     initComponent : function() {
         this.initStore();
@@ -155,6 +157,27 @@ Ext.define('Connector.grid.Panel', {
         this.reconfigure(this.store, columns);
 
     }
+
+    ,_getColumnsConfig : function(store, config) {
+        var columns = LABKEY.ext4.Util.getColumnsConfig(store, this, config);
+
+        if (Ext.isDefined(this.model)) {
+            var plotMeasures = this.model.get('plotMeasures');
+            Ext.each(columns, function(column) {
+
+                column.plotted = false;
+                for (var a=0; a < plotMeasures.length; a++) {
+                    if (LABKEY.MeasureUtil.getAlias(plotMeasures[a], true).toLowerCase() === column.dataIndex.toLowerCase()) {
+                        column.plotted = true;
+                    }
+                }
+
+            });
+        }
+
+        return columns;
+    }
+
     ,getColumnsConfig : function() {
         var config = {
             editable: this.editable,
@@ -170,7 +193,7 @@ Ext.define('Connector.grid.Panel', {
             Ext.Object.merge(config, this.metadata[c.name]);
         }
 
-        var columns = LABKEY.ext4.Util.getColumnsConfig(this.store, this, config);
+        var columns = this._getColumnsConfig(this.store, config);
 
         for (var idx=0;idx<columns.length;idx++){
             var col = columns[idx];
@@ -212,13 +235,18 @@ Ext.define('Connector.grid.Panel', {
         var groups = [];
 
         // A special group of recognized columns
-        var studyTime = [], remainder = [];
+        var studyTime = [], remainder = [], plotted = [];
         var studyCols = {
             subjectid: true,
             study: true,
             startdate: true,
-            visitdate: true
+            visit: true,
+            visitdate: true,
+            days: true,
+            weeks: true,
+            months: true
         };
+
         Ext.each(columns, function(col) {
             var dataIndex = col.dataIndex.split('_');
             var colName = dataIndex[dataIndex.length-1].toLowerCase();
@@ -226,15 +254,26 @@ Ext.define('Connector.grid.Panel', {
             if (studyCols[colName]) {
                 studyTime.push(col);
             }
+            else if (col.plotted === true) {
+                plotted.push(col);
+            }
             else {
                 remainder.push(col);
             }
 
         }, this);
+
         groups.push({
             text: 'Study and time',
             columns: studyTime
         });
+
+        if (plotted.length > 0) {
+            groups.push({
+                text: 'Plot Data Results',
+                columns: plotted
+            });
+        }
 
         // All other groups based on query name
         var groupMap = {};

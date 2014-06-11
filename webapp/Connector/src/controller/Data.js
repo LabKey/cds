@@ -52,18 +52,6 @@ Ext.define('Connector.controller.Data', {
         return param.split('~')[0];
     },
 
-    onUpdateColumnModel : function(view, schema, query, columnSet) {
-//        this.getStateManager().setCustomState({
-//            view: 'groupdatagrid',
-//            key: 'queryState'
-//        }, {
-//            schema: schema,
-//            query: query,
-//            columnSet: columnSet
-//        });
-//        this.getStateManager().updateState();
-    },
-
     runFilterAnimation : function(view, filterGroups, callback) {
 
         var box   = Ext.get(Ext.DomQuery.select('.filterpanel')[0]).getBox(); // filter panel on RHS
