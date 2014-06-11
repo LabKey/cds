@@ -66,7 +66,21 @@ Ext.define('Connector.controller.Chart', {
                 var win = btn.up('window');
                 if (win) win.hide();
 
-                this.getViewManager().changeView('learn', 'learn', ['assay']);
+                // issue 20664: find the assay label from the first dataset row
+                if (btn.source && btn.source.assaysLookup) {
+                    LABKEY.Query.selectRows({
+                        schemaName: 'study',
+                        queryName: btn.source.get('queryName'),
+                        columns: btn.source.assaysLookup.name + '/Label',
+                        maxRows: 1,
+                        scope: this,
+                        success: function(data) {
+                            if (data.rows.length == 1) {
+                                this.getViewManager().changeView('learn', 'learn', ['assay', data.rows[0][btn.source.assaysLookup.name + '/Label']]);
+                            }
+                        }
+                    });
+                }
             }
         });
 
