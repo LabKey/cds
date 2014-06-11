@@ -27,7 +27,6 @@ import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
-import org.labkey.api.query.SchemaKey;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.study.DataSet;
@@ -44,11 +43,11 @@ import java.util.List;
 public class FactLoader
 {
     private DataSet _sourceDataset;
-    private TableInfo _sourceTableInfo;
-    private final Container _container;
-    private User _user;
-    private ColumnMapper[] _colsToMap;
-    private int _rowsInserted = -1;
+    protected TableInfo _sourceTableInfo;
+    protected final Container _container;
+    protected User _user;
+    protected ColumnMapper[] _colsToMap;
+    protected int _rowsInserted = -1;
 
     public FactLoader(UserSchema studySchema, DataSet sourceDataset, User user, Container c)
     {
@@ -165,7 +164,7 @@ public class FactLoader
             this._lookupTarget = lookupTarget;
         }
 
-        private String getSelectSql()
+        protected String getSelectSql()
         {
             if (null != _sourceColumn)
                 return _sourceColumn.getName() + " AS " + _selectName;
@@ -305,7 +304,7 @@ public class FactLoader
      * This class may be used ot create a QuerySettings from a given SQL statement,
      * schema name, and container.
      */
-    private class TempQuerySettings extends QuerySettings
+    protected class TempQuerySettings extends QuerySettings
     {
         private String _sql;
 

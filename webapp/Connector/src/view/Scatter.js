@@ -1873,6 +1873,18 @@ Ext.define('Connector.view.Scatter', {
                     ui : 'footer',
                     padding : 15,
                     items : ['->', {
+                        text: 'remove variable',
+                        itemId: 'removevarbtn',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            // Need to remove the color measure from the plot filter or we'll pull it down again.
+                            this.removeVariableFromFilter(0);
+                            this.activeXSelection = undefined;
+                            this.axisPanelX.clearSelection();
+                            this.xwin.hide();
+                        },
+                        scope: this
+                    }, {
                         text  : 'set x axis',
                         ui    : 'rounded-inverted-accent',
                         handler : function() {
@@ -1891,17 +1903,6 @@ Ext.define('Connector.view.Scatter', {
                                     this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
                                 }, this);
                             }
-                        },
-                        scope: this
-                    }, {
-                        text: 'remove variable',
-                        ui: 'rounded-inverted-accent',
-                        handler: function(){
-                            // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            this.removeVariableFromFilter(0);
-                            this.activeXSelection = undefined;
-                            this.axisPanelX.clearSelection();
-                            this.xwin.hide();
                         },
                         scope: this
                     }, {
@@ -1928,6 +1929,10 @@ Ext.define('Connector.view.Scatter', {
         if (this.axisPanelX.hasSelection()) {
             this.activeXSelection = this.axisPanelX.getSelection()[0];
         }
+
+        // issue 20412: conditionally show 'remove variable' button
+        var filter = this.getPlotsFilter();
+        this.xwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[0]);
 
         this.xwin.show(null, function() {
             this.runUniqueQuery(this.axisPanelX);
@@ -1992,21 +1997,22 @@ Ext.define('Connector.view.Scatter', {
                     ui : 'footer',
                     padding: 15,
                     items : ['->', {
-                        text: 'set color variable',
-                        ui: 'rounded-inverted-accent',
-                        handler: function(){
-                            this.showTask.delay(300);
-                            this.colorwin.hide();
-                        },
-                        scope: this
-                    }, {
                         text: 'remove variable',
+                        itemId: 'removevarbtn',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
                             this.removeVariableFromFilter(2);
                             this.activeColorSelection = undefined;
                             this.colorPanel.clearSelection();
+                            this.colorwin.hide();
+                        },
+                        scope: this
+                    }, {
+                        text: 'set color variable',
+                        ui: 'rounded-inverted-accent',
+                        handler: function(){
+                            this.showTask.delay(300);
                             this.colorwin.hide();
                         },
                         scope: this
@@ -2035,19 +2041,31 @@ Ext.define('Connector.view.Scatter', {
             this.activeColorSelection = this.colorPanel.getSelection()[0];
         }
 
+        // issue 20412: conditionally show 'remove variable' button
+        var filter = this.getPlotsFilter();
+        this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
+
         this.colorwin.show();
     },
 
     removeVariableFromFilter : function(measureIdx) {
-        var filters = this.state.getFilters();
+        var filter = this.getPlotsFilter();
+        if (filter != null) {
+            var m = filter.get('plotMeasures');
+            m[measureIdx] = null;
+            this.state.updateFilter(filter.get('id'), {plotMeasures: m});
+        }
+    },
 
+    getPlotsFilter : function() {
+        var filters = this.state.getFilters();
         for (var f=0; f < filters.length; f++) {
-            var m = filters[f].get('plotMeasures');
             if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                m[measureIdx] = null;
-                this.state.updateFilter(filters[f].get('id'), {plotMeasures: m});
+                return filters[f];
             }
         }
+
+        return null;
     },
 
     runUniqueQuery : function(axisSelector) {

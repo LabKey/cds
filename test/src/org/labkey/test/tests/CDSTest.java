@@ -270,7 +270,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(8, 3, 3);
+        _asserts.assertFilterStatusCounts(9, 4, 3);
 
         //
         // Undo a info pane generated filter
@@ -282,7 +282,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(8, 3, 3);
+        _asserts.assertFilterStatusCounts(9, 4, 3);
 
         //
         // open the filter pane via a created filter
@@ -306,7 +306,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
-        _asserts.assertFilterStatusCounts(5, 2, 3); // default is 'OR'
+        _asserts.assertFilterStatusCounts(7, 2, 3); // default is 'OR'
 
         //
         // change the operator
@@ -511,7 +511,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         clickButton("Save and Finish");
         impersonateGroup("PermGroup1", false);
         cds.enterApplication();
-        _asserts.assertFilterStatusCounts(6, 1, 2);
+        _asserts.assertFilterStatusCounts(9, 1, 2);
         beginAt("project/" + getProjectName() + "/begin.view?");
         Ext4Helper.resetCssPrefix();
         clickUserMenuItem("Stop Impersonating");
@@ -573,7 +573,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // remove filter
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(29, 4, 4);
+        _asserts.assertDefaultFilterStatusCounts(this);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // verify undo
@@ -584,7 +584,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // remove an undo filter
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertFilterStatusCounts(29, 4, 4);
+        _asserts.assertDefaultFilterStatusCounts(this);
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // ensure undo is removed on view navigation
@@ -668,7 +668,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         log("Filter undo on grid");
         cds.clearFilter();
         grid.waitForCount(914);
-        _asserts.assertFilterStatusCounts(29, 4, 4);
+        _asserts.assertDefaultFilterStatusCounts(this);
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: Starts With White"));
