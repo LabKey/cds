@@ -12,8 +12,12 @@ Ext.define('Connector.view.module.Text', {
 	tpl : new Ext.XTemplate(
         '<tpl if="text || allowNullText">',
 			Connector.constant.Templates.module.title,
-			'<p>{text}</p>',
-		'</tpl>'),
+			'<p>{[this.processedText(values.text)]}</p>',
+		'</tpl>', {
+			processedText: function(text) {
+				return text && text.replace(/\n/g, '<br/>');
+			}
+		}),
 
 	hasContent : function() {
 		var data = this.data || this.initalConfig.data || {};

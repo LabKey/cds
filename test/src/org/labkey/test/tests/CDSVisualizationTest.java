@@ -11,6 +11,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.CustomModules;
+import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
@@ -311,8 +312,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
                 .containing("Percent activity observed"));
 
         click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
-
-        _asserts.verifyLearnAboutPage(Arrays.asList(CDSHelper.ASSAYS));
+        waitForElement(Locator.tagWithText("h3", "Lead contributor"));
+        assertElementPresent(Locator.tagWithText("h1", "Fake ADCC data"));
     }
 
     @Test
@@ -338,7 +339,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
                 .containing("Expression levels for CCL5"));
 
         click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
-        _asserts.verifyLearnAboutPage(Arrays.asList(CDSHelper.ASSAYS));
+        waitForElement(Locator.tagWithText("h3", "Lead contributor"));
+        assertElementPresent(Locator.tagWithText("h1", "mRNA assay"));
     }
 
     @Test
@@ -361,8 +363,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertElementNotPresent(color.measuresPanelRow().withText("ACTIVITY PCT")); // Only categorical data can be used for color axis
 
         click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
-
-        _asserts.verifyLearnAboutPage(Arrays.asList(CDSHelper.ASSAYS));
+        waitForElement(Locator.tagWithText("h3", "Lead contributor"));
+        assertElementPresent(Locator.tagWithText("h1", "Fake ADCC data"));
     }
 
     @Test

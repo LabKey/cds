@@ -335,7 +335,7 @@ Ext.define('Connector.panel.AxisSelector', {
             this.selectedSource = sources[0];
             this.updateDefinition(this.selectedSource);
 
-            this.down('button#gotoassaypage').setVisible(this.selectedSource.get('variableType') == null);
+            this.down('button#gotoassaypage').hide();
         }
 
         //select first variable in the list on source selection change, for singleSelect grid
@@ -528,7 +528,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                     optionsPanel.add(this.getLookupGrid(measure));
                 }
             }
-            else if (!this.disableAntigenFilter)
+            else
             {
                 this.determineAssayOptionsPanel(optionsPanel, measure, source);
             }
@@ -799,10 +799,11 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     },
 
     determineAssayOptionsPanel : function(parentPanel, measure, source) {
-        // the first time a source is selected, determine if it contains a lookup for Antigen
-        if (source.antigenLookup === undefined)
+        // the first time a source is selected, determine if it contains a lookup for Antigen and StudyDesignAssays
+        if (source.antigenLookup === undefined || source.assaysLookup === undefined)
         {
             source.antigenLookup = null;
+            source.assaysLookup = null;
 
             LABKEY.Query.getQueryDetails({
                 schemaName: source.get('schemaName'),
@@ -811,16 +812,17 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 success: function(data){
                     Ext.each(data.columns, function(col){
                         if (Ext.isDefined(col.lookup) && col.lookup.schemaName == 'CDS' && col.lookup.queryName == 'Antigens')
-                        {
                             source.antigenLookup = col;
-                        }
+
+                        if (Ext.isDefined(col.lookup) && col.lookup.schemaName == 'study' && col.lookup.queryName == 'StudyDesignAssays')
+                            source.assaysLookup = col;
                     });
 
                     parentPanel.add(this.getAssayOptionsPanel(source));
                 }
             });
         }
-        else if (source.antigenLookup != null)
+        else if (source.antigenLookup != null || source.assaysLookup != null)
         {
             parentPanel.add(this.getAssayOptionsPanel(source));
         }
@@ -831,11 +833,18 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         {
             this.assayOptionsPanel = Ext.create('Ext.panel.Panel', { items: [] });
 
-            if (source.antigenLookup != null)
+            if (!this.disableAntigenFilter && source.antigenLookup != null)
             {
                 this.assayOptionsPanel.add(this.getVariableOptionsTitlePanel('Antigens'));
                 this.assayOptionsPanel.add(this.getAntigensGrid(source));
             }
+        }
+
+        // issue 20664: only show for datasets with assays lookup
+        var assaybtn = this.down('button#gotoassaypage');
+        if (assaybtn) {
+            assaybtn.setVisible(source.assaysLookup != null);
+            assaybtn.source = source;
         }
 
         return this.assayOptionsPanel;
