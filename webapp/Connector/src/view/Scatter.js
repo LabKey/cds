@@ -1264,6 +1264,8 @@ Ext.define('Connector.view.Scatter', {
                     });
                 }
 
+                // TODO: Be better about letting other views know about application level column changes
+                var updated = false;
                 this.plotLock = true;
                 var filters = this.state.getFilters(), found = false;
                 for (var f=0; f < filters.length; f++) {
@@ -1274,8 +1276,10 @@ Ext.define('Connector.view.Scatter', {
                             // Call Filter.plotMeasuresEqual (see Filter.js).
                             // TODO: Call state.updateFilter instead. Figure out why we are skipping state.
                             this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
+                            updated = true;
                         } else {
                             this.state.updateFilterMembers(filters[f].get('id'), filter.members, true);
+                            updated = true;
                         }
 
                         found = true;
@@ -1284,10 +1288,15 @@ Ext.define('Connector.view.Scatter', {
                 }
                 if (!found) {
                     this.state.prependFilter(filter);
+                    updated = true;
                 }
                 this.plotLock = false;
 
                 this.requestChartData(activeMeasures);
+
+                if (updated) {
+                    this.state.getApplication().fireEvent('plotmeasures');
+                }
             },
             scope: this
         });

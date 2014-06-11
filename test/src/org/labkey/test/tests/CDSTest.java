@@ -596,7 +596,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 115;
+        final int COLUMN_COUNT = 119;
 
         DataGridSelector grid = new DataGridSelector(this);
 
@@ -609,7 +609,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab");
-        grid.waitForCount(668);
+        grid.waitForCount(911);
 
         //
         // Navigate to Summary to apply a filter
@@ -627,15 +627,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Check to see if grid is properly filtering based on explorer filter
         //
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
-        grid.waitForCount(437);
+        grid.waitForCount(590);
         cds.clearFilter();
-        grid.waitForCount(668);
+        grid.waitForCount(911);
         assertElementPresent(grid.cellLocator("Piehler/Eckels Lab"));
 
         gridColumnSelector.addGridColumn("Demographics", "Sex", true, true);
         gridColumnSelector.addGridColumn("Demographics", "Race", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab", "Sex", "Race");
-        grid.waitForCount(668);
+        grid.waitForCount(914);
 
         log("Remove a column");
         gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
@@ -643,42 +643,42 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
 
         grid.setFilter("Race", "White");
-        grid.waitForCount(246);
+        grid.waitForCount(307);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
         grid.ensureColumnsPresent("Point IC50");
-        grid.waitForCount(246);
+        grid.waitForCount(307);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
-        grid.waitForCount(246);
+        grid.waitForCount(307);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Filter on a looked-up column");
         grid.setFilter("PI", "Mark I");
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: Starts With White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
-        grid.waitForCount(237);
+        grid.waitForCount(298);
         _asserts.assertFilterStatusCounts(8, 3, 4);
 
         log("Filter undo on grid");
         cds.clearFilter();
-        grid.waitForCount(668);
+        grid.waitForCount(914);
         _asserts.assertFilterStatusCounts(29, 4, 4);
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: Starts With White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
-        grid.waitForCount(237);
+        grid.waitForCount(298);
         _asserts.assertFilterStatusCounts(8, 3, 4);
 
         log("update a column filter that already has a filter");
         grid.setFilter("Race", "Black");
-        grid.waitForCount(128);
+        grid.waitForCount(163);
         _asserts.assertFilterStatusCounts(5, 2, 3);
 
 //        log("Ensure filtering goes away when column does");
@@ -690,50 +690,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.clearFilters("Race");
         grid.waitForCount(5);
         grid.clearFilters("Point IC50");
-        grid.waitForCount(650);
+        grid.waitForCount(827);
         grid.clearFilters("PI");
-        grid.waitForCount(668);
+        grid.waitForCount(914);
         assertTextPresent("All subjects"); // ensure there are no app filters remaining
-
-        // TODO: Once citations are implemented, enable to following coverage cases
-//        log("Verify citation sources");
-//        click(Locators.cdsButtonLocator("Sources"));
-//        waitForText("References", CDS_WAIT);
-//        assertTextPresent(
-//                "Demo study final NAb data",
-//                "NAb Data From Igra Lab",
-//                "Data extracted from LabKey lab site on Atlas"
-//        );
-//        click(Locator.xpath("//a[text()='References']"));
-//        waitForText("Recent advances in assay", CDS_WAIT);
-//        click(Locators.cdsButtonLocator("Close"));
-//        waitForGridCount(668);
-//
-//        log("Verify multiple citation sources");
-//        gridColumnSelector.addGridColumn("Physical Exam", "Weight Kg", false, true);
-//        waitForElement(Locator.tagWithText("span", "Weight Kg"));
-//        waitForGridCount(700);
-//
-//        click(Locators.cdsButtonLocator("Sources"));
-//        waitAndClick(Locator.linkWithText("Sources"));
-//        waitForText("Pulled from Atlas", CDS_WAIT);
-//        assertTextPresent("Demo study data delivered by spreadsheet");
-//        click(Locators.cdsButtonLocator("Close"));
-//        waitForGridCount(700);
-//
-//        gridColumnSelector.removeGridColumn("Physical Exam", "Weight Kg", false);
-//        waitForGridCount(668);
-//
-//        // 15267
-//        gridColumnSelector.addGridColumn("Physical Exam", "Source", true, true);
-//        gridColumnSelector.addGridColumn("NAb", "Source", false, true);
-//        waitForGridCount(700);
-//        setDataFilter("Source", "Demo"); // Hopefully get text on page
-//        waitForText("Demo study physical exam", CDS_WAIT);
-//        waitForText("Demo study final NAb data", CDS_WAIT);
-//
-//        openFilterPanel("Source");
-//        click(Locators.cdsButtonLocator(GRID_CLEAR_FILTER));
     }
 
     @Test
