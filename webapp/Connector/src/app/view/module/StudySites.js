@@ -12,9 +12,6 @@ Ext.define('Connector.app.view.module.StudySites', {
 	tpl : new Ext.XTemplate(
         '<tpl>',
 			Connector.constant.Templates.module.title,
-			'<tpl if="model.get(\'Population\')">',
-				'<p>{[values.model.get("Population")]}</p>',
-			'</tpl>',
 			'<tpl if="model.get(\'SiteLocations\')">',
 				'<div class="learn-map-container"></div>',
 			'</tpl>',
@@ -120,6 +117,14 @@ Ext.define('Connector.app.view.module.StudySites', {
 	        "visibility": "off"
 	    }]
 	}],
+
+	hasContent : function() {
+		var data = this.data || this.initalConfig.data || {};
+		var model = data && data.model;
+		var locations = model && model.get('SiteLocations');
+
+		return locations && locations.length;
+	},
 
 	afterRender : function() {
 		// This setTimeout is required - without it google maps renders
