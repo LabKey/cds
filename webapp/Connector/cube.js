@@ -330,6 +330,22 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
+                            title: 'Title'
+                        },
+                        modelData: {
+                            text: 'Title'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'Description'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
                             title: 'CDS editorial'
                         },
                         modelData: {
@@ -338,27 +354,29 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
-                            title: 'Study Objectives'
+                            title: 'Study objectives'
                         },
                         modelData: {
-                            text: 'Description'
+                            text: 'Objectives'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Population'
+                        },
+                        modelData: {
+                            text: 'Population'
                         }
                     }, {
                         type: 'studysites',
                         staticData: {
-                            title: 'Population & sites'
+                            title: 'Sites'
                         }
                     }], [{
-                        type: 'person',
                         staticData: {
-                            title: 'Study point of contact'
+                            title: 'Contact information'
                         },
-                        modelData: {
-                            name: 'MainContact.Name',
-                            picture: 'MainContact.Portrait',
-                            line1: 'MainContact.Role',
-                            line2: 'MainContact.Team'
-                        }
+                        type: 'contactcds'
                     }, {
                         type: 'studyproducts',
                         staticData: {
