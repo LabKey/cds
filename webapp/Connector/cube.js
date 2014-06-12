@@ -193,7 +193,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Assay]',
                 pluralName: 'Assays',
                 priority: 40,
-                summaryTargetLevel: '[Assay.Target Area].[Name]',
+                summaryTargetLevel: '[Assay.Type].[Name]',
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Assay',
                 detailModel: 'Connector.app.model.Assay',
@@ -279,18 +279,18 @@ Ext4.define('Connector.cube.Configuration', {
                         countPlural: 'Assays'
                     }]
                 },{
-                    uniqueName: '[Assay.Target Area]',
+                    uniqueName: '[Assay.Type]',
                     levels: [{
-                        uniqueName: '[Assay.Target Area].[Target Area]',
-                        countSingular: 'Target Area',
-                        countPlural: 'Target Areas'
+                        uniqueName: '[Assay.Type].[Type]',
+                        countSingular: 'Type',
+                        countPlural: 'Types'
                     }]
                 },{
-                    uniqueName: '[Assay.Methodology]',
+                    uniqueName: '[Assay.Platform]',
                     levels: [{
-                        uniqueName: '[Assay.Methodology].[Methodology]',
-                        countSingular: 'Methodology',
-                        countPlural: 'Methodologies'
+                        uniqueName: '[Assay.Platform].[Platform]',
+                        countSingular: 'Platform',
+                        countPlural: 'Platforms'
                     }]
                 }]
             },{

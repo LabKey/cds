@@ -38,7 +38,7 @@ Ext.define('Connector.view.module.StudyAssays', {
 
         //var hierarchy = view.dimension.getHierarchies()[0];
         var config = {
-            onRows: [{ level: '[Assay.Methodology].[Name]' }],
+            onRows: [{ level: '[Assay.Platform].[Name]' }],
             filter: [ {hierarchy : 'Study', members: ["[Study].["+studyId+"]"]} ],
             success: function(slice) {
                 var cells = slice.cells, row;

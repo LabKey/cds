@@ -45,15 +45,15 @@
             <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
             </Level>
         </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Target Area">
+        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Type">
             <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Target Area" visible="true" column="target" type="String" uniqueMembers="true"  />
+            <Level name="Type" visible="true" column="type" type="String" uniqueMembers="true"  />
             <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
             </Level>
         </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Methodology">
+        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Platform">
             <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Methodology" visible="true" column="methodology" type="String" uniqueMembers="true"  />
+            <Level name="Platform" visible="true" column="platform" type="String" uniqueMembers="true"  />
             <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
             </Level>
         </Hierarchy>
