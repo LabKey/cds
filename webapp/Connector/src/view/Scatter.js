@@ -28,9 +28,18 @@ Ext.define('Connector.view.Scatter', {
     layout: 'border',
 
     defaultSortSchema: 'study',
-    defaultSortQuery: 'Demographics', // cannot be equivalent to Connector.studyContext.subjectVisitColumn
+    defaultSortQuery: '', // cannot be equivalent to Connector.studyContext.subjectVisitColumn
+
+    constructor : function(config) {
+
+        this.callParent([config]);
+
+        this.addEvents('onready');
+    },
 
     initComponent : function() {
+
+        this._ready = false;
 
         this.items = [
             this.getNorth(),
@@ -40,51 +49,68 @@ Ext.define('Connector.view.Scatter', {
 
         this.callParent();
 
-        this.on('afterrender', function() {
-            Ext.create('Ext.Component', {
-                id: 'scatterloader',
-                renderTo: Ext.getBody(),
-                autoEl: {
-                    tag: 'img',
-                    src: LABKEY.contextPath + '/production/Connector/resources/images/grid/loading.gif',
-                    alt: 'loading',
-                    height: 25,
-                    width: 25
-                }
-            });
-            this.loader = Ext.get('scatterloader');
-
-            Ext.create('Ext.Component', {
-                id: 'noplotmessage',
-                renderTo: this.body,
-                cls: 'noplotmsg',
-                hidden: true,
-                autoEl: {
-                    tag: 'div',
-                    style: 'position: relative; width: 895px; margin-right: auto; margin-left: auto;',
-                    children: [{
-                        tag: 'h1',
-                        html: 'Choose a "y" variable and up to two more to plot at a time.'
-                    },{
-                        tag: 'h1',
-                        html: 'Make selections on the plot to subgroup and filter.',
-                        style: 'color: #7a7a7a;'
-                    },{
-                        tag: 'h1',
-                        html: 'Use subgroups for further comparision.',
-                        style: 'color: #b5b5b5;'
-                    }]
-                },
-                listeners: {
-                    afterrender : function(c) {
-                        this.noplotmsg = c;
-                    },
-                    scope: this
-                }
-            });
-        }, this, {single: true});
+        this.on('afterrender', this._initAfterRender, this, {single: true});
 
         this.attachInternalListeners();
+
+        Connector.model.Grid.getDefaultDatasetName(function(name) {
+            this.defaultSortQuery = name;
+            this._ready = true;
+            this.fireEvent('onready');
+        }, this);
+    },
+
+    _initAfterRender : function() {
+        Ext.create('Ext.Component', {
+            id: 'scatterloader',
+            renderTo: Ext.getBody(),
+            autoEl: {
+                tag: 'img',
+                src: LABKEY.contextPath + '/production/Connector/resources/images/grid/loading.gif',
+                alt: 'loading',
+                height: 25,
+                width: 25
+            }
+        });
+        this.loader = Ext.get('scatterloader');
+
+        Ext.create('Ext.Component', {
+            id: 'noplotmessage',
+            renderTo: this.body,
+            cls: 'noplotmsg',
+            hidden: true,
+            autoEl: {
+                tag: 'div',
+                style: 'position: relative; width: 895px; margin-right: auto; margin-left: auto;',
+                children: [{
+                    tag: 'h1',
+                    html: 'Choose a "y" variable and up to two more to plot at a time.'
+                },{
+                    tag: 'h1',
+                    html: 'Make selections on the plot to subgroup and filter.',
+                    style: 'color: #7a7a7a;'
+                },{
+                    tag: 'h1',
+                    html: 'Use subgroups for further comparision.',
+                    style: 'color: #b5b5b5;'
+                }]
+            },
+            listeners: {
+                afterrender : function(c) {
+                    this.noplotmsg = c;
+                },
+                scope: this
+            }
+        });
+    },
+
+    onReady : function(callback, scope) {
+        if (this._ready === true) {
+            callback.call(scope);
+        }
+        else {
+            this.on('onready', function() { callback.call(scope); }, this, {single: true});
+        }
     },
 
     getNorth : function() {
@@ -204,8 +230,12 @@ Ext.define('Connector.view.Scatter', {
 
     attachInternalListeners : function() {
 
-        this.showTask = new Ext.util.DelayedTask(this.onShowGraph, this);
-        this.resizeTask = new Ext.util.DelayedTask(this.handleResize, this);
+        this.showTask = new Ext.util.DelayedTask(function() {
+            this.onReady(this.onShowGraph, this);
+        }, this);
+        this.resizeTask = new Ext.util.DelayedTask(function() {
+            this.onReady(this.handleResize, this);
+        }, this);
 
         this.on('resize', function() {
             this.resizeTask.delay(150);

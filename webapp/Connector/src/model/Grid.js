@@ -296,6 +296,22 @@ Ext.define('Connector.model.Grid', {
                     }
                 });
             }
+        },
+
+        getMaxRows : function() {
+
+            var max = 500;
+            var params = LABKEY.ActionURL.getParameters();
+
+            if (Ext.isDefined(params['maxRows'])) {
+                var num = parseInt(params['maxRows']);
+                if (Ext.isNumber(num))
+                {
+                    max = num;
+                }
+            }
+
+            return max;
         }
     },
 
