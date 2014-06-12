@@ -25,7 +25,7 @@
 <%
     PrintTemplate me   = (PrintTemplate) HttpView.currentView();
     String contextPath = request.getContextPath();
-    String serverHash   = PageFlowUtil.getServerSessionHash();
+    String serverHash = PageFlowUtil.getServerSessionHash();
     Boolean devMode = AppProps.getInstance().isDevMode();
 
     String appPath = contextPath + "/Connector";
@@ -266,7 +266,7 @@
 
     <% } else {  %>
     <!-- PRODUCTION -->
-    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js?v="<%=text(serverHash)%>></script>
+    <script type="text/javascript" src="<%=text(appPath)%>/extapp.min.js?v=<%=text(serverHash)%>"></script>
     <% } %>
 </head>
 <body>

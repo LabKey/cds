@@ -767,9 +767,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // 14910
         cds.goToSummary();
-        waitAndClick(Locator.linkWithText("target areas"));
+        waitAndClick(Locator.linkWithText("types"));
         waitForElement(dimensionGroup.withText("Assays"));
-        waitForElement(dimensionSort.withText("SORTED BY: TARGET AREA"));
+        waitForElement(dimensionSort.withText("SORTED BY: TYPE"));
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         cds.waitForBarToAnimate(CDSHelper.ASSAYS[0]);
         cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);

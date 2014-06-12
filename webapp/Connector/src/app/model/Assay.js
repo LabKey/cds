@@ -18,7 +18,7 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'Description'},
         {name: 'Label'},
         {name: 'PI'},
-        {name: 'Methodology'},
+        {name: 'Platform'},
         {name: 'Type'},
         {name: 'Target'},
         {name: 'TargetFunction'}
