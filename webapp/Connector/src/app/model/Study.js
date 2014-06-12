@@ -26,7 +26,7 @@ Ext.define('Connector.app.model.Study', {
         {name: 'Description'},// defaultValue: "[PLACEHOLDER Study.Description]"},
         {name: 'Editorial'},// defaultValue: "[PLACEHOLDER Study.Editorial]"},
         {name: 'Objectives'},// defaultValue: "[PLACEHOLDER Study.Objectives]"},
-        {name: 'Population'},// defaultValue: "[PLACEHOLDER Study.Population]"},
+        {name: 'StudyPopulation'},// defaultValue: "[PLACEHOLDER Study.Population]"},
         {name: 'Stage'},// defaultValue: "[PLACEHOLDER Study.Stage]"},
         
         {name: 'MainContact'}// defaultValue: {
