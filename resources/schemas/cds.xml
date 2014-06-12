@@ -299,6 +299,7 @@
       <ns:column columnName="viruscategory"/>
       <ns:column columnName="pseudovirus_backbone"/>
       <ns:column columnName="Panel"/>
+      <ns:column columnName="Description"/>
     </ns:columns>
   </ns:table>
     <ns:table tableName="Citable" tableDbType="TABLE">
