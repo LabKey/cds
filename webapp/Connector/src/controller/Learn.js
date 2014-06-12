@@ -35,6 +35,15 @@ Ext.define('Connector.controller.Learn', {
             }
         });
 
+        this.control('#up', {
+            click : function() {
+                if (this.dimensionName) {
+                    this.getViewManager().changeView('learn', 'learn', [this.dimensionName]);
+                }
+            },
+            scope: this
+        });
+
 //        this.control('detailstatus', {
 //            itemclick : function(view, rec, node, idx) {
 //                var r = view.getStore().getAt(idx+1);

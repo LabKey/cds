@@ -210,6 +210,7 @@ Ext.define('Connector.view.Learn', {
                             label : self.headerLabel(dimension,model),
                             buttons : {
                                 back: true,
+                                up: dimension.pluralName.toLowerCase(),
                                 group: self.headerButtonsByDimension[dimension.singularName]
                             },
                             tabs : dimension.itemDetailTabs,
