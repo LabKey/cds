@@ -140,9 +140,10 @@ Ext.define('Connector.model.Grid', {
             var sorts = gridModel.getSorts();
 
             if (measures.length > 0 && sorts.length > 0) {
-                LABKEY.Visualization.getData({
+                LABKEY.Query.Visualization.getData({
                     measures: measures,
                     sorts: sorts,
+                    metaDataOnly: true,
                     success: function(metadata)
                     {
                         if (Ext.isFunction(config.onSuccess)) {

@@ -1017,6 +1017,7 @@ Ext.define('Connector.view.Scatter', {
             success: this.onChartDataSuccess,
             failure: this.onFailure,
             requiredVersion: '9.1',
+            maxRows: (this.rowlimit+1),
             scope: this
         };
 
@@ -1052,16 +1053,11 @@ Ext.define('Connector.view.Scatter', {
             this.setColumnMetadata(null);
 
             // Request Chart Data
-            Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-                method: 'POST',
-                jsonData: {
-                    measures: nonNullMeasures.concat(additionalMeasures),
-                    sorts: sorts,
-                    limit: (this.rowlimit+1)
-                },
-                success: function(resp) {
-                    var json = Ext.decode(resp.responseText);
+            LABKEY.Query.Visualization.getData({
+                measures: nonNullMeasures.concat(additionalMeasures),
+                sorts: sorts,
+                metaDataOnly: true,
+                success: function(json) {
                     this.setColumnMetadata(json);
                     this.requestChartData(json);
                 },
@@ -1299,10 +1295,9 @@ Ext.define('Connector.view.Scatter', {
             return;
         }
 
-        // TODO: Rename to something else. This isn't actually a getData response, it's a selectRows response.
-        this.getDataResp = response;
+        this.selectRowsResponse = response;
 
-        this._preprocessData();
+        this._preprocessData(response);
     },
 
     updatePlotBasedFilter : function(activeMeasures) {
@@ -1324,30 +1319,26 @@ Ext.define('Connector.view.Scatter', {
         this.setColumnMetadata(null);
 
         // Request Distinct Participants
-        Ext.Ajax.request({
-            url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
-            method: 'POST',
-            jsonData: {
-                measures: nonNullMeasures.concat(additionalMeasures),
-                sorts: this.getSorts(),
-                limit: (this.rowlimit+1)
-            },
+        LABKEY.Query.Visualization.getData({
+            measures: nonNullMeasures.concat(additionalMeasures),
+            sorts: this.getSorts(),
+            metaDataOnly: true,
             success: function(response) {
                 // Note: We intentionally pass in the measures object that might have nulls.
-                this.onFilterDataSuccess(Ext.decode(response.responseText), activeMeasures);
+                this.onFilterDataSuccess(response, activeMeasures);
             },
             failure: this.onFailure,
             scope: this
         });
     },
 
-    onFilterDataSuccess : function(r, activeMeasures) {
+    onFilterDataSuccess : function(response, activeMeasures) {
         var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
 
         LABKEY.Query.selectDistinctRows({
-            schemaName: r.schemaName,
-            queryName: r.queryName,
-            column: r.measureToColumn[Connector.studyContext.subjectColumn],
+            schemaName: response.schemaName,
+            queryName: response.queryName,
+            column: response.measureToColumn[Connector.studyContext.subjectColumn],
             success: function(data) {
 
                 var filter = {
@@ -1390,8 +1381,8 @@ Ext.define('Connector.view.Scatter', {
                     updated = true;
                 }
                 this.plotLock = false;
-                this.setColumnMetadata(r);
-                this.requestChartData(r);
+                this.setColumnMetadata(response);
+                this.requestChartData(response);
 
                 if (updated) {
                     this.state.getApplication().fireEvent('plotmeasures');
@@ -1464,8 +1455,8 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    _preprocessGetDataResp : function() {
-        var data = this.getDataResp, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
+    _preprocessSelectRowsResp : function() {
+        var data = this.selectRowsResponse, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
                 ya = null, ca = null,_xid, _yid, _cid, mTC = this.measureToColumn;
 
         this.dataQWP = {schema: data.schemaName, query: data.queryName};
@@ -2398,7 +2389,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _buildAlignmentMap : function() {
-        var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName;
+        var alignmentMap = {}, rows = this.selectRowsResponse.rows, xColName, visitColName;
 
         xColName = this.measures[0].interval;
         visitColName = this.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
@@ -2545,7 +2536,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _preprocessData : function() {
-        this._preprocessGetDataResp();
+        this._preprocessSelectRowsResp();
         if (this.requireStudyAxis) {
             this._buildAlignmentMap();
             this.requestStudyAxisData();
