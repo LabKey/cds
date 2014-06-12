@@ -28,7 +28,7 @@ Ext.define('Connector.view.Scatter', {
     layout: 'border',
 
     defaultSortSchema: 'study',
-    defaultSortQuery: 'Demographics',
+    defaultSortQuery: 'Demographics', // cannot be equivalent to Connector.studyContext.subjectVisitColumn
 
     initComponent : function() {
 
@@ -719,7 +719,7 @@ Ext.define('Connector.view.Scatter', {
                         xMin = transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
                         xMax = transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
 
-                        if (xMeasure.name == "SubjectVisit/Visit/ProtocolDay") {
+                        if (xMeasure.name.toLowerCase() === "visit/protocolday") {
                             xMin = Math.floor(xMin);
                             xMax = Math.ceil(xMax);
                         }
@@ -832,7 +832,7 @@ Ext.define('Connector.view.Scatter', {
         // first, check the set of active filters
         var filters = this.state.getFilters();
         for (var f=0; f < filters.length; f++) {
-            if (filters[f].get('isPlot') == true) {
+            if (filters[f].isPlot() === true) {
                 var m = filters[f].get('plotMeasures');
 
                 if (m[0]) {
@@ -935,27 +935,29 @@ Ext.define('Connector.view.Scatter', {
             }
         }
 
-        if (this.filterClear || !activeMeasures.y) {
+        if (this.filterClear || activeMeasures.y == null) {
             this.requireStudyAxis = false;
             this.studyAxisPanel.setVisible(false);
             this.state.clearSelections(true);
             this.filterClear = false;
             this.noPlot();
-            return;
-        }
-
-        this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
-
-        this.rowlimit = activeMeasures.x && this.isContinuousMeasure(activeMeasures.x) ? 5000 : 100000; // selectRows server default limit is 100000
-
-        this.showLoad();
-
-        if (!this.fromFilter && activeMeasures.y) {
-            this.updatePlotBasedFilter(activeMeasures);
         }
         else {
-            this.initialized = true;
-            this.createTempQuery(activeMeasures);
+            this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
+
+            this.rowlimit = activeMeasures.x != null && this.isContinuousMeasure(activeMeasures.x) ? 5000 : 100000; // selectRows server default limit is 100000
+
+            this.showLoad();
+
+            this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
+
+            if (!this.fromFilter && activeMeasures.y !== null) {
+                this.updatePlotBasedFilter(activeMeasures);
+            }
+            else {
+                this.initialized = true;
+                this.createTempQuery(activeMeasures);
+            }
         }
     },
 
@@ -1017,8 +1019,8 @@ Ext.define('Connector.view.Scatter', {
                 this.applyFiltersToSorts(sorts, ptidList);
             }
 
-            this.requireStudyAxis = activeMeasures.x && activeMeasures.x.variableType === "TIME";
-            this.measureToColumn = null;
+            this.setColumnMetadata(null);
+
             // Request Chart Data
             Ext.Ajax.request({
                 url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
@@ -1030,7 +1032,7 @@ Ext.define('Connector.view.Scatter', {
                 },
                 success: function(resp) {
                     var json = Ext.decode(resp.responseText);
-                    this.measureToColumn = json.measureToColumn;
+                    this.setColumnMetadata(json);
                     this.requestChartData(json);
                 },
                 failure: this.onFailure,
@@ -1110,39 +1112,46 @@ Ext.define('Connector.view.Scatter', {
     getAdditionalMeasures : function(activeMeasures, requiresPivot) {
         // map key to schema, query, name, and values
         var measuresMap = {}, additionalMeasuresArr = [], filters = this.state.getFilters();
+
         Ext.each(["x", "y"], function(axis)
         {
             var schema, query, name;
             if (activeMeasures[axis])
             {
-                schema = activeMeasures[axis].schemaName;
-                query = activeMeasures[axis].queryName;
-
                 if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen)
                 {
+                    schema = activeMeasures[axis].schemaName;
+                    query = activeMeasures[axis].queryName;
+
                     name = activeMeasures[axis].options.antigen.name;
                     var values = activeMeasures[axis].options.antigen.values;
                     this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                 }
+                else {
+                    // A time-based X-measure is dependent on the schema/query of the Y-measure
+                    schema = activeMeasures['y'].schemaName;
+                    query = activeMeasures['y'].queryName;
 
-                if (activeMeasures[axis].variableType === "TIME")
-                {
-                    name = Connector.studyContext.subjectVisitColumn + "/Visit";
-                    this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
+                    if (activeMeasures[axis].variableType === "TIME")
+                    {
+                        name = Connector.studyContext.subjectVisitColumn + "/Visit";
+                        this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
+                    }
                 }
             }
         }, this);
 
-        for (var key in measuresMap)
-        {
-            additionalMeasuresArr.push({measure : {
-                name: measuresMap[key].name,
-                queryName: measuresMap[key].queryName,
-                schemaName: measuresMap[key].schemaName,
-                values: measuresMap[key].values
-            }, time: 'date'});
-
-        }
+        Ext.iterate(measuresMap, function(k, m) {
+            additionalMeasuresArr.push({
+                measure: {
+                    name: m.name,
+                    queryName: m.queryName,
+                    schemaName: m.schemaName,
+                    values: m.values
+                },
+                time: 'date'
+            });
+        });
 
         // If we don't have study days/weeks/months on the x-axis then we need to search the current filter set to see
         // if there is a filter on that measure from the grid that we need to pull out. If we don't pull out the measure
@@ -1249,12 +1258,6 @@ Ext.define('Connector.view.Scatter', {
                             me.srcs.push(src);
                         }
                     }
-//                    if (me.srcs.length == 0) {
-//                        me.getSrcButton().hide();
-//                    }
-//                    else {
-//                        me.getSrcButton().show();
-//                    }
                 }
             });
         }
@@ -1269,7 +1272,7 @@ Ext.define('Connector.view.Scatter', {
         // TODO: Rename to something else. This isn't actually a getData response, it's a selectRows response.
         this.getDataResp = response;
 
-        this._preprocessData(this.requireStudyAxis);
+        this._preprocessData();
     },
 
     updatePlotBasedFilter : function(activeMeasures) {
@@ -1284,9 +1287,12 @@ Ext.define('Connector.view.Scatter', {
         }
 
         requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
+
         // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
         additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
-        this.measureToColumn = null;
+
+        this.setColumnMetadata(null);
+
         // Request Distinct Participants
         Ext.Ajax.request({
             url: LABKEY.ActionURL.buildURL('visualization', 'getData.api'),
@@ -1354,7 +1360,7 @@ Ext.define('Connector.view.Scatter', {
                     updated = true;
                 }
                 this.plotLock = false;
-                this.measureToColumn = r.measureToColumn;
+                this.setColumnMetadata(r);
                 this.requestChartData(r);
 
                 if (updated) {
@@ -1363,6 +1369,17 @@ Ext.define('Connector.view.Scatter', {
             },
             scope: this
         });
+    },
+
+    setColumnMetadata : function(dataResponse) {
+        if (dataResponse) {
+            this.measureToColumn = dataResponse.measureToColumn;
+            this.columnAliases = dataResponse.columnAliases;
+        }
+        else {
+            this.measureToColumn = null;
+            this.columnAliases = null;
+        }
     },
 
     noPlot : function() {
@@ -1616,76 +1633,82 @@ Ext.define('Connector.view.Scatter', {
         // when we are plotting subsets of antigens from the same source against each other, we pivot the data
         // so we need to unpivot it here for each combination of x-axis antigen by y-axis antigen
 
-        if (this.requiresPivot(x, y) && x.options.antigen != null && x.options.antigen.values.length > 0
-            && y.options.antigen != null && y.options.antigen.values.length > 0)
-        {
-            var xColName = x.name;
-            var yColName = y.name;
+        if (this.requiresPivot(x, y)) {
+            var xantigen = x.options.antigen;
+            var yantigen = y.options.antigen;
 
-            // get the mapping of the column aliases in the data object in an easier format to reference
-            var columnAliasMap = {};
-            Ext.each(data.columnAliases, function(alias){
-                columnAliasMap[alias.measureName + "::" + alias.pivotValue] = alias.columnName;
-            });
-
-            // create an array of antigen pairs (of the data object column aliases)
-            var antigenColumnAliasPairs = [];
-            for (i = 0; i < x.options.antigen.values.length; i++)
+            if (xantigen != null && xantigen.values.length > 0 &&
+                    yantigen != null && yantigen.values.length > 0)
             {
-                var xAntigenVal = x.options.antigen.values[i];
-                for (j = 0; j < y.options.antigen.values.length; j++)
+
+                var xColName = x.name;
+                var yColName = y.name;
+
+                // get the mapping of the column aliases in the data object in an easier format to reference
+                var columnAliasMap = {};
+                Ext.each(this.columnAliases, function(alias) {
+                    columnAliasMap[alias.measureName + "::" + alias.pivotValue] = alias.columnName;
+                });
+
+                // create an array of antigen pairs (of the data object column aliases)
+                var antigenColumnAliasPairs = [];
+                for (i = 0; i < xantigen.values.length; i++)
                 {
-                    var yAntigenVal = y.options.antigen.values[j];
-                    antigenColumnAliasPairs.push({
-                        xAlias: columnAliasMap[xColName + "::" + xAntigenVal],
-                        xAntigen: xAntigenVal,
-                        yAlias: columnAliasMap[yColName + "::" + yAntigenVal],
-                        yAntigen: yAntigenVal
-                    });
-                }
-            }
-
-            // special case for having the same measure on both axis
-            if (xColName == yColName)
-            {
-                xColName += '-x';
-                yColName += '-y';
-
-                // remap the column names to what we will set them to
-                data.measureToColumn['xAxis'] = xColName;
-                data.measureToColumn['yAxis'] = yColName;
-            }
-            else
-            {
-                // remap the column names to what we will set them to
-                data.measureToColumn[xColName] = xColName;
-                data.measureToColumn[yColName] = yColName;
-            }
-
-            // create the new data.rows array with a row for each ptid/visit/antigenPair
-            var newRowsArr = [];
-            for (var i = 0; i < data.rows.length; i++)
-            {
-                var row = data.rows[i];
-                for (var j = 0; j < antigenColumnAliasPairs.length; j++)
-                {
-                    var dataRow = {};
-                    dataRow[subjectCol] = row[subjectCol];
-                    dataRow[colorCol] = row[colorCol];
-
-                    // issue 20589: skip null-null points produced by pivot
-                    if (row[antigenColumnAliasPairs[j].xAlias].value != null || row[antigenColumnAliasPairs[j].yAlias].value != null)
+                    var xAntigenVal = xantigen.values[i];
+                    for (var j = 0; j < yantigen.values.length; j++)
                     {
-                        dataRow[xColName] = row[antigenColumnAliasPairs[j].xAlias];
-                        dataRow[xColName].antigen = antigenColumnAliasPairs[j].xAntigen;
-                        dataRow[yColName] = row[antigenColumnAliasPairs[j].yAlias];
-                        dataRow[yColName].antigen = antigenColumnAliasPairs[j].yAntigen;
-
-                        newRowsArr.push(dataRow);
+                        var yAntigenVal = yantigen.values[j];
+                        antigenColumnAliasPairs.push({
+                            xAlias: columnAliasMap[xColName + "::" + xAntigenVal],
+                            xAntigen: xAntigenVal,
+                            yAlias: columnAliasMap[yColName + "::" + yAntigenVal],
+                            yAntigen: yAntigenVal
+                        });
                     }
                 }
+
+                // special case for having the same measure on both axis
+                if (xColName == yColName)
+                {
+                    xColName += '-x';
+                    yColName += '-y';
+
+                    // remap the column names to what we will set them to
+                    this.measureToColumn['xAxis'] = xColName;
+                    this.measureToColumn['yAxis'] = yColName;
+                }
+                else
+                {
+                    // remap the column names to what we will set them to
+                    this.measureToColumn[xColName] = xColName;
+                    this.measureToColumn[yColName] = yColName;
+                }
+
+                // create the new data.rows array with a row for each ptid/visit/antigenPair
+                var newRowsArr = [];
+                for (var i = 0; i < data.rows.length; i++)
+                {
+                    var row = data.rows[i];
+                    Ext.each(antigenColumnAliasPairs, function(pair) {
+                        var dataRow = {};
+                        dataRow[subjectCol] = row[subjectCol];
+                        dataRow[colorCol] = row[colorCol];
+
+                        // issue 20589: skip null-null points produced by pivot
+                        if (row[pair.xAlias].value != null || row[pair.yAlias].value != null)
+                        {
+                            dataRow[xColName] = row[pair.xAlias];
+                            dataRow[xColName].antigen = pair.xAntigen;
+                            dataRow[yColName] = row[pair.yAlias];
+                            dataRow[yColName].antigen = pair.yAntigen;
+
+                            newRowsArr.push(dataRow);
+                        }
+                    });
+                }
+
+                data.rows = newRowsArr;
             }
-            data.rows = newRowsArr;
         }
 
         return data;
@@ -2219,7 +2242,7 @@ Ext.define('Connector.view.Scatter', {
         // if we can help it, the sort should use the first non-demographic measure
         for (var i=0; i < this.measures.length; i++) {
             var item = this.measures[i];
-            if (item && !item.isDemographic) {
+            if (item && !item.isDemographic && item.queryName !== Connector.studyContext.subjectVisitColumn) {
                 firstMeasure = item;
                 break;
             }
@@ -2345,10 +2368,10 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _buildAlignmentMap : function() {
-        var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName, protocolDay, value;
+        var alignmentMap = {}, rows = this.getDataResp.rows, xColName, visitColName;
 
         xColName = this.measures[0].interval;
-        visitColName = this.getDataResp.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
+        visitColName = this.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
 
         for (var i = 0; i < rows.length; i++) {
             alignmentMap[rows[i][visitColName].value] = rows[i][xColName].value;
@@ -2491,9 +2514,9 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis();
     },
 
-    _preprocessData : function(withStudyAxis) {
+    _preprocessData : function() {
         this._preprocessGetDataResp();
-        if (withStudyAxis) {
+        if (this.requireStudyAxis) {
             this._buildAlignmentMap();
             this.requestStudyAxisData();
         } else {
