@@ -136,8 +136,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ProductOtherProducts": "../../../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
   "Connector.view.module.ProductStudies": "../../../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../../../webapp/Connector/src/app/view/module/StudyAssays.js",
+  "Connector.view.module.StudyDataSets": "../../../../webapp/Connector/src/app/view/module/StudyDataSets.js",
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
-  "Connector.view.module.StudyLabsAndClinicalData": "../../../../webapp/Connector/src/app/view/module/StudyLabsAndClinicalData.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
   "Connector.view.search.Container": "../../../../webapp/Connector/src/view/search/Container.js",
@@ -292,8 +292,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ProductOtherProducts": [],
   "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
+  "Connector.view.module.StudyDataSets": [],
   "Connector.view.module.StudyHeader": [],
-  "Connector.view.module.StudyLabsAndClinicalData": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
   "Connector.view.search.Container": [],
@@ -1387,11 +1387,11 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.StudyAssays": [
     "widget.app.module.studyassays"
   ],
+  "Connector.view.module.StudyDataSets": [
+    "widget.app.module.studydatasets"
+  ],
   "Connector.view.module.StudyHeader": [
     "widget.app.module.studyheader"
-  ],
-  "Connector.view.module.StudyLabsAndClinicalData": [
-    "widget.app.module.studylabsandclinicaldata"
   ],
   "Connector.view.module.StudyProducts": [
     "widget.app.module.studyproducts"

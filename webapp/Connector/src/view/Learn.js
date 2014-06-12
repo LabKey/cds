@@ -84,7 +84,7 @@ Ext.define('Connector.view.Learn', {
                 var hierarchy = dimension.getHierarchies()[0];
                 var config = {
                     onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
-                    useNamedFilters: ['statefilter'],
+                    //useNamedFilters: ['statefilter'],
                     success: function(slice) {
                         if (store)
                             store.loadSlice(slice);
