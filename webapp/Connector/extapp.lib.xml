@@ -195,8 +195,8 @@
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
+        <script path="Connector/src/app/view/module/StudyDataSets.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
-        <script path="Connector/src/app/view/module/StudyLabsAndClinicalData.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>
         <script path="Connector/src/app/view/module/StudySites.js"/>
 

@@ -10,7 +10,8 @@ Ext.define('Connector.app.model.DataSet', {
     fields: [
         {name: 'Label'},
         {name: 'Name'},
-        {name: 'KeyPropertyName'}
+        {name: 'KeyPropertyName'},
+        {name: 'CategoryId'}
     ],
 
     countsByStudy : undefined,
@@ -22,7 +23,6 @@ Ext.define('Connector.app.model.DataSet', {
     },
 
     hasDataFromStudy : function(study) {
-//    	console.log(this.get('Name'),study,this.countsByStudy)
     	return this.countsByStudy[study] > 0;
     },
 
@@ -42,10 +42,10 @@ Ext.define('Connector.app.model.DataSet', {
         //     },
         //     scope : this
         // });
-
+//console.log('QDFS',this.get('Name').value);
 		LABKEY.Query.executeSql({
 			schemaName: 'study',
-			sql: "SELECT COUNT(*) AS n FROM \""+this.get('Name')+"\" WHERE " + Connector.studyContext.subjectColumn + ".Study.Label = '"+id+"'",
+			sql: "SELECT COUNT(*) AS n FROM \""+this.get('Name').value+"\" WHERE " + Connector.studyContext.subjectColumn + ".Study.Label = '"+id+"'",
 			success: function(data) {
 				var count = data.rows[0].n;
 				this.countsByStudy[id] = count;

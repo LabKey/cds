@@ -255,8 +255,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDataSets.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyLabsAndClinicalData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
 
