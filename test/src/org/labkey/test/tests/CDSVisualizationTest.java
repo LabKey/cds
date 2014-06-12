@@ -59,11 +59,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         CDSVisualizationTest initTest = new CDSVisualizationTest();
 
-//        initTest.doCleanup(false);
-//        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-//        _initializer.setDesiredStudies(DESIRED_STUDIES);
-//        _initializer.setupDataspace();
-//        initTest.createParticipantGroups();
+        initTest.doCleanup(false);
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        _initializer.setDesiredStudies(DESIRED_STUDIES);
+        _initializer.setupDataspace();
+        initTest.createParticipantGroups();
 
         currentTest = initTest;
     }
