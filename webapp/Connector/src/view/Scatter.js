@@ -1013,7 +1013,6 @@ Ext.define('Connector.view.Scatter', {
         var config = {
             schemaName: r.schemaName,
             queryName: r.queryName,
-            filterArray: this.timeFilters ? this.timeFilters : null,
             success: this.onChartDataSuccess,
             failure: this.onFailure,
             requiredVersion: '9.1',
@@ -1179,20 +1178,21 @@ Ext.define('Connector.view.Scatter', {
             });
         });
 
-        // If we don't have study days/weeks/months on the x-axis then we need to search the current filter set to see
-        // if there is a filter on that measure from the grid that we need to pull out. If we don't pull out the measure
-        // then we can't apply the filter when querying for the data.
+        // If there is a grid filter on days/weeks/months we need to pull the filter out so we can apply it when
+        // querying for data. If we don't already have days/weeks/months as a measure, then we also need to add it to
+        // the list of measures that getData returns.
         this.timeFilters = null;
-        if (!activeMeasures.x || !activeMeasures.x.interval) {
-            for (var i = 0; i < filters.length; i++) {
-                var filterData = filters[i].data;
-                if (filterData.isGrid && !filterData.isPlot) {
-                    // gridFilter is an array of filters, it needs to be renamed.
-                    if (filterData.gridFilter[0]) {
-                        var colName = filterData.gridFilter[0].getColumnName().toLowerCase();
-                        if (colName === 'days' || colName === 'weeks' || colName === 'months') {
-                            this.timeFilters = filterData.gridFilter;
 
+        for (var i = 0; i < filters.length; i++) {
+            var filterData = filters[i].data;
+            if (filterData.isGrid && !filterData.isPlot) {
+                // gridFilter is an array of filters, it needs to be renamed.
+                if (filterData.gridFilter[0]) {
+                    var colName = filterData.gridFilter[0].getColumnName();
+                    if (colName === 'Days' || colName === 'Weeks' || colName === 'Months') {
+                        this.timeFilters = filterData.gridFilter;
+
+                        if (activeMeasures.x == null || !activeMeasures.x.interval) {
                             additionalMeasuresArr.push({
                                 dateOptions: {
                                     interval: colName,
@@ -1200,16 +1200,16 @@ Ext.define('Connector.view.Scatter', {
                                     useProtocolDay: true
                                 },
                                 measure: {
-                                    name: Connector.studyContext.subjectVisitColumn + "/Visit",
+                                    name: Connector.studyContext.subjectVisitColumn + "/Visit/ProtocolDay",
                                     queryName: activeMeasures.y.queryName,
                                     schemaName: activeMeasures.y.schemaName,
                                     values: []
                                 },
                                 time: 'date'
                             });
-
-                            break;
                         }
+
+                        break;
                     }
                 }
             }
