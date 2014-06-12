@@ -30,7 +30,7 @@ public class CDSAsserts
     {
         assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "4 countries", "2 sexes", "2 hiv infection statuses", "1 species", "6 races & subtypes");
         assertCDSPortalRow("Study products", "3 study products");
-        assertCDSPortalRow("Assays", "4 assays", "3 target areas", "3 methodologies");
+        assertCDSPortalRow("Assays", "4 assays", "3 types", "3 platforms");
         assertCDSPortalRow("Studies", "4 studies");
     }
 
