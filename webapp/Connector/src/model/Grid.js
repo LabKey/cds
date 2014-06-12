@@ -483,7 +483,7 @@ Ext.define('Connector.model.Grid', {
         Ext.each(filters, function(filter) {
 
             // respect plotted measures
-            if (filter.isPlot()) {
+            if (filter.isPlot() && !filter.isGrid()) {
                 var plotMeasureSet = filter.get('plotMeasures');
                 Ext.each(plotMeasureSet, function(pm) {
                     if (Ext.isObject(pm)) {

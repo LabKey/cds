@@ -177,7 +177,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         _asserts.assertSelectionStatusCounts(1, 1, 2);
 
         plotSelectionX.findElement(getDriver()).click(); // remove the x variable from the selection.
-        _asserts.assertSelectionStatusCounts(2, 1, 2);
+        _asserts.assertSelectionStatusCounts(1, 1, 2);
         plotSelectionX.findElement(getDriver()).click(); // remove the y variable from the selection.
         assertElementNotPresent(plotSelection);
 
