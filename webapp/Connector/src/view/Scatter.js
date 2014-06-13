@@ -1851,7 +1851,7 @@ Ext.define('Connector.view.Scatter', {
                         handler: function() {
                             if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
-                                this.showTask.delay(300);
+                                this.showTask.delay(10);
                                 this.ywin.hide(targetEl);
                             }
                         },
@@ -1972,8 +1972,8 @@ Ext.define('Connector.view.Scatter', {
 
                             if (yHasSelection && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
+                                this.showTask.delay(10);
                                 this.xwin.hide(targetEl);
-                                this.showTask.delay(300);
                             }
                             else if (this.axisPanelX.hasSelection()) {
                                 this.xwin.hide(targetEl, function() {
@@ -2095,7 +2095,7 @@ Ext.define('Connector.view.Scatter', {
                         text: 'set color variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            this.showTask.delay(300);
+                            this.showTask.delay(10);
                             this.colorwin.hide(targetEl);
                         },
                         scope: this
