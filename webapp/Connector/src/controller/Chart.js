@@ -64,7 +64,10 @@ Ext.define('Connector.controller.Chart', {
         this.control('axisselectdisplay > panel > panel > button#gotoassaypage', {
             click: function(btn) {
                 var win = btn.up('window');
-                if (win) win.hide();
+                if (win) {
+                    win.hideLock = true;
+                    win.hide();
+                }
 
                 // issue 20664: find the assay label from the first dataset row
                 if (btn.source && btn.source.assaysLookup) {

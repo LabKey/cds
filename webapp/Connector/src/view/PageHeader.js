@@ -82,8 +82,21 @@ Ext.define('Connector.view.PageHeader', {
                     style: 'margin: 4px 2px 0 23px;'
                 });
             }
+            
+            if (buttonConfig.up) {
+                buttons.push({
+                    xtype: 'button',
+                    html: '<svg width="12" height="10" fill="#9b0d96">'+
+                        '<path d="M0 6 L5 10 L5 2 Z" />'+
+                    '</svg>'+buttonConfig.up,
+                    cls: '',
+                    itemId: 'up',
+                    style: 'margin: 4px 2px 0 23px;'
+                });
+            }
+            
             if (buttonConfig.group && buttonConfig.group.length) {
-                if (buttonConfig.back) {
+                if (buttonConfig.back || buttonConfig.up) {
                     buttons.push({
                         xtype: 'tbspacer',
                         width: 50

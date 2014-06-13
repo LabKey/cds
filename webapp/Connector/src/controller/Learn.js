@@ -35,62 +35,16 @@ Ext.define('Connector.controller.Learn', {
             }
         });
 
-//        this.control('detailstatus', {
-//            itemclick : function(view, rec, node, idx) {
-//                var r = view.getStore().getAt(idx+1);
-//                var detail = r.data;
-//                var key = detail.hierarchy.split('.')[0];
-//                this.onDetail(key, detail);
-//            }
-//        });
-
-        //
-        // Hook into the primary controller hide/show actions for learn views
-        //
-//        this.getViewManager().registerShowAction('learn', this.showAction, this);
+        this.control('#up', {
+            click : function() {
+                if (this.dimension.name) {
+                    this.getViewManager().changeView('learn', 'learn', [this.dimension.name]);
+                }
+            },
+            scope: this
+        });
 
         this.callParent();
-    },
-
-    showAction : function(xtype, context) {
-        var vm = this.getViewManager();
-        var center = vm.getCenter();
-
-        if (!vm.viewMap[xtype] || !vm.tabMap[xtype]) {
-            vm.viewMap[xtype] = vm.createView(xtype, context);
-            center.add(vm.viewMap[xtype]);
-        }
-
-        var pre = center.getActiveTab();
-        var postIdx = vm.tabMap[xtype];
-
-        this.innerTransition = false;
-
-        if (pre) {
-            var preType = pre.getXType();
-
-            if (preType == 'learn') {
-                //
-                // This is a transition within the learn view
-                //
-                this.innerTransition = true;
-//                this.updateView(xtype, context);
-            }
-            else {
-                pre.getEl().fadeOut({
-                    callback: function() {
-                        center.setActiveTab(postIdx);
-                        vm.fadeInView(xtype);
-                        Ext.defer(function() { pre.getEl().fadeIn(); }, 200, pre);
-                    }
-                });
-            }
-        }
-        else {
-            center.setActiveTab(postIdx);
-            vm.fadeInView(xtype);
-        }
-        vm.showStatusView('filterstatus');
     },
 
     createView : function(xtype, context) {
@@ -194,6 +148,8 @@ Ext.define('Connector.controller.Learn', {
                     v.selectDimension(dim, id, this.innerTransition);
                     this.innerTransition = false;
                     this.updateLock = false;
+                } else {
+                    v.selectDimension(this.dimension, null, this.innerTransition);
                 }
             }
             else {
@@ -206,24 +162,40 @@ Ext.define('Connector.controller.Learn', {
         return 'learn';
     },
 
-    onSelectDimension : function(dimension) {
+    onSelectDimension : function(dimension, silent) {
         if (!this.updateLock) {
             var context = [dimension.get('name')];
             if (this.context.id) {
                 context.push(this.context.id);
             }
-            this.getViewManager().changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
+
+            //
+            // If a selection is 'silent' then it is considered to be avoiding
+            // url update (and avoid browser back issues). The more ideal solution
+            // would be to have a default state for the learn view/model
+            //
+            if (silent === true)
+            {
+                context = this.parseContext(context);
+                this.updateLearnView(context);
+            }
+            else
+            {
+                this.getViewManager().changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
+            }
         }
     },
 
     onSelectItem : function(item) {
         var id = item.getId();
 
-        if (id) {
-            this.getViewManager().changeView('learn', 'learn', [this.dimensionName, id]);
+        if (id && this.dimension) {
+            this.getViewManager().changeView('learn', 'learn', [this.dimension.name, id]);
         }
-        else {
+        else if (!id) {
             console.warn('Unable to show item without an id property');
+        } else {
+            console.warn('No dimension selected');
         }
     },
 
