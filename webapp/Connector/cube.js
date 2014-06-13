@@ -128,7 +128,14 @@ Ext4.define('Connector.cube.Configuration', {
                         countPlural: 'Baseline BMI categories'
                     }]
                 },{
-                    uniqueName: '[Subject.Species]'
+                    uniqueName: '[Subject.Species]',
+                    levels: [{
+                        uniqueName: '[Subject.Species].[Species]',
+                        activeCount: true,
+                        countPriority: 15,
+                        countSingular: 'Species',
+                        countPlural: 'Species'
+                    }]
                 }]
             },{
                 uniqueName: '[Vaccine]',
