@@ -37,8 +37,8 @@ Ext.define('Connector.controller.Learn', {
 
         this.control('#up', {
             click : function() {
-                if (this.dimensionName) {
-                    this.getViewManager().changeView('learn', 'learn', [this.dimensionName]);
+                if (this.dimension.name) {
+                    this.getViewManager().changeView('learn', 'learn', [this.dimension.name]);
                 }
             },
             scope: this
@@ -199,10 +199,13 @@ Ext.define('Connector.controller.Learn', {
                     // can be found in the context
                     //
                     this.dimension = dim;
+                    //this.dimensionName = this.dimensionName || dim.name;
                     this.updateLock = true;
                     v.selectDimension(dim, id, this.innerTransition);
                     this.innerTransition = false;
                     this.updateLock = false;
+                } else {
+                    v.selectDimension(this.dimension, null, this.innerTransition);
                 }
             }
             else {
@@ -228,11 +231,13 @@ Ext.define('Connector.controller.Learn', {
     onSelectItem : function(item) {
         var id = item.getId();
 
-        if (id) {
-            this.getViewManager().changeView('learn', 'learn', [this.dimensionName, id]);
+        if (id && this.dimension) {
+            this.getViewManager().changeView('learn', 'learn', [this.dimension.name, id]);
         }
-        else {
+        else if (!id) {
             console.warn('Unable to show item without an id property');
+        } else {
+            console.warn('No dimension selected');
         }
     },
 
