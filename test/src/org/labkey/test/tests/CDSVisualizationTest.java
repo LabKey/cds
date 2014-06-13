@@ -11,26 +11,20 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.CustomModules;
-import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.Maps;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,11 +53,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         CDSVisualizationTest initTest = new CDSVisualizationTest();
 
-        initTest.doCleanup(false);
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setDesiredStudies(DESIRED_STUDIES);
-        _initializer.setupDataspace();
-        initTest.createParticipantGroups();
+//        initTest.doCleanup(false);
+//        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+//        _initializer.setDesiredStudies(DESIRED_STUDIES);
+//        _initializer.setupDataspace();
+//        initTest.createParticipantGroups();
 
         currentTest = initTest;
     }
@@ -176,9 +170,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
         _asserts.assertSelectionStatusCounts(1, 1, 2);
 
-        plotSelectionX.findElement(getDriver()).click(); // remove the x variable from the selection.
+        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
         _asserts.assertSelectionStatusCounts(1, 1, 2);
-        plotSelectionX.findElement(getDriver()).click(); // remove the y variable from the selection.
+        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
         assertElementNotPresent(plotSelection);
 
         // Select them again and apply them as a filter.
@@ -455,21 +449,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Check to make sure study axis appears.
         waitForElement(studyAxisLoc);
-        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visits on the study axis.", 59, studyVisits.findElements(getDriver()).size());
 
         WebElement studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
         studyVisitEls = studyAxisTest1.findElements(studyVisits.toBy());
-
-        // Sort the visits for Study Axis Test 1 by x location because DOM insertion varies by platform and browser
-        // version, so this is the only accurate way to actually get the first visit for that study.
-        Collections.sort(studyVisitEls, new Comparator<WebElement>()
-        {
-            @Override
-            public int compare(WebElement o1, WebElement o2)
-            {
-                return o1.getLocation().getX() - o2.getLocation().getX();
-            }
-        });
 
         // Check that study axis hovers appear when hovered over.
         builder.moveToElement(studyVisitEls.get(0)).perform();
@@ -486,7 +469,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         waitForTextToDisappear("NotRV144");
 
-        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visits on the study axis.", 44, studyVisits.findElements(getDriver()).size());
 
         WebElement notRV144 = studyGroups.findElements(getDriver()).get(0);
         WebElement diamondVisit = notRV144.findElement(studyVisits.toBy());
@@ -503,7 +486,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForText("NotRV144");
 
         // Assert that we have the same amount of visits even with study weeks.
-        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visits on the study axis.", 59, studyVisits.findElements(getDriver()).size());
     }
 
     @Test
@@ -708,7 +691,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         public static Locator plotSelection = Locator.css(".selectionfilter .plot-selection");
         public static Locator plotSelectionFilter = Locator.css(".activefilter .plot-selection");
-        public static Locator plotSelectionX = Locator.css(".selectionfilter .plot-selection .closeitem");
+        public static Locator plotSelectionCloseBtn = Locator.css("div.plot-selection div.closeitem");
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");

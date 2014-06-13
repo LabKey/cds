@@ -2330,104 +2330,124 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestStudyAxisData : function() {
-        var visits = Object.keys(this.alignmentMap), inClause, sql;
+        var studyContainers = Object.keys(this.alignmentMap), inClause, sql;
+        inClause = '(\'' + studyContainers.join('\',\'') + '\')';
+        sql = 'SELECT\n' +
+                'StudyLabel,\n' +
+                'StudyContainer,\n'+
+                'TimepointType,\n' +
+                'VisitLabel,\n' +
+                'SequenceNumMin,\n' +
+                'SequenceNumMax,\n' +
+                'ProtocolDay,\n' +
+                'VisitDescription,\n' +
+                'VisitRowId,\n' +
+                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
+                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
+                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
+                'FROM (\n' +
+                'SELECT\n' +
+                'StudyProperties.Label as StudyLabel,\n' +
+                'StudyProperties.TimepointType as TimepointType,\n' +
+                'Visit.Label as VisitLabel,\n' +
+                'Visit.SequenceNumMin,\n' +
+                'Visit.SequenceNumMax,\n' +
+                'Visit.ProtocolDay,\n' +
+                'Visit.Description as VisitDescription,\n' +
+                'Visit.Folder as VisitContainer,\n' +
+                'Visit.RowId as VisitRowId,\n' +
+                'StudyProperties.Container as StudyContainer\n' +
+                'FROM Visit, StudyProperties\n' +
+                'WHERE Visit.Folder = StudyProperties.Container\n' +
+                'AND StudyProperties.Container IN ' + inClause + '\n' +
+                ') as AllVisits\n' +
+                'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
 
-        if (visits.length === 0) {
-            this.studyAxisData = null;
-            this.initPlot(this.plotData, false);
-        } else {
-            inClause = '(' + visits.join(',') + ')';
-            sql = 'SELECT\n' +
-                    'StudyLabel,\n' +
-                    'TimepointType,\n' +
-                    'VisitLabel,\n' +
-                    'SequenceNumMin,\n' +
-                    'SequenceNumMax,\n' +
-                    'ProtocolDay,\n' +
-                    'VisitDescription,\n' +
-                    'VisitRowId,\n' +
-                    'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
-                    'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
-                    'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
-                    'FROM (\n' +
-                    'SELECT\n' +
-                    'StudyProperties.Label as StudyLabel,\n' +
-                    'StudyProperties.TimepointType as TimepointType,\n' +
-                    'Visit.Label as VisitLabel,\n' +
-                    'Visit.SequenceNumMin,\n' +
-                    'Visit.SequenceNumMax,\n' +
-                    'Visit.ProtocolDay,\n' +
-                    'Visit.Description as VisitDescription,\n' +
-                    'Visit.Folder as VisitContainer,\n' +
-                    'Visit.RowId as VisitRowId,\n' +
-                    'StudyProperties.Container as StudyContainer\n' +
-                    'FROM Visit, StudyProperties\n' +
-                    'WHERE Visit.Folder = StudyProperties.Container AND\n' +
-                    'Visit.RowId IN ' + inClause + '\n' +
-                    ') as AllVisits\n' +
-                    'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+        LABKEY.Query.executeSql({
+            schemaName: 'study',
+            requiredVersion: 9.1,
+            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
+            sql: sql,
+            success: function(resp){
+                if (!this.isActiveView) {
+                    return;
+                }
 
-            LABKEY.Query.executeSql({
-                schemaName: 'study',
-                requiredVersion: 9.1,
-                containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
-                sql: sql,
-                success: function(resp){
-                    if (!this.isActiveView) {
-                        return;
-                    }
+                this.studyAxisResp = resp;
+                this._preprocessStudyAxisData();
+                this.initPlot(this.plotData, false);
+                this.initStudyAxis();
+            },
+            failure: function(resp) {console.error('Error retrieving study axis data')},
+            scope: this
+        });
+    },
 
-                    this.studyAxisResp = resp;
-                    this._preprocessStudyAxisData();
-                    this.initPlot(this.plotData, false);
-                    this.initStudyAxis();
-                },
-                failure: function(resp) {console.error('Error retrieving study axis data')},
-                scope: this
-            });
+    _convertInterval : function(d, interval) {
+        // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
+        if (interval == 'days') {
+            return d;
+        } else if (interval == 'weeks') {
+            return d / 7;
+        } else if (interval == 'months') {
+            return d / (365.25/12);
         }
     },
 
     _buildAlignmentMap : function() {
-        var alignmentMap = {}, rows = this.selectRowsResponse.rows, xColName, visitColName;
+        var rows = this.selectRowsResponse.rows, am = {}, xColName, visitColName, protocolColName, container,
+                protocolDay, shiftedVal, interval, visitMap = {};
 
         xColName = this.measures[0].interval;
+        interval = xColName.toLowerCase();
         visitColName = this.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
+        protocolColName = visitColName + '_ProtocolDay';
 
         for (var i = 0; i < rows.length; i++) {
-            alignmentMap[rows[i][visitColName].value] = rows[i][xColName].value;
+            container = rows[i].SubjectVisit_Visit_Folder.value;
+            visitMap[rows[i][visitColName].value] = true;
+            if (!am[container]) {
+                shiftedVal = rows[i][xColName].value;
+                protocolDay = Math.floor(this._convertInterval(rows[i][protocolColName].value, interval));
+                am[container] = shiftedVal - protocolDay;
+            }
         }
 
-        this.alignmentMap = alignmentMap;
+        this.visitMap = visitMap;
+        this.alignmentMap = am;
     },
 
     _preprocessStudyAxisData : function() {
-        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, studyMap = {}, studyLabel, study, visitId,
-                visit, visitTagName, visits, interval, convertInterval, visitKeys, visitKey, i;
-
-        interval = this.measures[0].interval.toLowerCase();
-        convertInterval = function(d) {
-            // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
-            if (interval == 'days') {
-                return d;
-            } else if (interval == 'weeks') {
-                return d / 7;
-            } else if (interval == 'months') {
-                return d / (365.25/12);
-            }
-        };
+        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, interval, studyMap = {}, studyLabel,
+                study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
+                seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j;
 
         this.studyAxisData = [];
+        interval = this.measures[0].interval.toLowerCase();
 
-        for (i = 0; i < rows.length; i++) {
-            studyLabel = rows[i].StudyLabel.value;
-            visitId = rows[i].VisitRowId.value;
-            visitTagName = rows[i].VisitTagName.value;
+        for (j = 0; j < rows.length; j++) {
+            studyLabel = rows[j].StudyLabel.value;
+            studyContainer = rows[j].StudyContainer.value;
+            shiftVal = alignmentMap[studyContainer];
+            visitId = rows[j].VisitRowId.value;
+            visitLabel = rows[j].VisitLabel.value;
+            seqMin = rows[j].SequenceNumMin.value;
+            seqMax = rows[j].SequenceNumMax.value;
+            protocolDay = this._convertInterval(rows[j].ProtocolDay.value, interval) + shiftVal;
+            timepointType = rows[j].TimepointType.value;
+            visitTagCaption = rows[j].VisitTagCaption.value;
+
+            if (!this.visitMap[visitId] && !visitTagCaption) { continue; }
+
+            if (timepointType !== 'VISIT') {
+                seqMin = this._convertInterval(seqMin, interval) + shiftVal;
+                seqMax = this._convertInterval(seqMax, interval) + shiftVal;
+            }
 
             if (!studyMap.hasOwnProperty(studyLabel)) {
                 studyMap[studyLabel] = {
                     label : studyLabel,
-                    timepointType : rows[i].TimepointType.value,
+                    timepointType : timepointType,
                     visits: {}
                 };
             }
@@ -2436,77 +2456,52 @@ Ext.define('Connector.view.Scatter', {
 
             if (!study.visits.hasOwnProperty(visitId)) {
                 study.visits[visitId] = {
-                    id: visitId,
-                    label: rows[i].VisitLabel.value,
-                    description: rows[i].VisitDescription.value,
-                    sequenceNumMin: rows[i].SequenceNumMin.value,
-                    sequenceNumMax: rows[i].SequenceNumMax.value,
-                    protocolDay: convertInterval(rows[i].ProtocolDay.value),
-                    alignedDay: alignmentMap[rows[i].VisitRowId.value],
-                    visitTagMap : {} // Each visit tag the visit is tagged with.
+                    label: visitLabel,
+                    sequenceNumMin: seqMin,
+                    sequenceNumMax: seqMax,
+                    protocolDay: protocolDay,
+                    visitTags: {}
                 };
-
-                if (study.timepointType !== 'VISIT') {
-                    study.visits[visitId].sequenceNumMin = convertInterval(study.visits[visitId].sequenceNumMin);
-                    study.visits[visitId].sequenceNumMax = convertInterval(study.visits[visitId].sequenceNumMax);
-                }
             }
 
             visit = study.visits[visitId];
 
-            if (!visit.alignedDay) {
-                visit.alignedDay = alignmentMap[rows[i].VisitRowId.value];
-            }
-
-            if (visitTagName && !visit.visitTagMap.hasOwnProperty(visitTagName)) {
-                visit.visitTagMap[visitTagName] = {
-                    name: visitTagName,
-                    caption: rows[i].VisitTagCaption.value,
-                    description: rows[i].VisitTagDescription.value
-
-                };
+            if (visitTagCaption !== null && !visit.visitTags.hasOwnProperty(visitTagCaption)) {
+                visit.visitTags[visitTagCaption] = visitTagCaption;
             }
         }
 
         // Convert study map and visit maps into arrays.
-        for (var studyName in studyMap) {
-            if (studyMap.hasOwnProperty(studyName)) {
-                study = studyMap[studyName];
-                visitKeys = Object.keys(study.visits).sort();
-                visits = [];
-                for (i = 0; i < visitKeys.length; i++) {
-                    visitKey = visitKeys[i];
-                    if (study.visits.hasOwnProperty(visitKey)) {
-                        visits.push(study.visits[visitKey]);
-                    }
-                }
+        studyKeys = Object.keys(studyMap).sort();
 
-                study.visits = visits;
-                this.studyAxisData.push(study);
+        for (i = 0; i < studyKeys.length; i++) {
+            study = studyMap[studyKeys[i]];
+            visitKeys = Object.keys(study.visits).sort();
+            visits = [];
+            for (j = 0; j < visitKeys.length; j++) {
+                visitKey = visitKeys[j];
+                study.visits[visitKey].visitTags = Object.keys(study.visits[visitKey].visitTags).sort();
+                visits.push(study.visits[visitKey]);
             }
+
+            study.visits = visits;
+            this.studyAxisData.push(study);
         }
     },
 
     showStudyAxisHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
             plotBBox = plotEl.getBoundingClientRect(),
-            hoverBBox, html, visitTagKeys, visitTagKey, visitTag, i;
+            hoverBBox, html, i;
 
         this.visitHoverEl = document.createElement('div');
         this.visitHoverEl.setAttribute('class', 'study-axis-window');
         html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
 
-        // Sort visit tags so they're consistent.
-        visitTagKeys = Object.keys(data.visitTagMap);
-        visitTagKeys.sort();
-
-        for (i = 0; i < visitTagKeys.length; i++) {
-            visitTagKey = visitTagKeys[i];
-            if (data.visitTagMap.hasOwnProperty(visitTagKey)) {
-                visitTag = data.visitTagMap[visitTagKey];
-                html += '<p>' + visitTag.caption + '</p>';
-            }
+        for (i = 0; i < data.visitTags.length; i++) {
+                html += '<p>' + data.visitTags[i] + '</p>';
         }
+
         this.visitHoverEl.innerHTML = html;
         document.querySelector('body').appendChild(this.visitHoverEl);
         hoverBBox = this.visitHoverEl.getBoundingClientRect();
