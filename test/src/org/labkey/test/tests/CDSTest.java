@@ -258,14 +258,14 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         cds.goToSummary();
         cds.clickBy("Assays");
-        cds.openStatusInfoPane("Races & Subtypes");
+        cds.openStatusInfoPane("Races & subtypes");
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
         _asserts.assertDefaultFilterStatusCounts(this);
 
         //
         // Open a filter pane and create filter
         //
-        cds.openStatusInfoPane("Races & Subtypes");
+        cds.openStatusInfoPane("Races & subtypes");
         cds.selectInfoPaneItem(raceMember, true);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
 
@@ -332,7 +332,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Check sort menu
         //
-        cds.openStatusInfoPane("Races & Subtypes");
+        cds.openStatusInfoPane("Races & subtypes");
         cds.changeInfoPaneSort("Race", "Country");
         cds.selectInfoPaneItem("South Africa", true);
         cds.selectInfoPaneItem("Thailand", true);
@@ -846,7 +846,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         //test more group saving
         cds.clickBy("Subject characteristics");
-        cds.pickSort("Sex");
+        cds.pickSort("Sex at birth");
         cds.selectBars("f");
 
         // save the group and request cancel

@@ -44,62 +44,7 @@ Ext.define('Connector.controller.Learn', {
             scope: this
         });
 
-//        this.control('detailstatus', {
-//            itemclick : function(view, rec, node, idx) {
-//                var r = view.getStore().getAt(idx+1);
-//                var detail = r.data;
-//                var key = detail.hierarchy.split('.')[0];
-//                this.onDetail(key, detail);
-//            }
-//        });
-
-        //
-        // Hook into the primary controller hide/show actions for learn views
-        //
-//        this.getViewManager().registerShowAction('learn', this.showAction, this);
-
         this.callParent();
-    },
-
-    showAction : function(xtype, context) {
-        var vm = this.getViewManager();
-        var center = vm.getCenter();
-
-        if (!vm.viewMap[xtype] || !vm.tabMap[xtype]) {
-            vm.viewMap[xtype] = vm.createView(xtype, context);
-            center.add(vm.viewMap[xtype]);
-        }
-
-        var pre = center.getActiveTab();
-        var postIdx = vm.tabMap[xtype];
-
-        this.innerTransition = false;
-
-        if (pre) {
-            var preType = pre.getXType();
-
-            if (preType == 'learn') {
-                //
-                // This is a transition within the learn view
-                //
-                this.innerTransition = true;
-//                this.updateView(xtype, context);
-            }
-            else {
-                pre.getEl().fadeOut({
-                    callback: function() {
-                        center.setActiveTab(postIdx);
-                        vm.fadeInView(xtype);
-                        Ext.defer(function() { pre.getEl().fadeIn(); }, 200, pre);
-                    }
-                });
-            }
-        }
-        else {
-            center.setActiveTab(postIdx);
-            vm.fadeInView(xtype);
-        }
-        vm.showStatusView('filterstatus');
     },
 
     createView : function(xtype, context) {

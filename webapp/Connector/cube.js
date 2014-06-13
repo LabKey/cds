@@ -53,6 +53,7 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Subject.Sex]',
                     defaultOperator: 'REQ_OR',
+                    label: 'Sex at birth',
                     levels: [{
                         uniqueName: '[Subject.Sex].[Sex]',
                         activeCount: true,
@@ -68,8 +69,8 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Subject.Race].[Race]',
                         activeCount: true,
                         countPriority: 20,
-                        countSingular: 'Race & Subtype',
-                        countPlural: 'Races & Subtypes'
+                        countSingular: 'Race & subtype',
+                        countPlural: 'Races & subtypes'
                     }]
                 },{
                     uniqueName: '[Subject.Country]',
