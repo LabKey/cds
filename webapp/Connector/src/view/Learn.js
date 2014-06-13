@@ -35,11 +35,10 @@ Ext.define('Connector.view.Learn', {
 
                 hidden: true,
 
-                // TODO: This should be bubblable but the this.control() in the controller
-                // does not seem to respect bubbled events
+                // TODO: This should be bubblable but the this.control() in the controller does not seem to respect bubbled events
                 listeners: {
-                    selectdimension: function(model) {
-                        this.fireEvent('selectdimension', model);
+                    selectdimension: function(model, silent) {
+                        this.fireEvent('selectdimension', model, silent);
                     },
                     scope: this
                 }
@@ -347,11 +346,11 @@ Ext.define('Connector.view.LearnHeader', {
         // For the header view this view should bubble the following events
         // itemclick
         //
-        this.getHeaderView().on('itemclick', function(view, model, el, idx) {
+        this.getHeaderView().on('itemclick', function(view, model) {
             this.fireEvent('selectdimension', model);
         }, this);
-        this.getHeaderView().on('fakeitemclick', function(view, model, el, idx) {
-            this.fireEvent('selectdimension', model);
+        this.getHeaderView().on('requestselect', function(model) {
+            this.fireEvent('selectdimension', model, true);
         }, this);
     },
 
@@ -395,6 +394,8 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     ),
 
     initComponent : function() {
+
+        this.addEvents('requestselect');
 
         this.store = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Dimension',
@@ -469,7 +470,7 @@ Ext.define('Connector.view.LearnHeaderDataView', {
 
     _select : function(model) {
         this.getSelectionModel().select(model);
-        this.fireEvent('fakeitemclick', this, model);
+        this.fireEvent('requestselect', model);
     }
 });
 

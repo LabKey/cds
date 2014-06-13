@@ -144,7 +144,6 @@ Ext.define('Connector.controller.Learn', {
                     // can be found in the context
                     //
                     this.dimension = dim;
-                    //this.dimensionName = this.dimensionName || dim.name;
                     this.updateLock = true;
                     v.selectDimension(dim, id, this.innerTransition);
                     this.innerTransition = false;
@@ -163,13 +162,27 @@ Ext.define('Connector.controller.Learn', {
         return 'learn';
     },
 
-    onSelectDimension : function(dimension) {
+    onSelectDimension : function(dimension, silent) {
         if (!this.updateLock) {
             var context = [dimension.get('name')];
             if (this.context.id) {
                 context.push(this.context.id);
             }
-            this.getViewManager().changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
+
+            //
+            // If a selection is 'silent' then it is considered to be avoiding
+            // url update (and avoid browser back issues). The more ideal solution
+            // would be to have a default state for the learn view/model
+            //
+            if (silent === true)
+            {
+                context = this.parseContext(context);
+                this.updateLearnView(context);
+            }
+            else
+            {
+                this.getViewManager().changeView('learn', 'learn', context, 'Learn About: ' + dimension.get('pluralName'));
+            }
         }
     },
 
