@@ -40,6 +40,7 @@ Ext.define('Connector.view.Scatter', {
     initComponent : function() {
 
         this._ready = false;
+        this.clearVisibleWindow();
 
         this.items = [
             this.getNorth(),
@@ -1300,6 +1301,10 @@ Ext.define('Connector.view.Scatter', {
         this._preprocessData(response);
     },
 
+    /**
+     * This function is meant to update the values within the 'In the plot' filter
+     * @param activeMeasures
+     */
     updatePlotBasedFilter : function(activeMeasures) {
         var wrappedMeasures, nonNullMeasures = [], requiresPivot, additionalMeasures;
 
@@ -1325,16 +1330,16 @@ Ext.define('Connector.view.Scatter', {
             metaDataOnly: true,
             success: function(response) {
                 // Note: We intentionally pass in the measures object that might have nulls.
-                this.onFilterDataSuccess(response, activeMeasures);
+                this._updatePlotBasedFilterHelper(response, wrappedMeasures, function() {
+                    this.createTempQuery(activeMeasures);
+                }, this);
             },
             failure: this.onFailure,
             scope: this
         });
     },
 
-    onFilterDataSuccess : function(response, activeMeasures) {
-        var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
-
+    _updatePlotBasedFilterHelper : function(response, wrappedMeasures, callback, scope) {
         LABKEY.Query.selectDistinctRows({
             schemaName: response.schemaName,
             queryName: response.queryName,
@@ -1381,11 +1386,13 @@ Ext.define('Connector.view.Scatter', {
                     updated = true;
                 }
                 this.plotLock = false;
-                this.setColumnMetadata(response);
-                this.requestChartData(response);
 
                 if (updated) {
                     this.state.getApplication().fireEvent('plotmeasures');
+                }
+
+                if (Ext.isFunction(callback)) {
+                    callback.call(scope);
                 }
             },
             scope: this
@@ -1776,6 +1783,20 @@ Ext.define('Connector.view.Scatter', {
         return pos;
     },
 
+    setVisibleWindow : function(win) {
+        this.visibleWindow = win;
+    },
+
+    clearVisibleWindow : function() {
+        if (Ext.isObject(this.visibleWindow) && this.visibleWindow.hideLock === true) {
+            this.visibleWindow.hideLock = false;
+        }
+        else
+        {
+            this.visibleWindow = false;
+        }
+    },
+
     showYMeasureSelection : function(targetEl) {
 
         if (!this.ywin) {
@@ -1806,13 +1827,10 @@ Ext.define('Connector.view.Scatter', {
                 disableAntigenFilter: false
             });
 
-            var pos = this.getPlotPosition();
-
             this.ywin = Ext.create('Ext.window.Window', {
                 id: 'plotymeasurewin',
                 ui: 'axiswindow',
                 cls: 'axiswindow',
-                animateTarget: targetEl,
                 sourceCls: sCls,
                 axisPanel: this.axisPanelY,
                 modal: true,
@@ -1837,11 +1855,10 @@ Ext.define('Connector.view.Scatter', {
                     items : ['->',{
                         text: 'set y axis',
                         handler: function() {
-                            var yselect = this.axisPanelY.getSelection();
                             if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
-                                this.showTask.delay(300);
-                                this.ywin.hide();
+                                this.showTask.delay(10);
+                                this.ywin.hide(targetEl);
                             }
                         },
                         scope: this
@@ -1854,11 +1871,20 @@ Ext.define('Connector.view.Scatter', {
                             } else {
                                 this.axisPanelY.clearSelection();
                             }
-                            this.ywin.hide();
+                            this.ywin.hide(targetEl);
                         },
                         scope : this
                     }]
                 }],
+                listeners: {
+                    show : function(win) {
+                        this.setVisibleWindow(win);
+                    },
+                    hide : function() {
+                        this.clearVisibleWindow();
+                    },
+                    scope: this
+                },
                 scope : this
             });
         }
@@ -1868,7 +1894,7 @@ Ext.define('Connector.view.Scatter', {
         if (this.axisPanelY.hasSelection()) {
             this.activeYSelection = this.axisPanelY.getSelection()[0];
         }
-        this.ywin.show(null, function() {
+        this.ywin.show(targetEl, function() {
             this.runUniqueQuery(this.axisPanelY);
         }, this);
     },
@@ -1908,7 +1934,6 @@ Ext.define('Connector.view.Scatter', {
             this.xwin = Ext.create('Ext.window.Window', {
                 id        : 'plotxmeasurewin',
                 cls       : 'axiswindow',
-                animateTarget : targetEl,
                 sourceCls : sCls,
                 axisPanel : this.axisPanelX,
                 modal     : true,
@@ -1939,7 +1964,7 @@ Ext.define('Connector.view.Scatter', {
                             this.removeVariableFromFilter(0);
                             this.activeXSelection = undefined;
                             this.axisPanelX.clearSelection();
-                            this.xwin.hide();
+                            this.xwin.hide(targetEl);
                         },
                         scope: this
                     }, {
@@ -1953,11 +1978,11 @@ Ext.define('Connector.view.Scatter', {
 
                             if (yHasSelection && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
-                                this.xwin.hide();
-                                this.showTask.delay(300);
+                                this.showTask.delay(10);
+                                this.xwin.hide(targetEl);
                             }
                             else if (this.axisPanelX.hasSelection()) {
-                                this.xwin.hide(null, function() {
+                                this.xwin.hide(targetEl, function() {
                                     this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
                                 }, this);
                             }
@@ -1973,11 +1998,20 @@ Ext.define('Connector.view.Scatter', {
                             } else {
                                 this.axisPanelX.clearSelection();
                             }
-                            this.xwin.hide();
+                            this.xwin.hide(targetEl);
                         },
                         scope : this
                     }]
                 }],
+                listeners : {
+                    show : function(win) {
+                        this.setVisibleWindow(win);
+                    },
+                    hide : function() {
+                        this.clearVisibleWindow();
+                    },
+                    scope: this
+                },
                 scope : this
             });
         }
@@ -1992,7 +2026,7 @@ Ext.define('Connector.view.Scatter', {
         var filter = this.getPlotsFilter();
         this.xwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[0]);
 
-        this.xwin.show(null, function() {
+        this.xwin.show(targetEl, function() {
             this.runUniqueQuery(this.axisPanelX);
         }, this);
     },
@@ -2027,12 +2061,9 @@ Ext.define('Connector.view.Scatter', {
                 scalename : 'colorscale'
             });
 
-            var pos = this.getPlotPosition();
-
             this.colorwin = Ext.create('Ext.window.Window', {
                 id        : 'plotcolorwin',
                 cls       : 'axiswindow',
-                animateTarget : targetEl,
                 sourceCls : sCls,
                 axisPanel : this.colorPanel,
                 modal     : true,
@@ -2063,15 +2094,15 @@ Ext.define('Connector.view.Scatter', {
                             this.removeVariableFromFilter(2);
                             this.activeColorSelection = undefined;
                             this.colorPanel.clearSelection();
-                            this.colorwin.hide();
+                            this.colorwin.hide(targetEl);
                         },
                         scope: this
                     }, {
                         text: 'set color variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            this.showTask.delay(300);
-                            this.colorwin.hide();
+                            this.showTask.delay(10);
+                            this.colorwin.hide(targetEl);
                         },
                         scope: this
                     }, {
@@ -2084,11 +2115,20 @@ Ext.define('Connector.view.Scatter', {
                             } else {
                                 this.colorPanel.clearSelection();
                             }
-                            this.colorwin.hide();
+                            this.colorwin.hide(targetEl);
                         },
                         scope: this
                     }]
                 }],
+                listeners: {
+                    show: function(win) {
+                        this.setVisibleWindow(win);
+                    },
+                    hide: function() {
+                        this.clearVisibleWindow();
+                    },
+                    scope: this
+                },
                 scope: this
             });
         }
@@ -2103,7 +2143,7 @@ Ext.define('Connector.view.Scatter', {
         var filter = this.getPlotsFilter();
         this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
 
-        this.colorwin.show();
+        this.colorwin.show(targetEl);
     },
 
     removeVariableFromFilter : function(measureIdx) {
@@ -2204,16 +2244,16 @@ Ext.define('Connector.view.Scatter', {
             if (this.msg) {
                 this.msg.show();
             }
+
+            if (Ext.isObject(this.visibleWindow)) {
+                this.visibleWindow.show();
+            }
         }
         else {
             this.hideLoad();
 
             if (this.msg) {
                 this.msg.hide();
-            }
-
-            if (this.win) {
-                this.win.hide();
             }
         }
     },

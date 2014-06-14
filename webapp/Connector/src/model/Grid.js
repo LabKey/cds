@@ -380,26 +380,28 @@ Ext.define('Connector.model.Grid', {
     },
 
     onUpdateColumns : function() {
-        var state = this.olapProvider;
 
-        var measures = this.get('measures');
-        var validMeasures = [];
-
-        Ext.each(measures, function(measure) {
-            if (Ext.isDefined(measure.type)) {
-                validMeasures.push(measure);
-            }
-        });
-
-        if (validMeasures.length > 0) {
-            state.setCustomState({
-                view: 'gridmodel',
-                key: 'measures'
-            },{
-                measures: validMeasures
-            });
-            state.updateState();
-        }
+        // TODO: Stop doing this for now until persisted columns can be picked up appropriately by the measure
+        // TODO: picker and that filter 'undo' does not get updated via this state update.
+//        var measures = this.get('measures');
+//        var validMeasures = [];
+//
+//        Ext.each(measures, function(measure) {
+//            if (Ext.isDefined(measure.type)) {
+//                validMeasures.push(measure);
+//            }
+//        });
+//
+//        if (validMeasures.length > 0) {
+//            var state = this.olapProvider;
+//            state.setCustomState({
+//                view: 'gridmodel',
+//                key: 'measures'
+//            },{
+//                measures: validMeasures
+//            });
+//            state.updateState();
+//        }
     },
 
     convertTimeMeasure : function(measure) {
@@ -639,8 +641,10 @@ Ext.define('Connector.model.Grid', {
             if (filter.isGrid()) {
                 var gridFilters = filter.get('gridFilter');
                 Ext.each(gridFilters, function(gf) {
-                    filterArray.push(gf);
-                    this.addToFilters(gf, filter.id);
+                    if (gf !== null) {
+                        filterArray.push(gf);
+                        this.addToFilters(gf, filter.id);
+                    }
                 }, this);
             }
             else {

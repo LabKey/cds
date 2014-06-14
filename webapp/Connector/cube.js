@@ -53,6 +53,7 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Subject.Sex]',
                     defaultOperator: 'REQ_OR',
+                    label: 'Sex at birth',
                     levels: [{
                         uniqueName: '[Subject.Sex].[Sex]',
                         activeCount: true,
@@ -68,8 +69,8 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Subject.Race].[Race]',
                         activeCount: true,
                         countPriority: 20,
-                        countSingular: 'Race & Subtype',
-                        countPlural: 'Races & Subtypes'
+                        countSingular: 'Race & subtype',
+                        countPlural: 'Races & subtypes'
                     }]
                 },{
                     uniqueName: '[Subject.Country]',
@@ -127,7 +128,14 @@ Ext4.define('Connector.cube.Configuration', {
                         countPlural: 'Baseline BMI categories'
                     }]
                 },{
-                    uniqueName: '[Subject.Species]'
+                    uniqueName: '[Subject.Species]',
+                    levels: [{
+                        uniqueName: '[Subject.Species].[Species]',
+                        activeCount: true,
+                        countPriority: 15,
+                        countSingular: 'Species',
+                        countPlural: 'Species'
+                    }]
                 }]
             },{
                 uniqueName: '[Vaccine]',
@@ -365,7 +373,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Population'
                         },
                         modelData: {
-                            text: 'Population'
+                            text: 'StudyPopulation'
                         }
                     }, {
                         type: 'studysites',

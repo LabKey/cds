@@ -356,6 +356,81 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     btnMap: {},
 
+    statics: {
+        _learnButton: undefined,
+        initButton : function(view) {
+            if (!Ext.isDefined(Connector.view.SingleAxisExplorerView._learnButton)) {
+
+                var button = {
+                    renderTo: Ext.getBody(),
+                    text: 'learn about',
+                    hidden: true,
+                    style: 'z-index: 10000',
+                    handler: function(e) {
+                        this.btnclick = true;
+                    },
+                    listeners: {
+                        click: function(b) {
+                            var m = Ext.clone(Connector.view.SingleAxisExplorerView._learnButton.model.data);
+                            Connector.view.SingleAxisExplorerView._learnButton.OVER = 'STOP';
+                            Connector.view.SingleAxisExplorerView.detachButton();
+                            view.fireEvent('learnclick', m);
+                        },
+                        mouseover: function() {
+                            if (this.OVER !== 'STOP')
+                                this.OVER = true;
+                        },
+                        mouseout: function() {
+                            this.OVER = false;
+                            Connector.view.SingleAxisExplorerView.detachButton();
+                        }
+                    },
+                    scope: this
+                };
+
+                Connector.view.SingleAxisExplorerView._learnButton = Ext.create('Connector.button.InfoButton', button);
+            }
+
+            view.on('itemmouseenter', Connector.view.SingleAxisExplorerView.attachButton);
+            view.on('itemmouseleave', Connector.view.SingleAxisExplorerView.detachButton);
+            Connector.getApplication().getController('Connector').on('afterchangeview', Connector.view.SingleAxisExplorerView.detachButton);
+        },
+        attachButton : function(view, model, element) {
+            if (Connector.view.SingleAxisExplorerView._learnButton.OVER !== 'STOP') {
+                var extEl = Ext.get(element);
+                if (extEl) {
+                    Connector.view.SingleAxisExplorerView.resolveDetail(model, function() {
+                        Connector.view.SingleAxisExplorerView._learnButton.setModel(model);
+                        var countEl = extEl.query('span.count');
+                        if (Ext.isArray(countEl) && countEl.length > 0) {
+                            var rect = countEl[0].getBoundingClientRect();
+                            Connector.view.SingleAxisExplorerView._learnButton.setPosition(rect.right + 10, rect.bottom - 20).show();
+                        }
+                    }, this);
+                }
+            }
+            else {
+                Connector.view.SingleAxisExplorerView._learnButton.OVER = false;
+            }
+        },
+        detachButton : function() {
+            if (Connector.view.SingleAxisExplorerView._learnButton.OVER !== true) {
+                Connector.view.SingleAxisExplorerView._learnButton.hide();
+                Connector.view.SingleAxisExplorerView._learnButton.clear();
+            }
+        },
+        resolveDetail : function(model, success, scope) {
+            if (model && model.data && !model.data.isGroup && model.data.levelUniqueName && Ext.isFunction(success)) {
+                Connector.getApplication().getController('State').onMDXReady(function (mdx) {
+                    var lvl = mdx.getLevel(model.data.levelUniqueName);
+                    if (lvl && lvl.hierarchy.dimension.supportsDetails === true) {
+                        success.call(scope);
+                    }
+                });
+            }
+        }
+    },
+
     initComponent : function() {
 
         this.callParent();
@@ -364,8 +439,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
         this.on('refresh', function() { this.cancelShowLoad(); }, this);
 
-        // Disabled for now until layout can be adjusted
-//        this.on('itemmouseenter', this.renderInfoButton, this);
+        Connector.view.SingleAxisExplorerView.initButton(this);
     },
 
     getCountTemplate : function() {
@@ -402,26 +476,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         this.msgTask.cancel();
         if (this.loadMsg) {
             this.hideMessage();
-        }
-    },
-
-    renderInfoButton : function(view, rec, element) {
-        if (rec && !rec.data.isGroup && this.dimension.supportsDetails) {
-            var el = Ext.query(".info", element);
-            if (el.length > 0) {
-                el = Ext.get(el[0]);
-                var btn = Ext.create('Connector.button.InfoButton', {
-                    renderTo : el,
-                    text : 'view info',
-                    record : rec,
-                    dimension : this.dimension,
-                    handler : function(e) {
-                        this.btnclick = true;
-                    },
-                    scope: this
-                });
-                btn.show();
-            }
         }
     },
 
