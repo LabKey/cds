@@ -17,6 +17,7 @@ import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
+import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
@@ -53,11 +54,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         CDSVisualizationTest initTest = new CDSVisualizationTest();
 
-//        initTest.doCleanup(false);
-//        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-//        _initializer.setDesiredStudies(DESIRED_STUDIES);
-//        _initializer.setupDataspace();
-//        initTest.createParticipantGroups();
+        initTest.doCleanup(false);
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        _initializer.setDesiredStudies(DESIRED_STUDIES);
+        _initializer.setupDataspace();
+        initTest.createParticipantGroups();
 
         currentTest = initTest;
     }
@@ -171,6 +172,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         _asserts.assertSelectionStatusCounts(1, 1, 2);
 
         plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
+        waitForElementToDisappear(plotSelectionCloseBtn.index(1));
         _asserts.assertSelectionStatusCounts(1, 1, 2);
         plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
         assertElementNotPresent(plotSelection);
