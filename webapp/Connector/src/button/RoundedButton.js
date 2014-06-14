@@ -25,12 +25,14 @@ Ext.define('Connector.button.InfoButton', {
     iconCls: 'info',
 
     constructor : function(config) {
-
-        if (!config.dimension)
-            console.error('A dimension must be provided for InfoButton construction.');
-        if (!config.record)
-            console.error('A data record must be provided for InfoButton construction.');
-
         this.callParent([config]);
+    },
+
+    setModel : function(model) {
+        this.model = model;
+    },
+
+    clear : function() {
+        this.model = undefined;
     }
 });

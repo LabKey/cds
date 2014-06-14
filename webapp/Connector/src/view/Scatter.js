@@ -1301,6 +1301,10 @@ Ext.define('Connector.view.Scatter', {
         this._preprocessData(response);
     },
 
+    /**
+     * This function is meant to update the values within the 'In the plot' filter
+     * @param activeMeasures
+     */
     updatePlotBasedFilter : function(activeMeasures) {
         var wrappedMeasures, nonNullMeasures = [], requiresPivot, additionalMeasures;
 
@@ -1326,16 +1330,16 @@ Ext.define('Connector.view.Scatter', {
             metaDataOnly: true,
             success: function(response) {
                 // Note: We intentionally pass in the measures object that might have nulls.
-                this.onFilterDataSuccess(response, activeMeasures);
+                this._updatePlotBasedFilterHelper(response, wrappedMeasures, function() {
+                    this.createTempQuery(activeMeasures);
+                }, this);
             },
             failure: this.onFailure,
             scope: this
         });
     },
 
-    onFilterDataSuccess : function(response, activeMeasures) {
-        var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
-
+    _updatePlotBasedFilterHelper : function(response, wrappedMeasures, callback, scope) {
         LABKEY.Query.selectDistinctRows({
             schemaName: response.schemaName,
             queryName: response.queryName,
@@ -1382,11 +1386,13 @@ Ext.define('Connector.view.Scatter', {
                     updated = true;
                 }
                 this.plotLock = false;
-                this.setColumnMetadata(response);
-                this.requestChartData(response);
 
                 if (updated) {
                     this.state.getApplication().fireEvent('plotmeasures');
+                }
+
+                if (Ext.isFunction(callback)) {
+                    callback.call(scope);
                 }
             },
             scope: this
@@ -1851,7 +1857,7 @@ Ext.define('Connector.view.Scatter', {
                         handler: function() {
                             if (this.axisPanelY.hasSelection()) {
                                 this.initialized = true;
-                                this.showTask.delay(300);
+                                this.showTask.delay(10);
                                 this.ywin.hide(targetEl);
                             }
                         },
@@ -1972,8 +1978,8 @@ Ext.define('Connector.view.Scatter', {
 
                             if (yHasSelection && this.axisPanelX.hasSelection()) {
                                 this.initialized = true;
+                                this.showTask.delay(10);
                                 this.xwin.hide(targetEl);
-                                this.showTask.delay(300);
                             }
                             else if (this.axisPanelX.hasSelection()) {
                                 this.xwin.hide(targetEl, function() {
@@ -2095,7 +2101,7 @@ Ext.define('Connector.view.Scatter', {
                         text: 'set color variable',
                         ui: 'rounded-inverted-accent',
                         handler: function(){
-                            this.showTask.delay(300);
+                            this.showTask.delay(10);
                             this.colorwin.hide(targetEl);
                         },
                         scope: this

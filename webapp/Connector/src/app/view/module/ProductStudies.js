@@ -28,10 +28,10 @@ Ext.define('Connector.view.module.ProductStudies', {
         var product = data.model;
 
         var config = {
-            onRows: [{ level: '[Study].[Study]' }],
+            onRows: [{ level: '[Study].[Name]' }],
             filter: [ {level : '[Subject].[Subject]', membersQuery: {
+                hierarchy: "[Vaccine.Type]",
                 members: ["[Vaccine.Type].["+product.get('Type')+"].[" + product.get('Label') + "]"],
-                hierarchy: "Vaccine"
             }}],
             success: function(slice) {
                 var cells = slice.cells, row;
