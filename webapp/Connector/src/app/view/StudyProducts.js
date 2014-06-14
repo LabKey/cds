@@ -21,7 +21,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
                 '<div class="detail-container">',
-                    '<div class="study-description detail-header">Name</div>',
+                    '<div class="study-description detail-header">Product name</div>',
                     '<div class="study-date detail-header">Type</div>',
                     '<div class="study-treatments detail-header">Developer</div>',
                 '</div>',
