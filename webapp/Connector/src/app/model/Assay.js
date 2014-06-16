@@ -21,6 +21,10 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'Platform'},
         {name: 'Type'},
         {name: 'Target'},
-        {name: 'TargetFunction'}
+        {name: 'TargetFunction'},
+        {name: 'FullName'},
+        {name: 'Lab'},
+        {name: 'TargetType'},
+        {name: 'TargetSubtype'}
     ]
 });
