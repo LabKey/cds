@@ -1,0 +1,111 @@
+span.statme {
+  display: inline-block;
+  padding: 0;
+  margin: 0 0 -2px 0;
+}
+
+span.status-label {
+  float: left;
+  text-transform: lowercase;
+  background-color: #ebebeb;
+  position: relative;
+  top: 4px;
+  padding-right: 4px;
+  font-size: 12pt;
+}
+
+span.status-count {
+  background-color: #f0f0f0;
+  position: relative;
+  top: 4px;
+  padding-left: 4px;
+  font-size: 12pt;
+}
+
+span.hl-status-label {
+  float: left;
+  font-size: 13.5pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #ebebeb;
+  position: relative;
+  top: 4px;
+  padding-right: 4px;
+}
+
+span.hl-status-count {
+  font-size: 13.5pt;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  position: relative;
+  top: 4px;
+  padding-left: 4px;
+}
+
+span.hideit {
+  display: none !important;
+}
+
+span.status-subcount {
+  color: $select-color;
+}
+
+span.status-of {
+  color: #ccc;
+}
+
+ul.detailstatus {
+  font-family: $bodycaps-font;
+
+  li {
+    border-bottom: 2px dotted #ccc;
+    text-align: right;
+    margin: -6px 4px 0 4px; /* note if this changes, modify marign on div.status-row */
+  }
+}
+
+div.status-row {
+  border: 1px solid transparent;
+  border-radius: 15px;
+  padding: 4px;
+  margin: 0 -10px 0 -10px; /* note if this changes, modify margin on ul.detailstatus li */
+}
+
+div.hl-status-row {
+  margin-top: 20px;
+}
+
+div.status-over {
+  @include border-radius(15px);
+  background-color: $light-color;
+  border: 1px solid #a9a9a9;
+  cursor: pointer;
+
+  span {
+    &.status-label,
+    &.status-count,
+    &.hl-status-label,
+    &.hl-status-count {
+      background-color: $light-color;
+    }
+  }
+
+  &:hover li {
+    /* Artefact: desire is to have '...' not appear when highlighted */
+    border-bottom: 2px solid transparent;
+  }
+}
+
+div.nolink.status-over {
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: default;
+
+  span {
+    background-color: #ebebeb;
+  }
+
+  &:hover li {
+    border-bottom: 2px dotted #ccc;
+  }
+}

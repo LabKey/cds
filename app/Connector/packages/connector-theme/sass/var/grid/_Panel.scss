@@ -1,0 +1,67 @@
+.connector-grid {
+
+  .filtered-column {
+
+    .x-column-header-trigger {
+      background-color: $heat-scale-4 !important;
+    }
+
+  }
+
+  .x-grid-view {
+    z-index: 5;
+  }
+
+  .x-column-header-trigger {
+    display: inline-block;
+    border-left: 1px solid transparent;
+  }
+
+  .x-column-header-inner {
+    height: 45px;
+  }
+
+  .x-column-header-align-center {
+    text-align: left;
+    color: $light-color;
+    background-color: $heat-scale-1;
+
+    /* Column group headers do not show trigger */
+    .x-column-header-trigger {
+      display: none;
+    }
+
+    .x-group-sub-header {
+
+      background-color: $heat-scale-4;
+
+      .x-column-header-trigger {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        top: inherit;
+        height: 15px;
+      }
+
+      .x-column-header-inner {
+        position: relative;
+      }
+
+      .x-column-header-text {
+        white-space: normal;
+        position: absolute;
+        left: 4px;
+        bottom: 4px;
+        margin: 0;
+        width: 85%;
+        text-align: justify;
+      }
+    }
+  }
+}
+
+/* Connector.window.Filter */
+div.filterheader {
+  font-size: 11pt;
+}
+/* END Connector.window.Filter */

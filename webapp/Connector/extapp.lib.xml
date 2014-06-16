@@ -62,7 +62,6 @@
         <script path="Connector/src/types/Filter.js"/>
 
         <!-- Application Models -->
-        <script path="Connector/src/model/Citation.js"/>
         <script path="Connector/src/model/ColumnInfo.js"/>
         <script path="Connector/src/model/Detail.js"/>
         <script path="Connector/src/model/Dimension.js"/>
@@ -109,11 +108,9 @@
 
         <!-- Application Views -->
         <script path="Connector/src/view/About.js"/>
-        <script path="Connector/src/view/Citation.js"/>
         <script path="Connector/src/view/Compare.js"/>
         <script path="Connector/src/view/DetailStatus.js"/>
         <script path="Connector/src/view/Selection.js"/>
-        <script path="Connector/src/view/FilterSave.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/InfoPane.js"/>
         <script path="Connector/src/view/PlotPane.js"/>
@@ -137,7 +134,6 @@
         <script path="Connector/src/view/TermsOfUse.js"/>
         <script path="Connector/src/view/Time.js"/>
         <script path="Connector/src/view/Viewport.js"/>
-        <script path="Connector/src/view/search/Container.js"/>
 
         <script path="Connector/src/view/module/BaseModule.js"/>
         <script path="Connector/src/view/module/ContactCDS.js"/>
@@ -147,7 +143,6 @@
         <!-- Application Controllers -->
         <script path="Connector/src/controller/AbstractViewController.js"/>
         <script path="Connector/src/controller/Chart.js"/>
-        <script path="Connector/src/controller/Citation.js"/>
         <script path="Connector/src/controller/Connector.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>

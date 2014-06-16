@@ -24,23 +24,6 @@
     <input type="hidden" id="x-history-field" value="">
     <iframe id="x-history-frame"></iframe>
 </form>
-<div id="tip-content" style="display: none;">
-    <div id="chartdemography" class="featuretip">
-        <div style="float: left;">
-            <img src="<%=text(contextPath)%>/Connector/images/compare.png" height="142px" width="156px" alt="Compare Demography"/>
-        </div>
-        <div>
-            <p style="padding-top: 20px;">Future Feature</p>
-            <p style="font-weight: normal; padding-top: 5px;">Compare groups of participants by demographic characteristics.</p>
-        </div>
-    </div>
-    <div id="searchtip" class="featuretip" style="width: 200px;">
-        <div>
-            <p style="padding-top: 20px;">Future Feature</p>
-            <p style="font-weight: normal; padding-top: 5px;">Capability to search the Data Connector across multiple studies with targeted results.</p>
-        </div>
-    </div>
-</div>
 <noscript>
     Sorry! Your browser does not support Javascript. Javascript is required for the HIV Data Connector.
 </noscript>
