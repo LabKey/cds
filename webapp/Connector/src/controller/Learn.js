@@ -20,13 +20,15 @@ Ext.define('Connector.controller.Learn', {
             selectitem: this.onSelectItem
         });
 
-        this.control('infobutton', {
-            click : function(e) {
-                var detail     = e.record.data;
-                detail.simple  = true;
-                var key        = e.dimension.getName().split('.')[0];
-                this.onDetail(key, detail);
-            }
+        this.control('singleaxisview', {
+            learnclick : function(data) {
+                // Assumes the data has already been validated to supportDetails
+                this.getStateManager().onMDXReady(function(mdx) {
+                    var ctx = [mdx.getLevel(data.levelUniqueName).hierarchy.dimension.name, data.label];
+                    this.getViewManager().changeView('learn', 'learn', ctx);
+                }, this);
+            },
+            scope: this
         });
 
         this.control('#back', {
@@ -197,20 +199,5 @@ Ext.define('Connector.controller.Learn', {
         } else {
             console.warn('No dimension selected');
         }
-    },
-
-    /**
-     * This is called when the app internally requests that a details view be shown (e.g. click a 'view info' button)
-     */
-    onDetail : function(key, detail) {
-
-        var context = key;
-        var action = 'learn';
-
-        if (detail && Ext.isString(detail.value) && detail.value.length > 0) {
-            context += '/' + detail.value;
-        }
-
-        this.getViewManager().changeView(action, 'learn', context.split('/'));
     }
 });

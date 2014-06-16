@@ -219,7 +219,7 @@ Ext.define('Connector.view.InfoPane', {
                     '{name:htmlEncode}',
                     '<tpl if="hasDetails === true">',
                         '<a class="expando" href="{detailLink}">',
-                            '<span class="icontext">View info</span>',
+                            '<span class="icontext">learn about</span>',
                             '<img src="' + Connector.resourceContext.path + '/images/cleardot.gif" class="iconone">',
                         '</a>',
                     '</tpl>'
