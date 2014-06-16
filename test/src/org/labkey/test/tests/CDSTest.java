@@ -191,7 +191,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Validate Groups
         //
-        assertTextPresent("My Saved Groups and Plots");
+        assertTextPresent("My saved groups and plots");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 

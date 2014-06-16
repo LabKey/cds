@@ -270,11 +270,6 @@ svg a {
   }
 }
 
-.auto-scroll-y {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
 .iScroll {
   ::-webkit-scrollbar {
     width: 7px;
@@ -421,6 +416,56 @@ div.emptytext {
   background-color: $heat-scale-4;
 }
 
+/* Role-based selectors */
+.auto-scroll-y {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.section-title {
+  font-size: 17pt;
+}
+
+.top-spacer {
+  margin-top: 10px;
+
+  &-sm {
+    margin-top: 5px;
+  }
+
+  &-lg {
+    margin-top: 20px;
+  }
+
+  &-xlg {
+    margin-top: 40px;
+  }
+}
+
+.left-spacer {
+  margin-left: $pageLeftPadding;
+
+  &-sm {
+    margin-left: 13px;
+  }
+
+  &-lg {
+    margin-left: 54px;
+  }
+}
+
+.bottom-spacer {
+  margin-bottom: 10px;
+
+  &-sm {
+    margin-bottom: 5px;
+  }
+
+  &-lg {
+    margin-bottom: 20px;
+  }
+}
+
 @import 'windows';
 
 @import 'grid/Panel';
@@ -441,7 +486,3 @@ div.emptytext {
 @import 'view/Summary';
 @import 'view/TermsOfUse';
 @import 'view/Variable';
-
-.x-btn-rounded-inverted-accent-small-over svg {
-  fill: #ffffff;
-}
