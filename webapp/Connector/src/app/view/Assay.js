@@ -26,7 +26,8 @@ Ext.define('Connector.app.view.Assay', {
                     '<div class="study-treatments detail-header">Platform/Target/Function</div>',
                 '</div>',
             '</div>'
-        )
+        ),
+        searchFields : ['Label', 'PI', 'FullName', 'Type', 'SystemTarget', 'Platform', 'Target', 'TargetFunction']
     },
 
     tpl: new Ext.XTemplate(

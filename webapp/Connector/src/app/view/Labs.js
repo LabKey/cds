@@ -27,7 +27,8 @@ Ext.define('Connector.app.view.Labs', {
 //                    '<div class="study-treatments detail-header">Assays</div>',
                 '</div>',
             '</div>'
-        )
+        ),
+        searchFields : ['Name', 'Description', 'PI', 'Institution', 'Location']
     },
 
     tpl: new Ext.XTemplate(

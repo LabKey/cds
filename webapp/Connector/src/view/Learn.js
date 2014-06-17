@@ -82,7 +82,18 @@ Ext.define('Connector.view.Learn', {
 
     dimensionDataLoaded : function(dimension, store) {
         store.clearFilter(this.searchFilter);
-        this.searchFilter && store.filter('Label', new RegExp(this.searchFilter, 'i'));
+        var fields = this.searchFields || [];
+        var regex = new RegExp(this.searchFilter, 'i');
+        this.searchFilter && store.filterBy(function(model) {
+            var match = false;
+            Ext.each(fields, function(field) {
+                var str = model.get(field);
+                if (regex.test(str)) {
+                    match = true;
+                }
+            });
+            return match;
+        });
     },
 
     loadData : function(dimension, store) {
@@ -300,8 +311,16 @@ Ext.define('Connector.view.Learn', {
         this.getHeader().setDimensions(dimensions);
     },
 
+    viewByDimension : {
+        'Assay' : 'Assay',
+        'Study' : 'Study',
+        'Lab' : 'Labs',
+        'Study product' : 'StudyProducts'
+    },
+
     selectDimension : function(dimension, id, animate) {
         this.searchFilter = null;
+        this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
             this.loadDataView(dimension, id, animate);
