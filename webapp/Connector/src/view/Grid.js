@@ -324,7 +324,7 @@ Ext.define('Connector.view.Grid', {
             this.measureWindow = Ext.create('Ext.window.Window', {
                 id: 'gridmeasurewin',
                 ui: 'axiswindow',
-                cls: 'measurewindow',
+                cls: 'axiswindow gridaxiswindow',
                 plain: true,
                 modal: true,
                 draggable: false,

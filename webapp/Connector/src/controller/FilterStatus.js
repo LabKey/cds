@@ -11,7 +11,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
     stores: ['FilterStatus'],
 
-    views: ['DetailStatus', 'FilterSave', 'FilterStatus', 'InfoPane', 'PlotPane'],
+    views: ['DetailStatus', 'FilterStatus', 'InfoPane', 'PlotPane'],
 
     init : function() {
 
@@ -64,10 +64,6 @@ Ext.define('Connector.controller.FilterStatus', {
             requestundo : function() {
                 this.getStateManager().requestFilterUndo();
             }
-        });
-
-        this.control('filtersave > form > toolbar > #cancelsave', {
-            click : this.onFilterCancel
         });
 
         this.control('filterpanel > container > #clear', {
@@ -237,20 +233,10 @@ Ext.define('Connector.controller.FilterStatus', {
             v = this.createFilterStatus();
         }
 
-        if (xtype == 'filtersave') {
-            v = Ext.create('Connector.view.FilterSave', {
-                flex : 1
-            });
-        }
-
         return v;
     },
 
     updateView : function(xtype, context) { },
-
-    onFilterCancel : function() {
-        this.getViewManager().hideView('filtersave');
-    },
 
     onFilterClear : function() {
         var state = this.getStateManager();
@@ -263,10 +249,6 @@ Ext.define('Connector.controller.FilterStatus', {
                 view.showUndoMessage();
             }
         }
-    },
-
-    onFilterSave : function() {
-        this.getViewManager().showView('filtersave');
     },
 
     onSelectionClick : function() {

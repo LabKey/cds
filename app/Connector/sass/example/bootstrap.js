@@ -33,7 +33,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
   "Connector.controller.Chart": "../../../../webapp/Connector/src/controller/Chart.js",
-  "Connector.controller.Citation": "../../../../webapp/Connector/src/controller/Citation.js",
   "Connector.controller.Connector": "../../../../webapp/Connector/src/controller/Connector.js",
   "Connector.controller.Data": "../../../../webapp/Connector/src/controller/Data.js",
   "Connector.controller.Explorer": "../../../../webapp/Connector/src/controller/Explorer.js",
@@ -50,7 +49,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
   "Connector.grid.Panel": "../../../../webapp/Connector/src/grid/Panel.js",
   "Connector.model.Antigen": "../../../../webapp/Connector/src/model/Antigen.js",
-  "Connector.model.Citation": "../../../../webapp/Connector/src/model/Citation.js",
   "Connector.model.ColumnInfo": "../../../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../../../webapp/Connector/src/model/Detail.js",
   "Connector.model.Dimension": "../../../../webapp/Connector/src/model/Dimension.js",
@@ -82,12 +80,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTag": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
-  "Connector.view.Citation": "../../../../webapp/Connector/src/view/Citation.js",
   "Connector.view.Compare": "../../../../webapp/Connector/src/view/Compare.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
-  "Connector.view.FilterSave": "../../../../webapp/Connector/src/view/FilterSave.js",
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.Grid": "../../../../webapp/Connector/src/view/Grid.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
@@ -140,7 +136,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
-  "Connector.view.search.Container": "../../../../webapp/Connector/src/view/search/Container.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
   "Ext": "../../ext/src",
@@ -189,7 +184,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Chart": [],
-  "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
   "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
@@ -206,7 +200,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [],
   "Connector.model.Antigen": [],
-  "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
@@ -238,12 +231,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.VisitTag": [],
   "Connector.types.Filter": [],
   "Connector.view.About": [],
-  "Connector.view.Citation": [],
   "Connector.view.Compare": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
-  "Connector.view.FilterSave": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.Grid": [],
   "Connector.view.GroupListView": [],
@@ -296,7 +287,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
-  "Connector.view.search.Container": [],
   "Connector.window.Filter": [],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
@@ -1166,7 +1156,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
   "Connector.controller.Chart": [],
-  "Connector.controller.Citation": [],
   "Connector.controller.Connector": [],
   "Connector.controller.Data": [],
   "Connector.controller.Explorer": [],
@@ -1185,7 +1174,6 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.connector-gridpanel"
   ],
   "Connector.model.Antigen": [],
-  "Connector.model.Citation": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
@@ -1243,9 +1231,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.About": [
     "widget.about"
   ],
-  "Connector.view.Citation": [
-    "widget.citation"
-  ],
   "Connector.view.Compare": [
     "widget.compareview"
   ],
@@ -1257,9 +1242,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.DimensionSelector": [
     "widget.dimselectorview"
-  ],
-  "Connector.view.FilterSave": [
-    "widget.filtersave"
   ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"
@@ -1398,9 +1380,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.Text": [
     "widget.module.text"
-  ],
-  "Connector.view.search.Container": [
-    "widget.searchcontainer"
   ],
   "Connector.window.Filter": [
     "widget.columnfilterwin"
