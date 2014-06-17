@@ -40,6 +40,9 @@ Ext.define('Connector.view.Learn', {
                     selectdimension: function(model, silent) {
                         this.fireEvent('selectdimension', model, silent);
                     },
+                    searchchanged: function(search) {
+                        this.onSearchFilterChange(search);
+                    },
                     scope: this
                 }
             });
@@ -71,28 +74,40 @@ Ext.define('Connector.view.Learn', {
         return this.headerViews.learnDetail;
     },
 */
-    // onFilterChange : function(filters) {
-    //     var view = this.dataViews[0];
-    //     this.loadData(view.dimension, view.getStore());
-    // },
+    onSearchFilterChange : function(filter) {
+        this.searchFilter = filter;
+        var view = this.dataViews[0];
+        this.loadData(view.dimension, view.getStore());
+    },
+
+    dimensionDataLoaded : function(dimension, store) {
+        store.clearFilter(this.searchFilter);
+        this.searchFilter && store.filter('Label', new RegExp(this.searchFilter, 'i'));
+    },
 
     loadData : function(dimension, store) {
-
         if (dimension) {
-            this.state.onMDXReady(function(mdx) {
-                var hierarchy = dimension.getHierarchies()[0];
-                var config = {
-                    onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
-                    //useNamedFilters: ['statefilter'],
-                    success: function(slice) {
-                        if (store)
-                            store.loadSlice(slice);
-                    },
-                    scope: this
-                };
-                mdx.query(config);
+            var hierarchy = dimension.getHierarchies()[0];
+            var dimensionName = hierarchy.getName();
+            if (!this.dimensionDataLoaded[dimensionName]) {
+                this.state.onMDXReady(function(mdx) {
+                    var config = {
+                        onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
+                        //useNamedFilters: ['statefilter'],
+                        success: function(slice) {
+                            if (store)
+                                store.loadSlice(slice);
+                            this.dimensionDataLoaded[dimensionName] = true;
+                            this.dimensionDataLoaded(dimension, store);
+                        },
+                        scope: this
+                    };
+                    mdx.query(config);
 
-            }, this);
+                }, this);
+            } else {
+                this.dimensionDataLoaded(dimensionName, store);
+            }
         }
     },
 
@@ -115,7 +130,7 @@ Ext.define('Connector.view.Learn', {
         if (this.dataViews && this.dataViews.length) {
             var dataViews = this.dataViews;
             delete this.dataViews;
-//            this.state.un('filterchange', this.onFilterChange, this);
+            //this.state.un('searchfilterchange', this.onFilterChange, this);
             var views = dataViews.length;
             var fadedViews = 0;
             Ext.each(dataViews, function(dataView) {
@@ -161,7 +176,7 @@ Ext.define('Connector.view.Learn', {
 
     headerButtonsByDimension : {
         Study : [{
-            groupLabel: "Select",
+            groupLabel: "Select:",
             buttonLabel: 'all study subjects',
             handler: function(button, _, dimension, model) {
                 Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
@@ -261,7 +276,7 @@ Ext.define('Connector.view.Learn', {
                 this.loadData(dimension, view.getStore());
             }
 
-            //this.state.on('filterchange', this.onFilterChange, this);
+            //this.state.on('searchfilterchange', this.onFilterChange, this);
         }
         else {
             //
@@ -286,6 +301,7 @@ Ext.define('Connector.view.Learn', {
     },
 
     selectDimension : function(dimension, id, animate) {
+        this.searchFilter = null;
 
         if (dimension) {
             this.loadDataView(dimension, id, animate);
@@ -296,7 +312,7 @@ Ext.define('Connector.view.Learn', {
             }
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension);
     }
 });
 
@@ -333,13 +349,27 @@ Ext.define('Connector.view.LearnHeader', {
                     xtype: 'learnheaderdataview',
                     itemId: 'headerdataview',
                     dimensions: this.dimensions
+                }, {
+                    xtype: 'textfield',
+                    itemId: 'searchfield',
+                    emptyText: 'Search',
+                    cls: 'learn-search-input',
+                    checkChangeBuffer: 500,
+                    validator: Ext.bind(function(value) {
+                        this.fireEvent('searchchanged', value);
+                        return true;
+                    }, this)
+                    // autoEl: {
+                    //     tag: 'div',
+                    //     html: '<input type="text" class="learn-filter" placeholder="Search assays">'
+                    // }
                 }]
             }
         ];
 
         this.callParent();
 
-        this.addEvents('selectdimension');
+        this.addEvents('selectdimension', 'searchchanged');
 
         //
         // Only classes inherited from Ext.container.AbstractContainer can bubble events
@@ -363,10 +393,13 @@ Ext.define('Connector.view.LearnHeader', {
         return this.getComponent('dataviewcontainer').getComponent('headerdataview');
     },
 
-    selectDimension : function(dimUniqueName, id) {
+    selectDimension : function(dimUniqueName, id, dimension) {
         if (this.dimensions && this.dimensions.length > 0) {
             this.getHeaderView().selectDimension(dimUniqueName);
         }
+        var search = this.getComponent('dataviewcontainer').getComponent('searchfield')
+        search.emptyText = 'Search '+dimension.pluralName.toLowerCase();
+        search.setValue('');
     }
 });
 

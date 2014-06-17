@@ -102,9 +102,23 @@ Ext.define('Connector.view.PageHeader', {
                         width: 50
                     })
                 }
+//                console.log("BUTTON CONFIG",buttonConfig);
                 var doBind = data.scope && !buttonConfig.handlersBound;
                 buttonConfig.handlersBound = true;
+                var haveVisibleButtons = false;
                 Ext.each(buttonConfig.group, function(button) {
+                    if (!button.hidden) {
+                        haveVisibleButtons = true;
+                    }
+                });
+
+                Ext.each(buttonConfig.group, function(button) {
+                    if (button.groupLabel && haveVisibleButtons) {
+                        buttons.push({
+                            xtype: 'label',
+                            text: button.groupLabel
+                        })
+                    }
                     if (doBind && button.handler) {
                         button.handler = Ext.bind(button.handler, data.scope, data.handlerParams, true);
                     }
