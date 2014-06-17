@@ -1,6 +1,7 @@
 Connector.view.StudyAxis = function(){
-    var width, height, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(), mouseover, mouseout,
-            canvas = null, mouseoverScope, mouseoutScope;
+    var canvas = null, width, height, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
+            visitMouseover, visitMouseout, visitMouseoverScope, visitMouseoutScope, tagMouseover, tagMouseout,
+            tagMouseoverScope, tagMouseoutScope;
 
     var renderAlignment = function(selection) {
         var alignmentPath, x, pathStr;
@@ -15,33 +16,21 @@ Connector.view.StudyAxis = function(){
     };
 
     var renderVisits = function(selection){
-        var visits, widthFn, heightFn, xFn, yFn, transformFn, opacityFn;
+        var visits, xFn, yFn, widthFn;
 
-        xFn = function(d) { return xScale(d.protocolDay); };
-        yFn = function(d) { return yScale(d.studyLabel) - 8; };
+        xFn = function(d) {
+            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
+                return xScale(d.protocolDay) - 5;
+            }
+
+            return xScale(d.sequenceNumMin)
+        };
+        yFn = function(d) { return yScale(d.studyLabel) - 9; };
         widthFn = function(d) {
             if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
-                return 8.5;
+                return 10;
             }
             return xScale(d.sequenceNumMax) - xScale(d.sequenceNumMin);
-        };
-        heightFn = function(d) {
-            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
-                return 8.5;
-            }
-            return 10;
-        };
-        transformFn = function(d) {
-            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
-                return 'rotate(45,' + xFn(d) + ',' + yFn(d) +  ')';
-            }
-            return '';
-        };
-        opacityFn = function(d) {
-            if (d.sequenceNumMax == d.sequenceNumMin) {
-                return 1;
-            }
-            return 0.30;
         };
 
         visits = selection.selectAll('rect.visit').data(function(d){
@@ -55,17 +44,58 @@ Connector.view.StudyAxis = function(){
 
         visits.exit().remove();
         visits.enter().append('rect').attr('class', 'visit');
-        visits.attr('width', widthFn).attr('height', heightFn)
-                .attr('x', xFn).attr('y', yFn)
+        visits.attr('x', xFn).attr('y', yFn)
+                .attr('width', widthFn).attr('height', 18)
                 .attr('fill', '#f5a73a') // $info-color
-                .attr('transform', transformFn)
-                .attr('fill-opacity', opacityFn);
+                .attr('fill-opacity', 0.30);
 
         visits.on('mouseover', function(d){
-            mouseover.call(mouseoverScope, d, this);
+            visitMouseover.call(visitMouseoverScope, d, this);
         });
         visits.on('mouseout', function(d){
-            mouseout.call(mouseoutScope, d, this);
+            visitMouseout.call(visitMouseoutScope, d, this);
+        });
+    };
+
+    var renderVisitTags = function(selection){
+        var visitTags, pathFn;
+
+        pathFn = function(d) {
+            var x = xScale(d.protocolDay), y = yScale(d.studyLabel), xLeft = x - 4, xRight = x + 4, yTop = y - 6,
+                    yBottom = y + 6;
+
+            return 'M ' + x + ' ' + yTop + ' L ' +
+                    xRight + ' ' + y + ' L ' +
+                    x + ' ' + yBottom + ' L ' +
+                    xLeft + ' ' + y + ' Z';
+        };
+
+        visitTags = selection.selectAll('path.visit-tag').data(function (d){
+            var visits = d.visits, visitsWithTags = [];
+
+            for (var i = 0; i < visits.length; i++) {
+                if (visits[i].visitTags.length > 0) {
+                    visitsWithTags.push({
+                        studyLabel: d.label,
+                        protocolDay: visits[i].protocolDay,
+                        visitTags: visits[i].visitTags
+                    });
+                }
+            }
+
+            return visitsWithTags;
+        });
+
+        visitTags.exit().remove();
+        visitTags.enter().append('path').attr('class', 'visit-tag');
+        visitTags.attr('d', pathFn).attr('fill', '#f5a73a');
+
+        // TODO: add visit tag mouseover/mouseout functions.
+        visitTags.on('mouseover', function(d){
+            tagMouseover.call(tagMouseoverScope, d, this);
+        });
+        visitTags.on('mouseout', function(d){
+            tagMouseout.call(tagMouseoutScope, d, this);
         });
     };
 
@@ -73,7 +103,7 @@ Connector.view.StudyAxis = function(){
         var lines, pathFn;
 
         pathFn = function(d){
-            var y = Math.floor(yScale(d.label) + 7) + 0.5;
+            var y = Math.floor(yScale(d.label) + 13) + 0.5;
             return 'M 25 ' + y + ' L ' + width + ' ' + y + ' Z';
         };
 
@@ -113,16 +143,16 @@ Connector.view.StudyAxis = function(){
 
             return d.label;
         });
-        labels.attr('y', function(d){return yScale(d.label);})
+        labels.attr('y', function(d){return Math.floor(yScale(d.label) + 7) + 0.5;})
                 .attr('x', 25)
                 .attr('fill', '#666363')
-                .style('font', '12pt Georgia, serif');
+                .style('font', '14pt Georgia, serif');
     };
 
     var studyAxis = function(){
         var yDomain = [], studies;
 
-        height = studyData.length * 25;
+        height = studyData.length * 32;
 
         for (var i = 0; i < studyData.length; i++) {
             yDomain.push(studyData[i].label);
@@ -144,13 +174,16 @@ Connector.view.StudyAxis = function(){
         studies.exit().remove();
         studies.call(renderStudyLabels);
         studies.call(renderVisits);
+        studies.call(renderVisitTags);
     };
 
     studyAxis.renderTo = function(id) { renderTo = id; return studyAxis; };
     studyAxis.width = function(w) { width = w; return studyAxis; };
     studyAxis.studyData = function(d) { studyData = d; return studyAxis; };
-    studyAxis.mouseover = function(m, s) { mouseover = m; mouseoverScope = s; return studyAxis; };
-    studyAxis.mouseout = function(m, s) { mouseout = m; mouseoutScope = s; return studyAxis; };
+    studyAxis.visitMouseover = function(m, s) { visitMouseover = m; visitMouseoverScope = s; return studyAxis; };
+    studyAxis.visitMouseout = function(m, s) { visitMouseout = m; visitMouseoutScope = s; return studyAxis; };
+    studyAxis.visitTagMouseover = function(m, s) { tagMouseover = m; tagMouseoverScope = s; return studyAxis; };
+    studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
     studyAxis.scale = function(s) {
         var r;
         xScale = s.copy();
