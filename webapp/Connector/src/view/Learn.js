@@ -301,6 +301,7 @@ Ext.define('Connector.view.Learn', {
     },
 
     selectDimension : function(dimension, id, animate) {
+        this.searchFilter = null;
 
         if (dimension) {
             this.loadDataView(dimension, id, animate);
@@ -311,7 +312,7 @@ Ext.define('Connector.view.Learn', {
             }
         }
 
-        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id);
+        this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension);
     }
 });
 
@@ -392,10 +393,13 @@ Ext.define('Connector.view.LearnHeader', {
         return this.getComponent('dataviewcontainer').getComponent('headerdataview');
     },
 
-    selectDimension : function(dimUniqueName, id) {
+    selectDimension : function(dimUniqueName, id, dimension) {
         if (this.dimensions && this.dimensions.length > 0) {
             this.getHeaderView().selectDimension(dimUniqueName);
         }
+        var search = this.getComponent('dataviewcontainer').getComponent('searchfield')
+        search.emptyText = 'Search '+dimension.pluralName.toLowerCase();
+        search.setValue('');
     }
 });
 
