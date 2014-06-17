@@ -442,7 +442,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Lab]',
                 pluralName: 'Labs',
                 priority: 20,
-                supportsDetails: true,
+                supportsDetails: false,
                 supportsSummary: false,
                 detailCollection: 'Connector.app.store.Labs',
                 detailModel: 'Connector.app.model.Labs',
