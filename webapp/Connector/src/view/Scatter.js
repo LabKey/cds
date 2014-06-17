@@ -1085,7 +1085,7 @@ Ext.define('Connector.view.Scatter', {
                 interval: interval,
                 zeroDayVisitTag: options.alignmentVisitTag,
                 useProtocolDay: true
-            }
+            };
         }
         else if (requiresPivot && hasAntigens)
         {
@@ -2529,7 +2529,7 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    showStudyAxisHover : function(data, rectEl) {
+    showVisitHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
             plotBBox = plotEl.getBoundingClientRect(),
             hoverBBox, html, i;
@@ -2538,10 +2538,6 @@ Ext.define('Connector.view.Scatter', {
         this.visitHoverEl.setAttribute('class', 'study-axis-window');
         html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
 
-        for (i = 0; i < data.visitTags.length; i++) {
-                html += '<p>' + data.visitTags[i] + '</p>';
-        }
-
         this.visitHoverEl.innerHTML = html;
         document.querySelector('body').appendChild(this.visitHoverEl);
         hoverBBox = this.visitHoverEl.getBoundingClientRect();
@@ -2549,10 +2545,37 @@ Ext.define('Connector.view.Scatter', {
         this.visitHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
     },
 
-    removeStudyAxisHover : function() {
+    removeVisitHover : function() {
         if (this.visitHoverEl) {
             this.visitHoverEl.parentNode.removeChild(this.visitHoverEl);
             this.visitHoverEl = null;
+        }
+    },
+
+    showVisitTagHover : function(data, rectEl) {
+        var plotEl = document.querySelector('div.plot svg'),
+                plotBBox = plotEl.getBoundingClientRect(),
+                hoverBBox, html, i;
+
+        this.tagHoverEl = document.createElement('div');
+        this.tagHoverEl.setAttribute('class', 'study-axis-window');
+        html = '<p>' + data.studyLabel + '</p>';
+
+        for (i = 0; i < data.visitTags.length; i++) {
+            html += '<p>' + data.visitTags[i] + '</p>';
+        }
+
+        this.tagHoverEl.innerHTML = html;
+        document.querySelector('body').appendChild(this.tagHoverEl);
+        hoverBBox = this.tagHoverEl.getBoundingClientRect();
+        this.tagHoverEl.style.left = rectEl.getBBox().x + 'px';
+        this.tagHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
+    },
+
+    removeVisitTagHover : function() {
+        if (this.tagHoverEl) {
+            this.tagHoverEl.parentNode.removeChild(this.tagHoverEl);
+            this.tagHoverEl = null;
         }
     },
 
@@ -2564,8 +2587,10 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis.studyData(this.studyAxisData)
                 .scale(this.plot.scales.x.scale)
                 .width(this.studyAxisPanel.getWidth() - 40)
-                .mouseover(this.showStudyAxisHover, this)
-                .mouseout(this.removeStudyAxisHover, this);
+                .visitMouseover(this.showVisitHover, this)
+                .visitMouseout(this.removeVisitHover, this)
+                .visitTagMouseover(this.showVisitTagHover, this)
+                .visitTagMouseout(this.removeVisitTagHover, this);
 
         this.studyAxis();
     },
