@@ -18,6 +18,11 @@ div.learnview {
     }
   }
 
+  ul {
+    list-style-position: inside;
+    list-style-type: disc;
+  }
+
   .disabled {
     color: $unselect-black;
   }
