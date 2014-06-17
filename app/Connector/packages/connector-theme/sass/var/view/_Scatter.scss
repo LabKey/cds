@@ -1,0 +1,86 @@
+.stdcolor {
+  background-color: $primary-color;
+}
+
+#scatterloader {
+  position: absolute;
+  visibility: hidden;
+  z-index: 10000;
+
+  img {
+    padding-right: 3px;
+  }
+}
+
+.timeview, .compareview, .rawdataview {
+  background-color : $primary-color;
+  padding: 15px 0 0 0;
+}
+
+.scatterview {
+  background-color : $secondary-color;
+  padding: 0;
+
+  .x-panel-body {
+    @include rightFade;
+  }
+}
+
+.emptyplot svg {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.x-window-default, .x-window-header-default-top {
+  background: $secondary-color !important;
+}
+
+.xaxisbutton {
+  margin-top: 1%;
+  margin-left: 49.5%;
+}
+
+.yaxisbutton {
+  position: absolute;
+  top: 50%;
+}
+
+#gridsources, #plotsources {
+  float: right;
+  margin-right: 20px;
+}
+
+.scatterplot {
+  background-color: $light-color;
+
+  svg, .info {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+}
+
+.study-axis-window {
+  position: absolute;
+  background-color: $info-color;
+  color: $light-color;
+  font-family: $font-family;
+  font-size: 12pt;
+  padding: 5px;
+  z-index: 9999999999; /* seriously? */
+}
+
+#plotymeasurewin:after,
+#plotymeasurewin:before {
+  border-right-color: $secondary-color;
+  border-bottom-color: transparent;
+}
+
+#plotxmeasurewin:after,
+#plotxmeasurewin:before {
+  top: 100%;
+  left: 40%;
+  border-top-color: $secondary-color;
+  border-right-color: transparent;
+}

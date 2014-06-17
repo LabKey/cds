@@ -191,7 +191,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Validate Groups
         //
-        assertTextPresent("My Saved Groups and Plots");
+        assertTextPresent("My saved groups and plots");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
@@ -596,7 +596,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 119;
+        final int COLUMN_COUNT = 117;
 
         DataGridSelector grid = new DataGridSelector(this);
 

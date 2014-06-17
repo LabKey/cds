@@ -1,0 +1,198 @@
+div.selitem {
+  width: 90%; /* remaining space for .circle */
+  padding: 4px 6px;
+}
+
+div.opselect {
+  position: absolute;
+  top: 25px;
+}
+
+div.filterpanel {
+
+  font-family: $info-font;
+  font-size: 10pt;
+
+  .header {
+    font-size: $headline;
+    font-family: $data-font;
+    span {
+      color: $dark-color;
+    }
+  }
+}
+
+div.selectionpanel {
+
+  font-family: $info-font;
+  font-size: 10pt;
+
+  .header {
+    @include smallStandout;
+    font-size: 13.5pt;
+  }
+
+  .x-toolbar-footer {
+    padding: 0;
+    margin-left: 20px;
+  }
+
+  .x-btn-rounded-inverted-accent-small .x-btn-inner {
+    font-size: 7pt;
+  }
+}
+
+div.selectionfilter {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.closeitem {
+  position: absolute;
+  opacity: 0;
+  right: 10px;
+  margin-top: 4px;
+  width: 10px;
+  height: 10px;
+  z-index: 5;
+  border: 0;
+  background-repeat: no-repeat;
+  background: url(images/close.png);
+  background-size: 10px 10px;
+  cursor: pointer;
+}
+
+div.wrapitem {
+
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+
+  select {
+    margin: 0;
+  }
+
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .fader:hover {
+    cursor: pointer;
+  }
+}
+
+.memberitem {
+
+  float: right;
+  white-space: nowrap;
+
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.grouprow {
+  &:hover {
+    .closeitem {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+div.collapsed-member {
+  width: 77%;
+  padding: 4px 8px;
+  font-size: 10pt;
+
+  span {
+    display: block;
+    overflow: hidden;
+  }
+}
+
+div.plot-selection {
+  width: 90%;
+  padding: 4px 8px;
+  font-size: 10pt;
+}
+
+div.activefilter {
+  position: relative;
+  background-color: $light-color;
+  border: 1px solid #a9a9a9;
+  @include border-radius(12px);
+  display: inline-block;
+  width: 100%;
+  padding: 3px 7px;
+
+  .circle {
+    display: none;
+  }
+
+  div.collapsed-member {
+    padding: 0 10px;
+  }
+
+  div.plot-selection {
+    padding: 0;
+    width: 100%;
+  }
+
+  div.selitem {
+    border: 1px solid transparent;
+    padding: 2px 5px 2px 0;
+    width: 100%;
+  }
+
+  div.status-over {
+    border-color: transparent;
+  }
+
+  .fader {
+    display: block;
+  }
+
+  &:hover {
+    .wholeitem {
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+/* Connector.view.Selection */
+.sel-listing {
+  padding: 5px 1px 5px 30px;
+}
+
+.circle {
+  width: 15px;
+  height: 15px;
+  @include border-radius(8px);
+  border: 1px solid $black;
+  background-color: $select-color;
+  margin: 6px 4px 0 0;
+  display: inline-block;
+  float: left;
+}
+/* -- END Connector.view.Selection */

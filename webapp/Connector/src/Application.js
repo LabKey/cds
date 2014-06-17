@@ -34,7 +34,6 @@ Ext.define('Connector.Application', {
         'Group',
         'Main',
         'Router',
-        'Citation',
         'Chart',
         'Explorer',
         'FilterStatus',

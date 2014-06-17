@@ -430,11 +430,13 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     @Test
     public void verifyStudyAxis()
     {
+        // TODO: Need to test visit tag hovers as well as visit hovers.
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
         Locator studyAxisLoc = Locator.css("#study-axis svg");
         Locator studyGroups = Locator.css("g.study");
         Locator studyVisits = Locator.css("rect.visit");
+        Locator visitTags = Locator.css("path.visit-tag");
         Locator visitHover = Locator.css("div.study-axis-window");
         List<WebElement> studyVisitEls;
         Actions builder = new Actions(getDriver());
@@ -452,6 +454,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         // Check to make sure study axis appears.
         waitForElement(studyAxisLoc);
         assertEquals("Unexpected number of visits on the study axis.", 59, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visit tagss on the study axis.", 25, visitTags.findElements(getDriver()).size());
 
         WebElement studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
         studyVisitEls = studyAxisTest1.findElements(studyVisits.toBy());
@@ -459,7 +462,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         // Check that study axis hovers appear when hovered over.
         builder.moveToElement(studyVisitEls.get(0)).perform();
         waitForElement(visitHover);
-        assertElementPresent(visitHover.withText("Study Axis Test 1\nMonth 1\nDay 0 (meaning varies)\nFirst Vaccination"));
+        assertElementPresent(visitHover.withText("Study Axis Test 1\nMonth 1"));
 
         // Check that hovers disappear
         builder.moveToElement(studyVisitEls.get(0)).moveByOffset(0, -500).perform();
@@ -472,14 +475,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForTextToDisappear("NotRV144");
 
         assertEquals("Unexpected number of visits on the study axis.", 44, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
 
         WebElement notRV144 = studyGroups.findElements(getDriver()).get(0);
-        WebElement diamondVisit = notRV144.findElement(studyVisits.toBy());
-        assertTrue("Visit didnt have a transform as expected.", !diamondVisit.getAttribute("transform").equals(""));
-
-        studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
-        WebElement rectVisit = studyAxisTest1.findElement(studyVisits.toBy());
-        assertTrue("Visit had a transform.", rectVisit.getAttribute("transform").equals(""));
+        WebElement visit = notRV144.findElement(studyVisits.toBy());
+        assertEquals("Visit had an unexpected width.", "10", visit.getAttribute("width"));
 
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Time points", "Study weeks");
@@ -489,6 +489,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Assert that we have the same amount of visits even with study weeks.
         assertEquals("Unexpected number of visits on the study axis.", 59, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
     }
 
     @Test

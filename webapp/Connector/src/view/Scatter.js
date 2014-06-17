@@ -1064,8 +1064,6 @@ Ext.define('Connector.view.Scatter', {
                 failure: this.onFailure,
                 scope: this
             });
-
-            this.requestCitations();
         });
     },
 
@@ -1085,7 +1083,7 @@ Ext.define('Connector.view.Scatter', {
                 interval: interval,
                 zeroDayVisitTag: options.alignmentVisitTag,
                 useProtocolDay: true
-            }
+            };
         }
         else if (requiresPivot && hasAntigens)
         {
@@ -1245,49 +1243,6 @@ Ext.define('Connector.view.Scatter', {
 
     hideLoad : function() {
         this.loader.setStyle('visibility', 'hidden');
-    },
-
-    requestCitations : function() {
-        var measures = this.getActiveMeasures();
-        var x = measures.x, y = measures.y;
-        var xy = [];
-
-        if (x) {
-            xy.push({
-                s : x.schemaName,
-                q : x.queryName
-            });
-        }
-
-        if (y) {
-            xy.push({
-                s : y.schemaName,
-                q : y.queryName
-            });
-        }
-
-        this.srcs = [];
-        var me = this;
-        for (var i=0; i < xy.length; i++) {
-            LABKEY.Query.getQueryDetails({
-                schemaName : xy[i].s,
-                queryName  : xy[i].q,
-                success    : function(d) {
-                    for (var c=0; c < d.columns.length; c++) {
-                        if (d.columns[c].name.toLowerCase() == 'source') {
-                            var src = d.columns[c];
-                            Ext.apply(src, {
-                                isSourceURI : true,
-                                schemaName  : d.schemaName,
-                                queryName   : d.queryName || d.name,
-                                alias       : src.fieldKeyPath
-                            });
-                            me.srcs.push(src);
-                        }
-                    }
-                }
-            });
-        }
     },
 
     onChartDataSuccess : function(response) {
@@ -1830,7 +1785,7 @@ Ext.define('Connector.view.Scatter', {
             this.ywin = Ext.create('Ext.window.Window', {
                 id: 'plotymeasurewin',
                 ui: 'axiswindow',
-                cls: 'axiswindow',
+                cls: 'axiswindow plotaxiswindow',
                 sourceCls: sCls,
                 axisPanel: this.axisPanelY,
                 modal: true,
@@ -1933,7 +1888,7 @@ Ext.define('Connector.view.Scatter', {
 
             this.xwin = Ext.create('Ext.window.Window', {
                 id        : 'plotxmeasurewin',
-                cls       : 'axiswindow',
+                cls       : 'axiswindow plotaxiswindow',
                 sourceCls : sCls,
                 axisPanel : this.axisPanelX,
                 modal     : true,
@@ -2063,7 +2018,7 @@ Ext.define('Connector.view.Scatter', {
 
             this.colorwin = Ext.create('Ext.window.Window', {
                 id        : 'plotcolorwin',
-                cls       : 'axiswindow',
+                cls       : 'axiswindow plotaxiswindow',
                 sourceCls : sCls,
                 axisPanel : this.colorPanel,
                 modal     : true,
@@ -2529,7 +2484,7 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    showStudyAxisHover : function(data, rectEl) {
+    showVisitHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
             plotBBox = plotEl.getBoundingClientRect(),
             hoverBBox, html, i;
@@ -2538,10 +2493,6 @@ Ext.define('Connector.view.Scatter', {
         this.visitHoverEl.setAttribute('class', 'study-axis-window');
         html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
 
-        for (i = 0; i < data.visitTags.length; i++) {
-                html += '<p>' + data.visitTags[i] + '</p>';
-        }
-
         this.visitHoverEl.innerHTML = html;
         document.querySelector('body').appendChild(this.visitHoverEl);
         hoverBBox = this.visitHoverEl.getBoundingClientRect();
@@ -2549,10 +2500,37 @@ Ext.define('Connector.view.Scatter', {
         this.visitHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
     },
 
-    removeStudyAxisHover : function() {
+    removeVisitHover : function() {
         if (this.visitHoverEl) {
             this.visitHoverEl.parentNode.removeChild(this.visitHoverEl);
             this.visitHoverEl = null;
+        }
+    },
+
+    showVisitTagHover : function(data, rectEl) {
+        var plotEl = document.querySelector('div.plot svg'),
+                plotBBox = plotEl.getBoundingClientRect(),
+                hoverBBox, html, i;
+
+        this.tagHoverEl = document.createElement('div');
+        this.tagHoverEl.setAttribute('class', 'study-axis-window');
+        html = '<p>' + data.studyLabel + '</p>';
+
+        for (i = 0; i < data.visitTags.length; i++) {
+            html += '<p>' + data.visitTags[i] + '</p>';
+        }
+
+        this.tagHoverEl.innerHTML = html;
+        document.querySelector('body').appendChild(this.tagHoverEl);
+        hoverBBox = this.tagHoverEl.getBoundingClientRect();
+        this.tagHoverEl.style.left = rectEl.getBBox().x + 'px';
+        this.tagHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
+    },
+
+    removeVisitTagHover : function() {
+        if (this.tagHoverEl) {
+            this.tagHoverEl.parentNode.removeChild(this.tagHoverEl);
+            this.tagHoverEl = null;
         }
     },
 
@@ -2564,8 +2542,10 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis.studyData(this.studyAxisData)
                 .scale(this.plot.scales.x.scale)
                 .width(this.studyAxisPanel.getWidth() - 40)
-                .mouseover(this.showStudyAxisHover, this)
-                .mouseout(this.removeStudyAxisHover, this);
+                .visitMouseover(this.showVisitHover, this)
+                .visitMouseout(this.removeVisitHover, this)
+                .visitTagMouseover(this.showVisitTagHover, this)
+                .visitTagMouseout(this.removeVisitTagHover, this);
 
         this.studyAxis();
     },
