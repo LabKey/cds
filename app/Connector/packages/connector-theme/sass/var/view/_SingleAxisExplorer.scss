@@ -1,0 +1,262 @@
+/* Connector.view.SingleAxisExplorer */
+@keyframes indexframe {
+  0% { width: 0; }
+}
+
+@-webkit-keyframes indexframe {
+  0% { width: 0; }
+}
+
+span.animator {
+  animation-duration: .5s;
+  animation-name: indexframe;
+  -webkit-animation-duration: .5s;
+  -webkit-animation-name: indexframe;
+}
+
+.barchart {
+  width: 78%;
+  padding: 2px;
+  margin: 2px 0;
+
+}
+
+.bar {
+  position: relative;
+  display: block;
+}
+
+.bar.large {
+  height: 38px;
+  margin: 4px 0 0 23px;
+}
+
+.bar.small {
+  height: 27px;
+  margin: 4px 0 4px 23px;
+  .x-btn {
+    display: none;
+  }
+}
+
+.bar.small:hover {
+  .x-btn {
+    display: block;
+  }
+}
+
+.bar .barlabel {
+  font-family: $data-font;
+  display: block;
+  padding: 5px 5px;
+  position: relative;
+  z-index: 2;
+  @include unselectable;
+}
+
+.bar.large .barlabel {
+  font-size: 14pt;
+  z-index: 5002;
+}
+
+.bar.small .barlabel {
+  font-size: 12pt;
+  font-weight: bold;
+  z-index: 5002;
+  border-left: 1px solid $primary-color;
+}
+
+.barlabel.selected {
+  padding: 5px;
+  font-weight: bold;
+  font-size: 12pt;
+  position: absolute;
+  z-index: 10000000;
+}
+
+span.info {
+  display: inline-block;
+  position: absolute;
+  width: 200px;
+  height: 25px;
+  top: 5px;
+  z-index: 5005;
+}
+
+.bar.large:hover,
+.bar.small:hover {
+
+  cursor: pointer;
+
+  .barlabel {
+    text-decoration: underline;
+  }
+
+  .index {
+    z-index: 5001;
+    background-color: $select-color;
+  }
+}
+
+.bar .count {
+  color: $legend-color;
+  font-family: $data-font;
+  font-weight: bold;
+  font-size: 14pt;
+  position: absolute;
+  @include unselectable;
+}
+
+.bar.large .count {
+  top: 6px;
+}
+
+.bar.small .count {
+  top: 0;
+}
+
+.bar .index {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: $primary-color;
+  text-indent: -9999px;
+  overflow: hidden;
+}
+
+.bar .index-selected {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: $select-color;
+  text-indent: -9999px;
+  overflow: hidden;
+}
+
+.bar .index-selected.inactive {
+  background-color: $selectongrey-color;
+}
+
+.bar.x-item-selected span.index-selected.inactive {
+  background-color: $select-color;
+}
+
+.bar .count.inactive {
+  color: #B3D4D5;
+}
+
+.bar .count.active {
+  color: $select-color;
+}
+
+div.singleaxis {
+  overflow-y: auto;
+}
+
+div.saecollapse {
+  color : $interactive-color;
+  border: 1px solid $primary-color;
+  float : left;
+  font-size: 22pt;
+  height: 38px;
+  width : 23px;
+}
+
+div.saecollapse p {
+  vertical-align: middle;
+  text-align: center;
+}
+
+div.saecollapse:hover {
+  cursor: pointer;
+  color : $light-color;
+  background-color: $select-color;
+  border-color: $select-color;
+}
+
+div.barcollapse {
+  opacity: 0;
+  height: 0;
+  display: none;
+}
+
+div.saeempty {
+  font-family: $data-font;
+  font-size: 14pt;
+  margin-top: 10px;
+}
+
+/* -- END Connector.view.SingleAxisExplorer */
+
+/* Connector.view.Dimension */
+.dimensionview {
+  @include rightFade;
+}
+
+div.dimensionsort {
+  color: $heat-scale-2;
+  padding-top: 10px;
+  padding-left: $pageLeftPadding;
+  padding-bottom: 5px;
+  font-family: $info-font;
+  @include smallStandout;
+  font-size: 11pt;
+}
+
+div.dimensionsort .sorttype {
+  padding-left: 5px;
+}
+
+#type-field div input {
+  margin-left: $pageLeftPadding;
+  height : 22px;
+  border : 1px inset;
+}
+
+div.label {
+  color: $heat-scale-2;
+  font-family: $data-font;
+  font-size: 11pt;
+}
+
+div.label span {
+  color: $dark-color;
+  font-weight: bold;
+}
+
+div.boldlabel {
+  @include smallStandout;
+  font-size: 10pt;
+}
+
+/* Currently used in the Plot pane but meant to be used more widely */
+.smallstandout {
+  @include smallStandout;
+}
+
+.soft {
+  color: $heat-scale-2;
+}
+
+.spacer {
+  margin-top: 20px;
+}
+
+div.boldlabel span {
+  color: $dark-color;
+  font-weight: bold;
+}
+
+/* -- END Connector.view.Dimension */
+
+/* Connector.view.DimensionSelector */
+div.dimgroup {
+  @include pagePaddingLeft;
+  @include standout;
+}
+
+/* -- END Connector.view.DimensionSelector */

@@ -56,10 +56,11 @@ Ext.define('Connector.panel.FilterPanel', {
         // title
         var items = [{
             xtype: 'box',
-            autoEl: {
-                tag: 'h2',
-                style: 'font-size: 17pt;',
-                html: this.title
+            tpl: new Ext.XTemplate(
+                '<h2 class="section-title">{title:htmlEncode}</h2>'
+            ),
+            data: {
+                title: this.title
             }
         }];
 
@@ -70,7 +71,7 @@ Ext.define('Connector.panel.FilterPanel', {
         return {
             xtype: 'container',
             ui: 'custom',
-            style: 'margin-bottom: 10px;',
+            cls: 'bottom-spacer',
             layout: {
                 type: 'hbox'
             },

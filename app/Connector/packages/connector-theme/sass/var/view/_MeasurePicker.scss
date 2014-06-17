@@ -1,0 +1,69 @@
+/* This filename is a misnomer, as we are applying styles to the LABKEY study measure picker
+LABKEY.ext4.MeasuresDataView.SplitPanels
+*/
+.sourcepanel, .measurepanel {
+  .x-panel-body .x-box-inner {
+    background-color: $light-color;
+    border: none;
+  }
+
+  .groupheader {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-family: $bodycaps-font;
+    font-weight: normal;
+  }
+
+  .groupheaderline {
+    margin-top: 8px;
+    border-top: solid $secondary-color 1px;
+  }
+
+  .itemrow {
+    color: $dark-color;
+  }
+
+  .itemdisabled {
+    color: $primary-color;
+  }
+
+  .x-grid-group-hd {
+    border: none;
+    padding: 0;
+  }
+
+  .x-grid-group-title .groupheader {
+    padding: 8px 6px 4px 6px !important;
+  }
+}
+
+.sourcepanel {
+  margin-right: 5px;
+
+  .itemrow:hover {
+    border-color: $secondary-color;
+    background-color: $secondary-color;
+  }
+
+  .itemselected {
+    border-color: $primary-color;
+    background-color: $primary-color;
+    color: $dark-color !important;
+  }
+}
+
+.measurepanel {
+  margin-left: 5px;
+
+  .itemrow:hover {
+    border-color: $selectongrey-color;
+    background-color: $selectongrey-color;
+    color: $dark-color !important;
+  }
+
+  .itemselected {
+    border-color: $select-color;
+    background-color: $select-color;
+    color: $light-color !important;
+  }
+}

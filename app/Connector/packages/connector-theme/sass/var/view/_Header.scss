@@ -1,0 +1,44 @@
+.connectorheader {
+
+  .logo {
+    @include headline;
+
+    h2 {
+      float: left;
+      padding: 20px 5px 0px 27px !important;
+      font-family: $bodycaps-font;
+      font-weight: bold;
+      font-size: 13pt;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    span {
+      color : $select-color;
+    }
+
+    img {
+      padding-top: 23px;
+    }
+  }
+}
+
+.headline {
+  text-transform: uppercase;
+  font-family: $bodycaps-font;
+  font-size: 13.5pt;
+}
+
+.connectorheader-collapse .logo span {
+  color : $select-color;
+}
+
+.connectorheader, .connectorheader-collapse {
+  background-color: $black;
+  color : $light-color;
+  background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from($black), to($dark-color)); // TODO: Change to compass
+  background: -moz-linear-gradient(left, $black,  $dark-color);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);
+}

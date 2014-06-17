@@ -41,7 +41,7 @@ Ext.define('Connector.view.Home', {
 
             this.content = Ext.create('Ext.container.Container', {
                 plugins: ['messaging'],
-                margin: '0 0 0 27',
+                cls: 'left-spacer',
                 layout: {
                     type: 'hbox',
                     align: 'stretch',
@@ -54,11 +54,12 @@ Ext.define('Connector.view.Home', {
                 },{
                     xtype: 'dataview',
                     flex: 10,
-                    margin: '32 0 0 27',
+                    cls: 'top-spacer-xlg left-spacer-lg',
                     itemSelector: 'div.entry',
                     loadMask: false,
+                    border: false,
                     tpl: new Ext.XTemplate(
-                        '<div class="grouplist-header">News</div>',
+                        '<h2 class="section-title bottom-spacer">News</h2>',
                         '<tpl if="this.isEmpty(values)">',
                             '<div class="grouplist-empty" style="font-size: 13pt; font-family: Arial;">Feeds not available</div>',
                         '</tpl>',

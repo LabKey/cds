@@ -1,0 +1,157 @@
+div.learnview {
+  .module {
+    padding-bottom: 20px;
+  }
+}
+
+.module {
+  h3 {
+    padding-bottom: 8px;
+    clear: both;
+  }
+
+  p {
+    color: #231F20;
+
+    &.loading-data {
+      color: $unselect-black;
+    }
+  }
+
+  .disabled {
+    color: $unselect-black;
+  }
+
+  .checkbox {
+    color: $unselect-black;
+    width: 11px;
+    height: 19px;
+    float: left;
+  }
+
+  .item-row {
+    min-height: 19px;
+    padding: 2px 0px;
+  }
+}
+
+.modulecontainer {
+  position: relative;
+}
+
+.modulecontainercolumn {
+  @include sectionPaddingTop;
+  @include pagePaddingLeft;
+}
+
+div.learnheader,
+div.learncolumnheader {
+  @include rightFade;
+}
+
+div.learncolumnheader {
+  height: 25px;
+}
+
+div.learn-header-container {
+  padding-left: $pageLeftPadding;
+}
+
+div.learn-map-container {
+  height: 340px;
+  margin-bottom: 4px;
+}
+
+h1.lhdv {
+  float: left;
+  font-weight: normal;
+  padding-right: 18px;
+  color: $unselect-black;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.active {
+    color: $black;
+  }
+}
+
+.headerlock {
+  position: absolute;
+  top: 0px;
+}
+
+div.detail-wrapper:hover {
+  @include transition(background-color 0.2s ease-out);
+  background-color: $selectongrey-color;
+  cursor: pointer;
+}
+
+div.detail-container {
+  width: 95%;
+  margin-left: $pageLeftPadding;
+  margin-right: auto;
+
+  div.detail-header {
+    font-size: 12pt;
+    color: $dark-color;
+    font-family: $bodycaps-font;
+    font-weight: bold;
+  }
+}
+
+/* TODO: The Following study- selectors need to be renamed */
+div.study-detail {
+  height: 170px;
+  border-bottom: 2px solid $primary-color;
+  padding-top: 15px;
+  overflow: hidden;
+}
+
+div.study-description {
+  width: 40%;
+  padding-right: 10px;
+  float: left;
+  font-family: $info-font;
+
+  .phase-text {
+    font-size: 12pt;
+    color: $heat-scale-1;
+  }
+
+  .description-text {
+    padding-top: 5px;
+    font-size: 12pt;
+    color: $heat-scale-1;
+  }
+}
+
+div.study-date {
+  width: 20%;
+  float: left;
+  padding-right: 10px;
+  font-family: $info-font;
+  font-size: 12pt;
+
+  .startdate-text {
+    display: block;
+  }
+
+  .enddate-text {
+    display: block;
+    color: $heat-scale-1;
+  }
+
+  .date-diff-text {
+    color: $heat-scale-1;
+  }
+}
+
+div.study-treatments {
+  width: 40%;
+  float: right;
+  font-family: $info-font;
+  font-size: 12pt;
+  color: $heat-scale-1;
+}

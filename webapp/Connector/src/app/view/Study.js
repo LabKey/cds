@@ -23,7 +23,7 @@ Ext.define('Connector.app.view.Study', {
                 '<div class="detail-container">',
                     '<div class="study-description detail-header">Description</div>',
                     '<div class="study-date detail-header">Start Date</div>',
-                    '<div class="study-treatments detail-header">Treatments</div>',
+                    '<div class="study-treatments detail-header">Products</div>',
                 '</div>',
             '</div>'
         )
