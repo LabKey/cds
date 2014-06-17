@@ -56,12 +56,10 @@
                 path: <%=PageFlowUtil.jsString(resourcePath)%>
             }
         };
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
-    <script type="text/javascript">
         Ext = {}; Ext4 = Ext;
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
     <% if (devMode) { %>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
@@ -121,7 +119,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 
     <!-- Application Models -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/model/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/ColumnInfo.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Detail.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Dimension.js"></script>
@@ -168,11 +165,9 @@
 
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Compare.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
@@ -196,7 +191,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/TermsOfUse.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/search/Container.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/ContactCDS.js"></script>
@@ -207,7 +201,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Home.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Citation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>

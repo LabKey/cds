@@ -1,0 +1,59 @@
+.navigation-view {
+  padding: 16px 0 20px 0;
+  font-family: $data-font;
+  color: $light-color;
+}
+
+div.nav-label, div.dis-label {
+  padding-top: 4px;
+
+  span.right-label {
+    width: 284px;
+    float: right;
+    @include unselectable;
+  }
+
+  span.left-label {
+    padding-left: 23px;
+    @include unselectable;
+  }
+}
+
+div.grouplist-label-over:after,
+div.nav-label:after, div.dis-label:after{
+  //This is a nifty class that self-clears any floats.
+  content: '.';
+  visibility: hidden;
+  clear: both;
+}
+
+div.dis-label {
+  opacity: 0.35;
+  cursor: default;
+}
+
+div.nav-label-over span.right-label,
+div.nav-label-over span.left-label {
+  cursor : pointer;
+  color: $secondary-color;
+}
+
+div.emptytext span.left-label {
+  padding-left: 23px;
+}
+
+div.grouplist-label-selected, div.nav-label-selected {
+  span {
+    font-weight: bold;
+
+    &.left-arrow {
+      position: relative;
+      float: left;
+      left: 0;
+      top: 0;
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      border-left: 11px solid $light-color;
+    }
+  }
+}

@@ -507,8 +507,8 @@ Ext.define('Connector.model.Grid', {
                 Ext.each(plotMeasureSet, function(pm) {
                     if (Ext.isObject(pm)) {
                         var p = {
-                            dateOptions: pm.dateOptions,
-                            measure: pm.measure,
+                            dateOptions: Ext.clone(pm.dateOptions),
+                            measure: Ext.clone(pm.measure),
                             time: 'date'
                         };
                         if (p.measure.variableType === "TIME") {

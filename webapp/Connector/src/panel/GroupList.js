@@ -48,9 +48,7 @@ Ext.define('Connector.view.GroupListView', {
 
     loadMask: false,
 
-    margin: '30 0 0 0',
-
-    cls: 'grouplist-view',
+    cls: 'grouplist-view top-spacer-xlg',
 
     overItemCls: 'grouplist-over',
 
@@ -59,7 +57,7 @@ Ext.define('Connector.view.GroupListView', {
     bubbleEvents: ['deletegroup'],
 
     tpl: new Ext.XTemplate(
-        '<div class="grouplist-header">My Saved Groups and Plots</div>',
+        '<h2 class="section-title bottom-spacer">My saved groups and plots</h2>',
         '<tpl if="this.isEmpty(values)">',
             '<div class="grouplist-empty">Saved work will appear here</div>',
         '</tpl>',
@@ -107,8 +105,6 @@ Ext.define('Connector.view.GroupListView', {
             var index = el.getAttribute('group-index');
             var store = this.getStore();
             var group = store.getAt(index);
-
-            GG = group;
             if (group) {
                 evt.stopPropagation();
                 this.fireEvent('deletegroup', group);

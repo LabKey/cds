@@ -1064,8 +1064,6 @@ Ext.define('Connector.view.Scatter', {
                 failure: this.onFailure,
                 scope: this
             });
-
-            this.requestCitations();
         });
     },
 
@@ -1245,49 +1243,6 @@ Ext.define('Connector.view.Scatter', {
 
     hideLoad : function() {
         this.loader.setStyle('visibility', 'hidden');
-    },
-
-    requestCitations : function() {
-        var measures = this.getActiveMeasures();
-        var x = measures.x, y = measures.y;
-        var xy = [];
-
-        if (x) {
-            xy.push({
-                s : x.schemaName,
-                q : x.queryName
-            });
-        }
-
-        if (y) {
-            xy.push({
-                s : y.schemaName,
-                q : y.queryName
-            });
-        }
-
-        this.srcs = [];
-        var me = this;
-        for (var i=0; i < xy.length; i++) {
-            LABKEY.Query.getQueryDetails({
-                schemaName : xy[i].s,
-                queryName  : xy[i].q,
-                success    : function(d) {
-                    for (var c=0; c < d.columns.length; c++) {
-                        if (d.columns[c].name.toLowerCase() == 'source') {
-                            var src = d.columns[c];
-                            Ext.apply(src, {
-                                isSourceURI : true,
-                                schemaName  : d.schemaName,
-                                queryName   : d.queryName || d.name,
-                                alias       : src.fieldKeyPath
-                            });
-                            me.srcs.push(src);
-                        }
-                    }
-                }
-            });
-        }
     },
 
     onChartDataSuccess : function(response) {
@@ -1830,7 +1785,7 @@ Ext.define('Connector.view.Scatter', {
             this.ywin = Ext.create('Ext.window.Window', {
                 id: 'plotymeasurewin',
                 ui: 'axiswindow',
-                cls: 'axiswindow',
+                cls: 'axiswindow plotaxiswindow',
                 sourceCls: sCls,
                 axisPanel: this.axisPanelY,
                 modal: true,
@@ -1933,7 +1888,7 @@ Ext.define('Connector.view.Scatter', {
 
             this.xwin = Ext.create('Ext.window.Window', {
                 id        : 'plotxmeasurewin',
-                cls       : 'axiswindow',
+                cls       : 'axiswindow plotaxiswindow',
                 sourceCls : sCls,
                 axisPanel : this.axisPanelX,
                 modal     : true,
@@ -2063,7 +2018,7 @@ Ext.define('Connector.view.Scatter', {
 
             this.colorwin = Ext.create('Ext.window.Window', {
                 id        : 'plotcolorwin',
-                cls       : 'axiswindow',
+                cls       : 'axiswindow plotaxiswindow',
                 sourceCls : sCls,
                 axisPanel : this.colorPanel,
                 modal     : true,
