@@ -176,7 +176,7 @@ Ext.define('Connector.view.Learn', {
 
     headerButtonsByDimension : {
         Study : [{
-            groupLabel: "Select",
+            groupLabel: "Select:",
             buttonLabel: 'all study subjects',
             handler: function(button, _, dimension, model) {
                 Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
