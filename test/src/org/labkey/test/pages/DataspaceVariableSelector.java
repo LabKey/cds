@@ -80,6 +80,7 @@ public abstract class DataspaceVariableSelector
 
     public void setVariableOptions(String... options)
     {
+        _test.waitForElement(variableOptionsRow());
         clearVariableOptions();
 
         for (String option : options)
