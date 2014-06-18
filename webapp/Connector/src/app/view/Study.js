@@ -26,7 +26,8 @@ Ext.define('Connector.app.view.Study', {
                     '<div class="study-treatments detail-header">Products</div>',
                 '</div>',
             '</div>'
-        )
+        ),
+        searchFields : ['Label', 'Phase', 'Description', 'Treatments']
     },
 
     tpl: new Ext.XTemplate(
@@ -39,9 +40,9 @@ Ext.define('Connector.app.view.Study', {
                     '<div class="study-description">',
                         '<h2 class="name-text">{Label:htmlEncode}</h2>',
                         '<tpl if="Phase && Phase.length &gt; 0">',
-                            '<span class="phase-text">Phase {Phase:htmlEncode}</span>',
+                            '<span class="phase-text">{Phase:htmlEncode}</span>',
                         '</tpl>',
-                        '<div class="description-text">{Description:htmlEncode}</div>',
+                        '<div class="description-text">{Description}</div>',
                     '</div>',
                     '<div class="study-date">',
                         '<span class="startdate-text">{StartDate:this.renderDate}</span>',

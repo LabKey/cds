@@ -147,7 +147,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
 
         // Test brush events.
-        builder.moveToElement(points.get(10)).moveByOffset(-45, -75).clickAndHold().moveByOffset(130, 160).release().perform();
+        builder.moveToElement(points.get(10)).moveByOffset(-45, -65).clickAndHold().moveByOffset(130, 160).release().perform();
 
         for (int i = 10; i < 15; i++)
         {
@@ -165,7 +165,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
 
         // Brush the same area, then apply that selection as a filter.
-        builder.moveToElement(points.get(10)).moveByOffset(-45, -75).clickAndHold().moveByOffset(130, 160).release().perform();
+        builder.moveToElement(points.get(10)).moveByOffset(-45, -65).clickAndHold().moveByOffset(130, 160).release().perform();
         waitForElement(plotSelection);
 
         assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());

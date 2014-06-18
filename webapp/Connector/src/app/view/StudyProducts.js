@@ -26,7 +26,8 @@ Ext.define('Connector.app.view.StudyProducts', {
                     '<div class="study-treatments detail-header">Developer</div>',
                 '</div>',
             '</div>'
-        )
+        ),
+        searchFields : ['Label', 'Description', 'Type', 'Class', 'Subclass', 'Developer']
     },
 
     tpl: new Ext.XTemplate(
