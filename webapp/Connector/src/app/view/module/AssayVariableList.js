@@ -14,5 +14,36 @@ Ext.define('Connector.view.module.AssayVariableList', {
             Connector.constant.Templates.module.title,
             'Variable data goes here',
             // '<tpl if="model.get(\'Category\')"><p class="item-row">Category: {[values.model.get("Category")]}</p></tpl>',
-        '</tpl>')
+        '</tpl>'),
+
+    initComponent : function() {
+        var data = this.data;
+
+        var store = StoreCache.getStore('Connector.app.store.DataSet');
+        var me = this;
+
+        var assayName = data.model.get('Name');
+
+        function dataSetsLoaded(store, records) {
+            Ext.each(records, function(record) {
+//                record.hasDataForAssayByName(assayName);
+
+                // record.getVariables(studyId, function(hasData) {
+                //     console.log("GV");
+                // })
+            })
+            me.update(data);
+        }
+
+        if (!store.data.length) {
+            store.on('load', dataSetsLoaded, this, {
+                single: true
+            });
+            store.load();
+        } else {
+            dataSetsLoaded(store, store.data.items);
+        }
+
+        this.callParent();
+    }
 });

@@ -7,6 +7,8 @@ Ext.define('Connector.app.model.DataSet', {
 
     extend : 'Ext.data.Model',
 
+    // idProperty: 'Label',
+
     fields: [
         {name: 'Label'},
         {name: 'Name'},
@@ -53,6 +55,20 @@ Ext.define('Connector.app.model.DataSet', {
 			},
 			scope: this
 		});
+    },
+
+    hasDataForAssayByName : function(assayName) {
+        var id = this.get('Label');
+
+        var store = this.store.dataSetStores[id.value];
+
+        var count = store.count();
+        var countForAssay = 0;
+        store.each(function(record) {
+            console.log("RECORD IS ",record);
+        })
+
+        console.log("HDFABN",count,countForAssay);
     },
 
     getVariables: function(id, callback) {
