@@ -58,7 +58,7 @@ Ext.define('Connector.view.Main', {
                         label: 'Home',
                         controller: 'home'
                     },{
-                        label: 'Learn about studies, assays',
+                        label: 'Learn about studies, assays, ...',
                         controller: 'learn'
                     },{
                         label: 'Find subjects',
