@@ -803,7 +803,7 @@ Ext.define('Connector.view.Scatter', {
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
-                if (this.measures[2]) {
+                if (!noplot && this.measures[2]) {
                     var colorSelector = Ext.getCmp('colorselector');
                     colorSelector.setLegend(this.plot.getLegendData());
                 }
