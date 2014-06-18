@@ -397,7 +397,7 @@ Ext.define('Connector.view.Scatter', {
                     };
 
                     opacityFn = function(d) {
-                        return  d.subjectId.value === pointData.subjectId.value ? 1 : .5;
+                        return  d.subjectId.value === pointData.subjectId.value ? 1 : .3;
                     };
 
                     var points = layerSel.selectAll('.point path');
@@ -696,10 +696,10 @@ Ext.define('Connector.view.Scatter', {
                     };
 
                     assocOpacityFn = function(d) {
-                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                        if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
                             return 1;
                         } else {
-                            return this.getAttribute('fill-opacity');
+                            return .3;
                         }
                     };
 
@@ -784,9 +784,10 @@ Ext.define('Connector.view.Scatter', {
                         scope: this
                     });
                 },
-                brushclear : function() {
+                brushclear : function(event, allData, plot, selections) {
                     layerScope.isBrushed = false;
                     stateManager.clearSelections(true);
+                    selections[0].selectAll('.point path').attr('fill-opacity',.5).attr('stroke-opacity',.5);
                 }
             };
         }
