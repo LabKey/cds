@@ -750,7 +750,7 @@ Ext.define('Connector.view.Scatter', {
                         xMin = transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
                         xMax = transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
 
-                        if (xMeasure.name.toLowerCase() === "visit/protocolday") {
+                        if (xMeasure.name.toLowerCase().indexOf("protocolday") > -1) {
                             xMin = Math.floor(xMin);
                             xMax = Math.ceil(xMax);
                         }

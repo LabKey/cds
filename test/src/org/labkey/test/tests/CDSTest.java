@@ -943,15 +943,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Test
-    public void testLearnAboutLabs()
-    {
-        cds.viewLearnAboutPage("Labs");
-
-        List<String> labs = Arrays.asList("Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab");
-        _asserts.verifyLearnAboutPage(labs);
-    }
-
-    @Test
     @Ignore("Sites have been disabled until it is no longer dependent on the demographics dataset")
     public void testLearnAboutSites()
     {
