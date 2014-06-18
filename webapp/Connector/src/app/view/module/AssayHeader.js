@@ -11,9 +11,9 @@ Ext.define('Connector.view.module.AssayHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
-            '<tpl if="model.get(\'FullName\')"><p class="item-row">Full Name: {[values.model.get("FullName")]}</p></tpl>',
+            '<tpl if="model.get(\'AlternateName\')"><p class="item-row">Full Name: {[values.model.get("AlternateName")]}</p></tpl>',
             '<tpl if="model.get(\'Lab\')"><p class="item-row">Lab: {[values.model.get("Lab")]}</p></tpl>',
-            '<tpl if="model.get(\'Type\')"><p class="item-row">Type: {[values.model.get("Target")]}</p></tpl>',
+            '<tpl if="model.get(\'Type\')"><p class="item-row">Type: {[values.model.get("Type")]}</p></tpl>',
             '<tpl if="model.get(\'Category\')"><p class="item-row">Category: {[values.model.get("Category")]}</p></tpl>',
             '<tpl if="model.get(\'Target\')"><p class="item-row">Target Type: {[values.model.get("TargetType")]}</p></tpl>',
             '<tpl if="model.get(\'TargetSubType\')"><p class="item-row">Target Type: {[values.model.get("TargetSubType")]}</p></tpl>',

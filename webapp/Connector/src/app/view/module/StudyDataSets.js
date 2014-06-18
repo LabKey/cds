@@ -61,20 +61,21 @@ Ext.define('Connector.view.module.StudyDataSets', {
             data.categories = [];
             Ext.each(records, function(record) {
                 var category = record.get('CategoryId');
-                if (!categoriesById[category.value]) {
-                    var o = {
-                        category: category.displayValue,
-                        dataSets: [],
-                        model: data.model
+                if (category.value) {
+                    if (!categoriesById[category.value]) {
+                        var o = {
+                            category: category.displayValue,
+                            dataSets: [],
+                            model: data.model
+                        }
+                        categoriesById[category.value] = o;
+                        data.categories.push(o);
                     }
-                    categoriesById[category.value] = o;
-                    data.categories.push(o);
+                    categoriesById[category.value].dataSets.push(record);
+                    record.queryDataFromStudy(studyId, function(hasData) {
+                        me.update(data);
+                    });
                 }
-                categoriesById[category.value].dataSets.push(record);
-                record.queryDataFromStudy(studyId, function(hasData) {
-                    me.update(data);
-                });
-
                 // record.getVariables(studyId, function(hasData) {
                 //     console.log("GV");
                 // })
