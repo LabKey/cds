@@ -5,5 +5,9 @@
  */
 Ext.define('Connector.app.model.DataSetData', {
 
-    extend : 'Ext.data.Model'
+    extend : 'Ext.data.Model',
+
+    fields: [
+        {name: 'Assay'}
+    ]
 });

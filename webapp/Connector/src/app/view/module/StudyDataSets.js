@@ -76,9 +76,6 @@ Ext.define('Connector.view.module.StudyDataSets', {
                         me.update(data);
                     });
                 }
-                // record.getVariables(studyId, function(hasData) {
-                //     console.log("GV");
-                // })
             })
         }
 
