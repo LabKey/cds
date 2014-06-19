@@ -23,7 +23,7 @@ Ext.define('Connector.view.Scatter', {
     showAxisButtons: true,
 
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
-    rowlimit: 0,
+    rowlimit: 5000,
 
     layout: 'border',
 
@@ -717,7 +717,7 @@ Ext.define('Connector.view.Scatter', {
                             return isMin ? Math.floor(val) : Math.ceil(val);
                         } else if (type === 'TIMESTAMP') {
                             return isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
-                        } else if (type === "DOUBLE"){
+                        } else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT'){
                             var precision;
 
                             if (domain[1] >= 1000) {
@@ -976,8 +976,6 @@ Ext.define('Connector.view.Scatter', {
         }
         else {
             this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
-
-            this.rowlimit = activeMeasures.x != null && this.isContinuousMeasure(activeMeasures.x) ? 5000 : 100000; // selectRows server default limit is 100000
 
             this.showLoad();
 
@@ -1392,7 +1390,8 @@ Ext.define('Connector.view.Scatter', {
     },
 
     isValidValue: function(measure, value) {
-        if (measure.type === 'INTEGER' || measure.type === 'DOUBLE') {
+        var type = measure.type;
+        if (type === 'INTEGER' || type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
             return this.isValidNumber(value);
         } else {
             return !(value === undefined || value === null);
@@ -1400,15 +1399,15 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _getValue : function(measure, colName, row) {
-        var val;
+        var val, type = measure.type;
 
-        if (measure.type === 'INTEGER') {
+        if (type === 'INTEGER') {
             val = parseInt(row[colName].value);
             return this.isValidNumber(val) ? val : null;
-        } else if (measure.type === 'DOUBLE') {
+        } else if (type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
             val = parseFloat(row[colName].value);
             return this.isValidNumber(val) ? val : null;
-        } else if (measure.type === 'TIMESTAMP') {
+        } else if (type === 'TIMESTAMP') {
             val = row[colName].value;
             return val !== undefined && val !== null ? new Date(val) : null;
         } else {
@@ -1443,7 +1442,7 @@ Ext.define('Connector.view.Scatter', {
                 colName: _xid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : x.label,
                 type   : x.type,
-                isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE',
+                isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
                 isContinuous: this.isContinuousMeasure(x)
             };
         } else {
@@ -1467,7 +1466,7 @@ Ext.define('Connector.view.Scatter', {
             colName: _yid, // Stash colName so we can query the getData temp table in the brushend handler.
             label  : y.label,
             type   : y.type,
-            isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE',
+            isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'FLOAT' || y.type === 'REAL',
             isContinuous: this.isContinuousMeasure(y)
         };
 
@@ -1699,7 +1698,8 @@ Ext.define('Connector.view.Scatter', {
     },
 
     isContinuousMeasure : function(measure) {
-        return measure.type === 'INTEGER' || measure.type === 'DOUBLE' || measure.type === 'TIMESTAMP';
+        var type = measure.type;
+        return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
     },
 
     updateMeasureSelection : function(win) {
