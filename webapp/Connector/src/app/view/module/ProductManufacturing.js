@@ -14,5 +14,10 @@ Ext.define('Connector.view.module.ProductManufacturing', {
             Connector.constant.Templates.module.title,
             '<tpl if="model.get(\'Manufacturer\')"><p class="item-row">Manufacturer: {[values.model.get("Manufacturer")]}</p></tpl>',
             '<tpl if="model.get(\'Production\')"><p class="item-row">Production: {[values.model.get("Production")]}</p></tpl>',
-        '</tpl>')
+        '</tpl>'),
+
+    hasContent : function() {
+        var data = this.data || this.initalConfig.data || {};
+        return data.model.get('Manufacturer') || data.model.get('Production');
+    }
 });
