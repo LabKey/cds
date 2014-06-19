@@ -343,7 +343,7 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
+        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
         SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", Locator.tagWithClass("div", "titlepanel").withText("view data grid"));
