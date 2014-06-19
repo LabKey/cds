@@ -12,6 +12,9 @@ Ext.define('Connector.view.module.AssayVariableList', {
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
+            '<tpl if="!values.variables">',
+                Connector.constant.Templates.module.loadingData,
+            '</tpl>',
             '<tpl if="variables.key.length">',
 	            '<tpl if="showNames"><h4>RECOMMENDED</h4></tpl>',
 	            '<tpl for="variables.key">',
