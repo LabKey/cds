@@ -17,7 +17,7 @@ Ext.define('Connector.view.module.StudyDataSets', {
             // Connector.constant.Templates.module.title,
             '<tpl if="!values.categories">',
                 '<div class="module">',
-                    '<p class="loading-data">Loading data...</p>',
+                    Connector.constant.Templates.module.loadingData,
                 '</div>',
             '</tpl>',
             '<tpl if="values.categories">',
@@ -76,9 +76,6 @@ Ext.define('Connector.view.module.StudyDataSets', {
                         me.update(data);
                     });
                 }
-                // record.getVariables(studyId, function(hasData) {
-                //     console.log("GV");
-                // })
             })
         }
 

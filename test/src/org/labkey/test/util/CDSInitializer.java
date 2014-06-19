@@ -47,7 +47,7 @@ public class CDSInitializer
     private void setupProject()
     {
         _test._containerHelper.createProject(_project, "Dataspace");
-        _test.enableModule(_project, "CDS");
+        _test._containerHelper.enableModule(_project, "CDS");
         _test.goToManageStudy();
         _test.clickAndWait(Locator.linkWithText("Change Study Properties"));
         _test.waitForElement(Ext4Helper.Locators.radiobutton(_test, "DATE"));
