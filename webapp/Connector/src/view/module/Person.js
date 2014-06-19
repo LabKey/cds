@@ -20,5 +20,10 @@ Ext.define('Connector.view.module.Person', {
                 '<tpl if="line3"><p>{line3}</p></tpl>',
                 '<tpl if="line4"><p>{line4}</p></tpl>',
             '</div>',
-        '</tpl>')
+        '</tpl>'),
+
+    hasContent : function() {
+        var data = this.data || this.initalConfig.data || {};
+        return !!data.name;
+    }
 });

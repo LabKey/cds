@@ -221,6 +221,7 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DataSet.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DataSetData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
@@ -228,6 +229,7 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DataSet.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DataSetData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
