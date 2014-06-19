@@ -31,7 +31,7 @@ Ext.define('Connector.view.module.ProductStudies', {
             onRows: [{ level: '[Study].[Name]' }],
             filter: [ {level : '[Subject].[Subject]', membersQuery: {
                 hierarchy: "[Vaccine.Type]",
-                members: ["[Vaccine.Type].["+product.get('Type')+"].[" + product.get('Label') + "]"],
+                members: ["[Vaccine.Type].["+(product.get('Type') || '#null')+"].[" + product.get('Label') + "]"],
             }}],
             success: function(slice) {
                 var cells = slice.cells, row;
