@@ -11,6 +11,8 @@ Ext.define('Connector.constant.ModuleViewsLookup', {
 	person: 'module.person',
 	contactcds: 'module.contactcds',
 	productheader: 'app.module.productheader',
+	productprovidedby: 'app.module.productprovidedby',
+	productmanufacturing: 'app.module.productmanufacturing',
 	productstudies: 'app.module.productstudies',
 	productotherproducts: 'app.module.productotherproducts',
 	studyheader: 'app.module.studyheader',
