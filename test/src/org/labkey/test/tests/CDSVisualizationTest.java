@@ -55,7 +55,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSVisualizationTest initTest = new CDSVisualizationTest();
 
         initTest.doCleanup(false);
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
         _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
         initTest.createParticipantGroups();

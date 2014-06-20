@@ -30,7 +30,7 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSLoginTest initTest = new CDSLoginTest();
 
         initTest.doCleanup(false);
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
         _initializer.setDesiredStudies(new String[] {"DemoSubset"});
         _initializer.setupDataspace();
         initTest._cds.enterApplication();
