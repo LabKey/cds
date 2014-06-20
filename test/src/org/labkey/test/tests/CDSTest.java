@@ -96,7 +96,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSTest initTest = new CDSTest();
 
         initTest.doCleanup(false);
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
         _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
 
