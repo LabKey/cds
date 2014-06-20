@@ -41,6 +41,18 @@ Ext.define('Connector.app.model.DataSet', {
 		});
     },
 
+    getAssayName : function() {
+        var id = this.get('Label');
+        var store = this.store.dataSetStores[id.value];
+        var assay;
+
+        store.each(function(record) {
+            assay = assay || record.get("Assay");
+        });
+
+        return assay;
+    },
+
     // Query variables etc for an assay named assayName. data param can be an existing object to append to, or if omitted the
     // data variable will be created. The callback will receive the updated data object once queries are complete.
     dataForAssayByName : function(assayName, data, callback) {

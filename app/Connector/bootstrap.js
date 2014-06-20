@@ -131,7 +131,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.ContactCDS": "../../webapp/Connector/src/view/module/ContactCDS.js",
   "Connector.view.module.Person": "../../webapp/Connector/src/view/module/Person.js",
   "Connector.view.module.ProductHeader": "../../webapp/Connector/src/app/view/module/ProductHeader.js",
+  "Connector.view.module.ProductManufacturing": "../../webapp/Connector/src/app/view/module/ProductManufacturing.js",
   "Connector.view.module.ProductOtherProducts": "../../webapp/Connector/src/app/view/module/ProductOtherProducts.js",
+  "Connector.view.module.ProductProvidedBy": "../../webapp/Connector/src/app/view/module/ProductProvidedBy.js",
   "Connector.view.module.ProductStudies": "../../webapp/Connector/src/app/view/module/ProductStudies.js",
   "Connector.view.module.StudyAssays": "../../webapp/Connector/src/app/view/module/StudyAssays.js",
   "Connector.view.module.StudyDataSets": "../../webapp/Connector/src/app/view/module/StudyDataSets.js",
@@ -284,7 +286,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.ContactCDS": [],
   "Connector.view.module.Person": [],
   "Connector.view.module.ProductHeader": [],
+  "Connector.view.module.ProductManufacturing": [],
   "Connector.view.module.ProductOtherProducts": [],
+  "Connector.view.module.ProductProvidedBy": [],
   "Connector.view.module.ProductStudies": [],
   "Connector.view.module.StudyAssays": [],
   "Connector.view.module.StudyDataSets": [],
@@ -1366,8 +1370,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.ProductHeader": [
     "widget.app.module.productheader"
   ],
+  "Connector.view.module.ProductManufacturing": [
+    "widget.app.module.productmanufacturing"
+  ],
   "Connector.view.module.ProductOtherProducts": [
     "widget.app.module.productotherproducts"
+  ],
+  "Connector.view.module.ProductProvidedBy": [
+    "widget.app.module.productprovidedby"
   ],
   "Connector.view.module.ProductStudies": [
     "widget.app.module.productstudies"
