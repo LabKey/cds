@@ -27,7 +27,7 @@ Ext.define('Connector.app.view.StudyProducts', {
                 '</div>',
             '</div>'
         ),
-        searchFields : ['Label', 'Description', 'Type', 'Class', 'Subclass', 'Developer']
+        searchFields : ['Label', 'Description', 'Type', 'Class', 'ProductSubclass', 'Developer']
     },
 
     tpl: new Ext.XTemplate(
@@ -44,7 +44,7 @@ Ext.define('Connector.app.view.StudyProducts', {
                         '<div class="study-date">',
                             '<span class="startdate-text">{Type}</span>',
                             '<span class="enddate-text">Class: <span style="color: black;">{Class}</span></span>',
-                            '<span class="enddate-text">Subclass: <span style="color: black;">{Subclass}</span></span>',
+                            '<span class="enddate-text">Subclass: <span style="color: black;">{ProductSubclass}</span></span>',
                         '</div>',
                         '<div class="study-treatments">{Developer}</div>',
                     '</div>',

@@ -156,18 +156,20 @@ Ext4.define('Connector.cube.Configuration', {
                     }, {
                         type: 'text',
                         staticData: {
-                            title: 'Product production'
-                        },
-                        modelData: {
-                            text: 'Production'
-                        }
-                    }, {
-                        type: 'text',
-                        staticData: {
                             title: 'Description'
                         },
                         modelData: {
                             text: 'Description'
+                        }
+                    }, {
+                        type: 'productprovidedby',
+                        staticData: {
+                            title: 'Product provided by'
+                        }
+                    }, {
+                        type: 'productmanufacturing',
+                        staticData: {
+                            title: 'Product manufacturing'
                         }
                     }], [{
                         type: 'productotherproducts',
@@ -254,15 +256,10 @@ Ext4.define('Connector.cube.Configuration', {
                         }]]
                     }
                 }, {
-                    label: 'Variables, Antigens, Analytes',
+                    label: 'Antigens, Analytes, Variables',
                     content: {
                         view: 'Connector.app.view.ModuleContainer',
                         modules: [[{
-                            type: 'assayvariablelist',
-                            staticData: {
-                                title: 'Variables'
-                            }
-                        }], [{
                             type: 'assayantigenlist',
                             staticData: {
                                 title: 'Antigens'
@@ -271,6 +268,11 @@ Ext4.define('Connector.cube.Configuration', {
                             type: 'assayanalytelist',
                             staticData: {
                                 title: 'Analytes'
+                            }
+                        }], [{
+                            type: 'assayvariablelist',
+                            staticData: {
+                                title: 'Variables'
                             }
                         }]]
                     }

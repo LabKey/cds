@@ -189,6 +189,8 @@
         <script path="Connector/src/app/view/module/AssayHeader.js"/>
         <script path="Connector/src/app/view/module/AssayVariableList.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
+        <script path="Connector/src/app/view/module/ProductManufacturing.js"/>
+        <script path="Connector/src/app/view/module/ProductProvidedBy.js"/>
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>

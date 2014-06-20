@@ -13,7 +13,7 @@ Ext.define('Connector.view.module.ProductStudies', {
         '<tpl><p>',
             Connector.constant.Templates.module.title,
             '<tpl if="!values.items">',
-                '<p class="loading-data">Loading data...</p>',
+                Connector.constant.Templates.module.loadingData,
             '</tpl>',
             '<tpl for="items">',
                 '<div class="item-row">',
@@ -31,7 +31,7 @@ Ext.define('Connector.view.module.ProductStudies', {
             onRows: [{ level: '[Study].[Name]' }],
             filter: [ {level : '[Subject].[Subject]', membersQuery: {
                 hierarchy: "[Vaccine.Type]",
-                members: ["[Vaccine.Type].["+product.get('Type')+"].[" + product.get('Label') + "]"],
+                members: ["[Vaccine.Type].["+(product.get('Type') || '#null')+"].[" + product.get('Label') + "]"],
             }}],
             success: function(slice) {
                 var cells = slice.cells, row;

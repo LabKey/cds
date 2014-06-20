@@ -13,7 +13,7 @@ Ext.define('Connector.view.module.StudyProducts', {
         '<tpl><p>',
             Connector.constant.Templates.module.title,
             '<tpl if="!values.items">',
-                '<p class="loading-data">Loading data...</p>',
+                Connector.constant.Templates.module.loadingData,
             '</tpl>',
             '<tpl for="items">',
                 '<div class="item-row">',

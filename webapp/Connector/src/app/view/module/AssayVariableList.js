@@ -12,9 +12,33 @@ Ext.define('Connector.view.module.AssayVariableList', {
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            'Variable data goes here',
-            // '<tpl if="model.get(\'Category\')"><p class="item-row">Category: {[values.model.get("Category")]}</p></tpl>',
+            '<tpl if="!values.variables">',
+                Connector.constant.Templates.module.loadingData,
+            '</tpl>',
+            '<tpl if="variables.key.length">',
+	            '<tpl if="showNames"><h4>RECOMMENDED</h4></tpl>',
+	            '<tpl for="variables.key">',
+		            '<p class="item-row">{label}</p>',
+	            '</tpl>',
+            '</tpl>',
+            '<tpl if="variables.other.length">',
+	            '<tpl if="showNames"><h4>ADDITIONAL</h4></tpl>',
+	            '<tpl for="variables.other">',
+		            '<p class="item-row">{label}</p>',
+	            '</tpl>',
+            '</tpl>',
         '</tpl>'),
+
+    assayDataLoaded : function(data) {
+    	// TEST:
+    	// if (data.variables.other.length && !data.variables.key.length) {
+    	// 	var v = data.variables.other.pop();
+    	// 	data.variables.key.push(v);
+    	// }
+		//console.log("DATA",data);
+		data.showNames = data.variables.key.length > 0;
+        this.update(data);
+    },
 
     initComponent : function() {
         var data = this.data;
@@ -25,14 +49,17 @@ Ext.define('Connector.view.module.AssayVariableList', {
         var assayName = data.model.get('Name');
 
         function dataSetsLoaded(store, records) {
+        	var assayData;
+        	var queryCount = records.length;
             Ext.each(records, function(record) {
-//                record.hasDataForAssayByName(assayName);
-
-                // record.getVariables(studyId, function(hasData) {
-                //     console.log("GV");
-                // })
-            })
-            me.update(data);
+                record.dataForAssayByName(assayName, assayData, Ext.bind(function(updatedData) {
+                	assayData = updatedData;
+                	if (--queryCount == 0) {
+                		data.variables = assayData.variables;
+                		this.assayDataLoaded(data);
+                	}
+                }, this));
+            }, this)
         }
 
         if (!store.data.length) {
@@ -41,7 +68,7 @@ Ext.define('Connector.view.module.AssayVariableList', {
             });
             store.load();
         } else {
-            dataSetsLoaded(store, store.data.items);
+            dataSetsLoaded.call(this, store, store.data.items);
         }
 
         this.callParent();

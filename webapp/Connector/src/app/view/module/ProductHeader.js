@@ -13,23 +13,9 @@ Ext.define('Connector.view.module.ProductHeader', {
         '<tpl>',
             '<tpl if="model.get(\'Type\')"><p class="item-row">Product Type: {[values.model.get("Type")]}</p></tpl>',
             '<tpl if="model.get(\'Class\')"><p class="item-row">Class: {[values.model.get("Class")]}</p></tpl>',
-            '<tpl if="model.get(\'Subclass\')"><p class="item-row">Subclass: {[values.model.get("Subclass")]}</p></tpl>',
+            '<tpl if="model.get(\'VectorClass\')"><p class="item-row">Vector Class: {[values.model.get("Class")]}</p></tpl>',
+            '<tpl if="model.get(\'Subclass\')"><p class="item-row">Subclass: {[values.model.get("ProductSubclass")]}</p></tpl>',
+            '<tpl if="model.get(\'Clades\')"><p class="item-row">Clades: {[values.model.get("Clades")]}</p></tpl>',
             '<tpl if="model.get(\'Inserts\')"><p class="item-row">Inserts: {[values.model.get("Inserts")]}</p></tpl>',
-        '</tpl>',
-    {
-        typeString : function(model) {
-            var phase = model.get('Phase');
-            var type = model.get('Type');
-//            var start = model.get('StartDate');
-//            var end = model.get('EndDate');
-            var s = '';
-            if (phase) {
-                s = "Phase " + phase + " ";
-            }
-            if (type) {
-                s += type;
-            }
-            return s;
-        }
-    })
+        '</tpl>')
 });

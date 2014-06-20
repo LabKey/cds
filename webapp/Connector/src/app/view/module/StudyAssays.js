@@ -13,7 +13,7 @@ Ext.define('Connector.view.module.StudyAssays', {
         '<tpl><p>',
             Connector.constant.Templates.module.title,
             '<tpl if="!values.assays">',
-                '<p class="loading-data">Loading data...</p>',
+                Connector.constant.Templates.module.loadingData,
             '</tpl>',
             '<tpl if="values.assays">',
                 Connector.constant.Templates.module.availableDataLegend,
