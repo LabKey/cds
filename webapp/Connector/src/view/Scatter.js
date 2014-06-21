@@ -1010,6 +1010,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestChartData : function(r) {
+        var filters = [];
         var config = {
             schemaName: r.schemaName,
             queryName: r.queryName,
@@ -1020,8 +1021,17 @@ Ext.define('Connector.view.Scatter', {
             scope: this
         };
 
+        if (this.measures[0] !== null && !this.isContinuousMeasure(this.measures[0])) {
+            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[0].name]));
+            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[1].name]));
+        }
+
         if (Ext.isArray(this.timeFilters)) {
-            config.filterArray = this.timeFilters;
+            filters = filters.concat(this.timeFilters);
+        }
+
+        if (filters.length > 0) {
+            config.filterArray = filters;
         }
 
         LABKEY.Query.selectRows(config);
