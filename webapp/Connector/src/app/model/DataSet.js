@@ -170,5 +170,5 @@ Ext.define('Connector.app.model.DataSet', {
         } else {
             callback(data);
         }
-]    }
+    }
 });
