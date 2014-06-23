@@ -15,6 +15,6 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            '',
+            '<p class="item-row">Data currently unavailable</p>',
         '</tpl>')
 });
