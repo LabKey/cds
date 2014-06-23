@@ -9,12 +9,16 @@ public class CDSInitializer
     private final CDSHelper _cds;
     private final String _project;
     private String[] _desiredStudies;
+    private final String[] _emails;
+    private final String[] _pictureFileNames;
 
-    public CDSInitializer(BaseWebDriverTest test, String projectName)
+    public CDSInitializer(BaseWebDriverTest test, String projectName, String[] emails, String[] pictureFileNames)
     {
         _test = test;
         _cds = new CDSHelper(_test);
         _project = projectName;
+        _emails = emails;
+        _pictureFileNames = pictureFileNames;
     }
 
     public void setDesiredStudies(String[] studies) {
@@ -94,6 +98,8 @@ public class CDSInitializer
         _test.setFormElement(Locator.name("quf_FeedURL"), CDSHelper.TEST_FEED);
         _test.clickButton("Submit");
         _test.assertTextPresent(CDSHelper.TEST_FEED);
+
+        createPersonPictureList(_emails, _pictureFileNames);
     }
 
     @LogMethod
@@ -131,5 +137,30 @@ public class CDSInitializer
         _test.assertElementPresent(Locator.linkWithText("MRNA"));
         _test.assertElementPresent(Locator.linkWithText("ADCC"));
         _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    @LogMethod
+    public void createPersonPictureList(String[] emails, String[] fileNames)
+    {
+        _test.goToProjectHome();
+        ListHelper listHelper = new ListHelper(_test);
+        ListHelper.ListColumn  personCol = new ListHelper.ListColumn("Person", "Person", ListHelper.ListColumnType.String, "Person Lookup", new ListHelper.LookupInfo(_project, "CDS", "People"));
+        ListHelper.ListColumn  pictureCol = new ListHelper.ListColumn("Picture", "Picture", ListHelper.ListColumnType.Attachment, "Picture");
+
+        listHelper.createList(_project, "PeoplePictures", ListHelper.ListColumnType.AutoInteger, "Key", personCol, pictureCol);
+        _test.goToManageLists();
+        _test.click(Locator.linkWithText("PeoplePictures"));
+
+        for (int i = 0; i < emails.length; i++) {
+            String email = emails[i];
+            String fileName = fileNames[i];
+
+            _test.clickButton("Insert New");
+            _test.selectOptionByText(Locator.name("quf_Person"), email);
+            _test.setFormElement(Locator.name("quf_Picture"), BaseWebDriverTest.getSampleData("/pictures/" + fileName));
+            _test.clickButton("Submit");
+        }
+
+        _test.goToProjectHome();
     }
 }
