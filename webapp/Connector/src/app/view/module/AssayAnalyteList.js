@@ -9,10 +9,10 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
 
     extend : 'Connector.view.module.BaseModule',
 
+    // TODO:
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            'Analyte data goes here',
-            // '<tpl if="model.get(\'Category\')"><p class="item-row">Category: {[values.model.get("Category")]}</p></tpl>',
+            '',
         '</tpl>')
 });

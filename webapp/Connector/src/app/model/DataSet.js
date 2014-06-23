@@ -55,12 +55,46 @@ Ext.define('Connector.app.model.DataSet', {
 
     // Query variables etc for an assay named assayName. data param can be an existing object to append to, or if omitted the
     // data variable will be created. The callback will receive the updated data object once queries are complete.
-    dataForAssayByName : function(assayName, data, callback) {
+    dataForAssayByName : function(assayName, data, options, callback) {
         data = data || {};
         data.variables = data.variables || {
             key: [],
             other: []
         };
+
+        if (options.antigens) {
+            data.antigens = data.antigens || [];
+        }
+
+        var antigenColumns = [];
+        var antigenColumnMeasures = [];
+
+        // If querying antigens, this function will be called once their columns names are loaded
+        function antigenColumnsLoaded() {
+            // Count the number of antigen queries
+            var waitingFor = antigenColumns.length;
+
+            if (waitingFor) {
+                Ext.each(antigenColumns, function(antigenColumn, index) {
+                    var measure = antigenColumnMeasures[index];
+                    var store = Ext.create('Connector.store.AssayDistinctValue', {
+                        schemaName: measure.schemaName,
+                        queryName: measure.queryName,
+                        colName: antigenColumn
+                    });
+                    store.on('load', function() {
+                        store.each(function(value) {
+                            data.antigens.push(value);
+                        });
+                        if (--waitingFor == 0) {
+                            callback(data);
+                        }
+                    });
+                });       
+            } else {
+                callback(data);
+            }
+        }
 
         var id = this.get('Label');
 
@@ -84,20 +118,57 @@ Ext.define('Connector.app.model.DataSet', {
                 },
                 success: function(response){
                     response = LABKEY.Utils.decode(response.response);
+                    
+                    var measureCount = 0;
+
                     Ext.each(response.measures, function(measure) {
-                        if (measure.isKeyVariable) {
-                            data.variables.key.push(measure);
-                        } else {
-                            data.variables.other.push(measure);
+                        if (measure.shownInDetailsView) {
+                            ++measureCount;
+                            if (measure.isKeyVariable) {
+                                data.variables.key.push(measure);
+                            } else {
+                                data.variables.other.push(measure);
+                            }
                         }
-                    })
-                    callback(data);
+                    });
+
+                    if (options.antigens && measureCount) {
+                        var waitingFor = measureCount;
+
+                        // Query antigen lookups for each measure
+                        Ext.each(response.measures, function(measure) {
+                            if (measure.shownInDetailsView) {
+                                LABKEY.Query.getQueryDetails({
+                                    schemaName: measure.schemaName,
+                                    queryName: measure.queryName,
+                                    scope: this,
+                                    success: function(response){
+                                        Ext.each(response.columns, function(col){
+
+                                            if (Ext.isDefined(col.lookup) && col.lookup.schemaName == 'CDS' && col.lookup.queryName == 'Antigens') {
+                                                if (antigenColumns.indexOf(col.name) < 0) {
+                                                    antigenColumns.push(col.name);
+                                                    antigenColumnMeasures.push(measure)
+                                                }
+                                            }
+                                        });
+
+                                        if (--waitingFor == 0) {
+                                            // All antigen column names have been loaded
+                                            antigenColumnsLoaded();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+
+                    } else {
+                        callback(data);
+                    }
                 }
             });
         } else {
             callback(data);
         }
-
-        return countForAssay > 0;
-    }
+]    }
 });

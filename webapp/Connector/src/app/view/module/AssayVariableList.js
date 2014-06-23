@@ -14,17 +14,20 @@ Ext.define('Connector.view.module.AssayVariableList', {
             Connector.constant.Templates.module.title,
             '<tpl if="!values.variables">',
                 Connector.constant.Templates.module.loadingData,
-            '</tpl>',
-            '<tpl if="variables.key.length">',
-	            '<tpl if="showNames"><h4>RECOMMENDED</h4></tpl>',
-	            '<tpl for="variables.key">',
-		            '<p class="item-row">{label}</p>',
+            '<tpl else>',
+	            '<tpl if="variables.key.length">',
+		            '<tpl if="showNames"><h4>RECOMMENDED</h4></tpl>',
+		            '<tpl for="variables.key">',
+			            '<p class="item-row">{label}</p>',
+		            '</tpl>',
 	            '</tpl>',
-            '</tpl>',
-            '<tpl if="variables.other.length">',
-	            '<tpl if="showNames"><h4>ADDITIONAL</h4></tpl>',
-	            '<tpl for="variables.other">',
-		            '<p class="item-row">{label}</p>',
+	            '<tpl if="variables.other.length">',
+		            '<tpl if="showNames"><h4>ADDITIONAL</h4></tpl>',
+		            '<tpl for="variables.other">',
+			            '<p class="item-row">{label}</p>',
+		            '</tpl>',
+		        '<tpl else>',
+		            '<p class="item-row">No antigens</p>',
 	            '</tpl>',
             '</tpl>',
         '</tpl>'),
@@ -35,7 +38,6 @@ Ext.define('Connector.view.module.AssayVariableList', {
     	// 	var v = data.variables.other.pop();
     	// 	data.variables.key.push(v);
     	// }
-		//console.log("DATA",data);
 		data.showNames = data.variables.key.length > 0;
         this.update(data);
     },
@@ -52,7 +54,7 @@ Ext.define('Connector.view.module.AssayVariableList', {
         	var assayData;
         	var queryCount = records.length;
             Ext.each(records, function(record) {
-                record.dataForAssayByName(assayName, assayData, Ext.bind(function(updatedData) {
+                record.dataForAssayByName(assayName, assayData, {}, Ext.bind(function(updatedData) {
                 	assayData = updatedData;
                 	if (--queryCount == 0) {
                 		data.variables = assayData.variables;
