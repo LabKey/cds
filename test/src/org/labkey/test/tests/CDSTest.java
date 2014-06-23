@@ -185,8 +185,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Validate News feed
         //
-        waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
-        assertTextPresentInThisOrder("08 May 2014", "09 Jan 2014", "16 Oct 2013");
+        // TODO: Uncomment this when we revert the demo_feed.xml change.
+//        waitForText("LabKey Software looks forward to sponsoring the Association of Independent Research Institutes");
+//        assertTextPresentInThisOrder("08 May 2014", "09 Jan 2014", "16 Oct 2013");
 
         //
         // Validate Groups
