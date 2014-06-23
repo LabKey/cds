@@ -5,6 +5,15 @@ div.learnview {
 }
 
 .module {
+  .groupheader {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-family: $bodycaps-font;
+    font-weight: bold;
+    padding: 8px 0px !important;
+    opacity: 0.5;
+  }
+
   h3 {
     padding-bottom: 8px;
     clear: both;
@@ -37,6 +46,20 @@ div.learnview {
   .item-row {
     min-height: 19px;
     padding: 2px 0px;
+
+  }
+
+  &.assaylist {
+    .item-row {
+
+      padding-left: 3px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $select-color;
+        color: $light-color;
+      }
+    }
   }
 }
 
@@ -165,3 +188,4 @@ div.study-treatments {
   float: right;
   margin: 12px 8px;
 }
+

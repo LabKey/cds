@@ -9,6 +9,8 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     extend : 'Connector.view.module.BaseModule',
 
+    cls : 'module assaylist',
+
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,

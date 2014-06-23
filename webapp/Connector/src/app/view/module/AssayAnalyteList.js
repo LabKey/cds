@@ -9,6 +9,8 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
 
     extend : 'Connector.view.module.BaseModule',
 
+    cls : 'module assaylist',
+
     // TODO:
     tpl : new Ext.XTemplate(
         '<tpl>',
