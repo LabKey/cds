@@ -9,6 +9,8 @@ Ext.define('Connector.view.module.AssayVariableList', {
 
     extend : 'Connector.view.module.BaseModule',
 
+    cls : 'module assaylist',
+
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
@@ -16,18 +18,18 @@ Ext.define('Connector.view.module.AssayVariableList', {
                 Connector.constant.Templates.module.loadingData,
             '<tpl else>',
 	            '<tpl if="variables.key.length">',
-		            '<tpl if="showNames"><h4>RECOMMENDED</h4></tpl>',
+		            '<tpl if="showNames"><p class="groupheader">Recommended</p></tpl>',
 		            '<tpl for="variables.key">',
-			            '<p class="item-row">{label}</p>',
+                        '<p class="item-row interactive">{label}</p>',
 		            '</tpl>',
 	            '</tpl>',
 	            '<tpl if="variables.other.length">',
-		            '<tpl if="showNames"><h4>ADDITIONAL</h4></tpl>',
+		            '<tpl if="showNames"><p class="groupheader">Additional</p></tpl>',
 		            '<tpl for="variables.other">',
-			            '<p class="item-row">{label}</p>',
+			            '<p class="item-row interactive">{label}</p>',
 		            '</tpl>',
 		        '<tpl else>',
-		            '<p class="item-row">No antigens</p>',
+                    '<p class="item-row">Data currently unavailable</p>',
 	            '</tpl>',
             '</tpl>',
         '</tpl>'),

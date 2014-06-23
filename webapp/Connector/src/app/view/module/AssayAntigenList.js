@@ -9,6 +9,8 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     extend : 'Connector.view.module.BaseModule',
 
+    cls : 'module assaylist',
+
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
@@ -17,10 +19,10 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 	        '<tpl else>',
 	            '<tpl if="values.antigens.length">',
 		            '<tpl for="antigens">',
-			            '<p class="item-row">{[values.get("Name")]}</p>',
+			            '<p class="item-row interactive">{[values.get("Name")]}</p>',
 		            '</tpl>',
 		        '<tpl else>',
-		            '<p class="item-row">No antigens</p>',
+		            '<p class="item-row">No or unknown data</p>',
 	            '</tpl>',
             '</tpl>',
         '</tpl>'),

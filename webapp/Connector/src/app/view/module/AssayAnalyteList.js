@@ -9,10 +9,12 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
 
     extend : 'Connector.view.module.BaseModule',
 
+    cls : 'module assaylist',
+
     // TODO:
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            '',
+            '<p class="item-row">Data currently unavailable</p>',
         '</tpl>')
 });
