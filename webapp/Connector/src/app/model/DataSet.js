@@ -42,7 +42,7 @@ Ext.define('Connector.app.model.DataSet', {
     },
 
     getAssayName : function() {
-        var id = this.get('Label');
+        var id = this.get('Name');
         var store = this.store.dataSetStores[id.value];
         var assay;
 
@@ -96,7 +96,7 @@ Ext.define('Connector.app.model.DataSet', {
             }
         }
 
-        var id = this.get('Label');
+        var id = this.get('Name');
 
         var store = this.store.dataSetStores[id.value];
 
