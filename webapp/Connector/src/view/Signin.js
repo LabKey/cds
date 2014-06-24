@@ -37,7 +37,7 @@ Ext.define('Connector.view.SigninForm', {
 		        	'<input id="rememberMeCheck" {[this.rememberEmailCheckedAttr(values)]} {[this.disabledAttr(values)]} type="checkbox" style="float: left;"/>',
 		            '<div style="padding-left: 30px; padding-bottom: 5px;">',
 		            	'<div>Remember my email address</div>',
-		            	'<a href="/labkey/login/home/resetPassword.view">Forgot your password?</a>',
+		            	'<a href="' + LABKEY.contextPath + '/login/home/resetPassword.view">Forgot your password?</a>',
 		            '</div>',
 		            '<tpl if="error">',
 		            	'<p class="errormsg">',
