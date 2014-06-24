@@ -99,7 +99,7 @@ public class CDSInitializer
         _test.clickButton("Submit");
         _test.assertTextPresent(CDSHelper.TEST_FEED);
 
-        createPersonPictureList(_emails, _pictureFileNames);
+        createPeoplePictureList(_emails, _pictureFileNames);
     }
 
     @LogMethod
@@ -140,7 +140,7 @@ public class CDSInitializer
     }
 
     @LogMethod
-    public void createPersonPictureList(String[] emails, String[] fileNames)
+    public void createPeoplePictureList(String[] emails, String[] fileNames)
     {
         _test.goToProjectHome();
         ListHelper listHelper = new ListHelper(_test);
