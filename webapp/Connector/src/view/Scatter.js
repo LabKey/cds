@@ -772,6 +772,13 @@ Ext.define('Connector.view.Scatter', {
                         sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.colName, yMax);
                     }
 
+                    // plot brushing filters need to include the antigen selection if this is a pivoted query
+                    if (requiresPivot && xMeasure.options.antigen.name == yMeasure.options.antigen.name)
+                    {
+                        var antigens = xMeasure.options.antigen.values.concat(yMeasure.options.antigen.values);
+                        sqlFilters.push(new LABKEY.Query.Filter.In(yMeasure.options.antigen.name, antigens));
+                    }
+
                     Connector.model.Filter.sqlToMdx({
                         schemaName: requiresPivot ? yMeasure.schemaName : config.schemaName,
                         queryName: requiresPivot ? yMeasure.queryName : config.queryName,
@@ -2290,7 +2297,7 @@ Ext.define('Connector.view.Scatter', {
                 schemaName: firstMeasure.schemaName
             });
             sorts.push({
-                name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+                name: Connector.studyContext.subjectVisitColumn + '/sequencenum',
                 queryName: firstMeasure.queryName,
                 schemaName: firstMeasure.schemaName
             });
@@ -2303,7 +2310,7 @@ Ext.define('Connector.view.Scatter', {
                schemaName: this.defaultSortSchema
            });
            sorts.push({
-               name: Connector.studyContext.subjectVisitColumn + '/VisitDate',
+               name: Connector.studyContext.subjectVisitColumn + '/sequencenum',
                queryName: this.defaultSortQuery,
                schemaName: this.defaultSortSchema
            });
