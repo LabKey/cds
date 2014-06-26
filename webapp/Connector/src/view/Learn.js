@@ -198,8 +198,7 @@ Ext.define('Connector.view.Learn', {
                         members: [{ uniqueName: '['+dimension.singularName+'].['+model.get('Label')+']' }],
                         // "[Study].[Name]"
                         level: "["+dimension.singularName + "].[Name]",
-                        operator: "OR",
-                        isGroup: false
+                        operator: "OR"
                     }];
                     this.state.addSelection(selections, false, true, true);
                 }, this);

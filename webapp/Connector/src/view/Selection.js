@@ -76,9 +76,6 @@ Ext.define('Connector.view.Selection', {
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
                     return isGrid && !isPlot;
                 },
-                isGroup : function(values) {
-                    return (Ext.isArray(values.filters) ? true : false);
-                },
                 isPlot : function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;

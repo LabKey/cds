@@ -35,10 +35,6 @@ Ext.define('Connector.controller.State', {
         }
     },
 
-    getFilterGroupModelName : function() {
-        return 'Connector.model.FilterGroup';
-    },
-
     getFilterModelName : function() {
         return 'Connector.model.Filter';
     }
