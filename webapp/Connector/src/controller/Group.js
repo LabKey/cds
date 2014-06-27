@@ -271,7 +271,7 @@ Ext.define('Connector.controller.Group', {
             // Retrieve the listing of participants matching group filters
             //
             var filterModels = LABKEY.app.model.Filter.fromJSON(group.filters);
-            var olapFilters = LABKEY.app.model.Filter.getOlapFilters(filterModels, state.subjectName);
+            var olapFilters = LABKEY.app.model.Filter.getOlapFilters(mdx, filterModels, state.subjectName);
             mdx.setNamedFilter('groupfilter', olapFilters);
             mdx.queryParticipantList({
                 useNamedFilters: ['groupfilter'],
