@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 /* Models an RSS <item> element. See http://www.w3schools.com/rss/rss_item.asp */
 Ext.define('Connector.model.RSSItem', {
     extend: 'Ext.data.Model',

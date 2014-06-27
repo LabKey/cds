@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 Connector.view.StudyAxis = function(){
     var canvas = null, width, height, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             visitMouseover, visitMouseout, visitMouseoverScope, visitMouseoutScope, tagMouseover, tagMouseout,
