@@ -32,7 +32,6 @@ Ext.define('Connector.model.Filter', {
                     var mdxFilterConfig = {
                         isGrid: true, // TODO: rename to isSQL
                         isPlot: true,
-                        isGroup: false,
                         hierarchy: "Subject",
                         gridFilter: config.sqlFilters, // TODO: rename to sqlFilters
                         plotMeasures: config.measures,

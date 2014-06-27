@@ -150,8 +150,8 @@ Ext.define('Connector.controller.FilterStatus', {
             }
             else if (filterOrDetail.$className === "Connector.model.Filter") {
 
-                if (filterOrDetail.isGrid() || filterOrDetail.isGroup()) {
-                    console.log('Grid/Group filters not yet supported.');
+                if (filterOrDetail.isGrid()) {
+                    console.log('Grid filters not yet supported.');
                     return;
                 }
                 else if (filterOrDetail.isPlot()) {

@@ -42,9 +42,5 @@ Ext.define('Connector.model.FilterGroup', {
         if (this.data.label)
             return this.data.label;
         return this.data.name;
-    },
-
-    isGroup : function() {
-        return true;
     }
 });
