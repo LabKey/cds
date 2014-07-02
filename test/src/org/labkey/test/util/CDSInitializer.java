@@ -115,6 +115,17 @@ public class CDSInitializer
         _test.assertTextPresent(CDSHelper.TEST_FEED);
 
         createPeoplePictureList(_emails, _pictureFileNames);
+
+        _test.goToSchemaBrowser();
+        _test.selectQuery("study", "StudyDesignAssays");
+        _test.waitAndClickAndWait(Locator.linkWithText("edit metadata"));
+
+        MetadataEditorHelper editor = new MetadataEditorHelper(_test);
+
+        _test._listHelper.setColumnType(editor.getFieldIndexForName("LabPI"), new ListHelper.LookupInfo(null, "CDS", "People"));
+        _test._listHelper.setColumnType(editor.getFieldIndexForName("Contact"), new ListHelper.LookupInfo(null, "CDS", "People"));
+        _test._listHelper.setColumnType(editor.getFieldIndexForName("LeadContributor"), new ListHelper.LookupInfo(null, "CDS", "People"));
+        editor.save();
     }
 
     @LogMethod
