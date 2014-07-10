@@ -1,0 +1,7 @@
+CohortId	TreatmentId	VisitId	cohortId.label	visitId.sequenceNumMin
+243	1	33437	Positive	0.0
+242	2	33437	Negative	0.0
+243	1	33439	Positive	60.0
+242	3	33439	Negative	60.0
+243	1	33986	Positive	
+242	2	33986	Negative	

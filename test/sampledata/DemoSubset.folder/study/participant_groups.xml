@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<participantGroups xmlns="http://labkey.org/study/xml/participantGroups">
+  <participantCategory label="DemoStudy" type="list" autoUpdate="false" datasetId="0">
+    <group label="DemoStudy" categoryLabel="DemoStudy">
+      <participantId>249318596</participantId>
+      <participantId>249320107</participantId>
+      <participantId>249320127</participantId>
+      <participantId>249320489</participantId>
+      <participantId>249320897</participantId>
+      <participantId>249325717</participantId>
+    </group>
+  </participantCategory>
+</participantGroups>

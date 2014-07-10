@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<participantGroups xmlns="http://labkey.org/study/xml/participantGroups">
+  <participantCategory label="NotRV144" type="list" autoUpdate="false" datasetId="0">
+    <group label="NotRV144" categoryLabel="NotRV144">
+      <participantId>1</participantId>
+      <participantId>105</participantId>
+      <participantId>2</participantId>
+      <participantId>3</participantId>
+      <participantId>4</participantId>
+      <participantId>5</participantId>
+    </group>
+  </participantCategory>
+</participantGroups>

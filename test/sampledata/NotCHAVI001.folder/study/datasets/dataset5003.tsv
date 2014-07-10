@@ -1,0 +1,13 @@
+SubjectId	date	QCStateLabel	hivinf	Country	Height	Sex	Group	Comments	Race	EnrolledClinicalSite	prot	rx	rx_code	arm	age	bmi	baseline_ad5_titer	circumcised	hivcutoffday	randomization	per_protocol	ad5_grp	bmi_grp	species	SequenceNum
+3001	2012-03-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1.0
+3002	2011-12-05 00:00:00.0		infected	USA		f			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1.0
+3003	2011-07-04 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1.0
+3004	2011-08-03 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1.0
+3005	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1.0
+3006	2011-09-18 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1.0
+3007	2011-10-29 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1.0
+3008	2011-12-03 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1.0
+3009	2011-07-12 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1.0
+3010	2012-02-01 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1.0
+3011	2011-06-01 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1.0
+3012	2011-11-21 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1.0

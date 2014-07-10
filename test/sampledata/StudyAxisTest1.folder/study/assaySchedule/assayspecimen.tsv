@@ -1,0 +1,5 @@
+RowId	AssayName	Description	LocationId	Source	TubeType	Lab	SampleType
+221	ADCC-Ferrari	ADCC-Ferrari				Ferrari	
+222	Luminex-Sample-LabKey	Luminex-Sample				Arnold/Bellew Lab	
+223	mRNA assay	MRNA assay				LabKey Lab	
+224	NAb-Sample-LabKey	NAb-Sample-LabKey				Lum's Lab	

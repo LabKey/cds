@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<visitMap xmlns="http://labkey.org/study/xml">
+  <visit label="Month 1" sequenceNum="0.0" maxSequenceNum="29.0" protocolDay="0.0" sequenceNumHandling="normal"/>
+  <visit label="Month 2" sequenceNum="30.0" maxSequenceNum="59.0" protocolDay="30.0" sequenceNumHandling="normal"/>
+  <visit label="Month 3" sequenceNum="60.0" maxSequenceNum="89.0" protocolDay="60.0" sequenceNumHandling="normal"/>
+  <visit label="Month 4" sequenceNum="90.0" maxSequenceNum="119.0" protocolDay="90.0" sequenceNumHandling="normal"/>
+  <visit label="Month 5" sequenceNum="120.0" maxSequenceNum="149.0" protocolDay="120.0" sequenceNumHandling="normal"/>
+  <visit label="Month 6" sequenceNum="150.0" maxSequenceNum="179.0" protocolDay="150.0" sequenceNumHandling="normal"/>
+  <visit label="Month 7" sequenceNum="180.0" maxSequenceNum="209.0" protocolDay="180.0" sequenceNumHandling="normal"/>
+  <visit label="Month 8" sequenceNum="210.0" maxSequenceNum="239.0" protocolDay="210.0" sequenceNumHandling="normal"/>
+  <visit label="Month 9" sequenceNum="240.0" maxSequenceNum="269.0" protocolDay="240.0" sequenceNumHandling="normal"/>
+  <visit label="Month 11" sequenceNum="300.0" maxSequenceNum="329.0" protocolDay="300.0" sequenceNumHandling="normal">
+    <visitTags>
+      <visitTag name="day0"/>
+    </visitTags>
+  </visit>
+  <visit label="Month 12" sequenceNum="330.0" maxSequenceNum="359.0" protocolDay="330.0" sequenceNumHandling="normal">
+    <visitTags>
+      <visitTag name="firstvaccination" cohort="Positive"/>
+      <visitTag name="firstvaccination" cohort="Negative"/>
+    </visitTags>
+  </visit>
+  <visit label="Month 13" sequenceNum="360.0" maxSequenceNum="389.0" protocolDay="360.0" sequenceNumHandling="normal">
+    <visitTags>
+      <visitTag name="finalvaccination" cohort="Positive"/>
+    </visitTags>
+  </visit>
+  <visit label="Month 14" sequenceNum="390.0" maxSequenceNum="419.0" protocolDay="390.0" sequenceNumHandling="normal"/>
+  <visit label="Month 15" sequenceNum="420.0" maxSequenceNum="449.0" protocolDay="420.0" sequenceNumHandling="normal">
+    <visitTags>
+      <visitTag name="peakimmunogenicity"/>
+    </visitTags>
+  </visit>
+  <visit label="Month 16" sequenceNum="450.0" maxSequenceNum="479.0" protocolDay="450.0" sequenceNumHandling="normal"/>
+  <visit label="Month 17" sequenceNum="480.0" maxSequenceNum="509.0" protocolDay="480.0" sequenceNumHandling="normal"/>
+  <visit label="Month 18" sequenceNum="510.0" maxSequenceNum="539.0" protocolDay="510.0" sequenceNumHandling="normal"/>
+  <visit label="Month 19" sequenceNum="540.0" maxSequenceNum="569.0" protocolDay="540.0" sequenceNumHandling="normal"/>
+  <visit label="Month 20" sequenceNum="570.0" maxSequenceNum="599.0" protocolDay="570.0" sequenceNumHandling="normal"/>
+  <visit label="Month 21" sequenceNum="600.0" maxSequenceNum="629.0" protocolDay="600.0" sequenceNumHandling="normal"/>
+  <visit label="Month 22" sequenceNum="630.0" maxSequenceNum="659.0" protocolDay="630.0" sequenceNumHandling="normal"/>
+  <visit label="Month 23" sequenceNum="660.0" maxSequenceNum="689.0" protocolDay="660.0" sequenceNumHandling="normal">
+    <visitTags>
+      <visitTag name="finalvaccination" cohort="Negative"/>
+    </visitTags>
+  </visit>
+  <visit label="Month 24" sequenceNum="690.0" maxSequenceNum="719.0" protocolDay="690.0" sequenceNumHandling="normal"/>
+  <visit label="Month 25" sequenceNum="720.0" maxSequenceNum="749.0" protocolDay="720.0" sequenceNumHandling="normal"/>
+  <visitTag name="peakimmunogenicity" caption="Predicted peak immunogenicity visit" singleUse="true"/>
+  <visitTag name="finalvaccination" caption="Final Vaccination" singleUse="true"/>
+  <visitTag name="day0" caption="Day 0 (meaning varies)" singleUse="true"/>
+  <visitTag name="finalvisit" caption="Final visit" singleUse="true"/>
+  <visitTag name="notsingleuse" caption="Not Single Use Tag" singleUse="false"/>
+  <visitTag name="firstvaccination" caption="First Vaccination" singleUse="true"/>
+</visitMap>

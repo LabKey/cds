@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables xmlns="http://labkey.org/data/xml">
+  <table tableName="NAb" tableDbType="TABLE">
+    <description>Contains up to one row of NAb data for each Participant/visit/VirusName combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="Run">
+        <datatype>integer</datatype>
+        <columnTitle>Run</columnTitle>
+        <measure>false</measure>
+      </column>
+      <column columnName="Concentration Units">
+        <datatype>varchar</datatype>
+        <columnTitle>Concentration Units</columnTitle>
+      </column>
+      <column columnName="AUC">
+        <datatype>double</datatype>
+        <columnTitle>AUC</columnTitle>
+        <description>The area under the curve.</description>
+      </column>
+      <column columnName="CurveIC50">
+        <datatype>double</datatype>
+        <columnTitle>Curve IC50</columnTitle>
+        <description>The IC50 curve.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="CurveIC80">
+        <datatype>double</datatype>
+        <columnTitle>Curve IC80</columnTitle>
+        <description>The IC80 curve.</description>
+      </column>
+      <column columnName="FitError">
+        <datatype>double</datatype>
+        <columnTitle>Fit Error</columnTitle>
+        <description>The error of the fit.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="PointIC50">
+        <datatype>double</datatype>
+        <columnTitle>Point IC50</columnTitle>
+        <description>The point for IC50.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="PointIC80">
+        <datatype>double</datatype>
+        <columnTitle>Point IC80</columnTitle>
+        <description>The point for IC80.</description>
+      </column>
+      <column columnName="PositiveAUC">
+        <datatype>double</datatype>
+        <columnTitle>Positive AUC</columnTitle>
+        <description>If the AUC is positive.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="FitMethod">
+        <datatype>varchar</datatype>
+        <columnTitle>Fit Method</columnTitle>
+        <description>The method used for curve fitting.</description>
+      </column>
+      <column columnName="VirusName">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus Name</columnTitle>
+        <description>The name of the virus.</description>
+        <fk>
+          <fkFolderPath>/CDSTest Project</fkFolderPath>
+          <fkDbSchema>CDS</fkDbSchema>
+          <fkTable>Antigens</fkTable>
+          <fkColumnName>Id</fkColumnName>
+        </fk>
+        <isKeyField>true</isKeyField>
+      </column>
+      <column columnName="AssayTarget">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay Target</columnTitle>
+        <description>What the assay is targeting.</description>
+      </column>
+      <column columnName="Lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignLabs</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="Assay">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignAssays</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="Source">
+        <datatype>varchar</datatype>
+        <columnTitle>Source</columnTitle>
+        <fk>
+          <fkFolderPath>/CDSTest Project</fkFolderPath>
+          <fkDbSchema>CDS</fkDbSchema>
+          <fkTable>Citable</fkTable>
+          <fkColumnName>URI</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="ID80">
+        <datatype>integer</datatype>
+        <columnTitle>ID80</columnTitle>
+      </column>
+      <column columnName="ID50">
+        <datatype>integer</datatype>
+        <columnTitle>ID50</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>NAb</tableTitle>
+  </table>
+  <table tableName="Luminex" tableDbType="TABLE">
+    <description>Contains up to one row of Luminex data for each Participant/visit combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="Type">
+        <datatype>varchar</datatype>
+        <columnTitle>Type</columnTitle>
+      </column>
+      <column columnName="Well">
+        <datatype>varchar</datatype>
+        <columnTitle>Well</columnTitle>
+      </column>
+      <column columnName="Antigen">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen</columnTitle>
+        <fk>
+          <fkFolderPath>/CDSTest Project</fkFolderPath>
+          <fkDbSchema>CDS</fkDbSchema>
+          <fkTable>Antigens</fkTable>
+          <fkColumnName>Id</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="Description">
+        <datatype>varchar</datatype>
+        <columnTitle>Description</columnTitle>
+      </column>
+      <column columnName="Specimen ID">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimen ID</columnTitle>
+      </column>
+      <column columnName="Dilution">
+        <datatype>double</datatype>
+        <columnTitle>Dilution</columnTitle>
+        <description>Dilution used.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="IL-2-FI">
+        <datatype>double</datatype>
+        <columnTitle>IL-2-FI</columnTitle>
+        <description>A field with IL-2-FI information.</description>
+      </column>
+      <column columnName="IL-2-FI-FIBackground">
+        <datatype>double</datatype>
+        <columnTitle>IL-2-FI-FIBackground</columnTitle>
+      </column>
+      <column columnName="IL-2-FI-StdDev">
+        <datatype>double</datatype>
+        <columnTitle>IL-2-FI-Std Dev</columnTitle>
+        <description>Standard deviation for IL-2-FI.</description>
+      </column>
+      <column columnName="IL-2-FI-ObsConc">
+        <datatype>double</datatype>
+        <columnTitle>IL-2-FI-Obs Conc</columnTitle>
+      </column>
+      <column columnName="IL-2-FI-ConcInRange">
+        <datatype>double</datatype>
+        <columnTitle>IL-2-FI-Conc In Range</columnTitle>
+        <description>Concentration in range for IL-2-FI.</description>
+      </column>
+      <column columnName="IL-10-FI">
+        <datatype>double</datatype>
+        <columnTitle>IL-10-FI</columnTitle>
+      </column>
+      <column columnName="IL-10-FI-FIBackground">
+        <datatype>double</datatype>
+        <columnTitle>IL-10-FI-FIBackground</columnTitle>
+      </column>
+      <column columnName="IL-10-FI-StdDev">
+        <datatype>double</datatype>
+        <columnTitle>IL-10-FI-Std Dev</columnTitle>
+        <description>Standard deviation for IL-10-FI</description>
+      </column>
+      <column columnName="IL-10-FI-ObsConc">
+        <datatype>double</datatype>
+        <columnTitle>IL-10-FI-Obs Conc</columnTitle>
+      </column>
+      <column columnName="IL-10-FI-ConcInRange">
+        <datatype>double</datatype>
+        <columnTitle>IL-10-FI-Conc In Range</columnTitle>
+      </column>
+      <column columnName="TNF-alpha-FI">
+        <datatype>double</datatype>
+        <columnTitle>TNF-alpha-FI</columnTitle>
+      </column>
+      <column columnName="TNF-alpha-FI-FIBackground">
+        <datatype>double</datatype>
+        <columnTitle>TNF-alpha-FI-FIBackground</columnTitle>
+        <description>Background for TNF-alpha-FI</description>
+      </column>
+      <column columnName="TNF-alpha-FI-StdDev">
+        <datatype>double</datatype>
+        <columnTitle>TNF-alpha-FI-Std Dev</columnTitle>
+      </column>
+      <column columnName="TNF-alpha-FI-ObsConc">
+        <datatype>double</datatype>
+        <columnTitle>TNF-alpha-FI-Obs Conc</columnTitle>
+        <description>Concentration in range for TNF-alpha-FI</description>
+      </column>
+      <column columnName="TNF-alpha-FI-ConcInRange">
+        <datatype>double</datatype>
+        <columnTitle>TNF-alpha-FI-Conc In Range</columnTitle>
+      </column>
+      <column columnName="Lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignLabs</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="Assay">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignAssays</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+    </columns>
+    <tableTitle>Luminex</tableTitle>
+  </table>
+  <table tableName="Demographics" tableDbType="TABLE">
+    <description>Contains up to one row of Demographics data for each Participant combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="hivinf">
+        <datatype>varchar</datatype>
+        <columnTitle>HIV Infection Status</columnTitle>
+      </column>
+      <column columnName="Country">
+        <datatype>varchar</datatype>
+        <columnTitle>Country</columnTitle>
+      </column>
+      <column columnName="Height">
+        <datatype>integer</datatype>
+        <columnTitle>Height</columnTitle>
+      </column>
+      <column columnName="Sex">
+        <datatype>varchar</datatype>
+        <columnTitle>Sex</columnTitle>
+      </column>
+      <column columnName="Group">
+        <datatype>varchar</datatype>
+        <columnTitle>Group</columnTitle>
+      </column>
+      <column columnName="Comments">
+        <datatype>varchar</datatype>
+        <columnTitle>Comments</columnTitle>
+      </column>
+      <column columnName="Race">
+        <datatype>varchar</datatype>
+        <columnTitle>Race</columnTitle>
+      </column>
+      <column columnName="EnrolledClinicalSite">
+        <datatype>varchar</datatype>
+        <columnTitle>EnrolledClinicalSite</columnTitle>
+        <fk>
+          <fkFolderPath>/CDSTest Project</fkFolderPath>
+          <fkDbSchema>CDS</fkDbSchema>
+          <fkTable>Sites</fkTable>
+          <fkColumnName>Id</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="prot">
+        <datatype>varchar</datatype>
+        <columnTitle>Protocol Code</columnTitle>
+      </column>
+      <column columnName="rx">
+        <datatype>varchar</datatype>
+        <columnTitle>Prime Product and Schedule</columnTitle>
+      </column>
+      <column columnName="rx_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Treatment Arm</columnTitle>
+      </column>
+      <column columnName="arm">
+        <datatype>varchar</datatype>
+        <columnTitle>Treatment</columnTitle>
+      </column>
+      <column columnName="age">
+        <datatype>integer</datatype>
+        <columnTitle>Age at Enrollment</columnTitle>
+      </column>
+      <column columnName="bmi">
+        <datatype>double</datatype>
+        <columnTitle>BMI at Enrollment</columnTitle>
+      </column>
+      <column columnName="baseline_ad5_titer">
+        <datatype>double</datatype>
+        <columnTitle>Baseline Ad5 Titer</columnTitle>
+      </column>
+      <column columnName="circumcised">
+        <datatype>varchar</datatype>
+        <columnTitle>Circumcision Status</columnTitle>
+      </column>
+      <column columnName="hivcutoffday">
+        <datatype>integer</datatype>
+        <columnTitle>Day of HIV Cutoff</columnTitle>
+      </column>
+      <column columnName="randomization">
+        <datatype>varchar</datatype>
+        <columnTitle>Randomization to Vaccine or Placebo</columnTitle>
+      </column>
+      <column columnName="per_protocol">
+        <datatype>varchar</datatype>
+        <columnTitle>Protocol Completion</columnTitle>
+      </column>
+      <column columnName="ad5_grp">
+        <datatype>varchar</datatype>
+        <columnTitle>Baseline Ad5 Titer Category</columnTitle>
+      </column>
+      <column columnName="bmi_grp">
+        <datatype>varchar</datatype>
+        <columnTitle>Baseline BMI Category</columnTitle>
+      </column>
+      <column columnName="species">
+        <datatype>varchar</datatype>
+        <columnTitle>Species</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Demographics</tableTitle>
+  </table>
+  <table tableName="HIV Test Results" tableDbType="TABLE">
+    <description>Contains up to one row of HIV Test Results data for each Participant/visit combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="HIVStdAntibody">
+        <datatype>varchar</datatype>
+        <columnTitle>HIVStd Antibody</columnTitle>
+      </column>
+      <column columnName="HIVRapidTest">
+        <datatype>varchar</datatype>
+        <columnTitle>HIVRapid Test</columnTitle>
+      </column>
+      <column columnName="HIVLoadQuant">
+        <datatype>integer</datatype>
+        <columnTitle>HIVLoad Quant</columnTitle>
+      </column>
+      <column columnName="HIVLoadIneq">
+        <datatype>varchar</datatype>
+        <columnTitle>HIVLoad Ineq</columnTitle>
+      </column>
+      <column columnName="HIVLoadQual">
+        <datatype>varchar</datatype>
+        <columnTitle>HIVLoad Qual</columnTitle>
+      </column>
+      <column columnName="HIVWestern">
+        <datatype>varchar</datatype>
+        <columnTitle>HIVWestern</columnTitle>
+      </column>
+      <column columnName="HIVSourceLab">
+        <datatype>varchar</datatype>
+        <columnTitle>HIVSource Lab</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>HIV Test Results</tableTitle>
+  </table>
+  <table tableName="Physical Exam" tableDbType="TABLE">
+    <description>Contains up to one row of Physical Exam data for each Participant/visit combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="SystolicBloodPressure">
+        <datatype>integer</datatype>
+        <columnTitle>Systolic Blood Pressure</columnTitle>
+      </column>
+      <column columnName="Weight_kg">
+        <datatype>integer</datatype>
+        <columnTitle>Weight Kg</columnTitle>
+      </column>
+      <column columnName="Respirations">
+        <datatype>integer</datatype>
+        <columnTitle>Respirations</columnTitle>
+      </column>
+      <column columnName="Temp_C">
+        <datatype>double</datatype>
+        <columnTitle>Temp C</columnTitle>
+      </column>
+      <column columnName="Pulse">
+        <datatype>integer</datatype>
+        <columnTitle>Pulse</columnTitle>
+      </column>
+      <column columnName="DiastolicBloodPressure">
+        <datatype>integer</datatype>
+        <columnTitle>Diastolic Blood Pressure</columnTitle>
+      </column>
+      <column columnName="Pregnancy">
+        <datatype>boolean</datatype>
+        <columnTitle>Pregnancy</columnTitle>
+      </column>
+      <column columnName="Language">
+        <datatype>varchar</datatype>
+        <columnTitle>Language</columnTitle>
+      </column>
+      <column columnName="Signature">
+        <datatype>integer</datatype>
+        <columnTitle>Signature</columnTitle>
+      </column>
+      <column columnName="Source">
+        <datatype>varchar</datatype>
+        <columnTitle>Source</columnTitle>
+        <fk>
+          <fkFolderPath>/CDSTest Project</fkFolderPath>
+          <fkDbSchema>CDS</fkDbSchema>
+          <fkTable>Citable</fkTable>
+          <fkColumnName>URI</fkColumnName>
+        </fk>
+      </column>
+    </columns>
+    <tableTitle>Physical Exam</tableTitle>
+  </table>
+  <table tableName="Lab Results" tableDbType="TABLE">
+    <description>Contains up to one row of Lab Results data for each Participant/visit combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="cohort">
+        <datatype>varchar</datatype>
+        <columnTitle>Cohort</columnTitle>
+      </column>
+      <column columnName="Lymphocytes">
+        <datatype>integer</datatype>
+        <columnTitle>Lymphocytes</columnTitle>
+      </column>
+      <column columnName="CD4">
+        <datatype>integer</datatype>
+        <columnTitle>CD4</columnTitle>
+      </column>
+      <column columnName="Hemoglobin">
+        <datatype>double</datatype>
+        <columnTitle>Hemoglobin</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Lab Results</tableTitle>
+  </table>
+  <table tableName="MRNA" tableDbType="TABLE">
+    <description>Contains up to one row of MRNA data for each Participant/visit combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="CCR1">
+        <datatype>double</datatype>
+        <columnTitle>CCR1</columnTitle>
+        <description>Expression levels for CCR1</description>
+      </column>
+      <column columnName="CCL5">
+        <datatype>double</datatype>
+        <columnTitle>CCL5</columnTitle>
+        <description>Expression levels for CCL5</description>
+      </column>
+      <column columnName="Lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignLabs</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="Assay">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignAssays</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+    </columns>
+    <tableTitle>MRNA</tableTitle>
+  </table>
+  <table tableName="ADCC" tableDbType="TABLE">
+    <description>Contains up to one row of ADCC data for each Participant/visit/TARGET_CELL_PREP_ISOLATE combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="TARGET_CELL_PREP_ISOLATE">
+        <datatype>varchar</datatype>
+        <columnTitle>TARGET_CELL_PREP_ISOLATE (Antigen)</columnTitle>
+        <fk>
+          <fkFolderPath>/CDSTest Project</fkFolderPath>
+          <fkDbSchema>CDS</fkDbSchema>
+          <fkTable>Antigens</fkTable>
+          <fkColumnName>Id</fkColumnName>
+        </fk>
+        <isKeyField>true</isKeyField>
+      </column>
+      <column columnName="EFFECTOR_CELLS">
+        <datatype>varchar</datatype>
+        <columnTitle>EFFECTOR CELLS</columnTitle>
+      </column>
+      <column columnName="EFFECTOR_PCT_VIABILITY">
+        <datatype>integer</datatype>
+        <columnTitle>EFFECTOR PCT VIABILITY</columnTitle>
+        <description>Percent viability of effector cells</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="SAMPLE_ID">
+        <datatype>integer</datatype>
+        <columnTitle>SAMPLE ID</columnTitle>
+      </column>
+      <column columnName="SPEC_TYPE">
+        <datatype>varchar</datatype>
+        <columnTitle>SPEC TYPE</columnTitle>
+        <description>Type of specimen</description>
+      </column>
+      <column columnName="ACTIVITY_PCT">
+        <datatype>double</datatype>
+        <columnTitle>ACTIVITY PCT</columnTitle>
+        <description>Percent activity observed</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="ACTIVITY_PCT_BKG">
+        <datatype>double</datatype>
+        <columnTitle>ACTIVITY PCT BKG</columnTitle>
+        <measure>false</measure>
+      </column>
+      <column columnName="TARGET_CELLS">
+        <datatype>varchar</datatype>
+        <columnTitle>TARGET CELLS</columnTitle>
+        <description>The cells being targeted.</description>
+      </column>
+      <column columnName="INCUBATION_TIME">
+        <datatype>integer</datatype>
+        <columnTitle>INCUBATION TIME</columnTitle>
+        <measure>false</measure>
+      </column>
+      <column columnName="TARGET_CELL_ID">
+        <datatype>integer</datatype>
+        <columnTitle>TARGET CELL ID</columnTitle>
+      </column>
+      <column columnName="CELLS_PER_WELL">
+        <datatype>integer</datatype>
+        <columnTitle>CELLS PER WELL</columnTitle>
+        <description>How many cells there were per well.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="TARGET_PCT_VIABILITY">
+        <datatype>integer</datatype>
+        <columnTitle>TARGET PCT VIABILITY</columnTitle>
+        <measure>false</measure>
+      </column>
+      <column columnName="STAIN_POS_PCT">
+        <datatype>double</datatype>
+        <columnTitle>STAIN POS PCT</columnTitle>
+        <description>Percent staining.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="STAIN_NEG_PCT">
+        <datatype>double</datatype>
+        <columnTitle>STAIN NEG PCT</columnTitle>
+        <description>Percent unstained.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="TARGET_PCT">
+        <datatype>double</datatype>
+        <columnTitle>TARGET PCT</columnTitle>
+        <description>Target percent stained.</description>
+        <measure>false</measure>
+      </column>
+      <column columnName="TARGET_CELL_PCT_INFECTED">
+        <datatype>integer</datatype>
+        <columnTitle>TARGET CELL PCT INFECTED</columnTitle>
+        <measure>false</measure>
+      </column>
+      <column columnName="Lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignLabs</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="Assay">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>StudyDesignAssays</fkTable>
+          <fkColumnName>Name</fkColumnName>
+        </fk>
+      </column>
+    </columns>
+    <tableTitle>ADCC</tableTitle>
+  </table>
+  <table tableName="ParticipantTreatments" tableDbType="TABLE">
+    <description>Contains up to one row of ParticipantTreatment data for each Participant/Date/Treatment combination.</description>
+    <columns>
+      <column columnName="ParticipantId">
+        <datatype>varchar</datatype>
+        <columnTitle>Participant ID</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Participant</fkTable>
+          <fkColumnName>ParticipantId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+        <conceptURI>http://cpas.labkey.com/Study#VisitDate</conceptURI>
+      </column>
+      <column columnName="TreatmentId">
+        <datatype>integer</datatype>
+        <columnTitle>Treatment Id</columnTitle>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Treatment</fkTable>
+          <fkColumnName>RowId</fkColumnName>
+        </fk>
+        <isKeyField>true</isKeyField>
+      </column>
+    </columns>
+    <tableTitle>ParticipantTreatments</tableTitle>
+  </table>
+</tables>

@@ -132,7 +132,8 @@ public class CDSInitializer
     private void importComponentStudy(String studyName)
     {
         _test._containerHelper.createSubfolder(_project, studyName, "Study");
-        _test.importStudyFromZip(BaseWebDriverTest.getSampleData(studyName + ".folder.zip"), true, true);
+        StudyImporter importer = new StudyImporter(_test);
+        importer.zipAndImportStudy(BaseWebDriverTest.getSampleData(studyName + ".folder"));
     }
 
     @LogMethod

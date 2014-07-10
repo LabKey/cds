@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cohorts xmlns="http://labkey.org/study/xml">
+  <cohort label="Placebo" enrolled="true">
+    <id>105</id>
+    <id>4</id>
+    <id>5</id>
+  </cohort>
+  <cohort label="Vaccine" enrolled="true">
+    <id>1</id>
+    <id>2</id>
+    <id>3</id>
+  </cohort>
+  <cohort label="Vaccine Boost" enrolled="true">
+    <id>6</id>
+    <id>7</id>
+    <id>8</id>
+  </cohort>
+</cohorts>

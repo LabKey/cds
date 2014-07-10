@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables xmlns="http://labkey.org/data/xml">
+  <table tableName="ProductAntigen" tableDbType="TABLE">
+    <description>Contains one row per study product antigen</description>
+    <columns/>
+  </table>
+  <table tableName="Product" tableDbType="TABLE">
+    <description>Contains one row per study product</description>
+    <columns>
+      <column columnName="Description">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Description</columnTitle>
+      </column>
+      <column columnName="Class">
+        <datatype>varchar</datatype>
+        <columnTitle>Class</columnTitle>
+      </column>
+      <column columnName="Subclass">
+        <datatype>varchar</datatype>
+        <columnTitle>Subclass</columnTitle>
+      </column>
+      <column columnName="Developer">
+        <datatype>varchar</datatype>
+        <columnTitle>Developer</columnTitle>
+      </column>
+      <column columnName="Manufacturer">
+        <datatype>varchar</datatype>
+        <columnTitle>Manufacturer</columnTitle>
+      </column>
+      <column columnName="Production">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Production</columnTitle>
+      </column>
+      <column columnName="Inserts">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Inserts</columnTitle>
+      </column>
+      <column columnName="Clades">
+        <datatype>varchar</datatype>
+        <columnTitle>Clades</columnTitle>
+      </column>
+      <column columnName="ToxicityStudies">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Toxicity Studies</columnTitle>
+      </column>
+      <column columnName="PreviousTrials">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Previous Trials</columnTitle>
+      </column>
+      <column columnName="INDNumbers">
+        <datatype>varchar</datatype>
+        <columnTitle>IND #s</columnTitle>
+      </column>
+      <column columnName="INDHolders">
+        <datatype>varchar</datatype>
+        <columnTitle>IND Holders</columnTitle>
+      </column>
+    </columns>
+  </table>
+  <table tableName="TreatmentProductMap" tableDbType="TABLE">
+    <description>Contains one row per study treatment product</description>
+    <columns/>
+  </table>
+  <table tableName="Treatment" tableDbType="TABLE">
+    <description>Contains one row per study treatment</description>
+    <columns/>
+  </table>
+</tables>
