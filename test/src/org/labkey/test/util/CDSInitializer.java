@@ -17,6 +17,7 @@ package org.labkey.test.util;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.TestFileUtils;
 
 public class CDSInitializer
 {
@@ -133,7 +134,7 @@ public class CDSInitializer
     {
         _test._containerHelper.createSubfolder(_project, studyName, "Study");
         StudyImporter importer = new StudyImporter(_test);
-        importer.zipAndImportStudy(BaseWebDriverTest.getSampleData(studyName + ".folder"));
+        importer.zipAndImportStudy(TestFileUtils.getSampleData(studyName + ".folder"));
     }
 
     @LogMethod
@@ -144,7 +145,7 @@ public class CDSInitializer
         _test.clickAndWait(Locator.linkWithText(query));
         _test._listHelper.clickImportData();
 
-        _test.setFormElementJS(Locator.id("tsv3"), BaseWebDriverTest.getFileContents(BaseWebDriverTest.getSampleData(dataFilePath)));
+        _test.setFormElementJS(Locator.id("tsv3"), TestFileUtils.getFileContents(TestFileUtils.getSampleData(dataFilePath)));
         _test.clickButton("Submit");
     }
 
@@ -184,7 +185,7 @@ public class CDSInitializer
 
             _test.clickButton("Insert New");
             _test.selectOptionByText(Locator.name("quf_Person"), email);
-            _test.setFormElement(Locator.name("quf_Picture"), BaseWebDriverTest.getSampleData("/pictures/" + fileName));
+            _test.setFormElement(Locator.name("quf_Picture"), TestFileUtils.getSampleData("/pictures/" + fileName));
             _test.clickButton("Submit");
         }
 
