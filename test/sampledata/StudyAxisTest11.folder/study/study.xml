@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Exported from LabKey Server at http://localhost:8080/labkey/project/CDSTest%20Project/StudyAxisTest11/begin.view by nicka on Fri Jun 06 14:54:39 PDT 2014-->
+<study archiveVersion="14.1" label="Study Axis Test 11" timepointType="DATE" subjectNounSingular="Subject" subjectNounPlural="Subjects" subjectColumnName="pub_id" investigator="Bellew M" grant="THTI" species="Human" alternateIdPrefix="" alternateIdDigits="6" defaultTimepointDuration="30" startDate="2008-01-01-08:00" securityType="BASIC_READ" xmlns="http://labkey.org/study/xml">
+  <assaySchedule dir="assaySchedule"/>
+  <cohorts type="AUTOMATIC" mode="SIMPLE" datasetId="5004" datasetProperty="HIVWestern" file="cohorts.xml"/>
+  <datasets dir="datasets" file="datasets_manifest.xml">
+    <definition file="Study.dataset"/>
+  </datasets>
+  <comments/>
+  <specimens dir="specimens" settings="specimen_settings.xml" file="Study.specimens"/>
+  <treatmentData dir="treatmentData"/>
+  <visits file="visit_map.xml"/>
+  <studyViews dir="views" settings="settings.xml"/>
+  <studyDescription rendererType="TEXT_WITH_LINKS">
+    <description>Sample study with participants (pub_id) in the 3100s and dates in 2008</description>
+  </studyDescription>
+  <assayPlan>This is the plan, man</assayPlan>
+  <properties dir="properties"/>
+</study>

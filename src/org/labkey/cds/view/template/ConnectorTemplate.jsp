@@ -26,7 +26,8 @@
     PrintTemplate me   = (PrintTemplate) HttpView.currentView();
     String contextPath = request.getContextPath();
     String serverHash = PageFlowUtil.getServerSessionHash();
-    Boolean devMode = AppProps.getInstance().isDevMode();
+    String devModeParam = getActionURL().getParameter("devMode");
+    Boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
 
     String appPath = contextPath + "/Connector";
     String sdkPath = contextPath + "/ext-4.2.1";

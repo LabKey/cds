@@ -67,15 +67,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     @LogMethod(category = LogMethod.MethodType.SETUP)
     public static void doSetup() throws Exception
     {
-        CDSVisualizationTest initTest = new CDSVisualizationTest();
-
-        initTest.doCleanup(false);
+        CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
         _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
         initTest.createParticipantGroups();
-
-        currentTest = initTest;
     }
 
     @Before

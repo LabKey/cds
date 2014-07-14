@@ -93,14 +93,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @BeforeClass @LogMethod(category = LogMethod.MethodType.SETUP)
     public static void doSetup() throws Exception
     {
-        CDSTest initTest = new CDSTest();
-
-        initTest.doCleanup(false);
+        CDSTest initTest = (CDSTest)getCurrentTest();
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
         _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
-
-        currentTest = initTest;
     }
 
     @LogMethod(quiet = true)

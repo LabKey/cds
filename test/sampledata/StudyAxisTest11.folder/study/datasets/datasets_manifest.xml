@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasets metaDataFile="datasets_metadata.xml" xmlns="http://labkey.org/study/xml">
+  <datasets>
+    <dataset name="NAb" id="5001" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="Luminex" id="5002" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="Demographics" id="5003" demographicData="true" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="HIV Test Results" id="5004" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="Physical Exam" id="5005" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="Lab Results" id="5006" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="MRNA" id="5007" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="ADCC" id="5008" type="Standard">
+      <tags/>
+    </dataset>
+    <dataset name="ParticipantTreatments" id="5009" type="Standard">
+      <tags/>
+    </dataset>
+  </datasets>
+</datasets>

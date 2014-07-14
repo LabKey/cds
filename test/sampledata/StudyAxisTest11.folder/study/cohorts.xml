@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cohorts xmlns="http://labkey.org/study/xml">
+  <cohort label="Negative" enrolled="true" subjectCount="3">
+    <id>3104</id>
+    <id>3106</id>
+    <id>3107</id>
+    <id>3108</id>
+  </cohort>
+  <cohort label="Positive" enrolled="true" subjectCount="4">
+    <id>3101</id>
+    <id>3102</id>
+    <id>3103</id>
+    <id>3105</id>
+  </cohort>
+</cohorts>
