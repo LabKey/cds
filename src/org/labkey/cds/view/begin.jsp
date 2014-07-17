@@ -52,7 +52,6 @@
 <%=textLink("Populate Fact Table", CDSController.PopulateCubeAction.class)%>
 <%=textLink("Clear Fact Table", CDSController.ClearFactTableAction.class)%>
 <%=textLink("Warm Cache", CDSController.WarmCacheAction.class)%>
-<% //textLink("Verify", tableURL(userSchema, "qc_checkkeys")) -- turn this off for now so we don't hit on view. Fix query. %>
 <%=textLink("Update Participant Groups", CDSController.UpdateParticipantGroupsAction.class)%>
 <br>
 <%=textLink("Application", CDSController.AppAction.class)%>
