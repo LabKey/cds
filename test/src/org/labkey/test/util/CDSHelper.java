@@ -20,6 +20,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -93,10 +94,17 @@ public class CDSHelper
             {
                 Locator barLocator = Locator.tag("div").withClass("bar").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel))
                         .append(Locator.tag("span").withClass("index"));
-                String width1 = barLocator.findElement(_test.getDriver()).getCssValue("width");
-                _test.sleep(50);
-                String width2 = barLocator.findElement(_test.getDriver()).getCssValue("width");
-                return !"0px".equals(width1) && width1.equals(width2);
+                try
+                {
+                    String width1 = barLocator.findElement(_test.getDriver()).getCssValue("width");
+                    _test.sleep(50);
+                    String width2 = barLocator.findElement(_test.getDriver()).getCssValue("width");
+                    return !"0px".equals(width1) && width1.equals(width2);
+                }
+                catch (StaleElementReferenceException ignore)
+                {
+                    return false;
+                }
             }
         }, "Bar didn't stop animating: " + barLabel, CDS_WAIT * 10);
     }
