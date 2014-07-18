@@ -67,9 +67,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
     @Override
-    public String getAssociatedModuleDirectory()
+    public List<String> getAssociatedModules()
     {
-        return "server/customModules/CDS";
+        return Arrays.asList("CDS");
     }
 
     @Override

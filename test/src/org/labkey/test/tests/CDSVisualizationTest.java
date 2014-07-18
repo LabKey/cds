@@ -41,6 +41,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -684,9 +685,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     }
 
     @Override
-    public String getAssociatedModuleDirectory()
+    public List<String> getAssociatedModules()
     {
-        return null;
+        return Arrays.asList("CDS");
     }
 
     @Override
