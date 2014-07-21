@@ -30,6 +30,8 @@ import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.PostgresOnlyTest;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 
@@ -84,8 +86,8 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Override
-    public String getAssociatedModuleDirectory()
+    public java.util.List<String> getAssociatedModules()
     {
-        return "CDS";
+        return Arrays.asList("CDS");
     }
 }
