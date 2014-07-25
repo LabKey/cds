@@ -1341,10 +1341,12 @@ Ext.define('Connector.view.Scatter', {
                             filters[f].set('plotMeasures', wrappedMeasures);
                             // TODO: Before we update filter members check to see if the filters actually changed.
                             // Call Filter.plotMeasuresEqual (see Filter.js).
-                            this.state.updateFilterMembers(filters[f].get('id'), filter.members, false);
+                            this.state.updateFilterMembers(filters[f].get('id'), filter.members);
+                            this.state.updateFilterMembersComplete(false);
                             updated = true;
                         } else {
-                            this.state.updateFilterMembers(filters[f].get('id'), filter.members, true);
+                            this.state.updateFilterMembers(filters[f].get('id'), filter.members);
+                            this.state.updateFilterMembersComplete(true);
                             updated = true;
                         }
 
