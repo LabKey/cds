@@ -78,8 +78,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     @Before
     public void preTest()
     {
-        Ext4Helper.setCssPrefix("x-");
-
         cds.enterApplication();
         cds.clearAllFilters();
         cds.clearAllSelections();
@@ -620,12 +618,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         switchToWindow(1);
+        Ext4Helper.resetCssPrefix();
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
         assertEquals(86, plotDataTable.getDataRowCount());
         plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
         waitForElement(Locator.paginationText(42));
         getDriver().close();
         switchToMainWindow();
+        Ext4Helper.setCssPrefix("x-");
 
         yaxis.openSelectorWindow();
         yaxis.pickMeasure("NAb", "AUC");
@@ -637,13 +637,13 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         switchToWindow(1);
+        Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(86, plotDataTable.getDataRowCount());
         plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
         waitForElement(Locator.paginationText(42));
         getDriver().close();
         switchToMainWindow();
-
     }
 
     @AfterClass
