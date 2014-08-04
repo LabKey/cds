@@ -87,6 +87,7 @@ public class CDSHelper
 
     public void waitForBarToAnimate(final String barLabel)
     {
+        _test.sleep(200);
         _test.waitFor(new BaseWebDriverTest.Checker()
         {
             @Override
