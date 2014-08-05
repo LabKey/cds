@@ -96,7 +96,7 @@ public class CDSAsserts
         _test.waitForText(textToCheck.get(0));
         _test.assertTextPresent(textToCheck);
         cds.closeInfoPage();
-        cds.waitForBarToAnimate(noun);
+        cds.waitForBarsToAnimate();
     }
 
     @LogMethod
