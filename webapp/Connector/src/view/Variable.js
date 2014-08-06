@@ -133,6 +133,8 @@ Ext.define('Connector.panel.ColorSelector', {
 
     alias : 'widget.colorselector',
 
+    minWidth : 275,
+
     getModelTpl : function() {
         return new Ext.XTemplate(
             '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
@@ -160,7 +162,7 @@ Ext.define('Connector.panel.ColorSelector', {
     showHover : function() {
         var bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
         this.win.style.top = (bbox.top + 40) + 'px';
-        this.win.style.left = (bbox.left - (bbox.width / 2)) + 'px';
+        this.win.style.left = (bbox.left - 130 + (bbox.width / 2)) + 'px';
         this.win.style.display = '';
     },
 
@@ -173,7 +175,13 @@ Ext.define('Connector.panel.ColorSelector', {
 
         Ext4.query('#color-legend')[0].innerHTML = ''; // Clear the current legend element.
 
-        smallCanvas = d3.select('#color-legend').append('svg').attr('height', 18);
+        // issue 20541
+        var iconSize = 18;
+        var svgWidth = Math.min(125, legendData.length * (iconSize+2));
+
+        smallCanvas = d3.select('#color-legend').append('svg')
+                .attr('height', iconSize)
+                .attr('width', svgWidth);
         glyphs = smallCanvas.selectAll('.legend-point').data(legendData).enter().append('path');
         glyphs.attr('class', 'legend-point')
                 .attr('d', function(d){return d.shape();})
@@ -181,8 +189,8 @@ Ext.define('Connector.panel.ColorSelector', {
                 .attr('transform', function(d, i){return 'translate(' + (8 + i*20) + ',10)';});
 
         hoverRect = smallCanvas.selectAll('.legend-rect').data([legendData]).enter().append('rect');
-        hoverRect.attr('width', legendData.length * 18)
-                .attr('height', 18)
+        hoverRect.attr('width', legendData.length * iconSize)
+                .attr('height', iconSize)
                 .attr('fill', '#000')
                 .attr('fill-opacity', 0);
 
@@ -205,10 +213,9 @@ Ext.define('Connector.panel.ColorSelector', {
         }
 
         bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
-        this.win.style.top = (bbox.top + 40) + 'px';
-        this.win.style.left = (bbox.left - (bbox.width / 2)) + 'px';
         this.win.style.height = (8 + legendData.length * 20) + 'px';
 
+        this.windowCanvas.attr('height', (8 + legendData.length * 20));
         windowGlyphs = this.windowCanvas.selectAll('.legend-point').data(legendData);
         windowGlyphs.enter().append('path').attr('class', 'legend-point');
         windowGlyphs.exit().remove();
