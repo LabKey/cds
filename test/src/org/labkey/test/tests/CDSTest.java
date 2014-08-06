@@ -830,7 +830,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         log("Verify selection messaging");
         cds.clickBy("Assays");
         cds.pickSort("Name");
-        cds.waitForBarsToAnimate();
         cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
         _asserts.assertSelectionStatusCounts(0, 0, 0);
         cds.pickDimension("Studies");

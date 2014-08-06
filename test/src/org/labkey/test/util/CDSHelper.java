@@ -66,6 +66,8 @@ public class CDSHelper
     {
         _test.click(Locator.css(".sortDropdown"));
         _test.waitAndClick(Locator.xpath("//span[text()='" + sortBy + "' and contains(@class, 'x-menu-item-text')]"));
+        _test.waitForElement(Locator.css("span.sorttype").withText(sortBy.toUpperCase()));
+        waitForBarsToAnimate();
     }
 
     public void pickSort(String sort, String waitValue)
@@ -78,6 +80,7 @@ public class CDSHelper
     {
         _test.click(Locators.cdsDropDownButtonLocator("dimselectdrop"));
         _test.waitAndClick(Locator.xpath("//span[@class='x-menu-item-text' and text()='" + dimension + "']"));
+        waitForBarsToAnimate();
     }
 
     public void waitForFilterAnimation()
@@ -170,6 +173,7 @@ public class CDSHelper
         _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
         _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
+        waitForFilterAnimation();
     }
 
     public void applySelection(String barLabel)
@@ -254,6 +258,7 @@ public class CDSHelper
         _test.click(loc);
         _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
         _test.waitForElement(Locator.css(".dimgroup").withText(byNoun));
+        waitForBarsToAnimate();
     }
 
     public void viewInfo(String barLabel)
