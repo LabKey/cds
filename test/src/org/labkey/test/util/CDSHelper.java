@@ -32,13 +32,14 @@ public class CDSHelper
     public static final String[] STUDIES = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     public static final String[] ASSAYS = {"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
+    public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String[] EMAILS = {"adam@labkey.com", "alanv@labkey.com", "brittp@labkey.com", "klum@labkey.com",
             "kristinf@labkey.com", "marki@labkey.com", "matthewb@labkey.com", "nicka@labkey.com", "tchad@labkey.com"};
     public static final String[] PICTURE_FILE_NAMES = {"team_Adam_Rauch.jpg", "team_Alan_Vezina.jpg",
             "team_Britt_Piehler.jpg", "team_Karl_Lum.jpg", "team_Kristin_Fitzsimmons.jpg", "team_Mark_Igra.jpg",
             "team_Matthew_Bellew.jpg", "team_Nick_Arnold.jpg", "team_Trey_Chadick.jpg"};
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
-    public final static int CDS_WAIT = 1500;
+    public final static int CDS_WAIT = 2000;
     private final BaseWebDriverTest _test;
 
     public CDSHelper(BaseWebDriverTest test)
@@ -85,18 +86,19 @@ public class CDSHelper
         _test.waitForElementToDisappear(floatingFilterLoc);
     }
 
-    public void waitForBarToAnimate(final String barLabel)
+    @LogMethod
+    public void waitForBarsToAnimate()
     {
         _test.waitFor(new BaseWebDriverTest.Checker()
         {
             @Override
             public boolean check()
             {
-                Locator barLocator = Locator.tag("div").withClass("bar").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel))
+                Locator barLocator = Locator.tag("div").withClass("bar").withDescendant(Locator.tag("span").withClass("barlabel"))
                         .append(Locator.tag("span").withClass("index"));
                 try
                 {
-                    String width1 = barLocator.findElement(_test.getDriver()).getCssValue("width");
+                    String width1 = barLocator.waitForElement(_test.getDriver(), CDS_WAIT).getCssValue("width");
                     _test.sleep(50);
                     String width2 = barLocator.findElement(_test.getDriver()).getCssValue("width");
                     return !"0px".equals(width1) && width1.equals(width2);
@@ -106,7 +108,7 @@ public class CDSHelper
                     return false;
                 }
             }
-        }, "Bar didn't stop animating: " + barLabel, CDS_WAIT * 10);
+        }, "Bars didn't stop animating", CDS_WAIT * 10);
     }
 
     public void saveGroup(String name, @Nullable String description)
@@ -134,6 +136,8 @@ public class CDSHelper
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
 
+        waitForBarsToAnimate();
+
         Keys multiSelectKey;
         if (isShift)
             multiSelectKey = Keys.SHIFT;
@@ -142,32 +146,30 @@ public class CDSHelper
         else
             multiSelectKey = Keys.CONTROL;
 
-        waitForBarToAnimate(bars[0]);
+        clickBar(bars[0]);
 
-        String subselect = bars[0];
-        WebElement el = _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[0] + "']").toBy()));
-        _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
-        _test.waitForElement(Locators.filterMemberLocator(subselect), CDS_WAIT);
-        waitForFilterAnimation();
         if(bars.length > 1)
         {
             Actions builder = new Actions(_test.getDriver());
-
             builder.keyDown(multiSelectKey).build().perform();
 
-            for(int i = 1; i < bars.length; i++)
+            for (int i = 1; i < bars.length; i++)
             {
-                el = _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//span[@class='barlabel' and text() = '" + bars[i] + "']").toBy()));
-                _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
-                subselect = bars[i];
-                if (subselect.length() > 10)
-                    subselect = subselect.substring(0, 9);
-                _test.waitForElement(Locators.filterMemberLocator(subselect));
-                waitForFilterAnimation();
+                clickBar(bars[i]);
             }
 
             builder.keyUp(multiSelectKey).build().perform();
         }
+    }
+
+    private void clickBar(String barLabel)
+    {
+        Locator detailStatusPanelLoc = Locator.css("ul.detailstatus"); // becomes stale after filter is applied
+        WebElement detailStatusPanel = detailStatusPanelLoc.waitForElement(_test.getDriver(), CDS_WAIT);
+        WebElement el = _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel).toBy()));
+        _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
+        _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
+        _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
     }
 
     public void applySelection(String barLabel)
@@ -256,7 +258,7 @@ public class CDSHelper
 
     public void viewInfo(String barLabel)
     {
-        waitForBarToAnimate(barLabel);
+        waitForBarsToAnimate();
         Locator.XPathLocator barLocator = Locator.tag("div").withClass("small").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel));
         _test.scrollIntoView(barLocator); // screen might be too small
         _test.mouseOver(barLocator);
@@ -409,6 +411,7 @@ public class CDSHelper
 
     public static class Locators
     {
+        public static Locator.XPathLocator barLabel = Locator.tagWithClass("span", "barlabel");
 
         public static Locator.XPathLocator getByLocator(String byNoun)
         {

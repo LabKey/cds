@@ -614,7 +614,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarToAnimate(CDSHelper.STUDIES[0]);
+        cds.waitForBarsToAnimate();
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.useSelectionAsFilter();
 
@@ -765,10 +765,12 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // 14910
         cds.goToSummary();
         waitAndClick(Locator.linkWithText("types"));
+        cds.waitForBarsToAnimate();
         waitForElement(dimensionGroup.withText("Assays"));
         waitForElement(dimensionSort.withText("SORTED BY: TYPE"));
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarToAnimate(CDSHelper.ASSAYS[0]);
+        cds.waitForBarsToAnimate();
+        waitForElementToDisappear(CDSHelper.Locators.barLabel.withText(CDSHelper.EMPTY_ASSAY));
         cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
         waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
@@ -828,7 +830,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         log("Verify selection messaging");
         cds.clickBy("Assays");
         cds.pickSort("Name");
-        cds.waitForBarToAnimate(CDSHelper.ASSAYS[0]);
+        cds.waitForBarsToAnimate();
         cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
         _asserts.assertSelectionStatusCounts(0, 0, 0);
         cds.pickDimension("Studies");
@@ -873,7 +875,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         // placeholder pages
         cds.clickBy("Assay antigens");
-        cds.waitForBarToAnimate("SF162.LS");
+        cds.waitForBarsToAnimate();
         cds.pickSort("Tier", "1A");
         cds.toggleExplorerBar("1A");
         _asserts.assertNounInfoPage("MW965.26", Arrays.asList("Clade", "Tier", "MW965.26", "U08455"));
