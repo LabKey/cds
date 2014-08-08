@@ -117,6 +117,19 @@ Ext.define('Connector.view.Grid', {
 
         // bind view to view
         this.on('resize', this.onViewResize, this);
+
+        // plugin to handle loading mask for the grid
+        this.addPlugin({
+            ptype: 'loadingmask',
+            beginConfig: {
+                component: model,
+                events: ['filterchange', 'updatecolumns']
+            },
+            endConfig: {
+                component: this.getStore(),
+                events: ['load']
+            }
+        });
     },
 
     showMessage : function() {

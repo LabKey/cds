@@ -149,6 +149,7 @@
 
     <!-- Application plugins -->
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
 
     <!-- Constant singletons -->
     <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>
