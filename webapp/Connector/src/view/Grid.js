@@ -123,12 +123,12 @@ Ext.define('Connector.view.Grid', {
             ptype: 'loadingmask',
             blockingMask: true,
             beginConfig: {
-                component: model,
-                events: ['filterchange', 'updatecolumns']
+                component: this,
+                events: ['showload']
             },
             endConfig: {
-                component: this.getStore(),
-                events: ['load']
+                component: this,
+                events: ['hideload']
             }
         });
     },
@@ -206,6 +206,7 @@ Ext.define('Connector.view.Grid', {
     },
 
     onColumnUpdate : function() {
+        this.fireEvent('showload', this);
 
         //
         // remove the old grid
@@ -228,6 +229,7 @@ Ext.define('Connector.view.Grid', {
 
     onFilterChange : function(model, filterArray) {
         if (this.gridStore) {
+            this.fireEvent('showload', this);
             this.gridStore.filterArray = model.getFilterArray(true);
             this.gridStore.load();
             this.applyFilterColumnState(this.getGrid());
@@ -297,6 +299,7 @@ Ext.define('Connector.view.Grid', {
     getGrid : function(store) {
 
         if (!this.grid) {
+            this.fireEvent('showload', this);
 
             var size = this.getWidthHeight();
 
@@ -402,6 +405,8 @@ Ext.define('Connector.view.Grid', {
                 if (cmp) {
                     cmp.update({count: store.getCount()});
                 }
+
+                this.fireEvent('hideload', this);
             }, this);
         }
 
