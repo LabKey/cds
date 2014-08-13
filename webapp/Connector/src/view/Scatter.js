@@ -2108,7 +2108,9 @@ Ext.define('Connector.view.Scatter', {
         var filter = this.getPlotsFilter();
         this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
 
-        this.colorwin.show(targetEl);
+        this.colorwin.show(targetEl, function() {
+            this.runUniqueQuery(this.colorPanel);
+        }, this);
     },
 
     removeVariableFromFilter : function(measureIdx) {
