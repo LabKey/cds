@@ -27,6 +27,8 @@ Ext.define('Connector.store.FilterStatus', {
         }
         else {
             this.state.onMDXReady(function(mdx) {
+                this.fireEvent('beforeload', this);
+
                 if (!this.requests) {
                     this.requests = this.bindRequestConfigs(mdx);
                 }
@@ -188,5 +190,6 @@ Ext.define('Connector.store.FilterStatus', {
         }
 
         this.loadData(recs);
+        this.fireEvent('load', this);
     }
 });
