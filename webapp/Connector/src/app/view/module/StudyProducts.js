@@ -12,9 +12,6 @@ Ext.define('Connector.view.module.StudyProducts', {
     tpl : new Ext.XTemplate(
         '<tpl><p>',
             Connector.constant.Templates.module.title,
-            '<tpl if="!values.items">',
-                Connector.constant.Templates.module.loadingData,
-            '</tpl>',
             '<tpl for="items">',
                 '<div class="item-row">',
                     '<p><a href="#learn/learn/vaccine/{[encodeURIComponent(values)]}">{.}</a></p>',
@@ -45,6 +42,7 @@ Ext.define('Connector.view.module.StudyProducts', {
                 }
                 data.items = set;
                 this.update(data);
+                this.fireEvent('hideLoad', this);
 
                 // var links = this.getEl().query('a[cls~=popupLink]');
                 // links = Ext.select('.popupLink', this.getEl().dom);
@@ -74,6 +72,11 @@ Ext.define('Connector.view.module.StudyProducts', {
         });
 
         this.callParent();
+
+        this.on('render', function(){
+            if (!data.items)
+                this.fireEvent('showLoad', this);
+        });
     }
 
     // afterRender: function() {

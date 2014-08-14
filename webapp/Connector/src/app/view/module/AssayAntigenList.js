@@ -14,9 +14,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            '<tpl if="!values.antigens">',
-                Connector.constant.Templates.module.loadingData,
-	        '<tpl else>',
+            '<tpl if="values.antigens">',
 	            '<tpl if="values.antigens.length">',
 		            '<tpl for="antigens">',
 			            '<p class="item-row interactive">{[values.get("Name")]}</p>',
@@ -29,6 +27,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     assayDataLoaded : function(data) {
         this.update(data);
+        this.fireEvent('hideLoad', this);
     },
 
     initComponent : function() {
@@ -65,5 +64,11 @@ Ext.define('Connector.view.module.AssayAntigenList', {
         }
 
         this.callParent();
+
+        this.on('render', function(){
+            if (!data.antigens) {
+                this.fireEvent('showLoad', this);
+            }
+        });
     }
 });

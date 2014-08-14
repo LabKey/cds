@@ -14,9 +14,7 @@ Ext.define('Connector.view.module.AssayVariableList', {
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            '<tpl if="!values.variables">',
-                Connector.constant.Templates.module.loadingData,
-            '<tpl else>',
+            '<tpl if="values.variables">',
 	            '<tpl if="variables.key.length">',
 		            '<tpl if="showNames"><p class="groupheader">Recommended</p></tpl>',
 		            '<tpl for="variables.key">',
@@ -42,6 +40,7 @@ Ext.define('Connector.view.module.AssayVariableList', {
     	// }
 		data.showNames = data.variables.key.length > 0;
         this.update(data);
+        this.fireEvent('hideLoad', this);
     },
 
     initComponent : function() {
@@ -76,5 +75,11 @@ Ext.define('Connector.view.module.AssayVariableList', {
         }
 
         this.callParent();
+
+        this.on('render', function(){
+            if (!data.variables) {
+                this.fireEvent('showLoad', this);
+            }
+        });
     }
 });

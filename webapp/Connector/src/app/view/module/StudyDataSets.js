@@ -15,11 +15,6 @@ Ext.define('Connector.view.module.StudyDataSets', {
     tpl : new Ext.XTemplate(
         '<tpl><p>',
             // Connector.constant.Templates.module.title,
-            '<tpl if="!values.categories">',
-                '<div class="module">',
-                    Connector.constant.Templates.module.loadingData,
-                '</div>',
-            '</tpl>',
             '<tpl if="values.categories">',
                 '<tpl for="categories">',
                     '<tpl if="dataSets.length">',
@@ -118,6 +113,7 @@ Ext.define('Connector.view.module.StudyDataSets', {
                 }
             }, me);
             me.update(data);
+            me.fireEvent('hideLoad', me);
         }
 
         if (!store.data.length) {
@@ -130,5 +126,11 @@ Ext.define('Connector.view.module.StudyDataSets', {
         }
 
         this.callParent();
+
+        this.on('render', function(){
+            if (!data.categories) {
+                this.fireEvent('showLoad', this);
+            }
+        });
     }
 });
