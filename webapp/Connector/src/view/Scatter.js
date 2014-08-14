@@ -60,7 +60,7 @@ Ext.define('Connector.view.Scatter', {
             this.fireEvent('onready');
         }, this);
 
-        // plugin to handle loading mask for the info pane
+        // plugin to handle loading mask for the plot region
         this.addPlugin({
             ptype: 'loadingmask',
             blockingMask: true,
