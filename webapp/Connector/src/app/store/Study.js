@@ -9,7 +9,12 @@ Ext.define('Connector.app.store.Study', {
 
     model : 'Connector.app.model.Study',
 
-    cache : [],
+    constructor: function(config) {
+        Ext.applyIf(config, {
+            cache: []
+        });
+        this.callParent([config]);
+    },
 
     loadSlice : function(slice) {
 
