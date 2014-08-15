@@ -43,7 +43,7 @@
     Container c = getContainer();
     Study study = StudyService.get().getStudy(c);
     PopulateBehavior behavior = (PopulateBehavior) this.getModelBean();
-    List<? extends DataSet> datasets = study.getDataSets();
+    List<? extends DataSet> datasets = study.getDatasets();
     List<String> selectedDatasets = context.getList("dataset");
     boolean selected = null != selectedDatasets && selectedDatasets.size() > 0;
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
@@ -69,7 +69,7 @@ to be filled in by another mechanism.<br>
 %>
 
     <h3><input type='checkbox' name='dataset'<%=checked(!selected || selectedDatasets.contains(ds.getName()))%> value='<%=h(ds.getName())%>'>
-        <a href="<%=studyUrls.getDatasetURL(c, ds.getDataSetId())%>"><%=h(ds.getName())%></a></h3>
+        <a href="<%=studyUrls.getDatasetURL(c, ds.getDatasetId())%>"><%=h(ds.getName())%></a></h3>
     <%
     FactLoader mapper = new FactLoader(studySchema, ds, getUser(), c);
         for (FactLoader.ColumnMapper colMapper : mapper.getMappings())
