@@ -8,7 +8,12 @@ Ext.define('Connector.controller.Group', {
 
     views: ['GroupSave', 'GroupSummary'],
 
-    selected: [],
+    constructor: function(config) {
+        Ext.applyIf(config, {
+            selected: []
+        });
+        this.callParent([config]);
+    },
 
     init : function() {
 

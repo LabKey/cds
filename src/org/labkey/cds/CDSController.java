@@ -251,7 +251,7 @@ public class CDSController extends SpringActionController
             UserSchema studySchema = QueryService.get().getUserSchema(getUser(), getContainer(), "study");
             for (String dsName : selectedDatasets)
             {
-                DataSet dataSet = StudyService.get().getDataSet(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), dsName));
+                DataSet dataSet = StudyService.get().getDataset(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), dsName));
                 assert (null != dataSet) : "Couldn't find dataset " + dsName;
 
                 FactLoader loader = new FactLoader(studySchema, dataSet, getUser(), getContainer());
@@ -260,7 +260,7 @@ public class CDSController extends SpringActionController
 
             //Add any participants with no assay data to the cube...
             //Should be more robust in finding this dataset
-            DataSet demographicsDataset = StudyService.get().getDataSet(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), "Demographics"));
+            DataSet demographicsDataset = StudyService.get().getDataset(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), "Demographics"));
             assert (null != demographicsDataset) : "Couldn't find dataset: 'Demographics'";
             _factLoaders.add(new DemographicsFactLoader(studySchema, demographicsDataset, getUser(), getContainer()));
 

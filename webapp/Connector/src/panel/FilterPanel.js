@@ -21,9 +21,13 @@ Ext.define('Connector.panel.FilterPanel', {
 
     showEmptyText: true,
 
-    headerButtons: [],
-
-    filters: [],
+    constructor: function(config) {
+        Ext.applyIf(config, {
+            headerButtons: [],
+            filters: []
+        });
+        this.callParent([config]);
+    },
 
     initComponent : function() {
 

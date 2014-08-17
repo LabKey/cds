@@ -57,10 +57,12 @@ Ext.define('Connector.app.model.DataSet', {
     // data variable will be created. The callback will receive the updated data object once queries are complete.
     dataForAssayByName : function(assayName, data, options, callback) {
         data = data || {};
-        data.variables = data.variables || {
-            key: [],
-            other: []
-        };
+        Ext.applyIf(data, {
+            variables: {
+                key: [],
+                other: []
+            }
+        });
 
         if (options.antigens) {
             data.antigens = data.antigens || [];
