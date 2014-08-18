@@ -69,7 +69,7 @@ Ext.define('Connector.view.module.StudyDataSets', {
                             category: category.displayValue,
                             dataSets: [],
                             model: data.model
-                        }
+                        };
                         categoriesById[category.value] = o;
                         data.categories.push(o);
                     }

@@ -11,11 +11,16 @@ Ext.define('Connector.store.Summary', {
 
     model : 'Connector.model.Summary',
 
-    cache : [],
-
     flight : 0,
 
     count : 0,
+
+    constructor: function(config) {
+        Ext.applyIf(config, {
+            cache: []
+        });
+        this.callParent([config]);
+    },
 
     load : function() {
         this.fireEvent('beforeload', this);

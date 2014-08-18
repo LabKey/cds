@@ -14,7 +14,6 @@ Ext.define('Connector.view.Scatter', {
 
     cls: 'scatterview',
 
-    measures: [],
     canShowHidden: false,
 
     isActiveView: true,
@@ -31,6 +30,10 @@ Ext.define('Connector.view.Scatter', {
     defaultSortQuery: '', // cannot be equivalent to Connector.studyContext.subjectVisitColumn
 
     constructor : function(config) {
+
+        Ext.applyIf(config, {
+            measures: [],
+        });
 
         this.callParent([config]);
 

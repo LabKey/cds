@@ -20,10 +20,6 @@ Ext.define('Connector.view.Popup', {
         backgroundColor: 'transparent'
     },
 
-    //renderTo: Ext.getBody(),
-
-	//items: [],
-
     // Arrow definitions by popup position
     arrows : {
         top : '<div class="popup-arrow down shadow"></div>',

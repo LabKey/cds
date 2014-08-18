@@ -182,7 +182,7 @@
 </script>
 <h2>Fact Table</h2>
 <% for(FactLoader loader : loaders) { %>
-    <h3><a href="<%=studyUrls.getDatasetURL(c, loader.getSourceDataset().getDataSetId())%>"><%=h(loader.getSourceDataset().getName())%></a></h3>
+    <h3><a href="<%=studyUrls.getDatasetURL(c, loader.getSourceDataset().getDatasetId())%>"><%=h(loader.getSourceDataset().getName())%></a></h3>
     <%
         for (FactLoader.ColumnMapper colMapper : loader.getMappings())
         {
