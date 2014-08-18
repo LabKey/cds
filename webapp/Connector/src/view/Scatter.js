@@ -759,11 +759,11 @@ Ext.define('Connector.view.Scatter', {
                         }
 
                         if (xMeasure.type === 'TIMESTAMP') {
-                            sqlFilters[0] = new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.colName, xMin.toISOString());
-                            sqlFilters[1] = new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.colName, xMax.toISOString());
+                            sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL); //new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.colName, xMin.toISOString());
+                            sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL); //new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.colName, xMax.toISOString());
                         } else {
-                            sqlFilters[0] = new LABKEY.Query.Filter.Gte(xMeasure.colName, xMin);
-                            sqlFilters[1] = new LABKEY.Query.Filter.Lte(xMeasure.colName, xMax);
+                            sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL); //new LABKEY.Query.Filter.Gte(xMeasure.colName, xMin);
+                            sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL); //new LABKEY.Query.Filter.Lte(xMeasure.colName, xMax);
                         }
                     }
 
@@ -771,15 +771,15 @@ Ext.define('Connector.view.Scatter', {
                         yMin = transformVal(yExtent[0], yMeasure.type, true, plot.scales.yLeft.scale.domain());
                         yMax = transformVal(yExtent[1], yMeasure.type, false, plot.scales.yLeft.scale.domain());
 
-                        sqlFilters[2] = new LABKEY.Query.Filter.Gte(yMeasure.colName, yMin);
-                        sqlFilters[3] = new LABKEY.Query.Filter.Lte(yMeasure.colName, yMax);
+                        sqlFilters[2] = LABKEY.Filter.create(yMeasure.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL); // new LABKEY.Query.Filter.Gte(yMeasure.colName, yMin);
+                        sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL); // new LABKEY.Query.Filter.Lte(yMeasure.colName, yMax);
                     }
 
                     // plot brushing filters need to include the antigen selection if this is a pivoted query
                     if (requiresPivot && xMeasure.options.antigen.name == yMeasure.options.antigen.name)
                     {
                         var antigens = xMeasure.options.antigen.values.concat(yMeasure.options.antigen.values);
-                        sqlFilters.push(new LABKEY.Query.Filter.In(yMeasure.options.antigen.name, antigens));
+                        sqlFilters.push(LABKEY.Filter.create(yMeasure.options.antigen.name, antigens, LABKEY.Filter.Types.IN)); // new LABKEY.Query.Filter.In(yMeasure.options.antigen.name, antigens));
                     }
 
                     Connector.model.Filter.sqlToMdx({
