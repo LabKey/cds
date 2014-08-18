@@ -178,10 +178,12 @@ Ext.define('Connector.model.InfoPane', {
             var hierarchyItems = [];
 
             Ext.each(dim.hierarchies, function(h) {
-                hierarchyItems.push({
-                    text: h.label,
-                    uniqueName: h.uniqueName
-                });
+                if (!h.hidden) {
+                    hierarchyItems.push({
+                        text: h.label,
+                        uniqueName: h.uniqueName
+                    });
+                }
             }, this);
 
             this.suspendEvents();
