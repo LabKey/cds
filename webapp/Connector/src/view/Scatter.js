@@ -32,7 +32,7 @@ Ext.define('Connector.view.Scatter', {
     constructor : function(config) {
 
         Ext.applyIf(config, {
-            measures: [],
+            measures: []
         });
 
         this.callParent([config]);
@@ -139,7 +139,7 @@ Ext.define('Connector.view.Scatter', {
                     id: 'yaxisselector',
                     xtype: 'variableselector',
                     btnCls: 'yaxisbtn',
-                    model: new Ext.create('Connector.model.Variable', {
+                    model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'y'
                     })
                 }]
@@ -148,7 +148,7 @@ Ext.define('Connector.view.Scatter', {
                     id: 'colorselector',
                     xtype: 'colorselector',
                     btnCls: 'colorbtn',
-                    model: new Ext.create('Connector.model.Variable', {
+                    model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'color'
                     })
                 }]
@@ -216,7 +216,7 @@ Ext.define('Connector.view.Scatter', {
                     id: 'xaxisselector',
                     xtype: 'variableselector',
                     btnCls: 'xaxisbtn',
-                    model: new Ext.create('Connector.model.Variable', {
+                    model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'x'
                     })
                 },
