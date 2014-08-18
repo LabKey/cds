@@ -125,6 +125,16 @@ Ext.define('Connector.controller.Learn', {
         }
     },
 
+    getViewTitle : function(xtype, context) {
+        if (xtype == 'learn') {
+            var title = 'Learn About';
+            if (context.dimension) {
+                title = context.dimension + " - " + title;
+            }
+            return title;
+        }
+    },
+
     updateLearnView : function(context) {
         this.getStateManager().onMDXReady(function(mdx) {
             var v = this.getViewManager().getViewInstance('learn');

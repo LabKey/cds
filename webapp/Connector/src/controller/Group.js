@@ -99,6 +99,18 @@ Ext.define('Connector.controller.Group', {
         return v;
     },
 
+    getViewTitle : function(xtype, context) {
+        console.log('context:', context);
+        if (xtype === 'groupsummary') {
+            var v = this.getViewManager().getViewInstance('groupsummary');
+            var title = 'Groups';
+            if (v.getGroup()) {
+                title = v.getGroup().label + " - " + title;
+            }
+            return title;
+        }
+    },
+
     updateView : function(xtype, context) {
         // Check if xtype is groupsummary
         // use viewManager to get viewinstance of 'groupsummary'
