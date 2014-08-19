@@ -32,10 +32,21 @@ Ext.define('Connector.view.Summary', {
         this.callParent();
 
         this.store.on('mdxerror', this.showMessage, this);
-        this.store.on('beforeload', this.displayLoad, this);
-        this.store.on('load', this.removeLoad, this);
 
         this.on('afterrender', this.refresh, this, {single: true});
+
+        // plugin to handle loading mask for the summary view
+        this.addPlugin({
+            ptype: 'loadingmask',
+            beginConfig: {
+                component: this.store,
+                events: ['beforeload']
+            },
+            endConfig: {
+                component: this.store,
+                events: ['load']
+            }
+        });
     },
 
     getSummaryDataView : function() {
@@ -83,14 +94,6 @@ Ext.define('Connector.view.Summary', {
             x   : Math.floor(box.width/2),
             y   : (box.y-70) // height of message window
         });
-    },
-
-    displayLoad : function() {
-        this.titlePanel.addCls('showload');
-    },
-
-    removeLoad : function() {
-        this.titlePanel.removeCls('showload');
     }
 });
 
