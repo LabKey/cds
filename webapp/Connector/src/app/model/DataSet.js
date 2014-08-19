@@ -42,13 +42,17 @@ Ext.define('Connector.app.model.DataSet', {
     },
 
     getAssayName : function() {
-        var id = this.get('Name');
-        var store = this.store.dataSetStores[id.value];
+        var name = this.get('Name').value;
+        var label = this.get('Label').value;
+        var store = this.store.dataSetStores[name] || this.store.dataSetStores[label];
         var assay;
 
-        store.each(function(record) {
-            assay = assay || record.get("Assay");
-        });
+        if (store)
+        {
+            store.each(function(record) {
+                assay = assay || record.get("Assay");
+            });
+        }
 
         return assay;
     },
@@ -98,17 +102,19 @@ Ext.define('Connector.app.model.DataSet', {
             }
         }
 
-        var id = this.get('Name');
+        var name = this.get('Name').value;
+        var label = this.get('Label').value;
+        var store = this.store.dataSetStores[name] || this.store.dataSetStores[label];
 
-        var store = this.store.dataSetStores[id.value];
-
-        var count = store.count();
         var countForAssay = 0;
-        store.each(function(record) {
-            if (record.get("Assay") == assayName) {
-                ++countForAssay;
-            }
-        })
+        if (store)
+        {
+            store.each(function(record) {
+                if (record.get("Assay") == assayName) {
+                    ++countForAssay;
+                }
+            });
+        }
 
         if (countForAssay > 0) {
             LABKEY.Ajax.request({
@@ -116,7 +122,7 @@ Ext.define('Connector.app.model.DataSet', {
                 method : 'GET',
                 params : {
                     allColumns: true,
-                    filters: [LABKEY.Query.Visualization.Filter.create({schemaName: "study", queryName: id.value})]
+                    filters: [LABKEY.Query.Visualization.Filter.create({schemaName: "study", queryName: name})]
                 },
                 success: function(response){
                     response = LABKEY.Utils.decode(response.response);

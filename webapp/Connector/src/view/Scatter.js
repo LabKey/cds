@@ -181,6 +181,7 @@ Ext.define('Connector.view.Scatter', {
                 },
                 items: [{
                     xtype: 'panel',
+                    border: false,
                     flex: 10,
                     cls: 'plot',
                     style: {'background-color': '#fff'},

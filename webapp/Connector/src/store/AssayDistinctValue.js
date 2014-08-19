@@ -39,7 +39,7 @@ Ext.define('Connector.store.AssayDistinctValue', {
     load : function() {
         LABKEY.Query.executeSql({
             schemaName: this.schemaName,
-            sql: 'SELECT DISTINCT ' + this.colName + '.Id, ' + this.colName + '.ShortDescription FROM ' + this.queryName,
+            sql: 'SELECT DISTINCT ' + this.colName + '.Id, ' + this.colName + '.ShortDescription FROM "' + this.queryName + '"',
             success: this.loadAntigens,
             scope : this
         });
