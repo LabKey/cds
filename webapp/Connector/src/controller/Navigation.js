@@ -86,7 +86,7 @@ Ext.define('Connector.controller.Navigation', {
 
                 if (recs[0].data.value == 1) // All Subjects -- reset to default
                 {
-                    sview.getSummaryDataView().getStore().setFilterSet(['statefilter']);
+                    sview.getSummaryDataView().getStore().setFilterSet([LABKEY.app.constant.STATE_FILTER]);
                     var f = state.getFilters();
                     if (f && f.length > 0)
                         this.summaryFilters = state.getFilters();
@@ -96,10 +96,10 @@ Ext.define('Connector.controller.Navigation', {
                 {
                     state.setFilters(this.summaryFilters);
                 }
-                else // Active Filters -- without summaryFilters initialized, default to 'statefilter'
+                else // Active Filters -- without summaryFilters initialized, default to LABKEY.app.constant.STATE_FILTER
                 {
                     var s = sview.getSummaryDataView().getStore();
-                    s.setFilterSet(['statefilter']);
+                    s.setFilterSet([LABKEY.app.constant.STATE_FILTER]);
                     s.load();
                 }
             }

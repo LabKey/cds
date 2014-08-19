@@ -2247,9 +2247,9 @@ Ext.define('Connector.view.Scatter', {
 
         this.state.onMDXReady(function(mdx){
 
-            if (mdx.hasFilter('statefilter')) {
+            if (mdx.hasFilter(LABKEY.app.constant.STATE_FILTER)) {
                 mdx.queryParticipantList({
-                    useNamedFilters : ['statefilter'],
+                    useNamedFilters : [LABKEY.app.constant.STATE_FILTER],
                     success : function (cs) {
                         var ptids = [], pos = cs.axes[1].positions, a;
                         for (a=0; a < pos.length; a++) {

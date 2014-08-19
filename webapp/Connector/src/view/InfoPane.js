@@ -240,7 +240,7 @@ Ext.define('Connector.view.InfoPane', {
                         '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                         {
                             renderHeader: function(v) {
-                                return v ? 'Has data in current filters' : 'No data in current filters';
+                                return v ? 'Has data in current selection' : 'No data in current selection';
                             }
                         }
                 )

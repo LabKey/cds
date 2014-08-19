@@ -210,7 +210,7 @@ Ext.define('Connector.model.InfoPane', {
 
             var config = {
                 onRows: [{ level: lvl.getUniqueName(), member: 'members' }],
-                useNamedFilters: ['statefilter'],
+                useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
                 showEmpty: true,
                 success: this.processMembers,
                 scope: this
