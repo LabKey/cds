@@ -78,7 +78,7 @@ Ext.define('Connector.view.DetailStatus', {
         this.addPlugin({
             ptype: 'loadingmask',
             blockingMask: false,
-            itemsMask: true,
+            itemsMaskCls: 'item-spinner-mask',
             beginConfig: {
                 component: this.store,
                 events: ['beforeload']

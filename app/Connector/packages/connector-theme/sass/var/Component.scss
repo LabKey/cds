@@ -426,6 +426,15 @@ div.emptytext {
 
 .item-spinner-mask .maskit {
   background-image: url('images/mask/small-gray.gif');
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 18px;
+  color: transparent;
+}
+
+.item-spinner-mask-orange .maskit {
+  background-image: url('images/mask/small-orange.gif');
+  background-repeat: no-repeat;
   width: 16px;
   height: 18px;
   color: transparent;

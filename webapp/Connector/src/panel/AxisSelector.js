@@ -69,18 +69,20 @@ Ext.define('Connector.panel.AxisSelector', {
             measureGrid.on('itemclick', this.onMeasureClick, this);
         }
 
-        // plugin to handle loading mask for the variable selector
-//        this.addPlugin({
-//            ptype: 'loadingmask',
-//            beginConfig: {
-//                component: picker,
-//                events: ['beforeMeasuresStoreQuery', 'beforeMeasureSourceCountsLoad']
-//            },
-//            endConfig: {
-//                component: picker,
-//                events: ['measureSourceCountsLoad']
-//            }
-//        });
+        //plugin to handle loading mask for the variable selector
+        this.addPlugin({
+            ptype: 'loadingmask',
+            blockingMask: false,
+            itemsMaskCls: 'item-spinner-mask-orange',
+            beginConfig: {
+                component: picker,
+                events: ['beforeMeasureSourceCountsLoad']
+            },
+            endConfig: {
+                component: picker,
+                events: ['measureSourceCountsLoad']
+            }
+        });
     },
 
     getMainTitleDisplay : function() {
