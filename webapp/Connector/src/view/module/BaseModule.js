@@ -24,16 +24,16 @@ Ext.define('Connector.view.module.BaseModule', {
 		this.callParent();
 
         // plugin to handle loading mask for this section of the learn about page
-        this.addPlugin({
-            ptype: 'loadingmask',
-            beginConfig: {
-                component: this,
-                events: ['showLoad']
-            },
-            endConfig: {
-                component: this,
-                events: ['hideLoad']
-            }
-        });
+//        this.addPlugin({
+//            ptype: 'loadingmask',
+//            beginConfig: {
+//                component: this,
+//                events: ['showLoad']
+//            },
+//            endConfig: {
+//                component: this,
+//                events: ['hideLoad']
+//            }
+//        });
 	}
 });

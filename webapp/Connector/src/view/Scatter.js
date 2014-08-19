@@ -66,7 +66,6 @@ Ext.define('Connector.view.Scatter', {
         // plugin to handle loading mask for the plot region
         this.addPlugin({
             ptype: 'loadingmask',
-            blockingMask: true,
             beginConfig: {
                 component: this,
                 events: ['showload']

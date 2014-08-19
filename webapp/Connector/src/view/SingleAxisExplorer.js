@@ -442,7 +442,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         // plugin to handle loading mask for the explorer
         this.addPlugin({
             ptype: 'loadingmask',
-            blockingMask: true,
             beginConfig: {
                 component: this,
                 events: ['showLoad']

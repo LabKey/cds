@@ -70,18 +70,17 @@ Ext.define('Connector.panel.AxisSelector', {
         }
 
         // plugin to handle loading mask for the variable selector
-        this.addPlugin({
-            ptype: 'loadingmask',
-            blockingMask: true,
-            beginConfig: {
-                component: picker,
-                events: ['beforeMeasuresStoreQuery', 'beforeMeasureSourceCountsLoad']
-            },
-            endConfig: {
-                component: picker,
-                events: ['measureSourceCountsLoad']
-            }
-        });
+//        this.addPlugin({
+//            ptype: 'loadingmask',
+//            beginConfig: {
+//                component: picker,
+//                events: ['beforeMeasuresStoreQuery', 'beforeMeasureSourceCountsLoad']
+//            },
+//            endConfig: {
+//                component: picker,
+//                events: ['measureSourceCountsLoad']
+//            }
+//        });
     },
 
     getMainTitleDisplay : function() {

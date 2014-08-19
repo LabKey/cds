@@ -73,17 +73,17 @@ Ext.define('Connector.view.DetailStatus', {
         }
 
         // plugin to handle loading mask for the info pane
-        this.addPlugin({
-            ptype: 'loadingmask',
-            beginConfig: {
-                component: this.store.state,
-                events: ['filterchange', 'selectionchange']
-            },
-            endConfig: {
-                component: this.store,
-                events: ['load']
-            }
-        });
+//        this.addPlugin({
+//            ptype: 'loadingmask',
+//            beginConfig: {
+//                component: this.store.state,
+//                events: ['filterchange', 'selectionchange']
+//            },
+//            endConfig: {
+//                component: this.store,
+//                events: ['load']
+//            }
+//        });
     },
 
     onFilterChange : function() {

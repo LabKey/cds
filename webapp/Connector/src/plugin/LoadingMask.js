@@ -4,7 +4,7 @@ Ext.define('Connector.plugin.LoadingMask', {
 
     alias: 'plugin.loadingmask',
 
-    blockingMask: false,
+    //blockingMask: true,
 
     loadingDelay: 500,
 
@@ -19,23 +19,13 @@ Ext.define('Connector.plugin.LoadingMask', {
         this.showLoadingMaskTask = new Ext.util.DelayedTask(function(){
             if (this.maskingLock)
             {
-                if (this.blockingMask) {
-                    this.maskWin = Ext.Msg.show({
-                        header: false, closable: false,
-                        msg: "Blocking mask..."
-                    });
-                }
-                else {
-                    this.maskCmp = new Ext.LoadMask(this, {
-                        msg:"Non-blocking mask..."
-                    });
-                    this.maskCmp.show();
-                }
+                this.maskCmp = new Ext.LoadMask(this, { cls: "spinner-mask", msg:" " });
+                this.maskCmp.show();
             }
         }, component);
 
         Ext.override(component, {
-            blockingMask: this.blockingMask,
+            //blockingMask: this.blockingMask,
             loadingDelay: this.loadingDelay,
             showLoadingMaskTask: this.showLoadingMaskTask,
             showMask: this.showMask,
@@ -63,13 +53,7 @@ Ext.define('Connector.plugin.LoadingMask', {
     },
 
     hideMask : function() {
-        if (this.blockingMask) {
-            if (this.maskWin) this.maskWin.close();
-        }
-        else {
-            if (this.maskCmp) this.maskCmp.hide();
-        }
-
+        if (this.maskCmp) this.maskCmp.hide();
         this.maskingLock = false;
     }
 });
