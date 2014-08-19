@@ -4,15 +4,17 @@ Ext.define('Connector.plugin.LoadingMask', {
 
     alias: 'plugin.loadingmask',
 
-    blockingMask: true,
+    blockingMask: true, // blocking mask will show the large spinner and mask content area for the component
 
-    loadingDelay: 500,
+    itemsMask: false, // items mask will show small spinners for all items of the component (see Info Pane detail counts)
 
-    maskingLock: false,
+    loadingDelay: 500, // the number of milliseconds to delay before showing the mask if the end event hasn't already happened
 
     beginConfig: null, // defines the component and events for that component that will trigger the showMask
 
     endConfig: null, // defines the component and events for that component that will trigger the hideMask
+
+    maskingLock: false,
 
     init : function(component) {
 
@@ -26,20 +28,28 @@ Ext.define('Connector.plugin.LoadingMask', {
                 }
                 else
                 {
-                    this.maskCmp = Ext.create('Ext.Component', {
-                        renderTo: this.getEl(),
-                        autoEl: {
-                            tag: 'img', alt: 'loading',
-                            height: 22, width: 22,
-                            src: LABKEY.contextPath + '/production/Connector/resources/images/mask/med.gif'
-                        }
-                    });
+                    if (this.itemsMask)
+                    {
+                        this.getEl().addCls('item-spinner-mask');
+                    }
+                    else
+                    {
+                        this.maskCmp = Ext.create('Ext.Component', {
+                            renderTo: this.getEl(),
+                            autoEl: {
+                                tag: 'img', alt: 'loading',
+                                height: 22, width: 22,
+                                src: LABKEY.contextPath + '/production/Connector/resources/images/mask/med.gif'
+                            }
+                        });
+                    }
                 }
             }
         }, component);
 
         Ext.override(component, {
             blockingMask: this.blockingMask,
+            itemsMask: this.itemsMask,
             loadingDelay: this.loadingDelay,
             showLoadingMaskTask: this.showLoadingMaskTask,
             showMask: this.showMask,
@@ -68,6 +78,7 @@ Ext.define('Connector.plugin.LoadingMask', {
 
     hideMask : function() {
         if (this.maskCmp) this.maskCmp.hide();
+        this.getEl().removeCls('item-spinner-mask');
         this.maskingLock = false;
     }
 });

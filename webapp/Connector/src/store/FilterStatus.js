@@ -9,6 +9,13 @@ Ext.define('Connector.store.FilterStatus', {
 
     model: 'Connector.model.Detail',
 
+    // initial data record to show loading spinner on page load
+    data: [{
+        label: "Subjects",
+        subcount: -1,
+        highlight: true
+    }],
+
     constructor : function(config) {
 
         this.flight = 0;
