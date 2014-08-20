@@ -178,10 +178,12 @@ Ext.define('Connector.model.InfoPane', {
             var hierarchyItems = [];
 
             Ext.each(dim.hierarchies, function(h) {
-                hierarchyItems.push({
-                    text: h.label,
-                    uniqueName: h.uniqueName
-                });
+                if (!h.hidden) {
+                    hierarchyItems.push({
+                        text: h.label,
+                        uniqueName: h.uniqueName
+                    });
+                }
             }, this);
 
             this.suspendEvents();
@@ -208,7 +210,7 @@ Ext.define('Connector.model.InfoPane', {
 
             var config = {
                 onRows: [{ level: lvl.getUniqueName(), member: 'members' }],
-                useNamedFilters: ['statefilter'],
+                useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
                 showEmpty: true,
                 success: this.processMembers,
                 scope: this

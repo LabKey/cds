@@ -66,7 +66,7 @@ Ext.define('Connector.store.FilterStatus', {
                             request.configs.push({
                                 requestId: requestId,
                                 onRows: [ { level: lvl.uniqueName } ],
-                                useNamedFilters: ['statefilter'],
+                                useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                                 dd: dims[d].uniqueName,
                                 hh: hiers[h].uniqueName,
                                 ll: lvl.uniqueName,
@@ -88,7 +88,7 @@ Ext.define('Connector.store.FilterStatus', {
                                 requestId: requestId,
                                 selectionBased: true,
                                 onRows: [ { level: lvl.uniqueName } ],
-                                useNamedFilters: ['stateSelectionFilter', 'statefilter'],
+                                useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
                                 cellbased: lvl.cellbased
                             };
                         }

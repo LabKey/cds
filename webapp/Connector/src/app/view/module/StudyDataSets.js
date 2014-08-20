@@ -90,7 +90,7 @@ Ext.define('Connector.view.module.StudyDataSets', {
                                 this.state.onMDXReady(function(mdx) {
                                     var config = {
                                         onRows: [{hierarchy: "Assay.Name", member: 'members'}],
-                                        //useNamedFilters: ['statefilter'],
+                                        //useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                                         success: function(slice) {
                                             assayStore.on('load', function() {
                                                 assayStore.each(function(o) {
