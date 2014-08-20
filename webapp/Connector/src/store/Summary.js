@@ -58,7 +58,7 @@ Ext.define('Connector.store.Summary', {
                         request.configs.push({
                             requestId: requestId,
                             dimName: dims[d].name,
-                            useNamedFilters: ['statefilter'],
+                            useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                             onRows: [ { level: targetLevel } ],
                             priority: dims[d].priority
                         });
@@ -75,7 +75,7 @@ Ext.define('Connector.store.Summary', {
                                 request.configs.push({
                                     requestId: requestId,
                                     dimName: dims[d].name,
-                                    useNamedFilters: ['statefilter'],
+                                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                                     hierarchyIndex: h,
                                     targetLevel: targetHierLevel,
                                     label: targetHierLevel.countPlural || targetHierLevel.name,

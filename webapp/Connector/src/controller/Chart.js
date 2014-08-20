@@ -138,6 +138,12 @@ Ext.define('Connector.controller.Chart', {
         }
     },
 
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'plot') {
+            return 'Plot';
+        }
+    },
+
     getDefaultView : function() {
         return 'plot';
     }

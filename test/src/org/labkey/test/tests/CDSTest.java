@@ -247,8 +247,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         String raceMember3 = "Asian";
         String raceMember4 = "White";
 
-        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current filters");
-        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current filters");
+        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current selection");
+        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current selection");
 
         //
         // Open an filter pane and close it

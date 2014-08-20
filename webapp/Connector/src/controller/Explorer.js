@@ -137,6 +137,12 @@ Ext.define('Connector.controller.Explorer', {
         this.loadExplorerView(context, null);
     },
 
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'singleaxis') {
+            return 'Explore';
+        }
+    },
+
     getDefaultView : function() {
         return 'singleaxis';
     },

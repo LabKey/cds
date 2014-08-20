@@ -95,6 +95,12 @@ Ext.define('Connector.controller.Summary', {
 
     updateView : function(xtype, context) { },
 
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'summary') {
+            return 'Find';
+        }
+    },
+
     getDefaultView : function() {
         return 'summary';
     },

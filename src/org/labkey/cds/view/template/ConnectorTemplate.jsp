@@ -40,7 +40,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
-    <title>HIV Vaccine Connector</title>
+    <title>HIV CDS</title>
 
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">

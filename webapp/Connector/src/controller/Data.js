@@ -129,6 +129,12 @@ Ext.define('Connector.controller.Data', {
 
     updateView : function(xtype, context) { },
 
+    getViewTitle : function(xtype, context) {
+        if (xtype === 'groupdatagrid') {
+            return 'Data Grid';
+        }
+    },
+
     getDefaultView : function() {
         return 'groupdatagrid';
     }
