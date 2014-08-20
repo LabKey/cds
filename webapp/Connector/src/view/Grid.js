@@ -325,7 +325,7 @@ Ext.define('Connector.view.Grid', {
                     boxready : function(grid) {
                         this.showMessage();
                     },
-                    reconfigure: function(grid) {
+                    viewready: function(grid) {
                         this.updateColumnMap(grid.down('headercontainer'));
 
                         // reapply filters to the column UI
