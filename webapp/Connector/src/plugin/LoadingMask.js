@@ -30,7 +30,8 @@ Ext.define('Connector.plugin.LoadingMask', {
                 {
                     if (this.itemsMaskCls)
                     {
-                        this.getEl().addCls(this.itemsMaskCls);
+                        if (this.getEl())
+                            this.getEl().addCls(this.itemsMaskCls);
                     }
                     else
                     {
@@ -77,8 +78,12 @@ Ext.define('Connector.plugin.LoadingMask', {
     },
 
     hideMask : function() {
-        if (this.maskCmp) this.maskCmp.hide();
-        this.getEl().removeCls(this.itemsMaskCls);
+        if (this.maskCmp)
+            this.maskCmp.hide();
+
+        if (this.itemsMaskCls && this.getEl())
+            this.getEl().removeCls(this.itemsMaskCls);
+
         this.maskingLock = false;
     }
 });
