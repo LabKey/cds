@@ -113,7 +113,7 @@ Ext.define('Connector.view.Grid', {
 
         // bind view to model
         model.on('filterchange', this.onFilterChange, this, {buffer: 200});
-        model.on('updatecolumns', this.onColumnUpdate, this);
+        model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
 
         // bind view to view
         this.on('resize', this.onViewResize, this);
@@ -121,6 +121,7 @@ Ext.define('Connector.view.Grid', {
         // plugin to handle loading mask for the grid
         this.addPlugin({
             ptype: 'loadingmask',
+            loadingDelay: 0, // show this loading mask immediately since the grid render itself takes most of the time
             beginConfig: {
                 component: this,
                 events: ['showload']
@@ -216,14 +217,16 @@ Ext.define('Connector.view.Grid', {
         // add the new grid once the store has finished loading
         var newGrid = this.getGrid();
         newGrid.getStore().on('load', function() {
-            if (prevGridId)
+
+            if (prevGridId != null && prevGridId != newGrid.getId())
             {
                 this.remove(prevGridId, true);
                 this.hideMessage();
             }
 
             this.add(newGrid);
-        }, this);
+
+        }, this, {single: true});
     },
 
     onFilterChange : function(model, filterArray) {
