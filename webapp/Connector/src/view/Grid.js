@@ -185,10 +185,9 @@ Ext.define('Connector.view.Grid', {
     onViewResize : function() {
         Ext.defer(function() {
             if (this.getModel().isActive()) {
-                var grid = this.getComponent('gridcomponent');
-                if (grid) {
+                if (this.grid) {
                     var size = this.getWidthHeight();
-                    grid.setSize(size.width, size.height);
+                    this.getGrid().setSize(size.width, size.height);
                 }
             }
         }, 50, this);
@@ -207,30 +206,31 @@ Ext.define('Connector.view.Grid', {
     onColumnUpdate : function() {
         this.fireEvent('showload', this);
 
-        //
-        // remove the old grid
-        //
-        if (this.grid) {
-            this.remove(this.grid, true);
-            this.grid = null;
-            this.gridStore = null;
+        // hold on to the previous grid id so it can be removed once we are ready to add the new grid
+        var prevGridId = this.grid ? this.grid.getId() : null;
 
-            // reset the column mapping
-            this.columnMap = {};
-            this.hideMessage();
-        }
+        // reset the grid and column mapping
+        this.grid = null;
+        this.columnMap = {};
 
-        //
-        // add the new grid
-        //
-        this.add(this.getGrid(this.getStore()));
+        // add the new grid once the store has finished loading
+        var newGrid = this.getGrid();
+        newGrid.getStore().on('load', function() {
+            if (prevGridId)
+            {
+                this.remove(prevGridId, true);
+                this.hideMessage();
+            }
+
+            this.add(newGrid);
+        }, this);
     },
 
     onFilterChange : function(model, filterArray) {
-        if (this.gridStore) {
+        if (this.grid) {
             this.fireEvent('showload', this);
-            this.gridStore.filterArray = model.getFilterArray(true);
-            this.gridStore.load();
+            this.getGrid().getStore().filterArray = model.getFilterArray(true);
+            this.getGrid().getStore().load();
             this.applyFilterColumnState(this.getGrid());
         }
     },
@@ -271,8 +271,8 @@ Ext.define('Connector.view.Grid', {
             var fields = this.getModel().get('metadata').metaData.fields;
 
             // The proxy will have the most complete metadata -- getData API does not return lookup info
-            if (this.gridStore && this.gridStore.proxy) {
-                fields = this.gridStore.proxy.reader.getFields();
+            if (this.grid && this.grid.getStore().proxy) {
+                fields = this.grid.getStore().proxy.reader.getFields();
             }
 
             if (fields) {
@@ -295,7 +295,7 @@ Ext.define('Connector.view.Grid', {
         return target;
     },
 
-    getGrid : function(store) {
+    getGrid : function() {
 
         if (!this.grid) {
             this.fireEvent('showload', this);
@@ -304,11 +304,10 @@ Ext.define('Connector.view.Grid', {
 
             this.grid = Ext.create('Connector.grid.Panel', {
                 model: this.getModel(),
-                itemId: 'gridcomponent',
                 height: size.height,
                 width: size.width,
                 forceFit: true,
-                store: store,
+                store: this.initGridStore(),
                 border: false,
                 defaultColumnWidth: this.columnWidth,
                 margin: '-93 0 0 27',
@@ -386,30 +385,30 @@ Ext.define('Connector.view.Grid', {
     },
 
     getStore : function() {
+        return this.getGrid().getStore();
+    },
 
-        if (!this.gridStore) {
+    initGridStore : function() {
+        var model = this.getModel();
 
-            var model = this.getModel();
+        var store = Ext.create('LABKEY.ext4.data.Store', {
+            schemaName: model.get('schemaName'),
+            queryName: model.get('queryName'),
+            columns: model.get('columnSet'),
+            filterArray: model.getFilterArray(true),
+            maxRows: Connector.model.Grid.getMaxRows()
+        });
 
-            this.gridStore = Ext.create('LABKEY.ext4.data.Store', {
-                schemaName: model.get('schemaName'),
-                queryName: model.get('queryName'),
-                columns: model.get('columnSet'),
-                filterArray: model.getFilterArray(true),
-                maxRows: Connector.model.Grid.getMaxRows()
-            });
+        store.on('load', function(store) {
+            var cmp = Ext.getCmp('gridrowcountcmp');
+            if (cmp) {
+                cmp.update({count: store.getCount()});
+            }
 
-            this.gridStore.on('load', function(store) {
-                var cmp = Ext.getCmp('gridrowcountcmp');
-                if (cmp) {
-                    cmp.update({count: store.getCount()});
-                }
+            this.fireEvent('hideload', this);
+        }, this);
 
-                this.fireEvent('hideload', this);
-            }, this);
-        }
-
-        return this.gridStore;
+        return store;
     },
 
     getWidthHeight : function() {
@@ -520,9 +519,8 @@ Ext.define('Connector.view.Grid', {
             column = null;
 
             // lookup column by name
-            var grid = this.getGrid(this.getStore());
-            if (grid) {
-                var columns = grid.query('gridcolumn');
+            if (this.grid) {
+                var columns = this.getGrid().query('gridcolumn');
                 for (var c=0; c < columns.length; c++) {
                     if (columns[c].text.indexOf(_name) >= 0) {
                         column = columns[c];
@@ -572,7 +570,7 @@ Ext.define('Connector.view.Grid', {
     },
 
     requestExport : function() {
-        if (this.gridStore) {
+        if (this.grid) {
 
             var model = this.getModel();
 
