@@ -12,7 +12,7 @@ Ext4.define('Connector.cube.Configuration', {
         // Dimensions:
         //      singularName    - Declaure a singluar name for this dimension. Defaults to name value.
         //      pluralName      - Declaure a plural name for this dimension. Defaults to name value.
-        //      friendlyName    - Declaure a friendly, possibly more contextual, name for this dimension. Defaults to singularName value.
+        //      friendlyName    - Declaure a friendly, possibly more contextual, name for this dimension. Defaults to name value.
         //      hidden          - declare whether a dimension is hidden. Defaults to false.
         //      priority        - relative priority to be shown in displays. Default is 0.
         //      querySchema     - metadata member query schema. Defaults to undefined.
@@ -32,8 +32,8 @@ Ext4.define('Connector.cube.Configuration', {
         //      activeCountLink - declare whether an 'activeCount' level exposes navigation. false/true. Default is true.
         //      dataBasedCount  - false/true. Default is false.
         //      countPriority   - Default is 0.
-        //      countSingular   - Default is undefined.
-        //      countPlural     - Default is undefined.
+        //      countSingular   - The count label displayed when there is one match. Default is undefined.
+        //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
         //
         context: {
@@ -463,57 +463,32 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 }]
             }]
-            // Sites have been disabled until it is no longer dependent on the demographics dataset
-//            },{
-//                uniqueName: '[Site]',
-//                pluralName: 'Sites',
-//                supportsSummary: false,
-//                supportsDetails: true,
-//                detailCollection: 'Connector.app.store.Site',
-//                detailModel: 'Connector.app.model.Site',
-//                detailView: 'Connector.app.view.Site'
-//            }]
         },
 
-        /**
-         * Defines the application level context that wraps an OLAP cube provided for the data connector
-         */
-        applyContext : function(mdx) {
-
-            var OPERATOR = {
-                AND: 'AND',
-                REQ_AND: 'REQ_AND',
-                OR: 'OR',
-                REQ_OR: 'REQ_OR'
-            };
-
-            //
-            // Apply dimension metadata (dimensionDefaults)
-            //
-            var dd = {
-                singularName: undefined, // defaults to dim.name
-                pluralName: undefined, // defaults to dim.name
-                friendlyName: undefined, // defaults to dim.singularName
+        defaults: {
+            dimension: {
+                singularName: 'prop::name', // defaults to dim.name
+                pluralName: 'prop::name', // defaults to dim.name
+                friendlyName: 'prop::name', // defaults to dim.name
                 hidden: false,
                 priority: 0,
                 querySchema: undefined,
                 supportsDetails: false,
                 supportsSummary: true,
+                summaryTargetLevel: 'path::0|1',
                 detailCollection: undefined,
                 detailModel: undefined,
                 detailView: undefined,
                 itemDetail: undefined,
-                defaultOperator: OPERATOR.AND
-            };
-
-            var hh = {
+                defaultOperator: 'AND'
+            },
+            hierarchy: {
                 hidden: false,
                 supportsSummary: true,
-                defaultOperator: dd.defaultOperator,
-                label: '' // parsed later
-            };
-
-            var ll = {
+                defaultOperator: 'parent::defaultOperator',
+                label: 'label::'
+            },
+            level: {
                 activeCount: false,
                 activeCountLink: true,
                 dataBasedCount: false,
@@ -521,177 +496,19 @@ Ext4.define('Connector.cube.Configuration', {
                 countSingular: undefined,
                 countPlural: undefined,
                 cellbased: true,
-                defaultOperator: hh.defaultOperator
-            };
-
-            var context = Connector.cube.Configuration.context, cd, ch;
-            var dims = mdx.getDimensions(), _dim, _hier, c, d, h, _h;
-
-            //
-            // Iterate over the set of context overridden dimensions
-            //
-            for (c=0; c < context.dimensions.length; c++) {
-
-                cd = context.dimensions[c];
-
-                //
-                // For each context dimension, compare it against the cube dimensions
-                //
-                for (d=0; d < dims.length; d++) {
-
-                    if (dims[d].uniqueName == cd.uniqueName) {
-
-                        _dim = dims[d];
-                        _hier = _dim.getHierarchies();
-
-                        var defaultTargetLevel = '';
-                        if (_hier.length > 0) {
-                            if (_hier[0].levels.length > 1) {
-                                defaultTargetLevel = _hier[0].levels[1].uniqueName;
-                            }
-                        }
-
-                        //
-                        // Overlay the metadata for the given dimension configuration
-                        //
-                        Ext.apply(_dim, {
-                            singularName: Ext.isDefined(cd.singularName) ? cd.singularName : _dim.name,
-                            pluralName: Ext.isDefined(cd.pluralName) ? cd.pluralName : _dim.name,
-                            friendlyName: Ext.isDefined(cd.friendlyName) ? cd.friendlyName : (Ext.isDefined(cd.singularName) ? cd.singularName : _dim.name),
-                            hidden: Ext.isDefined(cd.hidden) ? cd.hidden : dd.hidden,
-                            priority: Ext.isDefined(cd.priority) ? cd.priority : dd.priority,
-                            querySchema: Ext.isDefined(cd.querySchema) ? cd.querySchema : dd.querySchema,
-                            supportsDetails: Ext.isDefined(cd.supportsDetails) ? cd.supportsDetails : dd.supportsDetails,
-                            supportsSummary: Ext.isDefined(cd.supportsSummary) ? cd.supportsSummary : dd.supportsSummary,
-                            summaryTargetLevel: Ext.isDefined(cd.summaryTargetLevel) ? cd.summaryTargetLevel : defaultTargetLevel,
-                            detailCollection: Ext.isDefined(cd.detailCollection) ? cd.detailCollection : dd.detailCollection,
-                            detailModel: Ext.isDefined(cd.detailModel) ? cd.detailModel : dd.detailModel,
-                            detailView: Ext.isDefined(cd.detailView) ? cd.detailView : dd.detailView,
-                            itemDetail: Ext.isDefined(cd.itemDetail) ? cd.itemDetail : dd.itemDetail,
-                            defaultOperator: Ext.isDefined(cd.defaultOperator) ? cd.defaultOperator : dd.defaultOperator
-                        });
-
-                        if (_dim.itemDetail) {
-
-                            if (Ext.isArray(_dim.itemDetail)) {
-                                // itemDetail is an array of composite data structures with detail page content and tab info.
-                                // Split it here
-                                var items = _dim.itemDetail;
-                                _dim.itemDetail = [];
-                                _dim.itemDetailTabs = [];
-                                Ext.each(items, function(item) {
-                                    _dim.itemDetail.push(item.content);
-                                    _dim.itemDetailTabs.push(item.label);
-                                })
-                            } else {
-                                _dim.itemDetail = [_dim.itemDetail];
-                            }
-                        }
-
-                        //
-                        // Iterate over the set of cube hierarchies applying context
-                        //
-                        ch = cd.hierarchies;
-                        var ctx = Ext.clone(hh);
-                        var processed = false;
-
-                        for (_h=0; _h < _hier.length; _h++) {
-
-                            var ctxHier = false;
-                            processed = false;
-
-                            if (ch) {
-                                // order of the context hierarchies might not match the dimension declarations
-                                // so find each one before overlaying
-                                for (h=0; h < ch.length; h++) {
-                                    if (ch[h].uniqueName === _hier[_h].uniqueName) {
-                                        ctxHier = ch[h];
-                                    }
-                                }
-
-                                if (ctxHier) {
-                                    ctx = {};
-
-                                    processed = true;
-                                    Ext.apply(ctx, {
-                                        hidden: Ext.isDefined(ctxHier.hidden) ? ctxHier.hidden === true : hh.hidden,
-                                        supportsSummary: Ext.isDefined(ctxHier.supportsSummary) ? ctxHier.supportsSummary === true : hh.supportsSummary,
-                                        defaultOperator: Ext.isDefined(ctxHier.defaultOperator) ? ctxHier.defaultOperator : _dim.defaultOperator,
-                                        label: Ext.isDefined(ctxHier.label) ? ctxHier.label : Connector.cube.Configuration.parseLabel(_hier[_h])
-                                    });
-
-                                    ll.defaultOperator = ctx.defaultOperator;
-                                }
-                            }
-
-                            if (!processed) {
-                                ctx = {};
-                                Ext.apply(ctx, {
-                                    hidden: hh.hidden,
-                                    supportsSummary: hh.supportsSummary,
-                                    defaultOperator: _dim.defaultOperator,
-                                    label: Connector.cube.Configuration.parseLabel(_hier[_h])
-                                });
-
-                                ll.defaultOperator = hh.defaultOperator;
-                            }
-
-                            Ext.apply(_hier[_h], ctx);
-
-                            //
-                            // Apply hierarchy level context
-                            //
-                            Connector.cube.Configuration.getLevels(_hier[_h], ctxHier, ll);
-                        }
-                    }
-                }
+                defaultOperator: 'parent::defaultOperator'
             }
-
-            return mdx;
         },
 
-        parseLabel : function(hierarchy) {
-            var label = hierarchy.name.split('.');
-            return label[label.length-1];
-        },
+        /**
+         * Defines the application level context that wraps an OLAP cube provided for the data connector
+         */
+        applyContext : function(mdx) {
 
-        getLevels : function(cubeHierarchy, contextHierarchy, defaults) {
+            var defaults = Connector.cube.Configuration.defaults;
+            var values = Connector.cube.Configuration.context;
 
-            //
-            // Iterate over the set of cube hierarchies levels applying context
-            //
-            var _levels = cubeHierarchy['levels'], lvl, l, _l;
-
-            for (_l=0; _l < _levels.length; _l++) {
-
-                var ctx = Ext.clone(defaults);
-
-                //
-                // Determine if an override was supplied for this level
-                //
-                if (Ext.isDefined(contextHierarchy) && Ext.isDefined(contextHierarchy.levels)) {
-
-                    for (l=0; l < contextHierarchy.levels.length; l++) {
-                        lvl = contextHierarchy.levels[l];
-                        if (lvl.uniqueName == _levels[_l].uniqueName) {
-                            ctx = {};
-                            Ext.apply(ctx, {
-                                activeCount: Ext.isDefined(lvl.activeCount) ? lvl.activeCount : defaults.activeCount,
-                                activeCountLink: Ext.isDefined(lvl.activeCountLink) ? lvl.activeCountLink : defaults.activeCountLink,
-                                dataBasedCount: Ext.isDefined(lvl.dataBasedCount) ? lvl.dataBasedCount : defaults.dataBasedCount,
-                                countPriority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : defaults.countPriority,
-                                countSingular: Ext.isDefined(lvl.countSingular) ? lvl.countSingular : defaults.countSingular,
-                                countPlural: Ext.isDefined(lvl.countPlural) ? lvl.countPlural : defaults.countPlural,
-                                cellbased: Ext.isDefined(lvl.cellbased) ? lvl.cellbased : defaults.cellbased,
-                                defaultOperator: Ext.isDefined(lvl.defaultOperator) ? lvl.defaultOperator : defaults.defaultOperator
-                            });
-                            break;
-                        }
-                    }
-                }
-
-                Ext.apply(_levels[_l], ctx);
-            }
+            return LABKEY.query.olap.AppContext.applyContext(mdx, defaults, values);
         }
     }
 });
