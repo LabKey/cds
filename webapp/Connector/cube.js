@@ -280,7 +280,7 @@ Ext4.define('Connector.cube.Configuration', {
 
                 hierarchies: [{
                     uniqueName: '[Assay.Name]',
-                    hidden: true,
+                    supportsSummary: false,
                     levels: [{
                         uniqueName: '[Assay.Name].[Name]',
                         activeCount: 'highlight',

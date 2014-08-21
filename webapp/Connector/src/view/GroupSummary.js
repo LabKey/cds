@@ -155,6 +155,12 @@ Ext.define('Connector.view.GroupSummary', {
         } else {
             console.log('group not found, throw not found.');
         }
+    },
+
+    getGroup : function() {
+        if (this.group) {
+            return Ext.clone(this.group.data);
+        }
     }
 });
 

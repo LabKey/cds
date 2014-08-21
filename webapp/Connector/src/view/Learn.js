@@ -104,7 +104,7 @@ Ext.define('Connector.view.Learn', {
                 this.state.onMDXReady(function(mdx) {
                     var config = {
                         onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
-                        //useNamedFilters: ['statefilter'],
+                        //useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                         success: function(slice) {
                             if (store)
                                 store.loadSlice(slice);
