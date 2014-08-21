@@ -111,16 +111,18 @@ Ext.define('Connector.model.Grid', {
             var colMeasure = {};
             Ext.each(measures, function(measure) {
 
-                if (metadata.measureToColumn[measure.name]) {
+                if (metadata.measureToColumn[measure.alias])
+                {
+                    colMeasure[measure.alias] = measure;
+                }
+                else if (metadata.measureToColumn[measure.name])
+                {
                     if (Ext.isDefined(measure.interval)) {
                         colMeasure[measure.interval] = measure;
                     }
                     else {
                         colMeasure[metadata.measureToColumn[measure.name]] = measure;
                     }
-                }
-                else {
-                    colMeasure[measure.alias] = measure;
                 }
             });
 

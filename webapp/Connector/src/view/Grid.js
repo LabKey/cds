@@ -570,6 +570,16 @@ Ext.define('Connector.view.Grid', {
                 exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
             });
 
+            // issue 20850: set export column headers to be "Dataset - Variable"
+            exportParams["columnNames"] = [];
+            exportParams["columnAliases"] = [];
+            Ext.each(this.getGrid().getColumnsConfig(), function(colGroup){
+                Ext.each(colGroup.columns, function(col){
+                    exportParams["columnNames"].push(col.dataIndex);
+                    exportParams["columnAliases"].push(colGroup.text + " - " + col.header);
+                });
+            });
+
             /**
              * Sometimes the GET URL gets too long, so use a POST instead. We have to create a separate <form>.
              */
@@ -577,7 +587,7 @@ Ext.define('Connector.view.Grid', {
             document.body.appendChild(newForm);
 
             Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('query', 'exportRowsXLSX'),
+                url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
                 method: 'POST',
                 form: newForm,
                 isUpload: true,

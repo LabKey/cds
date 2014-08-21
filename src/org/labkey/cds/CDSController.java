@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.labkey.api.action.Action;
+import org.labkey.api.action.ActionType;
 import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiJsonWriter;
 import org.labkey.api.action.ApiResponse;
@@ -47,11 +49,14 @@ import org.labkey.api.cache.CacheManager;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DataRegion;
+import org.labkey.api.data.DisplayColumn;
+import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.ShowRows;
 import org.labkey.api.data.Table;
 import org.labkey.api.files.FileContentService;
+import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
@@ -91,6 +96,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.lang.Object;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -1029,4 +1035,81 @@ public class CDSController extends SpringActionController
         }
     }
 
+    @RequiresPermissionClass(ReadPermission.class)
+    @Action(ActionType.Export)
+    public class ExportRowsXLSXAction extends SimpleViewAction<ExportForm>
+    {
+        @Override
+        public ModelAndView getView(ExportForm form, BindException errors) throws Exception
+        {
+            QueryView view = new ExcelExportQueryView(form, errors, form.getColumnAliases());
+            view.exportToExcel(getViewContext().getResponse(), ExcelWriter.ExcelDocumentType.xlsx);
+            return null;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
+        }
+    }
+
+    public class ExcelExportQueryView extends QueryView
+    {
+        private Map<String, String> _columnAliases;
+
+        public ExcelExportQueryView(QueryForm form, Errors errors, Map<String, String> columnAliases)
+        {
+            super(form, errors);
+            _columnAliases = columnAliases;
+        }
+
+        @Override
+        public List<DisplayColumn> getExportColumns(List<DisplayColumn> list)
+        {
+            List<DisplayColumn> retColumns = super.getExportColumns(list);
+            List<DisplayColumn> exportColumns = new ArrayList<>();
+
+            // issue 20850: set export column headers to be "Dataset - Variable"
+            for (DisplayColumn col : retColumns)
+            {
+                if (col.getColumnInfo() != null && _columnAliases.containsKey(col.getColumnInfo().getName()))
+                {
+                    col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
+                    exportColumns.add(col);
+                }
+                else if (_columnAliases.containsKey(col.getName()))
+                {
+                    col.setCaption(_columnAliases.get(col.getName()));
+                    exportColumns.add(col);
+                }
+            }
+            return exportColumns;
+        }
+    }
+
+    public static class ExportForm extends QueryForm
+    {
+        private Map<String, String> _columnAliases = new HashMap<String, String>();
+
+        protected BindException doBindParameters(PropertyValues in)
+        {
+            BindException errors = super.doBindParameters(in);
+
+            String[] columnNames = getValues("columnNames", in);
+            String[] columnAliases = getValues("columnAliases", in);
+            if (columnNames.length == columnAliases.length)
+            {
+                for (int i = 0; i < columnNames.length; i++)
+                    _columnAliases.put(columnNames[i], columnAliases[i]);
+            }
+
+            return errors;
+        }
+
+        public Map<String, String> getColumnAliases()
+        {
+            return _columnAliases;
+        }
+    }
 }
