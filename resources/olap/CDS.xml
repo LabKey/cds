@@ -61,7 +61,7 @@
 
 
 
-    <Cube name="DataspaceCube" visible="true" defaultMeasure="ParticipantCount" cache="true" enabled="true">
+    <Cube name="DataspaceCube" visible="true" defaultMeasure="RowCount" cache="true" enabled="true">
 
         <Annotations>
             <Annotation name="SchemaName">Study</Annotation>
@@ -170,7 +170,7 @@
         </DimensionUsage>
 
         <Dimension visible="true" highCardinality="false" name="Lab" foreignKey="lab">
-            <Hierarchy visible="true" hasAll="true">
+            <Hierarchy visible="true" hasAll="true" primaryKey="Name">
                 <Table schema="study" name="StudyDesignLabs" />
                 <Level name="Name" visible="true" column="Name" type="String" uniqueMembers="true" >
                 </Level>
