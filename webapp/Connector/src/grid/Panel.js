@@ -167,6 +167,12 @@ Ext.define('Connector.grid.Panel', {
         var columns = LABKEY.ext4.Util.getColumnsConfig(store, this, config);
 
         if (Ext.isDefined(this.model)) {
+            var measureNameToQueryMap = {};
+            Ext.each(this.model.get('measures'), function(measure){
+                if (measure.queryLabel)
+                    measureNameToQueryMap[measure.alias] = measure.queryLabel;
+            });
+
             var plotMeasures = this.model.get('plotMeasures');
             Ext.each(columns, function(column) {
 
@@ -177,6 +183,8 @@ Ext.define('Connector.grid.Panel', {
                     }
                 }
 
+                if (measureNameToQueryMap[column.dataIndex])
+                    column.queryLabel = measureNameToQueryMap[column.dataIndex];
             });
         }
 
@@ -194,7 +202,7 @@ Ext.define('Connector.grid.Panel', {
         if(this.metadataDefaults){
             Ext.Object.merge(config, this.metadataDefaults);
         }
-        if(this.metadata && this.metadata[c.name]){
+        if(this.metadata && this.metadata[c.name]){   // TODO: where is this c variable?
             Ext.Object.merge(config, this.metadata[c.name]);
         }
 
@@ -284,6 +292,13 @@ Ext.define('Connector.grid.Panel', {
         var groupMap = {};
         Ext.each(remainder, function(col) {
             var queryName = col.dataIndex.split('_')[1];
+            // TODO: enable this, but then there is a column alignment issue when the group header is longer than the sub-header
+            //if (col.queryLabel)
+            //    queryName = col.queryLabel;
+
+            // HACK: special case to map SubjectGroupMap -> User groups
+            if (queryName == "SubjectGroupMap")
+                queryName = "User groups";
 
             if (Ext.isDefined(queryName)) {
                 if (!groupMap[queryName]) {
