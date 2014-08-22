@@ -23,7 +23,8 @@ Ext.define('Connector.plugin.LoadingMask', {
             {
                 if (this.blockingMask)
                 {
-                    this.maskCmp = new Ext.LoadMask(this, { cls: "large-spinner-mask", msg:" " });
+                    if (!this.maskCmp)
+                        this.maskCmp = new Ext.LoadMask(this, { cls: "large-spinner-mask", msg:" " });
                     this.maskCmp.show();
                 }
                 else
@@ -59,14 +60,14 @@ Ext.define('Connector.plugin.LoadingMask', {
 
         // attach the begin events to the specified component to show mask
         if (this.beginConfig && this.beginConfig.component && Ext.isArray(this.beginConfig.events)) {
-            Ext.each(this.beginConfig.events, function(eventName){
+            Ext.each(Ext.Array.unique(this.beginConfig.events), function(eventName){
                 this.beginConfig.component.on(eventName, component.showMask, component);
             }, this);
         }
 
         // attach the end events to the specified component to hide mask
         if (this.endConfig && this.endConfig.component && Ext.isArray(this.endConfig.events)) {
-            Ext.each(this.endConfig.events, function(eventName){
+            Ext.each(Ext.Array.unique(this.endConfig.events), function(eventName){
                 this.endConfig.component.on(eventName, component.hideMask, component);
             }, this);
         }

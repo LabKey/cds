@@ -405,41 +405,6 @@ div.emptytext {
   opacity: .8 !important;
 }
 
-.large-spinner-mask {
-  border-style: none !important;
-  background-color: transparent !important;
-
-  .x-mask-msg-inner, .x-mask-msg {
-    border-style: none;
-    background-color: transparent;
-  }
-
-  .x-mask-msg-text {
-    background-image: url('images/mask/large.gif');
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-  }
-}
-
-.item-spinner-mask .maskit {
-  background-image: url('images/mask/small-gray.gif');
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 18px;
-  color: transparent;
-}
-
-.item-spinner-mask-orange .maskit {
-  background-image: url('images/mask/small-orange.gif');
-  background-repeat: no-repeat;
-  width: 16px;
-  height: 18px;
-  color: transparent;
-}
-
 /* Ext Message Box */
 .x-window-default,
 .x-window-header-default-top {
@@ -512,6 +477,8 @@ div.emptytext {
 
 @import 'panel/FilterPanel';
 @import 'panel/GroupList';
+
+@import 'plugin/LoadingMask';
 
 @import 'view/DetailStatus';
 @import 'view/Header';

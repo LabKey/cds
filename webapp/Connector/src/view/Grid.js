@@ -205,7 +205,6 @@ Ext.define('Connector.view.Grid', {
     },
 
     onColumnUpdate : function() {
-        this.fireEvent('showload', this);
 
         // hold on to the previous grid id so it can be removed once we are ready to add the new grid
         var prevGridId = this.grid ? this.grid.getId() : null;
@@ -231,7 +230,6 @@ Ext.define('Connector.view.Grid', {
 
     onFilterChange : function(model, filterArray) {
         if (this.grid) {
-            this.fireEvent('showload', this);
             this.getGrid().getStore().filterArray = model.getFilterArray(true);
             this.getGrid().getStore().load();
             this.applyFilterColumnState(this.getGrid());
@@ -333,6 +331,8 @@ Ext.define('Connector.view.Grid', {
 
                         // reapply filters to the column UI
                         this.applyFilterColumnState(grid);
+
+                        this.fireEvent('hideload', this);
                     },
                     scope: this
                 }
@@ -402,13 +402,21 @@ Ext.define('Connector.view.Grid', {
             maxRows: Connector.model.Grid.getMaxRows()
         });
 
+        store.on('beforeload', function(){
+            this.fireEvent('showload', this);
+        }, this);
+
         store.on('load', function(store) {
             var cmp = Ext.getCmp('gridrowcountcmp');
             if (cmp) {
                 cmp.update({count: store.getCount()});
             }
 
-            this.fireEvent('hideload', this);
+            // show/hide for a filter change need to place nicely with the show/hide for a column change
+            // (i.e. new grid creation) so we only hide the mask on store load if the grid is already rendered
+            if (this.getGrid().rendered) {
+                this.fireEvent('hideload', this);
+            }
         }, this);
 
         return store;
