@@ -551,7 +551,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             store: this.getLookupColumnStore(measure),
             ui: 'custom',
             height: 175,
-            cls: 'measuresgrid iScroll lookupgrid',
+            cls: 'measuresgrid iScroll lookupgrid variableoptionsgrid',
             flex: 1,
             hideHeaders: true,
             columns: [{

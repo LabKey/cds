@@ -463,7 +463,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Check to make sure study axis appears.
         waitForElement(studyAxisLoc);
-        assertEquals("Unexpected number of visits on the study axis.", 59, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
         assertEquals("Unexpected number of visit tagss on the study axis.", 25, visitTags.findElements(getDriver()).size());
 
         WebElement studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
@@ -484,7 +484,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         waitForTextToDisappear("NotRV144");
 
-        assertEquals("Unexpected number of visits on the study axis.", 44, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
         assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
 
         WebElement notRV144 = studyGroups.findElements(getDriver()).get(0);
@@ -498,7 +498,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForText("NotRV144");
 
         // Assert that we have the same amount of visits even with study weeks.
-        assertEquals("Unexpected number of visits on the study axis.", 59, studyVisits.findElements(getDriver()).size());
+        assertEquals("Unexpected number of visits on the study axis.", 52, studyVisits.findElements(getDriver()).size());
         assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
     }
 
