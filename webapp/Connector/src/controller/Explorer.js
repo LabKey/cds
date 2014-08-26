@@ -43,12 +43,16 @@ Ext.define('Connector.controller.Explorer', {
                         return;
                     }
 
-                    for (var d=0; d < h.length; d++) {
-                        m.add({
-                            text: h[d].label,
-                            hierarchyIndex: d
-                        });
-                    }
+                    Ext.each(h, function(hierarchy, idx) {
+                        if (!hierarchy.hidden) {
+                            m.add({
+                                text: hierarchy.label,
+                                uniqueName: hierarchy.uniqueName,
+                                hierarchyIndex: idx
+                            });
+                        }
+                    });
+
                     btn.show();
                 };
 
