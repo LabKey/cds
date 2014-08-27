@@ -229,6 +229,7 @@ Ext.define('Connector.view.Grid', {
                     allColumns: true,
                     displaySourceCounts: true,
                     includeTimpointMeasures: true,
+                    supportSelectionGroup: true,
                     sourceCls: this.axisSourceCls,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
