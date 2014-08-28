@@ -578,8 +578,13 @@ Ext.define('Connector.view.Grid', {
         measureWindow.showAt(47, 128);
 
         // Run the query to determine current measure counts
-        var picker = this.getAxisSelector().getMeasurePicker();
-        picker.setCountMemberSet(this.getModel().get('filterState').subjects);
+        var mp = this.getAxisSelector().getMeasurePicker();
+        mp.setCountMemberSet(this.getModel().get('filterState').subjects);
+
+        // Open with 'Current columns' selected if we have a selection
+        if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
+            mp.getSourcesView().getSelectionModel().select(mp.getSourceStore().getAt(0));
+        }
     },
 
     requestExport : function() {
