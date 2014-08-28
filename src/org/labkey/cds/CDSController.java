@@ -1042,7 +1042,7 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
-            QueryView view = new ExcelExportQueryView(form, errors, form.getColumnAliases());
+            QueryView view = new ExcelExportQueryView(form, errors);
             view.exportToExcel(getViewContext().getResponse(), ExcelWriter.ExcelDocumentType.xlsx);
             return null;
         }
@@ -1056,12 +1056,14 @@ public class CDSController extends SpringActionController
 
     public class ExcelExportQueryView extends QueryView
     {
+        private String[] _columnNamesOrdered;
         private Map<String, String> _columnAliases;
 
-        public ExcelExportQueryView(QueryForm form, Errors errors, Map<String, String> columnAliases)
+        public ExcelExportQueryView(ExportForm form, Errors errors)
         {
             super(form, errors);
-            _columnAliases = columnAliases;
+            _columnNamesOrdered = form.getColumnNamesOrdered();
+            _columnAliases = form.getColumnAliases();
         }
 
         @Override
@@ -1071,17 +1073,22 @@ public class CDSController extends SpringActionController
             List<DisplayColumn> exportColumns = new ArrayList<>();
 
             // issue 20850: set export column headers to be "Dataset - Variable"
-            for (DisplayColumn col : retColumns)
+            for (String colName : _columnNamesOrdered)
             {
-                if (col.getColumnInfo() != null && _columnAliases.containsKey(col.getColumnInfo().getName()))
+                for (DisplayColumn col : retColumns)
                 {
-                    col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
-                    exportColumns.add(col);
-                }
-                else if (_columnAliases.containsKey(col.getName()))
-                {
-                    col.setCaption(_columnAliases.get(col.getName()));
-                    exportColumns.add(col);
+                    if (col.getColumnInfo() != null && colName.equals(col.getColumnInfo().getName()))
+                    {
+                        col.setCaption(_columnAliases.get(col.getColumnInfo().getName()));
+                        exportColumns.add(col);
+                        break;
+                    }
+                    else if (colName.equals(col.getName()))
+                    {
+                        col.setCaption(_columnAliases.get(col.getName()));
+                        exportColumns.add(col);
+                        break;
+                    }
                 }
             }
             return exportColumns;
@@ -1090,6 +1097,7 @@ public class CDSController extends SpringActionController
 
     public static class ExportForm extends QueryForm
     {
+        private String[] _columnNamesOrdered;
         private Map<String, String> _columnAliases = new HashMap<String, String>();
 
         protected BindException doBindParameters(PropertyValues in)
@@ -1100,11 +1108,18 @@ public class CDSController extends SpringActionController
             String[] columnAliases = getValues("columnAliases", in);
             if (columnNames.length == columnAliases.length)
             {
+                _columnNamesOrdered = columnNames;
+
                 for (int i = 0; i < columnNames.length; i++)
                     _columnAliases.put(columnNames[i], columnAliases[i]);
             }
 
             return errors;
+        }
+
+        public String[] getColumnNamesOrdered()
+        {
+            return _columnNamesOrdered;
         }
 
         public Map<String, String> getColumnAliases()
