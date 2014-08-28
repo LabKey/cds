@@ -110,7 +110,7 @@ Ext.define('Connector.controller.Learn', {
             }
 
             if (defer) {
-                Ext.defer(v.getHeader().getHeaderView().selectDimension, 200, this);
+                Ext.defer(function(){ v.getHeader().getHeaderView().selectDimension(); }, 200, this);
             }
         }, this);
     },
