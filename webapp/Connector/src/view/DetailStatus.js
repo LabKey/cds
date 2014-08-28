@@ -20,6 +20,8 @@ Ext.define('Connector.view.DetailStatus', {
 
     overItemCls: 'status-over',
 
+    loadMask: false,
+
     tpl: new Ext.XTemplate(
             '<ul class="detailstatus">',
                 '<tpl for=".">',
@@ -27,18 +29,18 @@ Ext.define('Connector.view.DetailStatus', {
                         '<tpl if="highlight != undefined && highlight == true">',
                                 '<li>',
                                       '<span class="statme hl-status-label">{label:htmlEncode}</span>',
-                                      '<span class="statme hl-status-count status-subcount {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
+                                      '<span class="statme hl-status-count status-subcount maskit {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
                                       '<span class="statme hl-status-count status-of {subcount:this.subFormat}">of</span>',
-                                      '<span class="statme hl-status-count">{count:this.commaFormat}</span>',
+                                      '<span class="statme hl-status-count maskit">{count:this.commaFormat}</span>',
                                 '</li>',
                             '</div>',
                         '</tpl>',
                         '<tpl if="highlight == undefined || !highlight">',
                             '<li>',
                                 '<span class="statme status-label">{label:htmlEncode}</span>',
-                                '<span class="statme status-count status-subcount {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
+                                '<span class="statme status-count status-subcount maskit {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
                                 '<span class="statme status-count status-of {subcount:this.subFormat}">of</span>',
-                                '<span class="statme status-count">{count:this.commaFormat}</span>',
+                                '<span class="statme status-count maskit">{count:this.commaFormat}</span>',
                             '</li>',
                         '</tpl>',
                     '</div>',
@@ -71,6 +73,22 @@ Ext.define('Connector.view.DetailStatus', {
             state.on('filterchange', this.onFilterChange, this);
             state.on('selectionchange', this.onFilterChange, this);
         }
+
+        // plugin to handle loading mask for the info pane
+        this.addPlugin({
+            ptype: 'loadingmask',
+            blockingMask: false,
+            itemsMaskCls: 'item-spinner-mask',
+            beginConfig: {
+                component: this.store,
+                events: ['beforeload']
+
+            },
+            endConfig: {
+                component: this.store,
+                events: ['load']
+            }
+        });
     },
 
     onFilterChange : function() {
@@ -78,21 +96,6 @@ Ext.define('Connector.view.DetailStatus', {
     },
 
     filterChange : function() {
-        this.showLoad();
         this.store.load();
-    },
-
-    showLoad : function() {
-        var el = Ext.get('statusloader');
-        if (el) {
-            el.setStyle('visibility', 'visible');
-        }
-    },
-
-    hideLoad : function() {
-        var el = Ext.get('statusloader');
-        if (el) {
-            el.setStyle('visibility', 'hidden');
-        }
     }
 });

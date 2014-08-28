@@ -12,9 +12,6 @@ Ext.define('Connector.view.module.StudyAssays', {
     tpl : new Ext.XTemplate(
         '<tpl><p>',
             Connector.constant.Templates.module.title,
-            '<tpl if="!values.assays">',
-                Connector.constant.Templates.module.loadingData,
-            '</tpl>',
             '<tpl if="values.assays">',
                 Connector.constant.Templates.module.availableDataLegend,
                 '<tpl for="assays">',
@@ -55,6 +52,7 @@ Ext.define('Connector.view.module.StudyAssays', {
                 }
                 data.assays = assaySet;
                 this.update(data);
+                this.fireEvent('hideLoad', this);
             },
             scope: this
         };
@@ -63,5 +61,11 @@ Ext.define('Connector.view.module.StudyAssays', {
         });
 
         this.callParent();
+
+        this.on('render', function(){
+            if (!data.assays) {
+                this.fireEvent('showLoad', this);
+            }
+        });
     }
 });

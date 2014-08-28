@@ -400,6 +400,11 @@ div.emptytext {
   border-right-color: darken($primary-color, 10%);
 }
 
+.x-mask {
+  background-color: $light-color !important;
+  opacity: .8 !important;
+}
+
 /* Ext Message Box */
 .x-window-default,
 .x-window-header-default-top {
@@ -472,6 +477,8 @@ div.emptytext {
 
 @import 'panel/FilterPanel';
 @import 'panel/GroupList';
+
+@import 'plugin/LoadingMask';
 
 @import 'view/DetailStatus';
 @import 'view/Header';

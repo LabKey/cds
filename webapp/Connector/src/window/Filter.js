@@ -124,6 +124,7 @@ Ext.define('Connector.window.Filter', {
 
         items.push({
             xtype: 'labkey-default-filterpanel',
+            cls: 'filterpanel',
             boundColumn: this.boundColumn,
             filterArray: model.getFilterArray(),
             schemaName: model.get('metadata').schemaName,

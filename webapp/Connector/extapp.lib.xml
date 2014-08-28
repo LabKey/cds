@@ -91,6 +91,7 @@
 
         <!-- Application plugins -->
         <script path="Connector/src/plugin/Messaging.js"/>
+        <script path="Connector/src/plugin/LoadingMask.js"/>
 
         <!-- Constant singletons -->
         <script path="Connector/src/constant/Templates.js"></script>

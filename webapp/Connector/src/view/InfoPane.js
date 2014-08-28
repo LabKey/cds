@@ -197,7 +197,7 @@ Ext.define('Connector.view.InfoPane', {
     },
 
     getMiddleContent : function(model) {
-        return [{
+        var memberGrid = Ext.create('Ext.grid.Panel', {
             xtype: 'grid',
             itemId: 'membergrid',
             store: this.getMemberStore(),
@@ -257,7 +257,22 @@ Ext.define('Connector.view.InfoPane', {
                 },
                 scope: this
             }
-        }];
+        });
+
+        // plugin to handle loading mask for this grid
+        memberGrid.addPlugin({
+            ptype: 'loadingmask',
+            beginConfig: {
+                component: memberGrid,
+                events: ['render']
+            },
+            endConfig: {
+                component: memberGrid,
+                events: ['selectioncomplete']
+            }
+        });
+
+        return [memberGrid];
     },
 
     getToolbarConfig : function(model) {
@@ -385,6 +400,8 @@ Ext.define('Connector.view.InfoPane', {
         else {
             this.showOperator();
         }
+
+        grid.fireEvent('selectioncomplete', this);
     },
 
     onOperatorChange : function(radio, newValue) {
