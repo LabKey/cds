@@ -144,9 +144,96 @@ Ext.define('Connector.panel.AxisSelector', {
             return this.variableChooserPanel;
         }
 
-        this.variableChooserPanel = Ext.create('LABKEY.app.panel.MeasurePicker', this.measureConfig);
+        Ext.applyIf(this.measureConfig, {
+            includeTimpointMeasures: false,
+            allColumns: true,
+            showHidden: false,
+            multiSelect: true,
+            flex: 1,
+            sourceCls: undefined
+        });
 
+        Ext.apply(this.measureConfig, {
+            sourceGroupHeader : 'Datasets',
+            measuresAllHeader : 'All columns for this assay',
+            getAdditionalMeasuresArray : this.getAdditionalMeasuresArray,
+            getSessionMeasures: this.getSessionMeasures,
+            bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
+        });
+
+        var panel = Ext.create('LABKEY.app.panel.MeasurePicker', this.measureConfig);
+
+        // allows for a class to be added to the source selection panel
+        if (Ext.isString(this.measureConfig.sourceCls)) {
+            panel.getMeasurePicker().getSourcesView().on('afterrender', function(p) {
+                p.addCls(this.measureConfig.sourceCls);
+            }, this, {single: true});
+        }
+
+        this.variableChooserPanel = panel;
         return this.variableChooserPanel;
+    },
+
+    getAdditionalMeasuresArray : function() {
+        var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
+
+        return !this.includeTimpointMeasures ? [] :[{
+            sortOrder: -4,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'Time points',
+            queryDescription: timePointQueryDescription,
+            isKeyVariable: true,
+            name: 'SubjectVisit/Visit/ProtocolDay',
+            alias: 'Days',
+            label: 'Study days',
+            type: 'INTEGER',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
+            variableType: 'TIME'
+        },{
+            sortOrder: -3,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'Time points',
+            name: 'SubjectVisit/Visit/ProtocolDay',
+            alias: 'Weeks',
+            label: 'Study weeks',
+            type: 'DOUBLE',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
+            variableType: 'TIME'
+        },{
+            sortOrder: -2,
+            schemaName: null,
+            queryName: null,
+            queryLabel: 'Time points',
+            name: 'SubjectVisit/Visit/ProtocolDay',
+            alias: 'Months',
+            label: 'Study months',
+            type: 'DOUBLE',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
+            variableType: 'TIME'
+        },{
+            sortOrder: -1,
+            schemaName: 'study',
+            queryName: 'SubjectGroupMap',
+            queryLabel: 'User groups',
+            queryDescription: 'Creates a categorical x axis of the selected user groups',
+            name: 'GroupId',
+            alias: 'SavedGroups',
+            label: 'My saved groups',
+            description: 'Creates a categorical x axis of the selected saved groups',
+            type: 'VARCHAR',
+            isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
+            variableType: 'USER_GROUPS'
+        }];
+    },
+
+    getSessionMeasures : function() {
+        var cols = [];
+        Ext.iterate(Connector.getState().getSessionColumns(), function(k,col) {
+            cols.push(col);
+        });
+        return cols;
     },
 
     getMeasurePicker : function() {
