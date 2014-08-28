@@ -12,12 +12,31 @@ Ext.define('Connector.controller.State', {
 
     appVersion: '0.5',
 
+    supportColumnServices: true,
+
+    isService: true,
+
     init : function() {
         this.callParent();
 
         Connector.STATE = this;
         this.onMDXReady(function(mdx) {
             Connector.model.Filter.loadSubjectContainer(mdx);
+        });
+    },
+
+    initColumnListeners : function() {
+
+        this.control('groupdatagrid', {
+            measureselected: function(selected) {
+                Ext.each(selected, function(rec) { this.addSessionColumn(rec.raw); }, this);
+            }
+        });
+
+        this.control('plot', {
+            axisselect: function(plot, axis, selection) {
+                Ext.each(selection, this.addSessionColumn, this);
+            }
         });
     },
 
