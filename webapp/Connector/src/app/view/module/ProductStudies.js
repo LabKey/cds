@@ -12,9 +12,6 @@ Ext.define('Connector.view.module.ProductStudies', {
     tpl : new Ext.XTemplate(
         '<tpl><p>',
             Connector.constant.Templates.module.title,
-            '<tpl if="!values.items">',
-                Connector.constant.Templates.module.loadingData,
-            '</tpl>',
             '<tpl for="items">',
                 '<div class="item-row">',
                     '<p><a href="#learn/learn/Study/{[encodeURIComponent(values)]}">{.}</a></p>',
@@ -31,7 +28,7 @@ Ext.define('Connector.view.module.ProductStudies', {
             onRows: [{ level: '[Study].[Name]' }],
             filter: [ {level : '[Subject].[Subject]', membersQuery: {
                 hierarchy: "[Vaccine.Type]",
-                members: ["[Vaccine.Type].["+(product.get('Type') || '#null')+"].[" + product.get('Label') + "]"],
+                members: ["[Vaccine.Type].["+(product.get('Type') || '#null')+"].[" + product.get('Label') + "]"]
             }}],
             success: function(slice) {
                 var cells = slice.cells, row;
@@ -45,6 +42,7 @@ Ext.define('Connector.view.module.ProductStudies', {
                 }
                 data.items = set;
                 this.update(data);
+                this.fireEvent('hideLoad', this);
             },
             scope: this
         };
@@ -53,5 +51,11 @@ Ext.define('Connector.view.module.ProductStudies', {
         });
 
         this.callParent();
+
+        this.on('render', function(){
+            if (!data.items) {
+                this.fireEvent('showLoad', this);
+            }
+        });
     }
 });

@@ -82,7 +82,11 @@ Ext.define('Connector.model.Filter', {
 
                 Ext.each(members, function(member) {
                     if (Connector.model.Filter.subjectMap[member.name]) {
-                        console.error('Unable to process the same subject identifier in multiple studies.');
+                        var msg = 'Unable to process the same subject identifier in multiple studies.';
+                        if (LABKEY.devMode) {
+                            msg += " ID: " + member.name;
+                        }
+                        console.error(msg);
                     }
                     else {
                         var uniqueName = member.uniqueName.split('].');

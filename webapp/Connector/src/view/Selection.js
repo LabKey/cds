@@ -11,6 +11,8 @@ Ext.define('Connector.view.Selection', {
 
     itemSelector: 'div.wrapitem',
 
+    loadMask: false,
+
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
                 '<tpl if="this.isPlotSelection(values) === true">',

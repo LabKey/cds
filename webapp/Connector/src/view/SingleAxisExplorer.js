@@ -256,7 +256,7 @@ Ext.define('Connector.view.DimensionSelector', {
                     '</div>'
                 ),
                 data: {
-                    content: 'Loading...'
+                    content: ''
                 }
             },{
                 itemId: 'dimensionbtn',
@@ -435,11 +435,22 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
         this.callParent();
 
-        this.msgTask = new Ext.util.DelayedTask(this._loadMsg, this);
-
-        this.on('refresh', function() { this.cancelShowLoad(); }, this);
+        this.on('refresh', function() { this.fireEvent('hideLoad', this); }, this);
 
         Connector.view.SingleAxisExplorerView.initButton(this);
+
+        // plugin to handle loading mask for the explorer
+        this.addPlugin({
+            ptype: 'loadingmask',
+            beginConfig: {
+                component: this,
+                events: ['showLoad']
+            },
+            endConfig: {
+                component: this,
+                events: ['hideload']
+            }
+        });
     },
 
     getCountTemplate : function() {
@@ -461,24 +472,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         );
     },
 
-    _loadMsg : function() {
-        this.loadMsg = true;
-        this.showMessage('Loading...', true, true);
-    },
-
-    showLoad : function() {
-        if (!this.loadMsg) {
-            this.msgTask.delay(600);
-        }
-    },
-
-    cancelShowLoad : function() {
-        this.msgTask.cancel();
-        if (this.loadMsg) {
-            this.hideMessage();
-        }
-    },
-
     // This is a flag used to tell if a button has been pressed on the Explorer. Allows
     // for skipping of click events on individual bars.
     resetButtonClick : function() {
@@ -487,12 +480,12 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     loadStore : function() {
         this.callParent();
-        this.showLoad();
+        this.fireEvent('showLoad', this);
     },
 
     onMaxCount : function(count) {
         this.callParent();
-        this.cancelShowLoad();
+        this.fireEvent('hideLoad', this);
 
         // clean-up buttons
         Ext.iterate(this.btnMap, function(id, btn) {

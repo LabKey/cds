@@ -82,6 +82,9 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Proxy.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Store.js"></script>
 
+    <!-- Study Dependencies -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
+
     <!-- App API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/View.js"></script>
@@ -91,9 +94,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/MeasurePicker.js"></script>
-
-    <!-- Study Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
     <!-- Ext Widget Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>
@@ -149,6 +149,7 @@
 
     <!-- Application plugins -->
     <script type="text/javascript" src="<%=text(srcPath)%>/plugin/Messaging.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/plugin/LoadingMask.js"></script>
 
     <!-- Constant singletons -->
     <script type="text/javascript" src="<%=text(srcPath)%>/constant/Templates.js"></script>

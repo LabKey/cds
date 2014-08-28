@@ -65,21 +65,22 @@ Ext.define('Connector.view.Scatter', {
             this._ready = true;
             this.fireEvent('onready');
         }, this);
+
+        // plugin to handle loading mask for the plot region
+        this.addPlugin({
+            ptype: 'loadingmask',
+            beginConfig: {
+                component: this,
+                events: ['showload']
+            },
+            endConfig: {
+                component: this,
+                events: ['hideload']
+            }
+        });
     },
 
     _initAfterRender : function() {
-        Ext.create('Ext.Component', {
-            id: 'scatterloader',
-            renderTo: Ext.getBody(),
-            autoEl: {
-                tag: 'img',
-                src: LABKEY.contextPath + '/production/Connector/resources/images/grid/loading.gif',
-                alt: 'loading',
-                height: 25,
-                width: 25
-            }
-        });
-        this.loader = Ext.get('scatterloader');
 
         Ext.create('Ext.Component', {
             id: 'noplotmessage',
@@ -183,6 +184,7 @@ Ext.define('Connector.view.Scatter', {
                 },
                 items: [{
                     xtype: 'panel',
+                    border: false,
                     flex: 10,
                     cls: 'plot',
                     style: {'background-color': '#fff'},
@@ -495,7 +497,7 @@ Ext.define('Connector.view.Scatter', {
 
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
-            this.hideLoad();
+            this.fireEvent('hideload', this);
             this.plot = null;
             this.noPlot();
             return;
@@ -823,7 +825,7 @@ Ext.define('Connector.view.Scatter', {
             }
             catch(err) {
                 this.showMessage(err.message);
-                this.hideLoad();
+                this.fireEvent('hideload', this);
                 this.plot = null;
                 this.plotEl.update('');
                 this.noPlot();
@@ -832,7 +834,8 @@ Ext.define('Connector.view.Scatter', {
                 return;
             }
         }
-        this.hideLoad();
+
+        this.fireEvent('hideload', this);
     },
 
     getScale : function(axis) {
@@ -999,7 +1002,7 @@ Ext.define('Connector.view.Scatter', {
         else {
             this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
 
-            this.showLoad();
+            this.fireEvent('showload', this);
 
             this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
 
@@ -1257,25 +1260,6 @@ Ext.define('Connector.view.Scatter', {
         measureMap[key].values = measureMap[key].values.concat(values);
     },
 
-    showLoad : function() {
-        if (!this.isActiveView) {
-            return;
-        }
-        var plotEl = this.getPlotElement();
-        if (plotEl) {
-            var box = Ext.get(plotEl).getBox();
-            this.loader.setLeft(box.x+10);
-            this.loader.setTop(box.y+10);
-            if (this.isActiveView) {
-                this.loader.setStyle('visibility', 'visible');
-            }
-        }
-    },
-
-    hideLoad : function() {
-        this.loader.setStyle('visibility', 'hidden');
-    },
-
     onChartDataSuccess : function(response) {
 
         if (!this.isActiveView) {
@@ -1415,7 +1399,7 @@ Ext.define('Connector.view.Scatter', {
 
     onFailure : function(response) {
         console.log(response);
-        this.hideLoad();
+        this.fireEvent('hideload', this);
         this.showMessage('Failed to Load');
     },
 
@@ -2139,7 +2123,9 @@ Ext.define('Connector.view.Scatter', {
         var filter = this.getPlotsFilter();
         this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
 
-        this.colorwin.show(targetEl);
+        this.colorwin.show(targetEl, function() {
+            this.runUniqueQuery(this.colorPanel);
+        }, this);
     },
 
     removeVariableFromFilter : function(measureIdx) {
@@ -2246,7 +2232,7 @@ Ext.define('Connector.view.Scatter', {
             }
         }
         else {
-            this.hideLoad();
+            this.fireEvent('hideload', this);
 
             if (this.msg) {
                 this.msg.hide();

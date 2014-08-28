@@ -201,7 +201,7 @@ Ext.define('Connector.view.Signin', {
     	},
     	flex: 1,
     	items: [{
-    		xtype: 'homeheader',
+    		xtype: 'homeheader'
     	}, {
 	    	xtype: 'about',
 	    	cls: 'auto-scroll-y',

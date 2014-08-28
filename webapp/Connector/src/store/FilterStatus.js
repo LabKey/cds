@@ -9,6 +9,13 @@ Ext.define('Connector.store.FilterStatus', {
 
     model: 'Connector.model.Detail',
 
+    // initial data record to show loading spinner on page load
+    data: [{
+        label: "Subjects",
+        subcount: -1,
+        highlight: true
+    }],
+
     constructor : function(config) {
 
         this.flight = 0;
@@ -27,6 +34,8 @@ Ext.define('Connector.store.FilterStatus', {
         }
         else {
             this.state.onMDXReady(function(mdx) {
+                this.fireEvent('beforeload', this);
+
                 if (!this.requests) {
                     this.requests = this.bindRequestConfigs(mdx);
                 }
@@ -188,5 +197,6 @@ Ext.define('Connector.store.FilterStatus', {
         }
 
         this.loadData(recs);
+        this.fireEvent('load', this);
     }
 });

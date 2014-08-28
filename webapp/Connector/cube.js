@@ -14,6 +14,8 @@ Ext4.define('Connector.cube.Configuration', {
         //      pluralName      - Declaure a plural name for this dimension. Defaults to name value.
         //      friendlyName    - Declaure a friendly, possibly more contextual, name for this dimension. Defaults to name value.
         //      hidden          - declare whether a dimension is hidden. Defaults to false.
+        //      itemDetail      - A specific view configuration for the learn about pages. Defaults to undefined.
+        //      itemDetailTabs  - An array of tab names used in learn views. Requires itemDetail. Defaults to undefined.
         //      priority        - relative priority to be shown in displays. Default is 0.
         //      querySchema     - metadata member query schema. Defaults to undefined.
         //      supportsDetails - multinoun views are supported for this dimension. defaults to false.
@@ -149,7 +151,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.StudyProducts',
                 detailView: 'Connector.app.view.StudyProducts',
 
-                itemDetail: {
+                itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
                         type: 'productheader'
@@ -182,7 +184,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Studies where used'
                         }
                     }]]
-                },
+                }],
     
                 hierarchies: [{
                     uniqueName: '[Vaccine.Name]',
@@ -209,73 +211,68 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Assay',
                 detailView: 'Connector.app.view.Assay',
 
+                itemDetailTabs: ['Overview', 'Antigens, Analytes, Variables'],
                 itemDetail: [{
-                    label: 'Overview',
-                    content: {
-                        view: 'Connector.app.view.ModuleContainer',
-                            modules: [[{
-                            type: 'assayheader'
-                        }, {
-                            type: 'text',
-                            staticData: {
-                                title: 'Description'
-                            },
-                            modelData: {
-                                text: 'Summary'
-                            }
-                        }, {
-                            type: 'text',
-                            staticData: {
-                                title: 'Endpoint Description'
-                            },
-                            modelData: {
-                                text: 'Description'
-                            }
-                        }], [{
-                            type: 'person',
-                            staticData: {
-                                title: 'Contact'
-                            },
-                            modelData: {
-                                name: 'Contact'
-                                // picture: 'MainContact.Portrait',
-                                // line1: 'MainContact.Role',
-                                // line2: 'MainContact.Team'
-                            }
-                        }, {
-                            type: 'person',
-                            staticData: {
-                                title: 'Lead contributor'
-                            },
-                            modelData: {
-                                name: 'LeadContributor'
-                                // picture: 'MainContact.Portrait',
-                                // line1: 'MainContact.Role',
-                                // line2: 'MainContact.Team'
-                            }
-                        }]]
-                    }
-                }, {
-                    label: 'Antigens, Analytes, Variables',
-                    content: {
-                        view: 'Connector.app.view.ModuleContainer',
-                        modules: [[{
-                            type: 'assayantigenlist',
-                            staticData: {
-                                title: 'Antigens'
-                            }
-                        }], [{
-                            type: 'assayanalytelist',
-                            staticData: {
-                                title: 'Analytes'
-                            }
-                        }], [{
-                            type: 'assayvariablelist',
-                            staticData: {
-                                title: 'Variables'
-                            }
-                        }]]
-                    }
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'assayheader'
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'Summary'
+                        }
+                    }, {
+                        type: 'text',
+                        staticData: {
+                            title: 'Endpoint Description'
+                        },
+                        modelData: {
+                            text: 'Description'
+                        }
+                    }], [{
+                        type: 'person',
+                        staticData: {
+                            title: 'Contact'
+                        },
+                        modelData: {
+                            name: 'Contact'
+                            // picture: 'MainContact.Portrait',
+                            // line1: 'MainContact.Role',
+                            // line2: 'MainContact.Team'
+                        }
+                    }, {
+                        type: 'person',
+                        staticData: {
+                            title: 'Lead contributor'
+                        },
+                        modelData: {
+                            name: 'LeadContributor'
+                            // picture: 'MainContact.Portrait',
+                            // line1: 'MainContact.Role',
+                            // line2: 'MainContact.Team'
+                        }
+                    }]]
+                },{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'assayantigenlist',
+                        staticData: {
+                            title: 'Antigens'
+                        }
+                    }], [{
+                        type: 'assayanalytelist',
+                        staticData: {
+                            title: 'Analytes'
+                        }
+                    }], [{
+                        type: 'assayvariablelist',
+                        staticData: {
+                            title: 'Variables'
+                        }
+                    }]]
                 }],
 
                 hierarchies: [{
@@ -333,7 +330,7 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 }],
 
-                itemDetail: {
+                itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
                         type: 'studyheader'
@@ -398,7 +395,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: "Lab & clinical data"
                         }
                     }]]
-                }
+                }]
             },{
                 uniqueName: '[Antigen]',
                 pluralName: 'Assay antigens',
@@ -480,6 +477,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: undefined,
                 detailView: undefined,
                 itemDetail: undefined,
+                itemDetailTabs: undefined,
                 defaultOperator: 'AND'
             },
             hierarchy: {

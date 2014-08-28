@@ -21,6 +21,9 @@
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Proxy.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Store.js"/>
 
+        <!-- Study Dependencies -->
+        <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
+
         <!-- App API Dependencies -->
         <script path="../../../internal/explodedModule/web/app/State.js"/>
         <script path="../../../internal/explodedModule/web/app/View.js"/>
@@ -30,9 +33,6 @@
         <script path="../../../internal/explodedModule/web/app/AbstractViewController.js"/>
         <script path="../../../internal/explodedModule/web/app/OlapExplorer.js"/>
         <script path="../../../internal/explodedModule/web/app/MeasurePicker.js"/>
-
-        <!-- Study Dependencies -->
-        <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
 
         <!-- Ext Widget Dependencies -->
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
@@ -91,6 +91,7 @@
 
         <!-- Application plugins -->
         <script path="Connector/src/plugin/Messaging.js"/>
+        <script path="Connector/src/plugin/LoadingMask.js"/>
 
         <!-- Constant singletons -->
         <script path="Connector/src/constant/Templates.js"></script>
