@@ -177,17 +177,12 @@ Ext.define('Connector.view.Popup', {
         var container = {
             itemId: 'container',
             xtype: 'container',
-            //layout: 'auto',
-            //autoHeight: true,
-            //manageHeight: false,
             style: {
-//                position: 'absolute',
                 backgroundColor: '#fff',
-                padding: "10px",
-//                height: 'auto'
+                padding: "10px"
             },
             cls: 'shadow'
-        }
+        };
 
         var affordance = {
             itemId: 'affordance',
@@ -196,7 +191,7 @@ Ext.define('Connector.view.Popup', {
                 position: 'absolute',
                 backgroundColor: 'transparent'
             }
-        }
+        };
 
         var me = this;
 
