@@ -17,15 +17,22 @@ var launchApp = function(cube) {
 };
 
 var cube = LABKEY.query.olap.CubeManager.getCube({
-    configId: 'CDS:/CDS',
-    schemaName: 'CDS',
-    name: 'DataspaceCube',
     deferLoad: true,
-    applyContext: Connector.cube.Configuration.applyContext
+    defaultCube: {
+        configId: 'CDS:/CDS',
+        schemaName: 'CDS',
+        name: 'DataspaceCube'
+    },
+    defaultContext: {
+        defaults: Connector.cube.Configuration.defaults,
+        values: Connector.cube.Configuration.context
+    }
 });
 
 // launch the app
 launchApp(cube);
 
 // call to getCube in olap.js to initialize cube
-cube.load();
+if (LABKEY.user.isSignedIn) {
+    cube.load();
+}
