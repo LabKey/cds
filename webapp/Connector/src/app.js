@@ -17,7 +17,6 @@ Ext.override(Ext.button.Button, {
 // The IECheck function code is part of ExtJS and subject to the ExtJS license
 
 var launchApp = function(cube) {
-    Ext.onReady(function() {
 
         LABKEY.app.view.Selection.supportMemberClose = false;
         LABKEY.app.model.Filter.dynamicOperatorTypes = true;
@@ -28,21 +27,36 @@ var launchApp = function(cube) {
             autoCreateViewport: true,
             olap: cube
         });
-    });
+
 };
 
 var cube = LABKEY.query.olap.CubeManager.getCube({
-    configId: 'CDS:/CDS',
-    schemaName: 'CDS',
-    name: 'DataspaceCube',
     deferLoad: true,
-    applyContext: Connector.cube.Configuration.applyContext
+    defaultCube: {
+        configId: 'CDS:/CDS',
+        schemaName: 'CDS',
+        name: 'DataspaceCube'
+    },
+    defaultContext: {
+        defaults: Connector.cube.Configuration.defaults,
+        values: Connector.cube.Configuration.context
+    }
 });
 
-// launch the app
-launchApp(cube);
+Ext.onReady(function() {
+    Ext.Ajax.request({
+        url : LABKEY.ActionURL.buildURL('olap', 'getActiveAppConfig'),
+        method : 'POST',
+        success: LABKEY.Utils.getCallbackWrapper(function(response){
+            Ext.apply(cube, response.config);
 
-// call to getCube in olap.js to initialize cube
-if (LABKEY.user.isSignedIn) {
-    cube.load();
-}
+            // launch the app
+            launchApp(cube);
+
+            // call to getCube in olap.js to initialize cube
+            if (LABKEY.user.isSignedIn) {
+                cube.load();
+            }
+        }, this)
+    });
+});

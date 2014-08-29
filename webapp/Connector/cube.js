@@ -496,17 +496,6 @@ Ext4.define('Connector.cube.Configuration', {
                 cellbased: true,
                 defaultOperator: 'parent::defaultOperator'
             }
-        },
-
-        /**
-         * Defines the application level context that wraps an OLAP cube provided for the data connector
-         */
-        applyContext : function(mdx) {
-
-            var defaults = Connector.cube.Configuration.defaults;
-            var values = Connector.cube.Configuration.context;
-
-            return LABKEY.query.olap.AppContext.applyContext(mdx, defaults, values);
         }
     }
 });
