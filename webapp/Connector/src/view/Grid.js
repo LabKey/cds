@@ -575,7 +575,8 @@ Ext.define('Connector.view.Grid', {
         var box = this.getBox();
 
         measureWindow.setSize(box.width-100, box.height-100);
-        measureWindow.showAt(47, 128);
+        measureWindow.show();
+//        measureWindow.showAt(47, 128);
 
         // Run the query to determine current measure counts
         var mp = this.getAxisSelector().getMeasurePicker();

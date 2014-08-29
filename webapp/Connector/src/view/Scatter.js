@@ -1722,15 +1722,9 @@ Ext.define('Connector.view.Scatter', {
 
     updateMeasureSelection : function(win) {
         if (win) {
-            var pos = this.getPlotPosition(), offset = 0;
-            win.setSize(pos.width, pos.height);
-
-            if (pos.width > win.width) {
-                // If the window width is at maxWidth then we need to center the window in the plot area.
-                offset = (pos.width - win.width) / 2;
-            }
-
-            win.setPosition(pos.leftEdge + offset, pos.topEdge, false);
+            var box = this.getBox();
+            win.setSize(box.width-100, box.height-100);
+            win.show();
         }
         else {
             console.warn('Failed to updated measure selection');
