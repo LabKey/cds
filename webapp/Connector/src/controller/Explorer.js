@@ -143,7 +143,7 @@ Ext.define('Connector.controller.Explorer', {
 
     getViewTitle : function(xtype, context) {
         if (xtype === 'singleaxis') {
-            return 'Explore';
+            return 'Find';
         }
     },
 
