@@ -30,7 +30,7 @@ var launchApp = function(cube) {
 
 };
 
-var cube = LABKEY.query.olap.CubeManager.getCube({
+var defaultCubeConfig = {
     deferLoad: true,
     defaultCube: {
         configId: 'CDS:/CDS',
@@ -41,14 +41,16 @@ var cube = LABKEY.query.olap.CubeManager.getCube({
         defaults: Connector.cube.Configuration.defaults,
         values: Connector.cube.Configuration.context
     }
-});
+};
 
 Ext.onReady(function() {
     Ext.Ajax.request({
         url : LABKEY.ActionURL.buildURL('olap', 'getActiveAppConfig'),
         method : 'POST',
         success: LABKEY.Utils.getCallbackWrapper(function(response){
-            Ext.apply(cube, response.config);
+
+            var config = Ext.apply(defaultCubeConfig, response.config);
+            var cube = LABKEY.query.olap.CubeManager.getCube(config);
 
             // launch the app
             launchApp(cube);
