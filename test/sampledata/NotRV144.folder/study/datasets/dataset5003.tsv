@@ -1,10 +1,106 @@
 SubjectId	date	QCStateLabel	hivinf	Country	Height	Sex	Group	Comments	Race	EnrolledClinicalSite	prot	rx	rx_code	arm	age	bmi	baseline_ad5_titer	circumcised	hivcutoffday	randomization	per_protocol	ad5_grp	bmi_grp	species	SequenceNum
-1	2012-01-01 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1.0
-105	2012-02-01 00:00:00.0		uninfected	USA	70	f			White	CHN															-1.0
-2	2012-01-15 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1.0
-3	2012-01-02 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1.0
-4	2012-12-31 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1.0
-5	2012-01-05 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1.0
-6	2012-01-01 00:00:00.0		uninfected	France		f			Black/African American																-1.0
-7	2012-02-01 00:00:00.0		uninfected	France		f			Asian																-1.0
-8	2012-01-15 00:00:00.0		uninfected	France		f			Asian																-1.0
+1	2012-01-01 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1
+105	2012-02-01 00:00:00.0		uninfected	USA	70	f			White	CHN															-1
+2	2012-01-15 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1
+3	2012-01-02 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1
+4	2012-12-31 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1
+5	2012-01-05 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1
+6	2012-01-01 00:00:00.0		uninfected	France		f			Black/African American	CHN															-1
+7	2012-02-01 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+8	2012-01-15 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+9	2012-01-05 00:00:00.0		infected	Norway		f			Asian	HealthThai															-1
+10	2012-01-01 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+11	2012-02-01 00:00:00.0		uninfected	USA		f			Asian	CHN															-1
+12	2012-01-15 00:00:00.0		uninfected	Thailand		f			Black/African American	HealthThai															-1
+13	2012-01-02 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1
+14	2012-12-31 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+15	2012-01-05 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+16	2012-01-01 00:00:00.0		uninfected	France		m			Asian	CHN															-1
+17	2012-02-01 00:00:00.0		uninfected	France		m			Native Hawaiian/Pacific Islander	CHN															-1
+18	2012-01-15 00:00:00.0		uninfected	France		m			Native Hawaiian/Pacific Islander	CHN															-1
+19	2012-01-05 00:00:00.0		infected	Norway		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+20	2012-01-01 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+21	2012-02-01 00:00:00.0		uninfected	USA		m			White	CHN															-1
+22	2012-01-15 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+23	2012-01-02 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+24	2012-12-31 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+25	2012-01-05 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1
+26	2012-01-01 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+27	2012-02-01 00:00:00.0		uninfected	France		f			Black/African American	CHN															-1
+28	2012-01-15 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+29	2012-01-05 00:00:00.0		infected	Norway		f			Asian	HealthThai															-1
+30	2012-01-01 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+31	2012-02-01 00:00:00.0		uninfected	USA		f			Asian	CHN															-1
+32	2012-01-15 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+33	2012-01-02 00:00:00.0		uninfected	Thailand		f			Black/African American	HealthThai															-1
+34	2012-12-31 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1
+35	2012-01-05 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+36	2012-01-01 00:00:00.0		uninfected	France		m			White	CHN															-1
+37	2012-02-01 00:00:00.0		uninfected	France		m			Asian	CHN															-1
+38	2012-01-15 00:00:00.0		uninfected	France		m			Native Hawaiian/Pacific Islander	CHN															-1
+39	2012-01-05 00:00:00.0		infected	Norway		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+40	2012-01-01 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+41	2012-02-01 00:00:00.0		uninfected	USA		m			Native Hawaiian/Pacific Islander	CHN															-1
+42	2012-01-15 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1
+43	2012-01-02 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1
+44	2012-12-31 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1
+45	2012-01-05 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1
+46	2012-01-01 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+47	2012-02-01 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+48	2012-01-15 00:00:00.0		uninfected	France		m			Black/African American	CHN															-1
+49	2012-01-05 00:00:00.0		infected	Norway		m			Asian	HealthThai															-1
+50	2012-01-01 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1
+51	2012-02-01 00:00:00.0		uninfected	USA		m			Asian	CHN															-1
+52	2012-01-15 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1
+53	2012-01-02 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+54	2012-12-31 00:00:00.0		uninfected	Thailand		f			Black/African American	HealthThai															-1
+55	2012-01-05 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+56	2012-01-01 00:00:00.0		uninfected	France		f			White	CHN															-1
+57	2012-02-01 00:00:00.0		uninfected	France		m			White	CHN															-1
+58	2012-01-15 00:00:00.0		uninfected	France		m			Asian	CHN															-1
+59	2012-01-05 00:00:00.0		infected	Norway		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+60	2012-01-01 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+61	2012-02-01 00:00:00.0		uninfected	USA		m			Native Hawaiian/Pacific Islander	CHN															-1
+62	2012-01-15 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+63	2012-01-02 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+64	2012-12-31 00:00:00.0		uninfected	Thailand		f			White	HealthThai															-1
+65	2012-01-05 00:00:00.0		uninfected	Thailand		f			Native Hawaiian/Pacific Islander	HealthThai															-1
+66	2012-01-01 00:00:00.0		uninfected	France		f			Native Hawaiian/Pacific Islander	CHN															-1
+67	2012-02-01 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+68	2012-01-15 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+69	2012-01-05 00:00:00.0		infected	Norway		f			Black/African American	HealthThai															-1
+70	2012-01-01 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+71	2012-02-01 00:00:00.0		uninfected	USA		f			Asian	CHN															-1
+72	2012-01-15 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+73	2012-01-02 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+74	2012-12-31 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+75	2012-01-05 00:00:00.0		uninfected	Thailand		f			Black/African American	HealthThai															-1
+76	2012-01-01 00:00:00.0		uninfected	France		m			White	CHN															-1
+77	2012-02-01 00:00:00.0		uninfected	France		m			White	CHN															-1
+78	2012-01-15 00:00:00.0		uninfected	France		m			White	CHN															-1
+79	2012-01-05 00:00:00.0		infected	Norway		m			Asian	HealthThai															-1
+80	2012-01-01 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+81	2012-02-01 00:00:00.0		uninfected	USA		m			Native Hawaiian/Pacific Islander	CHN															-1
+82	2012-01-15 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+83	2012-01-02 00:00:00.0		uninfected	Thailand		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+84	2012-12-31 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+85	2012-01-05 00:00:00.0		uninfected	Thailand		m			White	HealthThai															-1
+86	2012-01-01 00:00:00.0		uninfected	France		f			Native Hawaiian/Pacific Islander	CHN															-1
+87	2012-02-01 00:00:00.0		uninfected	France		f			Native Hawaiian/Pacific Islander	CHN															-1
+88	2012-01-15 00:00:00.0		uninfected	France		f			Asian	CHN															-1
+89	2012-01-05 00:00:00.0		infected	Norway		f			Asian	HealthThai															-1
+90	2012-01-01 00:00:00.0		uninfected	Thailand		f			Black/African American	HealthThai															-1
+91	2012-02-01 00:00:00.0		uninfected	USA		f			Asian	CHN															-1
+92	2012-01-15 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+93	2012-01-02 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+94	2012-12-31 00:00:00.0		uninfected	Thailand		f			Asian	HealthThai															-1
+95	2012-01-05 00:00:00.0		uninfected	Thailand		m			Asian	HealthThai															-1
+96	2012-01-01 00:00:00.0		uninfected	France		m			Black/African American	CHN															-1
+97	2012-02-01 00:00:00.0		uninfected	France		m			White	CHN															-1
+98	2012-01-15 00:00:00.0		uninfected	France		m			White	CHN															-1
+99	2012-01-05 00:00:00.0		infected	Norway		m			White	HealthThai															-1
+100	2012-12-31 00:00:00.0		infected	USA		m			Asian	HealthThai															-1
+101	2012-01-05 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	CHN															-1
+102	2012-01-01 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	HealthThai															-1
+103	2012-02-01 00:00:00.0		infected	USA		f			Native Hawaiian/Pacific Islander	HealthThai															-1
+104	2012-01-15 00:00:00.0		infected	USA		f			Native Hawaiian/Pacific Islander	HealthThai															-1
