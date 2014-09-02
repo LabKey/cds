@@ -21,6 +21,8 @@
 <%@ page import="org.labkey.api.view.ActionURL" %>
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.CDSUserSchema" %>
+<%@ page import="org.labkey.api.util.PageFlowUtil" %>
+<%@ page import="org.labkey.api.app.SinglePageAppUrls" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%!
     ActionURL tableURL(CDSUserSchema userSchema, String tableName)
@@ -55,6 +57,7 @@
 <%=textLink("Update Participant Groups", CDSController.UpdateParticipantGroupsAction.class)%>
 <br>
 <%=textLink("Application", CDSController.AppAction.class)%>
+<%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%>
 <%
     }
     else
