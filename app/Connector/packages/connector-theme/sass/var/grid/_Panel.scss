@@ -21,10 +21,14 @@
     height: 45px;
   }
 
-  .x-column-header-align-center {
+  .x-group-header {
     text-align: left;
     color: $light-color;
-    background-color: $heat-scale-1;
+    background-color: $heat-scale-4;
+
+    .x-column-header-inner {
+      background-color: $heat-scale-1;
+    }
 
     /* Column group headers do not show trigger */
     .x-column-header-trigger {
@@ -32,8 +36,6 @@
     }
 
     .x-group-sub-header {
-
-      background-color: $heat-scale-4;
 
       .x-column-header-trigger {
         display: block;
@@ -45,6 +47,7 @@
 
       .x-column-header-inner {
         position: relative;
+        background-color: transparent;
       }
 
       .x-column-header-text {

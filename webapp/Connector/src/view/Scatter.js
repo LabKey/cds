@@ -21,6 +21,9 @@ Ext.define('Connector.view.Scatter', {
     initialized: false,
     showAxisButtons: true,
 
+    studyAxisData: [],
+    studyAxisRange: {min: null, max: null},
+
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
     rowlimit: 5000,
 
@@ -857,9 +860,18 @@ Ext.define('Connector.view.Scatter', {
                 axisValue = 'linear';
             }
 
+            // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
+            var min = null, max = null;
+            if (axis == 'x' && this.studyAxisRange.min != null) {
+                min = this.studyAxisRange.min < 0 ? this.studyAxisRange.min : 0;
+            }
+            if (axis == 'x' && this.studyAxisRange.max != null) {
+                max = this.studyAxisRange.max > 0 ? this.studyAxisRange.max : 0;
+            }
+
             Ext.apply(scale, {
                 trans : axisValue,
-                domain: [null, null]
+                domain: [min, max]
             });
         }
 
@@ -1710,15 +1722,9 @@ Ext.define('Connector.view.Scatter', {
 
     updateMeasureSelection : function(win) {
         if (win) {
-            var pos = this.getPlotPosition(), offset = 0;
-            win.setSize(pos.width, pos.height);
-
-            if (pos.width > win.width) {
-                // If the window width is at maxWidth then we need to center the window in the plot area.
-                offset = (pos.width - win.width) / 2;
-            }
-
-            win.setPosition(pos.leftEdge + offset, pos.topEdge, false);
+            var box = this.getBox();
+            win.setSize(box.width-100, box.height-100);
+            win.show();
         }
         else {
             console.warn('Failed to updated measure selection');
@@ -2383,8 +2389,7 @@ Ext.define('Connector.view.Scatter', {
                     return;
                 }
 
-                this.studyAxisResp = resp;
-                this._preprocessStudyAxisData();
+                this._preprocessStudyAxisData(resp);
                 this.initPlot(this.plotData, false);
                 this.initStudyAxis();
             },
@@ -2427,12 +2432,15 @@ Ext.define('Connector.view.Scatter', {
         this.alignmentMap = am;
     },
 
-    _preprocessStudyAxisData : function() {
-        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, interval, studyMap = {}, studyLabel,
+    _preprocessStudyAxisData : function(resp) {
+        var rows = resp.rows, alignmentMap = this.alignmentMap, interval, studyMap = {}, studyLabel,
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
                 seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j;
 
         this.studyAxisData = [];
+        this.studyAxisRange.min = null;
+        this.studyAxisRange.max = null;
+
         interval = this.measures[0].interval.toLowerCase();
 
         for (j = 0; j < rows.length; j++) {
@@ -2470,6 +2478,7 @@ Ext.define('Connector.view.Scatter', {
                     sequenceNumMin: seqMin,
                     sequenceNumMax: seqMax,
                     protocolDay: protocolDay,
+                    hasPlotData: this.visitMap[visitId] != undefined,
                     visitTags: {}
                 };
             }
@@ -2479,6 +2488,11 @@ Ext.define('Connector.view.Scatter', {
             if (visitTagCaption !== null && !visit.visitTags.hasOwnProperty(visitTagCaption)) {
                 visit.visitTags[visitTagCaption] = visitTagCaption;
             }
+
+            if (this.studyAxisRange.min == null || this.studyAxisRange.min > protocolDay)
+                this.studyAxisRange.min = protocolDay;
+            if (this.studyAxisRange.max == null || this.studyAxisRange.max < protocolDay)
+                this.studyAxisRange.max = protocolDay;
         }
 
         // Convert study map and visit maps into arrays.

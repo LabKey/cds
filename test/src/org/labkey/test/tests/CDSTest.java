@@ -593,7 +593,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 117;
+        final int COLUMN_COUNT = 119;
 
         DataGridSelector grid = new DataGridSelector(this);
 
