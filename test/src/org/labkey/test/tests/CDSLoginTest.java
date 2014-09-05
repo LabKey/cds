@@ -90,4 +90,10 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         return Arrays.asList("CDS");
     }
+
+    @Override
+    protected BrowserType bestBrowser()
+    {
+        return BrowserType.CHROME;
+    }
 }

@@ -94,7 +94,7 @@ Ext.define('Connector.view.PlotPane', {
     },
 
     onUpdate : function() {
-        this.getModel().clearFilter();
+        this.getModel().clearFilter(true);
         this.hide();
     },
 
