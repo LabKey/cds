@@ -74,6 +74,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
   "Connector.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Page.js",
+  "Connector.plugin.LoadingMask": "../../../../webapp/Connector/src/plugin/LoadingMask.js",
   "Connector.plugin.Messaging": "../../../../webapp/Connector/src/plugin/Messaging.js",
   "Connector.store.AssayDistinctValue": "../../../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../../../webapp/Connector/src/store/Explorer.js",
@@ -145,6 +146,7 @@ Ext.Loader.addClassPathMappings({
   "Ext": "../../ext/src",
   "Ext.Msg": "../../ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "../../ext/src/rtl/EventObject.js",
+  "LABKEY.app.constant": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.AbstractViewController": "../../../../../../internal/webapp/app/AbstractViewController.js",
   "LABKEY.app.controller.Route": "../../../../../../internal/webapp/app/Route.js",
   "LABKEY.app.controller.State": "../../../../../../internal/webapp/app/State.js",
@@ -229,6 +231,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.GroupList": [],
   "Connector.panel.Selection": [],
   "Connector.plugin.HeaderLock": [],
+  "Connector.plugin.LoadingMask": [],
   "Connector.plugin.Messaging": [],
   "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
@@ -1113,6 +1116,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.window.Window": [
     "Ext.Window"
   ],
+  "LABKEY.app.constant": [],
   "LABKEY.app.controller.AbstractViewController": [],
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],
@@ -1222,6 +1226,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.plugin.HeaderLock": [
     "plugin.headerlock"
+  ],
+  "Connector.plugin.LoadingMask": [
+    "plugin.loadingmask"
   ],
   "Connector.plugin.Messaging": [
     "plugin.messaging"
@@ -2385,6 +2392,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "widget.window"
   ],
+  "LABKEY.app.constant": [],
   "LABKEY.app.controller.AbstractViewController": [],
   "LABKEY.app.controller.Route": [],
   "LABKEY.app.controller.State": [],

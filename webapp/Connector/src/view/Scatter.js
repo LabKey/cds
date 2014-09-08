@@ -459,6 +459,17 @@ Ext.define('Connector.view.Scatter', {
         return aes;
     },
 
+    getBinLayer : function(layerScope) {
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.HexBin({
+                size: 3,
+                plotNullPoints: true,
+                opacity: 0.5
+            }),
+            aes: this.getLayerAes(layerScope, false)
+        });
+    },
+
     getPointLayer : function(layerScope) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Point({
@@ -815,6 +826,7 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.addLayer(layer);
+//            this.plot.addLayer(this.getBinLayer(layerScope));
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
