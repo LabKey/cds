@@ -153,9 +153,13 @@ Ext.define('Connector.view.Selection', {
 
                         if (filters[0].getFilterType().getURLSuffix() === 'dategte') {
                             var d = new Date(minVal);
-                            minVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + (d.getFullYear()%1000);
+                            var year = (d.getFullYear()%1000);
+                            year = year.toString().length == 1 ? "0" + year : year;
+                            minVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
                             d = new Date(maxVal);
-                            maxVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + (d.getFullYear()%1000);
+                            year = (d.getFullYear()%1000);
+                            year = year.toString().length == 1 ? "0" + year : year;
+                            maxVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
                         }
 
                         domString =
