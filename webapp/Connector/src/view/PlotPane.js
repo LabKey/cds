@@ -15,9 +15,7 @@ Ext.define('Connector.view.PlotPane', {
 
     maxHeight: 400,
 
-    initComponent : function() {
-        this.callParent();
-    },
+    displayTitle: 'In the plot',
 
     getMiddleContent : function(model) {
         var filter = model.get('filter');

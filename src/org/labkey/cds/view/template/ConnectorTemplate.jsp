@@ -172,6 +172,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/GridPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
@@ -204,6 +205,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Home.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>

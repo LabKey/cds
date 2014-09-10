@@ -151,8 +151,7 @@ Ext.define('Connector.controller.FilterStatus', {
             else if (filterOrDetail.$className === "Connector.model.Filter") {
 
                 if (filterOrDetail.isGrid()) {
-                    console.log('Grid filters not yet supported.');
-                    return;
+                    clazz = 'Connector.view.GridPane';
                 }
                 else if (filterOrDetail.isPlot()) {
                     clazz = 'Connector.view.PlotPane';

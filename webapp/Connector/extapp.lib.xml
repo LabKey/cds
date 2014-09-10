@@ -114,6 +114,7 @@
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/InfoPane.js"/>
+        <script path="Connector/src/view/GridPane.js"/>
         <script path="Connector/src/view/PlotPane.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/GroupSummary.js"/>
@@ -145,6 +146,7 @@
         <script path="Connector/src/controller/AbstractViewController.js"/>
         <script path="Connector/src/controller/Chart.js"/>
         <script path="Connector/src/controller/Connector.js"/>
+        <script path="Connector/src/controller/Query.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>
         <script path="Connector/src/controller/Group.js"/>

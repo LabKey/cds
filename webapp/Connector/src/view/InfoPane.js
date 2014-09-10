@@ -31,13 +31,20 @@ Ext.define('Connector.view.InfoPane', {
 
     showSort: true,
 
-    showOperator: true,
+    isShowOperator: true,
+
+    displayTitle: '',
 
     initComponent : function() {
 
         var btnId = Ext.id();
         var model = this.getModel();
         var filterBased = model.isFilterBased();
+
+        // If the model does not provide a title, use the panes default displayTitle
+        if (Ext.isString(model.get('title')) && model.get('title').length == 0) {
+            model.set('title', this.displayTitle);
+        }
 
         this.items = [];
 
@@ -137,7 +144,7 @@ Ext.define('Connector.view.InfoPane', {
             items: []
         };
 
-        if (this.showOperator) {
+        if (this.isShowOperator) {
             middleContent.items.push({
                 itemId: 'operatorlabel',
                 xtype: 'box',

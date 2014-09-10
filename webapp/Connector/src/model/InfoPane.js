@@ -58,10 +58,13 @@ Ext.define('Connector.model.InfoPane', {
 
                 var filter = this.get('filter');
 
-                if (filter.isPlot()) {
-                    this.set('title', 'In the plot');
-                }
-                else {
+//                if (filter.isGrid()) {
+//                    this.set('title', 'Filter details');
+//                }
+//                else if (filter.isPlot()) {
+//                    this.set('title', 'In the plot');
+//                }
+                if (!filter.isGrid() && !filter.isPlot()) {
                     this.initializeModel(null, filter.get('hierarchy'), filter.get('level'));
                 }
 
