@@ -23,19 +23,7 @@ Ext.define('Connector.model.Grid', {
             subjects: []
         }},
 
-        {name: 'defaultMeasures', defaultValue: [{
-            schemaName: 'study',
-            queryName: 'SubjectVisit',
-            name: Connector.studyContext.subjectColumn
-        },{
-            schemaName: 'study',
-            queryName: 'SubjectVisit',
-            name: Connector.studyContext.subjectColumn + '/Study'
-        },{
-            schemaName: 'study',
-            queryName: 'SubjectVisit',
-            name: 'Visit'
-        }]},
+        {name: 'defaultMeasures', defaultValue: []},
         {name: 'wrappedDefaultMeasures', defaultValue: []},
 
         {name: 'measures', defaultValue: []},
@@ -350,8 +338,11 @@ Ext.define('Connector.model.Grid', {
 
     _init : function() {
         if (this.viewReady && this.providerReady) {
-            var provider = this.providerReady;
-            this.onProviderReady(provider);
+            Connector.getService('Query').getDefaultGridMeasures(function(defaultMeasures) {
+                this.set('defaultMeasures', defaultMeasures);
+                var provider = this.providerReady;
+                this.onProviderReady(provider);
+            }, this);
         }
     },
 

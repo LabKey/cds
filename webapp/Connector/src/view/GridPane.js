@@ -11,7 +11,7 @@ Ext.define('Connector.view.GridPane', {
 
     showSort: false,
 
-    showOperator: false,
+    isShowOperator: false,
 
     maxHeight: 400,
 
@@ -20,8 +20,6 @@ Ext.define('Connector.view.GridPane', {
     getMiddleContent : function(model) {
         var filter = model.get('filter');
         var gridFilters = filter.get('gridFilter');
-        var measures = filter.get('plotMeasures');
-        var scales = filter.get('plotScales');
 
         var content = [{
             xtype: 'box',
@@ -43,57 +41,20 @@ Ext.define('Connector.view.GridPane', {
                         cls: 'smallstandout soft spacer',
                         autoEl: {
                             tag: 'div',
-                            html: measure.longlabel
+                            html: Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption
                         }
                     });
                     content.push({
                         xtype: 'box',
                         autoEl: {
                             tag: 'div',
-                            html: measure.label + this.getSublabel(measure)
+                            html: (Ext.isString(measure.label) ? measure.label : '') + this.getSublabel(measure)
                         }
                     });
                 }
             }, this);
         }
 
-//        if (Ext.isArray(measures)) {
-//            // assume length 3 array of (x, y, color)
-//            var indexOrder = [1,0,2];  // Y, X, then Color
-//            for (var i = 0; i < indexOrder.length; i++)
-//            {
-//                var index = indexOrder[i];
-//                var label = null;
-//                if (index == 0) label = 'X';
-//                else if (index == 1) label = 'Y';
-//                else if (index == 2) label = 'Color';
-//
-//                if (measures[index] && measures[index].measure) {
-//                    content.push({
-//                        xtype: 'box',
-//                        cls: 'smallstandout soft spacer',
-//                        autoEl: {
-//                            tag: 'div',
-//                            html: label
-//                        }
-//                    });
-//                    content.push({
-//                        xtype: 'box',
-//                        autoEl: {
-//                            tag: 'div',
-//                            html: measures[index].measure.queryLabel
-//                        }
-//                    });
-//                    content.push({
-//                        xtype: 'box',
-//                        autoEl: {
-//                            tag: 'div',
-//                            html: measures[index].measure.label + this.getSublabel(measures[index].measure)
-//                        }
-//                    });
-//                }
-//            }
-//        }
         return content;
     },
 

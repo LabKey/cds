@@ -11,7 +11,7 @@ Ext.define('Connector.view.PlotPane', {
 
     showSort: false,
 
-    showOperator: false,
+    isShowOperator: false,
 
     maxHeight: 400,
 

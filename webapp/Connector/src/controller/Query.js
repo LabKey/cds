@@ -6,7 +6,6 @@ Ext.define('Connector.controller.Query', {
 
     init : function() {
         this._initCache();
-//        this._hijackGetMeasures();
     },
 
     _initCache : function() {
@@ -25,9 +24,7 @@ Ext.define('Connector.controller.Query', {
             })],
             success: function(measures) {
                 Ext.each(measures, function(measure) {
-                    if (!Ext.isObject(this.MEMBER_CACHE[measure.alias])) {
-                        this.MEMBER_CACHE[measure.alias] = measure;
-                    }
+                    this.addMeasure(measure);
                     this.CACHE_LOADED = true;
                 }, this);
             },
@@ -35,56 +32,90 @@ Ext.define('Connector.controller.Query', {
         });
     },
 
-    _hijackGetMeasures : function() {
+    _gridMeasures : undefined,
 
-        Ext.namespace('LABKEY.Query.Visualization');
+    // This supplies the set of default columns available in the grid
+    // to the provided callback as an array of Measure descriptors
+    getDefaultGridMeasures : function(callback, scope) {
+        if (!Ext.isDefined(this._gridMeasures)) {
 
-        if (Ext.isFunction(LABKEY.Query.Visualization.getMeasures)) {
+            //
+            // request the appropriate query details
+            //
+            LABKEY.Query.getQueryDetails({
+                schemaName: 'study',
+                queryName: 'SubjectVisit',
+                fields: [
+                    Connector.studyContext.subjectColumn,
+                    Connector.studyContext.subjectColumn + '/Study',
+                    Connector.studyContext.subjectColumn + '/Study/Label',
+                    'Visit'
+                ],
+                success : function(queryDetails) {
+                    var columns = queryDetails.columns;
+                    this._gridMeasures = [undefined, undefined, undefined]; // order matters
 
-            var me = this;
-            me.GET_MEASURES = LABKEY.Query.Visualization.getMeasures;
-            me.MEMBER_CACHE = {};
+                    function mockUpMeasure(measure) {
+                        Ext.apply(measure, {
+                            schemaName: 'study',
+                            queryName: 'SubjectVisit'
+                        });
 
-            LABKEY.Query.Visualization.getMeasures = function(config) {
-
-                var success = function(measures) {
-
-                    var configSuccess = LABKEY.Utils.getOnSuccess(config);
-                    if (Ext.isFunction(configSuccess)) {
-                        configSuccess.apply(config.scope, arguments);
+                        // Add these into the MEMBER_CACHE
+                        measure['alias'] = LABKEY.MeasureUtil.getAlias(measure);
+                        this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                     }
-                };
 
-                var failure = function() {
+                    Ext.each(columns, function(col) {
+                        if (col.name === Connector.studyContext.subjectColumn) {
+                            this._gridMeasures[0] = col;
+                        }
+                        else if (col.name === Connector.studyContext.subjectColumn + '/Study') {
+                            this._gridMeasures[1] = col;
+                        }
+                        else if (col.name === Connector.studyContext.subjectColumn + '/Study/Label') {
+                            mockUpMeasure.call(this, col);
+                        }
+                        else if (col.name === 'Visit') {
+                            this._gridMeasures[2] = col;
+                        }
+                    }, this);
 
-                    console.log('called failure');
-                    var configFailure = LABKEY.Utils.getOnFailure(config);
-                    if (Ext.isFunction(configFailure)) {
-                        configFailure.apply(config.scope, arguments);
+                    Ext.each(this._gridMeasures, function(measure) {
+                        mockUpMeasure.call(this, measure);
+                    }, this);
+
+                    if (Ext.isFunction(callback)) {
+                        callback.call(scope, this._gridMeasures);
                     }
-                };
-
-                var newConfig = Ext.applyIf({
-                    success: success,
-                    failure: failure
-                }, config);
-
-                me.GET_MEASURES(newConfig);
-            };
+                },
+                scope: this
+            });
         }
+        else {
+            if (Ext.isFunction(callback)) {
+                callback.call(scope, this._gridMeasures);
+            }
+        }
+    },
 
+    addMeasure : function(measure) {
+        if (!Ext.isObject(this.MEMBER_CACHE[measure.alias])) {
+            this.MEMBER_CACHE[measure.alias] = measure;
+        }
     },
 
     getMeasure : function(measureAlias) {
         if (!this.CACHE_LOADED) {
             console.warn('Requested measure before measure caching prepared.');
         }
-        if (Ext.isString(measureAlias) && Ext.isObject(this.MEMBER_CACHE[measureAlias])) {
-            return Ext.clone(this.MEMBER_CACHE[measureAlias]);
+
+        var cleanAlias = measureAlias.replace(/\//g, '_');
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEMBER_CACHE[cleanAlias])) {
+            return Ext.clone(this.MEMBER_CACHE[cleanAlias]);
+        }
+        else {
+            console.warn('measure cache miss:', measureAlias);
         }
     }
-
-//    getValuesForMeasure : function(measure) {
-//        // Would return the select distinct of values available for this column
-//    }
 });
