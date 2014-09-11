@@ -2430,10 +2430,6 @@ Ext.define('Connector.view.Scatter', {
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
                 seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j, alignmentVisitTag, visitTagName;
 
-        this.studyAxisData = [];
-        this.studyAxisRange.min = null;
-        this.studyAxisRange.max = null;
-
         interval = this.measures[0].interval.toLowerCase();
 
         // first we have to loop through the study axis visit information to find the alignment visit for each container
@@ -2586,6 +2582,9 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _preprocessData : function() {
+        this.studyAxisData = [];
+        this.studyAxisRange = {min: null, max: null};
+
         this._preprocessSelectRowsResp();
         if (this.requireStudyAxis) {
             this._buildStudyVisitMap();
