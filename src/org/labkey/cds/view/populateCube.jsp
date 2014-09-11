@@ -195,16 +195,18 @@ to be filled in by another mechanism.<br>
             messageEl.update(msg);
         };
 
+        var formEl = document.getElementById('populatecubeform');
+
         var doQuery = function(index) {
             var target = checks[index];
             LABKEY.Query.executeSql({
                 schemaName: target.schema,
                 sql: target.sql,
-                maxRows: Ext.isDefined(target.maxRows) ? target.maxRows : 0,
+                maxRows: Ext4.isDefined(target.maxRows) ? target.maxRows : 0,
                 requiredVersion: 9.1,
                 success: function(data) {
                     var valid = true;
-                    if (Ext.isFunction(target.success)) {
+                    if (Ext4.isFunction(target.success)) {
                         valid = (target.success.call(this, data) !== false);
                     }
 
@@ -213,7 +215,6 @@ to be filled in by another mechanism.<br>
                             doQuery(index+1);
                         }
                         else {
-                            var formEl = document.getElementById('populatecubeform');
                             if (formEl) {
                                 formEl.submit();
                             }
@@ -226,8 +227,12 @@ to be filled in by another mechanism.<br>
             });
         };
 
-        if (checks.length > 0) {
-            doQuery(0);
+        // TODO: Need a more dynamic form of cube/query validation
+//        if (checks.length > 0) {
+//            doQuery(0);
+//        }
+        if (formEl) {
+            formEl.submit();
         }
     };
 
