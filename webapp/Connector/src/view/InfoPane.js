@@ -196,11 +196,9 @@ Ext.define('Connector.view.InfoPane', {
         this.callParent();
         this.bindModel();
 
-        var state = this.getModel().getStateManager();
-        if (Ext.isDefined(state)) {
-            state.on('selectionchange', function() { this.hide(); }, this, {single: true});
-            state.on('filterchange', function() { this.hide(); }, this, {single: true});
-        }
+        var state = Connector.getState();
+        state.on('selectionchange', function() { this.hide(); }, this, {single: true});
+        state.on('filterchange', function() { this.hide(); }, this, {single: true});
     },
 
     getMiddleContent : function(model) {

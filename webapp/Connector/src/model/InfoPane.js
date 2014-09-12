@@ -21,10 +21,6 @@ Ext.define('Connector.model.InfoPane', {
 
     constructor : function(config) {
 
-        if (config.state) {
-            this.setStateManager(config.state);
-        }
-
         this.callParent([config]);
 
         if (!Ext.ModelManager.isRegistered('Connector.model.Members')) {
@@ -54,16 +50,10 @@ Ext.define('Connector.model.InfoPane', {
         //
         if (this.isFilterBased()) {
             // Connector.model.Filter
-            this.getStateManager().onMDXReady(function(mdx) {
+            Connector.getState().onMDXReady(function(mdx) {
 
                 var filter = this.get('filter');
 
-//                if (filter.isGrid()) {
-//                    this.set('title', 'Filter details');
-//                }
-//                else if (filter.isPlot()) {
-//                    this.set('title', 'In the plot');
-//                }
                 if (!filter.isGrid() && !filter.isPlot()) {
                     this.initializeModel(null, filter.get('hierarchy'), filter.get('level'));
                 }
@@ -92,7 +82,7 @@ Ext.define('Connector.model.InfoPane', {
     },
 
     clearFilter : function(isFilter) {
-        var filter = this.get('filter'), state = this.getStateManager();
+        var filter = this.get('filter'), state = Connector.getState();
         isFilter ? state.removeFilter(filter.id) : state.removeSelection(filter.id);
     },
 
@@ -110,7 +100,7 @@ Ext.define('Connector.model.InfoPane', {
 
         var filter = this.createFilter(uniques);
         var noopFilter = (uniques.length === totalCount) && this.isOR();
-        var state = this.getStateManager();
+        var state = Connector.getState();
 
         if (this.isFilterBased()) {
             var staleFilter = this.get('filter');
@@ -166,15 +156,9 @@ Ext.define('Connector.model.InfoPane', {
         this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
 
-    getStateManager : function() { return this.state; },
-
-    setStateManager : function(state) {
-        this.state = state;
-    },
-
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
-        this.getStateManager().onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
 
             var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName);
             var dim = dimHier.dim, hier = dimHier.hierarchy, lvl = dimHier.lvl;

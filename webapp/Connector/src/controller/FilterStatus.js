@@ -139,9 +139,7 @@ Ext.define('Connector.controller.FilterStatus', {
             //
             // configure info pane view
             //
-            var config = {
-                state: this.getStateManager()
-            };
+            var config = {};
 
             if (filterOrDetail.$className === "Connector.model.Detail") {
                 config.dimension = filterOrDetail.get('dimension');
