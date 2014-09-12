@@ -30,35 +30,13 @@ var launchApp = function(cube) {
 
 };
 
-var defaultCubeConfig = {
-    deferLoad: true,
-    defaultCube: {
-        configId: 'CDS:/CDS',
-        schemaName: 'CDS',
-        name: 'DataspaceCube'
-    },
-    defaultContext: {
-        defaults: Connector.cube.Configuration.defaults,
-        values: Connector.cube.Configuration.context
+Connector.cube.Loader.getCube(function(cube) {
+
+    // launch the app
+    launchApp(cube);
+
+    // call to getCube in olap.js to initialize cube
+    if (LABKEY.user.isSignedIn) {
+        cube.load();
     }
-};
-
-Ext.onReady(function() {
-    Ext.Ajax.request({
-        url : LABKEY.ActionURL.buildURL('olap', 'getActiveAppConfig'),
-        method : 'POST',
-        success: LABKEY.Utils.getCallbackWrapper(function(response){
-
-            var config = Ext.apply(defaultCubeConfig, response.config);
-            var cube = LABKEY.query.olap.CubeManager.getCube(config);
-
-            // launch the app
-            launchApp(cube);
-
-            // call to getCube in olap.js to initialize cube
-            if (LABKEY.user.isSignedIn) {
-                cube.load();
-            }
-        }, this)
-    });
 });
