@@ -82,6 +82,11 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Proxy.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Store.js"></script>
 
+    <!-- Internal Dependencies -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Base.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
+
     <!-- Study Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
@@ -139,6 +144,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>

@@ -21,6 +21,10 @@
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Proxy.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Store.js"/>
 
+        <script path="../../../internal/explodedModule/web/dataregion/filter/Base.js"/>
+        <script path="../../../internal/explodedModule/web/dataregion/filter/Model.js"/>
+        <script path="../../../internal/explodedModule/web/dataregion/filter/Faceted.js"/>
+
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
 
@@ -81,6 +85,7 @@
         <script path="Connector/src/button/Image.js"/>
         <script path="Connector/src/button/RoundedButton.js"/>
         <script path="Connector/src/window/Filter.js"/>
+        <script path="Connector/src/window/Facet.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>
         <script path="Connector/src/panel/AxisSelector.js"/>
         <script path="Connector/src/panel/Feedback.js"/>
