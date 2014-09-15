@@ -5,7 +5,9 @@ Ext.define('Connector.controller.Query', {
     isService: true,
 
     init : function() {
-        this._initCache();
+        if (LABKEY.user.isSignedIn) {
+            this._initCache();
+        }
     },
 
     _initCache : function() {

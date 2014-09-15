@@ -13,14 +13,17 @@ Ext.define('Connector.window.Facet', {
 
     ui: 'facetwindow',
 //    cls: 'arrow-window',
-//    modal: true,
+    modal: true,
     autoShow: true,
     draggable: false,
+    resizable: false,
     closable: false,
     bodyStyle: 'margin: 8px;',
 
     width: 250,
     height: 400,
+
+    shadowOffset: 18,
 
     constructor : function(config) {
 
@@ -52,20 +55,6 @@ Ext.define('Connector.window.Facet', {
 
         this.items = [faceted];
 
-        this.buttons = [{
-            text  : 'Filter',
-            handler: this.applyFiltersAndColumns,
-            scope: this
-        },{
-            text : 'Cancel',
-            handler : this.close,
-            scope : this
-        },{
-            text : 'Clear',
-            handler : this.onClear,
-            scope: this
-        }];
-
         this.dockedItems = [{
             xtype: 'toolbar',
             dock: 'top',
@@ -85,6 +74,25 @@ Ext.define('Connector.window.Facet', {
                     scope: this
                 }
             ]
+        },{
+            xtype: 'toolbar',
+            dock: 'bottom',
+            ui: 'footer',
+            cls: 'dark-toolbar',
+            height: 30,
+            items: ['->',{
+                text  : 'Filter',
+                handler: this.applyFiltersAndColumns,
+                scope: this
+            },{
+                text : 'Cancel',
+                handler : this.close,
+                scope : this
+            },{
+                text : 'Clear',
+                handler : this.onClear,
+                scope: this
+            }]
         }];
 
         this.callParent(arguments);

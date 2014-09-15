@@ -1,6 +1,8 @@
 @include extjs-window-ui (
   $ui-label: 'axiswindow',
 
+  $ui-border-radius: 0,
+
   $ui-background-color: $secondary-color,
   $ui-border-color: $secondary-color
 );
