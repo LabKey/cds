@@ -99,6 +99,7 @@
         <datatype>double</datatype>
         <columnTitle>Baseline Ad5 Titer</columnTitle>
         <description>The baseline ad5 titer measurement for this participant</description>
+        <keyVariable>true</keyVariable>
       </column>
       <column columnName="circumcised">
         <datatype>varchar</datatype>
@@ -165,6 +166,7 @@
       <column columnName="SystolicBloodPressure">
         <datatype>integer</datatype>
         <columnTitle>Systolic Blood Pressure</columnTitle>
+          <keyVariable>true</keyVariable>
       </column>
       <column columnName="Weight_kg">
         <datatype>integer</datatype>
@@ -352,6 +354,7 @@
         <datatype>integer</datatype>
         <columnTitle>CD4</columnTitle>
         <description>HIV infection leads to a progressive reduction in the number of T cells expressing CD4.</description>
+          <keyVariable>true</keyVariable>
       </column>
       <column columnName="Hemoglobin">
         <datatype>double</datatype>
