@@ -11,20 +11,22 @@ Ext.define('Connector.window.Facet', {
 
     alias: 'widget.columnfacetwin',
 
-    ui: 'custom',
-    cls: 'filterwindow',
-    modal: true,
-//    width: 360,
+    ui: 'facetwindow',
+//    cls: 'arrow-window',
+//    modal: true,
     autoShow: true,
     draggable: false,
     closable: false,
     bodyStyle: 'margin: 8px;',
 
+    width: 250,
+    height: 400,
+
     constructor : function(config) {
 
         this.callParent([config]);
 
-        this.addEvents('clearall', 'filter');
+        this.addEvents('clearfilter', 'filter');
     },
 
     initComponent : function() {
@@ -34,13 +36,15 @@ Ext.define('Connector.window.Facet', {
             return;
         }
 
-        var column = this.dataView.getColumnMetadata(this.col.dataIndex);
         var model = this.dataView.getModel();
+
+        this.setDisplayPosition(this.col);
 
         var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
             itemId: 'faceted',
+            border: false,
             model: {
-                column: this.dataView.getColumnMetadata(this.col.dataIndex),
+                column: this.columnMetadata,
                 schemaName: model.get('metadata').schemaName,
                 queryName: model.get('metadata').queryName
             }
@@ -48,7 +52,7 @@ Ext.define('Connector.window.Facet', {
 
         this.items = [faceted];
 
-        this.buttons =  [{
+        this.buttons = [{
             text  : 'Filter',
             handler: this.applyFiltersAndColumns,
             scope: this
@@ -62,9 +66,43 @@ Ext.define('Connector.window.Facet', {
             scope: this
         }];
 
+        this.dockedItems = [{
+            xtype: 'toolbar',
+            dock: 'top',
+            ui: 'footer',
+            items: [
+                {
+                    xtype: 'tbtext',
+                    style: 'font-size: 13.5pt; font-weight: bold; text-transform: uppercase; font-family: Arial;',
+                    text: Ext.htmlEncode(this.columnMetadata.caption)
+                },
+                '->',
+                {
+                    text: '&#215;',
+                    ui: 'custom',
+                    style: 'font-size: 16pt; color: black; font-weight: bold;',
+                    handler: this.close,
+                    scope: this
+                }
+            ]
+        }];
+
         this.callParent(arguments);
 
         this.addListener('afterrender', this.onAfterRender, this, {single: true});
+    },
+
+    setDisplayPosition : function(column) {
+        var trigger = Ext.get(column.triggerEl);
+        if (trigger) {
+            trigger.show();
+            var box = trigger.getBox();
+
+            Ext.apply(this, {
+                x: box.x - 52,
+                y: box.y + 45
+            });
+        }
     },
 
     onAfterRender : function() {
@@ -79,14 +117,24 @@ Ext.define('Connector.window.Facet', {
                 scope: this
             }
         ]);
+
+        this.getComponent('faceted').setFilters(this.dataView.getModel().getFilterArray());
     },
 
     applyFiltersAndColumns : function() {
         var view = this.getComponent('faceted');
         if (view.checkValid()) {
-            FF = view.getFilters();
+            var filters = view.getFilters();
+            this.fireEvent('filter', this, view.getModel().get('column'), filters);
+            this.close();
         }
     },
 
-    onClear : function() {}
+    onClear : function() {
+        var column = this.columnMetadata;
+        var fieldKeyPath = column.displayField ? column.displayField : column.fieldKeyPath;
+
+        this.fireEvent('clearfilter', this, fieldKeyPath);
+        this.close();
+    }
 });

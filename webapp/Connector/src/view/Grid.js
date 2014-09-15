@@ -546,6 +546,7 @@ Ext.define('Connector.view.Grid', {
         if (column) {
             this.filterWin = Ext.create('Connector.window.Filter', {
                 col: column,
+                columnMetadata: this.getColumnMetadata(column.dataIndex),
                 dataView: this,
                 listeners: {
                     filter: function(win, boundColumn, filterArray) {

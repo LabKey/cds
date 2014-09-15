@@ -34,22 +34,11 @@ Ext.define('Connector.window.Filter', {
             return;
         }
 
-        var trigger = Ext.get(this.col.triggerEl);
-        if (trigger) {
-            trigger.show();
-            var box = trigger.getBox();
-
-            Ext.apply(this, {
-                x: box.x - 52,
-                y: box.y + 45
-            });
-        }
-
-        var columnName = this.col.dataIndex;
+        this.setDisplayPosition(this.col);
 
         Ext.apply(this, {
             store: this.dataView.getStore(),
-            boundColumn: this.dataView.getColumnMetadata(columnName)
+            boundColumn: this.columnMetadata
         });
 
         this.items = this.getItems();
@@ -92,6 +81,19 @@ Ext.define('Connector.window.Filter', {
                 scope: this
             }
         ]);
+    },
+
+    setDisplayPosition : function(column) {
+        var trigger = Ext.get(column.triggerEl);
+        if (trigger) {
+            trigger.show();
+            var box = trigger.getBox();
+
+            Ext.apply(this, {
+                x: box.x - 52,
+                y: box.y + 45
+            });
+        }
     },
 
     onClearFilters : function() {
