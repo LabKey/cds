@@ -5,42 +5,18 @@
  */
 Ext.define('Connector.window.Facet', {
 
-    extend: 'Ext.window.Window',
-
-    requires: ['Connector.model.ColumnInfo', 'Ext.form.field.ComboBox'],
+    extend: 'Connector.window.AbstractFilter',
 
     alias: 'widget.columnfacetwin',
 
-    ui: 'facetwindow',
-    modal: true,
-    autoShow: true,
-    draggable: false,
-    resizable: false,
-    closable: false,
     bodyStyle: 'margin: 8px; overflow-y: auto;',
 
     width: 280,
+
     height: 375,
 
-    shadowOffset: 18,
-
-    constructor : function(config) {
-
-        this.callParent([config]);
-
-        this.addEvents('clearfilter', 'filter');
-    },
-
-    initComponent : function() {
-
-        if (!this.col) {
-            console.error("'col' value must be provided to instantiate a", this.$className);
-            return;
-        }
-
+    getItems : function() {
         var model = this.dataView.getModel();
-
-        this.setDisplayPosition(this.col);
 
         // the set of filters that match this column
         var matchingFilters = [];
@@ -55,7 +31,7 @@ Ext.define('Connector.window.Facet', {
             useGrouping: true,
             useStoreCache: false,
             filters: matchingFilters,
-            groupFilters: this.dataView.getModel().getFilterArray(true),
+            groupFilters: model.getFilterArray(true),
             model: {
                 column: this.columnMetadata,
                 schemaName: model.get('metadata').schemaName,
@@ -63,78 +39,7 @@ Ext.define('Connector.window.Facet', {
             }
         });
 
-        this.items = [faceted];
-
-        this.dockedItems = [{
-            xtype: 'toolbar',
-            dock: 'top',
-            ui: 'footer',
-            items: [
-                {
-                    xtype: 'tbtext',
-                    style: 'font-size: 13.5pt; font-weight: bold; text-transform: uppercase; font-family: Arial;',
-                    text: Ext.htmlEncode(this.columnMetadata.caption)
-                },
-                '->',
-                {
-                    text: '&#215;',
-                    ui: 'custom',
-                    style: 'font-size: 16pt; color: black; font-weight: bold;',
-                    handler: this.close,
-                    scope: this
-                }
-            ]
-        },{
-            xtype: 'toolbar',
-            dock: 'bottom',
-            ui: 'footer',
-            cls: 'dark-toolbar',
-            height: 30,
-            items: ['->',{
-                text  : 'Filter',
-                handler: this.applyFiltersAndColumns,
-                scope: this
-            },{
-                text : 'Cancel',
-                handler : this.close,
-                scope : this
-            },{
-                text : 'Clear',
-                handler : this.onClear,
-                scope: this
-            }]
-        }];
-
-        this.callParent(arguments);
-
-        this.addListener('afterrender', this.onAfterRender, this, {single: true});
-    },
-
-    setDisplayPosition : function(column) {
-        var trigger = Ext.get(column.triggerEl);
-        if (trigger) {
-            trigger.show();
-            var box = trigger.getBox();
-
-            Ext.apply(this, {
-                x: box.x - 52,
-                y: box.y + 45
-            });
-        }
-    },
-
-    onAfterRender : function() {
-        var keymap = new Ext.util.KeyMap(this.el, [
-            {
-                key  : Ext.EventObject.ENTER,
-                fn   : this.applyFiltersAndColumns,
-                scope: this
-            },{
-                key  : Ext.EventObject.ESC,
-                fn   : this.close,
-                scope: this
-            }
-        ]);
+        return [faceted];
     },
 
     applyFiltersAndColumns : function() {

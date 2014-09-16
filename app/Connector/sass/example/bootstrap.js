@@ -143,6 +143,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
+  "Connector.window.AbstractFilter": "../../../../webapp/Connector/src/window/AbstractFilter.js",
   "Connector.window.Facet": "../../../../webapp/Connector/src/window/Facet.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
@@ -303,6 +304,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
+  "Connector.window.AbstractFilter": [],
   "Connector.window.Facet": [],
   "Connector.window.Filter": [],
   "Connector.window.SystemMessage": [],
@@ -1412,6 +1414,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.Text": [
     "widget.module.text"
   ],
+  "Connector.window.AbstractFilter": [],
   "Connector.window.Facet": [
     "widget.columnfacetwin"
   ],

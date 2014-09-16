@@ -75,7 +75,7 @@ public class DataGridSelector
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        _test.click(CDSHelper.Locators.cdsButtonLocator("OK"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Filter"));
         String filterText = columnName.replace(" ", "");
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filterText));
     }
@@ -83,7 +83,7 @@ public class DataGridSelector
     public void clearFilters(String columnName)
     {
         openFilterPanel(columnName);
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear Filters"));
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear"));
         _test.waitForText("Filter removed.");
     }
 

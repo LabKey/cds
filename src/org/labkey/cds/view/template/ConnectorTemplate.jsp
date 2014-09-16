@@ -143,6 +143,7 @@
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>

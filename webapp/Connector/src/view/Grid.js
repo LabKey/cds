@@ -9,7 +9,7 @@ Ext.define('Connector.view.Grid', {
 
     alias: 'widget.groupdatagrid',
 
-    requires: ['Ext.menu.DatePicker'],
+    requires: ['Ext.menu.DatePicker', 'Connector.window.*'],
 
     axisSourceCls: 'rawdatasource',
 
