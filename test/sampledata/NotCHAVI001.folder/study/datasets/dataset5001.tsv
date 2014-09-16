@@ -4770,7 +4770,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 3096	2010-10-29 00:00:00.0		21		0.0292	60	60	6.4	60	60	0.0548	Five Parameter	H061.14	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 3096	2010-10-29 00:00:00.0		21		0.009	60	60	5.7	60	60	0.0152	Five Parameter	H061.14	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 3096	2010-12-08 00:00:00.0		22		0.0242	60	60	6.3	60	60	0.0157	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-3096	2010-12-08 00:00:00.0		22		0.0082	60	60	6.2	60	60	0.029	Five Parameter	Du151.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+3096	2010-12-08 00:00:00.0		22		0.0083	60	60	6.2	60	60	0.029	Five Parameter	Du151.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 3096	2010-12-08 00:00:00.0		22		0.0112	60	60	4.3	60	60	0.0175	Five Parameter	SUMA.LucR.T2A.ecto	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 3096	2010-12-08 00:00:00.0		22		0.0217	60	60	7.2	60	60	0.0317	Five Parameter	SUMA.LucR.T2A.ecto	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 3096	2010-01-03 00:00:00.0		23		0.0072	60	60	3.4	60	60	0.0152	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
