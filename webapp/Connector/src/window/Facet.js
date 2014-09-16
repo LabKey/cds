@@ -12,16 +12,15 @@ Ext.define('Connector.window.Facet', {
     alias: 'widget.columnfacetwin',
 
     ui: 'facetwindow',
-//    cls: 'arrow-window',
     modal: true,
     autoShow: true,
     draggable: false,
     resizable: false,
     closable: false,
-    bodyStyle: 'margin: 8px;',
+    bodyStyle: 'margin: 8px; overflow-y: auto;',
 
-    width: 250,
-    height: 400,
+    width: 280,
+    height: 375,
 
     shadowOffset: 18,
 
@@ -43,9 +42,20 @@ Ext.define('Connector.window.Facet', {
 
         this.setDisplayPosition(this.col);
 
+        // the set of filters that match this column
+        var matchingFilters = [];
+        Ext.each(this.dataView.getModel().getFilterArray(), function(filter) {
+            if (filter.getColumnName().toLowerCase() === this.columnMetadata.filterField.toLowerCase())
+                matchingFilters.push(filter);
+        }, this);
+
         var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
             itemId: 'faceted',
             border: false,
+            useGrouping: true,
+            useStoreCache: false,
+            filters: matchingFilters,
+            groupFilters: this.dataView.getModel().getFilterArray(true),
             model: {
                 column: this.columnMetadata,
                 schemaName: model.get('metadata').schemaName,
@@ -125,8 +135,6 @@ Ext.define('Connector.window.Facet', {
                 scope: this
             }
         ]);
-
-        this.getComponent('faceted').setFilters(this.dataView.getModel().getFilterArray());
     },
 
     applyFiltersAndColumns : function() {

@@ -544,9 +544,12 @@ Ext.define('Connector.view.Grid', {
         }
 
         if (column) {
-            this.filterWin = Ext.create('Connector.window.Filter', {
+
+            var metadata = this.getColumnMetadata(column.dataIndex);
+
+            var config = {
                 col: column,
-                columnMetadata: this.getColumnMetadata(column.dataIndex),
+                columnMetadata: metadata,
                 dataView: this,
                 listeners: {
                     filter: function(win, boundColumn, filterArray) {
@@ -561,7 +564,14 @@ Ext.define('Connector.view.Grid', {
                     scope: this
                 },
                 scope: this
-            });
+            };
+
+            var clzz = 'Connector.window.Filter';
+//            if (metadata.jsonType === 'string') {
+//                clzz = 'Connector.window.Facet';
+//            }
+
+            this.filterWin = Ext.create(clzz, config);
         }
         else {
             console.error('Unable to find column for filtering.');
