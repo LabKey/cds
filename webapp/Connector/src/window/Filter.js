@@ -13,7 +13,7 @@ Ext.define('Connector.window.Filter', {
 
     width: 360,
 
-    bodyStyle: 'margin: 8px; overflow-y: auto;',
+    bodyStyle: 'margin: 8px; overflow-y: auto; padding: 10px;',
 
     getBottomConfig : function() {
         return {

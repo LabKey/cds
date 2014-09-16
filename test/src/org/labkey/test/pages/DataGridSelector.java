@@ -80,6 +80,18 @@ public class DataGridSelector
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filterText));
     }
 
+    public void setFacet(String columnName, String label)
+    {
+        openFilterPanel(columnName);
+        _test.waitForText(label);
+
+        Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
+        Locator.XPathLocator memberLabel = gridLoc.append(Locator.tagWithClass("div", "x-grid-cell-inner").containing(label));
+
+        _test.click(memberLabel);
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Filter"));
+    }
+
     public void clearFilters(String columnName)
     {
         openFilterPanel(columnName);

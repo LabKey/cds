@@ -567,9 +567,9 @@ Ext.define('Connector.view.Grid', {
             };
 
             var clzz = 'Connector.window.Filter';
-//            if (metadata.jsonType === 'string') {
-//                clzz = 'Connector.window.Facet';
-//            }
+            if (metadata.jsonType === 'string') {
+                clzz = 'Connector.window.Facet';
+            }
 
             this.filterWin = Ext.create(clzz, config);
         }
