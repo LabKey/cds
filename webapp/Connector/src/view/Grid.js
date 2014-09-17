@@ -482,9 +482,9 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             }
-            else {
-                console.log('failed to find filter column');
-            }
+//            else {
+//                console.log('failed to find filter column');
+//            }
 
         }, this);
     },

@@ -27,7 +27,19 @@ Ext.define('Connector.grid.Panel', {
         editingPluginId: 'editingplugin'
     },
 
-    model: undefined,
+    model: undefined, // instance of Connector.model.Grid
+
+    // A special group of recognized columns
+    studyColumns: {
+        subjectid: true,
+        study: true,
+        startdate: true,
+        visit: true,
+        visitdate: true,
+        days: true,
+        weeks: true,
+        months: true
+    },
 
     initComponent : function() {
         this.initStore();
@@ -66,8 +78,6 @@ Ext.define('Connector.grid.Panel', {
 
         this.callParent();
 
-        this.configureHeaders();
-
         if(!this.columns.length){
             this.mon(this.store, 'load', this.setupColumnModel, this, {single: true});
             if(!this.store.isLoading()){
@@ -92,24 +102,6 @@ Ext.define('Connector.grid.Panel', {
         this.addEvents('columnmodelcustomize', 'lookupstoreload');
 
         this.on('lookupstoreload', this.onLookupStoreEventFired, this, {buffer: 200});
-    }
-
-    ,configureHeaders : function() {
-        if(!this.headerCt)
-            return;
-
-        this.mon(this.headerCt, 'menucreate', this.onMenuCreate, this);
-    }
-
-    ,onMenuCreate : function(header, menu) {
-        menu.insert(2, {xtype : 'menuseparator'});
-        menu.insert(3, {text: 'Filter...', handler : this.onShowFilter, scope : this});
-        menu.remove(4);
-    }
-
-    ,onShowFilter : function(x,y,z) {
-        console.log('would show filter');
-        console.log([x,y,z]);
     }
 
     ,initStore : function() {
@@ -160,13 +152,13 @@ Ext.define('Connector.grid.Panel', {
 
         //reset the column model
         this.reconfigure(this.store, columns);
-
     }
 
     ,_getColumnsConfig : function(store, config) {
         var columns = LABKEY.ext4.Util.getColumnsConfig(store, this, config);
 
         if (Ext.isDefined(this.model)) {
+            GM = this.model;
             var measureNameToQueryMap = {};
             Ext.each(this.model.get('measures'), function(measure){
                 if (measure.queryLabel)
@@ -199,72 +191,42 @@ Ext.define('Connector.grid.Panel', {
             }
         };
 
-        if(this.metadataDefaults){
+        if (this.metadataDefaults) {
             Ext.Object.merge(config, this.metadataDefaults);
         }
-        if(this.metadata && this.metadata[c.name]){   // TODO: where is this c variable?
-            Ext.Object.merge(config, this.metadata[c.name]);
-        }
 
-        var columns = this._getColumnsConfig(this.store, config);
+        var columns = this._getColumnsConfig(this.store, config), meta, lookupStore;
 
-        for (var idx=0;idx<columns.length;idx++){
-            var col = columns[idx];
+        Ext.each(columns, function(column) {
 
-            //remember the first editable column (used during add record)
-            if(!this.firstEditableColumn && col.editable)
-                this.firstEditableColumn = idx;
+            column.width = this.defaultColumnWidth;
 
-            if (this.hideNonEditableColumns && !col.editable) {
-                col.hidden = true;
+            meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex);
+            if (!meta) {
+                return true; // continue
             }
 
-            var meta = LABKEY.ext4.Util.findFieldMetadata(this.store, col.dataIndex);
-            if(!meta)
-                continue;
+            // listen for changes to the underlying data in lookup store
+            if (Ext.isObject(meta.lookup) && meta.lookups !== false && meta.lookup.isPublic === true) {
+                lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
 
-            if(meta.isAutoExpandColumn && !col.hidden){
-                this.autoExpandColumn = idx;
-            }
-
-            //listen for changes in underlying data in lookup store
-            if(meta.lookup && meta.lookups !== false && meta.lookup.isPublic){
-                var lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
-
-                //this causes the whole grid to rerender, which is very expensive.  better solution?
-                if(lookupStore){
+                // this causes the whole grid to rerender, which is very expensive.  better solution?
+                if (lookupStore) {
                     this.mon(lookupStore, 'load', this.onLookupStoreLoad, this, {delay: 100});
                 }
             }
-        }
 
-        this.inferColumnWidths(columns);
-
-        for (var i=0; i < columns.length; i++) {
-            columns[i].width = this.defaultColumnWidth;
-        }
+        }, this);
 
         // Split columns into groups
         var groups = [];
 
-        // A special group of recognized columns
         var studyTime = [], remainder = [], plotted = [];
-        var studyCols = {
-            subjectid: true,
-            study: true,
-            startdate: true,
-            visit: true,
-            visitdate: true,
-            days: true,
-            weeks: true,
-            months: true
-        };
-
         Ext.each(columns, function(col) {
             var dataIndex = col.dataIndex.split('_');
             var colName = dataIndex[dataIndex.length-1].toLowerCase();
 
-            if (studyCols[colName]) {
+            if (this.studyColumns[colName]) {
                 studyTime.push(col);
             }
             else if (col.plotted === true) {
@@ -292,9 +254,6 @@ Ext.define('Connector.grid.Panel', {
         var groupMap = {};
         Ext.each(remainder, function(col) {
             var queryName = col.dataIndex.split('_')[1];
-            // TODO: enable this, but then there is a column alignment issue when the group header is longer than the sub-header
-            //if (col.queryLabel)
-            //    queryName = col.queryLabel;
 
             // HACK: special case to map SubjectGroupMap -> User groups
             if (queryName == "SubjectGroupMap")
@@ -310,11 +269,10 @@ Ext.define('Connector.grid.Panel', {
         }, this);
 
         Ext.iterate(groupMap, function(key, value) {
-            var group = {
+            groups.push({
                 text: key,
                 columns: value
-            };
-            groups.push(group);
+            });
         }, this);
 
         return groups;
@@ -331,53 +289,6 @@ Ext.define('Connector.grid.Panel', {
     //private
     ,onLookupStoreEventFired : function() {
         this.getView().refresh();
-    }
-
-    ,inferColumnWidths : function(columns) {
-        var col,
-                meta,
-                value,
-                values,
-                totalRequestedWidth = 0;
-
-        for (var i=0;i<columns.length;i++){
-
-            col = columns[i];
-            meta = LABKEY.ext4.Util.findFieldMetadata(this.store, col.dataIndex);
-
-            if(meta && !meta.fixedWidthCol){
-                values = [];
-                var records = this.store.getRange();
-                for (var j=0;j<records.length;j++){
-                    var rec = records[j];
-                    value = LABKEY.ext4.Util.getDisplayString(rec.get(meta.name), meta, rec, rec.store);
-                    if(!Ext.isEmpty(value)) {
-                        values.push(value.length);
-                    }
-                }
-
-                //TODO: this should probably take into account mean vs max, and somehow account for line wrapping on really long text
-                var avgLen = values.length ? (Ext.Array.sum(values) / values.length) : 1;
-
-                col.width = Math.max(avgLen, col.header ? col.header.length : 0) * this.charWidth + this.colPadding;
-                col.width = Math.min(col.width, this.maxColWidth);
-            }
-
-            if (!col.hidden) {
-                totalRequestedWidth += col.width || 0;
-            }
-        }
-
-        if (this.constraintColumnWidths) {
-
-            for (i=0;i<columns.length;i++){
-                col = columns[i];
-                if (!col.hidden) {
-                    col.flex  = (col.width / totalRequestedWidth);
-                    col.width = null;
-                }
-            }
-        }
     }
 
     ,getColumnById : function(colName) {
@@ -419,9 +330,6 @@ LABKEY.ext4.GRIDBUTTONS = {
 
                 var model = grid.store.createModel({});
                 grid.store.insert(0, [model]); //add a blank record in the first position
-
-                if(cellEditing)
-                    cellEditing.startEditByPosition({row: 0, column: this.firstEditableColumn || 0});
             }
         }, config);
     },

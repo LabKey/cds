@@ -4,6 +4,8 @@ Ext.define('Connector.controller.Query', {
 
     isService: true,
 
+    _ready: false,
+
     init : function() {
         if (LABKEY.user.isSignedIn) {
             this._initCache();
@@ -12,7 +14,6 @@ Ext.define('Connector.controller.Query', {
 
     _initCache : function() {
         if (!this.MEMBER_CACHE) {
-            this.CACHE_LOADED = false;
             this.MEMBER_CACHE = {};
         }
 
@@ -27,7 +28,8 @@ Ext.define('Connector.controller.Query', {
             success: function(measures) {
                 Ext.each(measures, function(measure) {
                     this.addMeasure(measure);
-                    this.CACHE_LOADED = true;
+                    this._ready = true;
+                    this.application.fireEvent('queryready', this);
                 }, this);
             },
             scope: this
@@ -35,6 +37,19 @@ Ext.define('Connector.controller.Query', {
     },
 
     _gridMeasures : undefined,
+
+    onReady : function(callback, scope) {
+        if (Ext.isFunction(callback)) {
+            if (this._ready === true) {
+                callback.call(scope, this);
+            }
+            else {
+                this.application.on('queryready', function() {
+                    callback.call(scope, this);
+                }, this, {single: true});
+            }
+        }
+    },
 
     // This supplies the set of default columns available in the grid
     // to the provided callback as an array of Measure descriptors
@@ -108,7 +123,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     getMeasure : function(measureAlias) {
-        if (!this.CACHE_LOADED) {
+        if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
 
