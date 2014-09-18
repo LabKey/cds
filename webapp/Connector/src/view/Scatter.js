@@ -25,7 +25,9 @@ Ext.define('Connector.view.Scatter', {
     studyAxisRange: {min: null, max: null},
 
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
-    rowlimit: 5000,
+
+    binRowLimit: 5000,
+    showPointsAsBin: false,
 
     layout: 'border',
 
@@ -462,9 +464,9 @@ Ext.define('Connector.view.Scatter', {
     getBinLayer : function(layerScope) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.HexBin({
-                size: 3,
-                plotNullPoints: true,
-                opacity: 0.5
+                color: 'orange',
+                size: 5,
+                plotNullPoints: true
             }),
             aes: this.getLayerAes(layerScope, false)
         });
@@ -513,7 +515,7 @@ Ext.define('Connector.view.Scatter', {
             this.noPlot();
             return;
         }
-        else if (rows.length < this.rowlimit && !noplot && (this.percentOverlap && this.percentOverlap == 1)) {
+        else if (!noplot && (this.percentOverlap && this.percentOverlap == 1)) {
             this.hideMessage();
         }
 
@@ -522,13 +524,16 @@ Ext.define('Connector.view.Scatter', {
             this.plot = null;
         }
 
+        this.showPointsAsBin = rows.length > this.binRowLimit;
+
         if (noplot) {
             layer = this.getNoPlotLayer();
         }else if (config.xaxis && config.xaxis.isContinuous) {
-            // Scatter.
-            layer = this.getPointLayer(layerScope);
+            // Scatter. Binned if over max row limit.
+            layer = this.showPointsAsBin ? this.getBinLayer(layerScope) : this.getPointLayer(layerScope);
         } else if (config.xaxis && !config.xaxis.isContinuous) {
             // Box plot (aka 1D).
+            // TODO: handle binning for points with boxplot
             layer = this.getBoxLayer(layerScope);
         }
 
@@ -630,103 +635,183 @@ Ext.define('Connector.view.Scatter', {
             this.setScale(plotConfig.scales.yLeft, 'y', config);
 
             // add brush handling
+            var isSelectedWithBrush = function(extent, x, y) {
+                var isX, isY, xExtent, yExtent;
+
+                xExtent = [extent[0][0], extent[1][0]];
+                yExtent = [extent[0][1], extent[1][1]];
+                isX = xExtent[0] !== null && xExtent[1] !== null;
+                isY = yExtent[0] !== null && yExtent[1] !== null;
+
+                // Issue 20116
+                if (isX && isY) { // 2D
+                    return (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
+                } else if (isX) { // 1D
+                    return (x > xExtent[0] && x < xExtent[1]);
+                } else if (isY) { // 1D
+                    return (y > yExtent[0] && y < yExtent[1]);
+                }
+
+                return false;
+            };
+
+            var brushPoints = function(event, layerData, extent, plot, layerSelections) {
+                var sel = layerSelections[0]; // We only have one layer, so grab the first one.
+                var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+                var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+                var assocColorFn, assocStrokeFn;
+
+                if (plot.scales.color && plot.scales.color.scale) {
+                    colorScale = plot.scales.color.scale;
+                    colorAcc = plot.aes.color;
+                }
+
+                colorFn = function(d) {
+                    var x = d.x, y = d.y;
+
+                    d.isSelected = isSelectedWithBrush(extent, x, y);
+
+                    if (d.isSelected) {
+                        subjects[d.subjectId.value] = true;
+                        return '#14C9CC';
+                    } else {
+                        if (colorScale && colorAcc) {
+                            return colorScale(colorAcc.getValue(d));
+                        }
+
+                        return '#000000';
+                    }
+                };
+
+                strokeFn = function(d) {
+                    if (d.isSelected) {
+                        return '#00393A';
+                    } else {
+                        if (colorScale && colorAcc) {
+                            return colorScale(colorAcc.getValue(d));
+                        }
+
+                        return '#000000';
+                    }
+                };
+
+                sel.selectAll('.point path').attr('fill', colorFn)
+                        .attr('stroke', strokeFn);
+
+                assocColorFn = function(d) {
+                    if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                        return '#01BFC2';
+                    } else{
+                        return this.getAttribute('fill');
+                    }
+                };
+
+                assocStrokeFn = function(d) {
+                    if (!d.isSelected && subjects[d.subjectId.value] === true) {
+                        return '#00EAFF';
+                    } else {
+                        return this.getAttribute('stroke');
+                    }
+                };
+
+                opacityFn = function(d) {
+                    if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
+                        return 1;
+                    } else {
+                        return .3;
+                    }
+                };
+
+                sel.selectAll('.point path').attr('fill', assocColorFn)
+                        .attr('stroke', assocStrokeFn)
+                        .attr('fill-opacity', opacityFn)
+                        .attr('stroke-opacity', opacityFn);
+            };
+
+            var brushBins = function(event, layerData, extent, plot, layerSelections) {
+                var sel = layerSelections[0]; // We only have one layer, so grab the first one.
+                var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+                var colorFn, opacityFn, assocColorFn, min, max;
+
+                // convert extent x/y values into aes scale as bins don't really have x/y values
+                if (extent[0][0] !== null && extent[1][0] !== null)
+                {
+                    extent[0][0] = plot.scales.x.scale(extent[0][0]);
+                    extent[1][0] = plot.scales.x.scale(extent[1][0]);
+                }
+                if (extent[0][1] !== null && extent[1][1] !== null)
+                {
+                    // TODO: the min/max y values are flipped for bins vs points, why?
+                    max = plot.scales.yLeft.scale(extent[0][1]);
+                    min = plot.scales.yLeft.scale(extent[1][1]);
+                    extent[0][1] = min;
+                    extent[1][1] = max;
+                }
+
+                // set color, via style attribute, for the selected bins
+                colorFn = function(d) {
+                    var x = d.x, y = d.y;
+
+                    d.isSelected = isSelectedWithBrush(extent, x, y);
+
+                    // track the subjects that are included in the points for the selected bins
+                    if (d.isSelected && d.length > 0 && d[0].data)
+                    {
+                        for (var i = 0; i < d.length; i++)
+                        {
+                            subjects[d[i].data.subjectId.value] = true;
+                        }
+                    }
+
+                    // keep original color of the bin (note: uses style instead of fill attribute)
+                    d.origStyle = d.origStyle || this.getAttribute('style');
+
+                    return d.isSelected ? 'fill: #14C9CC;' : d.origStyle;
+                };
+                sel.selectAll('.hexagon').attr('style', colorFn);
+
+                // set color, via style attribute, for the unselected bins
+                assocColorFn = function(d) {
+                    if (!d.isSelected && d.length > 0 && d[0].data)
+                    {
+                        for (var i = 0; i < d.length; i++)
+                        {
+                            if (subjects[d[i].data.subjectId.value] === true)
+                                return 'fill: #01BFC2;';
+                        }
+                    }
+
+                    return this.getAttribute('style');
+                };
+
+                // set the opacity for all bins, 3 states: select, associated, neither
+                opacityFn = function(d) {
+                    if (d.isSelected)
+                        return 1;
+
+                    if (!d.isSelected && d.length > 0 && d[0].data)
+                    {
+                        for (var i = 0; i < d.length; i++)
+                        {
+                            if (subjects[d[i].data.subjectId.value] === true)
+                                return .5;
+                        }
+                    }
+
+                    return .3;
+                };
+
+                sel.selectAll('.hexagon').attr('style', assocColorFn)
+                        .attr('fill-opacity', opacityFn)
+                        .attr('stroke-opacity', opacityFn);
+            };
+
             plotConfig.brushing = {
                 dimension: config.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : function() {
                     layerScope.isBrushed = true;
                 },
-                brush : function(event, layerData, extent, plot, layerSelections) {
-                    var sel = layerSelections[0]; // We only have one layer, so grab the first one.
-                    var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-                    var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-                    var isX, isY, xExtent, yExtent, assocColorFn, assocOpacityFn, assocStrokeFn;
-
-                    xExtent = [extent[0][0], extent[1][0]];
-                    yExtent = [extent[0][1], extent[1][1]];
-                    isX = xExtent[0] !== null && xExtent[1] !== null;
-                    isY = yExtent[0] !== null && yExtent[1] !== null;
-
-                    if (plot.scales.color && plot.scales.color.scale) {
-                        colorScale = plot.scales.color.scale;
-                        colorAcc = plot.aes.color;
-                    }
-
-                    colorFn = function(d) {
-                        var x = d.x, y = d.y;
-
-                        // Issue 20116
-                        if (isX && isY) { // 2D
-                            d.isSelected = (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
-                        } else if (isX) { // 1D
-                            d.isSelected = (x > xExtent[0] && x < xExtent[1]);
-                        } else if (isY) { // 1D
-                            d.isSelected = (y > yExtent[0] && y < yExtent[1]);
-                        } else { // Just incase.
-                            d.isSelected = false;
-                        }
-
-                        if (d.isSelected) {
-                            subjects[d.subjectId.value] = true;
-                            return '#14C9CC';
-                        } else {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
-                            }
-
-                            return '#000000';
-                        }
-                    };
-
-                    strokeFn = function(d) {
-                        if (d.isSelected) {
-                            return '#00393A';
-                        } else {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
-                            }
-
-                            return '#000000';
-                        }
-                    };
-
-                    opacityFn = function(d) {
-                        return d.isSelected ? 1 : .5;
-                    };
-
-                    sel.selectAll('.point path').attr('fill', colorFn)
-                            .attr('stroke', strokeFn)
-                            .attr('fill-opacity', opacityFn)
-                            .attr('stroke-opacity', opacityFn);
-
-                    assocColorFn = function(d) {
-                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                            return '#01BFC2';
-                        } else{
-                            return this.getAttribute('fill');
-                        }
-                    };
-
-                    assocStrokeFn = function(d) {
-                        if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                            return '#00EAFF';
-                        } else {
-                            return this.getAttribute('stroke');
-                        }
-                    };
-
-                    assocOpacityFn = function(d) {
-                        if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
-                            return 1;
-                        } else {
-                            return .3;
-                        }
-                    };
-
-                    sel.selectAll('.point path').attr('fill', assocColorFn)
-                            .attr('stroke', assocStrokeFn)
-                            .attr('fill-opacity', assocOpacityFn)
-                            .attr('stroke-opacity', assocOpacityFn);
-                },
+                brush : this.showPointsAsBin ? brushBins : brushPoints,
                 brushend: function(event, layerData, extent, plot, layerSelections) {
                     var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]], plotMeasures,
                             xMeasure, yMeasure, sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
@@ -813,7 +898,15 @@ Ext.define('Connector.view.Scatter', {
                 brushclear : function(event, allData, plot, selections) {
                     layerScope.isBrushed = false;
                     stateManager.clearSelections(true);
-                    selections[0].selectAll('.point path').attr('fill-opacity',.5).attr('stroke-opacity',.5);
+
+                    // reset points
+                    selections[0].selectAll('.point path')
+                            .attr('fill-opacity',.5).attr('stroke-opacity',.5);
+
+                    // reset bins
+                    selections[0].selectAll('.hexagon')
+                            .attr('style', function(d){ return d.origStyle })
+                            .attr('fill-opacity',1).attr('stroke-opacity',1);
                 }
             };
         }
@@ -826,7 +919,6 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.plot) {
             this.plot.addLayer(layer);
-//            this.plot.addLayer(this.getBinLayer(layerScope));
             try {
                 this.noplotmsg.hide();
                 this.plot.render();
@@ -1054,7 +1146,6 @@ Ext.define('Connector.view.Scatter', {
             success: this.onChartDataSuccess,
             failure: this.onFailure,
             requiredVersion: '9.1',
-            maxRows: (this.rowlimit+1),
             scope: this
         };
 
@@ -1527,11 +1618,7 @@ Ext.define('Connector.view.Scatter', {
                 len = rows.length,
                 validCount = 0;
 
-        if (len > this.rowlimit) {
-            len = this.rowlimit;
-            this.showMessage('Plotting first ' + Ext.util.Format.number(this.rowlimit, '0,000') + ' points.');
-        }
-        else if (this.msg) {
+        if (this.msg) {
             this.msg.hide();
         }
 
