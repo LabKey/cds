@@ -354,9 +354,142 @@ Ext.define('Connector.view.Scatter', {
     },
 
     getLayerAes : function(layerScope, isBoxPlot) {
-        var aes, hoverText;
 
-        hoverText = function(row) {
+        var mouseOverPointsFn = function(event, pointData, layerSel){
+            if (!layerScope.isBrushed) {
+                var plot = layerScope.plot, colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+
+                if (plot.scales.color && plot.scales.color.scale) {
+                    colorScale = plot.scales.color.scale;
+                    colorAcc = plot.aes.color;
+                }
+
+                colorFn = function(d) {
+                    if (d.subjectId.value === pointData.subjectId.value) {
+                        return '#01BFC2';
+                    } else {
+                        if (colorScale && colorAcc) {
+                            return colorScale(colorAcc.getValue(d));
+                        }
+
+                        return '#000000';
+                    }
+                };
+
+                strokeFn = function(d) {
+                    if (d.subjectId.value === pointData.subjectId.value) {
+                        return '#00EAFF';
+                    } else {
+                        if (colorScale && colorAcc) {
+                            return colorScale(colorAcc.getValue(d));
+                        }
+
+                        return '#000000';
+                    }
+                };
+
+                opacityFn = function(d) {
+                    return  d.subjectId.value === pointData.subjectId.value ? 1 : 0.3;
+                };
+
+                var points = layerSel.selectAll('.point path');
+
+                points.attr('fill', colorFn)
+                        .attr('stroke', strokeFn)
+                        .attr('fill-opacity', opacityFn)
+                        .attr('stroke-opacity', opacityFn);
+
+                points.each(function(d) {
+                    // Re-append the node so it is on top of all the other nodes, this way highlighted points
+                    // are always visible.
+                    var node = this.parentNode;
+                    if (d.subjectId.value === pointData.subjectId.value) {
+                        node.parentNode.appendChild(node);
+                    }
+                });
+            }
+        };
+
+        var mouseOutPointsFn = function(event, pointData, layerSel){
+            if (!layerScope.isBrushed) {
+                var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
+
+                if (plot.scales.color && plot.scales.color.scale) {
+                    colorScale = plot.scales.color.scale;
+                    colorAcc = plot.aes.color;
+                }
+
+                colorFn = function(d) {
+                    if (colorScale && colorAcc) {
+                        return colorScale(colorAcc.getValue(d));
+                    }
+
+                    return '#000000';
+                };
+
+                layerSel.selectAll('.point path').attr('fill', colorFn)
+                        .attr('stroke', colorFn)
+                        .attr('fill-opacity', 0.5)
+                        .attr('stroke-opacity', 0.5);
+            }
+        };
+
+        var mouseOverBinsFn = function(event, binData, layerSel){
+            if (!layerScope.isBrushed) {
+                // get the set of subjectIds in the binData
+                var subjects = {};
+                if (binData.length > 0 && binData[0].data)
+                {
+                    for (var i = 0; i < binData.length; i++)
+                        subjects[binData[i].data.subjectId.value] = true;
+                }
+
+                var isSubjectInMouseBin = function(d, yesVal, noVal) {
+                    if (d.length > 0 && d[0].data)
+                    {
+                        for (var i = 0; i < d.length; i++)
+                        {
+                            if (subjects[d[i].data.subjectId.value] === true)
+                                return yesVal;
+                        }
+                    }
+
+                    return noVal;
+                };
+
+                var colorFn = function(d) {
+                    // keep original color of the bin (note: uses style instead of fill attribute)
+                    d.origStyle = d.origStyle || this.getAttribute('style');
+
+                    return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
+                };
+
+                var opacityFn = function(d) {
+                    return isSubjectInMouseBin(d, 1, 0.3);
+                };
+
+                layerSel.selectAll('.hexagon path')
+                        .attr('style', colorFn)
+                        .attr('fill-opacity', opacityFn)
+                        .attr('stroke-opacity', opacityFn);
+            }
+        };
+
+        var mouseOutBinsFn = function(event, pointData, layerSel){
+            if (!layerScope.isBrushed)
+            {
+                layerSel.selectAll('.hexagon path')
+                        .attr('style', function(d){ return d.origStyle })
+                        .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+            }
+        };
+
+        var aes = {
+            mouseOverFn: this.showPointsAsBin ? mouseOverBinsFn : mouseOverPointsFn,
+            mouseOutFn: this.showPointsAsBin ? mouseOutBinsFn : mouseOutPointsFn
+        };
+
+        var hoverText = function(row) {
             var text = 'Subject: ' + row.subjectId.value;
 
             if (row.xname) {
@@ -372,86 +505,6 @@ Ext.define('Connector.view.Scatter', {
             return text;
         };
 
-        aes = {
-            mouseOverFn: function(event, pointData, layerSel){
-                if (!layerScope.isBrushed) {
-                    var plot = layerScope.plot, colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-
-                    if (plot.scales.color && plot.scales.color.scale) {
-                        colorScale = plot.scales.color.scale;
-                        colorAcc = plot.aes.color;
-                    }
-
-                    colorFn = function(d) {
-                        if (d.subjectId.value === pointData.subjectId.value) {
-                            return '#01BFC2';
-                        } else {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
-                            }
-
-                            return '#000000';
-                        }
-                    };
-
-                    strokeFn = function(d) {
-                        if (d.subjectId.value === pointData.subjectId.value) {
-                            return '#00EAFF';
-                        } else {
-                            if (colorScale && colorAcc) {
-                                return colorScale(colorAcc.getValue(d));
-                            }
-
-                            return '#000000';
-                        }
-                    };
-
-                    opacityFn = function(d) {
-                        return  d.subjectId.value === pointData.subjectId.value ? 1 : .3;
-                    };
-
-                    var points = layerSel.selectAll('.point path');
-
-                    points.attr('fill', colorFn)
-                            .attr('stroke', strokeFn)
-                            .attr('fill-opacity', opacityFn)
-                            .attr('stroke-opacity', opacityFn);
-
-                    points.each(function(d) {
-                        // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                        // are always visible.
-                        var node = this.parentNode;
-                        if (d.subjectId.value === pointData.subjectId.value) {
-                            node.parentNode.appendChild(node);
-                        }
-                    });
-                }
-            },
-            mouseOutFn: function(event, pointData, layerSel){
-                if (!layerScope.isBrushed) {
-                    var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
-
-                    if (plot.scales.color && plot.scales.color.scale) {
-                        colorScale = plot.scales.color.scale;
-                        colorAcc = plot.aes.color;
-                    }
-
-                    colorFn = function(d) {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
-
-                        return '#000000';
-                    };
-
-                    layerSel.selectAll('.point path').attr('fill', colorFn)
-                            .attr('stroke', colorFn)
-                            .attr('fill-opacity', .5)
-                            .attr('stroke-opacity', .5);
-                }
-            }
-        };
-
         if (isBoxPlot) {
             aes.pointHoverText = hoverText;
         } else {
@@ -464,7 +517,7 @@ Ext.define('Connector.view.Scatter', {
     getBinLayer : function(layerScope) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.HexBin({
-                color: 'orange',
+                color: 'black',
                 size: 5,
                 plotNullPoints: true
             }),
@@ -718,7 +771,7 @@ Ext.define('Connector.view.Scatter', {
                     if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
                         return 1;
                     } else {
-                        return .3;
+                        return 0.3;
                     }
                 };
 
@@ -768,7 +821,7 @@ Ext.define('Connector.view.Scatter', {
 
                     return d.isSelected ? 'fill: #14C9CC;' : d.origStyle;
                 };
-                sel.selectAll('.hexagon').attr('style', colorFn);
+                sel.selectAll('.hexagon path').attr('style', colorFn);
 
                 // set color, via style attribute, for the unselected bins
                 assocColorFn = function(d) {
@@ -794,14 +847,14 @@ Ext.define('Connector.view.Scatter', {
                         for (var i = 0; i < d.length; i++)
                         {
                             if (subjects[d[i].data.subjectId.value] === true)
-                                return .5;
+                                return 0.5;
                         }
                     }
 
-                    return .3;
+                    return 0.3;
                 };
 
-                sel.selectAll('.hexagon').attr('style', assocColorFn)
+                sel.selectAll('.hexagon path').attr('style', assocColorFn)
                         .attr('fill-opacity', opacityFn)
                         .attr('stroke-opacity', opacityFn);
             };
@@ -901,12 +954,12 @@ Ext.define('Connector.view.Scatter', {
 
                     // reset points
                     selections[0].selectAll('.point path')
-                            .attr('fill-opacity',.5).attr('stroke-opacity',.5);
+                            .attr('fill-opacity', 0.5).attr('stroke-opacity', 0.5);
 
                     // reset bins
-                    selections[0].selectAll('.hexagon')
+                    selections[0].selectAll('.hexagon path')
                             .attr('style', function(d){ return d.origStyle })
-                            .attr('fill-opacity',1).attr('stroke-opacity',1);
+                            .attr('fill-opacity', 1).attr('stroke-opacity', 1);
                 }
             };
         }
