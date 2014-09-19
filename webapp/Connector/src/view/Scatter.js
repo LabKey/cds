@@ -551,7 +551,10 @@ Ext.define('Connector.view.Scatter', {
         };
 
         return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.DataspaceBoxPlot({}),
+            geom: new LABKEY.vis.Geom.DataspaceBoxPlot({
+                binSize : 3,
+                binRowLimit : this.binRowLimit
+            }),
             aes: aes
         });
     },
@@ -589,7 +592,6 @@ Ext.define('Connector.view.Scatter', {
             layer = this.showPointsAsBin ? this.getBinLayer(layerScope) : this.getPointLayer(layerScope);
         } else if (config.xaxis && !config.xaxis.isContinuous) {
             // Box plot (aka 1D).
-            // TODO: handle binning for points with boxplot
             layer = this.getBoxLayer(layerScope);
         }
 
