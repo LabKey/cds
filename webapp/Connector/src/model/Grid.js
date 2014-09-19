@@ -24,16 +24,9 @@ Ext.define('Connector.model.Grid', {
         }},
 
         {name: 'defaultMeasures', defaultValue: []},
-        {name: 'wrappedDefaultMeasures', defaultValue: []},
-
         {name: 'measures', defaultValue: []},
-        {name: 'wrappedMeasures', defaultValue: []},
-
         {name: 'plotMeasures', defaultValue: []},
-        {name: 'wrappedPlotMeasures', defaultValue: []},
-
         {name: 'SQLMeasures', defaultValue: []},
-        {name: 'wrappedSQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
         {name: 'schemaName', defaultValue: 'study'},
@@ -86,23 +79,6 @@ Ext.define('Connector.model.Grid', {
             });
         },
 
-        _getMeasures : function(gridModel, wrapped) {
-            var measures = [];
-            if (wrapped === true) {
-                measures = gridModel.get('wrappedDefaultMeasures')
-                        .concat(gridModel.get('wrappedPlotMeasures'))
-                        .concat(gridModel.get('wrappedSQLMeasures'))
-                        .concat(gridModel.get('wrappedMeasures'));
-            }
-            else {
-                measures = gridModel.get('defaultMeasures')
-                        .concat(gridModel.get('plotMeasures'))
-                        .concat(gridModel.get('SQLMeasures'))
-                        .concat(gridModel.get('measures'));
-            }
-            return measures;
-        },
-
         /**
          * These columns can be used to populate a models 'columnSet'
          * @param gridModel
@@ -111,7 +87,7 @@ Ext.define('Connector.model.Grid', {
         getColumnList : function(gridModel) {
 
             // NOTE: default values must come first for getData API call to join correctly
-            var measures = Connector.model.Grid._getMeasures(gridModel, false /* get non-wrapped measures */);
+            var measures = gridModel.getMeasures();
             var metadata = gridModel.get('metadata');
 
             var colMeasure = {};
@@ -150,7 +126,7 @@ Ext.define('Connector.model.Grid', {
         getMetaData : function(gridModel, config) {
 
             // NOTE: default values must come first for getData API call to join correctly
-            var measures = Connector.model.Grid._getMeasures(gridModel, true /* get wrapped measures */);
+            var measures = gridModel.getWrappedMeasures();
             var sorts = gridModel.getSorts();
 
             if (measures.length > 0 && sorts.length > 0) {
@@ -359,7 +335,8 @@ Ext.define('Connector.model.Grid', {
         if (this.viewReady && this.stateReady) {
             Connector.getService('Query').onReady(function(service) {
                 service.getDefaultGridMeasures(function(defaultMeasures) {
-                    this.set('defaultMeasures', defaultMeasures);
+
+                    this.bindDefaultMeasures(defaultMeasures);
 
                     if (this._ready === false) {
                         this._ready = true;
@@ -416,14 +393,10 @@ Ext.define('Connector.model.Grid', {
         return measure;
     },
 
-    bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
-
-        var measureSet = [], sourceMeasure, item, wrapped =[],
-            sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
-
+    bindDefaultMeasures : function(defaultMeasures) {
         // set the wrapped default measures
-        wrapped = [];
-        Ext.each(this.get('defaultMeasures'), function(measure) {
+        var wrapped = [];
+        Ext.each(defaultMeasures, function(measure) {
             var w = {
                 measure: measure,
                 time: 'date'
@@ -431,7 +404,13 @@ Ext.define('Connector.model.Grid', {
 
             wrapped.push(w);
         });
-        this.set('wrappedDefaultMeasures', wrapped);
+        this.set('defaultMeasures', wrapped);
+    },
+
+    bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
+
+        var measureSet = [], sourceMeasure, item, wrapped =[],
+            sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
 
         Ext.each(measures, function(measure) {
             item = Ext.clone(measure.data);
@@ -487,11 +466,8 @@ Ext.define('Connector.model.Grid', {
             wrapped.push(w);
         });
 
-        // set the raw measures
-        this.set('measures', measureSet);
-
         // set the wrapped measures
-        this.set('wrappedMeasures', wrapped);
+        this.set('measures', wrapped);
 
         // set the foreign columns
         this.set('foreignColumns', foreignColumns);
@@ -500,6 +476,44 @@ Ext.define('Connector.model.Grid', {
         {
             this.requestMetaData();
         }
+    },
+
+    /**
+     * The 'raw' measures the grid recieves are wrapped during processing so they can
+     * be consumed by LABKEY.Query.Visualization.getData.
+     * @param {String} measureType
+     * @returns {Array}
+     */
+    getMeasures : function(measureType) {
+        var measures = [];
+
+        if (Ext.isString(measureType)) {
+            Ext.each(this.get(measureType), function(m) {
+                measures.push(m.measure);
+            });
+        }
+        else {
+            Ext.each(this.get('defaultMeasures'), function(m) {
+                measures.push(m.measure);
+            });
+            Ext.each(this.get('plotMeasures'), function(m) {
+                measures.push(m.measure);
+            });
+            Ext.each(this.get('SQLMeasures'), function(m) {
+                measures.push(m.measure);
+            });
+            Ext.each(this.get('measures'), function(m) {
+                measures.push(m.measure);
+            });
+        }
+        return measures;
+    },
+
+    getWrappedMeasures : function() {
+        return this.get('defaultMeasures')
+                .concat(this.get('plotMeasures'))
+                .concat(this.get('SQLMeasures'))
+                .concat(this.get('measures'));
     },
 
     bindApplicationMeasures : function(filterSet) {
@@ -516,7 +530,7 @@ Ext.define('Connector.model.Grid', {
         // map the default set of grid measures so they
         // are not replicated as 'SQLMeasures'
         var defaultMeasureSet = {};
-        Ext.each(this.get('defaultMeasures'), function(m) {
+        Ext.each(this.getMeasures('defaultMeasures'), function(m) {
             var key = m.alias;
             if (Ext.isObject(m.lookup)) {
                 key += '/' + m.lookup.displayColumn;
@@ -524,8 +538,7 @@ Ext.define('Connector.model.Grid', {
             defaultMeasureSet[key] = true;
         });
 
-        var SQLMeasures = [], wrappedSQLMeasures = [];
-        var plotMeasures = [], wrappedPlotMeasures = [];
+        var SQLMeasures = [], plotMeasures = [];
         var queryService = Connector.getService('Query');
         Ext.each(filters, function(filter) {
             // respect plotted measures
@@ -542,8 +555,7 @@ Ext.define('Connector.model.Grid', {
                             p.measure = this.convertTimeMeasure(p.measure);
                         }
                         newKeys[p.measure.alias] = true;
-                        plotMeasures.push(p.measure);
-                        wrappedPlotMeasures.push(p);
+                        plotMeasures.push(p);
                     }
                 }, this);
             }
@@ -561,8 +573,7 @@ Ext.define('Connector.model.Grid', {
                                 time: 'date'
                             };
                             newSQLKeys[p.measure.alias] = true;
-                            SQLMeasures.push(p.measure);
-                            wrappedSQLMeasures.push(p);
+                            SQLMeasures.push(p);
                         }
                     }
                 }, this);
@@ -576,13 +587,11 @@ Ext.define('Connector.model.Grid', {
         if (plotChange) {
             this.plotKeys = newKeys;
             this.set('plotMeasures', plotMeasures);
-            this.set('wrappedPlotMeasures', wrappedPlotMeasures);
         }
 
         if (sqlChange) {
             this.SQLKeys = newSQLKeys;
             this.set('SQLMeasures', SQLMeasures);
-            this.set('wrappedSQLMeasures', wrappedSQLMeasures);
         }
 
         if (change && !this.isActive()) {
