@@ -389,7 +389,7 @@ Ext.define('Connector.view.Scatter', {
                 };
 
                 opacityFn = function(d) {
-                    return  d.subjectId.value === pointData.subjectId.value ? 1 : 0.3;
+                    return  d.subjectId.value === pointData.subjectId.value ? 1 : 0.2;
                 };
 
                 var points = layerSel.selectAll('.point path');
@@ -465,7 +465,7 @@ Ext.define('Connector.view.Scatter', {
                 };
 
                 var opacityFn = function(d) {
-                    return isSubjectInMouseBin(d, 1, 0.3);
+                    return isSubjectInMouseBin(d, 1, 0.15);
                 };
 
                 layerSel.selectAll('.vis-bin path')
@@ -774,7 +774,7 @@ Ext.define('Connector.view.Scatter', {
                     if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
                         return 1;
                     } else {
-                        return 0.3;
+                        return 0.2;
                     }
                 };
 
@@ -854,7 +854,7 @@ Ext.define('Connector.view.Scatter', {
                         }
                     }
 
-                    return 0.3;
+                    return 0.15;
                 };
 
                 sel.selectAll('.vis-bin path').attr('style', assocColorFn)
