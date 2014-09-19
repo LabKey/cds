@@ -121,7 +121,7 @@ Ext.define('Connector.view.Grid', {
         // plugin to handle loading mask for the grid
         this.addPlugin({
             ptype: 'loadingmask',
-            loadingDelay: 0, // show this loading mask immediately since the grid render itself takes most of the time
+            loadingDelay: 250, // show this loading mask quickly since the grid render itself takes most of the time
             beginConfig: {
                 component: this,
                 events: ['showload']
