@@ -42,6 +42,7 @@
         <!-- Visualization Dependencies -->
         <script path="../../../internal/explodedModule/web/vis/lib/d3-3.3.9.min.js"/>
         <script path="../../../internal/explodedModule/web/vis/lib/hexbin.min.js"/>
+        <script path="../../../internal/explodedModule/web/vis/lib/sqbin.min.js"/>
         <script path="../../../internal/explodedModule/web/vis/lib/raphael-min-2.1.0.js"/>
 
         <script path="../../../internal/explodedModule/web/vis/lib/patches.js"/>

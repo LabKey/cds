@@ -468,7 +468,7 @@ Ext.define('Connector.view.Scatter', {
                     return isSubjectInMouseBin(d, 1, 0.3);
                 };
 
-                layerSel.selectAll('.hexagon path')
+                layerSel.selectAll('.vis-bin path')
                         .attr('style', colorFn)
                         .attr('fill-opacity', opacityFn)
                         .attr('stroke-opacity', opacityFn);
@@ -478,7 +478,7 @@ Ext.define('Connector.view.Scatter', {
         var mouseOutBinsFn = function(event, pointData, layerSel){
             if (!layerScope.isBrushed)
             {
-                layerSel.selectAll('.hexagon path')
+                layerSel.selectAll('.vis-bin path')
                         .attr('style', function(d){ return d.origStyle })
                         .attr('fill-opacity', 1).attr('stroke-opacity', 1);
             }
@@ -516,9 +516,12 @@ Ext.define('Connector.view.Scatter', {
 
     getBinLayer : function(layerScope) {
         return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.HexBin({
+            geom: new LABKEY.vis.Geom.Bin({
+//                shape: 'hex',
+                shape: 'square',
                 color: 'black',
-                size: 5,
+//                size: 5,
+                size: 10, // for squares you want a bigger size
                 plotNullPoints: true
             }),
             aes: this.getLayerAes(layerScope, false)
@@ -821,7 +824,7 @@ Ext.define('Connector.view.Scatter', {
 
                     return d.isSelected ? 'fill: #14C9CC;' : d.origStyle;
                 };
-                sel.selectAll('.hexagon path').attr('style', colorFn);
+                sel.selectAll('.vis-bin path').attr('style', colorFn);
 
                 // set color, via style attribute, for the unselected bins
                 assocColorFn = function(d) {
@@ -854,7 +857,7 @@ Ext.define('Connector.view.Scatter', {
                     return 0.3;
                 };
 
-                sel.selectAll('.hexagon path').attr('style', assocColorFn)
+                sel.selectAll('.vis-bin path').attr('style', assocColorFn)
                         .attr('fill-opacity', opacityFn)
                         .attr('stroke-opacity', opacityFn);
             };
@@ -957,7 +960,7 @@ Ext.define('Connector.view.Scatter', {
                             .attr('fill-opacity', 0.5).attr('stroke-opacity', 0.5);
 
                     // reset bins
-                    selections[0].selectAll('.hexagon path')
+                    selections[0].selectAll('.vis-bin path')
                             .attr('style', function(d){ return d.origStyle })
                             .attr('fill-opacity', 1).attr('stroke-opacity', 1);
                 }

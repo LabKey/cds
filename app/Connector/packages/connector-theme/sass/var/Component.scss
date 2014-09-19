@@ -472,7 +472,13 @@ div.emptytext {
 }
 
 /* Visualization Library */
-.hexagon {
+.vis-bin-hexagon {
+  fill: none;
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+.vis-bin-square {
   fill: none;
   stroke: #000;
   stroke-width: .5px;
