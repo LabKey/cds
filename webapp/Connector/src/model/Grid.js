@@ -111,7 +111,7 @@ Ext.define('Connector.model.Grid', {
         getColumnList : function(gridModel) {
 
             // NOTE: default values must come first for getData API call to join correctly
-            var measures = Connector.model.Grid._getMeasures(gridModel, false);
+            var measures = Connector.model.Grid._getMeasures(gridModel, false /* get non-wrapped measures */);
             var metadata = gridModel.get('metadata');
 
             var colMeasure = {};
@@ -150,7 +150,7 @@ Ext.define('Connector.model.Grid', {
         getMetaData : function(gridModel, config) {
 
             // NOTE: default values must come first for getData API call to join correctly
-            var measures = Connector.model.Grid._getMeasures(gridModel, true);
+            var measures = Connector.model.Grid._getMeasures(gridModel, true /* get wrapped measures */);
             var sorts = gridModel.getSorts();
 
             if (measures.length > 0 && sorts.length > 0) {
@@ -177,7 +177,7 @@ Ext.define('Connector.model.Grid', {
 
         getSubjectFilterState : function(model, callback, scope) {
 
-            var state = model.olapProvider;
+            var state = Connector.getState();
 
             var filterState = {
                 hasFilters: state.hasFilters(),
@@ -339,18 +339,16 @@ Ext.define('Connector.model.Grid', {
         this.filterMap = {}; // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance
         this.idMap = {}; // inverse of the filterMap
 
-        this.providerReady = false;
+        this.stateReady = false;
         this.viewReady = false;
         this._ready = false;
 
-        if (config.olapProvider) {
-            this.setOlapProvider(config.olapProvider);
-            this.olapProvider.onReady(function(provider) {
-                this.providerReady = provider;
-                this.applyFilters(this.bindFilters(this.olapProvider.getFilters()));
-                this._init();
-            }, this);
-        }
+        var state = Connector.getState();
+        state.onReady(function(state) {
+            this.stateReady = true;
+            this.applyFilters(this.bindFilters(state.getFilters()));
+            this._init();
+        }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
 
@@ -358,34 +356,31 @@ Ext.define('Connector.model.Grid', {
     },
 
     _init : function() {
-        if (this.viewReady && this.providerReady) {
+        if (this.viewReady && this.stateReady) {
             Connector.getService('Query').onReady(function(service) {
                 service.getDefaultGridMeasures(function(defaultMeasures) {
                     this.set('defaultMeasures', defaultMeasures);
-                    var provider = this.providerReady;
-                    this.onProviderReady(provider);
+
+                    if (this._ready === false) {
+                        this._ready = true;
+
+                        // hook listeners
+                        var state = Connector.getState();
+                        state.on('filterchange', this.onAppFilterChange, this);
+                        Connector.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
+
+                        this.bindMeasures([], [], [], true);
+                        this.bindApplicationMeasures(state.getFilters());
+                    }
+                    this.requestMetaData();
+
                 }, this);
             }, this);
         }
     },
 
-    onProviderReady : function(provider) {
-
-        if (this._ready === false) {
-            this._ready = true;
-
-            // hook listeners
-            this.olapProvider.on('filterchange', this.onAppFilterChange, this);
-            this.olapProvider.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
-
-            this.bindMeasures([], [], [], true);
-            this.bindApplicationMeasures(this.olapProvider.getFilters());
-        }
-        this.requestMetaData();
-    },
-
     onPlotMeasureChange : function() {
-        this.bindApplicationMeasures(this.olapProvider.getFilters());
+        this.bindApplicationMeasures(Connector.getState().getFilters());
     },
 
     onUpdateColumns : function() {
@@ -402,7 +397,7 @@ Ext.define('Connector.model.Grid', {
 //        });
 //
 //        if (validMeasures.length > 0) {
-//            var state = this.olapProvider;
+//            var state = Connector.getState();
 //            state.setCustomState({
 //                view: 'gridmodel',
 //                key: 'measures'
@@ -765,7 +760,7 @@ Ext.define('Connector.model.Grid', {
                     return;
                 }
 
-                var configResults = [];
+                var configResults = [], state = Connector.getState();
 
                 Ext.each(results, function(result) {
                     configResults.push({
@@ -778,7 +773,7 @@ Ext.define('Connector.model.Grid', {
                 // 1. replacement, find the record id
                 // 2. new, create a new app filter
 
-                var appFilters = this.olapProvider.getFilters(), newFilters = [], filter;
+                var appFilters = state.getFilters(), newFilters = [], filter;
 
                 Ext.each(configResults, function(configResult) {
 
@@ -839,13 +834,13 @@ Ext.define('Connector.model.Grid', {
 
                 appFilters = appFilters.concat(newFilters);
 
-                this.olapProvider.setFilters(appFilters);
+                state.setFilters(appFilters);
                 this.filterMap = {};
                 this.idMap = {};
 
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                this.bindFilters(this.olapProvider.getFilters());
+                this.bindFilters(state.getFilters());
 
             }, null, this);
         }
@@ -884,9 +879,10 @@ Ext.define('Connector.model.Grid', {
             this.removeAllGridFilters();
         }
         else {
+            var state = Connector.getState();
             Ext.iterate(this.filterMap, function(urlParam, id) {
                 if (urlParam.indexOf(fieldKey) > -1) {
-                    this.olapProvider.removeFilter(id, 'Subject');
+                    state.removeFilter(id, 'Subject');
                     this.clearFilter(urlParam);
                 }
             }, this);
@@ -894,8 +890,9 @@ Ext.define('Connector.model.Grid', {
     },
 
     removeAllGridFilters : function() {
+        var state = Connector.getState();
         Ext.iterate(this.filterMap, function(urlParam, id) {
-            this.olapProvider.removeFilter(id, 'Subject');
+            state.removeFilter(id, 'Subject');
         }, this);
 
         this.filterMap = {};
@@ -967,10 +964,6 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    setOlapProvider : function(olapProvider) {
-        this.olapProvider = olapProvider;
-    },
-
     setActive : function(active) {
         this.set('active', active);
 
@@ -984,7 +977,7 @@ Ext.define('Connector.model.Grid', {
                 }
             }
             else if (this.activeFilter) {
-                this.onAppFilterChange(this.olapProvider.getFilters());
+                this.onAppFilterChange(Connector.getState().getFilters());
             }
         }
     },

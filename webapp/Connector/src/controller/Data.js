@@ -116,9 +116,7 @@ Ext.define('Connector.controller.Data', {
 
         if (xtype == 'groupdatagrid') {
             v = Ext.create('Connector.view.Grid', {
-                model: Ext.create('Connector.model.Grid', {
-                    olapProvider: this.getStateManager()
-                })
+                model: Ext.create('Connector.model.Grid', {})
             });
 
             this.getViewManager().on('afterchangeview', v.onViewChange, v);

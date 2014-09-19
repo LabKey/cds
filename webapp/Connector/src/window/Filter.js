@@ -15,29 +15,6 @@ Ext.define('Connector.window.Filter', {
 
     bodyStyle: 'margin: 8px; overflow-y: auto; padding: 10px;',
 
-    getBottomConfig : function() {
-        return {
-            xtype: 'toolbar',
-            dock: 'bottom',
-            ui: 'footer',
-            cls: 'dark-toolbar',
-            height: 30,
-            items: ['->',{
-                text: 'Filter',
-                handler: this.applyFiltersAndColumns,
-                scope: this
-            },{
-                text: 'Cancel',
-                handler: this.close,
-                scope: this
-            },{
-                text: 'Clear',
-                handler: this.onClear,
-                scope: this
-            }]
-        };
-    },
-
     onClear : function() {
         var fieldKeyPath = this.columnMetadata.displayField ? this.columnMetadata.displayField : this.columnMetadata.fieldKeyPath;
 
