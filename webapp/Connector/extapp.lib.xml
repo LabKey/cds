@@ -33,6 +33,7 @@
         <script path="../../../internal/explodedModule/web/app/AbstractViewController.js"/>
         <script path="../../../internal/explodedModule/web/app/OlapExplorer.js"/>
         <script path="../../../internal/explodedModule/web/app/MeasurePicker.js"/>
+        <script path="../../../internal/explodedModule/web/app/LoadingMask.js"/>
 
         <!-- Ext Widget Dependencies -->
         <script path="../../../../staging/labkeyWebapp/extWidgets/Ext4DefaultFilterPanel.js"/>
