@@ -519,7 +519,7 @@ Ext.define('Connector.view.Scatter', {
             geom: new LABKEY.vis.Geom.Bin({
 //                shape: 'hex',
                 shape: 'square',
-                color: 'black',
+                colorRange: ["#E6E6E6", "#000000"],
 //                size: 5,
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
