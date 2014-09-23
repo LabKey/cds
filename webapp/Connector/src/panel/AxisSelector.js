@@ -17,6 +17,7 @@ Ext.define('Connector.panel.AxisSelector', {
 
     displayConfig: {},
 
+    // Configuration for nested Connector.panel.MeasuresView
     measureConfig: {},
 
     scalename: 'scale',
@@ -60,7 +61,6 @@ Ext.define('Connector.panel.AxisSelector', {
         // Measure listeners
         measureGrid.getSelectionModel().on({
             select: this.onMeasureSelect,
-//            deselect: this.onMeasureSelect,
             scope: this
         });
 
@@ -149,29 +149,29 @@ Ext.define('Connector.panel.AxisSelector', {
             allColumns: true,
             showHidden: false,
             multiSelect: true,
-            flex: 1
+            flex: 1,
+            sourceCls: undefined
         });
 
         Ext.apply(this.measureConfig, {
             sourceGroupHeader : 'Datasets',
             measuresAllHeader : 'All columns for this assay',
             getAdditionalMeasuresArray : this.getAdditionalMeasuresArray,
+            getSessionMeasures: this.getSessionMeasures,
             bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
         });
 
-        this.variableChooserPanel = Ext.create('LABKEY.app.panel.MeasurePicker', this.measureConfig);
+        var panel = Ext.create('LABKEY.app.panel.MeasurePicker', this.measureConfig);
 
         // allows for a class to be added to the source selection panel
-        if (this.measureConfig.sourceCls) {
-            this.variableChooserPanel.getMeasurePicker().getSourcesView().on('afterrender', function(p) {
+        if (Ext.isString(this.measureConfig.sourceCls)) {
+            panel.getMeasurePicker().getSourcesView().on('afterrender', function(p) {
                 p.addCls(this.measureConfig.sourceCls);
             }, this, {single: true});
         }
-        return this.variableChooserPanel;
-    },
 
-    getMeasurePicker : function() {
-        return this.getVariableChooserPanel().getMeasurePicker();
+        this.variableChooserPanel = panel;
+        return this.variableChooserPanel;
     },
 
     getAdditionalMeasuresArray : function() {
@@ -228,6 +228,18 @@ Ext.define('Connector.panel.AxisSelector', {
         }];
     },
 
+    getSessionMeasures : function() {
+        var cols = [];
+        Ext.iterate(Connector.getState().getSessionColumns(), function(k,col) {
+            cols.push(col);
+        });
+        return cols;
+    },
+
+    getMeasurePicker : function() {
+        return this.getVariableChooserPanel().getMeasurePicker();
+    },
+
     hasSelection : function() {
         return this.getSelection().length > 0;
     },
@@ -266,7 +278,7 @@ Ext.define('Connector.panel.AxisSelector', {
         {
             this.getSelectionDisplay().setMeasureSelection(measure);
             this.getSelectionDisplay().setVariableOptions(measure, this.selectedSource);
-            this.getSelectionDisplay().getScaleForm().setVisible(measure.get('variableType') == null && measure.get('type') !== 'VARCHAR');
+            this.getSelectionDisplay().getScaleForm().setVisible(measure.get('variableType') == null && measure.get('type') !== 'VARCHAR' && measure.get('type') !== 'TIMESTAMP');
             this.lastMeasure = measure;
         }
 
@@ -566,7 +578,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             store: this.getLookupColumnStore(measure),
             ui: 'custom',
             height: 175,
-            cls: 'measuresgrid iScroll lookupgrid',
+            cls: 'measuresgrid iScroll lookupgrid variableoptionsgrid',
             flex: 1,
             hideHeaders: true,
             columns: [{

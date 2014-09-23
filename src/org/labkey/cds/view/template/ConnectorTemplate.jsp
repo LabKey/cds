@@ -94,6 +94,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/MeasurePicker.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/LoadingMask.js"></script>
 
     <!-- Ext Widget Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/extWidgets/Ext4DefaultFilterPanel.js"></script>

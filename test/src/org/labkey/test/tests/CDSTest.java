@@ -593,7 +593,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 117;
+        final int COLUMN_COUNT = 119;
 
         DataGridSelector grid = new DataGridSelector(this);
 
@@ -632,7 +632,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         gridColumnSelector.addGridColumn("Demographics", "Sex", true, true);
         gridColumnSelector.addGridColumn("Demographics", "Race", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab", "Sex", "Race");
-        grid.waitForCount(760);
+        grid.waitForCount(757);
 
         log("Remove a column");
         gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
@@ -640,19 +640,19 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
 
         grid.setFilter("Race", "White");
-        grid.waitForCount(246);
+        grid.waitForCount(270);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
         grid.ensureColumnsPresent("Point IC50");
-        grid.waitForCount(246);
+        grid.waitForCount(270);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
-        grid.waitForCount(246);
+        grid.waitForCount(270);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Filter on a looked-up column");
@@ -664,7 +664,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         log("Filter undo on grid");
         cds.clearFilter();
-        grid.waitForCount(760);
+        grid.waitForCount(757);
         _asserts.assertDefaultFilterStatusCounts(this);
 
         click(Locator.linkWithText("Undo"));
@@ -680,7 +680,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
 //        log("Ensure filtering goes away when column does");
 //        gridColumnSelector.removeLookupColumn("NAb", "Lab", "PI");
-//        grid.waitForCount(999); // update to real count
+//        grid.waitForCount(128);
 
         grid.setFilter("Point IC50", "Is Greater Than", "60");
         grid.waitForCount(1);
@@ -689,7 +689,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.clearFilters("Point IC50");
         grid.waitForCount(650);
         grid.clearFilters("PI");
-        grid.waitForCount(760);
+        grid.waitForCount(757);
         assertTextPresent("All subjects"); // ensure there are no app filters remaining
     }
 

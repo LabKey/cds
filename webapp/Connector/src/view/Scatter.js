@@ -21,6 +21,9 @@ Ext.define('Connector.view.Scatter', {
     initialized: false,
     showAxisButtons: true,
 
+    studyAxisData: [],
+    studyAxisRange: {min: null, max: null},
+
     plotHeightOffset: 90, // value in 'px' that the plot svg is offset for container region
     rowlimit: 5000,
 
@@ -857,9 +860,18 @@ Ext.define('Connector.view.Scatter', {
                 axisValue = 'linear';
             }
 
+            // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
+            var min = null, max = null;
+            if (axis == 'x' && this.studyAxisRange.min != null) {
+                min = this.studyAxisRange.min < 0 ? this.studyAxisRange.min : 0;
+            }
+            if (axis == 'x' && this.studyAxisRange.max != null) {
+                max = this.studyAxisRange.max > 0 ? this.studyAxisRange.max : 0;
+            }
+
             Ext.apply(scale, {
                 trans : axisValue,
-                domain: [null, null]
+                domain: [min, max]
             });
         }
 
@@ -1710,15 +1722,9 @@ Ext.define('Connector.view.Scatter', {
 
     updateMeasureSelection : function(win) {
         if (win) {
-            var pos = this.getPlotPosition(), offset = 0;
-            win.setSize(pos.width, pos.height);
-
-            if (pos.width > win.width) {
-                // If the window width is at maxWidth then we need to center the window in the plot area.
-                offset = (pos.width - win.width) / 2;
-            }
-
-            win.setPosition(pos.leftEdge + offset, pos.topEdge, false);
+            var box = this.getBox();
+            win.setSize(box.width-100, box.height-100);
+            win.show();
         }
         else {
             console.warn('Failed to updated measure selection');
@@ -2340,7 +2346,7 @@ Ext.define('Connector.view.Scatter', {
     },
 
     requestStudyAxisData : function() {
-        var studyContainers = Object.keys(this.alignmentMap), inClause, sql;
+        var studyContainers = Object.keys(this.containerAlignmentDayMap), inClause, sql;
         inClause = '(\'' + studyContainers.join('\',\'') + '\')';
         sql = 'SELECT\n' +
                 'StudyLabel,\n' +
@@ -2383,8 +2389,7 @@ Ext.define('Connector.view.Scatter', {
                     return;
                 }
 
-                this.studyAxisResp = resp;
-                this._preprocessStudyAxisData();
+                this._preprocessStudyAxisData(resp);
                 this.initPlot(this.plotData, false);
                 this.initStudyAxis();
             },
@@ -2398,60 +2403,65 @@ Ext.define('Connector.view.Scatter', {
         if (interval == 'days') {
             return d;
         } else if (interval == 'weeks') {
-            return d / 7;
+            return Math.floor(d / 7);
         } else if (interval == 'months') {
-            return d / (365.25/12);
+            return Math.floor(d / (365.25/12));
         }
     },
 
-    _buildAlignmentMap : function() {
-        var rows = this.selectRowsResponse.rows, am = {}, xColName, visitColName, protocolColName, container,
-                protocolDay, shiftedVal, interval, visitMap = {};
+    _buildStudyVisitMap : function() {
+        var rows = this.selectRowsResponse.rows, containerAlignmentDayMap = {}, visitColName, containerColName, container, visitMap = {};
 
-        xColName = this.measures[0].interval;
-        interval = xColName.toLowerCase();
+        containerColName = "SubjectVisit_Visit_Folder";
         visitColName = this.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
-        protocolColName = visitColName + '_ProtocolDay';
 
-        for (var i = 0; i < rows.length; i++) {
-            container = rows[i].SubjectVisit_Visit_Folder.value;
+        for (var i = 0; i < rows.length; i++)
+        {
+            containerAlignmentDayMap[rows[i][containerColName].value] = 0;
             visitMap[rows[i][visitColName].value] = true;
-            if (!am[container]) {
-                shiftedVal = rows[i][xColName].value;
-                protocolDay = Math.floor(this._convertInterval(rows[i][protocolColName].value, interval));
-                am[container] = shiftedVal - protocolDay;
-            }
         }
 
         this.visitMap = visitMap;
-        this.alignmentMap = am;
+        this.containerAlignmentDayMap = containerAlignmentDayMap;
     },
 
-    _preprocessStudyAxisData : function() {
-        var rows = this.studyAxisResp.rows, alignmentMap = this.alignmentMap, interval, studyMap = {}, studyLabel,
+    _preprocessStudyAxisData : function(resp) {
+        var rows = resp.rows, containerAlignmentDayMap = this.containerAlignmentDayMap, interval, studyMap = {}, studyLabel,
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
-                seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j;
+                seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j, alignmentVisitTag, visitTagName;
 
-        this.studyAxisData = [];
         interval = this.measures[0].interval.toLowerCase();
+
+        // first we have to loop through the study axis visit information to find the alignment visit for each container
+        alignmentVisitTag = this.measures[0].options ? this.measures[0].options.alignmentVisitTag : null;
+        if (alignmentVisitTag != null)
+        {
+            for (j = 0; j < rows.length; j++)
+            {
+                studyContainer = rows[j].StudyContainer.value;
+                visitTagName = rows[j].VisitTagName.value;
+                if (visitTagName == alignmentVisitTag)
+                    containerAlignmentDayMap[studyContainer] = rows[j].ProtocolDay.value;
+            }
+        }
 
         for (j = 0; j < rows.length; j++) {
             studyLabel = rows[j].StudyLabel.value;
             studyContainer = rows[j].StudyContainer.value;
-            shiftVal = alignmentMap[studyContainer];
+            shiftVal = containerAlignmentDayMap[studyContainer];
             visitId = rows[j].VisitRowId.value;
             visitLabel = rows[j].VisitLabel.value;
             seqMin = rows[j].SequenceNumMin.value;
             seqMax = rows[j].SequenceNumMax.value;
-            protocolDay = this._convertInterval(rows[j].ProtocolDay.value, interval) + shiftVal;
+            protocolDay = this._convertInterval(rows[j].ProtocolDay.value - shiftVal, interval);
             timepointType = rows[j].TimepointType.value;
             visitTagCaption = rows[j].VisitTagCaption.value;
 
             if (!this.visitMap[visitId] && !visitTagCaption) { continue; }
 
             if (timepointType !== 'VISIT') {
-                seqMin = this._convertInterval(seqMin, interval) + shiftVal;
-                seqMax = this._convertInterval(seqMax, interval) + shiftVal;
+                seqMin = this._convertInterval(seqMin - shiftVal, interval);
+                seqMax = this._convertInterval(seqMax - shiftVal, interval);
             }
 
             if (!studyMap.hasOwnProperty(studyLabel)) {
@@ -2470,6 +2480,7 @@ Ext.define('Connector.view.Scatter', {
                     sequenceNumMin: seqMin,
                     sequenceNumMax: seqMax,
                     protocolDay: protocolDay,
+                    hasPlotData: this.visitMap[visitId] != undefined,
                     visitTags: {}
                 };
             }
@@ -2479,6 +2490,11 @@ Ext.define('Connector.view.Scatter', {
             if (visitTagCaption !== null && !visit.visitTags.hasOwnProperty(visitTagCaption)) {
                 visit.visitTags[visitTagCaption] = visitTagCaption;
             }
+
+            if (this.studyAxisRange.min == null || this.studyAxisRange.min > protocolDay)
+                this.studyAxisRange.min = protocolDay;
+            if (this.studyAxisRange.max == null || this.studyAxisRange.max < protocolDay)
+                this.studyAxisRange.max = protocolDay;
         }
 
         // Convert study map and visit maps into arrays.
@@ -2566,9 +2582,12 @@ Ext.define('Connector.view.Scatter', {
     },
 
     _preprocessData : function() {
+        this.studyAxisData = [];
+        this.studyAxisRange = {min: null, max: null};
+
         this._preprocessSelectRowsResp();
         if (this.requireStudyAxis) {
-            this._buildAlignmentMap();
+            this._buildStudyVisitMap();
             this.requestStudyAxisData();
         } else {
             this.initPlot(this.plotData, false);

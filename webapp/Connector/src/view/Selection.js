@@ -152,8 +152,14 @@ Ext.define('Connector.view.Selection', {
                             maxVal = filters[1].getValue();
 
                         if (filters[0].getFilterType().getURLSuffix() === 'dategte') {
-                            minVal = new Date(minVal).toLocaleDateString();
-                            maxVal = new Date(maxVal).toLocaleDateString();
+                            var d = new Date(minVal);
+                            var year = (d.getFullYear()%1000);
+                            year = year.toString().length == 1 ? "0" + year : year;
+                            minVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
+                            d = new Date(maxVal);
+                            year = (d.getFullYear()%1000);
+                            year = year.toString().length == 1 ? "0" + year : year;
+                            maxVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
                         }
 
                         domString =

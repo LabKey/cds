@@ -499,3 +499,54 @@ Ext4.define('Connector.cube.Configuration', {
         }
     }
 });
+
+Ext4.define('Connector.cube.Loader', {
+
+    singleton: true,
+
+    _cube: undefined,
+    _loaded: false,
+
+    defaultConfig: {
+        deferLoad: true,
+        defaultCube: {
+            configId: 'CDS:/CDS',
+            schemaName: 'CDS',
+            name: 'DataspaceCube'
+        },
+        defaultContext: {
+            defaults: Connector.cube.Configuration.defaults,
+            values: Connector.cube.Configuration.context
+        }
+    },
+
+    getCube : function(callback, scope, doLoad) {
+        var me = this;
+        Ext4.onReady(function() {
+            if (!Ext4.isDefined(me._cube)) {
+                Ext4.Ajax.request({
+                    url : LABKEY.ActionURL.buildURL('olap', 'getActiveAppConfig'),
+                    method : 'POST',
+                    success: LABKEY.Utils.getCallbackWrapper(function(response){
+
+                        var config = Ext4.apply(me.defaultConfig, response.config);
+                        me._cube = LABKEY.query.olap.CubeManager.getCube(config);
+
+                        if (doLoad === true && !me._loaded) {
+                            me._loaded = true;
+                            me._cube.load();
+                        }
+
+                        if (Ext4.isFunction(callback)) {
+                            callback.call(scope, me._cube);
+                        }
+
+                    }, me)
+                });
+            }
+            else if (Ext4.isFunction(callback)) {
+                callback.call(scope, me._cube);
+            }
+        }, me);
+    }
+});

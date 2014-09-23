@@ -31,6 +31,7 @@
         LinkedHashSet<ClientDependency> resources = new LinkedHashSet<>();
         resources.add(ClientDependency.fromFilePath("Ext4"));
         resources.add(ClientDependency.fromFilePath("query/olap.js"));
+        resources.add(ClientDependency.fromFilePath("Connector/cube.js"));
         return resources;
     }
 %>
@@ -41,22 +42,39 @@
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
     Container c = getContainer();
 %>
+<h2>Fact Table</h2>
+<% for(FactLoader loader : loaders) { %>
+    <h3><a href="<%=studyUrls.getDatasetURL(c, loader.getSourceDataset().getDatasetId())%>"><%=h(loader.getSourceDataset().getName())%></a></h3>
+    <%
+        for (FactLoader.ColumnMapper colMapper : loader.getMappings())
+        {
+            int rowsInserted = colMapper.getRowsInserted();
+            if (rowsInserted > 0) {%>
+                <%=rowsInserted%> rows added to
+                    <%=colMapper.getSelectName()%> from <%=(null == colMapper.getSourceColumn()) ? ("'" + colMapper.getConstValue() + "'") : colMapper.getSourceColumn().getName()%><br>
+    <%      }
+        }  %>
+    <b><%=loader.getRowsInserted()%> rows added to fact table.</b>
+    <br>
+    <!--
+    SQL Used to populate table
+    <%=h(loader.getPopulateSql().toString(), true)%> -->
+<% } %>
+<% if (isUpdateGroups) {%>
+    <div id="updateParticipants"></div>
+<% } %>
+    <br>
+<%=textLink("CDS Management", CDSController.BeginAction.class)%><br>
 <script type="text/javascript">
+
     Ext4.onReady(function() {
-        var _cube = LABKEY.query.olap.CubeManager.getCube({
-            configId: 'CDS:/CDS',
-            schemaName: 'CDS',
-            name: 'DataspaceCube'
-        });
 
         //
         // Update Property Statistics
         // Note: This could probably be done on the server, however the olap API is more stable
         // on the client-side at this time
         //
-        Ext4.getBody().mask('Updating Statistics');
-        _cube.onReady(function(mdx) {
-
+        function doOnReady(mdx) {
             var data = {
                 primaryCount: 0,
                 dataCount: 0
@@ -96,16 +114,16 @@
                 maxRows: 1,
                 success: function(_data) { data.dataCount = _data.rowCount; check(); }
             });
-        });
+        }
+
+        Ext4.getBody().mask('Updating Statistics');
+        Connector.cube.Loader.getCube(function(cube) {
+            cube.onReady(doOnReady);
+        }, this, true);
     });
 
-<% if (isUpdateGroups) { %>
+    <% if (isUpdateGroups) { %>
     var init = function() {
-        var cube = LABKEY.query.olap.CubeManager.getCube({
-            configId: 'CDS:/CDS',
-            schemaName: 'CDS',
-            name: 'DataspaceCube'
-        });
 
         var getParticipantUrl = function(participantId)
         {
@@ -154,16 +172,17 @@
                 }
                 else
                 {
-                    cube.onReady(function(mdx)
-                    {
-                        // must configure the same as the application
-                        LABKEY.app.model.Filter.dynamicOperatorTypes = true;
-                        var subjectName = 'Subject';
+                    Connector.cube.Loader.getCube(function(cube) {
+                        cube.onReady(function(mdx) {
+                            // must configure the same as the application
+                            LABKEY.app.model.Filter.dynamicOperatorTypes = true;
+                            var subjectName = 'Subject';
 
-                        for (var i = 0; i < groups.length; i++) {
-                            LABKEY.app.model.Filter.doParticipantUpdate(mdx, onGroupUpdate, null, groups[i], subjectName);
-                        }
-                    }, this);
+                            for (var i = 0; i < groups.length; i++) {
+                                LABKEY.app.model.Filter.doParticipantUpdate(mdx, onGroupUpdate, null, groups[i], subjectName);
+                            }
+                        });
+                    }, this, true);
                 }
             }
         });
@@ -176,30 +195,7 @@
         Ext = Ext4;
         LABKEY.requiresScript('app/Filter.js', true, function() { Ext4.onReady(init); });
     }, 2500);
-<%
-    }
-%>
-</script>
-<h2>Fact Table</h2>
-<% for(FactLoader loader : loaders) { %>
-    <h3><a href="<%=studyUrls.getDatasetURL(c, loader.getSourceDataset().getDatasetId())%>"><%=h(loader.getSourceDataset().getName())%></a></h3>
     <%
-        for (FactLoader.ColumnMapper colMapper : loader.getMappings())
-        {
-            int rowsInserted = colMapper.getRowsInserted();
-            if (rowsInserted > 0) {%>
-                <%=rowsInserted%> rows added to
-                    <%=colMapper.getSelectName()%> from <%=(null == colMapper.getSourceColumn()) ? ("'" + colMapper.getConstValue() + "'") : colMapper.getSourceColumn().getName()%><br>
-    <%      }
-        }  %>
-    <b><%=loader.getRowsInserted()%> rows added to fact table.</b>
-    <br>
-    <!--
-    SQL Used to populate table
-    <%=h(loader.getPopulateSql().toString(), true)%> -->
-<% } %>
-<% if (isUpdateGroups) {%>
-    <div id="updateParticipants"></div>
-<% } %>
-    <br>
-<%=textLink("CDS Management", CDSController.BeginAction.class)%><br>
+        }
+    %>
+</script>

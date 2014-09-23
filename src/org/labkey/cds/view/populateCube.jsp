@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 %>
+<%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%@ page import="org.labkey.api.data.Container"%>
 <%@ page import="org.labkey.api.study.DataSet"%>
 <%@ page import="org.labkey.api.study.Study" %>
@@ -30,6 +31,7 @@
 <%@ page import="org.labkey.api.view.template.ClientDependency" %>
 <%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
+<%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%!
     public LinkedHashSet<ClientDependency> getClientDependencies()
     {
@@ -61,7 +63,7 @@ The columns used for mapping are shown below each table.<br>
 <b>Note</b> If the dataset contains lookups that are not in the cds dimension tables (e.g. Assays), rows will be added to the cds table automatically to preserve foreign keys. Details in those rows will need
 to be filled in by another mechanism.<br>
 <%=this.formatErrorsForPath("form")%>
-<form method="post" id="populatecubeform">
+<labkey:form method="post" id="populatecubeform">
 
 <% for(DataSet ds : datasets) {
     if (ds.isDemographicData())
@@ -94,7 +96,7 @@ to be filled in by another mechanism.<br>
 <%} %>
     <div id="validatemessages" style="display: none;"></div>
     <input type="submit" onclick="validatePopulate(); return false;">
-</form>
+</labkey:form>
 <script type="text/javascript">
 
     var validatePopulate = function() {
@@ -193,16 +195,18 @@ to be filled in by another mechanism.<br>
             messageEl.update(msg);
         };
 
+        var formEl = document.getElementById('populatecubeform');
+
         var doQuery = function(index) {
             var target = checks[index];
             LABKEY.Query.executeSql({
                 schemaName: target.schema,
                 sql: target.sql,
-                maxRows: Ext.isDefined(target.maxRows) ? target.maxRows : 0,
+                maxRows: Ext4.isDefined(target.maxRows) ? target.maxRows : 0,
                 requiredVersion: 9.1,
                 success: function(data) {
                     var valid = true;
-                    if (Ext.isFunction(target.success)) {
+                    if (Ext4.isFunction(target.success)) {
                         valid = (target.success.call(this, data) !== false);
                     }
 
@@ -211,7 +215,6 @@ to be filled in by another mechanism.<br>
                             doQuery(index+1);
                         }
                         else {
-                            var formEl = document.getElementById('populatecubeform');
                             if (formEl) {
                                 formEl.submit();
                             }
@@ -224,8 +227,12 @@ to be filled in by another mechanism.<br>
             });
         };
 
-        if (checks.length > 0) {
-            doQuery(0);
+        // TODO: Need a more dynamic form of cube/query validation
+//        if (checks.length > 0) {
+//            doQuery(0);
+//        }
+        if (formEl) {
+            formEl.submit();
         }
     };
 

@@ -39,10 +39,14 @@ Connector.view.StudyAxis = function(){
         };
 
         visits = selection.selectAll('rect.visit').data(function(d){
-            var visits = d.visits;
+            var visits = [];
             for (var i = 0; i < d.visits.length; i++) {
-                d.visits[i].studyLabel = d.label;
-                d.visits[i].timepointType = d.timepointType;
+                var visit = d.visits[i];
+                visit.studyLabel = d.label;
+                visit.timepointType = d.timepointType;
+
+                if (visit["hasPlotData"])
+                    visits.push(visit);
             }
             return visits;
         });

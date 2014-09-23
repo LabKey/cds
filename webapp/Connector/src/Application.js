@@ -51,5 +51,36 @@ Ext.define('Connector.Application', {
 
     views: [],
 
-    stores: []
+    stores: [],
+
+    initNamespace : function() {
+        this.callParent(arguments);
+
+        var me = this;
+        var ns = Ext.namespace(me.name);
+
+        if (ns) {
+            ns.getService = function() {
+                return this.getService.apply(me, arguments);
+            };
+            ns.getState = function() {
+                return this.getState.apply(me, arguments);
+            };
+        }
+    },
+
+    getService : function(name) {
+        // For now, just ask controllers who have the 'isService' flag.
+        var service = this.getController(name);
+
+        if (service && service.isService === true) {
+            return service;
+        }
+
+        return undefined;
+    },
+
+    getState : function() {
+        return this.getService('State');
+    }
 });

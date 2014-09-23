@@ -24,24 +24,19 @@ Ext.define('Connector.model.Grid', {
         }},
 
         {name: 'defaultMeasures', defaultValue: [{
-            data: {
-                schemaName: 'study',
-                queryName: 'SubjectVisit',
-                name: Connector.studyContext.subjectColumn
-            }
+            schemaName: 'study',
+            queryName: 'SubjectVisit',
+            name: Connector.studyContext.subjectColumn
         },{
-            data: {
-                schemaName: 'study',
-                queryName: 'SubjectVisit',
-                name: Connector.studyContext.subjectColumn + '/Study'
-            }
+            schemaName: 'study',
+            queryName: 'SubjectVisit',
+            name: Connector.studyContext.subjectColumn + '/Study'
         },{
-            data: {
-                schemaName: 'study',
-                queryName: 'SubjectVisit',
-                name: 'Visit'
-            }
+            schemaName: 'study',
+            queryName: 'SubjectVisit',
+            name: 'Visit'
         }]},
+        {name: 'wrappedDefaultMeasures', defaultValue: []},
 
         {name: 'measures', defaultValue: []},
         {name: 'wrappedMeasures', defaultValue: []},
@@ -105,22 +100,26 @@ Ext.define('Connector.model.Grid', {
          * @returns {Array}
          */
         getColumnList : function(gridModel) {
-            var measures = gridModel.get('plotMeasures').concat(gridModel.get('measures'));
+
+            // NOTE: default values must come first for getData API call to join correctly
+            var measures = gridModel.get('defaultMeasures').concat(gridModel.get('plotMeasures')).concat(gridModel.get('measures'));
             var metadata = gridModel.get('metadata');
 
             var colMeasure = {};
             Ext.each(measures, function(measure) {
 
-                if (metadata.measureToColumn[measure.name]) {
+                if (metadata.measureToColumn[measure.alias])
+                {
+                    colMeasure[measure.alias] = measure;
+                }
+                else if (metadata.measureToColumn[measure.name])
+                {
                     if (Ext.isDefined(measure.interval)) {
                         colMeasure[measure.interval] = measure;
                     }
                     else {
                         colMeasure[metadata.measureToColumn[measure.name]] = measure;
                     }
-                }
-                else {
-                    colMeasure[measure.alias] = measure;
                 }
             });
 
@@ -141,7 +140,8 @@ Ext.define('Connector.model.Grid', {
 
         getMetaData : function(gridModel, config) {
 
-            var measures = gridModel.get('wrappedPlotMeasures').concat(gridModel.get('wrappedMeasures'));
+            // NOTE: default values must come first for getData API call to join correctly
+            var measures = gridModel.get('wrappedDefaultMeasures').concat(gridModel.get('wrappedPlotMeasures')).concat(gridModel.get('wrappedMeasures'));
             var sorts = gridModel.getSorts();
 
             if (measures.length > 0 && sorts.length > 0) {
@@ -149,6 +149,7 @@ Ext.define('Connector.model.Grid', {
                     measures: measures,
                     sorts: sorts,
                     metaDataOnly: true,
+                    joinToFirst: true,
                     success: function(metadata)
                     {
                         if (Ext.isFunction(config.onSuccess)) {
@@ -363,17 +364,6 @@ Ext.define('Connector.model.Grid', {
             this.olapProvider.on('filterchange', this.onAppFilterChange, this);
             this.olapProvider.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
 
-            var measureState = undefined;
-            var measures = this.get('defaultMeasures');
-
-            if (Ext.isDefined(measureState)) {
-                Ext.each(measureState.measures, function(measure) {
-                    measures.push({
-                        data: measure
-                    });
-                });
-            }
-
             this.bindMeasures([], [], [], true);
             this.bindApplicationMeasures(this.olapProvider.getFilters());
         }
@@ -419,16 +409,24 @@ Ext.define('Connector.model.Grid', {
 
     bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
 
-        measures = this.get('defaultMeasures').concat(measures);
+        var measureSet = [], sourceMeasure, item, wrapped =[],
+            sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
 
-        var measureSet = [], sourceMeasure,
-                item,
-                sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
+        // set the wrapped default measures
+        wrapped = [];
+        Ext.each(this.get('defaultMeasures'), function(measure) {
+            var w = {
+                measure: measure,
+                time: 'date'
+            };
+
+            wrapped.push(w);
+        });
+        this.set('wrappedDefaultMeasures', wrapped);
 
         Ext.each(measures, function(measure) {
             item = Ext.clone(measure.data);
 
-//            console.log('measure name (alias):', item.name, '(' + item.alias + ')');
             if (!(item.queryName in sourceMeasuresRequired))
                 sourceMeasuresRequired[item.queryName] = true;
 
@@ -461,7 +459,7 @@ Ext.define('Connector.model.Grid', {
             }
         });
 
-        var wrapped = [];
+        wrapped = [];
         Ext.each(measureSet, function(measure) {
             var w = {
                 measure: measure,
@@ -557,25 +555,8 @@ Ext.define('Connector.model.Grid', {
     },
 
     getSorts : function() {
-        var measures = this.get('measures');
-        var targetMeasure;
-
-        for (var m=0; m < measures.length; m++)
-        {
-            if (!measures[m].isDemographic)
-            {
-                targetMeasure = measures[m];
-                break;
-            }
-        }
-
         var schema = this.fields.map['schemaName'].defaultValue;
         var query = this.fields.map['queryName'].defaultValue;
-
-        if (targetMeasure) {
-            schema = targetMeasure.schemaName;
-            query = targetMeasure.queryName;
-        }
 
         return [{
             schemaName: schema,
@@ -585,6 +566,10 @@ Ext.define('Connector.model.Grid', {
             schemaName: schema,
             queryName: query,
             name: Connector.studyContext.subjectColumn + '/Study'
+        },{
+            schemaName: schema,
+            queryName: query,
+            name: 'Visit'
         }];
     },
 

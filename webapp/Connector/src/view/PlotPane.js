@@ -33,56 +33,40 @@ Ext.define('Connector.view.PlotPane', {
         }];
 
         if (Ext.isArray(measures)) {
-            // assume length 3 array of (x, y, color)?
-            if (measures[1] && measures[1].measure) {
-                // Y
-                content.push({
-                    xtype: 'box',
-                    cls: 'smallstandout soft spacer',
-                    autoEl: {
-                        tag: 'div',
-                        html: 'Y'
-                    }
-                });
-                content.push({
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        html: measures[1].measure.queryLabel
-                    }
-                });
-                content.push({
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        html: measures[1].measure.label + this.getSublabel(measures[1].measure)
-                    }
-                });
-            }
-            if (measures[0] && measures[0].measure) {
-                // X
-                content.push({
-                    xtype: 'box',
-                    cls: 'smallstandout soft spacer',
-                    autoEl: {
-                        tag: 'div',
-                        html: 'X'
-                    }
-                });
-                content.push({
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        html: measures[0].measure.queryLabel
-                    }
-                });
-                content.push({
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        html: measures[0].measure.label + this.getSublabel(measures[0].measure)
-                    }
-                });
+            // assume length 3 array of (x, y, color)
+            var indexOrder = [1,0,2];  // Y, X, then Color
+            for (var i = 0; i < indexOrder.length; i++)
+            {
+                var index = indexOrder[i];
+                var label = null;
+                if (index == 0) label = 'X';
+                else if (index == 1) label = 'Y';
+                else if (index == 2) label = 'Color';
+
+                if (measures[index] && measures[index].measure) {
+                    content.push({
+                        xtype: 'box',
+                        cls: 'smallstandout soft spacer',
+                        autoEl: {
+                            tag: 'div',
+                            html: label
+                        }
+                    });
+                    content.push({
+                        xtype: 'box',
+                        autoEl: {
+                            tag: 'div',
+                            html: measures[index].measure.queryLabel
+                        }
+                    });
+                    content.push({
+                        xtype: 'box',
+                        autoEl: {
+                            tag: 'div',
+                            html: measures[index].measure.label + this.getSublabel(measures[index].measure)
+                        }
+                    });
+                }
             }
         }
         return content;
@@ -110,7 +94,7 @@ Ext.define('Connector.view.PlotPane', {
     },
 
     onUpdate : function() {
-        this.getModel().clearFilter();
+        this.getModel().clearFilter(true);
         this.hide();
     },
 

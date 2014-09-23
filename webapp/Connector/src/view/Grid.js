@@ -245,6 +245,8 @@ Ext.define('Connector.view.Grid', {
                     allColumns: true,
                     displaySourceCounts: true,
                     includeTimpointMeasures: true,
+                    supportSelectionGroup: true,
+                    supportSessionGroup: true,
                     sourceCls: this.axisSourceCls,
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -573,11 +575,17 @@ Ext.define('Connector.view.Grid', {
         var box = this.getBox();
 
         measureWindow.setSize(box.width-100, box.height-100);
-        measureWindow.showAt(47, 128);
+        measureWindow.show();
+//        measureWindow.showAt(47, 128);
 
         // Run the query to determine current measure counts
-        var picker = this.getAxisSelector().getMeasurePicker();
-        picker.setCountMemberSet(this.getModel().get('filterState').subjects);
+        var mp = this.getAxisSelector().getMeasurePicker();
+        mp.setCountMemberSet(this.getModel().get('filterState').subjects);
+
+        // Open with 'Current columns' selected if we have a selection
+        if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
+            mp.getSourcesView().getSelectionModel().select(mp.getSourceStore().getAt(0));
+        }
     },
 
     requestExport : function() {
@@ -597,6 +605,16 @@ Ext.define('Connector.view.Grid', {
                 exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
             });
 
+            // issue 20850: set export column headers to be "Dataset - Variable"
+            exportParams["columnNames"] = [];
+            exportParams["columnAliases"] = [];
+            Ext.each(this.getGrid().getColumnsConfig(), function(colGroup){
+                Ext.each(colGroup.columns, function(col){
+                    exportParams["columnNames"].push(col.dataIndex);
+                    exportParams["columnAliases"].push(colGroup.text + " - " + col.header);
+                });
+            });
+
             /**
              * Sometimes the GET URL gets too long, so use a POST instead. We have to create a separate <form>.
              */
@@ -604,7 +622,7 @@ Ext.define('Connector.view.Grid', {
             document.body.appendChild(newForm);
 
             Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('query', 'exportRowsXLSX'),
+                url: LABKEY.ActionURL.buildURL('cds', 'exportRowsXLSX'),
                 method: 'POST',
                 form: newForm,
                 isUpload: true,
