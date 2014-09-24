@@ -102,6 +102,8 @@
 
     <!-- Visualization Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.3.9.min.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/hexbin.min.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/sqbin.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/raphael-min-2.1.0.js"></script>
 
     <!-- LabKey Visualization Library -->
