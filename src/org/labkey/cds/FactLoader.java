@@ -65,6 +65,7 @@ public class FactLoader
          */
         _colsToMap = new ColumnMapper[] {
             new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
+            new ColumnMapper("Day", null, null, "Day"),
             //The study column is the same as the container column and available directly in the table
             //For this reason we just use the container to find the lookup into the studyproperties table
             new ColumnMapper("Study", coreSchema.getTable("Container"), null, "Container", "Folder"),

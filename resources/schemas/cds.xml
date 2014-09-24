@@ -80,6 +80,8 @@
             <ns:fkDbSchema>study</ns:fkDbSchema>
           </ns:fk>
       </ns:column>
+        <ns:column columnName="Day">
+        </ns:column>
         <ns:column columnName="Assay">
           <ns:fk>
             <ns:fkColumnName>Name</ns:fkColumnName>
