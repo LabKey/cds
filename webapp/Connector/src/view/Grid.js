@@ -244,6 +244,7 @@ Ext.define('Connector.view.Grid', {
                 measureConfig : {
                     allColumns: true,
                     displaySourceCounts: true,
+                    sourceCountSchema: 'study',
                     includeTimpointMeasures: true,
                     supportSelectionGroup: true,
                     supportSessionGroup: true,

@@ -1942,6 +1942,7 @@ Ext.define('Connector.view.Scatter', {
                 measureConfig: {
                     allColumns: false,
                     displaySourceCounts: true,
+                    sourceCountSchema: 'study',
                     filter: LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
@@ -2044,6 +2045,7 @@ Ext.define('Connector.view.Scatter', {
                 measureConfig : {
                     allColumns : true,
                     displaySourceCounts: true,
+                    sourceCountSchema: 'study',
                     includeTimpointMeasures : true,
                     filter     : LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
@@ -2173,6 +2175,7 @@ Ext.define('Connector.view.Scatter', {
                 measureConfig : {
                     allColumns : true,
                     displaySourceCounts: true,
+                    sourceCountSchema: 'study',
                     includeTimpointMeasures : false,
                     filter     : LABKEY.Query.Visualization.Filter.create({
                         schemaName: 'study',
