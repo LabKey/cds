@@ -66,7 +66,8 @@ Ext.define('Connector.controller.Query', {
                     Connector.studyContext.subjectColumn,
                     Connector.studyContext.subjectColumn + '/Study',
                     Connector.studyContext.subjectColumn + '/Study/Label',
-                    'Visit'
+                    'Visit',
+                    'Visit/Label'
                 ],
                 success : function(queryDetails) {
                     var columns = queryDetails.columns;
@@ -95,6 +96,9 @@ Ext.define('Connector.controller.Query', {
                         }
                         else if (col.name === 'Visit') {
                             this._gridMeasures[2] = col;
+                        }
+                        else if (col.name === 'Visit/Label') {
+                            this._gridMeasures[3] = col;
                         }
                     }, this);
 
@@ -132,7 +136,7 @@ Ext.define('Connector.controller.Query', {
             return Ext.clone(this.MEMBER_CACHE[cleanAlias]);
         }
         else {
-            console.warn('measure cache miss:', measureAlias);
+            console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
         }
     }
 });
