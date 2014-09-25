@@ -32,25 +32,27 @@ Ext.define('Connector.view.GridPane', {
         if (Ext.isArray(gridFilters)) {
             var shown = {};
             Ext.each(gridFilters, function(gf) {
-                // get this columns measure information
-                var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                if (Ext.isObject(measure) && !shown[measure.alias]) {
-                    shown[measure.alias] = true;
-                    content.push({
-                        xtype: 'box',
-                        cls: 'smallstandout soft spacer',
-                        autoEl: {
-                            tag: 'div',
-                            html: Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption
-                        }
-                    });
-                    content.push({
-                        xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: (Ext.isString(measure.label) ? measure.label : '') + this.getSublabel(measure)
-                        }
-                    });
+                if (gf != null && Ext.isDefined(gf)) {
+                    // get this columns measure information
+                    var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
+                    if (Ext.isObject(measure) && !shown[measure.alias]) {
+                        shown[measure.alias] = true;
+                        content.push({
+                            xtype: 'box',
+                            cls: 'smallstandout soft spacer',
+                            autoEl: {
+                                tag: 'div',
+                                html: Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption
+                            }
+                        });
+                        content.push({
+                            xtype: 'box',
+                            autoEl: {
+                                tag: 'div',
+                                html: (Ext.isString(measure.label) ? measure.label : '') + this.getSublabel(measure)
+                            }
+                        });
+                    }
                 }
             }, this);
         }
