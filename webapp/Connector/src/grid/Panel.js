@@ -158,14 +158,13 @@ Ext.define('Connector.grid.Panel', {
         var columns = LABKEY.ext4.Util.getColumnsConfig(store, this, config);
 
         if (Ext.isDefined(this.model)) {
-            GM = this.model;
             var measureNameToQueryMap = {};
             Ext.each(this.model.get('measures'), function(measure){
                 if (measure.queryLabel)
                     measureNameToQueryMap[measure.alias] = measure.queryLabel;
             });
 
-            var plotMeasures = this.model.get('plotMeasures');
+            var plotMeasures = this.model.getMeasures('plotMeasures');
             Ext.each(columns, function(column) {
 
                 column.plotted = false;
