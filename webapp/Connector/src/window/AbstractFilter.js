@@ -96,26 +96,35 @@ Ext.define('Connector.window.AbstractFilter', {
     },
 
     getBottomConfig : function() {
+        ZZ = this;
         return {
+            itemId: 'bottombar',
             xtype: 'toolbar',
             dock: 'bottom',
             ui: 'footer',
             cls: 'dark-toolbar',
             height: 30,
             items: ['->',{
-                text  : 'Filter',
+                itemId: 'dofilter',
+                text: 'Filter',
                 handler: this.applyFiltersAndColumns,
                 scope: this
             },{
+                itemId: 'docancel',
                 text : 'Cancel',
                 handler : this.close,
                 scope : this
             },{
+                itemId: 'doclear',
                 text : 'Clear',
                 handler : this.onClear,
                 scope: this
             }]
         };
+    },
+
+    getButton : function(itemId) {
+        return this.getDockedComponent('bottombar').getComponent(itemId);
     },
 
     applyFiltersAndColumns : function() {},

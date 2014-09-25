@@ -76,13 +76,14 @@ Ext.define('Connector.view.PlotPane', {
             dock: 'bottom',
             ui: 'footer',
             items: ['->',
+//                {
+//                    text: 'clear plot',
+//                    cls: 'infoplotaction', // tests
+//                    handler: this.onUpdate,
+//                    scope: this
+//                },
                 {
-                    text: 'clear plot',
-                    cls: 'infoplotaction', // tests
-                    handler: this.onUpdate,
-                    scope: this
-                },{
-                    text: 'cancel',
+                    text: 'close',
                     cls: 'infoplotcancel', // tests
                     handler: function() { this.hide(); },
                     scope: this

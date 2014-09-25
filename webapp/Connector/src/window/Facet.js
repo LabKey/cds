@@ -11,7 +11,7 @@ Ext.define('Connector.window.Facet', {
 
     bodyStyle: 'margin: 8px; overflow-y: auto; padding: 10px 2px;',
 
-    width: 280,
+    width: 290,
 
     height: 375,
 
@@ -24,6 +24,7 @@ Ext.define('Connector.window.Facet', {
             if (filter.getColumnName().toLowerCase() === this.columnMetadata.filterField.toLowerCase())
                 matchingFilters.push(filter);
         }, this);
+        this.hasFilters = matchingFilters.length > 0;
 
         var faceted = Ext.create('LABKEY.dataregion.filter.Faceted', {
             itemId: 'faceted',
@@ -40,6 +41,13 @@ Ext.define('Connector.window.Facet', {
         });
 
         return [faceted];
+    },
+
+    onAfterRender : function() {
+        this.callParent(arguments);
+        if (this.hasFilters) {
+            this.getButton('dofilter').setText('Update');
+        }
     },
 
     applyFiltersAndColumns : function() {

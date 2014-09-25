@@ -89,7 +89,14 @@ public class DataGridSelector
         Locator.XPathLocator memberLabel = gridLoc.append(Locator.tagWithClass("div", "x-grid-cell-inner").containing(label));
 
         _test.click(memberLabel);
-        _test.click(CDSHelper.Locators.cdsButtonLocator("Filter"));
+
+        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("Update");
+        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("Filter");
+
+        if (_test.isElementPresent(update))
+            _test.click(update);
+        else
+            _test.click(filter);
     }
 
     public void clearFilters(String columnName)

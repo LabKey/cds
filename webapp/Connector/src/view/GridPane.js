@@ -64,13 +64,14 @@ Ext.define('Connector.view.GridPane', {
             dock: 'bottom',
             ui: 'footer',
             items: ['->',
+//                {
+//                    text: 'clear filter',
+//                    cls: 'infoplotaction', // tests
+//                    handler: this.onUpdate,
+//                    scope: this
+//                },
                 {
-                    text: 'clear filter',
-                    cls: 'infoplotaction', // tests
-                    handler: this.onUpdate,
-                    scope: this
-                },{
-                    text: 'cancel',
+                    text: 'close',
                     cls: 'infoplotcancel', // tests
                     handler: function() { this.hide(); },
                     scope: this
