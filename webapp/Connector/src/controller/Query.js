@@ -97,9 +97,6 @@ Ext.define('Connector.controller.Query', {
                         else if (col.name === 'Visit') {
                             this._gridMeasures[2] = col;
                         }
-                        else if (col.name === 'Visit/Label') {
-                            this._gridMeasures[3] = col;
-                        }
                     }, this);
 
                     Ext.each(this._gridMeasures, function(measure) {
