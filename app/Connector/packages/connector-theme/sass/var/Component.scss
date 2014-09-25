@@ -473,6 +473,19 @@ div.emptytext {
   }
 }
 
+/* Visualization Library */
+.vis-bin-hexagon {
+  fill: none;
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+.vis-bin-square {
+  fill: none;
+  stroke: #FFF;
+  stroke-width: .5px;
+}
+
 @import 'windows';
 
 @import 'grid/Panel';

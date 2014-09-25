@@ -159,6 +159,7 @@ Ext.Loader.addClassPathMappings({
   "LABKEY.app.model.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.model.State": "../../../../../../internal/webapp/app/State.js",
   "LABKEY.app.panel.MeasurePicker": "../../../../../../internal/webapp/app/MeasurePicker.js",
+  "LABKEY.app.plugin.LoadingMask": "../../../../../../internal/webapp/app/LoadingMask.js",
   "LABKEY.app.store.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.OlapExplorer": "../../../../../../internal/webapp/app/OlapExplorer.js",
   "LABKEY.app.view.Selection": "../../../../../../internal/webapp/app/Selection.js",
@@ -1133,6 +1134,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.MeasurePicker": [],
+  "LABKEY.app.plugin.LoadingMask": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [],
   "LABKEY.app.view.Selection": [],
@@ -2415,6 +2417,7 @@ Ext.ClassManager.addNameAliasMappings({
   "LABKEY.app.model.OlapExplorer": [],
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.MeasurePicker": [],
+  "LABKEY.app.plugin.LoadingMask": [],
   "LABKEY.app.store.OlapExplorer": [],
   "LABKEY.app.view.OlapExplorer": [
     "widget.olapexplorerview"
