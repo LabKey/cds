@@ -77,7 +77,7 @@
                 <Table name="demographics" schema="study"/>
                 <Level name="Container" visible="true" column="Folder" />
                 <Level name="Subject" visible="true" column="SubjectID" type="String" uniqueMembers="false" />
-                <Level name="Day" visible="true" column="Day" type="Integer" uniqueMembers="false" />
+                <!--<Level name="Day" visible="true" column="Day" type="Integer" uniqueMembers="false" />-->
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
