@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.SqlExecutor;
@@ -64,15 +65,15 @@ public class FactLoader
          * tables in the star schema.
          */
         _colsToMap = new ColumnMapper[] {
-            new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
-            new ColumnMapper("Day", null, null, "Day"),
+            new ColumnMapper("ParticipantId", JdbcType.VARCHAR, (TableInfo)null, null, "SubjectID", "ParticipantId"),
+            new ColumnMapper("Day", JdbcType.INTEGER, null, null, "Day"),
             //The study column is the same as the container column and available directly in the table
             //For this reason we just use the container to find the lookup into the studyproperties table
-            new ColumnMapper("Study", coreSchema.getTable("Container"), null, "Container", "Folder"),
-            new ColumnMapper("Assay", cdsSchema.getTable("Assays"), _sourceTableInfo.getName(), "Assay"),
-            new ColumnMapper("Lab", cdsSchema.getTable("Labs"), null, "Lab"),
-            new ColumnMapper("Antigen", cdsSchema.getTable("Antigens"), null, "Antigen", "VirusName", "Virus"),
-            new ColumnMapper("Container", null, c.getId())
+            new ColumnMapper("Study", JdbcType.GUID, coreSchema.getTable("Container"), null, "Container", "Folder"),
+            new ColumnMapper("Assay", JdbcType.VARCHAR, cdsSchema.getTable("Assays"), _sourceTableInfo.getName(), "Assay"),
+            new ColumnMapper("Lab", JdbcType.VARCHAR, cdsSchema.getTable("Labs"), null, "Lab"),
+            new ColumnMapper("Antigen", JdbcType.VARCHAR, cdsSchema.getTable("Antigens"), null, "Antigen", "VirusName", "Virus"),
+            new ColumnMapper("Container", JdbcType.GUID, null, c.getId())
         };
     }
 
@@ -151,14 +152,16 @@ public class FactLoader
 
     public class ColumnMapper
     {
+        private JdbcType _type;
         private ColumnInfo _sourceColumn;
         private String _constValue;
         private String _selectName;
         private TableInfo _lookupTarget;
         private int _rowsInserted = -1;
 
-        ColumnMapper(String selectName, TableInfo lookupTarget, @Nullable String constValue, String... altNames)
+        ColumnMapper(String selectName, JdbcType type, TableInfo lookupTarget, @Nullable String constValue, String... altNames)
         {
+            this._type = type;
             this._sourceColumn = findMappingColumn(lookupTarget, altNames);
             this._selectName = selectName;
             this._constValue = constValue;
@@ -172,7 +175,7 @@ public class FactLoader
             else if (null != _constValue)
                 return _sourceTableInfo.getSqlDialect().getStringHandler().quoteStringLiteral(_constValue) + " AS " + _selectName;
             else
-                return "NULL AS " + _selectName;
+                return "CAST(NULL AS " + _sourceTableInfo.getSqlDialect().sqlTypeNameFromJdbcType(_type) + ")" + " AS " + _selectName;
         }
 
         private ColumnInfo findLookupColumn(TableInfo target)
