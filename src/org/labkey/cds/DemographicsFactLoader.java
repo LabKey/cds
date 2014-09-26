@@ -17,6 +17,7 @@ package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.query.QueryService;
@@ -54,8 +55,8 @@ public class DemographicsFactLoader extends FactLoader
             new ColumnMapper("ParticipantId", null, null, "SubjectID", "ParticipantId"),
             //The study column is the same as the container column and available directly in the table
             //For this reason we just use the container to find the lookup into the studyproperties table
-            new ColumnMapper("Study", coreSchema.getTable("Container"), null, "Container", "Folder"),
-            new ColumnMapper("Container", null, c.getId())
+            new ColumnMapper("Study", JdbcType.GUID, coreSchema.getTable("Container"), null, "Container", "Folder"),
+            new ColumnMapper("Container", JdbcType.GUID, null, c.getId())
         };
    }
 
