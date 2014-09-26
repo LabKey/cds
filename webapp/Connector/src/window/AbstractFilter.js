@@ -77,6 +77,7 @@ Ext.define('Connector.window.AbstractFilter', {
             xtype: 'toolbar',
             dock: 'top',
             ui: 'footer',
+            cls: 'filter-top-toolbar',
             items: [
                 {
                     xtype: 'tbtext',
@@ -96,7 +97,6 @@ Ext.define('Connector.window.AbstractFilter', {
     },
 
     getBottomConfig : function() {
-        ZZ = this;
         return {
             itemId: 'bottombar',
             xtype: 'toolbar',
