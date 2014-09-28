@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Exported from Dataspace Demo Server at https://cds.labkey.com/project/Demo%20Data/DS%20108/begin.view by kristinf on Thu Sep 25 15:57:40 PDT 2014-->
+<folder archiveVersion="14.21" label="DS 108" type="normal" title="DS 108" xmlns="http://labkey.org/folder/xml">
+  <missingValueIndicators>
+    <ns:missingValueIndicator indicator="Q" label="Data currently under quality control review." xmlns:ns="http://labkey.org/study/xml"/>
+    <ns:missingValueIndicator indicator="N" label="Required field marked by site as 'data not available'." xmlns:ns="http://labkey.org/study/xml"/>
+  </missingValueIndicators>
+  <study dir="study"/>
+</folder>

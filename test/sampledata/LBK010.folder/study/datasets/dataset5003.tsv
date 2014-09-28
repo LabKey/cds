@@ -1,0 +1,1170 @@
+SubjectId	date	SequenceNum	QCStateLabel	country	Sex	Randomization	Race	bmi	bmi_grp	circumcised	Age	baseline_ad5_titer	Species	hivinf	per_protocol	ad5_grp	Height	Group	Comments	EnrolledClinicalSite	prot	rx	rx_code	arm	hivcutoffday
+LBK01018	2/25/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	19	18.50-24.99	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK01023	1/13/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		323	Human	Negative	Completed Per Protocol	200-1000									
+LBK01026	2/18/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		17	Human	Negative	Not Completed Per Protocol	0-18									
+LBK01027	2/9/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK01032	1/29/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		1100	Human	Positive	Not Completed Per Protocol	>1000									
+LBK01036	1/24/03	1		England	Female	Vaccine	White	37	>=30	N/A: Female		184	Human	Positive	Completed Per Protocol	19-200									
+LBK01045	2/18/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		777	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK01054	1/17/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK01062	2/18/03	1		England	Female	Vaccine	American Indian/Alaskan Native	33	>=30	N/A: Female		32	Human	Positive	Completed Per Protocol	19-200									
+LBK01066	1/19/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		141	Human	Positive	Not Completed Per Protocol	19-200									
+LBK01068	2/3/03	1		England	Male	Vaccine	White	37	>=30	Yes		184	Human	Positive	Completed Per Protocol	19-200									
+LBK01069	1/20/03	1		England	Female	Vaccine	White	44	>=30	N/A: Female		111	Human	Positive	Completed Per Protocol	19-200									
+LBK01078	1/19/03	1		England	Male	Vaccine	American Indian/Alaskan Native	37	>=30	No		238	Human	Positive	Completed Per Protocol	200-1000									
+LBK01082	1/24/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		877	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK01084	2/20/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		800	Human	Positive	Completed Per Protocol	200-1000									
+LBK01093	2/1/03	1		England	Male	Vaccine	Black/African American	38	>=30	Unknown		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK01095	1/19/03	1		England	Male	Vaccine	Black/African American	42	>=30	Unknown		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK010107	1/30/03	1		England	Female	Vaccine	Black/African American	18	<18.50	N/A: Female		9	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010108	2/28/03	1		England	Female	Vaccine	Black/African American	16	<18.50	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010117	1/3/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		10	Human	Positive	Completed Per Protocol	0-18									
+LBK010124	3/1/03	1		England	Male	Vaccine	American Indian/Alaskan Native	17	<18.50	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010125	1/12/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		65	Human	Negative	Completed Per Protocol	19-200									
+LBK010127	1/3/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		89	Human	Positive	Completed Per Protocol	19-200									
+LBK010129	1/16/03	1		England	Female	Vaccine	American Indian/Alaskan Native	14	<18.50	N/A: Female		100	Human	Positive	Completed Per Protocol	19-200									
+LBK010134	1/23/03	1		England	Male	Vaccine	White	15	<18.50	Unknown		93	Human	Positive	Completed Per Protocol	19-200									
+LBK010142	2/4/03	1		England	Male	Vaccine	White	20	18.50-24.99	Unknown		532	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010143	1/9/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		177	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010144	1/11/03	1		England	Male	Vaccine	Black/African American	25	25.0-29.99	Yes		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010145	1/28/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		555	Human	Positive	Completed Per Protocol	200-1000									
+LBK010157	2/15/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		541	Human	Positive	Completed Per Protocol	200-1000									
+LBK010159	1/2/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		378	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010160	1/3/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		487	Human	Negative	Completed Per Protocol	200-1000									
+LBK010166	3/1/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		1077	Human	Positive	Completed Per Protocol	>1000									
+LBK010175	2/3/03	1		England	Male	Vaccine	Black/African American	21	18.50-24.99	Yes		1250	Human	Negative	Not Completed Per Protocol	>1000									
+LBK010176	2/16/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	21	18.50-24.99	N/A: Female		4	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010187	2/16/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010202	1/5/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		67	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010214	2/3/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010215	2/10/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010216	2/16/03	1		England	Male	Vaccine	White	19	18.50-24.99	No		1000	Human	Positive	Completed Per Protocol	200-1000									
+LBK010218	1/26/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		300	Human	Negative	Completed Per Protocol	200-1000									
+LBK010219	1/4/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		177	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010223	2/28/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010238	2/13/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		387	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010239	2/21/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		871	Human	Positive	Completed Per Protocol	200-1000									
+LBK010245	1/25/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1012	Human	Negative	Not Completed Per Protocol	>1000									
+LBK010251	2/22/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK010256	1/10/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		1	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010257	1/9/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010258	2/17/03	1		England	Male	Vaccine	White	26	25.0-29.99	No		12	Human	Positive	Completed Per Protocol	0-18									
+LBK010260	2/22/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	Yes		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010263	2/25/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		8	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010265	2/19/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010268	1/1/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		181	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010271	2/7/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		134	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010273	1/30/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010274	2/7/03	1		England	Male	Vaccine	Black/African American	27	25.0-29.99	No		187	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010279	2/22/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		184	Human	Positive	Completed Per Protocol	19-200									
+LBK010283	1/13/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010294	2/28/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		555	Human	Positive	Completed Per Protocol	200-1000									
+LBK010295	2/1/03	1		England	Male	Vaccine	White	27	25.0-29.99	N/A: Female		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010296	2/14/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		400	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010299	1/26/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		345	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010302	2/13/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	30	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK010309	2/13/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		487	Human	Positive	Completed Per Protocol	200-1000									
+LBK010311	3/1/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	28	25.0-29.99	N/A: Female		387	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010316	2/25/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		1077	Human	Positive	Not Completed Per Protocol	>1000									
+LBK010317	1/17/03	1		England	Female	Vaccine	Indian	28	25.0-29.99	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK010319	2/9/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		1012	Human	Positive	Not Completed Per Protocol	>1000									
+LBK010322	2/23/03	1		England	Male	Vaccine	American Indian/Alaskan Native	26	25.0-29.99	N/A: Female		1015	Human	Positive	Not Completed Per Protocol	>1000									
+LBK010328	2/28/03	1		England	Male	Vaccine	White	28	25.0-29.99	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010334	1/9/03	1		England	Female	Vaccine	American Indian/Alaskan Native	32	>=30	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010350	1/30/03	1		England	Female	Vaccine	Indian	38	>=30	N/A: Female		143	Human	Positive	Completed Per Protocol	19-200									
+LBK010354	2/1/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	48	>=30	N/A: Female		87	Human	Positive	Completed Per Protocol	19-200									
+LBK010355	1/21/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		34	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010358	2/13/03	1		England	Male	Vaccine	White	34	>=30	Yes		141	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010364	1/30/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010366	2/23/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010367	3/1/03	1		England	Female	Vaccine	Indian	46	>=30	N/A: Female		777	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010374	2/23/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		389	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010380	1/6/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010386	2/5/03	1		England	Male	Vaccine	Black/African American	39	>=30	Unknown		999	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010390	2/24/03	1		England	Female	Vaccine	White	45	>=30	N/A: Female		555	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010396	2/17/03	1		England	Male	Vaccine	Indian	33	>=30	No		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK010402	1/22/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK010406	1/12/03	1		England	Female	Vaccine	Indian	32	>=30	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010424	1/19/03	1		England	Female	Vaccine	American Indian/Alaskan Native	31	>=30	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010429	1/21/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		55	Human	Positive	Completed Per Protocol	19-200									
+LBK010438	1/26/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		34	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010439	1/19/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		78	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010440	1/16/03	1		England	Male	Vaccine	Black/African American	43	>=30	N/A: Female		121	Human	Positive	Completed Per Protocol	19-200									
+LBK010450	1/23/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010451	1/24/03	1		England	Female	Vaccine	White	32	>=30	N/A: Female		219	Human	Positive	Completed Per Protocol	200-1000									
+LBK010457	1/3/03	1		England	Female	Vaccine	White	45	>=30	N/A: Female		555	Human	Positive	Completed Per Protocol	200-1000									
+LBK010458	1/28/03	1		England	Male	Vaccine	Black/African American	44	>=30	No		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010462	1/15/03	1		England	Male	Vaccine	American Indian/Alaskan Native	39	>=30	N/A: Female		323	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010463	2/10/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		323	Human	Negative	Completed Per Protocol	200-1000									
+LBK010471	1/22/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		420	Human	Positive	Completed Per Protocol	200-1000									
+LBK010475	1/2/03	1		England	Male	Vaccine	Black/African American	30	>=30	Unknown		1004	Human	Negative	Not Completed Per Protocol	>1000									
+LBK010478	2/2/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK010487	2/19/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010489	2/22/03	1		England	Female	Vaccine	White	45	>=30	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010492	2/8/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010501	1/26/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		7	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010509	1/20/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK010514	1/25/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		19	Human	Negative	Not Completed Per Protocol	0-18									
+LBK010515	1/26/03	1		England	Female	Vaccine	Indian	31	>=30	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK010517	1/2/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010518	2/27/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010519	1/2/03	1		England	Female	Vaccine	White	40	>=30	N/A: Female		115	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010527	1/18/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		185	Human	Positive	Completed Per Protocol	19-200									
+LBK010530	2/27/03	1		England	Male	Vaccine	Black/African American	42	>=30	N/A: Female		31	Human	Negative	Completed Per Protocol	19-200									
+LBK010535	2/24/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	43	>=30	No		75	Human	Positive	Completed Per Protocol	19-200									
+LBK010536	2/19/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		181	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010537	2/27/03	1		England	Male	Vaccine	Black/African American	35	>=30	No		151	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010538	2/7/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010541	2/18/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010548	2/12/03	1		England	Female	Vaccine	Black/African American	50	>=30	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010569	1/23/03	1		England	Male	Vaccine	Black/African American	30	>=30	Unknown		134	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010574	1/23/03	1		England	Male	Vaccine	Black/African American	42	>=30	Unknown		143	Human	Positive	Completed Per Protocol	19-200									
+LBK010582	2/2/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		55	Human	Negative	Completed Per Protocol	19-200									
+LBK010590	2/17/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		58	Human	Positive	Completed Per Protocol	19-200									
+LBK010593	1/1/03	1		England	Male	Vaccine	Black/African American	40	>=30	Unknown		65	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010596	1/12/03	1		England	Female	Vaccine	American Indian/Alaskan Native	30	>=30	N/A: Female		45	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010597	1/3/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010598	1/6/03	1		England	Female	Vaccine	Black/African American	50	>=30	N/A: Female		142	Human	Positive	Completed Per Protocol	19-200									
+LBK010604	1/21/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010607	1/31/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		187	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010608	2/26/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010613	1/3/03	1		England	Female	Vaccine	Black/African American	47	>=30	N/A: Female		87	Human	Positive	Completed Per Protocol	19-200									
+LBK010615	1/25/03	1		England	Male	Vaccine	Indian	42	>=30	Unknown		65	Human	Positive	Completed Per Protocol	19-200									
+LBK010620	1/2/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		22	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010626	1/25/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		20	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010628	1/6/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		34	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010631	2/12/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		45	Human	Positive	Completed Per Protocol	19-200									
+LBK010636	1/6/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		56	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010640	2/18/03	1		England	Male	Vaccine	White	35	>=30	Yes		67	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010643	1/30/03	1		England	Female	Vaccine	Black/African American	44	>=30	N/A: Female		78	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010644	1/12/03	1		England	Male	Vaccine	Indian	50	>=30	No		89	Human	Positive	Completed Per Protocol	19-200									
+LBK010648	1/1/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	37	>=30	N/A: Female		100	Human	Negative	Completed Per Protocol	19-200									
+LBK010655	2/10/03	1		England	Male	Vaccine	White	50	>=30	Unknown		121	Human	Positive	Completed Per Protocol	19-200									
+LBK010671	2/9/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		155	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010679	1/18/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		131	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010680	1/6/03	1		England	Male	Vaccine	White	42	>=30	N/A: Female		191	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010686	2/15/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	32	>=30	N/A: Female		143	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010689	1/17/03	1		England	Female	Vaccine	White	47	>=30	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010691	2/17/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	35	>=30	N/A: Female		131	Human	Negative	Completed Per Protocol	19-200									
+LBK010692	1/14/03	1		England	Male	Vaccine	White	34	>=30	Unknown		157	Human	Positive	Completed Per Protocol	19-200									
+LBK010699	1/10/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		120	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010704	1/11/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		87	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010707	1/30/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		44	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010710	1/4/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		93	Human	Positive	Completed Per Protocol	19-200									
+LBK010711	1/27/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		93	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010715	1/4/03	1		England	Female	Vaccine	Black/African American	36	>=30	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010726	1/13/03	1		England	Female	Vaccine	Indian	34	>=30	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010729	1/16/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		134	Human	Positive	Completed Per Protocol	19-200									
+LBK010730	1/30/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		112	Human	Positive	Completed Per Protocol	19-200									
+LBK010731	1/5/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		199	Human	Positive	Completed Per Protocol	19-200									
+LBK010742	1/10/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK010743	2/16/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	35	>=30	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK010747	1/9/03	1		England	Female	Vaccine	Indian	45	>=30	N/A: Female		205	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010749	2/25/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		1000	Human	Positive	Completed Per Protocol	200-1000									
+LBK010750	1/19/03	1		England	Female	Vaccine	Black/African American	36	>=30	N/A: Female		201	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010754	1/20/03	1		England	Female	Vaccine	Indian	45	>=30	N/A: Female		777	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010755	1/27/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		543	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010756	1/10/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK010761	2/11/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		300	Human	Negative	Completed Per Protocol	200-1000									
+LBK010762	2/22/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		219	Human	Positive	Completed Per Protocol	200-1000									
+LBK010763	2/23/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010765	2/23/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010766	2/25/03	1		England	Female	Vaccine	White	37	>=30	N/A: Female		177	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010767	2/12/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		899	Human	Positive	Completed Per Protocol	200-1000									
+LBK010768	1/24/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		542	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010772	2/9/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010777	2/25/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		384	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010787	1/30/03	1		England	Female	Vaccine	Black/African American	31	>=30	N/A: Female		201	Human	Negative	Completed Per Protocol	200-1000									
+LBK010791	2/7/03	1		England	Male	Vaccine	Black/African American	36	>=30	No		555	Human	Positive	Completed Per Protocol	200-1000									
+LBK010792	2/4/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		230	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010795	1/18/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010796	1/25/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		389	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010797	1/28/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	46	>=30	N/A: Female		450	Human	Positive	Completed Per Protocol	200-1000									
+LBK010799	1/10/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		400	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010802	2/9/03	1		England	Male	Vaccine	Black/African American	33	>=30	Yes		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010803	1/6/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		875	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010804	1/12/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		654	Human	Positive	Completed Per Protocol	200-1000									
+LBK010805	1/21/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		666	Human	Positive	Completed Per Protocol	200-1000									
+LBK010806	2/23/03	1		England	Male	Vaccine	White	37	>=30	No		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK010809	2/1/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		345	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010813	1/20/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010855	1/21/03	1		England	Male	Vaccine	American Indian/Alaskan Native	39	>=30	Unknown		1000	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010860	1/17/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010866	1/27/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		323	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010870	2/11/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK010875	1/20/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		323	Human	Negative	Completed Per Protocol	200-1000									
+LBK010884	1/12/03	1		England	Male	Vaccine	White	49	>=30	No		514	Human	Positive	Completed Per Protocol	200-1000									
+LBK010891	1/27/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010902	1/15/03	1		England	Female	Vaccine	White	47	>=30	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010904	2/16/03	1		England	Male	Vaccine	Black/African American	40	>=30	N/A: Female		432	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010907	1/8/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	39	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK010908	1/11/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		300	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010914	2/28/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010915	2/15/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	49	>=30	N/A: Female		267	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010918	1/27/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK010920	1/7/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		343	Human	Negative	Completed Per Protocol	200-1000									
+LBK010923	2/5/03	1		England	Male	Vaccine	Black/African American	37	>=30	Unknown		541	Human	Positive	Completed Per Protocol	200-1000									
+LBK010925	1/16/03	1		England	Male	Vaccine	White	43	>=30	No		533	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010927	1/24/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		328	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010929	1/13/03	1		England	Female	Vaccine	American Indian/Alaskan Native	40	>=30	N/A: Female		211	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010934	1/21/03	1		England	Male	Vaccine	Black/African American	41	>=30	No		999	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010935	1/10/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010936	2/16/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		378	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010951	2/15/03	1		England	Female	Vaccine	White	32	>=30	N/A: Female		487	Human	Positive	Completed Per Protocol	200-1000									
+LBK010956	1/22/03	1		England	Male	Vaccine	Black/African American	44	>=30	Unknown		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK010958	1/16/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	40	>=30			392	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010968	1/3/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010973	1/19/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		421	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010974	2/28/03	1		England	Female	Vaccine	Indian	46	>=30	N/A: Female		420	Human	Positive	Completed Per Protocol	200-1000									
+LBK010976	1/4/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		419	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010977	2/15/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		300	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK010980	2/9/03	1		England	Male	Vaccine	Black/African American	39	>=30	No		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010984	1/15/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		267	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK010991	1/21/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	38	>=30	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK010998	1/20/03	1		England	Female	Vaccine	Black/African American	31	>=30	N/A: Female		343	Human	Negative	Completed Per Protocol	200-1000									
+LBK0101002	2/1/03	1		England	Female	Vaccine	Black/African American	15	<18.50	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0101015	2/21/03	1		England	Female	Vaccine	Black/African American	18	<18.50	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101023	2/4/03	1		England	Male	Vaccine	Black/African American	15	<18.50	Unknown		11	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101027	2/26/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		5	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101030	2/9/03	1		England	Male	Vaccine	Black/African American	16	<18.50	No		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0101031	2/23/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		18	Human	Positive	Completed Per Protocol	0-18									
+LBK0101032	2/21/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		1	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101034	1/22/03	1		England	Male	Vaccine	White	16	<18.50	Unknown		6	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101035	1/8/03	1		England	Male	Vaccine	White	14	<18.50	Unknown		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101040	1/20/03	1		England	Female	Vaccine	Black/African American	16	<18.50	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101049	2/22/03	1		England	Female	Vaccine	Black/African American	15	<18.50	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101070	1/3/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0101072	2/13/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0101078	1/13/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	15	<18.50	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0101080	2/1/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101083	2/5/03	1		England	Female	Vaccine	American Indian/Alaskan Native	17	<18.50	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101088	1/26/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		7	Human	Positive	Completed Per Protocol	0-18									
+LBK0101098	1/1/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	17	<18.50	N/A: Female		17	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101108	2/4/03	1		England	Female	Vaccine	Black/African American	18	<18.50	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101110	3/1/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101116	2/20/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0101123	1/10/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0101129	2/15/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0101132	1/15/03	1		England	Female	Vaccine	Black/African American	18	<18.50	N/A: Female		3	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101141	2/18/03	1		England	Female	Vaccine	Black/African American	17	<18.50	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101144	1/6/03	1		England	Male	Vaccine	White	17	<18.50	No		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101149	2/2/03	1		England	Male	Vaccine	White	15	<18.50	Yes		17	Human	Positive	Completed Per Protocol	0-18									
+LBK0101154	2/19/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101155	2/19/03	1		England	Female	Vaccine	American Indian/Alaskan Native	18	<18.50	N/A: Female		8	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101156	2/21/03	1		England	Male	Vaccine	Indian	17	<18.50	N/A: Female		18	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101161	2/21/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0101169	1/12/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		14	Human	Negative	Completed Per Protocol	0-18									
+LBK0101170	1/14/03	1		England	Male	Vaccine	White	14	<18.50	Unknown		7	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101172	2/9/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101176	2/1/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	16	<18.50	N/A: Female		19	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101178	1/4/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	18	<18.50	Unknown		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0101180	1/23/03	1		England	Female	Vaccine	Indian	17	<18.50	N/A: Female		19	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101182	2/6/03	1		England	Male	Vaccine	White	16	<18.50	Unknown		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101187	1/25/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		115	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101189	3/1/03	1		England	Female	Vaccine	American Indian/Alaskan Native	14	<18.50	N/A: Female		185	Human	Positive	Completed Per Protocol	19-200									
+LBK0101191	1/1/03	1		England	Female	Vaccine	American Indian/Alaskan Native	17	<18.50	N/A: Female		31	Human	Positive	Completed Per Protocol	19-200									
+LBK0101193	2/2/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		75	Human	Positive	Completed Per Protocol	19-200									
+LBK0101194	2/1/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		181	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101195	1/5/03	1		England	Male	Vaccine	White	14	<18.50	Unknown		151	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101199	2/5/03	1		England	Female	Vaccine	Black/African American	14	<18.50	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101201	2/24/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0101202	2/22/03	1		England	Male	Vaccine	White	15	<18.50	N/A: Female		111	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101203	1/18/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101207	2/1/03	1		England	Female	Vaccine	Black/African American	16	<18.50	N/A: Female		134	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101210	1/16/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		143	Human	Positive	Completed Per Protocol	19-200									
+LBK0101215	2/20/03	1		England	Male	Vaccine	White	14	<18.50	N/A: Female		55	Human	Negative	Completed Per Protocol	19-200									
+LBK0101216	1/9/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		58	Human	Positive	Completed Per Protocol	19-200									
+LBK0101217	1/20/03	1		England	Female	Vaccine	Black/African American	18	<18.50	N/A: Female		65	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101218	1/19/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		45	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101226	2/24/03	1		England	Male	Vaccine	Black/African American	18	<18.50	N/A: Female		32	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101231	1/16/03	1		England	Female	Vaccine	Black/African American	17	<18.50	N/A: Female		142	Human	Positive	Completed Per Protocol	19-200									
+LBK0101232	1/31/03	1		England	Female	Vaccine	Black/African American	15	<18.50	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101238	1/27/03	1		England	Male	Vaccine	Black/African American	14	<18.50	Unknown		187	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101244	1/17/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		87	Human	Positive	Completed Per Protocol	19-200									
+LBK0101251	1/25/03	1		England	Female	Vaccine	Black/African American	14	<18.50	N/A: Female		32	Human	Positive	Completed Per Protocol	19-200									
+LBK0101260	1/8/03	1		England	Female	Vaccine	Black/African American	15	<18.50	N/A: Female		22	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101261	1/16/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		20	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101262	1/27/03	1		England	Male	Vaccine	Black/African American	16	<18.50	Unknown		34	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101263	1/4/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		45	Human	Positive	Completed Per Protocol	19-200									
+LBK0101264	1/13/03	1		England	Female	Vaccine	Black/African American	17	<18.50	N/A: Female		56	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101265	1/30/03	1		England	Male	Vaccine	Black/African American	17	<18.50	N/A: Female		67	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101266	2/26/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		78	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101296	1/25/03	1		England	Male	Vaccine	Black/African American	18	<18.50	N/A: Female		121	Human	Positive	Completed Per Protocol	19-200									
+LBK0101300	2/15/03	1		England	Male	Vaccine	Black/African American	15	<18.50	Unknown		141	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101302	2/28/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	18	<18.50	No		155	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101303	1/21/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		131	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101304	2/9/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	17	<18.50	N/A: Female		184	Human	Positive	Completed Per Protocol	19-200									
+LBK0101305	1/4/03	1		England	Male	Vaccine	Indian	17	<18.50	N/A: Female		191	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101310	1/11/03	1		England	Female	Vaccine	White	18	<18.50	N/A: Female		143	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101314	2/24/03	1		England	Male	Vaccine	Black/African American	16	<18.50	Unknown		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101317	1/3/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		111	Human	Positive	Completed Per Protocol	19-200									
+LBK0101319	1/27/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		131	Human	Negative	Completed Per Protocol	19-200									
+LBK0101320	1/11/03	1		England	Female	Vaccine	Black/African American	16	<18.50	N/A: Female		157	Human	Positive	Completed Per Protocol	19-200									
+LBK0101328	1/2/03	1		England	Male	Vaccine	White	14	<18.50	N/A: Female		120	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101331	1/2/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		87	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101337	2/17/03	1		England	Female	Vaccine	White	14	<18.50	N/A: Female		44	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101348	2/9/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		93	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101350	2/20/03	1		England	Female	Vaccine	Black/African American	16	<18.50	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101358	2/6/03	1		England	Female	Vaccine	Black/African American	17	<18.50	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101363	2/16/03	1		England	Male	Vaccine	White	15	<18.50	Unknown		134	Human	Positive	Completed Per Protocol	19-200									
+LBK0101365	2/25/03	1		England	Female	Vaccine	White	15	<18.50	N/A: Female		112	Human	Negative	Completed Per Protocol	19-200									
+LBK0101368	1/27/03	1		England	Male	Vaccine	Black/African American	17	<18.50	N/A: Female		199	Human	Positive	Completed Per Protocol	19-200									
+LBK0101371	1/14/03	1		England	Female	Vaccine	White	16	<18.50	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101374	1/31/03	1		England	Female	Vaccine	White	17	<18.50	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101381	1/15/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		205	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101383	1/24/03	1		England	Male	Vaccine	White	19	18.50-24.99	Yes		1000	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101388	2/3/03	1		England	Male	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		201	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101396	1/12/03	1		England	Male	Vaccine	White	25	25.0-29.99	Yes		777	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101398	1/15/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		543	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101400	2/18/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101405	2/8/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		300	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101407	1/28/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		219	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101422	2/8/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	19	18.50-24.99	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101432	1/2/03	1		England	Male	Vaccine	Black/African American	23	18.50-24.99	Yes		899	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101436	2/3/03	1		England	Male	Vaccine	White	23	18.50-24.99	No		542	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101441	2/13/03	1		England	Male	Vaccine	Black/African American	23	18.50-24.99	No		384	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101445	2/23/03	1		England	Female	Vaccine	American Indian/Alaskan Native	23	18.50-24.99	N/A: Female		238	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101446	2/20/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		201	Human	Negative	Completed Per Protocol	200-1000									
+LBK0101451	2/19/03	1		England	Male	Vaccine	Black/African American	25	25.0-29.99	Yes		230	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101457	1/27/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101458	2/25/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		389	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101462	1/21/03	1		England	Male	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		450	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101464	2/23/03	1		England	Male	Vaccine	White	24	18.50-24.99	No		400	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101471	1/18/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101472	1/3/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		875	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101483	1/14/03	1		England	Female	Vaccine	Indian	19	18.50-24.99	N/A: Female		654	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101485	1/12/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		666	Human	Negative	Completed Per Protocol	200-1000									
+LBK0101488	2/15/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101489	1/10/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		345	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101492	1/8/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101493	2/13/03	1		England	Male	Vaccine	Black/African American	19	18.50-24.99	Unknown		877	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101500	2/10/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	21	18.50-24.99	N/A: Female		800	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101519	3/1/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101521	2/11/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101522	2/2/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		323	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101527	2/20/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101531	1/31/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101533	1/18/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		514	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101534	1/3/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		321	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101537	1/28/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	20	18.50-24.99	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101544	1/15/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		432	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101548	2/6/03	1		England	Male	Vaccine	Black/African American	20	18.50-24.99	Unknown		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101549	2/21/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		300	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101558	1/13/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101559	1/1/03	1		England	Female	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		267	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101561	2/8/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101567	2/9/03	1		England	Male	Vaccine	White	21	18.50-24.99	N/A: Female		343	Human	Negative	Completed Per Protocol	200-1000									
+LBK0101578	1/23/03	1		England	Female	Vaccine	Indian	20	18.50-24.99	N/A: Female		533	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101580	1/23/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		328	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101582	2/2/03	1		England	Male	Vaccine	White	22	18.50-24.99	Unknown		211	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101583	2/8/03	1		England	Female	Vaccine	Indian	25	25.0-29.99	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101586	2/7/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		999	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101587	1/3/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101597	1/15/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101601	1/20/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101606	2/6/03	1		England	Male	Vaccine	Black/African American	21	18.50-24.99			392	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101607	2/19/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101610	1/5/03	1		England	Male	Vaccine	White	25	25.0-29.99	Unknown		421	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101621	1/27/03	1		England	Male	Vaccine	White	20	18.50-24.99	Unknown		420	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101626	1/21/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		419	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101628	1/21/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		387	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101629	2/24/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		555	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101634	2/24/03	1		England	Male	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		698	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101636	2/18/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101637	1/27/03	1		England	Female	Vaccine	Indian	23	18.50-24.99	N/A: Female		871	Human	Positive	Completed Per Protocol	200-1000									
+LBK0101639	2/28/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	20	18.50-24.99	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0101642	2/16/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0101644	1/7/03	1		England	Female	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		1001	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101647	1/5/03	1		England	Male	Vaccine	White	24	18.50-24.99	No		1111	Human	Positive	Completed Per Protocol	>1000									
+LBK0101648	1/24/03	1		England	Male	Vaccine	American Indian/Alaskan Native	23	18.50-24.99	No		1004	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101651	2/4/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		1043	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101656	1/11/03	1		England	Female	Vaccine	Indian	22	18.50-24.99	N/A: Female		1077	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101668	2/19/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0101675	2/23/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		1211	Human	Positive	Completed Per Protocol	>1000									
+LBK0101678	2/3/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		1078	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101683	3/1/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101686	1/26/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		1012	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101691	1/14/03	1		England	Female	Vaccine	American Indian/Alaskan Native	19	18.50-24.99	N/A: Female		1089	Human	Positive	Completed Per Protocol	>1000									
+LBK0101695	2/5/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		1087	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101697	2/3/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		1100	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101701	2/3/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		1200	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101710	1/20/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0101713	2/19/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0101714	1/9/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		1004	Human	Positive	Completed Per Protocol	>1000									
+LBK0101719	2/8/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		1010	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101724	2/24/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		1015	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101725	1/14/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	25	25.0-29.99	N/A: Female		1032	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101726	2/9/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		1054	Human	Positive	Completed Per Protocol	>1000									
+LBK0101728	2/20/03	1		England	Male	Vaccine	Indian	23	18.50-24.99	No		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101733	2/11/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		1054	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101737	2/4/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101744	2/23/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0101745	1/30/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		1001	Human	Positive	Completed Per Protocol	>1000									
+LBK0101749	1/22/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		1002	Human	Positive	Completed Per Protocol	>1000									
+LBK0101754	2/18/03	1		England	Male	Vaccine	Black/African American	24	18.50-24.99	Yes		1012	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0101757	1/12/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		1011	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0101759	1/12/03	1		England	Male	Vaccine	Indian	25	25.0-29.99	Yes		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0101762	2/2/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	24	18.50-24.99	N/A: Female		11	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101766	2/8/03	1		England	Male	Vaccine	White	22	18.50-24.99	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101770	1/4/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0101772	1/3/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0101775	1/20/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		18	Human	Positive	Completed Per Protocol	0-18									
+LBK0101780	1/26/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		1	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101787	1/29/03	1		England	Female	Vaccine	Indian	23	18.50-24.99	N/A: Female		6	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101797	1/19/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101798	1/28/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	24	18.50-24.99	N/A: Female		13	Human	Positive	Completed Per Protocol	0-18									
+LBK0101800	2/17/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	20	18.50-24.99	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101805	1/19/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101811	1/24/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0101817	2/11/03	1		England	Female	Vaccine	White	24	18.50-24.99	N/A: Female		8	Human	Negative	Completed Per Protocol	0-18									
+LBK0101820	2/21/03	1		England	Female	Vaccine	American Indian/Alaskan Native	20	18.50-24.99	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0101824	1/17/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101827	1/13/03	1		England	Male	Vaccine	Black/African American	19	18.50-24.99	Unknown		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101832	1/12/03	1		England	Male	Vaccine	Black/African American	21	18.50-24.99	Yes		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101842	1/12/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		7	Human	Positive	Completed Per Protocol	0-18									
+LBK0101847	1/20/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		17	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101851	1/28/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	19	18.50-24.99	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101855	2/16/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101856	2/17/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0101857	2/8/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0101858	1/4/03	1		England	Female	Vaccine	American Indian/Alaskan Native	21	18.50-24.99	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0101859	1/19/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		3	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101874	2/16/03	1		England	Male	Vaccine	White	23	18.50-24.99	No		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101876	1/28/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		17	Human	Positive	Completed Per Protocol	0-18									
+LBK0101878	1/6/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101879	2/18/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		8	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101884	1/23/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		18	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101887	1/6/03	1		England	Female	Vaccine	Black/African American	19	18.50-24.99	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0101890	1/16/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	24	18.50-24.99	N/A: Female		14	Human	Negative	Completed Per Protocol	0-18									
+LBK0101899	1/30/03	1		England	Female	Vaccine	American Indian/Alaskan Native	20	18.50-24.99	N/A: Female		10	Human	Positive	Completed Per Protocol	0-18									
+LBK0101903	1/6/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101906	1/11/03	1		England	Male	Vaccine	White	24	18.50-24.99	No		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0101909	2/7/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		19	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0101911	1/7/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0101913	2/8/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		19	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101921	2/4/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101926	2/4/03	1		England	Male	Vaccine	White	19	18.50-24.99	No		115	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101930	2/11/03	1		England	Female	Vaccine	Indian	21	18.50-24.99	N/A: Female		185	Human	Positive	Completed Per Protocol	19-200									
+LBK0101933	1/29/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		31	Human	Negative	Completed Per Protocol	19-200									
+LBK0101936	2/12/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		75	Human	Positive	Completed Per Protocol	19-200									
+LBK0101939	1/8/03	1		England	Male	Vaccine	Black/African American	25	25.0-29.99	Unknown		181	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101947	2/15/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		151	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101948	2/24/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101951	1/8/03	1		England	Female	Vaccine	Indian	23	18.50-24.99	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0101952	2/6/03	1		England	Male	Vaccine	Black/African American	19	18.50-24.99	No		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101957	1/1/03	1		England	Male	Vaccine	White	24	18.50-24.99	No		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101958	1/10/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		134	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101961	1/8/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		143	Human	Positive	Completed Per Protocol	19-200									
+LBK0101962	2/15/03	1		England	Female	Vaccine	Indian	22	18.50-24.99	N/A: Female		55	Human	Positive	Completed Per Protocol	19-200									
+LBK0101968	1/27/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		58	Human	Positive	Completed Per Protocol	19-200									
+LBK0101969	2/24/03	1		England	Male	Vaccine	White	19	18.50-24.99	No		65	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101971	2/21/03	1		England	Male	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		45	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101972	2/19/03	1		England	Male	Vaccine	White	22	18.50-24.99	Yes		32	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101973	2/28/03	1		England	Female	Vaccine	Indian	23	18.50-24.99	N/A: Female		142	Human	Positive	Completed Per Protocol	19-200									
+LBK0101980	1/15/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		111	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101981	2/7/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		187	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0101985	2/14/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0101986	1/1/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		87	Human	Positive	Completed Per Protocol	19-200									
+LBK0101988	1/20/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		65	Human	Negative	Completed Per Protocol	19-200									
+LBK0101991	2/21/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		32	Human	Positive	Completed Per Protocol	19-200									
+LBK0101992	1/5/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		22	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102000	2/12/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		20	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102004	2/7/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		34	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102005	2/2/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		45	Human	Positive	Completed Per Protocol	19-200									
+LBK0102019	2/5/03	1		England	Male	Vaccine	American Indian/Alaskan Native	24	18.50-24.99	Yes		56	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102020	1/6/03	1		England	Male	Vaccine	Black/African American	19	18.50-24.99			78	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102025	1/13/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		89	Human	Positive	Completed Per Protocol	19-200									
+LBK0102036	1/5/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	25	25.0-29.99	N/A: Female		100	Human	Negative	Completed Per Protocol	19-200									
+LBK0102045	2/2/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		121	Human	Positive	Completed Per Protocol	19-200									
+LBK0102046	1/1/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	20	18.50-24.99	N/A: Female		141	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102047	1/16/03	1		England	Male	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		155	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102054	1/8/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		131	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102057	1/27/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		184	Human	Positive	Completed Per Protocol	19-200									
+LBK0102058	2/15/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		191	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102079	1/2/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		143	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102089	1/25/03	1		England	Male	Vaccine	White	25	25.0-29.99	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102091	2/27/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	19	18.50-24.99	N/A: Female		111	Human	Positive	Completed Per Protocol	19-200									
+LBK0102092	1/11/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		131	Human	Positive	Completed Per Protocol	19-200									
+LBK0102095	1/12/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		157	Human	Positive	Completed Per Protocol	19-200									
+LBK0102099	1/23/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	23	18.50-24.99	N/A: Female		120	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102105	1/26/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	20	18.50-24.99	N/A: Female		87	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102110	2/16/03	1		England	Female	Vaccine	White	19	18.50-24.99	N/A: Female		44	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102127	1/23/03	1		England	Female	Vaccine	Indian	23	18.50-24.99	N/A: Female		93	Human	Positive	Completed Per Protocol	19-200									
+LBK0102132	1/1/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		93	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102134	2/2/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	19	18.50-24.99	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102141	2/3/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		134	Human	Positive	Completed Per Protocol	19-200									
+LBK0102142	2/2/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		112	Human	Negative	Completed Per Protocol	19-200									
+LBK0102147	1/16/03	1		England	Male	Vaccine	White	20	18.50-24.99	No		199	Human	Positive	Completed Per Protocol	19-200									
+LBK0102150	1/31/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102156	1/29/03	1		England	Female	Vaccine	Black/African American	24	18.50-24.99	N/A: Female		205	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102162	2/6/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		201	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102170	2/21/03	1		England	Male	Vaccine	White	20	18.50-24.99	Unknown		777	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102174	1/24/03	1		England	Male	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102176	1/13/03	1		England	Male	Vaccine	Indian	23	18.50-24.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102180	2/8/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		219	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102184	1/1/03	1		England	Male	Vaccine	White	24	18.50-24.99	Unknown		532	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102186	1/14/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102196	2/1/03	1		England	Male	Vaccine	White	19	18.50-24.99	N/A: Female		899	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102208	1/26/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		542	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102213	2/12/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102214	1/26/03	1		England	Female	Vaccine	White	20	18.50-24.99	N/A: Female		384	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102215	1/25/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		238	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102222	2/10/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102225	1/27/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	23	18.50-24.99	N/A: Female		555	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102226	2/23/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		230	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102234	1/11/03	1		England	Male	Vaccine	White	20	18.50-24.99	N/A: Female		389	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102239	2/10/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		450	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102240	2/13/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102244	2/27/03	1		England	Male	Vaccine	Black/African American	25	25.0-29.99	Unknown		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102254	2/6/03	1		England	Female	Vaccine	Indian	21	18.50-24.99	N/A: Female		875	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102255	2/25/03	1		England	Male	Vaccine	White	20	18.50-24.99	No		654	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102259	2/27/03	1		England	Male	Vaccine	White	20	18.50-24.99	Unknown		666	Human	Negative	Completed Per Protocol	200-1000									
+LBK0102267	1/12/03	1		England	Female	Vaccine	Black/African American	21	18.50-24.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102268	1/27/03	1		England	Male	Vaccine	Black/African American	20	18.50-24.99	No		345	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102273	2/24/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102274	1/20/03	1		England	Male	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		877	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102292	2/4/03	1		England	Female	Vaccine	White	22	18.50-24.99	N/A: Female		800	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102295	2/22/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102296	1/8/03	1		England	Female	Vaccine	Black/African American	20	18.50-24.99	N/A: Female		800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102297	1/21/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		323	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102298	1/19/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102300	1/7/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		514	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102305	2/14/03	1		England	Female	Vaccine	Black/African American	23	18.50-24.99	N/A: Female		321	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102310	1/8/03	1		England	Female	Vaccine	Indian	22	18.50-24.99	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102311	2/6/03	1		England	Female	Vaccine	White	23	18.50-24.99	N/A: Female		432	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102312	1/24/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	21	18.50-24.99	No		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102313	2/8/03	1		England	Male	Vaccine	White	24	18.50-24.99	Unknown		300	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102314	1/27/03	1		England	Male	Vaccine	White	25	25.0-29.99	Yes		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102318	1/26/03	1		England	Female	Vaccine	Indian	19	18.50-24.99	N/A: Female		267	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102319	2/1/03	1		England	Female	Vaccine	Black/African American	22	18.50-24.99	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102328	2/2/03	1		England	Male	Vaccine	American Indian/Alaskan Native	22	18.50-24.99	Yes		343	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102329	2/12/03	1		England	Female	Vaccine	White	21	18.50-24.99	N/A: Female		541	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102330	1/20/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	24	18.50-24.99	N/A: Female		533	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102335	2/21/03	1		England	Male	Vaccine	Black/African American	23	18.50-24.99	Unknown		328	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102342	2/3/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	30	>=30	N/A: Female		211	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102345	1/17/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102350	1/23/03	1		England	Male	Vaccine	White	30	>=30	Unknown		999	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102352	2/5/03	1		England	Male	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102355	1/12/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		378	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102357	2/2/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102358	2/1/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		487	Human	Negative	Completed Per Protocol	200-1000									
+LBK0102363	1/8/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102367	1/20/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		392	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102368	1/15/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102369	2/9/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		421	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102373	2/24/03	1		England	Female	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		420	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102378	2/11/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		419	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102387	1/31/03	1		England	Female	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		555	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102388	2/27/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	27	25.0-29.99	N/A: Female		698	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102389	1/2/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		433	Human	Negative	Completed Per Protocol	200-1000									
+LBK0102391	1/15/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102396	2/1/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102404	1/14/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		1001	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102406	2/11/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		1111	Human	Positive	Completed Per Protocol	>1000									
+LBK0102412	2/10/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		1004	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102425	2/13/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		1043	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102426	1/1/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1077	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102431	2/21/03	1		England	Male	Vaccine	White	28	25.0-29.99	No		1077	Human	Positive	Completed Per Protocol	>1000									
+LBK0102433	2/6/03	1		England	Male	Vaccine	White	25	25.0-29.99	Unknown		1001	Human	Positive	Completed Per Protocol	>1000									
+LBK0102435	1/4/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	26	25.0-29.99	N/A: Female		1211	Human	Positive	Completed Per Protocol	>1000									
+LBK0102438	1/13/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1078	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102449	1/4/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	26	25.0-29.99	N/A: Female		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102451	2/26/03	1		England	Male	Vaccine	Black/African American	28	25.0-29.99	Yes		1089	Human	Positive	Completed Per Protocol	>1000									
+LBK0102454	1/13/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		1087	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102456	2/14/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1100	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102457	2/27/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		1200	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102459	2/4/03	1		England	Male	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0102462	1/14/03	1		England	Male	Vaccine	American Indian/Alaskan Native	27	25.0-29.99	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0102471	2/22/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		1004	Human	Positive	Completed Per Protocol	>1000									
+LBK0102472	2/27/03	1		England	Male	Vaccine	White	26	25.0-29.99	N/A: Female		1010	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102479	2/27/03	1		England	Male	Vaccine	Black/African American	30	>=30	Unknown		1015	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102486	1/5/03	1		England	Male	Vaccine	Black/African American	27	25.0-29.99	No		1032	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102492	1/6/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		1054	Human	Positive	Completed Per Protocol	>1000									
+LBK0102493	2/4/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102500	2/19/03	1		England	Female	Vaccine	Indian	29	25.0-29.99	N/A: Female		1054	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102504	1/22/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	26	25.0-29.99	No		1021	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102507	2/19/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0102516	2/4/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		1002	Human	Positive	Completed Per Protocol	>1000									
+LBK0102520	2/24/03	1		England	Female	Vaccine	American Indian/Alaskan Native	30	>=30	N/A: Female		1250	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0102521	1/9/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		1012	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102527	1/23/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0102529	1/12/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0102530	1/3/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	28	25.0-29.99	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102539	2/23/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		11	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102540	1/3/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102546	2/14/03	1		England	Male	Vaccine	Black/African American	28	25.0-29.99	No		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0102555	1/5/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0102556	2/17/03	1		England	Female	Vaccine	American Indian/Alaskan Native	29	25.0-29.99	N/A: Female		18	Human	Positive	Completed Per Protocol	0-18									
+LBK0102561	1/2/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		6	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102562	1/29/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102564	2/15/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		13	Human	Positive	Completed Per Protocol	0-18									
+LBK0102568	2/22/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		5	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102574	2/7/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		9	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102577	1/6/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0102578	1/29/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		8	Human	Negative	Completed Per Protocol	0-18									
+LBK0102586	1/20/03	1		England	Male	Vaccine	White	28	25.0-29.99	N/A: Female		5	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102591	2/7/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102595	1/17/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102599	1/20/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		7	Human	Positive	Completed Per Protocol	0-18									
+LBK0102600	2/21/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		4	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102601	2/25/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0102606	1/8/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0102610	1/15/03	1		England	Male	Vaccine	Black/African American	26	25.0-29.99	Yes		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0102611	1/21/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		3	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102620	2/7/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102623	2/14/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	28	25.0-29.99	N/A: Female		4	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0102625	1/1/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		17	Human	Positive	Completed Per Protocol	0-18									
+LBK0102629	1/22/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102630	2/13/03	1		England	Male	Vaccine	Black/African American	27	25.0-29.99	Unknown		18	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102633	2/2/03	1		England	Female	Vaccine	American Indian/Alaskan Native	28	25.0-29.99	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0102639	2/25/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		14	Human	Positive	Completed Per Protocol	0-18									
+LBK0102642	2/17/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		10	Human	Positive	Completed Per Protocol	0-18									
+LBK0102646	2/26/03	1		England	Male	Vaccine	Black/African American	25	25.0-29.99	Unknown		7	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102653	2/14/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		19	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0102658	2/11/03	1		England	Male	Vaccine	Black/African American	30	>=30	Yes		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0102659	2/15/03	1		England	Male	Vaccine	White	30	>=30	Yes		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102660	2/20/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	Yes		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102661	2/1/03	1		England	Male	Vaccine	White	27	25.0-29.99	Unknown		115	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102664	2/24/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		185	Human	Positive	Completed Per Protocol	19-200									
+LBK0102668	1/21/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		31	Human	Negative	Completed Per Protocol	19-200									
+LBK0102670	2/9/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		75	Human	Positive	Completed Per Protocol	19-200									
+LBK0102681	1/10/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		151	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102685	1/19/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102704	1/30/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102706	1/4/03	1		England	Male	Vaccine	White	28	25.0-29.99	Unknown		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102718	2/25/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		143	Human	Positive	Completed Per Protocol	19-200									
+LBK0102722	2/15/03	1		England	Male	Vaccine	Black/African American	26	25.0-29.99	Unknown		55	Human	Negative	Completed Per Protocol	19-200									
+LBK0102727	1/13/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		58	Human	Positive	Completed Per Protocol	19-200									
+LBK0102728	2/10/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		65	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102729	1/29/03	1		England	Male	Vaccine	Black/African American	26	25.0-29.99	Unknown		45	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102731	2/28/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		142	Human	Positive	Completed Per Protocol	19-200									
+LBK0102733	1/6/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102741	2/23/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	28	25.0-29.99	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102746	1/5/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		87	Human	Positive	Completed Per Protocol	19-200									
+LBK0102748	1/2/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		65	Human	Positive	Completed Per Protocol	19-200									
+LBK0102757	1/14/03	1		England	Male	Vaccine	American Indian/Alaskan Native	26	25.0-29.99	No		32	Human	Positive	Completed Per Protocol	19-200									
+LBK0102760	1/27/03	1		England	Male	Vaccine	Black/African American	27	25.0-29.99	Unknown		22	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102761	2/20/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		20	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102765	2/17/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		34	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102766	2/24/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		45	Human	Positive	Completed Per Protocol	19-200									
+LBK0102767	2/21/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		56	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102770	2/6/03	1		England	Male	Vaccine	White	28	25.0-29.99	Unknown		67	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102772	1/11/03	1		England	Male	Vaccine	White	25	25.0-29.99	No		78	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102774	2/9/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		89	Human	Positive	Completed Per Protocol	19-200									
+LBK0102781	2/10/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		100	Human	Negative	Completed Per Protocol	19-200									
+LBK0102782	2/27/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		121	Human	Positive	Completed Per Protocol	19-200									
+LBK0102784	1/11/03	1		England	Female	Vaccine	American Indian/Alaskan Native	28	25.0-29.99	N/A: Female		141	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102786	2/17/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		155	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102789	1/15/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		131	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102790	2/20/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	25	25.0-29.99	N/A: Female		191	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102791	1/18/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		143	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102793	1/22/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102795	2/14/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		111	Human	Positive	Completed Per Protocol	19-200									
+LBK0102797	2/23/03	1		England	Female	Vaccine	American Indian/Alaskan Native	28	25.0-29.99	N/A: Female		131	Human	Negative	Completed Per Protocol	19-200									
+LBK0102799	1/29/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		157	Human	Positive	Completed Per Protocol	19-200									
+LBK0102806	2/23/03	1		England	Female	Vaccine	American Indian/Alaskan Native	28	25.0-29.99	N/A: Female		120	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102807	2/19/03	1		England	Male	Vaccine	White	26	25.0-29.99			87	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102821	2/20/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		44	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102827	2/17/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		93	Human	Positive	Completed Per Protocol	19-200									
+LBK0102828	1/4/03	1		England	Male	Vaccine	Indian	26	25.0-29.99	Unknown		93	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102836	2/11/03	1		England	Male	Vaccine	White	29	25.0-29.99	No		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102839	1/18/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		134	Human	Positive	Completed Per Protocol	19-200									
+LBK0102841	1/11/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		112	Human	Positive	Completed Per Protocol	19-200									
+LBK0102843	1/2/03	1		England	Male	Vaccine	White	28	25.0-29.99	Unknown		199	Human	Positive	Completed Per Protocol	19-200									
+LBK0102844	2/12/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0102865	1/30/03	1		England	Male	Vaccine	White	28	25.0-29.99	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0102866	1/19/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	28	25.0-29.99	Yes		205	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102873	2/1/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1000	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102876	2/6/03	1		England	Male	Vaccine	White	27	25.0-29.99			201	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102877	1/19/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		777	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102886	1/22/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		543	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102889	3/1/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102893	1/16/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		300	Human	Negative	Completed Per Protocol	200-1000									
+LBK0102896	1/2/03	1		England	Female	Vaccine	Indian	27	25.0-29.99	N/A: Female		219	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102901	1/17/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102903	1/2/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102908	2/14/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	25	25.0-29.99	N/A: Female		177	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102912	1/28/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		899	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102914	2/4/03	1		England	Male	Vaccine	American Indian/Alaskan Native	29	25.0-29.99	N/A: Female		542	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102919	1/25/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102922	2/10/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		384	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102928	1/29/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		238	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102932	2/18/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		201	Human	Negative	Completed Per Protocol	200-1000									
+LBK0102943	2/4/03	1		England	Female	Vaccine	American Indian/Alaskan Native	27	25.0-29.99	N/A: Female		230	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102951	2/20/03	1		England	Female	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		389	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102952	2/16/03	1		England	Male	Vaccine	Black/African American	28	25.0-29.99			450	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102961	1/3/03	1		England	Male	Vaccine	White	26	25.0-29.99	No		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102962	2/11/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		875	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102966	2/1/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	29	25.0-29.99	N/A: Female		654	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102973	1/7/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	29	25.0-29.99	N/A: Female		666	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102989	2/21/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	27	25.0-29.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0102990	1/8/03	1		England	Male	Vaccine	White	25	25.0-29.99	No		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0102992	2/3/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		877	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0102999	2/4/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	29	25.0-29.99	No		800	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103001	1/1/03	1		Mexico	Male	Placebo	American Indian/Alaskan Native	25	25.0-29.99			800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103002	2/1/03	1		England	Female	Vaccine	Black/African American	15	<18.50	Unknown		1000	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103003	1/1/03	1		Mexico	Male	Vaccine	American Indian/Alaskan Native	30	>=30	Yes		323	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103004	1/24/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103005	1/1/03	1		Mexico	Female	Placebo	Asian	30	>=30	No		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103006	2/5/03	1		England	Female	Vaccine	Black/African American	17	<18.50	Yes		323	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103007	2/22/03	1		England	Male	Vaccine	Black/African American	27	25.0-29.99	Unknown		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103008	2/23/03	1		England	Male	Vaccine	White	16	<18.50	Yes		323	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103009	2/21/03	1		England	Female	Vaccine	White	18	<18.50	Unknown		514	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103010	2/1/03	1		England	Female	Vaccine	Indian	28	25.0-29.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103011	1/1/03	1		Mexico	Female	Vaccine	American Indian/Alaskan Native	28	25.0-29.99	Yes		323	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103012	1/20/03	1		England	Male	Vaccine	Black/African American	16	<18.50	No		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103016	1/22/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		432	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103022	2/4/03	1		England	Female	Vaccine	Indian	29	25.0-29.99	N/A: Female		300	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103032	1/30/03	1		England	Female	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103037	1/21/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		267	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103044	1/23/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103050	2/5/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		343	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103054	1/16/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	No		541	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103058	1/10/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		533	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103065	2/27/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		328	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103066	1/11/03	1		England	Female	Vaccine	Indian	25	25.0-29.99	N/A: Female		211	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103067	2/12/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	28	25.0-29.99	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103071	2/25/03	1		England	Male	Vaccine	Black/African American	28	25.0-29.99			999	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103076	1/27/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103087	1/12/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		378	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103089	2/16/03	1		England	Female	Vaccine	American Indian/Alaskan Native	25	25.0-29.99	N/A: Female		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103096	2/4/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103098	1/25/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		392	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103102	2/11/03	1		England	Female	Vaccine	White	26	25.0-29.99	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103104	2/3/03	1		England	Female	Vaccine	Indian	26	25.0-29.99	N/A: Female		421	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103107	2/21/03	1		England	Female	Vaccine	White	28	25.0-29.99	N/A: Female		420	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103109	1/15/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		419	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103115	1/28/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	25	25.0-29.99	N/A: Female		555	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103119	1/20/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		698	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103123	1/17/03	1		England	Female	Vaccine	White	25	25.0-29.99	N/A: Female		433	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103126	2/4/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	Unknown		871	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103132	1/22/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		1000	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103136	2/27/03	1		England	Female	Vaccine	American Indian/Alaskan Native	27	25.0-29.99	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103137	1/29/03	1		England	Male	Vaccine	White	28	25.0-29.99	Unknown		1001	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103141	2/20/03	1		England	Female	Vaccine	American Indian/Alaskan Native	26	25.0-29.99	N/A: Female		1111	Human	Positive	Completed Per Protocol	>1000									
+LBK0103146	1/3/03	1		England	Female	Vaccine	Black/African American	25	25.0-29.99	N/A: Female		1004	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103149	2/7/03	1		England	Female	Vaccine	American Indian/Alaskan Native	27	25.0-29.99	N/A: Female		1043	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103166	2/8/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		1077	Human	Positive	Completed Per Protocol	>1000									
+LBK0103172	1/11/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		1211	Human	Positive	Completed Per Protocol	>1000									
+LBK0103179	2/14/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1078	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103185	2/14/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	29	25.0-29.99	No		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103198	2/26/03	1		England	Male	Vaccine	Black/African American	27	25.0-29.99	N/A: Female		1089	Human	Positive	Completed Per Protocol	>1000									
+LBK0103199	1/29/03	1		England	Female	Vaccine	American Indian/Alaskan Native	29	25.0-29.99	N/A: Female		1087	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103201	1/29/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		1200	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103203	2/9/03	1		England	Male	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0103207	2/27/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1001	Human	Positive	Completed Per Protocol	>1000									
+LBK0103215	2/10/03	1		England	Male	Vaccine	White	27	25.0-29.99	No		1004	Human	Positive	Completed Per Protocol	>1000									
+LBK0103219	2/28/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	29	25.0-29.99	Unknown		1010	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103226	2/26/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1032	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103235	2/24/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1054	Human	Positive	Completed Per Protocol	>1000									
+LBK0103237	1/1/03	1		England	Female	Vaccine	White	29	25.0-29.99	N/A: Female		1021	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103239	2/9/03	1		England	Female	Vaccine	Indian	26	25.0-29.99	N/A: Female		1054	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103240	1/22/03	1		England	Male	Vaccine	White	26	25.0-29.99	No		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103246	2/19/03	1		England	Female	Vaccine	Black/African American	26	25.0-29.99	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0103257	2/17/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0103259	2/25/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		1002	Human	Positive	Completed Per Protocol	>1000									
+LBK0103260	2/2/03	1		England	Female	Vaccine	Indian	29	25.0-29.99	N/A: Female		1250	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103262	1/13/03	1		England	Female	Vaccine	White	27	25.0-29.99	N/A: Female		1012	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103267	2/15/03	1		England	Male	Vaccine	White	27	25.0-29.99	N/A: Female		1011	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103268	2/1/03	1		England	Female	Vaccine	Black/African American	29	25.0-29.99	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0103281	2/26/03	1		England	Female	Vaccine	Black/African American	28	25.0-29.99	N/A: Female		11	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103282	2/24/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		5	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103288	2/22/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0103294	1/19/03	1		England	Female	Vaccine	White	47	>=30	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0103302	1/4/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		18	Human	Positive	Completed Per Protocol	0-18									
+LBK0103306	2/17/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	40	>=30	N/A: Female		1	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103309	2/7/03	1		England	Female	Vaccine	Indian	48	>=30	N/A: Female		6	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103314	1/30/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103316	1/17/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		13	Human	Positive	Completed Per Protocol	0-18									
+LBK0103317	1/7/03	1		England	Female	Vaccine	White	47	>=30	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103322	2/10/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103325	2/2/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		9	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103329	1/20/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	33	>=30	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0103335	2/25/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0103339	1/28/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0103340	2/18/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103342	2/25/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103349	1/24/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		7	Human	Positive	Completed Per Protocol	0-18									
+LBK0103361	1/16/03	1		England	Male	Vaccine	White	49	>=30			17	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103365	1/3/03	1		England	Male	Vaccine	White	30	>=30	No		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103366	2/9/03	1		England	Female	Vaccine	Indian	43	>=30	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103368	3/1/03	1		England	Female	Vaccine	White	43	>=30	N/A: Female		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0103376	1/26/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0103378	2/5/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	47	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0103380	1/8/03	1		England	Male	Vaccine	White	31	>=30	N/A: Female		3	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103391	1/27/03	1		England	Female	Vaccine	Indian	41	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103392	1/13/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103396	1/18/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		17	Human	Positive	Completed Per Protocol	0-18									
+LBK0103399	2/18/03	1		England	Male	Vaccine	Black/African American	30	>=30	Yes		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103409	1/23/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		8	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103414	2/23/03	1		England	Male	Vaccine	Black/African American	49	>=30	No		18	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103422	2/25/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0103423	2/22/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		14	Human	Negative	Completed Per Protocol	0-18									
+LBK0103429	2/22/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		10	Human	Positive	Completed Per Protocol	0-18									
+LBK0103435	2/2/03	1		England	Male	Vaccine	Black/African American	36	>=30	N/A: Female		7	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0103437	2/17/03	1		England	Male	Vaccine	Black/African American	41	>=30	No		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103445	2/22/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	34	>=30	N/A: Female		19	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0103446	2/24/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0103448	2/8/03	1		England	Male	Vaccine	White	31	>=30	No		19	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103449	2/8/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103451	2/15/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		115	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103453	2/14/03	1		England	Female	Vaccine	Indian	45	>=30	N/A: Female		185	Human	Positive	Completed Per Protocol	19-200									
+LBK0103455	2/24/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		31	Human	Positive	Completed Per Protocol	19-200									
+LBK0103463	1/13/03	1		England	Female	Vaccine	Indian	39	>=30	N/A: Female		75	Human	Positive	Completed Per Protocol	19-200									
+LBK0103469	1/28/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		181	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103471	2/18/03	1		England	Male	Vaccine	American Indian/Alaskan Native	35	>=30	N/A: Female		151	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103474	2/27/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103476	1/20/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0103491	2/8/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		111	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103495	2/13/03	1		England	Male	Vaccine	White	33	>=30	No		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103497	1/10/03	1		England	Female	Vaccine	American Indian/Alaskan Native	34	>=30	N/A: Female		134	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103500	1/29/03	1		England	Female	Vaccine	White	45	>=30	N/A: Female		55	Human	Negative	Completed Per Protocol	19-200									
+LBK0103501	2/27/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		58	Human	Positive	Completed Per Protocol	19-200									
+LBK0103507	2/5/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	33	>=30	No		65	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103513	2/15/03	1		England	Female	Vaccine	Black/African American	36	>=30	N/A: Female		45	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103514	1/23/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		32	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103518	2/13/03	1		England	Female	Vaccine	Black/African American	44	>=30	N/A: Female		142	Human	Positive	Completed Per Protocol	19-200									
+LBK0103528	1/11/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103531	2/22/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		187	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103534	1/8/03	1		England	Male	Vaccine	Black/African American	34	>=30	No		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103540	2/20/03	1		England	Male	Vaccine	Black/African American	32	>=30	N/A: Female		65	Human	Negative	Completed Per Protocol	19-200									
+LBK0103542	2/20/03	1		England	Male	Vaccine	Black/African American	47	>=30	Unknown		32	Human	Positive	Completed Per Protocol	19-200									
+LBK0103544	1/11/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		22	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103546	1/18/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		20	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103551	1/3/03	1		England	Female	Vaccine	Indian	31	>=30	N/A: Female		45	Human	Positive	Completed Per Protocol	19-200									
+LBK0103553	2/9/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		56	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103561	1/4/03	1		England	Male	Vaccine	White	38	>=30	Yes		67	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103566	1/24/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		78	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103568	2/24/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		89	Human	Positive	Completed Per Protocol	19-200									
+LBK0103574	1/28/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		100	Human	Positive	Completed Per Protocol	19-200									
+LBK0103575	2/28/03	1		England	Male	Vaccine	American Indian/Alaskan Native	44	>=30	Unknown		121	Human	Positive	Completed Per Protocol	19-200									
+LBK0103586	1/24/03	1		England	Female	Vaccine	American Indian/Alaskan Native	32	>=30	N/A: Female		155	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103590	1/29/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		131	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103606	1/25/03	1		England	Female	Vaccine	American Indian/Alaskan Native	50	>=30	N/A: Female		191	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103607	1/1/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		143	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103608	2/15/03	1		England	Male	Vaccine	White	45	>=30	No		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103610	1/25/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		111	Human	Positive	Completed Per Protocol	19-200									
+LBK0103613	1/2/03	1		England	Female	Vaccine	White	47	>=30	N/A: Female		131	Human	Negative	Completed Per Protocol	19-200									
+LBK0103616	2/9/03	1		England	Female	Vaccine	Black/African American	47	>=30	N/A: Female		157	Human	Positive	Completed Per Protocol	19-200									
+LBK0103619	2/26/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		120	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103625	1/12/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		87	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103627	1/14/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		44	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103631	2/7/03	1		England	Female	Vaccine	Indian	30	>=30	N/A: Female		93	Human	Positive	Completed Per Protocol	19-200									
+LBK0103635	2/27/03	1		England	Female	Vaccine	White	43	>=30	N/A: Female		93	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103643	2/2/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0103649	2/13/03	1		England	Female	Vaccine	Black/African American	44	>=30	N/A: Female		134	Human	Positive	Completed Per Protocol	19-200									
+LBK0103650	2/27/03	1		England	Female	Vaccine	White	37	>=30	N/A: Female		112	Human	Negative	Completed Per Protocol	19-200									
+LBK0103654	2/9/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		199	Human	Positive	Completed Per Protocol	19-200									
+LBK0103655	2/9/03	1		England	Female	Vaccine	White	36	>=30	N/A: Female		200	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0103660	1/15/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		205	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103663	2/15/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		1000	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103667	2/21/03	1		England	Female	Vaccine	Black/African American	44	>=30	N/A: Female		201	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103672	1/15/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		543	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103675	1/30/03	1		England	Female	Vaccine	Black/African American	44	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103677	1/28/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		300	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103680	1/22/03	1		England	Male	Vaccine	Black/African American	49	>=30	Unknown		219	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103685	1/22/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		532	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103686	2/25/03	1		England	Male	Vaccine	White	33	>=30	Unknown		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103690	2/25/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		177	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103693	2/9/03	1		England	Male	Vaccine	White	46	>=30	N/A: Female		899	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103697	1/22/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		542	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103698	2/20/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103701	2/27/03	1		England	Male	Vaccine	White	37	>=30	No		384	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103706	1/3/03	1		England	Male	Vaccine	White	31	>=30	No		238	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103712	2/15/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		201	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103723	2/8/03	1		England	Male	Vaccine	White	39	>=30	No		555	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103727	1/12/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		230	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103732	1/17/03	1		England	Male	Vaccine	Black/African American	42	>=30	No		543	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103745	2/20/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		450	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103757	1/29/03	1		England	Female	Vaccine	Indian	41	>=30	N/A: Female		400	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103759	2/1/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103763	2/18/03	1		England	Male	Vaccine	White	40	>=30	Unknown		875	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103769	1/29/03	1		England	Female	Vaccine	Indian	32	>=30	N/A: Female		654	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103770	1/30/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		666	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103772	1/21/03	1		England	Male	Vaccine	White	46	>=30	Yes		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103776	2/5/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		345	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103777	2/26/03	1		England	Male	Vaccine	Black/African American	43	>=30	No		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103793	1/31/03	1		England	Female	Vaccine	White	44	>=30	N/A: Female		877	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103799	2/27/03	1		England	Female	Vaccine	Indian	32	>=30	N/A: Female		800	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103802	2/5/03	1		England	Female	Vaccine	Black/African American	44	>=30	N/A: Female		800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103810	1/24/03	1		England	Male	Vaccine	Black/African American	41	>=30	Yes		323	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103811	1/4/03	1		England	Female	Vaccine	American Indian/Alaskan Native	48	>=30	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103812	1/23/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103818	1/23/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		514	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103819	2/28/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		321	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103822	1/19/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103824	1/23/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		432	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103828	1/16/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103830	2/9/03	1		England	Male	Vaccine	White	45	>=30	No		300	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103834	1/27/03	1		England	Male	Vaccine	Black/African American	42	>=30	No		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103838	2/19/03	1		England	Female	Vaccine	White	40	>=30	N/A: Female		267	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103839	2/6/03	1		England	Male	Vaccine	White	32	>=30	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103841	2/10/03	1		England	Male	Vaccine	Indian	42	>=30	Yes		343	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103845	1/7/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		541	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103846	2/3/03	1		England	Male	Vaccine	Black/African American	42	>=30	Unknown		533	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103853	1/20/03	1		England	Male	Vaccine	White	39	>=30	Yes		328	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103854	2/20/03	1		England	Male	Vaccine	White	34	>=30	No		211	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103859	1/12/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103861	2/3/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103865	1/14/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		378	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103866	1/14/03	1		England	Female	Vaccine	Indian	31	>=30	N/A: Female		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103868	2/20/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		487	Human	Negative	Completed Per Protocol	200-1000									
+LBK0103870	2/17/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103872	1/9/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		392	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103883	1/6/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103885	1/22/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		421	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103887	1/28/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		420	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103890	2/17/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		419	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103899	2/21/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		387	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103900	1/29/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		698	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103902	2/8/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	38	>=30	No		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103906	2/9/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		871	Human	Positive	Completed Per Protocol	200-1000									
+LBK0103922	1/5/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	40	>=30	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0103924	2/17/03	1		England	Female	Vaccine	Indian	50	>=30	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0103931	2/5/03	1		England	Male	Vaccine	White	36	>=30	Unknown		1001	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103935	2/26/03	1		England	Male	Vaccine	Black/African American	47	>=30	No		1111	Human	Positive	Completed Per Protocol	>1000									
+LBK0103941	1/23/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		1004	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103944	1/15/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		1043	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103947	2/16/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		1077	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103951	1/29/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		1077	Human	Positive	Completed Per Protocol	>1000									
+LBK0103952	1/6/03	1		England	Female	Vaccine	Indian	47	>=30	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0103954	1/17/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		1211	Human	Positive	Completed Per Protocol	>1000									
+LBK0103955	1/19/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	48	>=30	N/A: Female		1078	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103961	1/24/03	1		England	Female	Vaccine	American Indian/Alaskan Native	45	>=30	N/A: Female		1012	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103967	1/15/03	1		England	Male	Vaccine	Black/African American	49	>=30	N/A: Female		1089	Human	Positive	Completed Per Protocol	>1000									
+LBK0103968	1/25/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		1087	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0103985	1/11/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	46	>=30	N/A: Female		1100	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103987	1/15/03	1		England	Male	Vaccine	White	40	>=30	No		1200	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0103991	1/8/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0103997	2/4/03	1		England	Female	Vaccine	Indian	38	>=30	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0104005	1/25/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		1004	Human	Positive	Completed Per Protocol	>1000									
+LBK0104007	1/30/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		1010	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104009	1/21/03	1		England	Female	Vaccine	American Indian/Alaskan Native	36	>=30	N/A: Female		1015	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104014	2/21/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		1032	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104016	2/25/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	38	>=30	Unknown		1054	Human	Positive	Completed Per Protocol	>1000									
+LBK0104024	2/20/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		1054	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104027	1/18/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104030	2/5/03	1		England	Female	Vaccine	American Indian/Alaskan Native	40	>=30	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0104031	2/6/03	1		England	Male	Vaccine	Black/African American	43	>=30			1001	Human	Positive	Completed Per Protocol	>1000									
+LBK0104039	1/18/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1002	Human	Positive	Completed Per Protocol	>1000									
+LBK0104046	1/23/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		1250	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104049	1/28/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1012	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104051	2/28/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		1011	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104052	2/15/03	1		England	Female	Vaccine	White	40	>=30	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0104053	1/8/03	1		England	Male	Vaccine	White	40	>=30	Yes		4	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104056	1/14/03	1		England	Female	Vaccine	White	37	>=30	N/A: Female		11	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104062	2/23/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0104069	1/20/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	46	>=30	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0104071	1/4/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		18	Human	Positive	Completed Per Protocol	0-18									
+LBK0104077	1/30/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		1	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104079	2/2/03	1		England	Male	Vaccine	Indian	33	>=30	N/A: Female		6	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104083	2/22/03	1		England	Female	Vaccine	American Indian/Alaskan Native	49	>=30	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104084	2/18/03	1		England	Male	Vaccine	Black/African American	31	>=30	No		13	Human	Positive	Completed Per Protocol	0-18									
+LBK0104087	1/2/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104090	2/4/03	1		England	Male	Vaccine	White	41	>=30	No		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104096	1/23/03	1		England	Male	Vaccine	White	40	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104108	1/9/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0104113	2/6/03	1		England	Female	Vaccine	White	40	>=30	N/A: Female		8	Human	Negative	Completed Per Protocol	0-18									
+LBK0104118	1/8/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0104121	1/21/03	1		England	Male	Vaccine	White	45	>=30			5	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104126	1/16/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104129	1/27/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	46	>=30	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104135	1/27/03	1		England	Female	Vaccine	American Indian/Alaskan Native	42	>=30	N/A: Female		7	Human	Positive	Completed Per Protocol	0-18									
+LBK0104136	1/23/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		17	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104137	1/26/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104138	2/5/03	1		England	Male	Vaccine	White	48	>=30	Yes		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104141	1/1/03	1		England	Male	Vaccine	White	44	>=30	Unknown		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0104146	1/3/03	1		England	Male	Vaccine	Black/African American	34	>=30	No		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0104149	1/13/03	1		England	Female	Vaccine	American Indian/Alaskan Native	48	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0104158	2/22/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		3	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104159	3/1/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104167	2/3/03	1		England	Male	Vaccine	White	30	>=30	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104168	2/16/03	1		England	Female	Vaccine	Black/African American	50	>=30	N/A: Female		17	Human	Positive	Completed Per Protocol	0-18									
+LBK0104169	1/14/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104181	1/13/03	1		England	Male	Vaccine	White	42	>=30	Unknown		8	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104187	2/1/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		18	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104189	1/25/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0104197	2/4/03	1		England	Female	Vaccine	Black/African American	32	>=30	N/A: Female		14	Human	Negative	Completed Per Protocol	0-18									
+LBK0104203	1/15/03	1		England	Female	Vaccine	Indian	30	>=30	N/A: Female		10	Human	Positive	Completed Per Protocol	0-18									
+LBK0104209	1/21/03	1		England	Male	Vaccine	Black/African American	31	>=30	No		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104210	1/16/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		7	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104218	2/7/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		19	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104224	2/28/03	1		England	Male	Vaccine	Indian	38	>=30	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0104232	1/28/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		19	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104241	2/8/03	1		England	Male	Vaccine	Black/African American	41	>=30	No		115	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104244	2/13/03	1		England	Male	Vaccine	Black/African American	48	>=30	N/A: Female		185	Human	Positive	Completed Per Protocol	19-200									
+LBK0104248	1/7/03	1		England	Female	Vaccine	White	42	>=30	N/A: Female		31	Human	Negative	Completed Per Protocol	19-200									
+LBK0104252	1/16/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		75	Human	Positive	Completed Per Protocol	19-200									
+LBK0104253	1/16/03	1		England	Female	Vaccine	White	45	>=30	N/A: Female		181	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104256	2/24/03	1		England	Female	Vaccine	American Indian/Alaskan Native	37	>=30	N/A: Female		151	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104257	2/27/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104266	2/19/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		19	Human	Positive	Completed Per Protocol	19-200									
+LBK0104273	1/18/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		111	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104276	1/12/03	1		England	Female	Vaccine	White	33	>=30	N/A: Female		121	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104283	1/13/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		134	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104284	2/15/03	1		England	Female	Vaccine	Indian	40	>=30	N/A: Female		143	Human	Positive	Completed Per Protocol	19-200									
+LBK0104301	2/18/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		58	Human	Positive	Completed Per Protocol	19-200									
+LBK0104302	2/27/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		65	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104304	2/20/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	41	>=30	N/A: Female		45	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104320	1/9/03	1		England	Male	Vaccine	White	40	>=30	Unknown		32	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104329	1/10/03	1		England	Male	Vaccine	Black/African American	44	>=30	N/A: Female		142	Human	Positive	Completed Per Protocol	19-200									
+LBK0104335	1/20/03	1		England	Male	Vaccine	Black/African American	47	>=30	No		111	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104343	2/22/03	1		England	Female	Vaccine	White	43	>=30	N/A: Female		187	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104346	2/13/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104349	2/10/03	1		England	Female	Vaccine	White	44	>=30	N/A: Female		87	Human	Positive	Completed Per Protocol	19-200									
+LBK0104352	2/20/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	38	>=30	N/A: Female		65	Human	Negative	Completed Per Protocol	19-200									
+LBK0104353	1/28/03	1		England	Female	Vaccine	Black/African American	50	>=30	N/A: Female		32	Human	Positive	Completed Per Protocol	19-200									
+LBK0104356	2/16/03	1		England	Male	Vaccine	Black/African American	44	>=30	N/A: Female		22	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104367	1/12/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		20	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104381	2/7/03	1		England	Female	Vaccine	American Indian/Alaskan Native	39	>=30	N/A: Female		45	Human	Positive	Completed Per Protocol	19-200									
+LBK0104382	2/25/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		56	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104389	2/14/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		67	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104396	2/4/03	1		England	Male	Vaccine	American Indian/Alaskan Native	32	>=30	No		89	Human	Positive	Completed Per Protocol	19-200									
+LBK0104397	1/7/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		100	Human	Negative	Completed Per Protocol	19-200									
+LBK0104401	1/5/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		141	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104404	2/26/03	1		England	Female	Vaccine	White	47	>=30	N/A: Female		155	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104405	1/15/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		131	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104406	2/7/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		184	Human	Positive	Completed Per Protocol	19-200									
+LBK0104408	1/31/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		191	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104410	1/31/03	1		England	Female	Vaccine	Black/African American	50	>=30	N/A: Female		143	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104417	1/4/03	1		England	Female	Vaccine	American Indian/Alaskan Native	49	>=30	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104418	1/6/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		111	Human	Positive	Completed Per Protocol	19-200									
+LBK0104424	2/15/03	1		England	Male	Vaccine	White	38	>=30	Yes		131	Human	Positive	Completed Per Protocol	19-200									
+LBK0104428	1/13/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		157	Human	Positive	Completed Per Protocol	19-200									
+LBK0104432	1/4/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	31	>=30	N/A: Female		120	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104433	1/31/03	1		England	Female	Vaccine	White	45	>=30	N/A: Female		87	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104439	1/21/03	1		England	Female	Vaccine	White	37	>=30	N/A: Female		44	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104446	2/12/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		93	Human	Positive	Completed Per Protocol	19-200									
+LBK0104451	1/13/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		93	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104457	2/15/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		32	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104458	1/18/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		121	Human	Negative	Not Completed Per Protocol	19-200									
+LBK0104459	2/23/03	1		England	Male	Vaccine	Black/African American	48	>=30	Yes		134	Human	Positive	Completed Per Protocol	19-200									
+LBK0104465	1/14/03	1		England	Female	Vaccine	American Indian/Alaskan Native	44	>=30	N/A: Female		112	Human	Negative	Completed Per Protocol	19-200									
+LBK0104468	1/18/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		199	Human	Positive	Completed Per Protocol	19-200									
+LBK0104469	2/14/03	1		England	Female	Vaccine	Black/African American	31	>=30	N/A: Female		200	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104471	1/29/03	1		England	Female	Vaccine	Indian	41	>=30	N/A: Female		19	Human	Positive	Not Completed Per Protocol	19-200									
+LBK0104474	2/21/03	1		England	Male	Vaccine	White	45	>=30	Unknown		205	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104479	2/24/03	1		England	Male	Vaccine	Black/African American	43	>=30	No		1000	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104498	1/9/03	1		England	Female	Vaccine	Black/African American	31	>=30	N/A: Female		201	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104508	2/21/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104509	2/25/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		300	Human	Negative	Completed Per Protocol	200-1000									
+LBK0104510	2/9/03	1		England	Female	Vaccine	Indian	45	>=30	N/A: Female		532	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104514	1/11/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104520	1/31/03	1		England	Female	Vaccine	American Indian/Alaskan Native	36	>=30	N/A: Female		177	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104533	1/1/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		899	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104534	1/19/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		542	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104535	2/14/03	1		England	Male	Vaccine	White	47	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104548	1/29/03	1		England	Male	Vaccine	Black/African American	39	>=30	No		384	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104550	2/27/03	1		England	Male	Vaccine	White	41	>=30	No		238	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104567	1/2/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104574	1/15/03	1		England	Female	Vaccine	American Indian/Alaskan Native	46	>=30	N/A: Female		230	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104582	1/3/03	1		England	Female	Vaccine	American Indian/Alaskan Native	32	>=30	N/A: Female		389	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104583	3/1/03	1		England	Female	Vaccine	Indian	39	>=30	N/A: Female		450	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104585	3/1/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104587	2/15/03	1		England	Male	Vaccine	Black/African American	34	>=30	No		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104599	2/8/03	1		England	Female	Vaccine	Black/African American	50	>=30	N/A: Female		875	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104600	2/7/03	1		England	Female	Vaccine	White	34	>=30	N/A: Female		654	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104601	1/21/03	1		England	Female	Vaccine	White	43	>=30	N/A: Female		666	Human	Negative	Completed Per Protocol	200-1000									
+LBK0104604	1/15/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104605	1/27/03	1		England	Female	Vaccine	White	36	>=30	N/A: Female		345	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104609	2/24/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		532	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104610	2/20/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		877	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104611	2/14/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		800	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104612	1/15/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104614	1/15/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		800	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104626	1/29/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		323	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104631	2/19/03	1		England	Male	Vaccine	White	41	>=30	No		514	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104638	1/26/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		321	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104643	1/21/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		687	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104655	1/7/03	1		England	Female	Vaccine	White	36	>=30	N/A: Female		432	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104657	1/1/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104658	1/15/03	1		England	Male	Vaccine	Black/African American	33	>=30	Yes		300	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104662	1/27/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		232	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104677	1/20/03	1		England	Male	Vaccine	White	31	>=30	Unknown		267	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104678	1/25/03	1		England	Male	Vaccine	Black/African American	44	>=30	N/A: Female		751	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104680	2/21/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		343	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104681	1/21/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		541	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104683	2/9/03	1		England	Male	Vaccine	Black/African American	39	>=30	Yes		533	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104685	2/7/03	1		England	Female	Vaccine	Black/African American	48	>=30	N/A: Female		328	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104693	2/11/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		211	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104694	1/16/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		201	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104695	2/17/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		999	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104696	2/28/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104698	2/9/03	1		England	Female	Vaccine	Indian	41	>=30	N/A: Female		378	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104700	1/2/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		433	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104701	1/3/03	1		England	Male	Vaccine	White	36	>=30	Unknown		487	Human	Negative	Completed Per Protocol	200-1000									
+LBK0104702	2/23/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		321	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104706	2/10/03	1		England	Female	Vaccine	Black/African American	35	>=30	N/A: Female		392	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104707	1/14/03	1		England	Female	Vaccine	White	35	>=30	N/A: Female		400	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104709	1/3/03	1		England	Female	Vaccine	Black/African American	42	>=30	N/A: Female		421	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104710	2/28/03	1		England	Male	Vaccine	Black/African American	42	>=30	N/A: Female		419	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104714	2/22/03	1		England	Female	Vaccine	Black/African American	30	>=30	N/A: Female		387	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104715	1/19/03	1		England	Male	Vaccine	Black/African American	48	>=30	Unknown		555	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104719	1/10/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		698	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104720	2/6/03	1		England	Male	Vaccine	White	36	>=30	Yes		433	Human	Negative	Completed Per Protocol	200-1000									
+LBK0104721	2/18/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		871	Human	Positive	Completed Per Protocol	200-1000									
+LBK0104723	1/26/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		1000	Human	Negative	Not Completed Per Protocol	200-1000									
+LBK0104730	2/1/03	1		England	Male	Vaccine	White	31	>=30	N/A: Female		321	Human	Positive	Not Completed Per Protocol	200-1000									
+LBK0104745	3/1/03	1		England	Female	Vaccine	White	31	>=30	N/A: Female		1001	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104746	1/8/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		1111	Human	Positive	Completed Per Protocol	>1000									
+LBK0104752	1/1/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		1043	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104756	1/2/03	1		England	Male	Vaccine	White	30	>=30	No		1077	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104764	1/19/03	1		England	Male	Vaccine	White	43	>=30	Unknown		1077	Human	Positive	Completed Per Protocol	>1000									
+LBK0104765	2/5/03	1		England	Female	Vaccine	Black/African American	31	>=30	N/A: Female		1001	Human	Positive	Completed Per Protocol	>1000									
+LBK0104769	2/22/03	1		England	Male	Vaccine	Black/African American	50	>=30	No		1211	Human	Positive	Completed Per Protocol	>1000									
+LBK0104772	2/19/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		1078	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104781	1/16/03	1		England	Male	Vaccine	Black/African American	36	>=30	No		1012	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104783	2/18/03	1		England	Female	Vaccine	Black/African American	45	>=30	N/A: Female		1089	Human	Positive	Completed Per Protocol	>1000									
+LBK0104787	2/2/03	1		England	Female	Vaccine	Black/African American	47	>=30	N/A: Female		1087	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104790	1/27/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1100	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104797	1/1/03	1		England	Male	Vaccine	American Indian/Alaskan Native	30	>=30	N/A: Female		1200	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104800	1/1/03	1		England	Male	Vaccine	White	32	>=30	No		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0104805	2/18/03	1		England	Female	Vaccine	White	46	>=30	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0104806	1/12/03	1		England	Male	Vaccine	Black/African American	41	>=30	N/A: Female		1004	Human	Positive	Completed Per Protocol	>1000									
+LBK0104809	2/15/03	1		England	Female	Vaccine	Indian	39	>=30	N/A: Female		1010	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104816	2/15/03	1		England	Female	Vaccine	Black/African American	39	>=30	N/A: Female		1015	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104818	2/6/03	1		England	Male	Vaccine	White	43	>=30	No		1032	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104819	2/11/03	1		England	Male	Vaccine	Black/African American	48	>=30	Unknown		1054	Human	Positive	Completed Per Protocol	>1000									
+LBK0104820	1/22/03	1		England	Female	Vaccine	White	44	>=30	N/A: Female		1021	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104827	2/25/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		1054	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104845	1/12/03	1		England	Female	Vaccine	Indian	48	>=30	N/A: Female		1021	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104846	1/5/03	1		England	Female	Vaccine	White	49	>=30	N/A: Female		1011	Human	Positive	Completed Per Protocol	>1000									
+LBK0104847	2/2/03	1		England	Female	Vaccine	White	30	>=30	N/A: Female		1001	Human	Negative	Completed Per Protocol	>1000									
+LBK0104848	2/15/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	31	>=30	Unknown		1002	Human	Positive	Completed Per Protocol	>1000									
+LBK0104850	1/8/03	1		England	Female	Vaccine	Black/African American	46	>=30	N/A: Female		1250	Human	Negative	Not Completed Per Protocol	>1000									
+LBK0104852	2/26/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		1012	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104856	2/14/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		1011	Human	Positive	Not Completed Per Protocol	>1000									
+LBK0104857	1/16/03	1		England	Male	Vaccine	White	50	>=30	No		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0104860	1/1/03	1		England	Female	Vaccine	American Indian/Alaskan Native	42	>=30	N/A: Female		4	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104869	2/9/03	1		England	Female	Vaccine	White	48	>=30	N/A: Female		11	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104880	2/4/03	1		England	Female	Vaccine	Black/African American	40	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0104884	2/20/03	1		England	Male	Vaccine	Indian	47	>=30	Yes		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0104885	1/28/03	1		England	Male	Vaccine	White	32	>=30	Yes		18	Human	Positive	Completed Per Protocol	0-18									
+LBK0104887	1/17/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		1	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104888	1/8/03	1		England	Male	Vaccine	White	49	>=30	No		6	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104890	1/8/03	1		England	Male	Vaccine	Black/African American	38	>=30	N/A: Female		13	Human	Positive	Completed Per Protocol	0-18									
+LBK0104895	1/29/03	1		England	Male	Vaccine	White	33	>=30	N/A: Female		5	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104897	1/4/03	1		England	Female	Vaccine	Black/African American	43	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104900	1/22/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		9	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104903	1/9/03	1		England	Female	Vaccine	Indian	31	>=30	N/A: Female		5	Human	Positive	Completed Per Protocol	0-18									
+LBK0104906	1/27/03	1		England	Female	Vaccine	Black/African American	37	>=30	N/A: Female		8	Human	Negative	Completed Per Protocol	0-18									
+LBK0104910	1/4/03	1		England	Female	Vaccine	White	50	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0104912	1/3/03	1		England	Female	Vaccine	White	39	>=30	N/A: Female		5	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104913	2/3/03	1		England	Male	Vaccine	White	49	>=30	Unknown		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104926	1/4/03	1		England	Female	Vaccine	White	38	>=30	N/A: Female		7	Human	Positive	Completed Per Protocol	0-18									
+LBK0104927	2/19/03	1		England	Female	Vaccine	White	41	>=30	N/A: Female		17	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104932	1/2/03	1		England	Female	Vaccine	Black/African American	34	>=30	N/A: Female		12	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104934	2/21/03	1		England	Female	Vaccine	Hawaiian/Pacific Islander	35	>=30	N/A: Female		4	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104937	1/6/03	1		England	Male	Vaccine	White	47	>=30	No		8	Human	Positive	Completed Per Protocol	0-18									
+LBK0104942	2/1/03	1		England	Female	Vaccine	White	44	>=30	N/A: Female		5	Human	Negative	Completed Per Protocol	0-18									
+LBK0104945	2/9/03	1		England	Female	Vaccine	White	37	>=30	N/A: Female		12	Human	Positive	Completed Per Protocol	0-18									
+LBK0104955	2/10/03	1		England	Female	Vaccine	White	32	>=30	N/A: Female		3	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104956	2/21/03	1		England	Female	Vaccine	Black/African American	38	>=30	N/A: Female		9	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104958	2/11/03	1		England	Male	Vaccine	Black/African American	50	>=30	Unknown		4	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104967	2/15/03	1		England	Female	Vaccine	Indian	40	>=30	N/A: Female		17	Human	Positive	Completed Per Protocol	0-18									
+LBK0104968	2/3/03	1		England	Female	Vaccine	Black/African American	41	>=30	N/A: Female		12	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104974	2/24/03	1		England	Female	Vaccine	Black/African American	31	>=30	N/A: Female		8	Human	Positive	Not Completed Per Protocol	0-18									
+LBK0104980	1/13/03	1		England	Female	Vaccine	Black/African American	33	>=30	N/A: Female		18	Human	Negative	Not Completed Per Protocol	0-18									
+LBK0104990	1/24/03	1		England	Male	Vaccine	Hawaiian/Pacific Islander	45	>=30	Unknown		0	Human	Positive	Completed Per Protocol	0-18									
+LBK0104995	1/8/03	1		England	Female	Vaccine	Indian	48	>=30	N/A: Female		14	Human	Positive	Completed Per Protocol	0-18									
+LBK0104998	1/30/03	1		England	Female	Vaccine	Black/African American	49	>=30	N/A: Female		10	Human	Positive	Completed Per Protocol	0-18									
