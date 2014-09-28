@@ -60,7 +60,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
     private static final String[] DESIRED_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144"};
-    
+    private static final String[] ALL_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144", "BH078", "BH302", "DS108", "LBK001", "LBK010"};
+
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
     private final CDSHelper cds = new CDSHelper(this);
