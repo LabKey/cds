@@ -1,0 +1,6 @@
+RowId	Label	Description	DescriptionRendererType
+35	Placebo		TEXT_WITH_LINKS
+36	DNA Prime	VRC-HIVDNA009-00-VP in combination with escalating doses of a plasmid IL-2/Ig adjuvant	TEXT_WITH_LINKS
+37	VRC-HIVDNA016-00-VP	VRC-HIVDNA-016-00-VP is composed of six DNA plasmids in equal concentrations that encode Gag, Pol, and Nef from clade B (strains HXB2, NL4-3, NY5/BRU) and the HIV-1 Env glycoproteins from clade A (strain 92rw020), clade B (strains HXB2/BaL), and clade C (strain 97ZA012).	TEXT_WITH_LINKS
+38	VRC-HIVADV014-00-VP	The recombinant adenoviral vector product VRC-HIVADV014-00-VP (Ad5) is a replication deficient, combination vaccine containing a mixture of 4 recombinant serotype 5 adenoviral vectors, each expressing 1 of the 4 HIV antigens gp140(A), gp140(B)dv12, gp140(C) and GagPol(B) driven by the cytomegalovirus (CMV) immediate-early promoter.	TEXT_WITH_LINKS
+39	AIDSVAX		TEXT_WITH_LINKS
