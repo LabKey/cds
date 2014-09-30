@@ -21,6 +21,10 @@
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Proxy.js"/>
         <script path="../../../../staging/labkeyWebapp/clientapi/ext4/data/Store.js"/>
 
+        <script path="../../../internal/explodedModule/web/dataregion/filter/Base.js"/>
+        <script path="../../../internal/explodedModule/web/dataregion/filter/Model.js"/>
+        <script path="../../../internal/explodedModule/web/dataregion/filter/Faceted.js"/>
+
         <!-- Study Dependencies -->
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
 
@@ -83,7 +87,9 @@
         <!-- Application Widgets -->
         <script path="Connector/src/button/Image.js"/>
         <script path="Connector/src/button/RoundedButton.js"/>
+        <script path="Connector/src/window/AbstractFilter.js"/>
         <script path="Connector/src/window/Filter.js"/>
+        <script path="Connector/src/window/Facet.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>
         <script path="Connector/src/panel/AxisSelector.js"/>
         <script path="Connector/src/panel/Feedback.js"/>
@@ -117,6 +123,7 @@
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/InfoPane.js"/>
+        <script path="Connector/src/view/GridPane.js"/>
         <script path="Connector/src/view/PlotPane.js"/>
         <script path="Connector/src/view/GroupSave.js"/>
         <script path="Connector/src/view/GroupSummary.js"/>
@@ -148,6 +155,7 @@
         <script path="Connector/src/controller/AbstractViewController.js"/>
         <script path="Connector/src/controller/Chart.js"/>
         <script path="Connector/src/controller/Connector.js"/>
+        <script path="Connector/src/controller/Query.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>
         <script path="Connector/src/controller/Group.js"/>

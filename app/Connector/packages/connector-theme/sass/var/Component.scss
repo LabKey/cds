@@ -31,6 +31,8 @@ $info-font : Verdana, sans-serif;
 $data-font : Georgia, serif;
 
 // General
+$connector-prefix: 'x-'; /* Used to mimic Ext's $prefix which is not defined yet when this file is compiled */
+$css-shadow-border-radius: 0;
 $font-family: $info-font;
 
 // form/field/Base.scss
@@ -351,32 +353,32 @@ div.emptytext {
   }
 }
 
-.x-tab-bar {
+.#{$connector-prefix}tab-bar {
   display: none;
 }
 
-.x-border-layout-ct {
+.#{$connector-prefix}border-layout-ct {
   background-color: $light-color;
 }
 
-.x-form-item {
+.#{$connector-prefix}form-item {
   font-family: $info-font;
 }
 
-.x-form-item-label-top {
+.#{$connector-prefix}form-item-label-top {
   font-size: 11pt;
 }
 
-.x-border-box textarea.x-form-field {
+.#{$connector-prefix}border-box textarea.#{$connector-prefix}form-field {
   padding: 7px;
 }
 
-.x-form-field, .x-form-display-field {
+.#{$connector-prefix}form-field, .#{$connector-prefix}form-display-field {
   font-family: $info-font;
 }
 
 /* Ext Mask */
-.x-mask-msg {
+.#{$connector-prefix}mask-msg {
   background-color: $heat-scale-3;
   border-color: $heat-scale-1;
 
@@ -385,37 +387,37 @@ div.emptytext {
   }
 }
 
-.x-tip {
+.#{$connector-prefix}tip {
   border-color: $heat-scale-3;
   background-color: $heat-scale-4;
 }
 
-.x-tip-anchor {
+.#{$connector-prefix}tip-anchor {
   border-width: 12px;
   border-left-color: darken($primary-color, 10%);
 }
 
-.x-tip-anchor-left {
+.#{$connector-prefix}tip-anchor-left {
   border-left-color: transparent !important;
   border-right-color: darken($primary-color, 10%);
 }
 
-.x-mask {
+.#{$connector-prefix}mask {
   background-color: $light-color !important;
   opacity: .8 !important;
 }
 
 /* Ext Message Box */
-.x-window-default,
-.x-window-header-default-top {
+.#{$connector-prefix}window-default,
+.#{$connector-prefix}window-header-default-top {
   background-color: $light-color;
 }
 
-.x-toolbar .x-toolbar-separator-horizontal {
+.#{$connector-prefix}toolbar .#{$connector-prefix}toolbar-separator-horizontal {
   border-left: $heat-scale-3;
 }
 
-.x-btn-default-toolbar-small-over {
+.#{$connector-prefix}btn-default-toolbar-small-over {
   background-image: none;
   border-color: $heat-scale-3;
   background-color: $heat-scale-4;

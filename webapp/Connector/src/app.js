@@ -30,6 +30,7 @@ var launchApp = function(cube) {
 
 };
 
+// Use the connector loader
 Connector.cube.Loader.getCube(function(cube) {
 
     // launch the app

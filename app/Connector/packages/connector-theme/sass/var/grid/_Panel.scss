@@ -3,7 +3,7 @@
   .filtered-column {
 
     .x-column-header-trigger {
-      background-color: $heat-scale-4 !important;
+      background-color: transparent;
     }
 
   }
@@ -64,10 +64,6 @@
 }
 
 /* Connector.window.Filter */
-div.filterheader {
-  font-size: 11pt;
-}
-
 div.filterpanel .x-panel-body-default {
   background: transparent;
 }

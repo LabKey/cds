@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.PlotPane', {
+Ext.define('Connector.view.GridPane', {
 
     extend: 'Connector.view.InfoPane',
 
@@ -15,12 +15,11 @@ Ext.define('Connector.view.PlotPane', {
 
     maxHeight: 400,
 
-    displayTitle: 'In the plot',
+    displayTitle: 'Filter details',
 
     getMiddleContent : function(model) {
         var filter = model.get('filter');
-        var measures = filter.get('plotMeasures');
-        var scales = filter.get('plotScales');
+        var gridFilters = filter.get('gridFilter');
 
         var content = [{
             xtype: 'box',
@@ -30,43 +29,34 @@ Ext.define('Connector.view.PlotPane', {
             }
         }];
 
-        if (Ext.isArray(measures)) {
-            // assume length 3 array of (x, y, color)
-            var indexOrder = [1,0,2];  // Y, X, then Color
-            for (var i = 0; i < indexOrder.length; i++)
-            {
-                var index = indexOrder[i];
-                var label = null;
-                if (index == 0) label = 'X';
-                else if (index == 1) label = 'Y';
-                else if (index == 2) label = 'Color';
-
-                if (measures[index] && measures[index].measure) {
-                    content.push({
-                        xtype: 'box',
-                        cls: 'smallstandout soft spacer',
-                        autoEl: {
-                            tag: 'div',
-                            html: label
-                        }
-                    });
-                    content.push({
-                        xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: measures[index].measure.queryLabel
-                        }
-                    });
-                    content.push({
-                        xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: measures[index].measure.label + this.getSublabel(measures[index].measure)
-                        }
-                    });
+        if (Ext.isArray(gridFilters)) {
+            var shown = {};
+            Ext.each(gridFilters, function(gf) {
+                if (gf != null && Ext.isDefined(gf)) {
+                    // get this columns measure information
+                    var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
+                    if (Ext.isObject(measure) && !shown[measure.alias]) {
+                        shown[measure.alias] = true;
+                        content.push({
+                            xtype: 'box',
+                            cls: 'smallstandout soft spacer',
+                            autoEl: {
+                                tag: 'div',
+                                html: Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption
+                            }
+                        });
+                        content.push({
+                            xtype: 'box',
+                            autoEl: {
+                                tag: 'div',
+                                html: (Ext.isString(measure.label) ? measure.label : '') + this.getSublabel(measure)
+                            }
+                        });
+                    }
                 }
-            }
+            }, this);
         }
+
         return content;
     },
 
@@ -77,7 +67,7 @@ Ext.define('Connector.view.PlotPane', {
             ui: 'footer',
             items: ['->',
 //                {
-//                    text: 'clear plot',
+//                    text: 'clear filter',
 //                    cls: 'infoplotaction', // tests
 //                    handler: this.onUpdate,
 //                    scope: this
@@ -105,6 +95,10 @@ Ext.define('Connector.view.PlotPane', {
                 sub = " (" + measure.options.antigen.values.join(", ") + ")";
             else if (measure.options.alignmentVisitTagLabel)
                 sub = " (" + measure.options.alignmentVisitTagLabel + ")";
+        }
+        else if (Ext.isString(measure.description))
+        {
+            sub = ' ' + measure.description;
         }
         return sub;
     }

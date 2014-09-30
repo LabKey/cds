@@ -75,15 +75,34 @@ public class DataGridSelector
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        _test.click(CDSHelper.Locators.cdsButtonLocator("OK"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Filter"));
         String filterText = columnName.replace(" ", "");
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(filterText));
+    }
+
+    public void setFacet(String columnName, String label)
+    {
+        openFilterPanel(columnName);
+        _test.waitForText(label);
+
+        Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
+        Locator.XPathLocator memberLabel = gridLoc.append(Locator.tagWithClass("div", "x-grid-cell-inner").containing(label));
+
+        _test.click(memberLabel);
+
+        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("Update");
+        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("Filter");
+
+        if (_test.isElementPresent(update))
+            _test.click(update);
+        else
+            _test.click(filter);
     }
 
     public void clearFilters(String columnName)
     {
         openFilterPanel(columnName);
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear Filters"));
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear"));
         _test.waitForText("Filter removed.");
     }
 

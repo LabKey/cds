@@ -9,7 +9,7 @@ Ext.define('Connector.view.Grid', {
 
     alias: 'widget.groupdatagrid',
 
-    requires: ['Ext.menu.DatePicker'],
+    requires: ['Ext.menu.DatePicker', 'Connector.window.*'],
 
     axisSourceCls: 'rawdatasource',
 
@@ -121,7 +121,7 @@ Ext.define('Connector.view.Grid', {
         // plugin to handle loading mask for the grid
         this.addPlugin({
             ptype: 'loadingmask',
-            loadingDelay: 0, // show this loading mask immediately since the grid render itself takes most of the time
+            loadingDelay: 250, // show this loading mask quickly since the grid render itself takes most of the time
             beginConfig: {
                 component: this,
                 events: ['showload']
@@ -483,9 +483,9 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             }
-            else {
-                console.log('failed to find filter column');
-            }
+//            else {
+//                console.log('failed to find filter column');
+//            }
 
         }, this);
     },
@@ -545,8 +545,12 @@ Ext.define('Connector.view.Grid', {
         }
 
         if (column) {
-            this.filterWin = Ext.create('Connector.window.Filter', {
+
+            var metadata = this.getColumnMetadata(column.dataIndex);
+
+            var config = {
                 col: column,
+                columnMetadata: metadata,
                 dataView: this,
                 listeners: {
                     filter: function(win, boundColumn, filterArray) {
@@ -561,7 +565,14 @@ Ext.define('Connector.view.Grid', {
                     scope: this
                 },
                 scope: this
-            });
+            };
+
+            var clzz = 'Connector.window.Filter';
+            if (metadata.jsonType === 'string') {
+                clzz = 'Connector.window.Facet';
+            }
+
+            this.filterWin = Ext.create(clzz, config);
         }
         else {
             console.error('Unable to find column for filtering.');

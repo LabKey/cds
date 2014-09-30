@@ -639,7 +639,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertColumnsNotPresent("Point IC50");
         grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
 
-        grid.setFilter("Race", "White");
+        grid.setFacet("Race", "White");
         grid.waitForCount(270);
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
@@ -656,9 +656,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertFilterStatusCounts(11, 4, 4);
 
         log("Filter on a looked-up column");
-        grid.setFilter("PI", "Mark I");
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Race: Starts With White"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
+        grid.setFacet("PI", "Mark Igra");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.waitForCount(237);
         _asserts.assertFilterStatusCounts(8, 3, 4);
 
@@ -668,13 +668,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertDefaultFilterStatusCounts(this);
 
         click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Race: Starts With White"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: Starts With Mark I"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.waitForCount(237);
         _asserts.assertFilterStatusCounts(8, 3, 4);
 
         log("update a column filter that already has a filter");
-        grid.setFilter("Race", "Black");
+        grid.setFacet("Race", "Black");
         grid.waitForCount(128);
         _asserts.assertFilterStatusCounts(5, 2, 3);
 
