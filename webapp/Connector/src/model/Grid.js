@@ -23,26 +23,10 @@ Ext.define('Connector.model.Grid', {
             subjects: []
         }},
 
-        {name: 'defaultMeasures', defaultValue: [{
-            schemaName: 'study',
-            queryName: 'SubjectVisit',
-            name: Connector.studyContext.subjectColumn
-        },{
-            schemaName: 'study',
-            queryName: 'SubjectVisit',
-            name: Connector.studyContext.subjectColumn + '/Study'
-        },{
-            schemaName: 'study',
-            queryName: 'SubjectVisit',
-            name: 'Visit'
-        }]},
-        {name: 'wrappedDefaultMeasures', defaultValue: []},
-
+        {name: 'defaultMeasures', defaultValue: []},
         {name: 'measures', defaultValue: []},
-        {name: 'wrappedMeasures', defaultValue: []},
-
         {name: 'plotMeasures', defaultValue: []},
-        {name: 'wrappedPlotMeasures', defaultValue: []},
+        {name: 'SQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
         {name: 'schemaName', defaultValue: 'study'},
@@ -51,6 +35,7 @@ Ext.define('Connector.model.Grid', {
     ],
 
     plotKeys: {},
+    SQLKeys: {},
 
     statics: {
         addLookupColumns : function(gridModel, keyColumn, columns) {
@@ -102,7 +87,7 @@ Ext.define('Connector.model.Grid', {
         getColumnList : function(gridModel) {
 
             // NOTE: default values must come first for getData API call to join correctly
-            var measures = gridModel.get('defaultMeasures').concat(gridModel.get('plotMeasures')).concat(gridModel.get('measures'));
+            var measures = gridModel.getMeasures();
             var metadata = gridModel.get('metadata');
 
             var colMeasure = {};
@@ -141,7 +126,7 @@ Ext.define('Connector.model.Grid', {
         getMetaData : function(gridModel, config) {
 
             // NOTE: default values must come first for getData API call to join correctly
-            var measures = gridModel.get('wrappedDefaultMeasures').concat(gridModel.get('wrappedPlotMeasures')).concat(gridModel.get('wrappedMeasures'));
+            var measures = gridModel.getWrappedMeasures();
             var sorts = gridModel.getSorts();
 
             if (measures.length > 0 && sorts.length > 0) {
@@ -168,7 +153,7 @@ Ext.define('Connector.model.Grid', {
 
         getSubjectFilterState : function(model, callback, scope) {
 
-            var state = model.olapProvider;
+            var state = Connector.getState();
 
             var filterState = {
                 hasFilters: state.hasFilters(),
@@ -330,18 +315,16 @@ Ext.define('Connector.model.Grid', {
         this.filterMap = {}; // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance
         this.idMap = {}; // inverse of the filterMap
 
-        this.providerReady = false;
+        this.stateReady = false;
         this.viewReady = false;
         this._ready = false;
 
-        if (config.olapProvider) {
-            this.setOlapProvider(config.olapProvider);
-            this.olapProvider.onReady(function(provider) {
-                this.providerReady = provider;
-                this.applyFilters(this.bindFilters(this.olapProvider.getFilters()));
-                this._init();
-            }, this);
-        }
+        var state = Connector.getState();
+        state.onReady(function(state) {
+            this.stateReady = true;
+            this.applyFilters(this.bindFilters(state.getFilters()));
+            this._init();
+        }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
 
@@ -349,29 +332,32 @@ Ext.define('Connector.model.Grid', {
     },
 
     _init : function() {
-        if (this.viewReady && this.providerReady) {
-            var provider = this.providerReady;
-            this.onProviderReady(provider);
+        if (this.viewReady && this.stateReady) {
+            Connector.getService('Query').onReady(function(service) {
+                service.getDefaultGridMeasures(function(defaultMeasures) {
+
+                    this.bindDefaultMeasures(defaultMeasures);
+
+                    if (this._ready === false) {
+                        this._ready = true;
+
+                        // hook listeners
+                        var state = Connector.getState();
+                        state.on('filterchange', this.onAppFilterChange, this);
+                        Connector.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
+
+                        this.bindMeasures([], [], [], true);
+                        this.bindApplicationMeasures(state.getFilters());
+                    }
+                    this.requestMetaData();
+
+                }, this);
+            }, this);
         }
-    },
-
-    onProviderReady : function(provider) {
-
-        if (this._ready === false) {
-            this._ready = true;
-
-            // hook listeners
-            this.olapProvider.on('filterchange', this.onAppFilterChange, this);
-            this.olapProvider.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
-
-            this.bindMeasures([], [], [], true);
-            this.bindApplicationMeasures(this.olapProvider.getFilters());
-        }
-        this.requestMetaData();
     },
 
     onPlotMeasureChange : function() {
-        this.bindApplicationMeasures(this.olapProvider.getFilters());
+        this.bindApplicationMeasures(Connector.getState().getFilters());
     },
 
     onUpdateColumns : function() {
@@ -388,7 +374,7 @@ Ext.define('Connector.model.Grid', {
 //        });
 //
 //        if (validMeasures.length > 0) {
-//            var state = this.olapProvider;
+//            var state = Connector.getState();
 //            state.setCustomState({
 //                view: 'gridmodel',
 //                key: 'measures'
@@ -407,14 +393,10 @@ Ext.define('Connector.model.Grid', {
         return measure;
     },
 
-    bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
-
-        var measureSet = [], sourceMeasure, item, wrapped =[],
-            sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
-
+    bindDefaultMeasures : function(defaultMeasures) {
         // set the wrapped default measures
-        wrapped = [];
-        Ext.each(this.get('defaultMeasures'), function(measure) {
+        var wrapped = [];
+        Ext.each(defaultMeasures, function(measure) {
             var w = {
                 measure: measure,
                 time: 'date'
@@ -422,7 +404,13 @@ Ext.define('Connector.model.Grid', {
 
             wrapped.push(w);
         });
-        this.set('wrappedDefaultMeasures', wrapped);
+        this.set('defaultMeasures', wrapped);
+    },
+
+    bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
+
+        var measureSet = [], sourceMeasure, item, wrapped =[],
+            sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
 
         Ext.each(measures, function(measure) {
             item = Ext.clone(measure.data);
@@ -478,11 +466,8 @@ Ext.define('Connector.model.Grid', {
             wrapped.push(w);
         });
 
-        // set the raw measures
-        this.set('measures', measureSet);
-
         // set the wrapped measures
-        this.set('wrappedMeasures', wrapped);
+        this.set('measures', wrapped);
 
         // set the foreign columns
         this.set('foreignColumns', foreignColumns);
@@ -493,6 +478,44 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
+    /**
+     * The 'raw' measures the grid recieves are wrapped during processing so they can
+     * be consumed by LABKEY.Query.Visualization.getData.
+     * @param {String} measureType
+     * @returns {Array}
+     */
+    getMeasures : function(measureType) {
+        var measures = [];
+
+        if (Ext.isString(measureType)) {
+            Ext.each(this.get(measureType), function(m) {
+                measures.push(m.measure);
+            });
+        }
+        else {
+            Ext.each(this.get('defaultMeasures'), function(m) {
+                measures.push(m.measure);
+            });
+            Ext.each(this.get('plotMeasures'), function(m) {
+                measures.push(m.measure);
+            });
+            Ext.each(this.get('SQLMeasures'), function(m) {
+                measures.push(m.measure);
+            });
+            Ext.each(this.get('measures'), function(m) {
+                measures.push(m.measure);
+            });
+        }
+        return measures;
+    },
+
+    getWrappedMeasures : function() {
+        return this.get('defaultMeasures')
+                .concat(this.get('plotMeasures'))
+                .concat(this.get('SQLMeasures'))
+                .concat(this.get('measures'));
+    },
+
     bindApplicationMeasures : function(filterSet) {
         //
         // Cross-reference application measures
@@ -501,9 +524,23 @@ Ext.define('Connector.model.Grid', {
 
         var oldKeys = this.plotKeys;
         var newKeys = {};
-        var plotMeasures = [], wrappedPlotMeasures = [];
-        Ext.each(filters, function(filter) {
+        var oldSQLKeys = this.SQLKeys;
+        var newSQLKeys = {};
 
+        // map the default set of grid measures so they
+        // are not replicated as 'SQLMeasures'
+        var defaultMeasureSet = {};
+        Ext.each(this.getMeasures('defaultMeasures'), function(m) {
+            var key = m.alias;
+            if (Ext.isObject(m.lookup)) {
+                key += '/' + m.lookup.displayColumn;
+            }
+            defaultMeasureSet[key] = true;
+        });
+
+        var SQLMeasures = [], plotMeasures = [];
+        var queryService = Connector.getService('Query');
+        Ext.each(filters, function(filter) {
             // respect plotted measures
             if (filter.isPlot() && !filter.isGrid()) {
                 var plotMeasureSet = filter.get('plotMeasures');
@@ -518,13 +555,53 @@ Ext.define('Connector.model.Grid', {
                             p.measure = this.convertTimeMeasure(p.measure);
                         }
                         newKeys[p.measure.alias] = true;
-                        plotMeasures.push(p.measure);
-                        wrappedPlotMeasures.push(p);
+                        plotMeasures.push(p);
+                    }
+                }, this);
+            }
+            else if (filter.isGrid() && !filter.isPlot()) {
+                // For each grid filter find the associated measure
+                var gridFilters = filter.get('gridFilter');
+                Ext.each(gridFilters, function(gf) {
+                    if (!defaultMeasureSet[gf.getColumnName()])
+                    {
+                        var measure = queryService.getMeasure(gf.getColumnName());
+                        if (Ext.isObject(measure))
+                        {
+                            var p = {
+                                measure: Ext.clone(measure),
+                                time: 'date'
+                            };
+                            newSQLKeys[p.measure.alias] = true;
+                            SQLMeasures.push(p);
+                        }
                     }
                 }, this);
             }
         }, this);
 
+        var plotChange = this.isChanged(oldKeys, newKeys);
+        var sqlChange = this.isChanged(oldSQLKeys, newSQLKeys);
+        var change = plotChange || sqlChange;
+
+        if (plotChange) {
+            this.plotKeys = newKeys;
+            this.set('plotMeasures', plotMeasures);
+        }
+
+        if (sqlChange) {
+            this.SQLKeys = newSQLKeys;
+            this.set('SQLMeasures', SQLMeasures);
+        }
+
+        if (change && !this.isActive()) {
+            this.activeMeasure = true;
+        }
+
+        return change;
+    },
+
+    isChanged : function(oldKeys, newKeys) {
         var change = false;
         Ext.iterate(oldKeys, function(k,v) {
             if (!newKeys[k]) {
@@ -540,17 +617,6 @@ Ext.define('Connector.model.Grid', {
                 }
             });
         }
-        if (change) {
-            this.plotKeys = newKeys;
-            this.set('plotMeasures', plotMeasures);
-            this.set('wrappedPlotMeasures', wrappedPlotMeasures);
-
-            if (!this.isActive())
-            {
-                this.activeMeasure = true;
-            }
-        }
-
         return change;
     },
 
@@ -703,7 +769,7 @@ Ext.define('Connector.model.Grid', {
                     return;
                 }
 
-                var configResults = [];
+                var configResults = [], state = Connector.getState();
 
                 Ext.each(results, function(result) {
                     configResults.push({
@@ -716,7 +782,7 @@ Ext.define('Connector.model.Grid', {
                 // 1. replacement, find the record id
                 // 2. new, create a new app filter
 
-                var appFilters = this.olapProvider.getFilters(), newFilters = [], filter;
+                var appFilters = state.getFilters(), newFilters = [], filter;
 
                 Ext.each(configResults, function(configResult) {
 
@@ -777,13 +843,13 @@ Ext.define('Connector.model.Grid', {
 
                 appFilters = appFilters.concat(newFilters);
 
-                this.olapProvider.setFilters(appFilters);
+                state.setFilters(appFilters);
                 this.filterMap = {};
                 this.idMap = {};
 
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                this.bindFilters(this.olapProvider.getFilters());
+                this.bindFilters(state.getFilters());
 
             }, null, this);
         }
@@ -822,9 +888,10 @@ Ext.define('Connector.model.Grid', {
             this.removeAllGridFilters();
         }
         else {
+            var state = Connector.getState();
             Ext.iterate(this.filterMap, function(urlParam, id) {
                 if (urlParam.indexOf(fieldKey) > -1) {
-                    this.olapProvider.removeFilter(id, 'Subject');
+                    state.removeFilter(id, 'Subject');
                     this.clearFilter(urlParam);
                 }
             }, this);
@@ -832,8 +899,9 @@ Ext.define('Connector.model.Grid', {
     },
 
     removeAllGridFilters : function() {
+        var state = Connector.getState();
         Ext.iterate(this.filterMap, function(urlParam, id) {
-            this.olapProvider.removeFilter(id, 'Subject');
+            state.removeFilter(id, 'Subject');
         }, this);
 
         this.filterMap = {};
@@ -905,10 +973,6 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    setOlapProvider : function(olapProvider) {
-        this.olapProvider = olapProvider;
-    },
-
     setActive : function(active) {
         this.set('active', active);
 
@@ -922,7 +986,7 @@ Ext.define('Connector.model.Grid', {
                 }
             }
             else if (this.activeFilter) {
-                this.onAppFilterChange(this.olapProvider.getFilters());
+                this.onAppFilterChange(Connector.getState().getFilters());
             }
         }
     },

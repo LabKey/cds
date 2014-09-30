@@ -682,7 +682,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             queryName: lookup.queryName
         });
 
-        SS = Ext.create('Ext.data.Store', {
+        return Ext.create('Ext.data.Store', {
             model   : 'Connector.model.ColumnInfo',
             storeId : storeId,
             proxy   : {
@@ -699,8 +699,6 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             }],
             autoLoad: true
         });
-
-        return SS;
     },
 
     getVariableOptionsTitlePanel : function(title) {

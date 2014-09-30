@@ -82,6 +82,11 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Proxy.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/data/Store.js"></script>
 
+    <!-- Internal Dependencies -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Base.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
+
     <!-- Study Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
@@ -141,7 +146,9 @@
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
@@ -175,6 +182,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/InfoPane.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/GridPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PlotPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSave.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
@@ -207,6 +215,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Home.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>

@@ -44,6 +44,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Learn": "../../../../webapp/Connector/src/controller/Learn.js",
   "Connector.controller.Main": "../../../../webapp/Connector/src/controller/Main.js",
   "Connector.controller.Navigation": "../../../../webapp/Connector/src/controller/Navigation.js",
+  "Connector.controller.Query": "../../../../webapp/Connector/src/controller/Query.js",
   "Connector.controller.Router": "../../../../webapp/Connector/src/controller/Router.js",
   "Connector.controller.Signin": "../../../../webapp/Connector/src/controller/Signin.js",
   "Connector.controller.State": "../../../../webapp/Connector/src/controller/State.js",
@@ -89,6 +90,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.DimensionSelector": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterStatus": "../../../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.Grid": "../../../../webapp/Connector/src/view/Grid.js",
+  "Connector.view.GridPane": "../../../../webapp/Connector/src/view/GridPane.js",
   "Connector.view.GroupListView": "../../../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../../../webapp/Connector/src/view/GroupSave.js",
   "Connector.view.GroupSaveList": "../../../../webapp/Connector/src/view/GroupSave.js",
@@ -141,6 +143,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
+  "Connector.window.AbstractFilter": "../../../../webapp/Connector/src/window/AbstractFilter.js",
+  "Connector.window.Facet": "../../../../webapp/Connector/src/window/Facet.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
   "Connector.window.SystemMessage": "../../../../webapp/Connector/src/window/SystemMessage.js",
   "Ext": "../../ext/src",
@@ -202,6 +206,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
+  "Connector.controller.Query": [],
   "Connector.controller.Router": [],
   "Connector.controller.Signin": [],
   "Connector.controller.State": [],
@@ -247,6 +252,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.DimensionSelector": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.Grid": [],
+  "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
   "Connector.view.GroupSaveList": [],
@@ -299,6 +305,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
+  "Connector.window.AbstractFilter": [],
+  "Connector.window.Facet": [],
   "Connector.window.Filter": [],
   "Connector.window.SystemMessage": [],
   "Ext.AbstractComponent": [],
@@ -1181,6 +1189,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Learn": [],
   "Connector.controller.Main": [],
   "Connector.controller.Navigation": [],
+  "Connector.controller.Query": [],
   "Connector.controller.Router": [],
   "Connector.controller.Signin": [],
   "Connector.controller.State": [],
@@ -1268,6 +1277,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Grid": [
     "widget.groupdatagrid"
   ],
+  "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [
     "widget.grouplistview"
   ],
@@ -1405,6 +1415,10 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.Text": [
     "widget.module.text"
+  ],
+  "Connector.window.AbstractFilter": [],
+  "Connector.window.Facet": [
+    "widget.columnfacetwin"
   ],
   "Connector.window.Filter": [
     "widget.columnfilterwin"
