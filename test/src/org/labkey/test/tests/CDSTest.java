@@ -170,7 +170,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Validate counts and about link
         //
         Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "3 studies connected together combining");
-        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "7,427 data points.");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "3,335 data points.");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
 
@@ -647,21 +647,21 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
         grid.ensureColumnsPresent("Point IC50");
-        grid.waitForCount(1000);
+        grid.waitForCount(702);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
-        grid.waitForCount(1000);
+        grid.waitForCount(702);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Filter on a looked-up column");
         grid.setFacet("PI", "Mark Igra");
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.waitForCount(1000);
-        _asserts.assertFilterStatusCounts(34, 2, 3);
+        grid.waitForCount(445);
+        _asserts.assertFilterStatusCounts(15, 2, 2);
 
         log("Filter undo on grid");
         cds.clearFilter();
@@ -671,8 +671,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.waitForCount(1000);
-        _asserts.assertFilterStatusCounts(34, 2, 3);
+        grid.waitForCount(445);
+        _asserts.assertFilterStatusCounts(15, 2, 2);
 
 //        log("update a column filter that already has a filter");
 //        grid.setFacet("Race", "Black");
@@ -740,7 +740,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.applySelection(CDSHelper.ASSAYS[1]);
         _asserts.assertSelectionStatusCounts(24, 1, 2);
         cds.applySelection(CDSHelper.ASSAYS[3]);
-        _asserts.assertSelectionStatusCounts(132, 2, 3);
+        _asserts.assertSelectionStatusCounts(64, 2, 3);
         //cds.applySelection(CDSHelper.ASSAYS[2]);
      //   _asserts.assertSelectionStatusCounts(132, 2, 3);
         cds.goToSummary();
@@ -775,7 +775,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
         waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
-        _asserts.assertSelectionStatusCounts(12, 1, 2);
+        _asserts.assertSelectionStatusCounts(3, 1, 2);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts(this);
         // end 14910
@@ -787,7 +787,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectInfoPaneItem(CDSHelper.LABS[2], false);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
         cds.saveGroup(GROUP_NAME, GROUP_DESC);
-        _asserts.assertFilterStatusCounts(12, 1, 2);
+        _asserts.assertFilterStatusCounts(3, 1, 2);
         cds.clearFilter();
         _asserts.assertDefaultFilterStatusCounts(this);
         cds.goToSummary();
