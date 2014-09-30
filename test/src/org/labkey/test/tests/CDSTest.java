@@ -640,7 +640,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertColumnsNotPresent("Point IC50");
         grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
 
-        grid.setFilter("Race", "White");
+        grid.setFacet("Race", "White");
         grid.waitForCount(1000);
         _asserts.assertFilterStatusCounts(84,3,3);
 
@@ -657,7 +657,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Filter on a looked-up column");
-        grid.setFilter("PI", "Mark Igra");
+        grid.setFacet("PI", "Mark Igra");
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.waitForCount(1000);
@@ -674,10 +674,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.waitForCount(1000);
         _asserts.assertFilterStatusCounts(34, 2, 3);
 
-        log("update a column filter that already has a filter");
-        grid.setFacet("Race", "Black");
-        grid.waitForCount(1000);
-        _asserts.assertFilterStatusCounts(27, 2, 3);
+//        log("update a column filter that already has a filter");
+//        grid.setFacet("Race", "Black");
+//        grid.waitForCount(1000);
+//        _asserts.assertFilterStatusCounts(27, 2, 3);
 
 //        log("Ensure filtering goes away when column does");
 //        gridColumnSelector.removeLookupColumn("NAb", "Lab", "PI");
