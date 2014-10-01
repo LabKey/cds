@@ -279,21 +279,22 @@ Ext.define('Connector.view.Grid', {
                 fields = this.grid.getStore().proxy.reader.getFields();
             }
 
-            if (fields) {
-                for (var i = 0; i < fields.length; i++) {
-                    if (fields[i].name == columnName) {
-                        target = Ext.clone(fields[i]);
-                        break;
+            if (!Ext.isEmpty(fields)) {
+                Ext.each(fields, function(field) {
+                    if (field.name === columnName) {
+                        target = Ext.clone(field);
+                        return false;
                     }
-                }
+                });
             }
 
-            if (target) {
-                target.filterField = (Ext.isDefined(target.displayField) ? target.displayField : target.fieldKey);
+            if (Ext.isDefined(target)) {
+                target.filterField = (!Ext.isEmpty(target.displayField) ? target.displayField : target.fieldKey);
             }
-            else {
-                console.warn('failed to find column metadata:', columnName);
-            }
+        }
+
+        if (!Ext.isDefined(target)) {
+            console.warn('failed to find column metadata:', columnName);
         }
 
         return target;
@@ -548,31 +549,33 @@ Ext.define('Connector.view.Grid', {
 
             var metadata = this.getColumnMetadata(column.dataIndex);
 
-            var config = {
-                col: column,
-                columnMetadata: metadata,
-                dataView: this,
-                listeners: {
-                    filter: function(win, boundColumn, filterArray) {
-                        this.fireEvent('applyfilter', this, boundColumn, filterArray);
-                    },
-                    clearfilter: function(win, fieldKeyPath) {
-                        this.fireEvent('removefilter', this, fieldKeyPath, false);
-                    },
-                    clearall: function() {
-                        this.fireEvent('removefilter', this, null, true);
+            if (Ext.isDefined(metadata)) {
+                var config = {
+                    col: column,
+                    columnMetadata: metadata,
+                    dataView: this,
+                    listeners: {
+                        filter: function(win, boundColumn, filterArray) {
+                            this.fireEvent('applyfilter', this, boundColumn, filterArray);
+                        },
+                        clearfilter: function(win, fieldKeyPath) {
+                            this.fireEvent('removefilter', this, fieldKeyPath, false);
+                        },
+                        clearall: function() {
+                            this.fireEvent('removefilter', this, null, true);
+                        },
+                        scope: this
                     },
                     scope: this
-                },
-                scope: this
-            };
+                };
 
-            var clzz = 'Connector.window.Filter';
-            if (metadata.jsonType === 'string') {
-                clzz = 'Connector.window.Facet';
+                var clzz = 'Connector.window.Filter';
+                if (metadata.jsonType === 'string') {
+                    clzz = 'Connector.window.Facet';
+                }
+
+                this.filterWin = Ext.create(clzz, config);
             }
-
-            this.filterWin = Ext.create(clzz, config);
         }
         else {
             console.error('Unable to find column for filtering.');

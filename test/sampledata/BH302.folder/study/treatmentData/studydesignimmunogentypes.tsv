@@ -1,0 +1,13 @@
+Name	Label	Inactive
+Device	Device	false
+DNA	DNA	false
+Protein	Protein	false
+Virus	Virus	false
+DNAPlasmidVaccine	DNA Plasmid Vaccine	false
+Placebo	Placebo	false
+RecombinantAdenoviralVectorVaccine	recombinant adenoviral vector vaccine	false
+Adenovirus	Adenovirus	false
+Poxvirus	Poxvirus	false
+Sugar	Sugar	false
+Vaccine	Vaccine	false
+Adjuvant	Adjuvant	false

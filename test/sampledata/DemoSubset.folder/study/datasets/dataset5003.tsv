@@ -1,7 +1,33 @@
 SubjectId	date	QCStateLabel	hivinf	Country	Height	Sex	Group	Comments	Race	EnrolledClinicalSite	prot	rx	rx_code	arm	age	bmi	baseline_ad5_titer	circumcised	hivcutoffday	randomization	per_protocol	ad5_grp	bmi_grp	species	SequenceNum
-249318596	2008-05-17 00:00:00.0		uninfected	USA		m			Black/African American	CHN															-1.0
-249320107	2008-06-04 00:00:00.0		uninfected	USA		f			Indian	CHN															-1.0
-249320127	2008-07-30 00:00:00.0		uninfected	USA		f			Indian	CHN															-1.0
-249320489	2008-07-30 00:00:00.0		uninfected	USA		f			White	CHN															-1.0
-249320897	2008-05-01 00:00:00.0		uninfected	USA		f			American Indian/Alaskan Native	CHN															-1.0
-249325717	2008-04-27 00:00:00.0		uninfected	USA		m			White	CHN															-1.0
+249318596	2008-05-17 00:00:00.0		uninfected	USA		m			Black/African American	CHN															-1
+249320107	2008-06-04 00:00:00.0		uninfected	USA		f			Indian	CHN															-1
+249320127	2008-07-30 00:00:00.0		uninfected	USA		f			Indian	CHN															-1
+249320489	2008-07-30 00:00:00.0		uninfected	USA		f			White	CHN															-1
+249320897	2008-05-01 00:00:00.0		uninfected	USA		f			American Indian/Alaskan Native	CHN															-1
+249325717	2008-04-27 00:00:00.0		uninfected	USA		m			White	CHN															-1
+249325718	2008-05-12 00:00:00.0		infected	USA		m			White	CHN															-1
+249325719	2008-06-03 00:00:00.0		infected	USA		m			Black/African American	CHN															-1
+249325720	2008-05-15 00:00:00.0		infected	USA		f			Indian	CHN															-1
+249325721	2008-05-03 00:00:00.0		infected	USA		f			Asian	CHN															-1
+249325722	2008-05-17 00:00:00.0		infected	USA		m			Asian	CHN															-1
+249325723	2008-06-04 00:00:00.0		uninfected	USA		f			Native Hawaiian or Other Pacific Islander	CHN															-1
+249325724	2008-07-30 00:00:00.0		uninfected	USA		f			Native Hawaiian or Other Pacific Islander	CHN															-1
+249325725	2008-07-30 00:00:00.0		uninfected	USA		f			American Indian/Alaskan Native	CHN															-1
+249325726	2008-05-01 00:00:00.0		infected	USA		f			American Indian/Alaskan Native	CHN															-1
+249325727	2008-04-27 00:00:00.0		infected	USA		m			Indian	CHN															-1
+249325728	2008-05-12 00:00:00.0		infected	USA		m			White	CHN															-1
+249325729	2008-06-03 00:00:00.0		uninfected	USA		m			White	CHN															-1
+249325730	2008-05-15 00:00:00.0		uninfected	USA		m			White	CHN															-1
+249325731	2008-05-05 00:00:00.0		uninfected	USA		f			White	CHN															-1
+249325732	2008-05-17 00:00:00.0		uninfected	USA		f			White	CHN															-1
+249325733	2008-06-04 00:00:00.0		infected	USA		f			White	CHN															-1
+249325734	2008-07-30 00:00:00.0		infected	USA		f			American Indian/Alaskan Native	CHN															-1
+249325735	2008-07-30 00:00:00.0		infected	USA		m			American Indian/Alaskan Native	CHN															-1
+249325736	2008-05-01 00:00:00.0		infected	USA		m			American Indian/Alaskan Native	CHN															-1
+249325737	2008-04-27 00:00:00.0		infected	USA		m			Black/African American	CHN															-1
+249325738	2008-05-12 00:00:00.0		infected	USA		m			Black/African American	CHN															-1
+249325739	2008-06-03 00:00:00.0		uninfected	USA		f			Black/African American	CHN															-1
+249325740	2008-05-15 00:00:00.0		uninfected	USA		f			Asian	CHN															-1
+249325741	2008-05-03 00:00:00.0		uninfected	USA		f			Asian	CHN															-1
+249325742	2008-05-17 00:00:00.0		uninfected	USA		f			Black/African American	CHN															-1
+249325743	2008-06-04 00:00:00.0		uninfected	USA		f			Black/African American	CHN															-1

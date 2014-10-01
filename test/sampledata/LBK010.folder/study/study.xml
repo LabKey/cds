@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Exported from Dataspace Demo Server at https://cds.labkey.com/project/Demo%20Data/LBK%20010/begin.view by kristinf on Thu Sep 25 16:35:36 PDT 2014-->
+<study archiveVersion="14.21" label="LBK 010" timepointType="VISIT" subjectNounSingular="Subject" subjectNounPlural="Subjects" subjectColumnName="SubjectId" investigator="Bellew M" grant="THTI" species="Human" alternateIdPrefix="" alternateIdDigits="6" defaultTimepointDuration="1" startDate="2003-01-01-08:00" securityType="BASIC_READ" xmlns="http://labkey.org/study/xml">
+  <assaySchedule dir="assaySchedule"/>
+  <cohorts type="AUTOMATIC" mode="SIMPLE" datasetId="5004" datasetProperty="HIVWestern" file="cohorts.xml"/>
+  <datasets dir="datasets" file="datasets_manifest.xml">
+    <definition file="LBK.dataset"/>
+  </datasets>
+  <comments/>
+  <protocolDocs dir="protocolDocs"/>
+  <specimens dir="specimens" settings="specimen_settings.xml" file="LBK.specimens"/>
+  <treatmentData dir="treatmentData"/>
+  <visits file="visit_map.xml"/>
+  <studyViews dir="views" settings="settings.xml"/>
+  <studyDescription rendererType="HTML">
+    <description><![CDATA[Real CHAVI 001 description: The specimens collected during the course of this study will be used to investigate the following specific aims:<br/><br/>
+Aims directed at the transmitted virus
+<ol>
+<li>To determine the genetic, biologic, antigenic, and structural characteristics of sexually transmitted virus and mechanisms underlying virus transmission.</li>
+<li>To determine the source (cell free and/or cell associated) of sexually acquired HIV-1.</li>
+<li>To determine the cellular and molecular events in mucosal epithelial cell induction of virion production from virus infected cells.</li>
+<li>To determine whether acutely transmitted virus differs from chronic HIV-1 in co-receptor usage, relative CD4+ dependence and neutralization susceptibility</li>
+</ol>]]></description>
+  </studyDescription>
+  <properties dir="properties"/>
+</study>

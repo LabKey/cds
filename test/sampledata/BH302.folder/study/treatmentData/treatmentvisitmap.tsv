@@ -1,0 +1,7 @@
+CohortId	TreatmentId	VisitId	cohortId.label	visitId.sequenceNumMin
+825	36	9904	Vaccine	1.0
+825	39	9905	Vaccine	4.0
+824	35	9904	Placebo	1.0
+824	35	9905	Placebo	4.0
+826	39	9904	Vaccine Boost	1.0
+826	39	9905	Vaccine Boost	4.0

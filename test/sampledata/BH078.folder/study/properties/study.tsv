@@ -1,0 +1,23 @@
+Label	StartDate	EndDate	TimepointType	SubjectNounSingular	SubjectNounPlural	SubjectColumnName	Grant	Investigator	Species	ParticipantAliasDatasetId	ParticipantAliasProperty	ParticipantAliasSourceProperty	AssayPlan	Description	DescriptionRendererType	DateBased	LSID	Editorial	Network	Phase	SiteLocations	Contact	ContactEmail	SecondaryContact	SecondaryContactEmail	Title	Objectives	Stage	StudyPopulation
+BH 078	2002-03-12 00:00:00.0		VISIT	Participant	Participants	ParticipantId	NIH315	Igra M	Human					The purpose of BH 078 was to collect peripheral blood specimens from patients chronically infected with HIV-1 to study the frequency and molecular basis of broad and potent antibody-mediated virus neutralization and the viral mechanisms of antibody avoidance, as well as other aspects of the immunobiology or immunogenetics of HIV-1 infection pertaining to virus containment.	TEXT_WITH_LINKS	false	urn:lsid:labkey.com:Study.Folder-160:160	"In order to address unmet needs in HIV/AIDS vaccine research, the US National 
+Institutes of Health (NIH) has awarded a grant to a group of investigators to implement 
+The Center for HIV/AIDS Vaccine Immunology (CHAVI), as a US Government 
+contribution to the Global HIV/AIDS Vaccine Enterprise (GHAVE). CHAVI 
+investigators will use state-of-the art technology through carefully designed, focused, and 
+coordinated studies to address Enterprise-identified gaps in our knowledge targeted at 
+enabling the production of a successful HIV-1 vaccine. In CHAVI 008, CHAVI 
+investigators will work on the discovery of new information about the molecular basis of 
+broad and potent HIV-1 neutralization in naturally infected individuals."	BH	Observational	49.261226, -123.113927; 43.653226, -79.383184; 47.560541, -52.712831	Nick Arnold	nicka@labkey.com	Alan Vezina	alanv@labkey.com		"Primary Objectives:
+<ul>
+<li>To determine the prevalence of acute HIV infection at the participating sites.</li>
+<li>To determine the characteristics of the transmitted virus in acute HIV-1 infection.</li>
+<li>To determine the host acquired and innate immunes responses that contribute to virus control and/or protection against infection with HIV-1.</li>
+<li>To determine the genetic factors that contributes to early virus control and/or protection from infection with HIV-1.</li>
+<li>To examine the clinical, laboratory, and behavioral characteristics of individuals at diverse sites with acute HIV infection and their sexual partners, and appropriate controls.</li>
+</ul>"	Ongoing	"Up to approximately 1300 participants who are 18 years or older will be enrolled into this study. Eligible participants will be placed into one of the following four study groups:
+<ul>
+<li>Group 1: Proven acute HIV-1 infection: approximately 600 total</li>
+<li>Group 1A: Sexual partners of members of Group 1: approximately 600 total</li>
+<li>Group 2: Established HIV-1 infection: approximately 50 total</li>
+<li>Group 3: HIV-1 negative: approximately 50 total</li>
+</ul>"

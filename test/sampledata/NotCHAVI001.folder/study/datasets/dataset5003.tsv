@@ -1,13 +1,101 @@
 SubjectId	date	QCStateLabel	hivinf	Country	Height	Sex	Group	Comments	Race	EnrolledClinicalSite	prot	rx	rx_code	arm	age	bmi	baseline_ad5_titer	circumcised	hivcutoffday	randomization	per_protocol	ad5_grp	bmi_grp	species	SequenceNum
-3001	2012-03-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1.0
-3002	2011-12-05 00:00:00.0		infected	USA		f			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1.0
-3003	2011-07-04 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1.0
-3004	2011-08-03 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1.0
-3005	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1.0
-3006	2011-09-18 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1.0
-3007	2011-10-29 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1.0
-3008	2011-12-03 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1.0
-3009	2011-07-12 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1.0
-3010	2012-02-01 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1.0
-3011	2011-06-01 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1.0
-3012	2011-11-21 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1.0
+193001	2012-03-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193002	2011-12-05 00:00:00.0		infected	USA		f			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193003	2011-07-04 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193004	2011-08-03 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193005	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193006	2011-09-18 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193007	2011-10-29 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193008	2011-12-03 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193009	2011-07-12 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193010	2012-02-01 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193011	2011-06-01 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193012	2011-11-21 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193013	2012-02-15 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193014	2011-09-18 00:00:00.0		infected	USA		m			Asian	Henderson Wellness Clinic															-1
+193015	2011-10-29 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193016	2011-12-03 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193017	2011-07-12 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193018	2012-02-01 00:00:00.0		infected	USA		f			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193019	2012-03-01 00:00:00.0		infected	USA		m			American Indian/Alaska Native	Henderson Wellness Clinic															-1
+193020	2011-12-05 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193021	2012-03-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193022	2011-12-05 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193023	2011-07-04 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193024	2011-08-03 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193025	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193026	2011-09-18 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193027	2011-10-29 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193028	2011-12-03 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193029	2011-07-12 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193030	2012-02-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193031	2011-06-01 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193032	2011-11-21 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193033	2012-02-15 00:00:00.0		infected	USA		m			Asian	Henderson Wellness Clinic															-1
+193034	2011-09-18 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193035	2011-10-29 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193036	2011-12-03 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193037	2011-07-12 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193038	2012-02-01 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193039	2012-03-01 00:00:00.0		infected	USA		m			American Indian/Alaska Native	Henderson Wellness Clinic															-1
+193040	2011-12-05 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193041	2012-03-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193042	2011-12-05 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193043	2011-07-04 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193044	2011-08-03 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193045	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193046	2011-09-18 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193047	2011-10-29 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193048	2011-12-03 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193049	2011-07-12 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193050	2012-02-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193051	2011-06-01 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193052	2011-11-21 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193053	2012-02-15 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193054	2011-09-18 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193055	2011-10-29 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193056	2011-12-03 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193057	2011-07-12 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193058	2012-02-01 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193059	2012-03-01 00:00:00.0		infected	USA		m			American Indian/Alaska Native	Henderson Wellness Clinic															-1
+193060	2011-12-05 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193061	2012-03-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193062	2011-12-05 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193063	2011-07-04 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193064	2011-08-03 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193065	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193066	2011-09-18 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193067	2011-10-29 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193068	2011-12-03 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193069	2011-07-12 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193070	2012-02-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193071	2011-06-01 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193072	2011-11-21 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193073	2012-02-15 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193074	2011-09-18 00:00:00.0		infected	USA		m			Asian	Henderson Wellness Clinic															-1
+193075	2011-10-29 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193076	2011-12-03 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193077	2011-07-12 00:00:00.0		infected	USA		f			Asian	Henderson Wellness Clinic															-1
+193078	2012-02-01 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193079	2012-03-01 00:00:00.0		infected	USA		f			American Indian/Alaska Native	Henderson Wellness Clinic															-1
+193080	2011-12-05 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193081	2012-03-01 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193082	2011-12-05 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193083	2011-07-04 00:00:00.0		infected	USA		f			Black/African American	Henderson Wellness Clinic															-1
+193084	2011-08-03 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193085	2012-02-15 00:00:00.0		infected	USA		f			Indian	Henderson Wellness Clinic															-1
+193086	2011-09-18 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193087	2011-10-29 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193088	2011-12-03 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193089	2011-07-12 00:00:00.0		infected	USA		f			White	Henderson Wellness Clinic															-1
+193090	2012-02-01 00:00:00.0		infected	USA		m			Black/African American	Henderson Wellness Clinic															-1
+193091	2011-06-01 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193092	2011-11-21 00:00:00.0		infected	USA		m			White	Henderson Wellness Clinic															-1
+193093	2012-02-15 00:00:00.0		infected	USA		m			Asian	Henderson Wellness Clinic															-1
+193094	2011-09-18 00:00:00.0		infected	USA		m			Asian	Henderson Wellness Clinic															-1
+193095	2011-10-29 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193096	2011-12-03 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1
+193097	2011-07-12 00:00:00.0		infected	USA		m			Asian	Henderson Wellness Clinic															-1
+193098	2012-02-01 00:00:00.0		infected	USA		m			Native Hawaiian/Pacific Islander	Henderson Wellness Clinic															-1
+193099	2012-03-01 00:00:00.0		infected	USA		m			American Indian/Alaska Native	Henderson Wellness Clinic															-1
+193100	2011-12-05 00:00:00.0		infected	USA		m			Indian	Henderson Wellness Clinic															-1

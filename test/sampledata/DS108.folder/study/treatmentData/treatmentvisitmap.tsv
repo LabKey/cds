@@ -1,0 +1,7 @@
+CohortId	TreatmentId	VisitId	cohortId.label	visitId.sequenceNumMin
+818	17	8730	Positive	
+817	18	8730	Negative	
+818	17	8732	Positive	
+817	19	8732	Negative	
+818	17	33986	Positive	
+817	18	33986	Negative	

@@ -1,0 +1,19 @@
+Label	StartDate	EndDate	TimepointType	SubjectNounSingular	SubjectNounPlural	SubjectColumnName	Grant	Investigator	Species	ParticipantAliasDatasetId	ParticipantAliasProperty	ParticipantAliasSourceProperty	AssayPlan	Description	DescriptionRendererType	DateBased	LSID	Editorial	Network	Phase	SiteLocations	Contact	ContactEmail	SecondaryContact	SecondaryContactEmail	Title	Objectives	Stage	StudyPopulation
+LBK 001	2005-04-01 00:00:00.0		DATE	Participant	Participants	ParticipantId	DAIDS	Gavin Churchyard	Human					"LBK 001 is the name of a clinical trial to test the safety and immune response of two experimental 
+HIV vaccines. The study vaccines are described below. 
+The trial will test whether the study vaccines are safe and well tolerated, and whether they cause an 
+immune response."	TEXT_WITH_LINKS	true	urn:lsid:labkey.com:Study.Folder-155:155		LBK	Trial	13.727896,100.524123;13.862113,100.514353;12.927608,100.877081;40.678178,-73.944158;34.0500,118.2500	kristinf@labkey.com		jessim@labkey.com		Study Comparing DNA, Ad5, and Placebo treatments for HIV	"Develop additional strategies to enhance:
+<ul>
+<li>Recruitment of individuals with acute HIV infection. Under this objective, the usefulness of collecting information on locations of sex partner formation in developing countries with generalized epidemics for identifying locations as recruitment sites for CHAVI 001 will be explored.</li>
+<li>Notification and recruitment of partners of individuals with acute HIV infection. Under this objective, the following will be explored: Acceptability and feasibility of sex partner notification, including ethical issues, barriers, facilitators, and different methods of notification (patient referral and provider referral), from both the perspectives of the index case and sexual partners, Perceived feasibility of social partner referral (i.e. social contacts)</li>
+<li>Retention of individuals with acute HIV infection and their partners, once 
+enrolled </li>
+<li>Community understanding of acute HIV infection and on-going support</li>
+</ul>"	I	"Up to approximately 600 participants (500 from King’s College Hospital, 100 from MRC Laboratories) will be enrolled into this study.<br/><br/>
+Eligible participants will include:
+<ul>
+<li>those individuals with a positive antibody test for HIV-1 infection</li>
+<li>without a clinical history or laboratory findings that suggest the acquisition of HIV-1 in the preceding six months</li>
+<li>and not receiving antiretroviral therapy at the time of enrollment or in the preceding three 
+months.</li>
+<br/>Participants will be enrolled at clinics where patients infected by HIV-1 clades A, B, C, D, and A/G (CRF02) are prevalent."

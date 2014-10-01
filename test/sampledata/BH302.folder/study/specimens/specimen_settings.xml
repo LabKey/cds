@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specimens repositoryType="STANDARD" enableRequests="false" editableRepository="false" xmlns="http://labkey.org/study/xml">
+  <webPartGroupings>
+    <grouping>
+      <groupBy>Primary Type</groupBy>
+      <groupBy>Derivative Type</groupBy>
+      <groupBy>Additive Type</groupBy>
+    </grouping>
+    <grouping>
+      <groupBy>Derivative Type</groupBy>
+      <groupBy>Additive Type</groupBy>
+      <groupBy/>
+    </grouping>
+  </webPartGroupings>
+  <locationTypes>
+    <repository allowRequests="true"/>
+    <clinic allowRequests="true"/>
+    <siteAffiliatedLab allowRequests="true"/>
+    <endpointLab allowRequests="true"/>
+  </locationTypes>
+  <displaySettings>
+    <commentsAndQC defaultToCommentsMode="false" enableManualQCFlagging="true"/>
+    <lowSpecimenWarnings lastVial="ALL_USERS" zeroVials="ALL_USERS"/>
+  </displaySettings>
+</specimens>

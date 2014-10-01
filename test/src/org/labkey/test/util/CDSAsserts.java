@@ -43,10 +43,10 @@ public class CDSAsserts
 
     public void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Subject characteristics", "32 subject characteristics", "4 countries", "2 sexes", "2 hiv infection statuses", "1 species", "6 races & subtypes");
-        assertCDSPortalRow("Study products", "3 study products");
-        assertCDSPortalRow("Assays", "4 assays", "3 types", "4 platforms");
-        assertCDSPortalRow("Studies", "4 studies");
+        assertCDSPortalRow("Subject characteristics", "232 subject characteristics", "2 countries", "2 sexes", "2 hiv infection statuses", "1 species", "8 races & subtypes");
+        assertCDSPortalRow("Study products", "2 study products");
+        assertCDSPortalRow("Assays", "3 assays", "3 types", "3 platforms");
+        assertCDSPortalRow("Studies", "3 studies");
     }
 
     private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
@@ -175,7 +175,7 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts(CDSTest _test)
     {
-        assertFilterStatusCounts(32, 4, 4);
+        assertFilterStatusCounts(232, 3, 3);
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)

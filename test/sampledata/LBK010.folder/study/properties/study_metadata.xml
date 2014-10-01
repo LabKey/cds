@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables xmlns="http://labkey.org/data/xml">
+  <table tableName="Personnel" tableDbType="TABLE">
+    <description>Contains one row per each study personnel</description>
+    <columns/>
+  </table>
+  <table tableName="Study" tableDbType="TABLE">
+    <description>Contains one row per study, describing basic and extended study properties.</description>
+    <columns>
+      <column columnName="Editorial">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Editorial</columnTitle>
+        <description>Information on key points of this study, specifically targeted to dataspace users.</description>
+      </column>
+      <column columnName="Network">
+        <datatype>varchar</datatype>
+        <columnTitle>Network</columnTitle>
+        <description>HVTN | CAVD</description>
+      </column>
+      <column columnName="Phase">
+        <datatype>varchar</datatype>
+        <columnTitle>Study Type</columnTitle>
+        <description>Phase I | Phase II</description>
+      </column>
+      <column columnName="SiteLocations">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Site Locations</columnTitle>
+        <description>A semi-colon separated list of latitude/longitude values.
+Ex. x, y; a, b; m, n</description>
+      </column>
+      <column columnName="Contact">
+        <datatype>varchar</datatype>
+        <columnTitle>Contact</columnTitle>
+      </column>
+      <column columnName="ContactEmail">
+        <datatype>varchar</datatype>
+        <columnTitle>Contact Email</columnTitle>
+      </column>
+      <column columnName="SecondaryContact">
+        <datatype>varchar</datatype>
+        <columnTitle>Secondary Contact</columnTitle>
+      </column>
+      <column columnName="SecondaryContactEmail">
+        <datatype>varchar</datatype>
+        <columnTitle>Secondary Contact Email</columnTitle>
+      </column>
+      <column columnName="Title">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Title</columnTitle>
+      </column>
+      <column columnName="Objectives">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Objectives</columnTitle>
+      </column>
+      <column columnName="Stage">
+        <datatype>varchar</datatype>
+        <columnTitle>Stage</columnTitle>
+      </column>
+      <column columnName="StudyPopulation">
+        <datatype>varchar</datatype>
+        <inputType>textarea</inputType>
+        <columnTitle>Study Population</columnTitle>
+      </column>
+    </columns>
+  </table>
+</tables>

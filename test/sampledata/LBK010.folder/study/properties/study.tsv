@@ -1,0 +1,22 @@
+Label	StartDate	EndDate	TimepointType	SubjectNounSingular	SubjectNounPlural	SubjectColumnName	Grant	Investigator	Species	ParticipantAliasDatasetId	ParticipantAliasProperty	ParticipantAliasSourceProperty	AssayPlan	Description	DescriptionRendererType	DateBased	LSID	Editorial	Network	Phase	SiteLocations	Contact	ContactEmail	SecondaryContact	SecondaryContactEmail	Title	Objectives	Stage	StudyPopulation
+LBK 010	2003-01-01 00:00:00.0		DATE	Subject	Subjects	SubjectId	THTI	Bellew M	Human					"Real CHAVI 001 description: The specimens collected during the course of this study will be used to investigate the following specific aims:<br/><br/>
+Aims directed at the transmitted virus
+<ol>
+<li>To determine the genetic, biologic, antigenic, and structural characteristics of sexually transmitted virus and mechanisms underlying virus transmission.</li>
+<li>To determine the source (cell free and/or cell associated) of sexually acquired HIV-1.</li>
+<li>To determine the cellular and molecular events in mucosal epithelial cell induction of virion production from virus infected cells.</li>
+<li>To determine whether acutely transmitted virus differs from chronic HIV-1 in co-receptor usage, relative CD4+ dependence and neutralization susceptibility</li>
+</ol>"	HTML	true	urn:lsid:labkey.com:Study.Folder-156:156	This study is important to the dataspace because it is pretending to be the first CHAVI study.	CHAVI	Observational	51.508515, -0.125487	Matt Bellew	matthew@labkey.com	Nick Arnold	nicka@labkey.com		"Primary Objective: To determine the frequency of potent, broadly neutralizing antibodies in 
+subjects with established (non-acute) infection by different HIV-1 subtypes, and to determine the envelope epitopes recognized by these antibodies.<br/><br/>
+
+Secondary Objective: To provide a repository of clinical specimens for subsequent viral and host 
+immune and/or immunogenetic analyses including, but not limited to, adaptive or innate humoral or cellular immune responses; CD4 lymphocyte 
+counts; HIV-1 load determinations; HIV-1 cloning or isolation; HIV-1 monoclonal antibody generation; and host HLA or genetic analyses that may elucidate the biological or genetic basis of effective human immune responses to HIV-1.
+"	Ongoing	"Up to approximately 600 participants (500 from King’s College Hospital, 100 from MRC Laboratories) will be enrolled into this study.<br/><br/>
+Eligible participants will include:
+<ul>
+<li>those individuals with a positive antibody test for HIV-1 infection</li>
+<li>without a clinical history or laboratory findings that suggest the acquisition of HIV-1 in the preceding six months</li>
+<li>and not receiving antiretroviral therapy at the time of enrollment or in the preceding three 
+months.</li>
+<br/>Participants will be enrolled at clinics where patients infected by HIV-1 clades A, B, C, D, and A/G (CRF02) are prevalent."

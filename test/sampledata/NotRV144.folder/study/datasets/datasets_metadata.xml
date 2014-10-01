@@ -99,6 +99,7 @@
         <datatype>double</datatype>
         <columnTitle>Baseline Ad5 Titer</columnTitle>
         <description>The baseline ad5 titer measurement for this participant</description>
+          <keyVariable>true</keyVariable>
       </column>
       <column columnName="circumcised">
         <datatype>varchar</datatype>
@@ -165,6 +166,7 @@
       <column columnName="SystolicBloodPressure">
         <datatype>integer</datatype>
         <columnTitle>Systolic Blood Pressure</columnTitle>
+          <keyVariable>true</keyVariable>
       </column>
       <column columnName="Weight_kg">
         <datatype>integer</datatype>
@@ -347,6 +349,7 @@
         <datatype>integer</datatype>
         <columnTitle>Lymphocytes</columnTitle>
         <description>HIV infection causes an acquired immunodeficiency, principally because of depletion of CD4 lymphocytes.</description>
+          <keyVariable>true</keyVariable>
       </column>
       <column columnName="CD4">
         <datatype>integer</datatype>

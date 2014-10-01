@@ -1,6 +1,101 @@
 ParticipantId	date	QCStateLabel	hivinf	Country	Height	Sex	Group	Comments	Race	EnrolledClinicalSite	prot	rx	rx_code	arm	age	bmi	baseline_ad5_titer	circumcised	hivcutoffday	randomization	per_protocol	ad5_grp	bmi_grp	species	SequenceNum
-100	2012-02-05 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1.0
-101	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1.0
-102	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1.0
-103	2012-02-10 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1.0
-104	2012-02-01 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1.0
+9100	2012-02-05 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9101	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9102	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9103	2012-02-10 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9104	2012-02-01 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9105	2012-02-05 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9106	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9107	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9108	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9109	2012-02-01 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9110	2012-02-05 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9111	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9112	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9113	2012-02-10 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9114	2012-02-01 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9115	2012-02-05 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9116	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9117	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9118	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9119	2012-02-01 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9120	2012-02-05 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9121	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9122	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9123	2012-02-10 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9124	2012-02-01 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9125	2012-02-05 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9126	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9127	2012-02-08 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9128	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9129	2012-02-01 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9130	2012-02-05 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9131	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9132	2012-02-08 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9133	2012-02-10 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9134	2012-02-01 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9135	2012-02-05 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9136	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9137	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9138	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9139	2012-02-01 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9140	2012-02-05 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9141	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9142	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9143	2012-02-10 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9144	2012-02-01 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9145	2012-02-05 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9146	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9147	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9148	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9149	2012-02-01 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9150	2012-02-05 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9151	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9152	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9153	2012-02-10 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9154	2012-02-01 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9155	2012-02-05 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9156	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9157	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9158	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9159	2012-02-01 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9160	2012-02-05 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9161	2012-02-10 00:00:00.0		uninfected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9162	2012-02-08 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9163	2012-02-10 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
+9164	2012-02-01 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9165	2012-02-05 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9166	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9167	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9168	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9169	2012-02-01 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9170	2012-02-05 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9171	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9172	2012-02-08 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9173	2012-02-10 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9174	2012-02-01 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9175	2012-02-05 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9176	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9177	2012-02-08 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9178	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9179	2012-02-01 00:00:00.0		infected	South Africa		f			White	Durban HIV Clinic															-1
+9180	2012-02-05 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9181	2012-02-10 00:00:00.0		infected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9182	2012-02-08 00:00:00.0		uninfected	South Africa		f			White	Durban HIV Clinic															-1
+9183	2012-02-10 00:00:00.0		uninfected	South Africa		f			White	Durban HIV Clinic															-1
+9184	2012-02-01 00:00:00.0		uninfected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9185	2012-02-05 00:00:00.0		uninfected	South Africa		f			White	Durban HIV Clinic															-1
+9186	2012-02-10 00:00:00.0		uninfected	South Africa		f			Black/African American	Durban HIV Clinic															-1
+9187	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9188	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9189	2012-02-01 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9190	2012-02-05 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9191	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9192	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9193	2012-02-10 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9194	2012-02-01 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9195	2012-02-05 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9196	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9197	2012-02-08 00:00:00.0		infected	South Africa		m			White	Durban HIV Clinic															-1
+9198	2012-02-10 00:00:00.0		infected	South Africa		m			Black/African American	Durban HIV Clinic															-1
+9199	2012-02-01 00:00:00.0		uninfected	South Africa		m			White	Durban HIV Clinic															-1
