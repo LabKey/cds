@@ -660,7 +660,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.setFacet("PI", "Mark Igra");
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.waitForCount(445);
+        grid.waitForCount(443);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         log("Filter undo on grid");
@@ -671,7 +671,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.waitForCount(445);
+        grid.waitForCount(443);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
 //        log("update a column filter that already has a filter");
@@ -787,7 +787,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectInfoPaneItem(CDSHelper.LABS[2], false);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
         cds.saveGroup(GROUP_NAME, GROUP_DESC);
-        _asserts.assertFilterStatusCounts(3, 1, 2);
+        _asserts.assertFilterStatusCounts(14, 1, 2);
         cds.clearFilter();
         _asserts.assertDefaultFilterStatusCounts(this);
         cds.goToSummary();

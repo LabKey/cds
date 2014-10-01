@@ -39,7 +39,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193002	2/21/12		4		0.0112	60	60	5.9	60	60	0.0247	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193002	2/21/12		4		0.0217	60	60	4.1	60	60	0.0182	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193003	4/5/06		5		0.166	60	60	6.2	60	60	0.0172	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193003	5/5/06		22		0.066	60	60	7.9	60	60	0.0175	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193003	5/5/06		22		0.066	60	60	7.9	60	60	0.0175	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193003	3/3/07		34		0.122	60	60	4	60	60	0.0153	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193003	2/5/10		10		0.0038	60	60	4.1	60	60	0.0432	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193003	2/5/10		10		0.0025	60	60	3.5	60	60	0.0485	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -115,7 +115,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193014	10/5/10		13		0.011	60	60	7.7	60	60	0.0391	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193014	10/5/10		13		0.0197	60	60	3.9	60	60	0.0393	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193014	10/5/10		13		0.0517	60	60	7.1	60	60	0.0392	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193014	11/30/10		14		0.0258	60	60	4	60	60	0.0394	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193014	11/30/10		14		0.0258	60	60	4	60	60	0.0394	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193014	11/30/10		14		0.0037	60	60	3.9	60	60	0.0395	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193014	11/30/10		14		0.0405	60	60	4.1	60	60	0.0397	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193014	11/30/10		14		0.0203	60	60	5.7	60	60	0.0396	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -191,7 +191,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193022	12/8/10		22		0.0197	60	60	3.4	60	60	0.0627	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193022	12/18/10		19		0.0323	60	60	5.4	60	60	0.054	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193022	12/18/10		19		0.0313	60	60	2.8	60	60	0.0415	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193022	12/18/10		19		0.0148	60	60	5.9	60	60	0.0447	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193022	12/18/10		19		0.0148	60	60	5.9	60	60	0.0447	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193022	12/18/10		19		0.0248	60	60	5.3	60	60	0.0335	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193022	9/18/11		17		0.0097	60	60	8.4	60	60	0.0353	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193022	9/18/11		17		0.0333	60	60	4.8	60	60	0.0168	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -267,7 +267,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193030	12/10/10		31		0.0315	60	60	4.8	60	60	0.0295	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193030	7/12/11		28		0.0423	60	60	4.7	60	60	0.018	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193030	7/12/11		28		0.0373	60	60	4.2	60	60	0.0153	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193030	7/12/11		28		0.0398	60	60	5	60	60	0.0153	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193030	7/12/11		28		0.0398	60	60	5	60	60	0.0153	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193030	7/12/11		28		0.0363	60	60	4.2	60	60	0.0247	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193030	8/9/11		29		0.0248	60	60	5.1	60	60	0.0183	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193030	8/9/11		29		0.0122	60	60	4.2	60	60	0.0147	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -343,7 +343,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193038	8/3/11		34		0.0315	60	60	8.9	60	60	0.0692	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193038	8/3/11		34		0.0348	60	60	8	60	60	0.016	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193038	8/3/11		34		0.0322	60	60	5.2	60	60	0.067	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193038	9/20/11		35		0.0317	60	60	3	60	60	0.0152	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193038	9/20/11		35		0.0317	60	60	3	60	60	0.0152	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193038	9/20/11		35		0.0277	60	60	2.7	60	60	0.0157	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193038	9/20/11		35		0.0267	60	60	2.6	60	60	0.0548	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193038	9/20/11		35		0.0422	60	60	2.5	60	60	0.0588	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -419,7 +419,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193046	1/15/12		3		0.0687	60	60	2.9	60	60	0.0068	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193046	1/15/12		3		0.0625	60	60	5.4	60	60	0.0057	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193046	1/15/12		3		0.0403	60	60	4.5	60	60	0.0133	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193046	1/15/12		3		0.0343	60	60	2.8	60	60	0.0185	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193046	1/15/12		3		0.0343	60	60	2.8	60	60	0.0185	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193046	1/29/12		41		0.0392	60	60	5.2	60	60	0.054	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193046	1/29/12		41		0.0275	60	60	6.1	60	60	0.0415	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193046	2/18/12		42		0.041	60	60	6.2	60	60	0.0642	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -495,7 +495,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193054	10/5/11		13		0.047	60	60	3.7	60	60	0.0068	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193054	10/5/11		13		0.0353	60	60	4	60	60	0.0023	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193054	10/27/11		8		0.0275	60	60	4.6	60	60	0.0183	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193054	10/27/11		8		0.0495	60	60	4.7	60	60	0.0147	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193054	10/27/11		8		0.0495	60	60	4.7	60	60	0.0147	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193054	10/27/11		8		0.0392	60	60	4.4	60	60	0.0153	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193054	10/27/11		8		0.0507	60	60	5.1	60	60	0.018	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193054	12/29/11		9		0.0448	60	60	3.8	60	60	0.0052	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -571,7 +571,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193062	3/2/12		20		0.0193	60	60	5.5	60	60	0.0158	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193062	3/2/12		20		0.017	60	60	4.3	60	60	0.0172	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193062	3/2/12		20		0.0068	60	60	4.4	60	60	0.0193	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193062	12/18/12		19		0.049	60	60	9.2	60	60	0.0055	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193062	12/18/12		19		0.049	60	60	9.2	60	60	0.0055	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193062	12/18/12		19		0.033	60	60	5.1	60	60	0.0112	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193062	12/18/12		19		0.0342	60	60	5.5	60	60	0.0147	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193062	12/18/12		19		0.0427	60	60	5.3	60	60	0.0112	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -647,7 +647,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193071	6/1/10		33		0.0348	60	60	2.9	60	60	0.0245	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193071	6/1/10		33		0.0183	60	60	5.4	60	60	0.0275	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193071	6/1/10		33		0.011	60	60	4.4	60	60	0.0288	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193071	6/1/10		33		0.0378	60	60	4.9	60	60	0.0285	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193071	6/1/10		33		0.0378	60	60	4.9	60	60	0.0285	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193071	8/3/10		34		0.0517	60	60	5.2	60	60	0.0025	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193071	8/3/10		34		0.0197	60	60	4	60	60	0.0072	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193071	8/3/10		34		0.0037	60	60	4.9	60	60	0.0068	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -723,7 +723,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193079	11/21/10		39		0.0097	60	60	3.8	60	60	0.0748	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193079	11/21/10		39		0.0038	60	60	3	60	60	0.0498	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193079	11/21/10		39		0.0433	60	60	6.9	60	60	0.0627	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193079	11/21/10		39		0.0025	60	60	5.2	60	60	0.0473	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193079	11/21/10		39		0.0025	60	60	5.2	60	60	0.0473	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193079	12/13/10		37		0.013	60	60	4.4	60	60	0.0335	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193079	12/31/10		40		0.036	60	60	7.1	60	60	0.0347	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193079	12/31/10		40		0.0138	60	60	7.2	60	60	0.0095	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -799,7 +799,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193087	7/4/11		5		0.0098	60	60	6.6	60	60	0.0588	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193087	8/18/11		6		0.0363	60	60	5	60	60	0.0317	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193087	8/18/11		6		0.0373	60	60	5.1	60	60	0.0152	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193087	8/18/11		6		0.0543	60	60	4.6	60	60	0.0175	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193087	8/18/11		6		0.0543	60	60	4.6	60	60	0.0175	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193087	8/18/11		6		0.0253	60	60	4.5	60	60	0.029	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193087	9/10/11		7		0.0248	60	60	3.7	60	60	0.0302	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193087	9/10/11		7		0.0122	60	60	5.3	60	60	0.0257	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
@@ -875,7 +875,7 @@ SubjectId	date	QCStateLabel	Run	ConcentrationUnits	AUC	CurveIC50	CurveIC80	FitEr
 193095	11/30/11		14		0.0093	60	60	3	60	60	0.0342	Five Parameter	92RW020.2	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193095	11/30/11		14		0.0012	60	60	6	60	60	0.0362	Five Parameter	96ZM651.02	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193095	1/15/12		15		0.033	60	60	5.8	60	60	0.0607	Five Parameter	97ZA012.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
-193095	1/15/12		15		0.0528	60	60	7.5	60	60	0.0695	Five Parameter	AC10.0.29	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
+193095	1/15/12		15		0.0528	60	60	7.5	60	60	0.0695	Five Parameter	AC10.0.29	A3R5	Piehler/Eckels Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab
 193095	1/15/12		15		0.049	60	60	5.8	60	60	0.033	Five Parameter	BaL.01	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193095	1/15/12		15		0.0342	60	60	5.6	60	60	0.0403	Five Parameter	BaL.27	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
 193095	2/15/12		16		0.0333	60	60	2.5	60	60	0.0573	Five Parameter	BaL.26	A3R5	LabKey Lab	NAb-Sample-LabKey	urn:lsid:cds.scharp.org:data:not_actually_chavi_001-nab-labkey_lab		
