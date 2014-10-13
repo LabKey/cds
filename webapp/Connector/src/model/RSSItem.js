@@ -20,8 +20,7 @@ Ext.define('Connector.model.RSSItem', {
 
     proxy: {
         type: 'ajax',
-//        url: LABKEY.ActionURL.buildURL('cds', 'news.api'), // TODO: After demo uncomment this and remove xml line below.
-        url: LABKEY.contextPath + '/Connector/demo_feed.xml',
+        url: LABKEY.ActionURL.buildURL('cds', 'news.api'),
         reader: {
             type: 'xml',
             record: 'item',
