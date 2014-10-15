@@ -86,9 +86,9 @@ public class DataGridSelector
         _test.waitForText(label);
 
         Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
-        Locator.XPathLocator memberLabel = gridLoc.append(Locator.tagWithClass("div", "x-grid-cell-inner").containing(label));
+        Locator.XPathLocator row = gridLoc.append(Locator.tagWithClass("div", "x-grid-cell-inner").containing(label));
 
-        _test.click(memberLabel);
+        _test.waitAndClick(10000, row, 0);
 
         Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("Update");
         Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("Filter");
