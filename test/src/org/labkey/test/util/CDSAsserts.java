@@ -96,7 +96,6 @@ public class CDSAsserts
         _test.waitForText(textToCheck.get(0));
         _test.assertTextPresent(textToCheck);
         cds.closeInfoPage();
-        cds.waitForBarsToAnimate();
     }
 
     @LogMethod
@@ -173,7 +172,7 @@ public class CDSAsserts
         _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
     }
 
-    public void assertDefaultFilterStatusCounts(CDSTest _test)
+    public void assertDefaultFilterStatusCounts()
     {
         assertFilterStatusCounts(232, 3, 3);
     }
