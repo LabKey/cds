@@ -27,7 +27,7 @@ Ext.define('Connector.view.Selection', {
                     // Grid Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderLabel(values)]}',
                         '</div>',
@@ -37,7 +37,7 @@ Ext.define('Connector.view.Selection', {
                     // "In the plot" Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderMeasures(values)]}',
                         '</div>',
@@ -59,7 +59,7 @@ Ext.define('Connector.view.Selection', {
                                         '</select>',
                                     '</tpl>',
                                     '{% if (parent.isSelection !== true && xindex > 5) break; %}',
-                                    '<div class="status-over memberitem collapsed-member">',
+                                    '<div class="status-over memberitem memberloc collapsed-member">',
                                         '<span>{uniqueName:this.renderUniqueName}</span>',
                                     '</div>',
                                 '</tpl>',
@@ -120,6 +120,7 @@ Ext.define('Connector.view.Selection', {
                         }
                     });
 
+                    label = Ext.htmlEncode(label);
                     if (!values.isSelection) {
                         if (!values.isWhereFilter) {
                             label = "Subjects: " + label;
@@ -127,11 +128,11 @@ Ext.define('Connector.view.Selection', {
 
                         // render filter with a single member on one line
                         if (values.members.length == 1) {
-                            label += ": " + this.renderUniqueName(values.members[0].uniqueName);
+                            label += ": <div style=\"display:inline;\" class=\" memberloc\">" + this.renderUniqueName(values.members[0].uniqueName) + "</div>";
                         }
                     }
 
-                    return Ext.htmlEncode(label);
+                    return label;
                 },
                 renderUniqueName : function(uniqueName) {
                     var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
@@ -175,7 +176,7 @@ Ext.define('Connector.view.Selection', {
                         }
 
                         domString =
-                                '<div class="status-over memberitem plot-selection">' +
+                                '<div class="status-over memberitem memberloc plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
                                         measure.label +
                                         ': &gt;= ' + minVal +

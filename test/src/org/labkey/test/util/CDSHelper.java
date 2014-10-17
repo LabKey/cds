@@ -420,7 +420,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator filterMemberLocator()
         {
-            return Locator.tagWithClass("div", "memberitem");
+            return Locator.tagWithClass("div", "memberloc");
         }
 
         public static Locator.XPathLocator filterMemberLocator(String filterText)

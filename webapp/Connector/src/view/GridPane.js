@@ -46,6 +46,7 @@ Ext.define('Connector.view.GridPane', {
                             });
                             content.push({
                                 xtype: 'box',
+                                padding: '0 0 7px 0',
                                 html: Ext.htmlEncode(this.getSublabel(measure))
                             })
                         }

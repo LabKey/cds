@@ -548,7 +548,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // verify buttons available
         assertElementPresent(CDSHelper.Locators.cdsButtonLocator("filter subjects"));
-        assertElementNotPresent(CDSHelper.Locators.cdsButtonLocator("label selected subjects"));
+        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("label selected subjects")); // hidden
         assertElementPresent(CDSHelper.Locators.cdsButtonLocator("clear"));
 
         // verify split display
