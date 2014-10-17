@@ -45,24 +45,15 @@ Ext.define('Connector.view.PlotPane', {
                     content.push({
                         xtype: 'box',
                         cls: 'smallstandout soft spacer',
-                        autoEl: {
-                            tag: 'div',
-                            html: label
-                        }
+                        html: label
                     });
                     content.push({
                         xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: measures[index].measure.queryLabel
-                        }
+                        html: Ext.htmlEncode(measures[index].measure.queryLabel)
                     });
                     content.push({
                         xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: measures[index].measure.label + this.getSublabel(measures[index].measure)
-                        }
+                        html: Ext.htmlEncode(measures[index].measure.label + this.getSublabel(measures[index].measure))
                     });
                 }
             }

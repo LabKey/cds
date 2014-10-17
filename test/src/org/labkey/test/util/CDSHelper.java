@@ -224,9 +224,15 @@ public class CDSHelper
         }
     }
 
-    public void useSelectionAsFilter()
+    public void useSelectionAsSubjectFilter()
     {
-        _test.click(Locators.cdsButtonLocator("use as filter"));
+        _test.click(Locators.cdsButtonLocator("filter subjects"));
+        waitForClearSelection(); // wait for animation
+    }
+
+    public void useSelectionAsDataFilter()
+    {
+        _test.click(Locators.cdsButtonLocator("filter data"));
         waitForClearSelection(); // wait for animation
     }
 

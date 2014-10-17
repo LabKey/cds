@@ -65,7 +65,8 @@ Ext.define('Connector.panel.FilterPanel', {
             ),
             data: {
                 title: this.title
-            }
+            },
+            flex: 1
         }];
 
         for (var i=0; i < this.headerButtons.length; i++) {
@@ -99,7 +100,6 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     createHierarchyFilter : function(filterset) {
-        filterset.data.dofade = true;
         return Ext.create('Connector.view.Selection', {
             cls: 'activefilter',
             store: {
@@ -115,6 +115,10 @@ Ext.define('Connector.panel.FilterPanel', {
 
     // entry point to load raw OLAP Filters
     loadFilters : function(filters) {
+        Ext.each(filters, function(filter){
+            filter.data.isSelection = false;
+        });
+
         this.displayFilters(filters);
     },
 

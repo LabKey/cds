@@ -68,6 +68,7 @@ div.wrapitem {
   display: inline-block;
   width: 100%;
   overflow: hidden;
+  cursor: pointer;
 
   select {
     margin: 0;
@@ -91,7 +92,9 @@ div.wrapitem {
 .memberitem {
 
   float: right;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  overflow: hidden;
 
   &:hover {
     .closeitem {
@@ -117,7 +120,7 @@ div.wrapitem {
 }
 
 div.collapsed-member {
-  width: 77%;
+  width: 75%;
   padding: 4px 8px;
   font-size: 10pt;
 
@@ -159,6 +162,9 @@ div.activefilter {
     border: 1px solid transparent;
     padding: 2px 5px 2px 0;
     width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   div.status-over {

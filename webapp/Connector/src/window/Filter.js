@@ -45,7 +45,7 @@ Ext.define('Connector.window.Filter', {
             filterArray = LABKEY.Filter.merge(fa, this.columnMetadata.displayField ? this.columnMetadata.displayField : this.columnMetadata.fieldKey, colFilters);
         }
         else {
-            Ext.window.Msg.alert("Please fix errors in filter.");
+            Ext.Msg.alert("Error", "Please fix errors in filter.");
         }
 
         return filterArray;

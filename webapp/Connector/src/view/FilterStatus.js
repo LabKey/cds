@@ -38,7 +38,7 @@ Ext.define('Connector.view.FilterStatus', {
             title: 'Active filters',
             id: 'filter-panel',
             headerButtons: [
-                { xtype: 'button', text: 'save', cls: 'filtersave', itemId: 'savegroup', style: 'margin: 4px 2px 0 23px;', hidden: hidden},
+                { xtype: 'button', text: 'save', cls: 'filtersave', itemId: 'savegroup', style: 'margin: 4px 2px 0 2px;', hidden: hidden},
                 { xtype: 'button', text: 'clear', cls: 'filterclear', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
             ],
             filters: this.filters
@@ -53,10 +53,8 @@ Ext.define('Connector.view.FilterStatus', {
 
         this.selectionpanel = Ext.create('Connector.panel.Selection', {
             id: 'selection-panel',
-            tbarButtons : [
-                { text: 'use as filter', itemId: 'overlap' },
-                { text: 'label as subgroup', itemId: 'subgroup', disabled: true },
-                { text: 'clear', cls: 'selectionclear', itemId: 'sClear' }
+            headerButtons : [
+                { xtype: 'button', text: 'clear', cls: 'selectionclear', itemId: 'sClear', style: 'margin: 0 2px;'}
             ],
             filters: this.selections
         });

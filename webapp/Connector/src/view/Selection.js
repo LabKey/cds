@@ -34,7 +34,7 @@ Ext.define('Connector.view.Selection', {
                     '</div>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === true">',
-                    // Plot Filter
+                    // "In the plot" Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
                         '<div class="selitem status-over memberitem">',
@@ -49,30 +49,29 @@ Ext.define('Connector.view.Selection', {
                         '<div class="circle"></div>',
                         '<tpl if="members.length &gt; 0">',
                             '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                            '<div class="selitem sel-listing">{level:this.renderType}</div>',
-                            '<tpl for="members">',
-                                '<tpl if="xindex == 1 && xcount &gt; 1">',
-                                    '<select>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
-                                    '</select>',
+                            '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
+                            '<tpl if="members.length &gt; 1 || isSelection === true">',
+                                '<tpl for="members">',
+                                    '<tpl if="xindex == 1 && xcount &gt; 1">',
+                                        '<select>',
+                                            '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
+                                            '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
+                                        '</select>',
+                                    '</tpl>',
+                                    '{% if (parent.isSelection !== true && xindex > 5) break; %}',
+                                    '<div class="status-over memberitem collapsed-member">',
+                                        '<span>{uniqueName:this.renderUniqueName}</span>',
+                                    '</div>',
                                 '</tpl>',
-                                '{% if (parent.dofade === true && xindex > 5) break; %}',
-                                '<div class="status-over memberitem collapsed-member">',
-                                    '<span>{uniqueName:this.renderUniqueName}</span>',
-                                '</div>',
-                            '</tpl>',
-                            '<tpl if="members.length &gt; 5">',
-                                '<div class="fader"><img class="ellipse"></div>',
+                                '<tpl if="members.length &gt; 5">',
+                                    '<div class="fader"><img class="ellipse"></div>',
+                                '</tpl>',
                             '</tpl>',
                         '</tpl>',
                     '</div>',
                 '</tpl>',
             '</tpl>',
             {
-                doFade : function(dofade) {
-                    return true === dofade;
-                },
                 isGrid : function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
@@ -98,7 +97,8 @@ Ext.define('Connector.view.Selection', {
                     if (op.indexOf('REQ_AND') > -1) { markup += ' disabled'; }
                     return markup;
                 },
-                renderType : function(lvl) {
+                renderType : function(values) {
+                    var lvl = values.level;
                     var label = '';
                     Connector.STATE.onMDXReady(function(mdx) {
                         var level = mdx.getLevel(lvl);
@@ -119,6 +119,18 @@ Ext.define('Connector.view.Selection', {
                             }
                         }
                     });
+
+                    if (!values.isSelection) {
+                        if (!values.isWhereFilter) {
+                            label = "Subjects: " + label;
+                        }
+
+                        // render filter with a single member on one line
+                        if (values.members.length == 1) {
+                            label += ": " + this.renderUniqueName(values.members[0].uniqueName);
+                        }
+                    }
+
                     return Ext.htmlEncode(label);
                 },
                 renderUniqueName : function(uniqueName) {
