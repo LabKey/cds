@@ -2011,6 +2011,7 @@ Ext.define('Connector.view.Scatter', {
                 listeners: {
                     show : function(win) {
                         this.setVisibleWindow(win);
+                        this.runUniqueQuery(this.axisPanelY);
                     },
                     hide : function() {
                         this.clearVisibleWindow();
@@ -2026,9 +2027,7 @@ Ext.define('Connector.view.Scatter', {
         if (this.axisPanelY.hasSelection()) {
             this.activeYSelection = this.axisPanelY.getSelection()[0];
         }
-        this.ywin.show(targetEl, function() {
-            this.runUniqueQuery(this.axisPanelY);
-        }, this);
+        this.ywin.show(targetEl);
     },
 
     showXMeasureSelection : function(targetEl) {
@@ -2139,6 +2138,7 @@ Ext.define('Connector.view.Scatter', {
                 listeners : {
                     show : function(win) {
                         this.setVisibleWindow(win);
+                        this.runUniqueQuery(this.axisPanelX);
                     },
                     hide : function() {
                         this.clearVisibleWindow();
@@ -2159,9 +2159,7 @@ Ext.define('Connector.view.Scatter', {
         var filter = this.getPlotsFilter();
         this.xwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[0]);
 
-        this.xwin.show(targetEl, function() {
-            this.runUniqueQuery(this.axisPanelX);
-        }, this);
+        this.xwin.show(targetEl);
     },
 
     showColorSelection : function(targetEl) {
@@ -2257,6 +2255,7 @@ Ext.define('Connector.view.Scatter', {
                 listeners: {
                     show: function(win) {
                         this.setVisibleWindow(win);
+                        this.runUniqueQuery(this.colorPanel);
                     },
                     hide: function() {
                         this.clearVisibleWindow();
@@ -2277,9 +2276,7 @@ Ext.define('Connector.view.Scatter', {
         var filter = this.getPlotsFilter();
         this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
 
-        this.colorwin.show(targetEl, function() {
-            this.runUniqueQuery(this.colorPanel);
-        }, this);
+        this.colorwin.show(targetEl);
     },
 
     removeVariableFromFilter : function(measureIdx) {

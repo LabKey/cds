@@ -595,7 +595,8 @@ Ext.define('Connector.view.Grid', {
 
         // Run the query to determine current measure counts
         var mp = this.getAxisSelector().getMeasurePicker();
-        mp.setCountMemberSet(this.getModel().get('filterState').subjects);
+        var filterState = this.getModel().get('filterState');
+        mp.setCountMemberSet(filterState.hasFilters ? this.getModel().get('filterState').subjects : null);
 
         // Open with 'Current columns' selected if we have a selection
         if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
