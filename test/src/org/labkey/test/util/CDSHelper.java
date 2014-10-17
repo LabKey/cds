@@ -67,7 +67,6 @@ public class CDSHelper
         _test.click(Locator.css(".sortDropdown"));
         _test.waitAndClick(Locator.xpath("//span[text()='" + sortBy + "' and contains(@class, 'x-menu-item-text')]"));
         _test.waitForElement(Locator.css("span.sorttype").withText(sortBy.toUpperCase()));
-        waitForBarsToAnimate();
     }
 
     public void pickSort(String sort, String waitValue)
@@ -80,38 +79,12 @@ public class CDSHelper
     {
         _test.click(Locators.cdsDropDownButtonLocator("dimselectdrop"));
         _test.waitAndClick(Locator.xpath("//span[@class='x-menu-item-text' and text()='" + dimension + "']"));
-        waitForBarsToAnimate();
     }
 
     public void waitForFilterAnimation()
     {
         Locator floatingFilterLoc = Locator.css(".barlabel.selected");
         _test.waitForElementToDisappear(floatingFilterLoc);
-    }
-
-    @LogMethod
-    public void waitForBarsToAnimate()
-    {
-        _test.waitFor(new BaseWebDriverTest.Checker()
-        {
-            @Override
-            public boolean check()
-            {
-                Locator barLocator = Locator.tag("div").withClass("bar").withDescendant(Locator.tag("span").withClass("barlabel"))
-                        .append(Locator.tag("span").withClass("index"));
-                try
-                {
-                    String width1 = barLocator.waitForElement(_test.getDriver(), CDS_WAIT).getCssValue("width");
-                    _test.sleep(50);
-                    String width2 = barLocator.findElement(_test.getDriver()).getCssValue("width");
-                    return !"0px".equals(width1) && width1.equals(width2);
-                }
-                catch (StaleElementReferenceException ignore)
-                {
-                    return false;
-                }
-            }
-        }, "Bars didn't stop animating", CDS_WAIT * 10);
     }
 
     public void saveGroup(String name, @Nullable String description)
@@ -139,8 +112,6 @@ public class CDSHelper
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
 
-        waitForBarsToAnimate();
-
         Keys multiSelectKey;
         if (isShift)
             multiSelectKey = Keys.SHIFT;
@@ -151,7 +122,7 @@ public class CDSHelper
 
         clickBar(bars[0]);
 
-        if(bars.length > 1)
+        if (bars.length > 1)
         {
             Actions builder = new Actions(_test.getDriver());
             builder.keyDown(multiSelectKey).build().perform();
@@ -169,10 +140,10 @@ public class CDSHelper
     {
         Locator detailStatusPanelLoc = Locator.css("ul.detailstatus"); // becomes stale after filter is applied
         WebElement detailStatusPanel = detailStatusPanelLoc.waitForElement(_test.getDriver(), CDS_WAIT);
-        WebElement el = _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel).toBy()));
-        _test.clickAt(el, 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel).toBy()));
+        _test.clickAt(_test.getElement(Locators.barLabel.withText(barLabel)), 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
-        _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
+//        _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
         waitForFilterAnimation();
     }
 
@@ -258,12 +229,10 @@ public class CDSHelper
         _test.click(loc);
         _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
         _test.waitForElement(Locator.css(".dimgroup").withText(byNoun));
-        waitForBarsToAnimate();
     }
 
     public void viewInfo(String barLabel)
     {
-        waitForBarsToAnimate();
         Locator.XPathLocator barLocator = Locator.tag("div").withClass("small").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel));
         _test.scrollIntoView(barLocator); // screen might be too small
         _test.mouseOver(barLocator);

@@ -257,7 +257,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Assays");
         cds.openStatusInfoPane("Races & subtypes");
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
 
         //
         // Open a filter pane and create filter
@@ -274,7 +274,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
 
         // verify undo
         click(Locator.linkWithText("Undo"));
@@ -455,19 +455,21 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         if (!isElementPresent(Locator.permissionRendered()))
             _permissionsHelper.enterPermissionsUI();
         _ext4Helper.clickTabContainingText("Project Groups");
-       if(isTextPresent("PermGroup1"))
-       {
-           _permissionsHelper.openGroupPermissionsDisplay("PermGroup1");
-           _extHelper.waitForExtDialog("PermGroup1 Information");
-           clickButton("Delete Empty Group",0);
-           waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
-           clickButton("Cancel");
-           if (!isElementPresent(Locator.permissionRendered()))
-               _permissionsHelper.enterPermissionsUI();
-           _ext4Helper.clickTabContainingText("Project Groups");
 
-       }
-        if(isTextPresent("PermGroup2"))
+        if (isTextPresent("PermGroup1"))
+        {
+            _permissionsHelper.openGroupPermissionsDisplay("PermGroup1");
+            _extHelper.waitForExtDialog("PermGroup1 Information");
+            clickButton("Delete Empty Group",0);
+            waitForElement(Locator.css(".groupPicker .x4-grid-cell-inner").withText("Users"), WAIT_FOR_JAVASCRIPT);
+            clickButton("Cancel");
+            if (!isElementPresent(Locator.permissionRendered()))
+                _permissionsHelper.enterPermissionsUI();
+            _ext4Helper.clickTabContainingText("Project Groups");
+
+        }
+
+        if (isTextPresent("PermGroup2"))
         {
             _permissionsHelper.openGroupPermissionsDisplay("PermGroup2");
             _extHelper.waitForExtDialog("PermGroup2 Information");
@@ -506,6 +508,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _permissionsHelper.enterPermissionsUI();
         _securityHelper.setProjectPerm("PermGroup2", "Reader");
         clickButton("Save and Finish");
+
+        // Regression 21735 -- Ensure the results get cached for fully qualified user
+        cds.enterApplication();
+        _asserts.assertDefaultFilterStatusCounts();
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        ensureAdminMode();
+        Ext4Helper.resetCssPrefix();
+        // End Regression 21735
+
         impersonateGroup("PermGroup1", false);
         cds.enterApplication();
         _asserts.assertFilterStatusCounts(100, 1, 2);
@@ -570,7 +581,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // remove filter
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // verify undo
@@ -581,7 +592,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // remove an undo filter
         click(Locator.tagWithClass("div", "closeitem"));
         waitForText("Filter removed.");
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
 
         // ensure undo is removed on view navigation
@@ -614,7 +625,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarsToAnimate();
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.useSelectionAsFilter();
 
@@ -665,7 +675,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         log("Filter undo on grid");
         cds.clearFilter();
         grid.waitForCount(1000);
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
@@ -745,7 +755,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
         cds.clearSelection();
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
         cds.pickSort("Country");
         cds.applySelection("South Africa");
         _asserts.assertSelectionStatusCounts(100, 1, 0);
@@ -765,18 +775,16 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // 14910
         cds.goToSummary();
         waitAndClick(Locator.linkWithText("types"));
-        cds.waitForBarsToAnimate();
         waitForElement(dimensionGroup.withText("Assays"));
         waitForElement(dimensionSort.withText("SORTED BY: TYPE"));
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        cds.waitForBarsToAnimate();
         waitForElementToDisappear(CDSHelper.Locators.barLabel.withText(CDSHelper.EMPTY_ASSAY));
         cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
         waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
         _asserts.assertSelectionStatusCounts(3, 1, 2);
         cds.clearSelection();
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
         // end 14910
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -788,7 +796,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.saveGroup(GROUP_NAME, GROUP_DESC);
         _asserts.assertFilterStatusCounts(14, 1, 2);
         cds.clearFilter();
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
         cds.goToSummary();
         _asserts.assertAllSubjectsPortalPage();
 
@@ -823,7 +831,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
        _asserts.assertFilterStatusCounts(132, 2, 3);  // and
         cds.clearFilter();
         waitForText("All subjects");
-        _asserts.assertDefaultFilterStatusCounts(this);
+        _asserts.assertDefaultFilterStatusCounts();
         assertTextPresent("All subjects");
         cds.goToSummary();
 
@@ -874,7 +882,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         // placeholder pages
         cds.clickBy("Assay antigens");
-        cds.waitForBarsToAnimate();
         cds.pickSort("Tier", "1A");
         cds.toggleExplorerBar("1A");
         _asserts.assertNounInfoPage("MW965.26", Arrays.asList("Clade", "Tier", "MW965.26", "U08455"));
