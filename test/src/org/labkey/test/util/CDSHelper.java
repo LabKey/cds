@@ -195,9 +195,15 @@ public class CDSHelper
         }
     }
 
-    public void useSelectionAsFilter()
+    public void useSelectionAsSubjectFilter()
     {
-        _test.click(Locators.cdsButtonLocator("use as filter"));
+        _test.click(Locators.cdsButtonLocator("filter subjects"));
+        waitForClearSelection(); // wait for animation
+    }
+
+    public void useSelectionAsDataFilter()
+    {
+        _test.click(Locators.cdsButtonLocator("filter data"));
         waitForClearSelection(); // wait for animation
     }
 
@@ -414,7 +420,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator filterMemberLocator()
         {
-            return Locator.tagWithClass("div", "memberitem");
+            return Locator.tagWithClass("div", "memberloc");
         }
 
         public static Locator.XPathLocator filterMemberLocator(String filterText)

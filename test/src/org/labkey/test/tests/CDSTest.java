@@ -200,7 +200,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0]);
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         _asserts.assertFilterStatusCounts(32, 1, 2);
 
@@ -361,7 +361,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         cds.saveGroup(STUDY_GROUP, studyGroupDesc);
 
         // verify group save messaging
@@ -404,7 +404,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         _asserts.assertFilterStatusCounts(24, 1, 2);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -547,8 +547,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
 
         // verify buttons available
-        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("use as filter"));
-        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("label as subgroup"));
+        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("filter subjects"));
+        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("label selected subjects")); // hidden
         assertElementPresent(CDSHelper.Locators.cdsButtonLocator("clear"));
 
         // verify split display
@@ -573,7 +573,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]));
 
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]), 1);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
         _asserts.assertFilterStatusCounts(0, 0, 0);
@@ -626,7 +626,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Studies");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         cds.selectBars(CDSHelper.STUDIES[0]);
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
 
@@ -717,7 +717,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Verify multi-select tooltip -- this only shows the first time
         //assertTextPresent(TOOLTIP);
 
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
         _asserts.assertFilterStatusCounts(32, 1, 2);
@@ -811,7 +811,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
         _asserts.assertSelectionStatusCounts(0, 0, 0); // and
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         waitForElementToDisappear(Locator.css("span.barlabel"), CDSHelper.CDS_WAIT);
         _asserts.assertFilterStatusCounts(0, 0, 0); // and
 
@@ -847,7 +847,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.pickDimension("Assays");
   //      _asserts.assertSelectionStatusCounts(32, 1, 2);
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         cds.goToSummary();
 
         //test more group saving
@@ -1009,7 +1009,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Subject characteristics");
         cds.pickSort("Race");
         cds.selectBars("White");
-        cds.useSelectionAsFilter();
+        cds.useSelectionAsSubjectFilter();
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("Live: Update group with new data");
         waitForText("replace an existing group");

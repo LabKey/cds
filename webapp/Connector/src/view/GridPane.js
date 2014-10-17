@@ -35,22 +35,26 @@ Ext.define('Connector.view.GridPane', {
                 if (gf != null && Ext.isDefined(gf)) {
                     // get this columns measure information
                     var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                    if (Ext.isObject(measure) && !shown[measure.alias]) {
+                    if (Ext.isObject(measure)) {
+
+                        // only show the measure label/caption for the first filter
+                        if (!shown[measure.alias]) {
+                            content.push({
+                                xtype: 'box',
+                                cls: 'smallstandout soft spacer',
+                                html: Ext.htmlEncode(Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption)
+                            });
+                            content.push({
+                                xtype: 'box',
+                                padding: '0 0 7px 0',
+                                html: Ext.htmlEncode(this.getSublabel(measure))
+                            })
+                        }
                         shown[measure.alias] = true;
+
                         content.push({
                             xtype: 'box',
-                            cls: 'smallstandout soft spacer',
-                            autoEl: {
-                                tag: 'div',
-                                html: Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption
-                            }
-                        });
-                        content.push({
-                            xtype: 'box',
-                            autoEl: {
-                                tag: 'div',
-                                html: (Ext.isString(measure.label) ? measure.label : '') + this.getSublabel(measure)
-                            }
+                            html: Ext.htmlEncode((Ext.isString(measure.label) ? measure.label : '') + ' ' + LABKEY.app.model.Filter.getGridLabel(gf))
                         });
                     }
                 }

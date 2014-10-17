@@ -27,17 +27,17 @@ Ext.define('Connector.view.Selection', {
                     // Grid Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderLabel(values)]}',
                         '</div>',
                     '</div>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === true">',
-                    // Plot Filter
+                    // "In the plot" Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderMeasures(values)]}',
                         '</div>',
@@ -49,30 +49,29 @@ Ext.define('Connector.view.Selection', {
                         '<div class="circle"></div>',
                         '<tpl if="members.length &gt; 0">',
                             '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                            '<div class="selitem sel-listing">{level:this.renderType}</div>',
-                            '<tpl for="members">',
-                                '<tpl if="xindex == 1 && xcount &gt; 1">',
-                                    '<select>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
-                                    '</select>',
+                            '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
+                            '<tpl if="members.length &gt; 1 || isSelection === true">',
+                                '<tpl for="members">',
+                                    '<tpl if="xindex == 1 && xcount &gt; 1">',
+                                        '<select>',
+                                            '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
+                                            '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
+                                        '</select>',
+                                    '</tpl>',
+                                    '{% if (parent.isSelection !== true && xindex > 5) break; %}',
+                                    '<div class="status-over memberitem memberloc collapsed-member">',
+                                        '<span>{uniqueName:this.renderUniqueName}</span>',
+                                    '</div>',
                                 '</tpl>',
-                                '{% if (parent.dofade === true && xindex > 5) break; %}',
-                                '<div class="status-over memberitem collapsed-member">',
-                                    '<span>{uniqueName:this.renderUniqueName}</span>',
-                                '</div>',
-                            '</tpl>',
-                            '<tpl if="members.length &gt; 5">',
-                                '<div class="fader"><img class="ellipse"></div>',
+                                '<tpl if="members.length &gt; 5">',
+                                    '<div class="fader"><img class="ellipse"></div>',
+                                '</tpl>',
                             '</tpl>',
                         '</tpl>',
                     '</div>',
                 '</tpl>',
             '</tpl>',
             {
-                doFade : function(dofade) {
-                    return true === dofade;
-                },
                 isGrid : function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
@@ -98,7 +97,8 @@ Ext.define('Connector.view.Selection', {
                     if (op.indexOf('REQ_AND') > -1) { markup += ' disabled'; }
                     return markup;
                 },
-                renderType : function(lvl) {
+                renderType : function(values) {
+                    var lvl = values.level;
                     var label = '';
                     Connector.STATE.onMDXReady(function(mdx) {
                         var level = mdx.getLevel(lvl);
@@ -119,7 +119,20 @@ Ext.define('Connector.view.Selection', {
                             }
                         }
                     });
-                    return Ext.htmlEncode(label);
+
+                    label = Ext.htmlEncode(label);
+                    if (!values.isSelection) {
+                        if (!values.isWhereFilter) {
+                            label = "Subjects: " + label;
+                        }
+
+                        // render filter with a single member on one line
+                        if (values.members.length == 1) {
+                            label += ": <div style=\"display:inline;\" class=\" memberloc\">" + this.renderUniqueName(values.members[0].uniqueName) + "</div>";
+                        }
+                    }
+
+                    return label;
                 },
                 renderUniqueName : function(uniqueName) {
                     var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
@@ -163,7 +176,7 @@ Ext.define('Connector.view.Selection', {
                         }
 
                         domString =
-                                '<div class="status-over memberitem plot-selection">' +
+                                '<div class="status-over memberitem memberloc plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
                                         measure.label +
                                         ': &gt;= ' + minVal +
