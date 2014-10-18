@@ -34,6 +34,8 @@ Ext.define('Connector.view.Scatter', {
     defaultSortSchema: 'study',
     defaultSortQuery: '', // cannot be equivalent to Connector.studyContext.subjectVisitColumn
 
+    ui: 'custom',
+
     constructor : function(config) {
 
         Ext.applyIf(config, {
@@ -62,11 +64,22 @@ Ext.define('Connector.view.Scatter', {
 
         this.attachInternalListeners();
 
+        var isReady = function() {
+            if (this.defaultSortQuery && this.defaultMeasure) {
+                this._ready = true;
+                this.fireEvent('onready', this);
+            }
+        };
+
+        var me = this;
+        Connector.getService('Query').getDefaultMeasure(function(measure) {
+            me.defaultMeasure = measure;
+            isReady.call(me);
+        });
         Connector.model.Grid.getDefaultDatasetName(function(name) {
-            this.defaultSortQuery = name;
-            this._ready = true;
-            this.fireEvent('onready');
-        }, this);
+            me.defaultSortQuery = name;
+            isReady.call(me);
+        });
 
         // plugin to handle loading mask for the plot region
         this.addPlugin({
@@ -870,16 +883,18 @@ Ext.define('Connector.view.Scatter', {
                     layerScope.isBrushed = true;
                 },
                 brush : this.showPointsAsBin ? brushBins : brushPoints,
-                brushend: function(event, layerData, extent, plot, layerSelections) {
+                brushend : function(event, layerData, extent, plot, layerSelections) {
                     var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]], plotMeasures,
                             xMeasure, yMeasure, sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
 
                     var transformVal = function(val, type, isMin, domain) {
                         if (type === 'INTEGER') {
                             return isMin ? Math.floor(val) : Math.ceil(val);
-                        } else if (type === 'TIMESTAMP') {
+                        }
+                        else if (type === 'TIMESTAMP') {
                             return isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
-                        } else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT'){
+                        }
+                        else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT'){
                             var precision;
 
                             if (domain[1] >= 1000) {
@@ -918,11 +933,12 @@ Ext.define('Connector.view.Scatter', {
                         }
 
                         if (xMeasure.type === 'TIMESTAMP') {
-                            sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL); //new LABKEY.Query.Filter.DateGreaterThanOrEqual(xMeasure.colName, xMin.toISOString());
-                            sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL); //new LABKEY.Query.Filter.DateLessThanOrEqual(xMeasure.colName, xMax.toISOString());
-                        } else {
-                            sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL); //new LABKEY.Query.Filter.Gte(xMeasure.colName, xMin);
-                            sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL); //new LABKEY.Query.Filter.Lte(xMeasure.colName, xMax);
+                            sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL);
+                            sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL);
+                        }
+                        else {
+                            sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                            sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
                         }
                     }
 
@@ -930,32 +946,34 @@ Ext.define('Connector.view.Scatter', {
                         yMin = transformVal(yExtent[0], yMeasure.type, true, plot.scales.yLeft.scale.domain());
                         yMax = transformVal(yExtent[1], yMeasure.type, false, plot.scales.yLeft.scale.domain());
 
-                        sqlFilters[2] = LABKEY.Filter.create(yMeasure.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL); // new LABKEY.Query.Filter.Gte(yMeasure.colName, yMin);
-                        sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL); // new LABKEY.Query.Filter.Lte(yMeasure.colName, yMax);
+                        sqlFilters[2] = LABKEY.Filter.create(yMeasure.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                        sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
                     }
 
                     // plot brushing filters need to include the antigen selection if this is a pivoted query
                     if (requiresPivot && xMeasure.options.antigen.name == yMeasure.options.antigen.name)
                     {
                         var antigens = xMeasure.options.antigen.values.concat(yMeasure.options.antigen.values);
-                        sqlFilters.push(LABKEY.Filter.create(yMeasure.options.antigen.name, antigens, LABKEY.Filter.Types.IN)); // new LABKEY.Query.Filter.In(yMeasure.options.antigen.name, antigens));
+                        sqlFilters.push(LABKEY.Filter.create(yMeasure.options.antigen.name, antigens, LABKEY.Filter.Types.IN));
                     }
 
-                    Connector.model.Filter.sqlToMdx({
-                        schemaName: requiresPivot ? yMeasure.schemaName : config.schemaName,
-                        queryName: requiresPivot ? yMeasure.queryName : config.queryName,
-                        subjectColumn: requiresPivot ? Connector.studyContext.subjectColumn : config.subjectColumn,
-                        measures: plotMeasures,
-                        sqlFilters: sqlFilters,
-                        success: function(filterConfig){
-                            stateManager.addSelection([filterConfig], true, false, true);
-                        },
-                        scope: this
+                    var filter = Ext4.create('Connector.model.Filter', {
+                        gridFilter: sqlFilters,
+                        plotMeasures: plotMeasures,
+                        hierarchy: 'Subject',
+                        isPlot: true,
+                        isGrid: true,
+                        operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                        filterSource: 'GETDATA',
+
+                        // data filtering
+                        isWhereFilter: true
                     });
+                    Connector.getState().addSelection([filter], true, false, true);
                 },
                 brushclear : function(event, allData, plot, selections) {
                     layerScope.isBrushed = false;
-                    stateManager.clearSelections(true);
+                    Connector.getState().clearSelections(true);
 
                     // reset points
                     selections[0].selectAll('.point path')
@@ -972,7 +990,6 @@ Ext.define('Connector.view.Scatter', {
         this.plot = new LABKEY.vis.Plot(plotConfig);
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
         var measures = this.measures; // hoisted for brushend.
-        var stateManager = this.state; // hoisted for brushend and brushclear.
         var requiresPivot = this.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
 
         if (this.plot) {
@@ -1049,7 +1066,7 @@ Ext.define('Connector.view.Scatter', {
         };
 
         // first, check the set of active filters
-        var filters = this.state.getFilters();
+        var filters = Connector.getState().getFilters();
         for (var f=0; f < filters.length; f++) {
             if (filters[f].isPlot() === true) {
                 var m = filters[f].get('plotMeasures');
@@ -1117,11 +1134,11 @@ Ext.define('Connector.view.Scatter', {
         }
 
         // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
-        if (measures.y != null && measures.x !=null && measures.color != null)
+        if (measures.color != null && measures.y != null && measures.x != null)
         {
             var queryMatch = ((measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
                               (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName));
-            measures.color.allowNullResults = queryMatch;
+            measures.color.requireLeftJoin = queryMatch;
         }
 
         return measures;
@@ -1157,7 +1174,7 @@ Ext.define('Connector.view.Scatter', {
         if (this.filterClear || activeMeasures.y == null) {
             this.requireStudyAxis = false;
             this.studyAxisPanel.setVisible(false);
-            this.state.clearSelections(true);
+            Connector.getState().clearSelections(true);
             this.filterClear = false;
             this.noPlot();
         }
@@ -1173,98 +1190,28 @@ Ext.define('Connector.view.Scatter', {
             }
             else {
                 this.initialized = true;
-                this.createTempQuery(activeMeasures);
+                this.requestChartData(activeMeasures);
             }
         }
     },
 
-    getWrappedMeasures : function(activeMeasures) {
+    getWrappedMeasures : function(activeMeasures, requiresPivot) {
 
-        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
-
-        var wrappedMeasures = [null, null, null];
-        if (activeMeasures.x) {
-            wrappedMeasures[0] = this.getAxisWrappedMeasure('x', activeMeasures, requiresPivot);
-        }
-        if (activeMeasures.y) {
-            wrappedMeasures[1] = this.getAxisWrappedMeasure('y', activeMeasures, requiresPivot);
-        }
-        if (activeMeasures.color) {
-            wrappedMeasures[2] = {measure : activeMeasures.color, time: 'date'};
-        }
+        var wrappedMeasures = [
+            this._getAxisWrappedMeasure(activeMeasures.x, requiresPivot),
+            this._getAxisWrappedMeasure(activeMeasures.y, requiresPivot)
+        ];
+        wrappedMeasures.push(activeMeasures.color ? {measure : activeMeasures.color, time: 'date'} : null);
 
         return wrappedMeasures;
     },
 
-    requestChartData : function(r) {
-        var filters = [];
-        var config = {
-            schemaName: r.schemaName,
-            queryName: r.queryName,
-            success: this.onChartDataSuccess,
-            failure: this.onFailure,
-            requiredVersion: '9.1',
-            scope: this
-        };
-
-        if (this.measures[0] !== null && !this.isContinuousMeasure(this.measures[0])) {
-            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[0].name]));
-            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[1].name]));
+    _getAxisWrappedMeasure : function(measure, requiresPivot) {
+        if (!measure) {
+            return null;
         }
 
-        if (Ext.isArray(this.timeFilters)) {
-            filters = filters.concat(this.timeFilters);
-        }
-
-        if (filters.length > 0) {
-            config.filterArray = filters;
-        }
-
-        LABKEY.Query.selectRows(config);
-    },
-
-    createTempQuery : function(activeMeasures) {
-        // This creates a temp query via getData which is then used to query for unique participants, and is also what
-        // we use to back the chart data (via selectRows on the temp query).
-        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
-
-        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
-        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
-
-        // Request Participant List
-        this.getParticipantIn(function(ptidList) {
-            var wrappedMeasures = this.getWrappedMeasures(activeMeasures), nonNullMeasures = [], sorts = this.getSorts();
-
-            for (var i =0; i < wrappedMeasures.length; i++) {
-                if (wrappedMeasures[i]) {
-                    nonNullMeasures.push(wrappedMeasures[i]);
-                }
-            }
-
-            if (ptidList) {
-                this.applyFiltersToSorts(sorts, ptidList);
-            }
-
-            this.setColumnMetadata(null);
-
-            // Request Chart Data
-            LABKEY.Query.Visualization.getData({
-                measures: nonNullMeasures.concat(additionalMeasures),
-                sorts: sorts,
-                metaDataOnly: true,
-                success: function(json) {
-                    this.setColumnMetadata(json);
-                    this.requestChartData(json);
-                },
-                failure: this.onFailure,
-                scope: this
-            });
-        });
-    },
-
-    getAxisWrappedMeasure : function(axis, activeMeasures, requiresPivot) {
-        var measure = activeMeasures[axis];
-        var options = activeMeasures[axis].options;
+        var options = measure.options;
         var wrappedMeasure = {measure : measure, time: 'date'};
 
         var isVisitTagAlignment = options && options.alignmentVisitTag !== undefined;
@@ -1289,12 +1236,119 @@ Ext.define('Connector.view.Scatter', {
         return wrappedMeasure;
     },
 
-    requiresPivot : function(xMeasure, yMeasure) {
-        // handle scenario where we are plotting either the same variable,
-        // with different antigen subsets, from the same source
-        // or different variables from the same source and the results will
-        // be pivoted by the getData API
+    getMeasureSet : function(activeMeasures, includeFilterMeasures) {
+        var measures = [{
+            measure: this.defaultMeasure,
+            time: 'date'
+        }];
+        measures[0].measure.allowNullResults = false;
 
+        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
+
+        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
+        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
+
+        var wrappedMeasures = this.getWrappedMeasures(activeMeasures, requiresPivot);
+
+        var nonNullMeasures = [];
+        for (var i =0; i < wrappedMeasures.length; i++) {
+            if (wrappedMeasures[i]) {
+                nonNullMeasures.push(wrappedMeasures[i]);
+            }
+        }
+
+        var _measures = measures.concat(nonNullMeasures.concat(additionalMeasures));
+
+        // set of measures from data filters
+        if (includeFilterMeasures) {
+            var filterMeasures = Connector.getService('Query').getWhereFilterMeasures(Connector.getState().getFilters());
+            _measures = _measures.concat(filterMeasures);
+        }
+
+        return {
+            measures: _measures,
+            wrapped: wrappedMeasures
+        };
+    },
+
+    /**
+     * This creates a temp query via getData which is then used to query for unique participants, and is also what
+     * we use to back the chart data (via selectRows on the temp query).
+     * @param activeMeasures
+     */
+    requestChartData : function(activeMeasures) {
+
+        var measureSet = this.getMeasureSet(activeMeasures, true /* Include any measures declared in filters */);
+
+        // Request Subject List
+        // TODO: For data filtering this is no longer quite right, it needs to only count the subjects from the set of subject filters
+        this.getSubjectsIn(function(ptidList) {
+            var sorts = Connector.getService('Query').getDataSorts();
+            if (ptidList) {
+                this.applyFiltersToSorts(sorts, ptidList);
+            }
+
+            this.setColumnMetadata(null);
+
+            // Request Chart Data
+            LABKEY.Query.Visualization.getData({
+                measures: measureSet.measures,
+                sorts: sorts,
+                metaDataOnly: true,
+                joinToFirst: true,
+                success: function(json) {
+                    this.setColumnMetadata(json);
+                    this.selectChartData(json);
+                },
+                failure: this.onFailure,
+                scope: this
+            });
+        });
+    },
+
+    selectChartData : function(getDataResponse) {
+        var filters = [];
+        var config = {
+            schemaName: getDataResponse.schemaName,
+            queryName: getDataResponse.queryName,
+            success: this.onChartDataSuccess,
+            failure: this.onFailure,
+            requiredVersion: '9.1',
+            scope: this
+        };
+
+        if (this.measures[0] !== null && !this.isContinuousMeasure(this.measures[0])) {
+            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[0].name]));
+            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[1].name]));
+        }
+
+        if (Ext.isArray(this.timeFilters)) {
+            filters = filters.concat(this.timeFilters);
+        }
+
+        if (filters.length > 0) {
+            config.filterArray = filters;
+        }
+
+        LABKEY.Query.selectRows(config);
+    },
+
+    onChartDataSuccess : function(response) {
+        if (this.isActiveView) {
+            this.selectRowsResponse = response;
+            this._preprocessData(response);
+        }
+    },
+
+    /**
+     * handle scenario where we are plotting either the same variable, with different antigen subsets,
+     * from the same source or different variables from the same source and result will be pivoted by
+     * the getData API
+     * @param xMeasure
+     * @param yMeasure
+     * @returns {boolean}
+     */
+    requiresPivot : function(xMeasure, yMeasure) {
         return xMeasure != null && yMeasure != null
             && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
             && xMeasure.options && xMeasure.options.antigen
@@ -1330,7 +1384,7 @@ Ext.define('Connector.view.Scatter', {
 
     getAdditionalMeasures : function(activeMeasures, requiresPivot) {
         // map key to schema, query, name, and values
-        var measuresMap = {}, additionalMeasuresArr = [], filters = this.state.getFilters();
+        var measuresMap = {}, additionalMeasuresArr = [], filters = Connector.getState().getFilters();
 
         Ext.each(["x", "y"], function(axis)
         {
@@ -1421,48 +1475,26 @@ Ext.define('Connector.view.Scatter', {
         measureMap[key].values = measureMap[key].values.concat(values);
     },
 
-    onChartDataSuccess : function(response) {
-
-        if (!this.isActiveView) {
-            return;
-        }
-
-        this.selectRowsResponse = response;
-
-        this._preprocessData(response);
-    },
-
     /**
      * This function is meant to update the values within the 'In the plot' filter
      * @param activeMeasures
      */
     updatePlotBasedFilter : function(activeMeasures) {
-        var wrappedMeasures, nonNullMeasures = [], requiresPivot, additionalMeasures;
 
-        wrappedMeasures = this.getWrappedMeasures(activeMeasures);
-
-        for (var i =0; i < wrappedMeasures.length; i++) {
-            if (wrappedMeasures[i]) {
-                nonNullMeasures.push(wrappedMeasures[i]);
-            }
-        }
-
-        requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
-
-        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
-        additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
+        var measureSet = this.getMeasureSet(activeMeasures, false /* Do not include any measures declared in filters */);
 
         this.setColumnMetadata(null);
 
         // Request Distinct Participants
         LABKEY.Query.Visualization.getData({
-            measures: nonNullMeasures.concat(additionalMeasures),
-            sorts: this.getSorts(),
+            measures: measureSet.measures,
+            sorts: Connector.getService('Query').getDataSorts(),
             metaDataOnly: true,
+            joinToFirst: true,
             success: function(response) {
                 // Note: We intentionally pass in the measures object that might have nulls.
-                this._updatePlotBasedFilterHelper(response, wrappedMeasures, function() {
-                    this.createTempQuery(activeMeasures);
+                this._updatePlotBasedFilterHelper(response, measureSet.wrapped, function() {
+                    this.requestChartData(activeMeasures);
                 }, this);
             },
             failure: this.onFailure,
@@ -1494,19 +1526,20 @@ Ext.define('Connector.view.Scatter', {
                 // TODO: Be better about letting other views know about application level column changes
                 var updated = false;
                 this.plotLock = true;
-                var filters = this.state.getFilters(), found = false;
+                var state = Connector.getState();
+                var filters = state.getFilters(), found = false;
                 for (var f=0; f < filters.length; f++) {
                     if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
                         if (!Connector.model.Filter.plotMeasuresEqual(filters[f].get('plotMeasures'), wrappedMeasures)) {
                             filters[f].set('plotMeasures', wrappedMeasures);
                             // TODO: Before we update filter members check to see if the filters actually changed.
                             // Call Filter.plotMeasuresEqual (see Filter.js).
-                            this.state.updateFilterMembers(filters[f].get('id'), filter.members);
-                            this.state.updateFilterMembersComplete(false);
+                            state.updateFilterMembers(filters[f].get('id'), filter.members);
+                            state.updateFilterMembersComplete(false);
                             updated = true;
                         } else {
-                            this.state.updateFilterMembers(filters[f].get('id'), filter.members);
-                            this.state.updateFilterMembersComplete(true);
+                            state.updateFilterMembers(filters[f].get('id'), filter.members);
+                            state.updateFilterMembersComplete(true);
                             updated = true;
                         }
 
@@ -1515,13 +1548,13 @@ Ext.define('Connector.view.Scatter', {
                     }
                 }
                 if (!found) {
-                    this.state.prependFilter(filter);
+                    state.prependFilter(filter);
                     updated = true;
                 }
                 this.plotLock = false;
 
                 if (updated) {
-                    this.state.getApplication().fireEvent('plotmeasures');
+                    state.getApplication().fireEvent('plotmeasures');
                 }
 
                 if (Ext.isFunction(callback)) {
@@ -2284,19 +2317,21 @@ Ext.define('Connector.view.Scatter', {
         if (filter != null) {
             var m = filter.get('plotMeasures');
             m[measureIdx] = null;
-            this.state.updateFilter(filter.get('id'), {plotMeasures: m});
+            Connector.getState().updateFilter(filter.get('id'), {plotMeasures: m});
         }
     },
 
     getPlotsFilter : function() {
-        var filters = this.state.getFilters();
+        var filters = Connector.getState().getFilters();
+        var _filter = null;
+
         for (var f=0; f < filters.length; f++) {
             if (filters[f].get('isPlot') == true && filters[f].get('isGrid') == false) {
-                return filters[f];
+                _filter = filters[f]; break;
             }
         }
 
-        return null;
+        return _filter;
     },
 
     runUniqueQuery : function(axisSelector) {
@@ -2304,7 +2339,7 @@ Ext.define('Connector.view.Scatter', {
 
         if (picker) {
             var me = this;
-            me.getParticipantIn(function(subjects) {
+            me.getSubjectsIn(function(subjects) {
                 picker.setCountMemberSet(subjects);
             });
         }
@@ -2391,10 +2426,10 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    getParticipantIn : function(callback, scope) {
+    getSubjectsIn : function(callback, scope) {
         var me = this;
 
-        this.state.onMDXReady(function(mdx){
+        Connector.getState().onMDXReady(function(mdx){
 
             if (mdx.hasFilter(LABKEY.app.constant.STATE_FILTER)) {
                 mdx.queryParticipantList({
@@ -2428,49 +2463,6 @@ Ext.define('Connector.view.Scatter', {
         }
 
         ptidSort.values = ptids;
-    },
-
-    getSorts : function() {
-        var firstMeasure = undefined;
-
-        // if we can help it, the sort should use the first non-demographic measure
-        for (var i=0; i < this.measures.length; i++) {
-            var item = this.measures[i];
-            if (item && !item.isDemographic && item.queryName !== Connector.studyContext.subjectVisitColumn) {
-                firstMeasure = item;
-                break;
-            }
-        }
-
-        var sorts = [];
-        if (firstMeasure) {
-            // pull from the selected sources shared columns
-            sorts.push({
-                name: Connector.studyContext.subjectColumn,
-                queryName: firstMeasure.queryName,
-                schemaName: firstMeasure.schemaName
-            });
-            sorts.push({
-                name: Connector.studyContext.subjectVisitColumn + '/sequencenum',
-                queryName: firstMeasure.queryName,
-                schemaName: firstMeasure.schemaName
-            });
-        }
-        else {
-           // resort to the default columns
-           sorts.push({
-               name: Connector.studyContext.subjectColumn,
-               queryName: this.defaultSortQuery,
-               schemaName: this.defaultSortSchema
-           });
-           sorts.push({
-               name: Connector.studyContext.subjectVisitColumn + '/sequencenum',
-               queryName: this.defaultSortQuery,
-               schemaName: this.defaultSortSchema
-           });
-        }
-
-        return sorts;
     },
 
     onPlotSelectionRemoved : function(filterId, measureIdx) {

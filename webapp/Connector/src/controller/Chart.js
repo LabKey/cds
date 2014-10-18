@@ -92,14 +92,14 @@ Ext.define('Connector.controller.Chart', {
 
     createView : function(xtype, config, context) {
 
+        var state = this.getStateManager();
+        var v;
+
         if (xtype == 'plot')
         {
-            var state = this.getStateManager();
-            var v = Ext.create('Connector.view.Scatter', {
+            v = Ext.create('Connector.view.Scatter', {
                 control: this.getController('Data'),
-                visitTagStore : this.getStore('VisitTag'),
-                ui  : 'custom',
-                state : state
+                visitTagStore : this.getStore('VisitTag')
             });
 
             state.clearSelections();
@@ -112,20 +112,16 @@ Ext.define('Connector.controller.Chart', {
         }
         else if (xtype == 'timeview')
         {
-            var state = this.getStateManager();
-            var v = Ext.create('Connector.view.Time', {
-                ui  : 'custom',
-                state : state
+            v = Ext.create('Connector.view.Time', {
+                ui  : 'custom'
             });
 
             return v;
         }
         else if (xtype == 'compareview')
         {
-            var state = this.getStateManager();
-            var v = Ext.create('Connector.view.Compare', {
-                ui  : 'custom',
-                state : state
+            v = Ext.create('Connector.view.Compare', {
+                ui  : 'custom'
             });
 
             return v;

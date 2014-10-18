@@ -100,7 +100,7 @@ Ext.define('Connector.view.Selection', {
                 renderType : function(values) {
                     var lvl = values.level;
                     var label = '';
-                    Connector.STATE.onMDXReady(function(mdx) {
+                    Connector.getState().onMDXReady(function(mdx) {
                         var level = mdx.getLevel(lvl);
                         if (level) {
                             label = level.hierarchy.dimension.friendlyName;
