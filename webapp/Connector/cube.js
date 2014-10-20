@@ -22,12 +22,14 @@ Ext4.define('Connector.cube.Configuration', {
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
         //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
+        //      filterType      - The default way of filtering for this dimension. Options are COUNT/WHERE. Defaults to WHERE.
         //
         // Hierarchies:
         //      hidden          - declare whether a hierarchy is hidden. Defaults to false.
         //      supportsSummary - summary views are supported for this hierarchy. defaults to true but respects hidden.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to dimensions value.
         //      label           - Default is parsed name.
+        //      filterType      - The default way of filtering for this hierarchy. Options are COUNT/WHERE. Defaults to dimensions value.
         //
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
@@ -37,10 +39,14 @@ Ext4.define('Connector.cube.Configuration', {
         //      countSingular   - The count label displayed when there is one match. Default is undefined.
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
+        //      filterType      - The default way of filtering for this hierarchy. Options are COUNT/WHERE. Defaults to hierarchy's value.
         //
         context: {
             dimensions: [{
                 uniqueName: '[Measures]',
+                hidden: true
+            },{
+                uniqueName: '[SubjectVisit]',
                 hidden: true
             },{
                 uniqueName: '[Subject]',
@@ -49,6 +55,7 @@ Ext4.define('Connector.cube.Configuration', {
                 summaryTargetLevel: '[Subject].[Subject]',
                 priority: 10,
                 defaultOperator: 'OR',
+                filterType: 'COUNT',
                 hierarchies: [{
                     uniqueName: '[Subject]',
                     hidden: true
@@ -309,6 +316,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
                 defaultOperator: 'OR',
+                filterType: 'COUNT',
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -478,13 +486,15 @@ Ext4.define('Connector.cube.Configuration', {
                 detailView: undefined,
                 itemDetail: undefined,
                 itemDetailTabs: undefined,
-                defaultOperator: 'AND'
+                defaultOperator: 'AND',
+                filterType: 'WHERE'
             },
             hierarchy: {
                 hidden: false,
                 supportsSummary: true,
                 defaultOperator: 'parent::defaultOperator',
-                label: 'label::'
+                label: 'label::',
+                filterType: 'parent::filterType'
             },
             level: {
                 activeCount: false,
@@ -494,7 +504,8 @@ Ext4.define('Connector.cube.Configuration', {
                 countSingular: undefined,
                 countPlural: undefined,
                 cellbased: true,
-                defaultOperator: 'parent::defaultOperator'
+                defaultOperator: 'parent::defaultOperator',
+                filterType: 'parent::filterType'
             }
         }
     }

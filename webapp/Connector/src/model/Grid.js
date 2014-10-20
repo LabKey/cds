@@ -333,7 +333,7 @@ Ext.define('Connector.model.Grid', {
 
     _init : function() {
         if (this.viewReady && this.stateReady) {
-            Connector.getService('Query').onReady(function(service) {
+            Connector.getService('Query').onQueryReady(function(service) {
                 service.getDefaultGridMeasures(function(defaultMeasures) {
 
                     this.bindDefaultMeasures(defaultMeasures);

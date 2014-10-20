@@ -19,10 +19,15 @@ Ext.define('Connector.controller.State', {
     init : function() {
         this.callParent();
 
-        Connector.STATE = this;
         this.onMDXReady(function(mdx) {
             Connector.model.Filter.loadSubjectContainer(mdx);
         });
+    },
+
+    checkReady : function() {
+        Connector.getService('Query').onQueryReady(function() {
+            this.fireReady();
+        }, this);
     },
 
     initColumnListeners : function() {

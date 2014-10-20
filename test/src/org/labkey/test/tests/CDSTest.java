@@ -404,7 +404,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
-        cds.useSelectionAsSubjectFilter();
+        cds.useSelectionAsDataFilter();
         _asserts.assertFilterStatusCounts(24, 1, 2);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -445,7 +445,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clearFilter();
     }
 
-    @Test
+//    @Test
     public void verifyUserPermissions()
     {
         beginAt("project/" + getProjectName() + "/begin.view?");
@@ -573,7 +573,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]));
 
-        cds.useSelectionAsSubjectFilter();
+        cds.useSelectionAsDataFilter();
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]), 1);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
         _asserts.assertFilterStatusCounts(0, 0, 0);
