@@ -30,8 +30,7 @@ Ext.define('Connector.model.Grid', {
 
         {name: 'metadata', defaultValue: undefined},
         {name: 'schemaName', defaultValue: 'study'},
-        {name: 'queryName', defaultValue: 'SubjectVisit' },
-        {name: 'sorts', defaultValue: []}
+        {name: 'queryName', defaultValue: 'SubjectVisit' }
     ],
 
     plotKeys: {},
@@ -121,34 +120,6 @@ Ext.define('Connector.model.Grid', {
             });
 
             return columns;
-        },
-
-        getMetaData : function(gridModel, config) {
-
-            // NOTE: default values must come first for getData API call to join correctly
-            var measures = gridModel.getWrappedMeasures();
-            var sorts = gridModel.getSorts();
-
-            if (measures.length > 0 && sorts.length > 0) {
-                LABKEY.Query.Visualization.getData({
-                    measures: measures,
-                    sorts: sorts,
-                    metaDataOnly: true,
-                    joinToFirst: true,
-                    success: function(metadata)
-                    {
-                        if (Ext.isFunction(config.onSuccess)) {
-                            config.onSuccess.call(config.scope, gridModel, metadata);
-                        }
-                    },
-                    failure: config.onFailure,
-                    scope: config.scope
-                });
-            }
-            else
-            {
-                console.warn('0 length measures or sorts');
-            }
         },
 
         getSubjectFilterState : function(model, callback, scope) {
@@ -267,26 +238,6 @@ Ext.define('Connector.model.Grid', {
                     failure: innerFailure
                 });
                 LABKEY.Query.selectDistinctRows(config);
-            }
-        },
-
-        DATASET: undefined,
-        getDefaultDatasetName : function(callback, scope) {
-            if (Ext.isDefined(Connector.model.Grid.DATASET)) {
-                callback.call(scope, Connector.model.Grid.DATASET);
-            }
-            else {
-                LABKEY.Query.selectRows({
-                    schemaName: 'study',
-                    queryName: 'DataSets',
-                    filterArray: [ LABKEY.Filter.create('DemographicData', true) ],
-                    success: function(data) {
-                        if (data.rowCount > 0) {
-                            Connector.model.Grid.DATASET = data.rows[0].Name;
-                            callback.call(scope, Connector.model.Grid.DATASET);
-                        }
-                    }
-                });
             }
         },
 
@@ -620,25 +571,6 @@ Ext.define('Connector.model.Grid', {
         return change;
     },
 
-    getSorts : function() {
-        var schema = this.fields.map['schemaName'].defaultValue;
-        var query = this.fields.map['queryName'].defaultValue;
-
-        return [{
-            schemaName: schema,
-            queryName: query,
-            name: Connector.studyContext.subjectColumn
-        },{
-            schemaName: schema,
-            queryName: query,
-            name: Connector.studyContext.subjectColumn + '/Study'
-        },{
-            schemaName: schema,
-            queryName: query,
-            name: 'Visit'
-        }];
-    },
-
     applyFilters : function(filterArray, callback, scope) {
         //
         // calculate the subject filter
@@ -930,22 +862,16 @@ Ext.define('Connector.model.Grid', {
 
     requestMetaData : function() {
         // retrieve new column metadata based on the model configuration
-        Connector.model.Grid.getMetaData(this, {
-            onSuccess: this.onMetaData,
-            onFailure: this.onFailure,
-            scope: this
-        });
+        Connector.getService('Query').getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this);
     },
 
     /**
-     * Called whenever the query metadata has been changed. Normally, this is a result
-     * of a request to Connector.model.Grid.getMetaData
+     * Called whenever the query metadata has been changed.
      * @param gridModel
      * @param metadata
      */
-    onMetaData : function(gridModel, metadata) {
+    onMetaData : function(metadata) {
         this.set('metadata', metadata);
-
         this.updateColumnModel();
     },
 

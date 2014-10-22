@@ -20,7 +20,6 @@ Ext.define('Connector.view.PlotPane', {
     getMiddleContent : function(model) {
         var filter = model.get('filter');
         var measures = filter.get('plotMeasures');
-        var scales = filter.get('plotScales');
 
         var content = [{
             xtype: 'box',

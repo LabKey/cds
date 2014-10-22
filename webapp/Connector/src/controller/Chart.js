@@ -98,7 +98,6 @@ Ext.define('Connector.controller.Chart', {
         if (xtype == 'plot')
         {
             v = Ext.create('Connector.view.Scatter', {
-                control: this.getController('Data'),
                 visitTagStore : this.getStore('VisitTag')
             });
 
