@@ -143,7 +143,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         assertSVG(WT_PLSE_LOG);
 
-        // TODO: Reenable the hover testing
         Actions builder = new Actions(getDriver());
        List<WebElement> points;
        points = Locator.css("svg g a.point path").findElements(getDriver());
