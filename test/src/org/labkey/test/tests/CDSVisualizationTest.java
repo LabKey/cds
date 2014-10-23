@@ -191,11 +191,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(plotSelection);
 
         assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
-        _asserts.assertSelectionStatusCounts(5, 1, 2);
+        _asserts.assertSelectionStatusCounts(8, 1, 2);
 
         plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
         waitForElementToDisappear(plotSelectionCloseBtn.index(1));
-        _asserts.assertSelectionStatusCounts(10, 1, 2);
+        _asserts.assertSelectionStatusCounts(13, 1, 2);
         plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
         assertElementNotPresent(plotSelection);
 
