@@ -17,6 +17,8 @@ Ext.define('Connector.controller.Data', {
             v = Ext.create('Connector.view.Grid', {
                 model: Ext.create('Connector.model.Grid', {})
             });
+
+            this.getViewManager().on('afterchangeview', v.onViewChange, v);
         }
 
         return v;
