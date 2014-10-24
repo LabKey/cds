@@ -99,7 +99,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    @Test
+/*    @Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -214,7 +214,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
         waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
     }
-
+*/
     @Test
     public void verifyBoxPlots()
     {
