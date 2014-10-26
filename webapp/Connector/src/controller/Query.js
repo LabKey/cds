@@ -148,7 +148,10 @@ Ext.define('Connector.controller.Query', {
             console.warn('Requested measure before measure caching prepared.');
         }
 
-        var cleanAlias = measureAlias.replace(/\//g, '_');
+        var copyAlias = Ext.clone(measureAlias);
+
+        // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
+        var cleanAlias = copyAlias.split('/')[0];
         if (Ext.isString(cleanAlias) && Ext.isObject(this.MEMBER_CACHE[cleanAlias])) {
             return Ext.clone(this.MEMBER_CACHE[cleanAlias]);
         }
@@ -309,27 +312,57 @@ Ext.define('Connector.controller.Query', {
                     measure = this.getMeasure(column);
                     if (measure) {
 
-                        measure.inNotNullSet = true;
+                        var filterOnLookup = gf.getColumnName().indexOf('/') > -1;
 
-                        if (!measureMap[measure.alias]) {
-                            measureMap[measure.alias] = {
-                                measure: measure,
-                                filterArray: []
-                            };
-                        }
+                        // process the filter itself, if it is a lookup then we just include it directly
+                        if (filterOnLookup) {
+                            // here we fake up a measure. The getData API accepts filters of the form
+                            // "study_Nab_Lab/PI" as "Lab.PI"
+                            var alias = gf.getColumnName().replace(/\//g, '_');
+                            var parts = gf.getColumnName().replace(/\//g, '.').split('_');
+                            var colName = parts[parts.length-1];
+                            var nf = LABKEY.Filter.create(colName.replace(/\./g, '/'), gf.getValue(), gf.getFilterType());
 
-                        // process the filter itself
-                        if (column === measure.name) {
-                            stringFilter = gf.getURLParameterName() + '=' + gf.getURLParameterValue();
-                            measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : stringFilter);
+                            if (!measureMap[alias]) {
+                                var allParts = gf.getColumnName().split('_');
+                                var schema = allParts[0], query = allParts[1];
+
+                                measureMap[alias] = {
+                                    measure: {
+                                        alias: alias,
+                                        schemaName: schema,
+                                        queryName: query,
+                                        name: colName,
+                                        inNotNullSet: true
+                                    },
+                                    filterArray: []
+                                };
+                            }
+
+                            var nfString = nf.getURLParameterName() + '=' + nf.getURLParameterValue();
+                            measureMap[alias].filterArray.push(filtersAreInstances ? nf : nfString);
                         }
                         else {
-                            // create a filter with the measure 'name' rather than the 'alias' as the column
-                            var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
-                            stringFilter = _gf.getURLParameterName() + '=' + _gf.getURLParameterValue();
-                            measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : stringFilter);
-                        }
+                            measure.inNotNullSet = true;
 
+                            if (!measureMap[measure.alias]) {
+                                measureMap[measure.alias] = {
+                                    measure: measure,
+                                    filterArray: []
+                                };
+                            }
+
+                            if (column === measure.name) {
+                                stringFilter = gf.getURLParameterName() + '=' + gf.getURLParameterValue();
+                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : stringFilter);
+                            }
+                            else {
+                                // create a filter with the measure 'name' rather than the 'alias' as the column
+                                var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
+                                stringFilter = _gf.getURLParameterName() + '=' + _gf.getURLParameterValue();
+                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : stringFilter);
+                            }
+                        }
                     }
                     else {
                         console.warn('Unable to find measure for query parameter:', gf.getURLParameterName() + '=' + gf.getURLParameterValue());
@@ -341,7 +374,6 @@ Ext.define('Connector.controller.Query', {
         Ext.iterate(measureMap, function (alias, measureConfig) {
             var mc = {
                 measure: measureConfig.measure,
-                filterArray: measureConfig.filterArray,
                 time: measureConfig.time || 'date'
             };
             if (measureConfig.dimension) {
@@ -350,6 +382,10 @@ Ext.define('Connector.controller.Query', {
             if (measureConfig.dateOptions) {
                 mc.dateOptions = measureConfig.dateOptions;
             }
+            if (measureConfig.filterArray.length > 0) {
+                mc.filterArray = measureConfig.filterArray;
+            }
+
             measures.push(mc);
         });
 

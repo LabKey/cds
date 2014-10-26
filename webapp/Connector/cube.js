@@ -39,7 +39,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      countSingular   - The count label displayed when there is one match. Default is undefined.
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
-        //      filterType      - The default way of filtering for this hierarchy. Options are COUNT/WHERE. Defaults to hierarchy's value.
+        //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchys value.
         //
         context: {
             dimensions: [{

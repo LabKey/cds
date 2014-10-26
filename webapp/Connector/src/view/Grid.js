@@ -201,7 +201,7 @@ Ext.define('Connector.view.Grid', {
      * @param view
      */
     onViewChange : function(controller, view) {
-        this.getModel().setActive(view == 'groupdatagrid');
+        this.getModel().setActive(view === this.xtype);
     },
 
     onColumnUpdate : function() {

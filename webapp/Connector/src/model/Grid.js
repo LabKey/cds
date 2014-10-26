@@ -182,65 +182,6 @@ Ext.define('Connector.model.Grid', {
             }
         },
 
-        queryMultiple : function(configs, success, failure, scope) {
-            var outstandingQueries = configs.length,
-                    results = new Array(configs.length),
-                    failed = false,
-                    flight = configs[0].flight;
-
-            // map configIds to indexes
-            var configMap = {}, config;
-            for (var h=0; h < configs.length; h++) {
-                configMap[configs[h].configId] = h;
-            }
-
-            var checkDone = function()
-            {
-                if (outstandingQueries == 0) {
-                    if (Ext.isFunction(failure))
-                        failure.call(scope);
-                    else if (Ext.isFunction(success))
-                        success.call(scope, results, flight);
-                    else
-                        console.warn('checkDone unable to find callback');
-                }
-            };
-
-            var innerSuccess = function(qr, config)
-            {
-                var activeIdx = -1;
-                for (var param in config.params) {
-                    if (config.params.hasOwnProperty(param)) {
-                        if (param in configMap) {
-                            activeIdx = configMap[param];
-                        }
-                    }
-                }
-                results[activeIdx] = {
-                    queryResult: qr,
-                    configIndex: activeIdx
-                };
-                outstandingQueries--;
-                checkDone();
-            };
-
-            var innerFailure = function()
-            {
-                console.error("NYI: finish failure handling");
-                failed = true;
-                outstandingQueries--;
-                checkDone();
-            };
-
-            for (var c=0 ; c < configs.length ; c++) {
-                config = Ext.apply(configs[c], {
-                    success: innerSuccess,
-                    failure: innerFailure
-                });
-                LABKEY.Query.selectDistinctRows(config);
-            }
-        },
-
         getMaxRows : function() {
 
             var max = 500;
@@ -270,16 +211,13 @@ Ext.define('Connector.model.Grid', {
         this.viewReady = false;
         this._ready = false;
 
-        var state = Connector.getState();
-        state.onReady(function(state) {
+        Connector.getState().onReady(function(state) {
             this.stateReady = true;
             this.applyFilters(this.bindFilters(state.getFilters()));
             this._init();
         }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
-
-        this.on('updatecolumns', this.onUpdateColumns, this);
     },
 
     _init : function() {
@@ -309,31 +247,6 @@ Ext.define('Connector.model.Grid', {
 
     onPlotMeasureChange : function() {
         this.bindApplicationMeasures(Connector.getState().getFilters());
-    },
-
-    onUpdateColumns : function() {
-
-        // TODO: Stop doing this for now until persisted columns can be picked up appropriately by the measure
-        // TODO: picker and that filter 'undo' does not get updated via this state update.
-//        var measures = this.get('measures');
-//        var validMeasures = [];
-//
-//        Ext.each(measures, function(measure) {
-//            if (Ext.isDefined(measure.type)) {
-//                validMeasures.push(measure);
-//            }
-//        });
-//
-//        if (validMeasures.length > 0) {
-//            var state = Connector.getState();
-//            state.setCustomState({
-//                view: 'gridmodel',
-//                key: 'measures'
-//            },{
-//                measures: validMeasures
-//            });
-//            state.updateState();
-//        }
     },
 
     convertTimeMeasure : function(measure) {
@@ -670,13 +583,11 @@ Ext.define('Connector.model.Grid', {
 
         for (f=0; f < fa.length; f++) {
             colname = fa[f].getColumnName();
-            if (bins[colname]) {
-                bins[colname].push(fa[f]);
-            }
-            else {
+            if (!bins[colname]) {
                 keys.push(colname);
-                bins[colname] = [fa[f]];
+                bins[colname] = [];
             }
+            bins[colname].push(fa[f]);
         }
 
         // This must be done independently for each filter
@@ -695,96 +606,98 @@ Ext.define('Connector.model.Grid', {
             });
         }
 
-        if (configs.length > 0) {
-            Connector.model.Grid.queryMultiple(configs, function(results, flight) {
-                if (flight != this.flights) {
-                    return;
+        if (!Ext.isEmpty(configs)) {
+
+            var state = Connector.getState();
+            var appFilters = state.getFilters();
+            var newFilters = [], matched = false;
+
+            // For each config do one of the following:
+            // 1. Replacement, find the record id
+            // 2. new, create a new app filter
+            Ext.each(configs, function(config) {
+                var match = this._generateMatch(config.filterArray, appFilters);
+                if (match) {
+                    matched = true;
                 }
+                else {
+                    newFilters.push(this.buildFilter(filterArray));
+                }
+            }, this);
 
-                var configResults = [], state = Connector.getState();
+            if (matched) {
+                state.updateFilterMembersComplete(true);
+            }
 
-                Ext.each(results, function(result) {
-                    configResults.push({
-                        group: result.queryResult.values,
-                        filterArrays: configs[result.configIndex].filterArray
-                    });
-                }, this);
+            if (!Ext.isEmpty(newFilters) || matched) {
+                state.setFilters(state.getFilters().concat(newFilters));
 
-                // For each result do one of the following:
-                // 1. replacement, find the record id
-                // 2. new, create a new app filter
-
-                var appFilters = state.getFilters(), newFilters = [], filter;
-
-                Ext.each(configResults, function(configResult) {
-
-                    var flat = [];
-                    for (var f=0; f < configResult.filterArrays.length; f++) {
-                        var fa = configResult.filterArrays[f];
-                        if (Ext.isArray(fa)) {
-                            for (var j=0; j < fa.length; j++) {
-                                flat.push(fa[j]);
-                            }
-                        }
-                        else if (Ext.isObject(fa)) {
-                            flat.push(fa);
-                        }
-                        else {
-                            console.error('invalid filter object');
-                        }
-                    }
-
-                    // assume all filter objects in this configuration have the same column name
-                    var columnName = flat[0].getColumnName(), replacement = false;
-                    Ext.each(appFilters, function(af) {
-                        if (af.isGrid()) {
-                            var gridFilter = af.get('gridFilter')[0];
-                            if (gridFilter.getColumnName() === columnName) {
-
-                                var newMembers = [];
-                                Ext.each(configResult.group, function(member) {
-                                    newMembers.push({
-                                        uniqueName: Connector.model.Filter.getSubjectUniqueName(member)
-                                    });
-                                }, this);
-
-                                replacement = true;
-                                af.set('gridFilter', flat);
-                                af.set('members', newMembers);
-                            }
-                        }
-                    }, this);
-
-                    if (!replacement) {
-                        filter = {
-                            hierarchy: 'Subject',
-                            isGrid: true,
-                            gridFilter: flat,
-                            members: []
-                        };
-
-                        Ext.each(configResult.group, function(member) {
-                            filter.members.push({
-                                uniqueName: Connector.model.Filter.getSubjectUniqueName(member)
-                            });
-                        }, this);
-
-                        newFilters.push(filter);
-                    }
-                }, this);
-
-                appFilters = appFilters.concat(newFilters);
-
-                state.setFilters(appFilters);
                 this.filterMap = {};
                 this.idMap = {};
 
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
                 this.bindFilters(state.getFilters());
-
-            }, null, this);
+            }
         }
+    },
+
+    /**
+     * Helper method that first determines if any of the filters in the filterArray are expressed in the filter set.
+     * If not, it returns false. If so, then an updated Connector.model.Filter is returned.
+     * @param filterArray
+     * @param filterSet
+     * @returns {boolean || Connector.model.Filter}
+     * @private
+     */
+    _generateMatch : function(filterArray, filterSet) {
+        var match = false;
+
+        if (!Ext.isEmpty(filterArray)) {
+            var columnMatch = filterArray[0].getColumnName();
+
+            Ext.each(filterSet, function(filter) {
+                if (filter.isGrid()) {
+                    var newGridFilter = [], found = false, faIdx = 0;
+                    Ext.each(filter.get('gridFilter'), function(gf) {
+                        if (gf && gf.getColumnName() == columnMatch) {
+                            found = true;
+                            if (faIdx < filterArray.length) {
+                                newGridFilter.push(filterArray[faIdx]);
+                                faIdx++;
+                            }
+                        }
+                        else {
+                            newGridFilter.push(gf);
+                        }
+                    });
+
+                    // found a match, now mutate it and return it
+                    if (found) {
+
+                        while (faIdx < filterArray.length) {
+                            newGridFilter.push(filterArray[faIdx]); faIdx++;
+                        }
+                        match = filter;
+                        match.set('gridFilter', newGridFilter);
+                        return false; // break from Ext.each
+                    }
+                }
+            });
+        }
+
+        return match;
+    },
+
+    buildFilter : function(filterArray) {
+        return Ext.create('Connector.model.Filter', {
+            hierarchy: 'Subject',
+            gridFilter: filterArray,
+            operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+            isGrid: true,
+            filterSource: 'GETDATA',
+            isWhereFilter: true
+        });
     },
 
     getFilterId : function(filter) {
