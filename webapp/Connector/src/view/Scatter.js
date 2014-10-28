@@ -1239,9 +1239,43 @@ Ext.define('Connector.view.Scatter', {
         }
 
         return {
-            measures: _measures,
+            measures: this.mergeMeasures(_measures),
             wrapped: wrappedMeasures
         };
+    },
+
+    /**
+     * This method takes in a set of measures and groups them according to alias. It will merge the filters and
+     * retain any other properties from the first instance of an alias found.
+     * @param measures
+     * @returns {Array}
+     */
+    mergeMeasures : function(measures) {
+        var merged = [], keyOrder = [], aliases = {}, alias;
+
+        Ext.each(measures, function(measure) {
+            alias = measure.measure.alias.toLowerCase();
+            if (!aliases[alias]) {
+                aliases[alias] = measure;
+                keyOrder.push(alias);
+            }
+            else {
+                if (!Ext.isEmpty(measure.filterArray)) {
+
+                    if (!Ext.isArray(aliases[alias].filterArray)) {
+                        aliases[alias].filterArray = [];
+                    }
+
+                    aliases[alias].filterArray = aliases[alias].filterArray.concat(measure.filterArray);
+                }
+            }
+        });
+
+        Ext.each(keyOrder, function(key) {
+            merged.push(aliases[key]);
+        });
+
+        return merged;
     },
 
     /**
