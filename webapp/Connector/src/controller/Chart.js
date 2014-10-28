@@ -7,7 +7,7 @@ Ext.define('Connector.controller.Chart', {
 
     extend : 'Connector.controller.AbstractViewController',
 
-    views  : ['Compare', 'Scatter', 'Time'],
+    views  : ['Compare', 'Chart', 'Time'],
 
     init : function() {
 
@@ -97,7 +97,7 @@ Ext.define('Connector.controller.Chart', {
 
         if (xtype == 'plot')
         {
-            v = Ext.create('Connector.view.Scatter', {
+            v = Ext.create('Connector.view.Chart', {
                 visitTagStore : this.getStore('VisitTag')
             });
 

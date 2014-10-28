@@ -3,16 +3,15 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-// TODO: Rename this view. It is no longer scatter specific, but instead includes scatter and box plots.
-Ext.define('Connector.view.Scatter', {
+Ext.define('Connector.view.Chart', {
 
     extend: 'Ext.panel.Panel',
 
-    requires: ['Connector.panel.AxisSelector'],
+    requires: ['Connector.model.ChartData', 'Connector.panel.AxisSelector'],
 
     alias: 'widget.plot',
 
-    cls: 'scatterview',
+    cls: 'chartview',
 
     layout: 'border',
 
@@ -40,8 +39,7 @@ Ext.define('Connector.view.Scatter', {
 
         Ext.applyIf(config, {
             measures: [],
-            studyAxisData: [],
-            studyAxisRange: {min: null, max: null}
+            hasStudyAxisData: false
         });
 
         this.callParent([config]);
@@ -168,19 +166,6 @@ Ext.define('Connector.view.Scatter', {
 
     getCenter : function() {
         if (!this.centerContainer) {
-
-            this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
-                border: false,
-                overflowX: 'hidden',
-                overflowY: 'auto',
-                frame: false,
-                items: [{
-                    xtype: 'box',
-                    tpl: new Ext.XTemplate('<div id="study-axis"></div>'),
-                    data: {}
-                }]
-            });
-
             this.centerContainer = Ext.create('Ext.container.Container', {
                 region: 'center',
                 layout: {
@@ -203,10 +188,28 @@ Ext.define('Connector.view.Scatter', {
                             scope: this
                         }
                     }
-                },this.studyAxisPanel]
+                },this.getStudyAxisPanel()]
             });
         }
         return this.centerContainer;
+    },
+
+    getStudyAxisPanel : function() {
+        if (!this.studyAxisPanel) {
+            this.studyAxisPanel = Ext.create('Ext.panel.Panel', {
+                border: false,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                frame: false,
+                items: [{
+                    xtype: 'box',
+                    tpl: new Ext.XTemplate('<div id="study-axis"></div>'),
+                    data: {}
+                }]
+            });
+        }
+
+        return this.studyAxisPanel;
     },
 
     getSouth : function() {
@@ -302,8 +305,8 @@ Ext.define('Connector.view.Scatter', {
             this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
         }
 
-        if (this.studyAxisPanel.isVisible() && this.studyAxis  && this.studyAxisData && this.studyAxisData.length > 0) {
-            this.studyAxis.width(this.studyAxisPanel.getWidth()- 40);
+        if (this.getStudyAxisPanel().isVisible() && this.studyAxis && this.hasStudyAxisData) {
+            this.studyAxis.width(this.getStudyAxisPanel().getWidth()- 40);
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
         }
@@ -542,13 +545,13 @@ Ext.define('Connector.view.Scatter', {
         });
     },
 
-    initPlot : function(config, noplot) {
-        var rows = config.rows;
+    initPlot : function(rows, properties, studyAxisInfo, noplot) {
+
         // Below vars needed for brush and mouse event handlers.
         var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
         this.plotEl.update('');
-        this.resizePlotContainers();
+        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
 
         if (!rows || !rows.length) {
             this.showMessage('No information available to plot.');
@@ -570,10 +573,10 @@ Ext.define('Connector.view.Scatter', {
 
         if (noplot) {
             layer = this.getNoPlotLayer();
-        }else if (config.xaxis && config.xaxis.isContinuous) {
+        }else if (properties.xaxis && properties.xaxis.isContinuous) {
             // Scatter. Binned if over max row limit.
             layer = this.showPointsAsBin ? this.getBinLayer(layerScope) : this.getPointLayer(layerScope);
-        } else if (config.xaxis && !config.xaxis.isContinuous) {
+        } else if (properties.xaxis && !properties.xaxis.isContinuous) {
             // Box plot (aka 1D).
             layer = this.getBoxLayer(layerScope);
         }
@@ -608,14 +611,14 @@ Ext.define('Connector.view.Scatter', {
             };
         }
         else {
-            if (config.xaxis.isContinuous) {
+            if (properties.xaxis.isContinuous) {
                 scales.x = {
                     scaleType: 'continuous'
                 };
 
-                if (config.xaxis.isNumeric) {
+                if (properties.xaxis.isNumeric) {
                     scales.x.tickFormat = numericTickFormat;
-                } else if (config.xaxis.type === 'TIMESTAMP') {
+                } else if (properties.xaxis.type === 'TIMESTAMP') {
                     scales.x.tickFormat = dateFormat;
                 }
             } else {
@@ -672,8 +675,9 @@ Ext.define('Connector.view.Scatter', {
         };
 
         if (!noplot) {
-            this.setScale(plotConfig.scales.x, 'x', config);
-            this.setScale(plotConfig.scales.yLeft, 'y', config);
+            var studyAxisRange = studyAxisInfo ? studyAxisInfo.getRange() : {min: null, max: null};
+            this.setScale(plotConfig.scales.x, 'x', properties, studyAxisRange);
+            this.setScale(plotConfig.scales.yLeft, 'y', properties, studyAxisRange);
 
             // add brush handling
             var isSelectedWithBrush = function(extent, x, y) {
@@ -848,7 +852,7 @@ Ext.define('Connector.view.Scatter', {
             };
 
             plotConfig.brushing = {
-                dimension: config.xaxis.isContinuous ? 'both' : 'y',
+                dimension: properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : function() {
                     layerScope.isBrushed = true;
                 },
@@ -885,10 +889,10 @@ Ext.define('Connector.view.Scatter', {
 
                     xMeasure = measures[0];
                     yMeasure = measures[1];
-                    yMeasure.colName = requiresPivot ? config.yaxis.name : config.yaxis.colName;
+                    yMeasure.colName = requiresPivot ? properties.yaxis.name : properties.yaxis.colName;
 
                     if (xMeasure) {
-                        xMeasure.colName = requiresPivot ? config.xaxis.name : config.xaxis.colName;
+                        xMeasure.colName = requiresPivot ? properties.xaxis.name : properties.xaxis.colName;
                     }
 
                     if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
@@ -958,7 +962,7 @@ Ext.define('Connector.view.Scatter', {
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
         var me = this;
         var measures = this.measures; // hoisted for brushend.
-        var requiresPivot = this.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
+        var requiresPivot = Connector.model.ChartData.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
 
         if (this.plot) {
             this.plot.addLayer(layer);
@@ -997,10 +1001,10 @@ Ext.define('Connector.view.Scatter', {
         return scale;
     },
 
-    setScale : function(scale, axis, config) {
+    setScale : function(scale, axis, properties, studyAxisRange) {
         // This function should likley be renamed, and refactored so it's less side-effecty.
         if (scale.scaleType !== 'discrete') {
-            var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !config.setYLinear : !config.setXLinear;
+            var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear;
 
             if (!allowLog && axisValue == 'log') {
                 this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.');
@@ -1009,11 +1013,11 @@ Ext.define('Connector.view.Scatter', {
 
             // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
             var min = null, max = null;
-            if (axis == 'x' && this.studyAxisRange.min != null) {
-                min = this.studyAxisRange.min < 0 ? this.studyAxisRange.min : 0;
+            if (axis == 'x' && studyAxisRange.min != null) {
+                min = studyAxisRange.min < 0 ? studyAxisRange.min : 0;
             }
-            if (axis == 'x' && this.studyAxisRange.max != null) {
-                max = this.studyAxisRange.max > 0 ? this.studyAxisRange.max : 0;
+            if (axis == 'x' && studyAxisRange.max != null) {
+                max = studyAxisRange.max > 0 ? studyAxisRange.max : 0;
             }
 
             Ext.apply(scale, {
@@ -1141,7 +1145,7 @@ Ext.define('Connector.view.Scatter', {
 
         if (this.filterClear || activeMeasures.y == null) {
             this.requireStudyAxis = false;
-            this.studyAxisPanel.setVisible(false);
+            this.getStudyAxisPanel().setVisible(false);
             Connector.getState().clearSelections(true);
             this.filterClear = false;
             this.noPlot();
@@ -1213,7 +1217,7 @@ Ext.define('Connector.view.Scatter', {
             time: 'date'
         }];
 
-        var requiresPivot = this.requiresPivot(activeMeasures.x, activeMeasures.y);
+        var requiresPivot = Connector.model.ChartData.requiresPivot(activeMeasures.x, activeMeasures.y);
 
         // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
         var additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
@@ -1254,7 +1258,7 @@ Ext.define('Connector.view.Scatter', {
         var merged = [], keyOrder = [], aliases = {}, alias;
 
         Ext.each(measures, function(measure) {
-            alias = measure.measure.alias.toLowerCase();
+            alias = (measure.measure.alias || measure.measure.name).toLowerCase();
             if (!aliases[alias]) {
                 aliases[alias] = measure;
                 keyOrder.push(alias);
@@ -1288,11 +1292,9 @@ Ext.define('Connector.view.Scatter', {
             var measures = this.getMeasureSet(activeMeasures, true /* Include any measures declared in filters */).measures;
 
             this.applyFiltersToMeasure(measures, ptidList);
-            this.setColumnMetadata(null);
 
             // Request Chart Data
             Connector.getService('Query').getData(measures, function(json) {
-                this.setColumnMetadata(json);
                 this.selectChartData(json);
             }, this.onFailure, this);
         });
@@ -1303,16 +1305,11 @@ Ext.define('Connector.view.Scatter', {
         var config = {
             schemaName: getDataResponse.schemaName,
             queryName: getDataResponse.queryName,
-            success: this.onChartDataSuccess,
+            success: function(response) { this.onChartDataSuccess(response, getDataResponse); },
             failure: this.onFailure,
             requiredVersion: '9.1',
             scope: this
         };
-
-//        if (this.measures[0] !== null && !this.isContinuousMeasure(this.measures[0])) {
-//            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[0].name]));
-//            filters.push(new LABKEY.Query.Filter.NonBlank(this.measureToColumn[this.measures[1].name]));
-//        }
 
         if (Ext.isArray(this.timeFilters)) {
             filters = filters.concat(this.timeFilters);
@@ -1325,28 +1322,68 @@ Ext.define('Connector.view.Scatter', {
         LABKEY.Query.selectRows(config);
     },
 
-    onChartDataSuccess : function(response) {
+    onChartDataSuccess : function(selectRowsResponse, getDataResponse) {
         if (this.isActiveView) {
-            this._preprocessData(response);
+            this.dataQWP = {schema: selectRowsResponse.schemaName, query: selectRowsResponse.queryName};
+
+            if (this.msg) {
+                this.msg.hide();
+            }
+
+            selectRowsResponse.measures = this.measures;
+            selectRowsResponse.measureToColumn = getDataResponse.measureToColumn;
+            selectRowsResponse.columnAliases = getDataResponse.columnAliases;
+            var chartData = Ext.create('Connector.model.ChartData', selectRowsResponse);
+
+            this.hasStudyAxisData = false;
+            this.showPercentOverlapMessage(chartData);
+
+            if (this.requireStudyAxis) {
+                this.requestStudyAxisData(chartData);
+            }
+            else {
+                this.initPlot(chartData.getDataRows(), chartData.getProperties(), null, false);
+            }
         }
     },
 
-    /**
-     * handle scenario where we are plotting either the same variable, with different antigen subsets,
-     * from the same source or different variables from the same source and result will be pivoted by
-     * the getData API
-     * @param xMeasure
-     * @param yMeasure
-     * @returns {boolean}
-     */
-    requiresPivot : function(xMeasure, yMeasure) {
-        return xMeasure != null && yMeasure != null
-            && this.isContinuousMeasure(xMeasure) && this.isContinuousMeasure(yMeasure)
-            && xMeasure.options && xMeasure.options.antigen
-            && yMeasure.options && yMeasure.options.antigen
-            && xMeasure.schemaName == yMeasure.schemaName
-            && xMeasure.queryName == yMeasure.queryName
-            && xMeasure.variableType == null && yMeasure.variableType == null;
+    showPercentOverlapMessage : function(chartData) {
+        if(chartData.getPercentOverlap() < 1 && chartData.getProperties().xaxis.isContinuous){
+            var id = Ext.id();
+            var id2 = Ext.id();
+            var msg = 'Points outside the plotting area have no match on the other axis.';
+            msg += '&nbsp;<a id="' + id2 +'">Got it</a>&nbsp;<a id="' + id +'">Details</a>';
+            this.showMessage(msg, true);
+
+            var tpl = new Ext.XTemplate(
+                    '<div class="matchtip">',
+                    '<div>',
+                    '<p class="tiptitle">Plotting Matches</p>',
+                    '<p class="tiptext">Percent match: {overlap}%. Mismatches may be due to data point subject, visit, or assay antigen.</p>',
+                    '</div>',
+                    '</div>'
+            );
+
+            var el = Ext.get(id);
+            if (el) {
+                Ext.create('Ext.tip.ToolTip', {
+                    target : el,
+                    anchor : 'left',
+                    data : {
+                        overlap : Ext.util.Format.round(chartData.getPercentOverlap() * 100, 2)
+                    },
+                    tpl : tpl,
+                    autoHide: true,
+                    mouseOffset : [15,0],
+                    maxWidth: 500,
+                    minWidth: 200,
+                    bodyPadding: 0,
+                    padding: 0
+                });
+            }
+            el = Ext.get(id2);
+            el.on('click', function() { this.hideMessage(); }, this);
+        }
     },
 
     getDimension : function() {
@@ -1475,8 +1512,6 @@ Ext.define('Connector.view.Scatter', {
 
         var wrapped = this.getMeasureSet(activeMeasures, false /* Do not include any measures declared in filters */).wrapped;
 
-        this.setColumnMetadata(null);
-
         this.plotLock = true;
 
         var state = Connector.getState();
@@ -1528,17 +1563,6 @@ Ext.define('Connector.view.Scatter', {
         state.getApplication().fireEvent('plotmeasures');
     },
 
-    setColumnMetadata : function(dataResponse) {
-        if (dataResponse) {
-            this.measureToColumn = dataResponse.measureToColumn;
-            this.columnAliases = dataResponse.columnAliases;
-        }
-        else {
-            this.measureToColumn = null;
-            this.columnAliases = null;
-        }
-    },
-
     noPlot : function() {
 
         var map = [{
@@ -1549,7 +1573,7 @@ Ext.define('Connector.view.Scatter', {
             subjectId: null
         }];
 
-        this.initPlot({rows:map}, true);
+        this.initPlot(map, null, null, true);
         this.resizeTask.delay(300);
         this.noplotmsg.show();
     },
@@ -1558,319 +1582,6 @@ Ext.define('Connector.view.Scatter', {
         console.log(response);
         this.fireEvent('hideload', this);
         this.showMessage('Failed to Load');
-    },
-
-    isValidNumber: function(number){
-        return !(number === undefined || isNaN(number) || number === null);
-    },
-
-    isValidValue: function(measure, value) {
-        var type = measure.type;
-        if (type === 'INTEGER' || type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
-            return this.isValidNumber(value);
-        } else {
-            return !(value === undefined || value === null);
-        }
-    },
-
-    _getValue : function(measure, colName, row) {
-        var val, type = measure.type;
-
-        if (type === 'INTEGER') {
-            val = parseInt(row[colName].value);
-            return this.isValidNumber(val) ? val : null;
-        } else if (type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
-            val = parseFloat(row[colName].value);
-            return this.isValidNumber(val) ? val : null;
-        } else if (type === 'TIMESTAMP') {
-            val = row[colName].value;
-            return val !== undefined && val !== null ? new Date(val) : null;
-        } else {
-            // Assume categorical.
-            val = row[colName].displayValue ? row[colName].displayValue : row[colName].value;
-            return (val !== undefined) ? val : null;
-        }
-    },
-
-    _preprocessSelectRowsResp : function(selectRowsResponse) {
-        var data = selectRowsResponse, x = this.measures[0], y = this.measures[1], color = this.measures[2], xa = null,
-                ya = null, ca = null,_xid, _yid, _cid, mTC = this.measureToColumn;
-
-        this.dataQWP = {schema: data.schemaName, query: data.queryName};
-
-        var subjectNoun = Connector.studyContext.subjectColumn;
-        var subjectCol = mTC[subjectNoun];
-
-        if (color) {
-            _cid = mTC[color.alias] || mTC[color.name];
-        }
-
-        data = this.processPivotedData(data, x, y, subjectCol, _cid);
-
-        if (x) {
-            _xid = x.interval || mTC["xAxis"] || mTC[x.alias] || mTC[x.name];
-            xa = {
-                schema : x.schemaName,
-                query  : x.queryName,
-                name   : x.name,
-                alias  : x.alias,
-                colName: _xid, // Stash colName so we can query the getData temp table in the brushend handler.
-                label  : x.label,
-                type   : x.type,
-                isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
-                isContinuous: this.isContinuousMeasure(x)
-            };
-        } else {
-            xa = {
-                schema  : null,
-                query   : null,
-                name    : null,
-                alias   : null,
-                colName : null,
-                label   : "",
-                isNumeric: false
-            }
-        }
-
-        _yid = mTC["yAxis"] || mTC[y.alias] || mTC[y.name];
-        ya = {
-            schema : y.schemaName,
-            query  : y.queryName,
-            name   : y.name,
-            alias  : y.alias,
-            colName: _yid, // Stash colName so we can query the getData temp table in the brushend handler.
-            label  : y.label,
-            type   : y.type,
-            isNumeric : y.type === 'INTEGER' || y.type === 'DOUBLE' || y.type === 'FLOAT' || y.type === 'REAL',
-            isContinuous: this.isContinuousMeasure(y)
-        };
-
-        if (color) {
-            ca = {
-                schema : color.schemaName,
-                query  : color.queryName,
-                name   : color.name,
-                alias  : color.alias,
-                colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
-                label  : color.label,
-                type   : color.type
-            };
-        } else {
-            ca = {
-                schema  : null,
-                query   : null,
-                name    : null,
-                alias   : null,
-                colName : null,
-                label   : "",
-                isNumeric: false
-            }
-        }
-
-        var map = [], r,
-                rows = data.rows,
-                len = rows.length,
-                validCount = 0;
-
-        if (this.msg) {
-            this.msg.hide();
-        }
-
-        var xVal, yVal, colorVal, xIsNum, yIsNum, negX = false, negY = false, xAntigen, yAntigen;
-        for (r = 0; r < len; r++) {
-            if (x) {
-                xVal = this._getValue(x, _xid, rows[r]);
-                xAntigen = rows[r][_xid].antigen;
-            } else {
-                xVal = "";
-            }
-
-            yVal = this._getValue(y, _yid, rows[r]);
-            yAntigen = rows[r][_yid].antigen;
-
-            if (color) {
-                colorVal = this._getValue(color, _cid, rows[r]);
-            } else {
-                colorVal = null;
-            }
-
-            // allow any pair that does not contain a negative value.
-            // NaN, null, and undefined are non-negative values.
-
-            // validate x
-            if (xa && xa.isNumeric) {
-                xIsNum = !(Ext.isNumber(x) && x < 1);
-                if (!negX && !xIsNum) {
-                    negX = true;
-                }
-            }
-
-            // validate y
-            if (ya.isNumeric) {
-                yIsNum = !(Ext.isNumber(y) && y < 1);
-                if (!negY && !yIsNum) {
-                    negY = true;
-                }
-            }
-
-            if ((xa && xa.isNumeric) || (!xa.isNumeric && xVal !== undefined && xVal !== null)) {
-                map.push({
-                    x : xVal,
-                    y : yVal,
-                    color : colorVal,
-                    subjectId: rows[r][subjectCol],
-                    xname : (xa ? xa.label : null) + (xAntigen ? " (" + xAntigen + ")" : ''),
-                    yname : ya.label + (yAntigen ? " (" + yAntigen + ")" : ''),
-                    colorname : ca.label
-                });
-            }
-
-            if ((!x || this.isValidValue(x, xVal)) && this.isValidValue(y, yVal)) {
-                validCount ++;
-            }
-        }
-
-        this.percentOverlap = validCount / len;
-
-        if(this.percentOverlap < 1 && xa.isContinuous){
-            var id = Ext.id();
-            var id2 = Ext.id();
-            var msg = 'Points outside the plotting area have no match on the other axis.';
-            msg += '&nbsp;<a id="' + id2 +'">Got it</a>&nbsp;<a id="' + id +'">Details</a>';
-            this.showMessage(msg, true);
-
-            var tpl = new Ext.XTemplate(
-                    '<div class="matchtip">',
-                    '<div>',
-                    '<p class="tiptitle">Plotting Matches</p>',
-                    '<p class="tiptext">Percent match: {overlap}%. Mismatches may be due to data point subject, visit, or assay antigen.</p>',
-                    '</div>',
-                    '</div>'
-            );
-
-            var el = Ext.get(id);
-            if (el) {
-                Ext.create('Ext.tip.ToolTip', {
-                    target : el,
-                    anchor : 'left',
-                    data : {
-                        overlap : Ext.util.Format.round(this.percentOverlap * 100, 2)
-                    },
-                    tpl : tpl,
-                    autoHide: true,
-                    mouseOffset : [15,0],
-                    maxWidth: 500,
-                    minWidth: 200,
-                    bodyPadding: 0,
-                    padding: 0
-                });
-            }
-            el = Ext.get(id2);
-            el.on('click', function() { this.hideMessage(); }, this);
-        }
-
-        this.plotData = {
-            schemaName: data.schemaName,
-            queryName: data.queryName,
-            // We need the subject column as it appears in the temp query for the brushend handler.
-            subjectColumn: subjectCol,
-            xaxis: xa,
-            yaxis: ya,
-            color: ca,
-            rows : map,
-            setXLinear : negX,
-            setYLinear : negY
-        };
-    },
-
-    processPivotedData : function(data, x, y, subjectCol, colorCol) {
-        // when we are plotting subsets of antigens from the same source against each other, we pivot the data
-        // so we need to unpivot it here for each combination of x-axis antigen by y-axis antigen
-
-        if (this.requiresPivot(x, y)) {
-            var xantigen = x.options.antigen;
-            var yantigen = y.options.antigen;
-
-            if (xantigen != null && xantigen.values.length > 0 &&
-                    yantigen != null && yantigen.values.length > 0)
-            {
-
-                var xColName = x.name;
-                var yColName = y.name;
-
-                // get the mapping of the column aliases in the data object in an easier format to reference
-                var columnAliasMap = {};
-                Ext.each(this.columnAliases, function(alias) {
-                    columnAliasMap[alias.measureName + "::" + alias.pivotValue] = alias.columnName;
-                });
-
-                // create an array of antigen pairs (of the data object column aliases)
-                var antigenColumnAliasPairs = [];
-                for (i = 0; i < xantigen.values.length; i++)
-                {
-                    var xAntigenVal = xantigen.values[i];
-                    for (var j = 0; j < yantigen.values.length; j++)
-                    {
-                        var yAntigenVal = yantigen.values[j];
-                        antigenColumnAliasPairs.push({
-                            xAlias: columnAliasMap[xColName + "::" + xAntigenVal],
-                            xAntigen: xAntigenVal,
-                            yAlias: columnAliasMap[yColName + "::" + yAntigenVal],
-                            yAntigen: yAntigenVal
-                        });
-                    }
-                }
-
-                // special case for having the same measure on both axis
-                if (xColName == yColName)
-                {
-                    xColName += '-x';
-                    yColName += '-y';
-
-                    // remap the column names to what we will set them to
-                    this.measureToColumn['xAxis'] = xColName;
-                    this.measureToColumn['yAxis'] = yColName;
-                }
-                else
-                {
-                    // remap the column names to what we will set them to
-                    this.measureToColumn[xColName] = xColName;
-                    this.measureToColumn[yColName] = yColName;
-                }
-
-                // create the new data.rows array with a row for each ptid/visit/antigenPair
-                var newRowsArr = [];
-                for (var i = 0; i < data.rows.length; i++)
-                {
-                    var row = data.rows[i];
-                    Ext.each(antigenColumnAliasPairs, function(pair) {
-                        var dataRow = {};
-                        dataRow[subjectCol] = row[subjectCol];
-                        dataRow[colorCol] = row[colorCol];
-
-                        // issue 20589: skip null-null points produced by pivot
-                        if (row[pair.xAlias].value != null || row[pair.yAlias].value != null)
-                        {
-                            dataRow[xColName] = row[pair.xAlias];
-                            dataRow[xColName].antigen = pair.xAntigen;
-                            dataRow[yColName] = row[pair.yAlias];
-                            dataRow[yColName].antigen = pair.yAntigen;
-
-                            newRowsArr.push(dataRow);
-                        }
-                    });
-                }
-
-                data.rows = newRowsArr;
-            }
-        }
-
-        return data;
-    },
-
-    isContinuousMeasure : function(measure) {
-        var type = measure.type;
-        return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
     },
 
     updateMeasureSelection : function(win) {
@@ -2479,8 +2190,8 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    requestStudyAxisData : function(mappings, callback, scope) {
-        var studyContainers = Object.keys(mappings.containerAlignmentDayMap), inClause, sql;
+    requestStudyAxisData : function(chartData) {
+        var studyContainers = Object.keys(chartData.getContainerAlignmentDayMap()), inClause, sql;
         inClause = '(\'' + studyContainers.join('\',\'') + '\')';
         sql = 'SELECT\n' +
                 'StudyLabel,\n' +
@@ -2520,138 +2231,20 @@ Ext.define('Connector.view.Scatter', {
             sql: sql,
             success: function(executeSqlResp) {
                 if (this.isActiveView) { // TODO: This is a bit weird we check this here...
-                    this._preprocessStudyAxisData(executeSqlResp, mappings);
-                    if (Ext.isFunction(callback)) { callback.call(scope || this); }
+                    executeSqlResp.measures = this.measures;
+                    executeSqlResp.visitMap = chartData.getVisitMap();
+                    executeSqlResp.containerAlignmentDayMap = chartData.getContainerAlignmentDayMap();
+                    var studyAxisData = Ext.create('Connector.model.StudyAxisData', executeSqlResp);
+
+                    this.hasStudyAxisData = studyAxisData.getData().length > 0;
+
+                    this.initPlot(chartData.getDataRows(), chartData.getProperties(), studyAxisData, false);
+                    this.initStudyAxis(studyAxisData);
                 }
             },
             failure: function(resp) {console.error('Error retrieving study axis data')},
             scope: this
         });
-    },
-
-    _convertInterval : function(d, interval) {
-        // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
-        if (interval == 'days') {
-            return d;
-        } else if (interval == 'weeks') {
-            return Math.floor(d / 7);
-        } else if (interval == 'months') {
-            return Math.floor(d / (365.25/12));
-        }
-    },
-
-    /**
-     * For a given selectRows response, returns the visitMap and containerAlignmentDayMap
-     * @param selectRowsResponse
-     * @returns {{visitMap: {}, containerAlignmentDayMap: {}}}
-     * @private
-     */
-    _buildStudyVisitMap : function(selectRowsResponse) {
-        var rows = selectRowsResponse.rows, containerAlignmentDayMap = {}, visitColName, containerColName, visitMap = {};
-
-        containerColName = "SubjectVisit_Visit_Folder";
-        visitColName = this.measureToColumn[Connector.studyContext.subjectVisitColumn + '/Visit'];
-
-        for (var i = 0; i < rows.length; i++)
-        {
-            containerAlignmentDayMap[rows[i][containerColName].value] = 0;
-            visitMap[rows[i][visitColName].value] = true;
-        }
-
-        return {
-            visitMap: visitMap,
-            containerAlignmentDayMap: containerAlignmentDayMap
-        };
-    },
-
-    _preprocessStudyAxisData : function(executeSqlResp, mappings) {
-        var rows = executeSqlResp.rows, visitMap = mappings.visitMap, containerAlignmentDayMap = mappings.containerAlignmentDayMap, interval, studyMap = {}, studyLabel,
-                study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
-                seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j, alignmentVisitTag, visitTagName;
-
-        interval = this.measures[0].interval.toLowerCase();
-
-        // first we have to loop through the study axis visit information to find the alignment visit for each container
-        alignmentVisitTag = this.measures[0].options ? this.measures[0].options.alignmentVisitTag : null;
-        if (alignmentVisitTag != null)
-        {
-            for (j = 0; j < rows.length; j++)
-            {
-                studyContainer = rows[j].StudyContainer.value;
-                visitTagName = rows[j].VisitTagName.value;
-                if (visitTagName == alignmentVisitTag)
-                    containerAlignmentDayMap[studyContainer] = rows[j].ProtocolDay.value;
-            }
-        }
-
-        for (j = 0; j < rows.length; j++) {
-            studyLabel = rows[j].StudyLabel.value;
-            studyContainer = rows[j].StudyContainer.value;
-            shiftVal = containerAlignmentDayMap[studyContainer];
-            visitId = rows[j].VisitRowId.value;
-            visitLabel = rows[j].VisitLabel.value;
-            seqMin = rows[j].SequenceNumMin.value;
-            seqMax = rows[j].SequenceNumMax.value;
-            protocolDay = this._convertInterval(rows[j].ProtocolDay.value - shiftVal, interval);
-            timepointType = rows[j].TimepointType.value;
-            visitTagCaption = rows[j].VisitTagCaption.value;
-
-            if (!visitMap[visitId] && !visitTagCaption) { continue; }
-
-            if (timepointType !== 'VISIT') {
-                seqMin = this._convertInterval(seqMin - shiftVal, interval);
-                seqMax = this._convertInterval(seqMax - shiftVal, interval);
-            }
-
-            if (!studyMap.hasOwnProperty(studyLabel)) {
-                studyMap[studyLabel] = {
-                    label : studyLabel,
-                    timepointType : timepointType,
-                    visits: {}
-                };
-            }
-
-            study = studyMap[studyLabel];
-
-            if (!study.visits.hasOwnProperty(visitId)) {
-                study.visits[visitId] = {
-                    label: visitLabel,
-                    sequenceNumMin: seqMin,
-                    sequenceNumMax: seqMax,
-                    protocolDay: protocolDay,
-                    hasPlotData: visitMap[visitId] != undefined,
-                    visitTags: {}
-                };
-            }
-
-            visit = study.visits[visitId];
-
-            if (visitTagCaption !== null && !visit.visitTags.hasOwnProperty(visitTagCaption)) {
-                visit.visitTags[visitTagCaption] = visitTagCaption;
-            }
-
-            if (this.studyAxisRange.min == null || this.studyAxisRange.min > protocolDay)
-                this.studyAxisRange.min = protocolDay;
-            if (this.studyAxisRange.max == null || this.studyAxisRange.max < protocolDay)
-                this.studyAxisRange.max = protocolDay;
-        }
-
-        // Convert study map and visit maps into arrays.
-        studyKeys = Object.keys(studyMap).sort();
-
-        for (i = 0; i < studyKeys.length; i++) {
-            study = studyMap[studyKeys[i]];
-            visitKeys = Object.keys(study.visits).sort();
-            visits = [];
-            for (j = 0; j < visitKeys.length; j++) {
-                visitKey = visitKeys[j];
-                study.visits[visitKey].visitTags = Object.keys(study.visits[visitKey].visitTags).sort();
-                visits.push(study.visits[visitKey]);
-            }
-
-            study.visits = visits;
-            this.studyAxisData.push(study);
-        }
     },
 
     showVisitHover : function(data, rectEl) {
@@ -2704,14 +2297,14 @@ Ext.define('Connector.view.Scatter', {
         }
     },
 
-    initStudyAxis : function() {
+    initStudyAxis : function(studyAxisInfo) {
         if (!this.studyAxis) {
             this.studyAxis = Connector.view.StudyAxis().renderTo('study-axis');
         }
 
-        this.studyAxis.studyData(this.studyAxisData)
+        this.studyAxis.studyData(studyAxisInfo.getData())
                 .scale(this.plot.scales.x.scale)
-                .width(this.studyAxisPanel.getWidth() - 40)
+                .width(this.getStudyAxisPanel().getWidth() - 40)
                 .visitMouseover(this.showVisitHover, this)
                 .visitMouseout(this.removeVisitHover, this)
                 .visitTagMouseover(this.showVisitTagHover, this)
@@ -2720,30 +2313,14 @@ Ext.define('Connector.view.Scatter', {
         this.studyAxis();
     },
 
-    _preprocessData : function(selectRowsResponse) {
-        this.studyAxisData = [];
-        this.studyAxisRange = {min: null, max: null};
-
-        this._preprocessSelectRowsResp(selectRowsResponse);
-        if (this.requireStudyAxis) {
-            this.requestStudyAxisData(this._buildStudyVisitMap(selectRowsResponse), function() {
-                this.initPlot(this.plotData, false);
-                this.initStudyAxis();
-            }, this);
-        }
-        else {
-            this.initPlot(this.plotData, false);
-        }
-    },
-
-    resizePlotContainers : function() {
-        if (this.requireStudyAxis && this.studyAxisData && this.studyAxisData.length > 0) {
+    resizePlotContainers : function(numStudies) {
+        if (this.requireStudyAxis && this.hasStudyAxisData) {
             this.plotEl.setStyle('padding', '0 0 0 150px');
-            this.studyAxisPanel.setVisible(true);
-            this.studyAxisPanel.setHeight(Math.min(100, 27 * this.studyAxisData.length));
+            this.getStudyAxisPanel().setVisible(true);
+            this.getStudyAxisPanel().setHeight(Math.min(100, 27 * numStudies));
         } else {
             this.plotEl.setStyle('padding', '0');
-            this.studyAxisPanel.setVisible(false);
+            this.getStudyAxisPanel().setVisible(false);
         }
     },
 

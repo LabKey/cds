@@ -52,6 +52,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
   "Connector.grid.Panel": "../../../../webapp/Connector/src/grid/Panel.js",
   "Connector.model.Antigen": "../../../../webapp/Connector/src/model/Antigen.js",
+  "Connector.model.ChartData": "../../../../webapp/Connector/src/model/ChartData.js",
   "Connector.model.ColumnInfo": "../../../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../../../webapp/Connector/src/model/Detail.js",
   "Connector.model.Dimension": "../../../../webapp/Connector/src/model/Dimension.js",
@@ -84,6 +85,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTag": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
+  "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.Compare": "../../../../webapp/Connector/src/view/Compare.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -114,7 +116,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.PageHeader": "../../../../webapp/Connector/src/view/PageHeader.js",
   "Connector.view.PlotPane": "../../../../webapp/Connector/src/view/PlotPane.js",
   "Connector.view.Popup": "../../../../webapp/Connector/src/view/Popup.js",
-  "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.Signin": "../../../../webapp/Connector/src/view/Signin.js",
   "Connector.view.SigninForm": "../../../../webapp/Connector/src/view/Signin.js",
@@ -214,6 +215,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [],
   "Connector.model.Antigen": [],
+  "Connector.model.ChartData": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
@@ -246,6 +248,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.VisitTag": [],
   "Connector.types.Filter": [],
   "Connector.view.About": [],
+  "Connector.view.Chart": [],
   "Connector.view.Compare": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
@@ -276,7 +279,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
   "Connector.view.Popup": [],
-  "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.Signin": [],
   "Connector.view.SigninForm": [],
@@ -1199,6 +1201,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.connector-gridpanel"
   ],
   "Connector.model.Antigen": [],
+  "Connector.model.ChartData": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
@@ -1258,6 +1261,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.types.Filter": [],
   "Connector.view.About": [
     "widget.about"
+  ],
+  "Connector.view.Chart": [
+    "widget.plot"
   ],
   "Connector.view.Compare": [
     "widget.compareview"
@@ -1333,9 +1339,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
   "Connector.view.Popup": [],
-  "Connector.view.Scatter": [
-    "widget.plot"
-  ],
   "Connector.view.Selection": [
     "widget.selectionview"
   ],
