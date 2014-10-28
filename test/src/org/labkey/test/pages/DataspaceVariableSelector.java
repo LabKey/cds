@@ -55,20 +55,20 @@ public abstract class DataspaceVariableSelector
 
     public Locator.CssLocator sourcePanelRow()
     {
-        return Locator.CssLocator.union(pickerPanel().append(".sourcepanel div.itemrow span.val"), // selects rows with counts
-                pickerPanel().append(".sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
+        return Locator.CssLocator.union(pickerPanel().append(" .sourcepanel div.itemrow span.val"), // selects rows with counts
+                pickerPanel().append(" .sourcepanel div.itemrow")); // selects rows without counts (also rows with counts due to CSS limitations)
     }
 
     public Locator.CssLocator measuresPanelRow()
     {
         return isMeasureMultiSelect() ?
-                pickerPanel().append(".measuresgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row"):
-                pickerPanel().append(".measuresgrid div.itemrow");
+                pickerPanel().append(" .measuresgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row"):
+                pickerPanel().append(" .measuresgrid div.itemrow");
     }
 
     public Locator.CssLocator variableOptionsRow()
     {
-        return window().append(".variableoptionsgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row");
+        return window().append(" .variableoptionsgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row");
     }
 
     public void pickSource(String source)
@@ -131,7 +131,7 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
-        _test.click(window().append("a.x-btn").withText("cancel"));
+        _test.click(window().append(" a.x-btn").withText("cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
 

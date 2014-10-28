@@ -86,7 +86,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     {
         addGridColumn(source, measure, true, true);
 
-        Locator.CssLocator _variablePanelRow = pickerPanel().append(".measuresgrid ." + Ext4Helper.getCssPrefix() + "grid-row");
+        Locator.CssLocator _variablePanelRow = pickerPanel().append(" .measuresgrid ." + Ext4Helper.getCssPrefix() + "grid-row");
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow.toBy()));
         _test.click(_variablePanelRow.withText(measure));
 
