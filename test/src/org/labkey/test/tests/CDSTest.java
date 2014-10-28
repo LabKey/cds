@@ -445,7 +445,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clearFilter();
     }
 
-//    @Test
+    @Test
     public void verifyUserPermissions()
     {
         beginAt("project/" + getProjectName() + "/begin.view?");

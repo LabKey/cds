@@ -178,7 +178,7 @@ Ext.define('Connector.view.Selection', {
                         domString =
                                 '<div class="status-over memberitem memberloc plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
-                                        measure.label +
+                                        measure.measure.label +
                                         ': &gt;= ' + minVal +
                                         ', &lt;= ' + maxVal +
                                 '</div>';
@@ -188,7 +188,7 @@ Ext.define('Connector.view.Selection', {
                 },
                 renderPlotSelection: function(values) {
                     var measures = values.plotMeasures,
-                        filters = values.gridFilter, // TODO: rename to sqlFilters
+                        filters = values.gridFilter,
                         xMeasure = measures[0],
                         yMeasure = measures[1],
                         xFilters = filters.slice(0, 2),

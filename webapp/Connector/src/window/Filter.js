@@ -22,11 +22,12 @@ Ext.define('Connector.window.Filter', {
         this.close();
     },
 
-    getItems : function () {
+    getItems : function() {
         var model = this.dataView.getModel();
 
         return [{
             xtype: 'labkey-default-filterpanel',
+            itemId: 'filtered',
             cls: 'filterpanel',
             boundColumn: this.columnMetadata,
             filterArray: model.getFilterArray(),
@@ -35,29 +36,12 @@ Ext.define('Connector.window.Filter', {
         }];
     },
 
-    applyFilters : function () {
-        var filterPanel = this.down('labkey-default-filterpanel');
-        var filterArray = [];
-        if (filterPanel.isValid()) {
-            var colFilters = filterPanel.getFilters();
-            var fa = Ext.clone(this.dataView.getModel().getFilterArray());
-            fa = fa.slice(1);
-            filterArray = LABKEY.Filter.merge(fa, this.columnMetadata.displayField ? this.columnMetadata.displayField : this.columnMetadata.fieldKey, colFilters);
-        }
-        else {
-            Ext.Msg.alert("Error", "Please fix errors in filter.");
-        }
+    applyFiltersAndColumns : function() {
 
-        return filterArray;
-    },
+        var view = this.getComponent('filtered');
 
-    applyFiltersAndColumns : function () {
-
-        var filterArray = this.applyFilters();
-
-        if (filterArray.length > 0) {
-            this.fireEvent('filter', this, this.columnMetadata, filterArray);
-            this.ppx = this.getPosition();
+        if (view.isValid()) {
+            this.fireEvent('filter', this, this.columnMetadata, view.getFilters());
             this.close();
         }
     }

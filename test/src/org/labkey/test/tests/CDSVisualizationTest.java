@@ -206,7 +206,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
         _asserts.assertSelectionStatusCounts(3, 1, 2);
 
-        cds.useSelectionAsSubjectFilter();
+        cds.useSelectionAsDataFilter();
         assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilter.findElements(getDriver()).size());
         _asserts.assertFilterStatusCounts(3, 1, 2);
 
