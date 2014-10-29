@@ -1040,7 +1040,7 @@ Ext.define('Connector.view.Chart', {
         // first, check the set of active filters
         var filters = Connector.getState().getFilters();
         for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot() === true) {
+            if (filters[f].isPlot() === true && filters[f].isGrid() === false) {
                 var m = filters[f].get('plotMeasures');
 
                 if (m[0]) {
@@ -1157,6 +1157,7 @@ Ext.define('Connector.view.Chart', {
 
             this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
 
+            // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
             if (!this.fromFilter && activeMeasures.y !== null) {
                 this.updatePlotBasedFilter(activeMeasures);
             }
@@ -2074,7 +2075,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     onViewChange : function(controller, view) {
-        this.isActiveView = (view == 'plot');
+        this.isActiveView = (view === this.xtype);
 
         if (this.isActiveView) {
 

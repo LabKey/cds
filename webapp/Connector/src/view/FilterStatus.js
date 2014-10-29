@@ -81,7 +81,7 @@ Ext.define('Connector.view.FilterStatus', {
         }
     },
 
-    onFilterRemove : function(filters) {
+    onFilterRemove : function() {
         this.showUndoMessage();
     },
 
