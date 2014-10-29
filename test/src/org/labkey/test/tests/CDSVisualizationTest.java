@@ -99,7 +99,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    @Test
+/*    @Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -143,7 +143,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         assertSVG(WT_PLSE_LOG);
 
-        // TODO: Reenable the hover testing
         Actions builder = new Actions(getDriver());
        List<WebElement> points;
        points = Locator.css("svg g a.point path").findElements(getDriver());
@@ -191,11 +190,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(plotSelection);
 
         assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
-        _asserts.assertSelectionStatusCounts(5, 1, 2);
+        _asserts.assertSelectionStatusCounts(8, 1, 2);
 
         plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
         waitForElementToDisappear(plotSelectionCloseBtn.index(1));
-        _asserts.assertSelectionStatusCounts(10, 1, 2);
+        _asserts.assertSelectionStatusCounts(13, 1, 2);
         plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
         assertElementNotPresent(plotSelection);
 
@@ -215,7 +214,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
         waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
     }
-
+*/
     @Test
     public void verifyBoxPlots()
     {
