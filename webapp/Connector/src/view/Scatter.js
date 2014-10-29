@@ -378,7 +378,7 @@ Ext.define('Connector.view.Scatter', {
 
                 strokeFn = function(d) {
                     if (d.subjectId.value === pointData.subjectId.value) {
-                        return '#00EAFF';
+                        return '#01BFC2';
                     } else {
                         if (colorScale && colorAcc) {
                             return colorScale(colorAcc.getValue(d));
@@ -731,7 +731,7 @@ Ext.define('Connector.view.Scatter', {
 
                     if (d.isSelected) {
                         subjects[d.subjectId.value] = true;
-                        return '#14C9CC';
+                        return '#01BFC2';
                     } else {
                         if (colorScale && colorAcc) {
                             return colorScale(colorAcc.getValue(d));
@@ -743,7 +743,7 @@ Ext.define('Connector.view.Scatter', {
 
                 strokeFn = function(d) {
                     if (d.isSelected) {
-                        return '#00393A';
+                        return '#01BFC2';
                     } else {
                         if (colorScale && colorAcc) {
                             return colorScale(colorAcc.getValue(d));
@@ -766,7 +766,7 @@ Ext.define('Connector.view.Scatter', {
 
                 assocStrokeFn = function(d) {
                     if (!d.isSelected && subjects[d.subjectId.value] === true) {
-                        return '#00EAFF';
+                        return '#01BFC2';
                     } else {
                         return this.getAttribute('stroke');
                     }
