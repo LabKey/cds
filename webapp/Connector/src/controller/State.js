@@ -91,6 +91,11 @@ Ext.define('Connector.controller.State', {
             return false;
         }
 
+        // Must be equivalent in plot/grid configuration
+        if ((filterA.isPlot() != filterB.isPlot()) || (filterA.isGrid() != filterB.isGrid())) {
+            return false;
+        }
+
         var aMeasures = filterA.get('plotMeasures'), am;
         var bMeasures = filterB.get('plotMeasures'), bm;
 
