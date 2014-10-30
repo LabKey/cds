@@ -368,11 +368,11 @@ Ext.define('Connector.view.Scatter', {
                     if (d.subjectId.value === pointData.subjectId.value) {
                         return '#01BFC2';
                     } else {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
+                        //if (colorScale && colorAcc) {
+                        //    return colorScale(colorAcc.getValue(d));
+                        //}
 
-                        return '#000000';
+                        return '#E6E6E6';
                     }
                 };
 
@@ -380,20 +380,20 @@ Ext.define('Connector.view.Scatter', {
                     if (d.subjectId.value === pointData.subjectId.value) {
                         return '#01BFC2';
                     } else {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
+                        //if (colorScale && colorAcc) {
+                        //    return colorScale(colorAcc.getValue(d));
+                        //}
 
-                        return '#000000';
+                        return '#E6E6E6';
                     }
                 };
 
                 opacityFn = function(d) {
-                    return  d.subjectId.value === pointData.subjectId.value ? 1 : 0.2;
+                    //return d.subjectId.value === pointData.subjectId.value ? 1 : 0.2;
+                    return 1;
                 };
 
                 var points = layerSel.selectAll('.point path');
-
                 points.attr('fill', colorFn)
                         .attr('stroke', strokeFn)
                         .attr('fill-opacity', opacityFn)
@@ -461,11 +461,12 @@ Ext.define('Connector.view.Scatter', {
                     // keep original color of the bin (note: uses style instead of fill attribute)
                     d.origStyle = d.origStyle || this.getAttribute('style');
 
-                    return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
+                    return isSubjectInMouseBin(d, 'fill: #01BFC2', 'fill: #E6E6E6');
                 };
 
                 var opacityFn = function(d) {
-                    return isSubjectInMouseBin(d, 1, 0.15);
+                    //return isSubjectInMouseBin(d, 1, 0.15);
+                    return 1;
                 };
 
                 layerSel.selectAll('.vis-bin path')
@@ -517,10 +518,8 @@ Ext.define('Connector.view.Scatter', {
     getBinLayer : function(layerScope) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Bin({
-//                shape: 'hex',
                 shape: 'square',
                 colorRange: ["#E6E6E6", "#000000"],
-//                size: 5,
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
             }),
@@ -728,28 +727,31 @@ Ext.define('Connector.view.Scatter', {
                     var x = d.x, y = d.y;
 
                     d.isSelected = isSelectedWithBrush(extent, x, y);
+                    d.origFill = d.origFill || this.getAttribute('fill');
 
                     if (d.isSelected) {
                         subjects[d.subjectId.value] = true;
                         return '#01BFC2';
                     } else {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
+                        //if (colorScale && colorAcc) {
+                        //    return colorScale(colorAcc.getValue(d));
+                        //}
 
-                        return '#000000';
+                        return '#E6E6E6';
                     }
                 };
 
                 strokeFn = function(d) {
+                    d.origStroke = d.origStroke || this.getAttribute('stroke');
+
                     if (d.isSelected) {
                         return '#01BFC2';
                     } else {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
+                        //if (colorScale && colorAcc) {
+                        //    return colorScale(colorAcc.getValue(d));
+                        //}
 
-                        return '#000000';
+                        return '#E6E6E6';
                     }
                 };
 
@@ -773,11 +775,12 @@ Ext.define('Connector.view.Scatter', {
                 };
 
                 opacityFn = function(d) {
-                    if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
-                        return 1;
-                    } else {
-                        return 0.2;
-                    }
+                    //if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
+                    //    return 1;
+                    //} else {
+                    //    return 0.2;
+                    //}
+                    return 1;
                 };
 
                 sel.selectAll('.point path').attr('fill', assocColorFn)
@@ -824,7 +827,7 @@ Ext.define('Connector.view.Scatter', {
                     // keep original color of the bin (note: uses style instead of fill attribute)
                     d.origStyle = d.origStyle || this.getAttribute('style');
 
-                    return d.isSelected ? 'fill: #14C9CC;' : d.origStyle;
+                    return d.isSelected ? 'fill: #01BFC2;' : 'fill: #E6E6E6;';
                 };
                 sel.selectAll('.vis-bin path').attr('style', colorFn);
 
@@ -844,19 +847,20 @@ Ext.define('Connector.view.Scatter', {
 
                 // set the opacity for all bins, 3 states: select, associated, neither
                 opacityFn = function(d) {
-                    if (d.isSelected)
-                        return 1;
-
-                    if (!d.isSelected && d.length > 0 && d[0].data)
-                    {
-                        for (var i = 0; i < d.length; i++)
-                        {
-                            if (subjects[d[i].data.subjectId.value] === true)
-                                return 0.5;
-                        }
-                    }
-
-                    return 0.15;
+                    //if (d.isSelected)
+                    //    return 1;
+                    //
+                    //if (!d.isSelected && d.length > 0 && d[0].data)
+                    //{
+                    //    for (var i = 0; i < d.length; i++)
+                    //    {
+                    //        if (subjects[d[i].data.subjectId.value] === true)
+                    //            return 0.5;
+                    //    }
+                    //}
+                    //
+                    //return 0.15;
+                    return 1;
                 };
 
                 sel.selectAll('.vis-bin path').attr('style', assocColorFn)
@@ -959,6 +963,8 @@ Ext.define('Connector.view.Scatter', {
 
                     // reset points
                     selections[0].selectAll('.point path')
+                            .attr('fill', function(d){ return d.origFill })
+                            .attr('stroke', function(d){ return d.origStroke })
                             .attr('fill-opacity', 0.5).attr('stroke-opacity', 0.5);
 
                     // reset bins
