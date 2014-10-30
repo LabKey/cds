@@ -270,7 +270,7 @@ Ext.define('Connector.controller.Query', {
      * @private
      */
     _getMeasures : function(filterConfig, filtersAreInstances) {
-        var measures = [], measureMap = {}, usePlotMeasures = false;
+        var measures = [], measureMap = {};
 
         if (filterConfig.isPlot === true) {
             // use the plotMeasures to determine the measure set
@@ -279,7 +279,6 @@ Ext.define('Connector.controller.Query', {
                     var measure = this.getMeasure(plotMeasure.measure.alias);
                     if (measure) {
                         measure.inNotNullSet = true;
-                        usePlotMeasures = true;
 
                         measureMap[measure.alias] = {
                             measure: measure,
@@ -348,17 +347,25 @@ Ext.define('Connector.controller.Query', {
                                 };
                             }
 
+                            if (nf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
+                                measureMap[alias].measure.inNotNullSet = false;
+                            }
+
                             var nfString = nf.getURLParameterName() + '=' + nf.getURLParameterValue();
                             measureMap[alias].filterArray.push(filtersAreInstances ? nf : nfString);
                         }
                         else {
-                            measure.inNotNullSet = true;
 
                             if (!measureMap[measure.alias]) {
+                                measure.inNotNullSet = true;
                                 measureMap[measure.alias] = {
                                     measure: measure,
                                     filterArray: []
                                 };
+                            }
+
+                            if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
+                                measureMap[measure.alias].measure.inNotNullSet = false;
                             }
 
                             if (column === measure.name) {
