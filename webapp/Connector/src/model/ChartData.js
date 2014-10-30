@@ -91,7 +91,7 @@ Ext.define('Connector.model.ChartData', {
     processSelectRows : function() {
         var x = this.getMeasure(0), y = this.getMeasure(1), color = this.getMeasure(2),
                 mTC = this.getMeasureToColumnMap(),
-                xa = null, ya = null, ca = null, _xid, _yid, _cid,
+                xa, ya, ca, _xid, _yid, _cid,
                 containerColName = "SubjectVisit_Visit_Folder", containerAlignmentDayMap = {},
                 visitColName = mTC[Connector.studyContext.subjectVisitColumn + '/Visit'], visitMap = {};
 
@@ -117,7 +117,8 @@ Ext.define('Connector.model.ChartData', {
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
                 isContinuous: Connector.model.ChartData.isContinuousMeasure(x)
             };
-        } else {
+        }
+        else {
             xa = {
                 schema  : null,
                 query   : null,
@@ -152,7 +153,8 @@ Ext.define('Connector.model.ChartData', {
                 label  : color.label,
                 type   : color.type
             };
-        } else {
+        }
+        else {
             ca = {
                 schema  : null,
                 query   : null,
@@ -183,7 +185,8 @@ Ext.define('Connector.model.ChartData', {
             if (x) {
                 xVal = this._getValue(x, _xid, rows[r]);
                 xAntigen = rows[r][_xid].antigen;
-            } else {
+            }
+            else {
                 xVal = "";
             }
 
@@ -192,7 +195,8 @@ Ext.define('Connector.model.ChartData', {
 
             if (color) {
                 colorVal = this._getValue(color, _cid, rows[r]);
-            } else {
+            }
+            else {
                 colorVal = null;
             }
 
@@ -350,11 +354,10 @@ Ext.define('Connector.model.ChartData', {
             val = row[colName].value;
             return val !== undefined && val !== null ? new Date(val) : null;
         }
-        else {
-            // Assume categorical.
-            val = row[colName].displayValue ? row[colName].displayValue : row[colName].value;
-            return (val !== undefined) ? val : null;
-        }
+
+        // Assume categorical.
+        val = row[colName].displayValue ? row[colName].displayValue : row[colName].value;
+        return (val !== undefined) ? val : null;
     },
 
     isValidNumber: function(number){
