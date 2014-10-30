@@ -320,7 +320,16 @@ Ext.define('Connector.controller.Query', {
                             // "study_Nab_Lab/PI" as "Lab.PI"
                             var alias = gf.getColumnName().replace(/\//g, '_');
                             var parts = gf.getColumnName().replace(/\//g, '.').split('_');
-                            var colName = parts[parts.length-1];
+
+                            var colName;
+                            if (parts.length > 3) {
+                                // ["study", "SubjectVisit", "SubjectId", "Study/Label"] --> "SubjectId/Study/Label"
+                                colName = parts.splice(2, parts.length-1).join('/');
+                            }
+                            else {
+                                colName = parts[parts.length-1];
+                            }
+
                             var nf = LABKEY.Filter.create(colName.replace(/\./g, '/'), gf.getValue(), gf.getFilterType());
 
                             if (!measureMap[alias]) {
