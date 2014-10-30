@@ -25,7 +25,7 @@ Ext.define('Connector.view.GridPane', {
             xtype: 'box',
             autoEl: {
                 tag: 'div',
-                html: 'This filter includes only subjects with data for the following variables.'
+                html: 'This filter includes only ' + (filter.get('isWhereFilter') ? '' : 'subjects with') + ' data for the following variables.'
             }
         }];
 
@@ -52,9 +52,14 @@ Ext.define('Connector.view.GridPane', {
                         }
                         shown[measure.alias] = true;
 
+                        // the query service can lookup a measure, but only the base of a lookup
+                        var label = Ext.isString(measure.label) ? measure.label : '';
+                        if (gf.getColumnName().indexOf('/') > -1) {
+                            label = LABKEY.app.model.Filter.getGridFilterLabel(gf);
+                        }
                         content.push({
                             xtype: 'box',
-                            html: Ext.htmlEncode((Ext.isString(measure.label) ? measure.label : '') + ' ' + LABKEY.app.model.Filter.getGridLabel(gf))
+                            html: Ext.htmlEncode(label + ' ' + LABKEY.app.model.Filter.getGridLabel(gf))
                         });
                     }
                 }

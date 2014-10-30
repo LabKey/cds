@@ -1,6 +1,5 @@
 div.selitem {
-  width: 90%; /* remaining space for .circle */
-  padding: 4px 6px;
+  padding: 4px 0;
 }
 
 div.opselect {
@@ -127,6 +126,8 @@ div.collapsed-member {
   span {
     display: block;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -187,9 +188,9 @@ div.activefilter {
 }
 
 /* Connector.view.Selection */
-.sel-listing {
-  padding: 5px 1px 5px 30px;
-}
+//.sel-listing {
+//  padding: 5px 1px 5px 30px;
+//}
 
 .circle {
   width: 15px;

@@ -25,7 +25,7 @@ Ext.define('Connector.view.PlotPane', {
             xtype: 'box',
             autoEl: {
                 tag: 'div',
-                html: 'This filter includes only subjects with data for the following variables.'
+                html: 'This filter includes only ' + (filter.get('isWhereFilter') ? '' : 'subjects with') + ' data for the following variables.'
             }
         }];
 
