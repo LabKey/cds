@@ -77,7 +77,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         _initializer.setDesiredStudies(DESIRED_STUDIES);
         _initializer.setupDataspace();
         initTest.createParticipantGroups();
-    }
+  }
 
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
@@ -99,7 +99,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-/*    @Test
+    @Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
@@ -143,78 +143,80 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         assertSVG(WT_PLSE_LOG);
 
-        Actions builder = new Actions(getDriver());
-       List<WebElement> points;
-       points = Locator.css("svg g a.point path").findElements(getDriver());
-
-       // Test hover events
-        builder.moveToElement(points.get(71)).perform();
-
-        // Check that related points are colored appropriately.
-       for (int i = 71; i < 76; i++)
-        {
-            assertEquals("Related point had an unexpected fill color", MOUSEOVER_FILL, points.get(i).getAttribute("fill"));
-            assertEquals("Related point had an unexpected stroke color", MOUSEOVER_STROKE, points.get(i).getAttribute("stroke"));
-
-        }
-
-        builder.moveToElement(points.get(33)).moveByOffset(10, 10).perform();
-
-        // Check that the points are no longer highlighted.
-        for (int i = 33; i < 38; i++)
-        {
-            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
-            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
-        }
-
-        // Test brush events.
-        builder.moveToElement(points.get(10)).moveByOffset(-45, -55).clickAndHold().moveByOffset(130, 160).release().perform();
-
-        for (int i = 10; i < 15; i++)
-        {
-            assertEquals("Brushed point had an unexpected fill color", BRUSHED_FILL, points.get(i).getAttribute("fill"));
-            assertEquals("Brushed point had an unexpected stroke color", BRUSHED_STROKE, points.get(i).getAttribute("stroke"));
-        }
-
-        builder.moveToElement(points.get(37)).moveByOffset(-25, 0).clickAndHold().release().perform();
-
-        // Check that the points are no longer brushed.
-        for (int i = 10; i < 15; i++)
-        {
-            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
-            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
-        }
-
-        // Brush the same area, then apply that selection as a filter.
-        builder.moveToElement(points.get(10)).moveByOffset(-45, -55).clickAndHold().moveByOffset(130, 160).release().perform();
-        waitForElement(plotSelection);
-
-        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
-        _asserts.assertSelectionStatusCounts(8, 1, 2);
-
-        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
-        waitForElementToDisappear(plotSelectionCloseBtn.index(1));
-        _asserts.assertSelectionStatusCounts(13, 1, 2);
-        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
-        assertElementNotPresent(plotSelection);
-
-        // Select them again and apply them as a filter.
-        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
-       waitForElement(plotSelection);
-
-        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
-        _asserts.assertSelectionStatusCounts(3, 1, 2);
-
-        cds.useSelectionAsDataFilter();
-        assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilter.findElements(getDriver()).size());
-        _asserts.assertFilterStatusCounts(3, 1, 2);
-
-        // Test that variable selectors are reset when filters are cleared (Issue 20138).
-        cds.clearFilter();
-        waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
-        waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
+        // TODO: Figure out and enable these hover selectors with completed data filters feature
+//        Actions builder = new Actions(getDriver());
+//       List<WebElement> points;
+//       points = Locator.css("svg g a.point path").findElements(getDriver());
+//
+//       // Test hover events
+//        builder.moveToElement(points.get(71)).perform();
+//
+//        // Check that related points are colored appropriately.
+//       for (int i = 71; i < 76; i++)
+//        {
+//            assertEquals("Related point had an unexpected fill color", MOUSEOVER_FILL, points.get(i).getAttribute("fill"));
+//            assertEquals("Related point had an unexpected stroke color", MOUSEOVER_STROKE, points.get(i).getAttribute("stroke"));
+//
+//        }
+//
+//        builder.moveToElement(points.get(33)).moveByOffset(10, 10).perform();
+//
+//        // Check that the points are no longer highlighted.
+//        for (int i = 33; i < 38; i++)
+//        {
+//            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
+//            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+//        }
+//
+//        // Test brush events.
+//        builder.moveToElement(points.get(10)).moveByOffset(-45, -55).clickAndHold().moveByOffset(130, 160).release().perform();
+//
+//        for (int i = 10; i < 15; i++)
+//        {
+//            assertEquals("Brushed point had an unexpected fill color", BRUSHED_FILL, points.get(i).getAttribute("fill"));
+//            assertEquals("Brushed point had an unexpected stroke color", BRUSHED_STROKE, points.get(i).getAttribute("stroke"));
+//        }
+//
+//        builder.moveToElement(points.get(37)).moveByOffset(-25, 0).clickAndHold().release().perform();
+//
+//        // Check that the points are no longer brushed.
+//        for (int i = 10; i < 15; i++)
+//        {
+//            assertEquals("Related point had an unexpected fill color", NORMAL_COLOR, points.get(i).getAttribute("fill"));
+//            assertEquals("Related point had an unexpected stroke color", NORMAL_COLOR, points.get(i).getAttribute("stroke"));
+//        }
+//
+//        // Brush the same area, then apply that selection as a filter.
+//        builder.moveToElement(points.get(10)).moveByOffset(-45, -55).clickAndHold().moveByOffset(130, 160).release().perform();
+//        waitForElement(plotSelection);
+//
+//        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
+//        _asserts.assertSelectionStatusCounts(8, 1, 2);
+//
+//        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
+//        waitForElementToDisappear(plotSelectionCloseBtn.index(1));
+//        _asserts.assertSelectionStatusCounts(13, 1, 2);
+//        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
+//        assertElementNotPresent(plotSelection);
+//
+//        // Select them again and apply them as a filter.
+//        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
+//       waitForElement(plotSelection);
+//
+//        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
+//        _asserts.assertSelectionStatusCounts(3, 1, 2);
+//
+//        cds.useSelectionAsDataFilter();
+//        assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilter.findElements(getDriver()).size());
+//        _asserts.assertFilterStatusCounts(3, 1, 2);
+//
+//        // Test that variable selectors are reset when filters are cleared (Issue 20138).
+//        cds.clearFilter();
+//        waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
+//        waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
     }
-*/
+
+
     @Test
     public void verifyBoxPlots()
     {

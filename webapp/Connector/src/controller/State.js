@@ -27,7 +27,13 @@ Ext.define('Connector.controller.State', {
     checkReady : function() {
         Connector.getService('Query').onQueryReady(function() {
             this.fireReady();
+            this.helpTest();
         }, this);
+    },
+
+    // Helper to let the test know that everything should be loaded
+    helpTest : function() {
+        Ext.getBody().addCls('appready');
     },
 
     initColumnListeners : function() {
