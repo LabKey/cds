@@ -52,12 +52,12 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("maxRows=1000");
-        _test.addUrlParameter("_showPlotData=true");
+        _test.addUrlParameter("maxRows=1000&_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
+        _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
     }
 
