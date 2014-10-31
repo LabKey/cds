@@ -262,17 +262,17 @@ Ext.define('Connector.model.ChartData', {
             var xantigen = x.options.antigen;
             var yantigen = y.options.antigen;
 
-            if (xantigen != null && xantigen.values.length > 0 &&
-                    yantigen != null && yantigen.values.length > 0)
+            if (xantigen != null && xantigen.values.length > 0 && yantigen != null && yantigen.values.length > 0)
             {
-
-                var xColName = x.name;
-                var yColName = y.name;
+                var xColAlias = x.alias;
+                var yColAlias = y.alias;
 
                 // get the mapping of the column aliases in the data object in an easier format to reference
                 var columnAliasMap = {};
-                Ext.each(this.getColumnAliases(), function(alias) {
-                    columnAliasMap[alias.measureName + "::" + alias.pivotValue] = alias.columnName;
+                Ext.each(this.getColumnAliases(), function(col) {
+                    if (col.pivotValue) {
+                        columnAliasMap[col.alias + "::" + col.pivotValue] = col.columnName;
+                    }
                 });
 
                 // create an array of antigen pairs (of the data object column aliases)
@@ -284,29 +284,29 @@ Ext.define('Connector.model.ChartData', {
                     {
                         var yAntigenVal = yantigen.values[j];
                         antigenColumnAliasPairs.push({
-                            xAlias: columnAliasMap[xColName + "::" + xAntigenVal],
+                            xAlias: columnAliasMap[xColAlias + "::" + xAntigenVal],
                             xAntigen: xAntigenVal,
-                            yAlias: columnAliasMap[yColName + "::" + yAntigenVal],
+                            yAlias: columnAliasMap[yColAlias + "::" + yAntigenVal],
                             yAntigen: yAntigenVal
                         });
                     }
                 }
 
                 // special case for having the same measure on both axis
-                if (xColName == yColName)
+                if (xColAlias == yColAlias)
                 {
-                    xColName += '-x';
-                    yColName += '-y';
+                    xColAlias += '-x';
+                    yColAlias += '-y';
 
                     // remap the column names to what we will set them to
-                    mTC['xAxis'] = xColName;
-                    mTC['yAxis'] = yColName;
+                    mTC['xAxis'] = xColAlias;
+                    mTC['yAxis'] = yColAlias;
                 }
                 else
                 {
                     // remap the column names to what we will set them to
-                    mTC[xColName] = xColName;
-                    mTC[yColName] = yColName;
+                    mTC[xColAlias] = xColAlias;
+                    mTC[yColAlias] = yColAlias;
                 }
 
                 // create the new data.rows array with a row for each ptid/visit/antigenPair
@@ -319,15 +319,18 @@ Ext.define('Connector.model.ChartData', {
                     Ext.each(antigenColumnAliasPairs, function(pair) {
                         var dataRow = {};
                         dataRow[subjectCol] = row[subjectCol];
-                        dataRow[colorCol] = row[colorCol];
+
+                        if (colorCol) {
+                            dataRow[colorCol] = row[colorCol];
+                        }
 
                         // issue 20589: skip null-null points produced by pivot
                         if (row[pair.xAlias].value != null || row[pair.yAlias].value != null)
                         {
-                            dataRow[xColName] = row[pair.xAlias];
-                            dataRow[xColName].antigen = pair.xAntigen;
-                            dataRow[yColName] = row[pair.yAlias];
-                            dataRow[yColName].antigen = pair.yAntigen;
+                            dataRow[xColAlias] = row[pair.xAlias];
+                            dataRow[xColAlias].antigen = pair.xAntigen;
+                            dataRow[yColAlias] = row[pair.yAlias];
+                            dataRow[yColAlias].antigen = pair.yAntigen;
 
                             newRowsArr.push(dataRow);
                         }

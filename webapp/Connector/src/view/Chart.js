@@ -889,10 +889,10 @@ Ext.define('Connector.view.Chart', {
 
                     xMeasure = measures[0];
                     yMeasure = measures[1];
-                    yMeasure.colName = requiresPivot ? properties.yaxis.name : properties.yaxis.colName;
+                    yMeasure.colName = properties.yaxis.colName;
 
                     if (xMeasure) {
-                        xMeasure.colName = requiresPivot ? properties.xaxis.name : properties.xaxis.colName;
+                        xMeasure.colName = properties.xaxis.colName;
                     }
 
                     if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
@@ -925,8 +925,9 @@ Ext.define('Connector.view.Chart', {
                     // plot brushing filters need to include the antigen selection if this is a pivoted query
                     if (requiresPivot && xMeasure.options.antigen.name == yMeasure.options.antigen.name)
                     {
+                        var antigenAlias = Connector.model.Antigen.getAntigenAlias(yMeasure);
                         var antigens = xMeasure.options.antigen.values.concat(yMeasure.options.antigen.values);
-                        sqlFilters.push(LABKEY.Filter.create(yMeasure.options.antigen.name, antigens, LABKEY.Filter.Types.IN));
+                        //TODO: sqlFilters.push(LABKEY.Filter.create(antigenAlias, antigens, LABKEY.Filter.Types.IN));
                     }
 
                     var wrapped = [ me._getAxisWrappedMeasure(xMeasure), me._getAxisWrappedMeasure(yMeasure) ];

@@ -295,6 +295,18 @@ Ext.define('Connector.controller.Query', {
                             measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
                         }
                     }
+
+                    // issue 21601: include the measure's antigen selection
+                    if (plotMeasure.measure.options && plotMeasure.measure.options.antigen) {
+                        var antigenMeasure = this.getMeasure(Connector.model.Antigen.getAntigenAlias(plotMeasure.measure));
+                        if (antigenMeasure) {
+                            antigenMeasure.values = plotMeasure.measure.options.antigen.values;
+                            measureMap[antigenMeasure.alias] = {
+                                measure: antigenMeasure,
+                                filterArray: []
+                            };
+                        }
+                    }
                 }
             }, this);
         }
