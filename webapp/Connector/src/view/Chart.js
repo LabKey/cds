@@ -20,6 +20,7 @@ Ext.define('Connector.view.Chart', {
     canShowHidden: false,
 
     binRowLimit: 5000,
+
     showPointsAsBin: false,
 
     constructor : function(config) {
@@ -339,162 +340,161 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    getLayerAes : function(layerScope, isBoxPlot) {
+    mouseOverPoints : function(event, pointData, layerSel, layerScope) {
+        if (!layerScope.isBrushed) {
+            var plot = layerScope.plot, strokeFillFn, opacityFn, colorScale = null, colorAcc = null;
 
-        var mouseOverPointsFn = function(event, pointData, layerSel){
-            if (!layerScope.isBrushed) {
-                var plot = layerScope.plot, colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
-
-                if (plot.scales.color && plot.scales.color.scale) {
-                    colorScale = plot.scales.color.scale;
-                    colorAcc = plot.aes.color;
-                }
-
-                colorFn = function(d) {
-                    if (d.subjectId.value === pointData.subjectId.value) {
-                        return '#01BFC2';
-                    } else {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
-
-                        return '#000000';
-                    }
-                };
-
-                strokeFn = function(d) {
-                    if (d.subjectId.value === pointData.subjectId.value) {
-                        return '#01BFC2';
-                    } else {
-                        if (colorScale && colorAcc) {
-                            return colorScale(colorAcc.getValue(d));
-                        }
-
-                        return '#000000';
-                    }
-                };
-
-                opacityFn = function(d) {
-                    return  d.subjectId.value === pointData.subjectId.value ? 1 : 0.2;
-                };
-
-                var points = layerSel.selectAll('.point path');
-
-                points.attr('fill', colorFn)
-                        .attr('stroke', strokeFn)
-                        .attr('fill-opacity', opacityFn)
-                        .attr('stroke-opacity', opacityFn);
-
-                points.each(function(d) {
-                    // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                    // are always visible.
-                    var node = this.parentNode;
-                    if (d.subjectId.value === pointData.subjectId.value) {
-                        node.parentNode.appendChild(node);
-                    }
-                });
+            if (plot.scales.color && plot.scales.color.scale) {
+                colorScale = plot.scales.color.scale;
+                colorAcc = plot.aes.color;
             }
-        };
 
-        var mouseOutPointsFn = function(event, pointData, layerSel){
-            if (!layerScope.isBrushed) {
-                var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
-
-                if (plot.scales.color && plot.scales.color.scale) {
-                    colorScale = plot.scales.color.scale;
-                    colorAcc = plot.aes.color;
-                }
-
-                colorFn = function(d) {
+            strokeFillFn = function(d) {
+                if (d.subjectId.value === pointData.subjectId.value) {
+                    return '#01BFC2';
+                } else {
                     if (colorScale && colorAcc) {
                         return colorScale(colorAcc.getValue(d));
                     }
 
                     return '#000000';
-                };
+                }
+            };
 
-                layerSel.selectAll('.point path').attr('fill', colorFn)
-                        .attr('stroke', colorFn)
-                        .attr('fill-opacity', 0.5)
-                        .attr('stroke-opacity', 0.5);
+            opacityFn = function(d) {
+                return  d.subjectId.value === pointData.subjectId.value ? 1 : 0.2;
+            };
+
+            var points = layerSel.selectAll('.point path');
+
+            points.attr('fill', strokeFillFn)
+                    .attr('stroke', strokeFillFn)
+                    .attr('fill-opacity', opacityFn)
+                    .attr('stroke-opacity', opacityFn);
+
+            points.each(function(d) {
+                // Re-append the node so it is on top of all the other nodes, this way highlighted points
+                // are always visible.
+                var node = this.parentNode;
+                if (d.subjectId.value === pointData.subjectId.value) {
+                    node.parentNode.appendChild(node);
+                }
+            });
+        }
+    },
+
+    mouseOutPoints : function(event, pointData, layerSel, layerScope) {
+        if (!layerScope.isBrushed) {
+            var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
+
+            if (plot.scales.color && plot.scales.color.scale) {
+                colorScale = plot.scales.color.scale;
+                colorAcc = plot.aes.color;
             }
-        };
 
-        var mouseOverBinsFn = function(event, binData, layerSel){
-            if (!layerScope.isBrushed) {
-                // get the set of subjectIds in the binData
-                var subjects = {};
-                if (binData.length > 0 && binData[0].data)
-                {
-                    for (var i = 0; i < binData.length; i++)
-                        subjects[binData[i].data.subjectId.value] = true;
+            colorFn = function(d) {
+                if (colorScale && colorAcc) {
+                    return colorScale(colorAcc.getValue(d));
                 }
 
-                var isSubjectInMouseBin = function(d, yesVal, noVal) {
-                    if (d.length > 0 && d[0].data)
-                    {
-                        for (var i = 0; i < d.length; i++)
-                        {
-                            if (subjects[d[i].data.subjectId.value] === true)
-                                return yesVal;
-                        }
-                    }
+                return '#000000';
+            };
 
-                    return noVal;
-                };
+            layerSel.selectAll('.point path').attr('fill', colorFn)
+                    .attr('stroke', colorFn)
+                    .attr('fill-opacity', 0.5)
+                    .attr('stroke-opacity', 0.5);
+        }
+    },
 
-                var colorFn = function(d) {
-                    // keep original color of the bin (note: uses style instead of fill attribute)
-                    d.origStyle = d.origStyle || this.getAttribute('style');
-
-                    return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
-                };
-
-                var opacityFn = function(d) {
-                    return isSubjectInMouseBin(d, 1, 0.15);
-                };
-
-                layerSel.selectAll('.vis-bin path')
-                        .attr('style', colorFn)
-                        .attr('fill-opacity', opacityFn)
-                        .attr('stroke-opacity', opacityFn);
-            }
-        };
-
-        var mouseOutBinsFn = function(event, pointData, layerSel){
-            if (!layerScope.isBrushed)
+    mouseOverBins : function(event, binData, layerSel, layerScope) {
+        if (!layerScope.isBrushed) {
+            // get the set of subjectIds in the binData
+            var subjects = {};
+            if (binData.length > 0 && binData[0].data)
             {
-                layerSel.selectAll('.vis-bin path')
-                        .attr('style', function(d){ return d.origStyle })
-                        .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+                for (var i = 0; i < binData.length; i++)
+                    subjects[binData[i].data.subjectId.value] = true;
             }
-        };
+
+            var isSubjectInMouseBin = function(d, yesVal, noVal) {
+                if (d.length > 0 && d[0].data)
+                {
+                    for (var i = 0; i < d.length; i++)
+                    {
+                        if (subjects[d[i].data.subjectId.value] === true)
+                            return yesVal;
+                    }
+                }
+
+                return noVal;
+            };
+
+            var colorFn = function(d) {
+                // keep original color of the bin (note: uses style instead of fill attribute)
+                d.origStyle = d.origStyle || this.getAttribute('style');
+
+                return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
+            };
+
+            var opacityFn = function(d) {
+                return isSubjectInMouseBin(d, 1, 0.15);
+            };
+
+            layerSel.selectAll('.vis-bin path')
+                    .attr('style', colorFn)
+                    .attr('fill-opacity', opacityFn)
+                    .attr('stroke-opacity', opacityFn);
+        }
+    },
+
+    mouseOutBins : function(event, binData, layerSel, layerScope) {
+        if (!layerScope.isBrushed) {
+            layerSel.selectAll('.vis-bin path')
+                    .attr('style', function(d){ return d.origStyle })
+                    .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+        }
+    },
+
+    pointHoverText : function(row) {
+        var text = 'Subject: ' + row.subjectId.value, colon = ': ', linebreak = ',\n';
+
+        if (row.xname) {
+            text += linebreak + row.xname + colon + row.x;
+        }
+
+        text += linebreak + row.yname + colon + row.y;
+
+        if (row.colorname) {
+            text += linebreak + row.colorname + colon + row.color;
+        }
+
+        return text;
+    },
+
+    getLayerAes : function(layerScope, isBoxPlot) {
+
+        var me = this;
+        var layerArgs = [layerScope], slice = Array.prototype.slice;
+
+        var mouseOverPointsFn = function() { me.mouseOverPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
+
+        var mouseOutPointsFn = function() { me.mouseOutPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
+
+        var mouseOverBinsFn = function() { me.mouseOverBins.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
+
+        var mouseOutBinsFn = function() { me.mouseOutBins.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
 
         var aes = {
             mouseOverFn: this.showPointsAsBin ? mouseOverBinsFn : mouseOverPointsFn,
             mouseOutFn: this.showPointsAsBin ? mouseOutBinsFn : mouseOutPointsFn
         };
 
-        var hoverText = function(row) {
-            var text = 'Subject: ' + row.subjectId.value;
-
-            if (row.xname) {
-                text += ',\n' + row.xname + ': ' + row.x;
-            }
-
-            text += ',\n' + row.yname + ': ' + row.y;
-
-            if (row.colorname) {
-                text += ',\n' + row.colorname + ': ' + row.color;
-            }
-
-            return text;
-        };
-
         if (isBoxPlot) {
-            aes.pointHoverText = hoverText;
-        } else {
-            aes.hoverText = hoverText;
+            aes.pointHoverText = me.pointHoverText;
+        }
+        else {
+            aes.hoverText = me.pointHoverText;
         }
 
         return aes;
@@ -510,7 +510,7 @@ Ext.define('Connector.view.Chart', {
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
             }),
-            aes: this.getLayerAes(layerScope, false)
+            aes: this.getLayerAes.call(this, layerScope, false)
         });
     },
 
@@ -521,12 +521,12 @@ Ext.define('Connector.view.Chart', {
                 plotNullPoints: true,
                 opacity: 0.5
             }),
-            aes: this.getLayerAes(layerScope, false)
+            aes: this.getLayerAes.call(this, layerScope, false)
         });
     },
 
     getBoxLayer : function(layerScope) {
-        var aes = this.getLayerAes(layerScope, true);
+        var aes = this.getLayerAes.call(this, layerScope, true);
         aes.hoverText = function(name, summary){
             var text = name + '\n';
             text += 'Q1: ' + summary.Q1 + '\n';

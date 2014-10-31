@@ -120,7 +120,6 @@
 
         <!-- Application Views -->
         <script path="Connector/src/view/About.js"/>
-        <script path="Connector/src/view/Compare.js"/>
         <script path="Connector/src/view/DetailStatus.js"/>
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
@@ -145,7 +144,6 @@
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
         <script path="Connector/src/view/Summary.js"/>
         <script path="Connector/src/view/TermsOfUse.js"/>
-        <script path="Connector/src/view/Time.js"/>
         <script path="Connector/src/view/Viewport.js"/>
 
         <script path="Connector/src/view/module/BaseModule.js"/>

@@ -32,8 +32,6 @@ Ext.define('Connector.controller.Signin', {
             }, this);
             break;
         case 'terms':
-            var terms = Ext.create('Connector.view.TermsOfUse', {});
-
             var header = Ext.create('Connector.view.PageHeader', {
                 data: {
                     label : "<h1>Full Terms of Use Agreement: HIV Collaborative DataSpace</h1>",
@@ -44,14 +42,11 @@ Ext.define('Connector.controller.Signin', {
                 }
             });
 
-            var pageView = Ext.create('Connector.view.Page', {
-                // scrollContent: true,
-                contentViews: [terms],
+            v = Ext.create('Connector.view.Page', {
+                contentViews: [Ext.create('Connector.view.TermsOfUse', {})],
                 header: header,
                 pageID: 'terms'
             });
-
-            v = pageView;
 
             break;
         }

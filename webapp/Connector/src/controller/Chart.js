@@ -7,7 +7,7 @@ Ext.define('Connector.controller.Chart', {
 
     extend : 'Connector.controller.AbstractViewController',
 
-    views  : ['Compare', 'Chart', 'Time'],
+    views  : ['Chart'],
 
     init : function() {
 
@@ -49,15 +49,17 @@ Ext.define('Connector.controller.Chart', {
 
         this.control('plot', {
             axisselect: function(plot, axis, selection) {
+                var type;
                 if (axis === 'y') {
-                    Ext.getCmp('yaxisselector').getModel().updateVariable(selection);
+                    type = 'yaxisselector';
                 }
                 else if (axis === 'x') {
-                    Ext.getCmp('xaxisselector').getModel().updateVariable(selection);
+                    type = 'xaxisselector';
                 }
                 else if (axis === 'color') {
-                    Ext.getCmp('colorselector').getModel().updateVariable(selection);
+                    type = 'colorselector';
                 }
+                if (type) { Ext.getCmp(type).getModel().updateVariable(selection); }
             }
         });
 
@@ -106,25 +108,9 @@ Ext.define('Connector.controller.Chart', {
             state.on('plotselectionremoved', v.onPlotSelectionRemoved, v);
             state.on('selectionchange', v.onSelectionChange, v);
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
-
-            return v;
         }
-        else if (xtype == 'timeview')
-        {
-            v = Ext.create('Connector.view.Time', {
-                ui  : 'custom'
-            });
 
-            return v;
-        }
-        else if (xtype == 'compareview')
-        {
-            v = Ext.create('Connector.view.Compare', {
-                ui  : 'custom'
-            });
-
-            return v;
-        }
+        return v;
     },
 
     updateView : function(xtype, context) {
