@@ -61,7 +61,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             items : [{
                 xtype : 'panel',
                 ui    : 'custom',
-                margin: '25 0 0 48',
+                cls: 'explorer-box explorer-options',
                 layout: {
                     type : 'hbox'
                 },
@@ -82,7 +82,9 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                     handler: this.onEmptySelection,
                     scope: this
                 }]
-            },this.getSingleAxisView(resizeTask)],
+            },
+                this.getSingleAxisView(resizeTask)
+            ],
             listeners : {
                 afterlayout : function() {
                     var delay = (this.saview.animate ? 250 : 10);
@@ -116,7 +118,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             return this.saview;
 
         var config = {
-            padding: '0 0 0 48',
+            cls: 'explorer-box',
             store: this.store,
             flex: 1,
             resizeTask: task,
@@ -358,12 +360,20 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     statics: {
         _learnButton: undefined,
+        _task: undefined,
         initButton : function(view) {
             if (!Ext.isDefined(Connector.view.SingleAxisExplorerView._learnButton)) {
 
-                var button = {
+                Connector.view.SingleAxisExplorerView._task = new Ext.util.DelayedTask(function() {
+                    if (Connector.view.SingleAxisExplorerView._learnButton.OVER !== true) {
+                        Connector.view.SingleAxisExplorerView._learnButton.hide();
+                        Connector.view.SingleAxisExplorerView._learnButton.clear();
+                    }
+                }, this);
+
+                Connector.view.SingleAxisExplorerView._learnButton = Ext.create('Connector.button.InfoButton', {
                     renderTo: Ext.getBody(),
-                    text: 'learn about',
+                    text: '', //'learn about',
                     hidden: true,
                     style: 'z-index: 10000',
                     handler: function(e) {
@@ -386,9 +396,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
                         }
                     },
                     scope: this
-                };
-
-                Connector.view.SingleAxisExplorerView._learnButton = Ext.create('Connector.button.InfoButton', button);
+                });
             }
 
             view.on('itemmouseenter', Connector.view.SingleAxisExplorerView.attachButton);
@@ -397,6 +405,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         },
         attachButton : function(view, model, element) {
             if (Connector.view.SingleAxisExplorerView._learnButton.OVER !== 'STOP') {
+                Connector.view.SingleAxisExplorerView._task.cancel();
                 var extEl = Ext.get(element);
                 if (extEl) {
                     Connector.view.SingleAxisExplorerView.resolveDetail(model, function() {
@@ -414,14 +423,11 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             }
         },
         detachButton : function() {
-            if (Connector.view.SingleAxisExplorerView._learnButton.OVER !== true) {
-                Connector.view.SingleAxisExplorerView._learnButton.hide();
-                Connector.view.SingleAxisExplorerView._learnButton.clear();
-            }
+            Connector.view.SingleAxisExplorerView._task.delay(300);
         },
         resolveDetail : function(model, success, scope) {
             if (model && model.data && model.data.levelUniqueName && Ext.isFunction(success)) {
-                Connector.getApplication().getController('State').onMDXReady(function (mdx) {
+                Connector.getState().onMDXReady(function (mdx) {
                     var lvl = mdx.getLevel(model.data.levelUniqueName);
                     if (lvl && lvl.hierarchy.dimension.supportsDetails === true) {
                         success.call(scope);
@@ -437,7 +443,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
         this.on('refresh', function() { this.fireEvent('hideLoad', this); }, this);
 
-        Connector.view.SingleAxisExplorerView.initButton(this);
+//        Connector.view.SingleAxisExplorerView.initButton(this);
 
         // plugin to handle loading mask for the explorer
         this.addPlugin({
@@ -451,25 +457,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
                 events: ['hideload']
             }
         });
-    },
-
-    getCountTemplate : function() {
-        return new Ext.XTemplate(
-            '<tpl if="count &gt; 0">',
-                '<span class="count" style="left: {[ this.calcLeft(values)]}%">',
-                    '{[ this.displayCount(values)]}',
-                '</span>',
-            '</tpl>',
-            {
-                calcLeft : function(v) {
-                    return (v.count / v.maxcount) * 100 + 3;
-                },
-                displayCount : function(values) {
-                    // TODO: Enable showing selected highlights
-                    return values.count;
-                }
-            }
-        );
     },
 
     // This is a flag used to tell if a button has been pressed on the Explorer. Allows

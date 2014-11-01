@@ -87,7 +87,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.About": "../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../webapp/Connector/src/view/Chart.js",
-  "Connector.view.Compare": "../../webapp/Connector/src/view/Compare.js",
   "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -125,7 +124,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Summary": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../webapp/Connector/src/view/Summary.js",
   "Connector.view.TermsOfUse": "../../webapp/Connector/src/view/TermsOfUse.js",
-  "Connector.view.Time": "../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.AssayAnalyteList": "../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
@@ -251,7 +249,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.types.Filter": [],
   "Connector.view.About": [],
   "Connector.view.Chart": [],
-  "Connector.view.Compare": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
@@ -289,7 +286,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
   "Connector.view.TermsOfUse": [],
-  "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [],
@@ -1268,9 +1264,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Chart": [
     "widget.plot"
   ],
-  "Connector.view.Compare": [
-    "widget.compareview"
-  ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
   ],
@@ -1365,9 +1358,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.TermsOfUse": [
     "widget.terms"
-  ],
-  "Connector.view.Time": [
-    "widget.timeview"
   ],
   "Connector.view.Variable": [
     "widget.variableselector"
