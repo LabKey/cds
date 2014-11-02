@@ -236,7 +236,7 @@ Ext.define('Connector.model.ChartData', {
             }
         }
 
-        this.set('visitMap', visitMap),
+        this.set('visitMap', visitMap);
         this.set('containerAlignmentDayMap', containerAlignmentDayMap);
         this.set('percentOverlap', validCount / len);
 

@@ -7,6 +7,9 @@ Ext.define('Connector.controller.Query', {
     _ready: false,
 
     init : function() {
+
+        LABKEY.app.model.Filter.registerDataFilterProvider(this.getDataFilter, this);
+
         if (LABKEY.devMode) {
             QUERY = this;
         }
