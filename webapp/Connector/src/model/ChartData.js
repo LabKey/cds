@@ -185,6 +185,9 @@ Ext.define('Connector.model.ChartData', {
             if (x) {
                 xVal = this._getValue(x, _xid, rows[r]);
                 xAntigen = rows[r][_xid].antigen;
+                if (!xAntigen && x.options.antigen && rows[r][mTC[x.options.antigen.name]]) {
+                    xAntigen = rows[r][mTC[x.options.antigen.name]].value;
+                }
             }
             else {
                 xVal = "";
@@ -192,6 +195,9 @@ Ext.define('Connector.model.ChartData', {
 
             yVal = this._getValue(y, _yid, rows[r]);
             yAntigen = rows[r][_yid].antigen;
+            if (!yAntigen && y.options.antigen && rows[r][mTC[y.options.antigen.name]]) {
+                yAntigen = rows[r][mTC[y.options.antigen.name]].value;
+            }
 
             if (color) {
                 colorVal = this._getValue(color, _cid, rows[r]);

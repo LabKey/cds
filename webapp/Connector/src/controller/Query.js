@@ -281,7 +281,7 @@ Ext.define('Connector.controller.Query', {
                 if (plotMeasure) {
                     var measure = this.getMeasure(plotMeasure.measure.alias);
                     if (measure) {
-                        measure.inNotNullSet = true;
+                        measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
 
                         measureMap[measure.alias] = {
                             measure: measure,

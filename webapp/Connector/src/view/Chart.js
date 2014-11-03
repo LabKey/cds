@@ -1205,7 +1205,7 @@ Ext.define('Connector.view.Chart', {
             wrappedMeasure.dimension = this.getDimension();
         }
 
-        wrappedMeasure.measure.inNotNullSet = true;
+        wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
 
         return wrappedMeasure;
     },
