@@ -560,9 +560,6 @@ Ext.define('Connector.view.Chart', {
             this.noPlot();
             return;
         }
-        else if (!noplot && (this.percentOverlap && this.percentOverlap == 1)) {
-            this.hideMessage();
-        }
 
         if (this.plot) {
             this.plot.clearGrid();
@@ -1273,6 +1270,7 @@ Ext.define('Connector.view.Chart', {
                     }
 
                     aliases[alias].filterArray = aliases[alias].filterArray.concat(measure.filterArray);
+                    aliases[alias].measure.hasFilters = true;
                 }
             }
         });

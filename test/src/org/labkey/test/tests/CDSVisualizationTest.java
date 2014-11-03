@@ -646,7 +646,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
-        assertEquals(100, plotDataTable.getDataRowCount());
+        assertEquals(16, plotDataTable.getDataRowCount());
         plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
         waitForElement(Locator.paginationText(12));
         getDriver().close();
@@ -665,7 +665,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
-        assertEquals(100, plotDataTable.getDataRowCount());
+        assertEquals(28, plotDataTable.getDataRowCount());
         plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
         waitForElement(Locator.paginationText(12));
         getDriver().close();

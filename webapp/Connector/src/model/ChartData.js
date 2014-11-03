@@ -325,7 +325,10 @@ Ext.define('Connector.model.ChartData', {
                         }
 
                         // issue 20589: skip null-null points produced by pivot
-                        if (row[pair.xAlias].value != null || row[pair.yAlias].value != null)
+                        // issue 21601: skip null values if x/y has filters
+                        if ((!x.hasFilters || row[pair.xAlias].value != null) &&
+                            (!y.hasFilters || row[pair.yAlias].value != null) &&
+                            (row[pair.xAlias].value != null || row[pair.yAlias].value != null))
                         {
                             dataRow[xColAlias] = row[pair.xAlias];
                             dataRow[xColAlias].antigen = pair.xAntigen;
