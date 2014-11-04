@@ -100,7 +100,6 @@ Ext.define('Connector.controller.Group', {
     },
 
     getViewTitle : function(xtype, context) {
-        console.log('context:', context);
         if (xtype === 'groupsummary') {
             var v = this.getViewManager().getViewInstance('groupsummary');
             var title = 'Groups';
@@ -370,8 +369,9 @@ Ext.define('Connector.controller.Group', {
                 Connector.model.Group.getGroupStore().load();
                 this.getViewManager().changeView('home');
             },
-            failure: function(){
-                console.error('Delete group failed.');
+            failure: function(response){
+                var json = Ext.decode(response.responseText);
+                Ext.Msg.alert('ERROR', json.exception ? json.exception : 'Delete group failed.');
             }
         });
     },
