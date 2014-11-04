@@ -46,6 +46,9 @@ Ext.define('Connector.controller.Query', {
                 Ext.each(measures, function(measure) {
                     this.addMeasure(measure);
                 }, this);
+                Ext.each(this.getTimeMeasures(), function(time) {
+                    this.addMeasure(time);
+                }, this);
                 cacheReady = true;
                 doReady.call(this);
             },
@@ -138,6 +141,76 @@ Ext.define('Connector.controller.Query', {
                 callback.call(scope, this._gridMeasures);
             }
         }
+    },
+
+    getTimeAliases : function() {
+        if (!this.timeAliases) {
+            this.timeAliases = {'Days': 1, 'Weeks': 1, 'Months': 1}
+        }
+        return this.timeAliases;
+    },
+
+    getTimeMeasures : function() {
+
+        var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
+        var subjectVisitTableName = LABKEY.moduleContext.study.subject.tableName + 'Visit'; // SubjectVisit;
+
+        var query = 'study';
+        var schema = subjectVisitTableName;
+
+        return [{
+            alias: 'Days',
+            sortOrder: -4,
+            schemaName: query,
+            queryName: schema,
+            queryLabel: 'Time points',
+            queryDescription: timePointQueryDescription,
+            inNotNullSet: false,
+            isKeyVariable: true,
+            name: 'Visit/ProtocolDay',
+            label: 'Study days',
+            type: 'INTEGER',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
+            variableType: 'TIME'
+        },{
+            alias: 'Weeks',
+            sortOrder: -3,
+            schemaName: query,
+            queryName: schema,
+            inNotNullSet: false,
+            queryLabel: 'Time points',
+            name: 'Visit/ProtocolDay',
+            label: 'Study weeks',
+            type: 'DOUBLE',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
+            variableType: 'TIME'
+        },{
+            alias: 'Months',
+            sortOrder: -2,
+            schemaName: query,
+            queryName: schema,
+            inNotNullSet: false,
+            queryLabel: 'Time points',
+            name: 'Visit/ProtocolDay',
+            label: 'Study months',
+            type: 'DOUBLE',
+            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
+            variableType: 'TIME'
+        },{
+            alias: 'SavedGroups',
+            sortOrder: -1,
+            schemaName: 'study',
+            queryName: 'SubjectGroupMap',
+            queryLabel: 'User groups',
+            inNotNullSet: false,
+            queryDescription: 'Creates a categorical x axis of the selected user groups',
+            name: 'GroupId',
+            label: 'My saved groups',
+            description: 'Creates a categorical x axis of the selected saved groups',
+            type: 'VARCHAR',
+            isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
+            variableType: 'USER_GROUPS'
+        }];
     },
 
     addMeasure : function(measure) {
@@ -281,7 +354,11 @@ Ext.define('Connector.controller.Query', {
                 if (plotMeasure) {
                     var measure = this.getMeasure(plotMeasure.measure.alias);
                     if (measure) {
-                        measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+
+                        // we still respect the value if it is set explicitly on the measure
+                        if (!Ext.isDefined(measure.inNotNullSet)) {
+                            measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+                        }
 
                         measureMap[measure.alias] = {
                             measure: measure,
@@ -356,7 +433,7 @@ Ext.define('Connector.controller.Query', {
                                         schemaName: schema,
                                         queryName: query,
                                         name: colName,
-                                        inNotNullSet: true
+                                        inNotNullSet: true // unfortunately, we don't know much about the lookup type
                                     },
                                     filterArray: []
                                 };
@@ -371,19 +448,33 @@ Ext.define('Connector.controller.Query', {
                         }
                         else {
 
+                            var isTimeBased = measure.alias in this.getTimeAliases();
+
                             if (!measureMap[measure.alias]) {
-                                measure.inNotNullSet = true;
+
+                                // we still respect the value if it is set explicitly on the measure
+                                if (!Ext.isDefined(measure.inNotNullSet)) {
+                                    measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+                                }
+
                                 measureMap[measure.alias] = {
                                     measure: measure,
                                     filterArray: []
                                 };
+
+                                if (isTimeBased) {
+                                    measureMap[measure.alias].dateOptions = {
+                                        interval: measure.alias,
+                                        zeroDayVisitTag: null
+                                    };
+                                }
                             }
 
                             if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
                                 measureMap[measure.alias].measure.inNotNullSet = false;
                             }
 
-                            if (column === measure.name) {
+                            if (column === measure.name || isTimeBased) {
                                 stringFilter = gf.getURLParameterName() + '=' + gf.getURLParameterValue();
                                 measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : stringFilter);
                             }
