@@ -75,7 +75,7 @@ public class DataGridSelector
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        _test.click(CDSHelper.Locators.cdsButtonLocator("Filter"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("filter", "filter-btn"));
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
     }
 
@@ -89,8 +89,8 @@ public class DataGridSelector
 
         _test.waitAndClick(10000, row, 0);
 
-        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("Update");
-        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("Filter");
+        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("update", "filter-btn");
+        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("filter", "filter-btn");
 
         if (_test.isElementPresent(update))
             _test.click(update);
@@ -101,7 +101,7 @@ public class DataGridSelector
     public void clearFilters(String columnName)
     {
         openFilterPanel(columnName);
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear"));
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("clear", "filter-btn"));
         _test.waitForText("Filter removed.");
     }
 

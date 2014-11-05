@@ -322,8 +322,7 @@ Ext.define('Connector.model.Grid', {
                 w.measure.interval = w.measure.alias;
                 w.dateOptions = {
                     interval: w.measure.alias,
-                    zeroDayVisitTag: null,
-                    useProtocolDay: true
+                    zeroDayVisitTag: null
                 }
             }
 

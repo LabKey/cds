@@ -92,7 +92,7 @@ Ext.define('Connector.model.ChartData', {
         var x = this.getMeasure(0), y = this.getMeasure(1), color = this.getMeasure(2),
                 mTC = this.getMeasureToColumnMap(),
                 xa, ya, ca, _xid, _yid, _cid,
-                containerColName = "SubjectVisit_Visit_Folder", containerAlignmentDayMap = {},
+                containerColName = "Visit_Folder", containerAlignmentDayMap = {},
                 visitColName = mTC[Connector.studyContext.subjectVisitColumn + '/Visit'], visitMap = {};
 
         var subjectNoun = Connector.studyContext.subjectColumn;

@@ -1195,8 +1195,7 @@ Ext.define('Connector.view.Chart', {
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
                 interval: interval,
-                zeroDayVisitTag: options.alignmentVisitTag,
-                useProtocolDay: true
+                zeroDayVisitTag: options.alignmentVisitTag
             };
         }
         else if (requiresPivot && hasAntigens)
@@ -1205,7 +1204,11 @@ Ext.define('Connector.view.Chart', {
             wrappedMeasure.dimension = this.getDimension();
         }
 
-        wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+        // we still respect the value if it is set explicitly on the measure
+        if (!Ext.isDefined(wrappedMeasure.measure.inNotNullSet)) {
+            console.log('set it:', wrappedMeasure.measure.alias);
+            wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+        }
 
         return wrappedMeasure;
     },
@@ -1473,13 +1476,12 @@ Ext.define('Connector.view.Chart', {
                             additionalMeasuresArr.push({
                                 dateOptions: {
                                     interval: colName,
-                                    zeroDayVisitTag: null,
-                                    useProtocolDay: true
+                                    zeroDayVisitTag: null
                                 },
                                 measure: {
-                                    name: Connector.studyContext.subjectVisitColumn + "/Visit/ProtocolDay",
-                                    queryName: activeMeasures.y.queryName,
-                                    schemaName: activeMeasures.y.schemaName,
+                                    schemaName: 'study',
+                                    queryName: 'SubjectVisit',
+                                    name: "Visit/ProtocolDay",
                                     values: []
                                 },
                                 time: 'date'
