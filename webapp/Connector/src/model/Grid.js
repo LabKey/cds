@@ -29,8 +29,8 @@ Ext.define('Connector.model.Grid', {
         {name: 'SQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
-        {name: 'schemaName', defaultValue: 'study'},
-        {name: 'queryName', defaultValue: 'SubjectVisit' }
+        {name: 'schemaName', defaultValue: Connector.studyContext.schemaName },
+        {name: 'queryName', defaultValue: Connector.studyContext.subjectVisit }
     ],
 
     plotKeys: {},
@@ -249,10 +249,10 @@ Ext.define('Connector.model.Grid', {
         this.bindApplicationMeasures(Connector.getState().getFilters());
     },
 
-    convertTimeMeasure : function(measure) {
-        measure.schemaName = "study";
-        measure.queryName = "SubjectVisit";
-        measure.name = "Visit/ProtocolDay";
+    convertTimeMeasure : function(measure) {   // TODO: is this needed?
+        measure.schemaName = Connector.studyContext.schemaName;
+        measure.queryName = Connector.studyContext.subjectVisit;
+        measure.name = Connector.studyContext.protocolDayColumn;
 
         return measure;
     },

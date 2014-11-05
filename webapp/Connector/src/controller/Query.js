@@ -39,7 +39,7 @@ Ext.define('Connector.controller.Query', {
             allColumns: true,
             showHidden: true,
             filters: [LABKEY.Query.Visualization.Filter.create({
-                schemaName: 'study',
+                schemaName: Connector.studyContext.schemaName,
                 queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
             })],
             success: function(measures) {
@@ -86,8 +86,8 @@ Ext.define('Connector.controller.Query', {
             // request the appropriate query details
             //
             LABKEY.Query.getQueryDetails({
-                schemaName: 'study',
-                queryName: 'SubjectVisit',
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.subjectVisit,
                 fields: [
                     Connector.studyContext.subjectColumn,
                     Connector.studyContext.subjectColumn + '/Study',
@@ -101,8 +101,8 @@ Ext.define('Connector.controller.Query', {
 
                     function mockUpMeasure(measure) {
                         Ext.apply(measure, {
-                            schemaName: 'study',
-                            queryName: 'SubjectVisit'
+                            schemaName: Connector.studyContext.schemaName,
+                            queryName: Connector.studyContext.subjectVisit
                         });
 
                         // Add these into the MEMBER_CACHE
@@ -153,21 +153,17 @@ Ext.define('Connector.controller.Query', {
     getTimeMeasures : function() {
 
         var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
-        var subjectVisitTableName = LABKEY.moduleContext.study.subject.tableName + 'Visit'; // SubjectVisit;
-
-        var query = 'study';
-        var schema = subjectVisitTableName;
 
         return [{
             alias: 'Days',
             sortOrder: -4,
-            schemaName: query,
-            queryName: schema,
+            schemaName: Connector.studyContext.schemaName,
+            queryName: Connector.studyContext.subjectVisit,
             queryLabel: 'Time points',
             queryDescription: timePointQueryDescription,
             inNotNullSet: false,
             isKeyVariable: true,
-            name: 'Visit/ProtocolDay',
+            name: Connector.studyContext.protocolDayColumn,
             label: 'Study days',
             type: 'INTEGER',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
@@ -175,11 +171,11 @@ Ext.define('Connector.controller.Query', {
         },{
             alias: 'Weeks',
             sortOrder: -3,
-            schemaName: query,
-            queryName: schema,
+            schemaName: Connector.studyContext.schemaName,
+            queryName: Connector.studyContext.subjectVisit,
             inNotNullSet: false,
             queryLabel: 'Time points',
-            name: 'Visit/ProtocolDay',
+            name: Connector.studyContext.protocolDayColumn,
             label: 'Study weeks',
             type: 'DOUBLE',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
@@ -187,11 +183,11 @@ Ext.define('Connector.controller.Query', {
         },{
             alias: 'Months',
             sortOrder: -2,
-            schemaName: query,
-            queryName: schema,
+            schemaName: Connector.studyContext.schemaName,
+            queryName: Connector.studyContext.subjectVisit,
             inNotNullSet: false,
             queryLabel: 'Time points',
-            name: 'Visit/ProtocolDay',
+            name: Connector.studyContext.protocolDayColumn,
             label: 'Study months',
             type: 'DOUBLE',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
@@ -199,7 +195,7 @@ Ext.define('Connector.controller.Query', {
         },{
             alias: 'SavedGroups',
             sortOrder: -1,
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             queryName: 'SubjectGroupMap',
             queryLabel: 'User groups',
             inNotNullSet: false,
@@ -238,20 +234,18 @@ Ext.define('Connector.controller.Query', {
 
     getDataSorts : function() {
         if (!this._dataSorts) {
-            var subjectVisitTableName = LABKEY.moduleContext.study.subject.tableName + 'Visit'; // SubjectVisit;
-
             this._dataSorts = [{
                 name: 'Container',
-                schemaName: 'study',
-                queryName: subjectVisitTableName
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.subjectVisit
             },{
                 name: Connector.studyContext.subjectColumn,
-                schemaName: 'study',
-                queryName: subjectVisitTableName
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.subjectVisit
             },{
                 name: 'Day',
-                schemaName: 'study',
-                queryName: subjectVisitTableName
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.subjectVisit
             }];
         }
 

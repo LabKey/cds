@@ -244,13 +244,13 @@ Ext.define('Connector.view.Grid', {
                 measureConfig : {
                     allColumns: true,
                     displaySourceCounts: true,
-                    sourceCountSchema: 'study',
+                    sourceCountSchema: Connector.studyContext.schemaName,
                     includeTimpointMeasures: true,
                     supportSelectionGroup: true,
                     supportSessionGroup: true,
                     sourceCls: this.axisSourceCls,
                     filter: LABKEY.Query.Visualization.Filter.create({
-                        schemaName: 'study',
+                        schemaName: Connector.studyContext.schemaName,
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
                     }),
                     showHidden: this.canShowHidden,

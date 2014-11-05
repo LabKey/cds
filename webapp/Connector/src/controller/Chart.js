@@ -74,7 +74,7 @@ Ext.define('Connector.controller.Chart', {
                 // issue 20664: find the assay label from the first dataset row
                 if (btn.source && btn.source.assaysLookup) {
                     LABKEY.Query.selectRows({
-                        schemaName: 'study',
+                        schemaName: Connector.studyContext.schemaName,
                         queryName: btn.source.get('queryName'),
                         columns: btn.source.assaysLookup.name + '/Label',
                         maxRows: 1,

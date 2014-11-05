@@ -1206,7 +1206,6 @@ Ext.define('Connector.view.Chart', {
 
         // we still respect the value if it is set explicitly on the measure
         if (!Ext.isDefined(wrappedMeasure.measure.inNotNullSet)) {
-            console.log('set it:', wrappedMeasure.measure.alias);
             wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
         }
 
@@ -1439,7 +1438,7 @@ Ext.define('Connector.view.Chart', {
 
                     if (activeMeasures[axis].variableType === "TIME")
                     {
-                        name = Connector.studyContext.subjectVisitColumn + "/Visit";
+                        name = Connector.studyContext.subjectVisit + "/Visit";
                         this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
                     }
                 }
@@ -1479,9 +1478,9 @@ Ext.define('Connector.view.Chart', {
                                     zeroDayVisitTag: null
                                 },
                                 measure: {
-                                    schemaName: 'study',
-                                    queryName: 'SubjectVisit',
-                                    name: "Visit/ProtocolDay",
+                                    schemaName: Connector.studyContext.schemaName,
+                                    queryName: Connector.studyContext.subjectVisit,
+                                    name: Connector.studyContext.protocolDayColumn,
                                     values: []
                                 },
                                 time: 'date'
@@ -1651,9 +1650,9 @@ Ext.define('Connector.view.Chart', {
                 measureConfig: {
                     allColumns: false,
                     displaySourceCounts: true,
-                    sourceCountSchema: 'study',
+                    sourceCountSchema: Connector.studyContext.schemaName,
                     filter: LABKEY.Query.Visualization.Filter.create({
-                        schemaName: 'study',
+                        schemaName: Connector.studyContext.schemaName,
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
                     }),
                     showHidden: this.canShowHidden,
@@ -1753,10 +1752,10 @@ Ext.define('Connector.view.Chart', {
                 measureConfig : {
                     allColumns : true,
                     displaySourceCounts: true,
-                    sourceCountSchema: 'study',
+                    sourceCountSchema: Connector.studyContext.schemaName,
                     includeTimpointMeasures : true,
                     filter     : LABKEY.Query.Visualization.Filter.create({
-                        schemaName: 'study',
+                        schemaName: Connector.studyContext.schemaName,
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
                     }),
                     showHidden : this.canShowHidden,
@@ -1882,10 +1881,10 @@ Ext.define('Connector.view.Chart', {
                 measureConfig : {
                     allColumns : true,
                     displaySourceCounts: true,
-                    sourceCountSchema: 'study',
+                    sourceCountSchema: Connector.studyContext.schemaName,
                     includeTimpointMeasures : false,
                     filter     : LABKEY.Query.Visualization.Filter.create({
-                        schemaName: 'study',
+                        schemaName: Connector.studyContext.schemaName,
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
                     }),
                     userFilter : function(row) {
@@ -2227,7 +2226,7 @@ Ext.define('Connector.view.Chart', {
                 'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
 
         LABKEY.Query.executeSql({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             requiredVersion: 9.1,
             containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
             sql: sql,

@@ -50,8 +50,10 @@
     <script type="text/javascript">
         var Connector = {
             studyContext: {
+                schemaName: 'study',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
-                subjectVisitColumn: 'SubjectVisit'
+                subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
+                protocolDayColumn: 'Visit/ProtocolDay'
             },
             resourceContext: {
                 path: <%=PageFlowUtil.jsString(resourcePath)%>

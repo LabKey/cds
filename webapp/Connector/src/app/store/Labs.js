@@ -32,7 +32,7 @@ Ext.define('Connector.app.store.Labs', {
         var columns = Connector.app.model.Labs.Fields;
         if (labSet.length > 0) {
             var queryConfig = {
-                schemaName: 'study',
+                schemaName: Connector.studyContext.schemaName,
                 queryName: 'StudyDesignLabs',
                 columns: Ext.Array.pluck(Connector.app.model.Labs.getFields(), "name"),
                 success: this.onLoadQuery,
