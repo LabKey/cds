@@ -57,9 +57,25 @@ Ext.define('Connector.view.GridPane', {
                         if (gf.getColumnName().indexOf('/') > -1) {
                             label = LABKEY.app.model.Filter.getGridFilterLabel(gf);
                         }
+
+                        // issue 21879: split Equals One Of filter values into new lines
+                        var filterStr = LABKEY.app.model.Filter.getGridLabel(gf);
+                        var filterType = gf.getFilterType().getDisplayText();
+                        if (filterType == 'Equals One Of') {
+                            var values = [];
+                            Ext.each(gf.getValue(), function(value){
+                                Ext.each(value.split(';'), function(v){
+                                    if (v)
+                                        values.push(Ext.htmlEncode('- ' + v));
+                                });
+                            });
+
+                            filterStr = filterType + ':<br/><ul class="indent"><li>' + values.join('</li><li>') + '</li></ul>';
+                        }
+
                         content.push({
                             xtype: 'box',
-                            html: Ext.htmlEncode(label + ' ' + LABKEY.app.model.Filter.getGridLabel(gf))
+                            html: Ext.htmlEncode(label) + ' ' + filterStr
                         });
                     }
                 }

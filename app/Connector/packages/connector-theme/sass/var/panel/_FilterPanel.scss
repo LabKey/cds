@@ -203,3 +203,10 @@ div.activefilter {
   float: left;
 }
 /* -- END Connector.view.Selection */
+
+ul.indent li {
+  padding-left: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
