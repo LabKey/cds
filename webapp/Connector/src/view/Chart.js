@@ -424,12 +424,12 @@ Ext.define('Connector.view.Chart', {
                 // keep original color of the bin (note: uses style instead of fill attribute)
                 d.origStyle = d.origStyle || this.getAttribute('style');
 
-                    return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
-                };
+                return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
+            };
 
-                var opacityFn = function(d) {
-                    return isSubjectInMouseBin(d, 1, 0.15);
-                };
+            var opacityFn = function(d) {
+                return isSubjectInMouseBin(d, 1, 0.15);
+            };
 
             layerSel.selectAll('.vis-bin path')
                     .attr('style', colorFn)
@@ -688,13 +688,8 @@ Ext.define('Connector.view.Chart', {
             var brushPoints = function(event, layerData, extent, plot, layerSelections) {
                 var sel = layerSelections[0]; // We only have one layer, so grab the first one.
                 var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-                var colorFn, opacityFn, strokeFn, colorScale = null, colorAcc = null;
+                var colorFn, opacityFn, strokeFn;
                 var assocColorFn, assocStrokeFn;
-
-                if (plot.scales.color && plot.scales.color.scale) {
-                    colorScale = plot.scales.color.scale;
-                    colorAcc = plot.aes.color;
-                }
 
                 colorFn = function(d) {
                     var x = d.x, y = d.y;
@@ -705,13 +700,9 @@ Ext.define('Connector.view.Chart', {
                     if (d.isSelected) {
                         subjects[d.subjectId.value] = true;
                         return '#01BFC2';
-                    } else {
-                        //if (colorScale && colorAcc) {
-                        //    return colorScale(colorAcc.getValue(d));
-                        //}
-
-                        return '#E6E6E6';
                     }
+
+                    return '#E6E6E6';
                 };
 
                 strokeFn = function(d) {
@@ -719,13 +710,8 @@ Ext.define('Connector.view.Chart', {
 
                     if (d.isSelected) {
                         return '#01BFC2';
-                    } else {
-                        //if (colorScale && colorAcc) {
-                        //    return colorScale(colorAcc.getValue(d));
-                        //}
-
-                        return '#E6E6E6';
                     }
+                    return '#E6E6E6';
                 };
 
                 sel.selectAll('.point path').attr('fill', colorFn)
@@ -748,11 +734,6 @@ Ext.define('Connector.view.Chart', {
                 };
 
                 opacityFn = function(d) {
-                    //if (d.isSelected || (!d.isSelected && subjects[d.subjectId.value] === true)) {
-                    //    return 1;
-                    //} else {
-                    //    return 0.2;
-                    //}
                     return 1;
                 };
 
