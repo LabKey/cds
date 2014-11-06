@@ -216,6 +216,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Update.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>
