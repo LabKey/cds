@@ -19,9 +19,6 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 
-/**
- * Created by Nick Arnold on 4/29/14.
- */
 public class DataGridSelector
 {
     protected BaseWebDriverTest _test;
@@ -56,10 +53,12 @@ public class DataGridSelector
     public void openFilterPanel(String columnHeaderName)
     {
         Locator.XPathLocator columnHeader = columnHeaderLocator(columnHeaderName);
-        _test.waitForElement(columnHeader);
-
         Locator.XPathLocator filterIcon = columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger"));
-        _test.waitAndClick(filterIcon);
+        _test.waitForElement(filterIcon);
+        _test.mouseOver(filterIcon);
+        Locator.XPathLocator hoveredColumn = columnHeader.append(Locator.tagWithClass("div", "x-column-header-over"));
+        _test.waitForElement(hoveredColumn);
+        _test.click(filterIcon);
     }
 
     public void setFilter(String columnName, String value)
