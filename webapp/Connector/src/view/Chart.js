@@ -1303,7 +1303,6 @@ Ext.define('Connector.view.Chart', {
     },
 
     selectChartData : function(getDataResponse) {
-        var filters = [];
         var config = {
             schemaName: getDataResponse.schemaName,
             queryName: getDataResponse.queryName,
@@ -1312,14 +1311,6 @@ Ext.define('Connector.view.Chart', {
             requiredVersion: '9.1',
             scope: this
         };
-
-        if (Ext.isArray(this.timeFilters)) {
-            filters = filters.concat(this.timeFilters);
-        }
-
-        if (filters.length > 0) {
-            config.filterArray = filters;
-        }
 
         LABKEY.Query.selectRows(config);
     },
@@ -1422,23 +1413,21 @@ Ext.define('Connector.view.Chart', {
             var schema, query, name;
             if (activeMeasures[axis])
             {
+                schema = activeMeasures[axis].schemaName;
+                query = activeMeasures[axis].queryName;
+
                 if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen)
                 {
-                    schema = activeMeasures[axis].schemaName;
-                    query = activeMeasures[axis].queryName;
-
                     name = activeMeasures[axis].options.antigen.name;
                     var values = activeMeasures[axis].options.antigen.values;
                     this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                 }
-                else {
-                    // A time-based X-measure is dependent on the schema/query of the Y-measure
-                    schema = activeMeasures['y'].schemaName;
-                    query = activeMeasures['y'].queryName;
-
+                else
+                {
+                    // A time-based X-measure also requires the Visit column be selected
                     if (activeMeasures[axis].variableType === "TIME")
                     {
-                        name = Connector.studyContext.subjectVisit + "/Visit";
+                        name = "Visit";
                         this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
                     }
                 }
@@ -1456,42 +1445,6 @@ Ext.define('Connector.view.Chart', {
                 time: 'date'
             });
         });
-
-        // If there is a grid filter on days/weeks/months we need to pull the filter out so we can apply it when
-        // querying for data. If we don't already have days/weeks/months as a measure, then we also need to add it to
-        // the list of measures that getData returns.
-        this.timeFilters = null;
-
-        for (var i = 0; i < filters.length; i++) {
-            var filterData = filters[i].data;
-            if (filterData.isGrid && !filterData.isPlot) {
-                // gridFilter is an array of filters, it needs to be renamed.
-                if (filterData.gridFilter[0]) {
-                    var colName = filterData.gridFilter[0].getColumnName();
-                    if (colName === 'Days' || colName === 'Weeks' || colName === 'Months') {
-                        this.timeFilters = filterData.gridFilter;
-
-                        if (activeMeasures.x == null || !activeMeasures.x.interval) {
-                            additionalMeasuresArr.push({
-                                dateOptions: {
-                                    interval: colName,
-                                    zeroDayVisitTag: null
-                                },
-                                measure: {
-                                    schemaName: Connector.studyContext.schemaName,
-                                    queryName: Connector.studyContext.subjectVisit,
-                                    name: Connector.studyContext.protocolDayColumn,
-                                    values: []
-                                },
-                                time: 'date'
-                            });
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
 
         return additionalMeasuresArr;
     },

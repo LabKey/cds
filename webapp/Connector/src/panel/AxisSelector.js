@@ -486,7 +486,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
             var optionsPanel = this.getVariableOptionsPanel();
 
-            if (measure.get('variableType') == 'TIME')
+            if (measure.get('variableType') == 'TIME' && this.visitTagStore)
             {
                 optionsPanel.add(this.getAlignmentForm());
             }

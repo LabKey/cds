@@ -249,14 +249,6 @@ Ext.define('Connector.model.Grid', {
         this.bindApplicationMeasures(Connector.getState().getFilters());
     },
 
-    convertTimeMeasure : function(measure) {   // TODO: is this needed?
-        measure.schemaName = Connector.studyContext.schemaName;
-        measure.queryName = Connector.studyContext.subjectVisit;
-        measure.name = Connector.studyContext.protocolDayColumn;
-
-        return measure;
-    },
-
     bindDefaultMeasures : function(defaultMeasures) {
         // set the wrapped default measures
         var wrapped = [];
@@ -282,21 +274,16 @@ Ext.define('Connector.model.Grid', {
             if (!(item.queryName in sourceMeasuresRequired))
                 sourceMeasuresRequired[item.queryName] = true;
 
-            if (item.variableType === "TIME") {
-                item = this.convertTimeMeasure(item);
-            }
-            else {
-                // We don't want to lose foreign key info -- measure picker follows these by default
-                if (item.name.indexOf("/") != -1) {
-                    if (item.name.toLowerCase() == "source/title") {
-                        sourceMeasuresRequired[item.queryName] = false;
-                        item.isSourceURI = true;
-                    }
+            // We don't want to lose foreign key info -- measure picker follows these by default
+            if (item.variableType !== "TIME" && item.name.indexOf("/") != -1) {
+                if (item.name.toLowerCase() == "source/title") {
+                    sourceMeasuresRequired[item.queryName] = false;
+                    item.isSourceURI = true;
+                }
 
-                    if (Ext.isDefined(item.alias)) {
-                        item.name = item.name.substring(0, item.name.indexOf("/"));
-                        item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
-                    }
+                if (Ext.isDefined(item.alias)) {
+                    item.name = item.name.substring(0, item.name.indexOf("/"));
+                    item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
                 }
             }
 
@@ -414,9 +401,7 @@ Ext.define('Connector.model.Grid', {
                             measure: Ext.clone(pm.measure),
                             time: 'date'
                         };
-                        if (p.measure.variableType === "TIME") {
-                            p.measure = this.convertTimeMeasure(p.measure);
-                        }
+
                         newKeys[p.measure.alias] = true;
                         plotMeasures.push(p);
                     }
