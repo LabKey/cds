@@ -49,6 +49,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Signin": "../../webapp/Connector/src/controller/Signin.js",
   "Connector.controller.State": "../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../webapp/Connector/src/controller/Summary.js",
+  "Connector.controller.Update": "../../webapp/Connector/src/controller/Update.js",
   "Connector.factory.Module": "../../webapp/Connector/src/factory/Module.js",
   "Connector.grid.Panel": "../../webapp/Connector/src/grid/Panel.js",
   "Connector.model.Antigen": "../../webapp/Connector/src/model/Antigen.js",
@@ -67,6 +68,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.StudyAxisData": "../../webapp/Connector/src/model/StudyAxisData.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
+  "Connector.model.UpdateLog": "../../webapp/Connector/src/controller/Update.js",
   "Connector.model.Variable": "../../webapp/Connector/src/model/Variable.js",
   "Connector.model.VisitTag": "../../webapp/Connector/src/model/VisitTag.js",
   "Connector.panel.AxisSelectDisplay": "../../webapp/Connector/src/panel/AxisSelector.js",
@@ -211,6 +213,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.controller.Update": [],
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [],
   "Connector.model.Antigen": [],
@@ -229,6 +232,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
   "Connector.model.Summary": [],
+  "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [],
@@ -1194,6 +1198,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.controller.Update": [],
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [
     "widget.connector-gridpanel"
@@ -1214,6 +1219,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
   "Connector.model.Summary": [],
+  "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [

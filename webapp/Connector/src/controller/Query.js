@@ -392,7 +392,12 @@ Ext.define('Connector.controller.Query', {
             for (var g=0; g < gridFilters.length; g++) {
                 var gf = gridFilters[g];
                 // At times the filter can be null/undefined (e.g. when the plot specifies x-axis filters only)
-                if (gf) {
+                if (gf && gf !== "_null") {
+
+                    if (Ext.isString(gf)) {
+                        gf = LABKEY.Filter.getFiltersFromUrl(gf, 'query')[0];
+                    }
+
                     column = gf.getColumnName();
                     measure = this.getMeasure(column);
                     if (measure) {

@@ -47,10 +47,6 @@ public class CDSInitializer
         setupProject();
         importData();
         populateFactTable();
-
-        // TODO: Re-enable this check once the verify query has been fixed and re-linked in the management webpart
-//        initTest.verifyFactTable();
-
         preCacheCube();
     }
 
@@ -164,7 +160,8 @@ public class CDSInitializer
         _test.assertElementPresent(Locator.linkWithText("Luminex"));
         _test.assertElementPresent(Locator.linkWithText("MRNA"));
         _test.assertElementPresent(Locator.linkWithText("ADCC"));
-        _test._ext4Helper.waitForMaskToDisappear(30000);
+
+        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Click to Complete"));
     }
 
     @LogMethod
