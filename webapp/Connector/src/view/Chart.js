@@ -2036,17 +2036,10 @@ Ext.define('Connector.view.Chart', {
         state.onMDXReady(function(mdx) {
 
             var filters = state.getFilters();
-            var countFilters = [];
 
-            Ext.each(filters, function(filter) {
-                if (!filter.get('isWhereFilter') && (!filter.get('isPlot') || filter.get('isGrid'))) {
-                    countFilters.push(filter);
-                }
-            });
-
-            if (countFilters.length > 0) {
+            if (filters.length > 0) {
                 var SUBJECT_IN = 'scattercount';
-                state.addPrivateSelection(countFilters, SUBJECT_IN, function() {
+                state.addPrivateSelection(filters, SUBJECT_IN, function() {
                     mdx.queryParticipantList({
                         useNamedFilters: [SUBJECT_IN],
                         success : function(cellset) {
