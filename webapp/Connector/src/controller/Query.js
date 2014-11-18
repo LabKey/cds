@@ -299,7 +299,7 @@ Ext.define('Connector.controller.Query', {
         var getDataConfig = {
             joinToFirst: true,
             measures: [{
-                measure: this._gridMeasures[0],
+                measure: this.cleanMeasure(this._gridMeasures[0]),
                 time: 'date'
             }],
             sorts: this.getDataSorts()
@@ -497,24 +497,33 @@ Ext.define('Connector.controller.Query', {
             }
         }
 
-        Ext.iterate(measureMap, function (alias, measureConfig) {
+        Ext.iterate(measureMap, function (alias, config) {
             var mc = {
-                measure: measureConfig.measure,
-                time: measureConfig.time || 'date'
+                measure: this.cleanMeasure(config.measure),
+                time: config.time || 'date'
             };
-            if (measureConfig.dimension) {
-                mc.dimension = measureConfig.dimension;
+            if (config.dimension) {
+                mc.dimension = config.dimension;
             }
-            if (measureConfig.dateOptions) {
-                mc.dateOptions = measureConfig.dateOptions;
+            if (config.dateOptions) {
+                mc.dateOptions = config.dateOptions;
             }
-            if (measureConfig.filterArray.length > 0) {
-                mc.filterArray = measureConfig.filterArray;
+            if (config.filterArray.length > 0) {
+                mc.filterArray = config.filterArray;
             }
 
             measures.push(mc);
-        });
+        }, this);
 
         return measures;
+    },
+
+    /**
+     * The exclusive set of measure properties that will be sent across the wire
+     */
+    MEASURE_PROPERTIES: 'aggregate,alias,allowNullResults,defaultScale,inNotNullSet,isDemographic,name,queryName,requireLeftJoin,schemaName,values',
+
+    cleanMeasure : function(measure) {
+        return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
     }
 });

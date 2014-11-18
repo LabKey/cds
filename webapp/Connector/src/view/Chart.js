@@ -1450,14 +1450,6 @@ Ext.define('Connector.view.Chart', {
 
         var sqlFilters = [null, null, null, null];
 
-//        if (activeMeasures.x) {
-//            sqlFilters[0] = LABKEY.Filter.create(activeMeasures.x.alias, '', LABKEY.Filter.Types.NONBLANK);
-//        }
-//
-//        if (activeMeasures.y) {
-//            sqlFilters[2] = LABKEY.Filter.create(activeMeasures.y.alias, '', LABKEY.Filter.Types.NONBLANK);
-//        }
-
         // see if filter already exists
         Ext.each(filters, function(filter) {
             if (filter.get('isPlot') === true && filter.get('isGrid') === false) {
