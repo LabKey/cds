@@ -372,17 +372,16 @@ Ext.define('Connector.model.ChartData', {
         return (val !== undefined) ? val : null;
     },
 
-    isValidNumber: function(number){
+    isValidNumber : function(number) {
         return !(number === undefined || isNaN(number) || number === null);
     },
 
-    isValidValue: function(measure, value) {
+    isValidValue : function(measure, value) {
         var type = measure.type;
         if (type === 'INTEGER' || type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
             return this.isValidNumber(value);
         }
-        else {
-            return !(value === undefined || value === null);
-        }
+
+        return !(value === undefined || value === null);
     }
 });

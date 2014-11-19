@@ -70,19 +70,26 @@ Ext.define('Connector.controller.State', {
     },
 
     moveSelectionToFilter : function() {
-        var s, f;
+        var s, f, ss, ff, g, gf, pm, fSet, mSet;
 
         // prior to moving, merge any measure-based selections into equivalent measure-based filters
         for (s=0; s < this.selections.length; s++) {
-
+            ss = this.selections[s];
             // determine if an equivalent filter can be found for this selection
             for (f=0; f < this.filters.length; f++) {
-                if (this.equalMeasures(this.selections[s], this.filters[f])) {
-                    var gridFilter = this.selections[s].get('gridFilter'), filterSet = [];
-                    for (var g=0; g < gridFilter.length; g++) {
-                        filterSet.push(gridFilter[g]);
+                ff = this.filters[f];
+                if (this.equalMeasures(ss, ff)) {
+                    gf = ss.get('gridFilter'); pm = ss.get('plotMeasures'); fSet = []; mSet = [];
+
+                    for (g=0; g < gf.length; g++) {
+                        fSet.push(gf[g]);
                     }
-                    this.filters[f].set('gridFilter', filterSet);
+                    for (g=0; g < pm.length; g++) {
+                        mSet.push(pm[g]);
+                    }
+
+                    ff.set('gridFilter', fSet);
+                    ff.set('plotMeasures', mSet);
                 }
             }
         }
