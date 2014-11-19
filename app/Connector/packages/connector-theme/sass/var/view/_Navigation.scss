@@ -8,8 +8,10 @@ div.nav-label, div.dis-label {
   padding-top: 4px;
 
   span.right-label {
-    width: 284px;
+    width: 240px;
+    font-size: 16px;
     float: right;
+    opacity: 0.65;
     @include unselectable;
   }
 
@@ -44,16 +46,17 @@ div.emptytext span.left-label {
 
 div.grouplist-label-selected, div.nav-label-selected {
   span {
-    font-weight: bold;
+    font-weight: normal;
+    opacity: 1.0!important;
 
     &.left-arrow {
       position: relative;
       float: left;
       left: 0;
-      top: 0;
-      border-top: 11px solid transparent;
-      border-bottom: 11px solid transparent;
-      border-left: 11px solid $light-color;
+      top: 5px;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid $light-color;
     }
   }
 }
