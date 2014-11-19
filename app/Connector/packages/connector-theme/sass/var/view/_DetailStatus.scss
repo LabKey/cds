@@ -9,7 +9,6 @@ span.status-label {
   text-transform: capitalize;
   background-color: #ebebeb;
   position: relative;
-  top: 4px;
   padding-right: 4px;
   font-size: 12px;
 }
@@ -17,7 +16,6 @@ span.status-label {
 span.status-count {
   background-color: #f0f0f0;
   position: relative;
-  top: 4px;
   padding-left: 4px;
   font-size: 12px;
 }
@@ -29,7 +27,6 @@ span.hl-status-label {
   text-transform: capitalize;
   background-color: #ebebeb;
   position: relative;
-  top: 4px;
   padding-right: 4px;
 }
 
@@ -38,7 +35,6 @@ span.hl-status-count {
   font-weight: normal;
   background-color: #f0f0f0;
   position: relative;
-  top: 4px;
   padding-left: 4px;
 }
 
@@ -56,6 +52,7 @@ span.status-of {
 
 ul.detailstatus {
   font-family: $bodycaps-font;
+  padding: 0;
 
   li {
     text-align: right;
@@ -64,39 +61,50 @@ ul.detailstatus {
 }
 
 div.status-row {
-  border: 1px solid transparent;
-  border-radius: 15px;
-  padding: 6px 4px 4px;
-  height: 24px;
-  margin: 0; /* note if this changes, modify margin on ul.detailstatus li */
+  li {
+    border: 1px solid transparent;
+    border-radius: 15px;
+    padding: 4px 8px;
+    margin: 0 0 0 0px; /* note if this changes, modify margin on ul.detailstatus li */
+    line-height: 16px;
+    clear: both;
+  }
 }
 
 div.hl-status-row {
-  margin-top: 20px;
+  border-top: 1px solid #DDDCDC;
+  border-radius: 0;
+  margin-top: 12px;
+  padding-top: 12px;
 }
 
 div.status-over {
-  @include border-radius(15px);
-  background-color: $light-color;
-  border: 1px solid #DDDCDC;
-  cursor: pointer;
+  li {
+    @include border-radius(15px);
+    background-color: $light-color;
+    border: 1px solid #DDDCDC;
+    cursor: pointer;
 
-  span {
-    &.status-label,
-    &.status-count,
-    &.hl-status-label,
-    &.hl-status-count {
-      background-color: $light-color;
+    span {
+      &.status-label,
+      &.status-count,
+      &.hl-status-label,
+      &.hl-status-count {
+        background-color: $light-color;
+      }
     }
   }
 }
 
 div.nolink.status-over {
-  background-color: transparent;
-  border: 1px solid transparent;
-  cursor: default;
+  li {
+    background-color: transparent;
+    border: 1px solid transparent;
+    cursor: default;
+    border-radius: 0;
 
-  span {
-    background-color: #ebebeb;
+    span {
+      background-color: #ebebeb;
+    }
   }
 }
