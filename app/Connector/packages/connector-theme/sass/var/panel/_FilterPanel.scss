@@ -12,6 +12,7 @@ div.filterpanel {
 
   font-family: $info-font;
   font-size: 12px;
+  margin: 10px 10px 0 10px;
 
   .header {
     font-size: $headline;
@@ -29,11 +30,20 @@ div.filterpanel {
 div.selectionpanel {
 
   font-family: $info-font;
-  font-size: 10pt;
+  font-size: 12px;
+  margin: 0 10px 0 10px;
 
   .header {
-    @include smallStandout;
-    font-size: 13.5pt;
+    font-size: 16px!important;
+    color: $select-color!important;
+    font-family: $data-font;
+    span {
+      color: $dark-color;
+    }
+
+    .section-title {
+      font-size: 16px!important;
+    }
   }
 
   .x-toolbar-footer {
