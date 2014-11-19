@@ -1382,7 +1382,7 @@ Ext.define('Connector.view.Chart', {
 
     getAdditionalMeasures : function(activeMeasures, requiresPivot) {
         // map key to schema, query, name, and values
-        var measuresMap = {}, additionalMeasuresArr = [], filters = Connector.getState().getFilters();
+        var measuresMap = {}, additionalMeasuresArr = [];
 
         Ext.each(["x", "y"], function(axis)
         {
@@ -2029,9 +2029,18 @@ Ext.define('Connector.view.Chart', {
 
             var filters = state.getFilters();
 
-            if (filters.length > 0) {
+            var validFilters = [];
+
+            Ext.each(filters, function(filter) {
+                if (!filter.isPlot() && !filter.isGrid()) {
+                    validFilters.push(filter);
+                }
+            });
+
+            if (validFilters.length > 0) {
+
                 var SUBJECT_IN = 'scattercount';
-                state.addPrivateSelection(filters, SUBJECT_IN, function() {
+                state.addPrivateSelection(validFilters, SUBJECT_IN, function() {
                     mdx.queryParticipantList({
                         useNamedFilters: [SUBJECT_IN],
                         success : function(cellset) {
