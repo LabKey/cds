@@ -109,9 +109,9 @@ $tip-body-color: $info-color;
 };
 
 @mixin smallStandout {
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 11pt;
+  text-transform: none;
+  font-weight: normal;
+  font-size: 12px;
   font-family: $bodycaps-font;
   span {
     color: $dark-color;

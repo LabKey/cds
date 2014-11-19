@@ -2,10 +2,37 @@
 
   background-color: $light-color;
   border: 1px solid lightgrey;
-  border-radius: 15px;
+  border-radius: 5px;
   font-size: 10pt;
 
+  h2 {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .label {
+    font-size: 12px;
+    display: block;
+    color: $heat-scale-2;
+    margin-bottom: 4px;
+  }
+
   .sorter {
+    span.sorter-label {
+      display: block;
+      color: $heat-scale-2;
+    }
+
+    span.sorter-content {
+      margin: 4px 0;
+      padding: 4px 8px;
+      display: block;
+      @include border-radius(15px);
+      background-color: $light-color;
+      border: 1px solid #DDDCDC;
+      line-height: 16px;
+    }
+
     @include smallStandout;
   }
 }

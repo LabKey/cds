@@ -17,9 +17,9 @@ Ext.define('Connector.view.InfoPane', {
         pack: 'start'
     },
 
-    margin: 10,
+    margin: 15,
 
-    padding: '10 0 10 10',
+    padding: 15,
 
     flex: 1,
 
@@ -52,7 +52,7 @@ Ext.define('Connector.view.InfoPane', {
             this.items.push({
                 xtype: 'box',
                 tpl: new Ext.XTemplate(
-                        '<h2 style="font-size: 18pt;">{title:htmlEncode}</h2>'
+                    '<h2>{title:htmlEncode}</h2>'
                 ),
                 data: model.data,
                 listeners: {
@@ -74,9 +74,9 @@ Ext.define('Connector.view.InfoPane', {
                 items: [{
                     xtype: 'box',
                     tpl: new Ext.XTemplate(
-                            '<div class="sorter" style="margin-top: 20px;">',
-                            '<span style="color: #A09C9C;">SORTED BY:&nbsp;</span>',
-                            '<span>{hierarchyLabel:htmlEncode}</span>',
+                            '<div class="sorter">',
+                                '<span class="sorter-label">Sorted by:</span>',
+                                '<span class="sorter-content">{hierarchyLabel:htmlEncode}</span>',
                             '</div>'
                     ),
                     data: model.data,
@@ -100,14 +100,14 @@ Ext.define('Connector.view.InfoPane', {
                     style: 'float: right;',
                     vector: 21,
                     width: 21,
-                    margin: '17 10 0 0',
+                    margin: '20 0 0 20',
                     hidden: filterBased,
                     menu: {
                         xtype: 'menu',
                         autoShow: true,
                         itemId: 'infosortedmenu',
                         showSeparator: false,
-                        width: 265,
+                        width: 208,
                         ui: 'custom',
                         cls: 'infosortmenu',
                         btn: btnId,
@@ -150,7 +150,7 @@ Ext.define('Connector.view.InfoPane', {
                 xtype: 'box',
                 tpl: new Ext.XTemplate(
                     '<div style="margin-top: 20px;">',
-                        '<span>Subjects can fall into multiple Types.</span>',
+                        '<span class="label">Subjects can fall into multiple types.</span>',
                     '</div>'
                 ),
                 data: {}
