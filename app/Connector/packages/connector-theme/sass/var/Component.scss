@@ -151,7 +151,7 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,
 ::-moz-focus-inner {border:0;}
 
 h1 {
-  font-size: 26pt;
+  font-size: 26px;
   @include header;
 }
 
@@ -264,8 +264,10 @@ svg a {
 
 .titlepanel {
   padding-bottom: 7px;
-  @include sectionPaddingTop;
   @include pagePaddingLeft;
+  font-size: 26px!important;
+  line-height: 32px;
+  padding-top: 34px;
 
   span {
     @include bodycaps;
@@ -313,7 +315,7 @@ svg a {
 }
 
 div.emptytext {
-  font-size: 11pt;
+  font-size: 12px;
   font-family: $info-font;
   color: $heat-scale-2;
 }

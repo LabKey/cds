@@ -11,7 +11,7 @@ div.opselect {
 div.filterpanel {
 
   font-family: $info-font;
-  font-size: 10pt;
+  font-size: 12px;
 
   .header {
     font-size: $headline;
@@ -19,6 +19,10 @@ div.filterpanel {
     span {
       color: $dark-color;
     }
+  }
+
+  .section-title {
+    font-size: 16px!important;
   }
 }
 

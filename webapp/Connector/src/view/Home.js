@@ -127,7 +127,7 @@ Ext.define('Connector.view.HomeHeader', {
                         '<h1 style="opacity: 0.7;">{nstudy:htmlEncode} studies connected together combining</h1>',
                         '<h1 style="opacity: 0.4; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
                     '</div>',
-                    '<a href="#home/about" style="font-size: 11pt; margin: -25px 60px 0 0; float: right;">About the Collaborative Dataspace...</a>',
+                    '<a href="#home/about" style="font-size: 12px; margin: 0 0; position: absolute; right: 33px; top: 48px!important;">About the Collaborative DataSpace...</a>',
                     {
                         commaFormat : function(v) {
                             return Ext.util.Format.number(v, '0,000');
