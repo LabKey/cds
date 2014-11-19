@@ -12,7 +12,7 @@ $select-on-grey-color: #03ADB0;
 $interactive-color: #9B0D96;       // Interactive
 $info-color: #F5A73A;              // Info
 
-$black: #000000;
+$black: #303030;
 $unselect-black: rgba(0, 0, 0, 0.4);
 
 /* these could be an actual scale using a function -- stick with Artefact colors for now */
@@ -27,7 +27,7 @@ $pageLeftPadding: 27px;
 $sectionTopPadding: 25px;
 
 $bodycaps-font : Arial;
-$info-font : Verdana, sans-serif;
+$info-font : Arial, sans-serif;
 $data-font : Georgia, serif;
 
 // General
@@ -99,7 +99,7 @@ $tip-body-color: $info-color;
 
 @mixin headline {
   font-size: $headline;
-  text-transform: uppercase;
+  text-transform: none;
 };
 
 @mixin standout {
@@ -484,15 +484,6 @@ div.emptytext {
   fill: none;
   stroke: #FFF;
   stroke-width: .5px;
-}
-
-// Issue 20763
-g.tick-text text {
-  -moz-user-select: -moz-none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 
 @import 'windows';

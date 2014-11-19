@@ -34,7 +34,7 @@ Ext.define('Connector.view.Main', {
         itemId: 'eastview',
         region: 'east',
         ui: 'east-view',
-        width : 305,
+        width : 270,
         plain : true,
         hideCollapseTool : true,
         defaults: {

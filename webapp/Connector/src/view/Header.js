@@ -10,19 +10,21 @@ Ext.define("Connector.view.Header", {
 
     layout: 'hbox',
 
-    height: 87,
+    height: 65,
 
     cls: 'connectorheader',
 
     expand: true,
 
-    collapseTime : 200,
+    collapseTime : 0,
 
     ui: 'custom',
 
     defaults: {
         ui: 'custom'
     },
+
+    logoText: 'HIV VACCINE <span>Collaborative DataSpace</span>',
 
     constructor : function(config) {
 
@@ -52,10 +54,8 @@ Ext.define("Connector.view.Header", {
             cls: 'logo',
             autoEl: {
                 tag: 'div',
-                html  : '<h2 style="padding-top: 200px;">hiv vaccine <br>' +
-                        '<span>collaborative dataspace</span>' +
-                        '</h2>' +
-                        '<img src="' + LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) +'.png">' // TODO: Get rid of hard coded context
+                html: '<img src="' + LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) +'.png">' + // TODO: Get rid of hard coded context
+                      '<h2 style="padding-top: 200px;">' + this.logoText + '</h2>'
             },
             flex: 4,
             listeners: {
@@ -70,8 +70,8 @@ Ext.define("Connector.view.Header", {
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '25 0 0 0',
-            width: 100,
+            margin: '25 14 0 0',
+            width: 50,
             items: [{
                 xtype: 'box',
                 margin: '2 15 0 0',
@@ -113,14 +113,15 @@ Ext.define("Connector.view.Header", {
     },
 
     expand : function() {
-        if(!this.expanded) {
+        if (!this.expanded) {
+            var time = this.collapseTime;
             var h2logo = Ext.get(this.getComponent('logo').getEl().query('h2')[0]);
-            h2logo.dom.innerHTML = 'hiv vaccine <br><span>collaborative dataspace</span>';
-            h2logo.animate({ to : { fontSize: '13pt', paddingTop: 27 }, duration: this.collapseTime });
-            Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 23, width : 45 }, duration: this.collapseTime });
-            Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: 0}, duration : this.collapseTime }));
-            this.setHeight(87);
-            this.expanded = true;
+            h2logo.dom.innerHTML = this.logoText;
+            h2logo.animate({ to : { fontSize: '12px', paddingTop: 24 }, duration: time });
+            Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 20 , width : 20}, duration: time });
+            Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: -3}, duration : time }));
+            this.setHeight(64);
+            this.expanded = false;
         }
     },
 
@@ -128,11 +129,11 @@ Ext.define("Connector.view.Header", {
         if (this.expanded || force === true) {
             var time = force ? 0 : this.collapseTime;
             var h2logo = Ext.get(this.getComponent('logo').getEl().query('h2')[0]);
-            h2logo.dom.innerHTML = 'hiv vaccine <span>collaborative dataspace</span>';
-            h2logo.animate({ to : { fontSize: '11pt', paddingTop: 8 }, duration: time });
-            Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 11 , width : 32}, duration: time });
+            h2logo.dom.innerHTML = this.logoText;
+            h2logo.animate({ to : { fontSize: '12px', paddingTop: 24 }, duration: time });
+            Ext.get(this.getComponent('logo').getEl().query('img')[0]).animate({ to : { paddingTop: 20 , width : 20}, duration: time });
             Ext.get(this.getComponent('search').getEl().animate({ to : { marginTop: -3}, duration : time }));
-            this.setHeight(53);
+            this.setHeight(64);
             this.expanded = false;
         }
     }

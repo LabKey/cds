@@ -5,10 +5,10 @@
 
     h2 {
       float: left;
-      padding: 20px 5px 0px 27px !important;
+      padding: 0 0 0 10px;
       font-family: $bodycaps-font;
       font-weight: bold;
-      font-size: 13pt;
+      font-size: 12px;
 
       &:hover {
         cursor: pointer;
@@ -16,19 +16,23 @@
     }
 
     span {
-      color : $select-color;
+      font-weight: normal;
     }
 
     img {
-      padding-top: 23px;
+      width: 75%;
+      height: 75%;
+      display: block;
+      float: left;
+      margin-left: 24px;
     }
   }
 }
 
 .headline {
-  text-transform: uppercase;
+  text-transform: none;
   font-family: $bodycaps-font;
-  font-size: 13.5pt;
+  font-size: 12px;
 }
 
 .connectorheader-collapse .logo span {

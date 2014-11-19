@@ -186,7 +186,7 @@ Ext.define('Connector.panel.ColorSelector', {
         glyphs.attr('class', 'legend-point')
                 .attr('d', function(d){return d.shape();})
                 .attr('fill', function(d){return d.color;})
-                .attr('transform', function(d, i){return 'translate(' + (8 + i*20) + ',10) scale(1.5)';});
+                .attr('transform', function(d, i){return 'translate(' + (8 + i*20) + ',10)';});
 
         hoverRect = smallCanvas.selectAll('.legend-rect').data([legendData]).enter().append('rect');
         hoverRect.attr('width', legendData.length * iconSize)
@@ -207,7 +207,6 @@ Ext.define('Connector.panel.ColorSelector', {
             this.win.setAttribute('class', 'arrow-window');
             this.win.style.width = '250px';
             this.win.style.padding = '5px';
-            this.win.style.overflow = 'hidden';
             this.win.style.display = 'none';
             document.querySelector('body').appendChild(this.win);
             this.windowCanvas = d3.select('#legend-window').append('svg');
@@ -222,7 +221,7 @@ Ext.define('Connector.panel.ColorSelector', {
         windowGlyphs.exit().remove();
         windowGlyphs.attr('d', function(d){return d.shape();})
                 .attr('fill', function(d){return d.color;})
-                .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ') scale(1.5)';});
+                .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
 
         windowLabels = this.windowCanvas.selectAll('.legend-text').data(legendData);
         windowLabels.enter().append('text').attr('class', 'legend-text');
