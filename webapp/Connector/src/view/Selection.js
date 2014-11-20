@@ -153,7 +153,10 @@ Ext.define('Connector.view.Selection', {
                 },
                 renderGridFilterLabel : function(values) {
                     var type = LABKEY.app.model.Filter.getGridHierarchy(values);
-                    if (values.gridFilter && values.gridFilter.length == 1) {
+
+                    if (values.gridFilter && values.gridFilter.length > 0) {
+                        // 21881: since this is presumed to be a grid filter then all
+                        // the applied filters should be the same measure/column
                         var gf = values.gridFilter[0];
 
                         // the query service can lookup a measure, but only the base of a lookup
