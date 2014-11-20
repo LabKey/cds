@@ -16,7 +16,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
         align: 'stretch'
     },
 
-    dimViewHeight: 161,
+    dimViewHeight: 160,
 
     showEmpty: true,
 

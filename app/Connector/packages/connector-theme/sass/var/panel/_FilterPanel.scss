@@ -12,7 +12,11 @@ div.filterpanel {
 
   font-family: $info-font;
   font-size: 12px;
-  margin: 10px 10px 0 10px;
+  margin: 0 10px 0 10px;
+
+  .section-title {
+    margin-top: 10px;
+  }
 
   .header {
     font-size: $headline;

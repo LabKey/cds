@@ -23,8 +23,8 @@ Ext.define('Connector.view.Summary', {
 
         this.titlePanel = Ext.create('Ext.panel.Panel', {
             ui  : 'custom',
-            cls : 'titlepanel',
-            html: '<span>find subjects...</span>'
+            cls : 'educational-titlepanel',
+            html: '<h1>Find subjects based on their characteristics.<br/><span style="opacity: 0.66;">Combine filters to create complex queries.</span><br/><span style="opacity: 0.33;">Then go plot their data.</span></h1>'
         });
 
         this.items = [this.titlePanel, this.getSummaryDataView()];

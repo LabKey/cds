@@ -34,7 +34,7 @@ Ext.define('Connector.view.Page', {
 
 	selectedView : 0,
 
-	headerHeight : 161,
+	headerHeight : 160,
 
 	getHeader : function() {
 		return this.getComponent('northRegion');

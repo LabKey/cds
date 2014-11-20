@@ -92,10 +92,10 @@ $tip-body-color: $info-color;
 
 @mixin bodycaps {
   font-family: $bodycaps-font;
-  font-size: 14pt;
+  font-size: 16px;
   font-weight: bold;
   color : $interactive-color;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 @mixin headline {
@@ -263,12 +263,25 @@ svg a {
   }
 }
 
+.educational-titlepanel {
+  padding-bottom: 34px;
+  padding-top: 31px;
+  color: $black;
+
+  @include pagePaddingLeft;
+
+  h1 {
+    font-size: 26px!important;
+    line-height: 32px;
+  }
+}
+
 .titlepanel {
   padding-bottom: 7px;
+  font-size: 16px!important;
+  line-height: 16px;
+  padding-top: 24px;
   @include pagePaddingLeft;
-  font-size: 26px!important;
-  line-height: 32px;
-  padding-top: 34px;
 
   span {
     @include bodycaps;

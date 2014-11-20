@@ -74,7 +74,7 @@ div.learnview {
 
 div.learnheader,
 div.learncolumnheader {
-  @include rightFade;
+//  @include rightFade;
 }
 
 div.learncolumnheader {
@@ -93,7 +93,7 @@ div.learn-map-container {
 h1.lhdv {
   float: left;
   font-weight: normal;
-  padding-right: 18px;
+  padding-right: 28px;
   color: $unselect-black;
 
   &:hover {

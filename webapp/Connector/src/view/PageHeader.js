@@ -27,7 +27,7 @@ Ext.define('Connector.view.PageHeader', {
 
     extend: 'Ext.container.Container',
 
-    height: 161,
+    height: 160,
 
     requires: ['Connector.button.Image'],
 

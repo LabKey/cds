@@ -227,7 +227,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             }]
         }];
 
-        this.height = 161;
+        this.height = 160;
 
         this.callParent();
     },

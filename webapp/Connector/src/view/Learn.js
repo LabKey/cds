@@ -356,7 +356,7 @@ Ext.define('Connector.view.LearnHeader', {
                 autoEl: {
                     tag: 'div',
                     cls: 'titlepanel',
-                    html: '<span>Learn About...</span>'
+                    html: '<span>Learn about...</span>'
                 }
             },{
                 xtype: 'container',

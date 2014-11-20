@@ -8,7 +8,7 @@ Ext.define('Connector.view.Home', {
 
     alias: 'widget.home',
 
-    homeHeaderHeight: 161,
+    homeHeaderHeight: 160,
 
     initComponent : function() {
 
@@ -106,7 +106,7 @@ Ext.define('Connector.view.HomeHeader', {
         align: 'stretch'
     },
 
-    height: 161,
+    height: 160,
 
     cls: 'dimensionview',
 
@@ -122,10 +122,10 @@ Ext.define('Connector.view.HomeHeader', {
                 xtype: 'box',
                 itemId: 'statdisplay',
                 tpl: new Ext.XTemplate(
-                    '<div class="titlepanel">',
+                    '<div class="educational-titlepanel">',
                         '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
-                        '<h1 style="opacity: 0.7;">{nstudy:htmlEncode} studies connected together combining</h1>',
-                        '<h1 style="opacity: 0.4; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
+                        '<h1 style="opacity: 0.66;">{nstudy:htmlEncode} studies connected together combining</h1>',
+                        '<h1 style="opacity: 0.33; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
                     '</div>',
                     '<a href="#home/about" style="font-size: 12px; margin: 0 0; position: absolute; right: 33px; top: 48px!important;">About the Collaborative DataSpace...</a>',
                     {

@@ -65,21 +65,20 @@ a.x-btn {
 
   $border-radius : 15px,
 
-  $background-color: $secondary-color,
-  $background-color-focus: $dark-color,
-  $background-color-over: $dark-color,
-  $background-color-disabled: $secondary-color,
+  $background-color: $heat-scale-2,
+  $background-color-pressed: $heat-scale-1,
+  $background-color-over: $heat-scale-1,
+  $background-color-disabled: $heat-scale-4,
 
-  $border-width : 2px,
-  $border-color: $heat-scale-3,
-  $border-color-over: $heat-scale-3,
-  $border-color-focus: $heat-scale-3,
-  $border-color-pressed: $heat-scale-3,
-  $border-color-disabled: $heat-scale-3,
+  $border-width : 0px,
+  $border-color: $heat-scale-2,
+  $border-color-over: $heat-scale-1,
+  $border-color-pressed: $heat-scale-1,
+  $border-color-disabled: $heat-scale-4,
 
-  $text-padding: 5px,
+  $text-padding: 8px,
 
-  $color: $dark-color,
+  $color: $light-color,
   $color-over: $light-color,
   $color-disabled: $heat-scale-3,
 
@@ -95,8 +94,9 @@ a.x-btn {
 );
 
 .x-btn-darkrounded-small {
-  padding: 3px 5px 4px 5px;
+  padding: 5px 5px 4px 5px;
   background-image: none;
+  height: 24px;
 }
 
 .x-btn-darkrounded-small-disabled {
@@ -252,20 +252,20 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-small',
 
-  $border-radius : 8px,
-  $border-width : 1px,
-  $border-color: #CC87C9,
-  $border-color-over: $interactive-color,
-  $border-color-disabled: rgba(#CC87C9, 0.7),
+  $border-radius : 15px,
+  $border-width : 2px,
+  $border-color: transparent,
+  $border-color-over: transparent,
+  $border-color-disabled: transparent,
 
-  $background-color: $light-color,
+  $background-color: $interactive-color,
   $background-color-over: $interactive-color,
 
   $text-padding: 0px,
 
-  $color: $interactive-color,
+  $color: $light-color,
   $color-over: $light-color,
-  $color-disabled: rgba($interactive-color, 0.4),
+  $color-disabled: rgba($light-color, 0.4),
 
   $font-weight: normal,
 
@@ -279,6 +279,12 @@ a.x-btn {
   $icon-size : 12px,
   $glyph-color : #FFFFFF
 );
+
+.x-btn-rounded-inverted-accent-small {
+  padding: 4px 5px 4px 5px!important;
+  background-image: none;
+  height: 24px;
+}
 
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-icon-small',
@@ -297,7 +303,7 @@ a.x-btn {
   $color-over: $light-color,
   $color-disabled: $heat-scale-4,
 
-  $font-size : 12px,
+  $font-size : 12px!important,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -310,7 +316,7 @@ a.x-btn {
 
 .x-btn-rounded-small,
 .x-btn-rounded-accent-small {
-  padding: 3px 5px 4px 5px;
+  padding: 5px 5px 4px 5px;
   background-image: none;
   border-width: 0px;
 }

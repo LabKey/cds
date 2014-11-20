@@ -20,10 +20,6 @@
 .scatterview {
   background-color : $secondary-color;
   padding: 0;
-
-  .x-panel-body {
-    @include rightFade;
-  }
 }
 
 .emptyplot svg {
