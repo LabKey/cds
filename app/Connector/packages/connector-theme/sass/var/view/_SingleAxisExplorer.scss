@@ -186,8 +186,9 @@ div.barcollapse {
 
 div.saeempty {
   font-family: $data-font;
-  font-size: 14pt;
-  margin-top: 10px;
+  font-size: 26px;
+  margin-top: 24px;
+  margin-left: $pageLeftPadding;
 }
 
 /* -- END Connector.view.SingleAxisExplorer */

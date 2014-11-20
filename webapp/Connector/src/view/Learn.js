@@ -339,7 +339,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     extend : 'Ext.container.Container',
 
-    height: 136,
+    height: 160,
 
     cls: 'learnheader',
 

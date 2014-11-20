@@ -252,22 +252,22 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-small',
 
-  $border-radius : 15px,
-  $border-width : 2px,
-  $border-color: transparent,
-  $border-color-over: transparent,
-  $border-color-disabled: transparent,
+  $border-radius : 16px,
 
   $background-color: $interactive-color,
   $background-color-over: $interactive-color,
+  $background-color-disabled: $heat-scale-4,
 
-  $text-padding: 0px,
+  $border-width : 0px,
+  $border-color: #ffffff,
+  $border-color-over: $light-color,
+  $border-color-focus: $light-color,
+  $border-color-pressed: $dark-color,
+  $border-color-disabled: $light-color,
 
   $color: $light-color,
-  $color-over: $light-color,
-  $color-disabled: rgba($light-color, 0.4),
-
-  $font-weight: normal,
+  $color-over : #ffffff,
+  $color-disabled: $light-color,
 
   $font-size : 12px,
   $font-family: $info-font,
@@ -281,7 +281,7 @@ a.x-btn {
 );
 
 .x-btn-rounded-inverted-accent-small {
-  padding: 4px 5px 4px 5px!important;
+  padding: 6px 12px 4px 12px!important;
   background-image: none;
   height: 24px;
 }
@@ -368,16 +368,16 @@ input:-webkit-autofill {
 }
 
 input.x-btn-rounded-inverted-accent-small {
-  padding: 2px 8px 3px;
-  color: $interactive-color;
+  padding: 4px 12px 4px 12px!important;
+  color: #ffffff;
   font-weight: normal;
-  font-size: 8pt;
+  font-size: 12px;
   font-family: $info-font;
 
   &:hover {
     &.enabled {
-      background-color: $interactive-color;
-      color: white;
+      opacity: 0.9;
+      color: #ffffff;
     }
   }
 }

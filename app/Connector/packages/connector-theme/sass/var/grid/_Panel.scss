@@ -24,10 +24,10 @@
   .x-group-header {
     text-align: left;
     color: $light-color;
-    background-color: $heat-scale-4;
+    background-color: $light-color;
 
     .x-column-header-inner {
-      background-color: $heat-scale-1;
+      background-color: $light-color;
     }
 
     /* Column group headers do not show trigger */

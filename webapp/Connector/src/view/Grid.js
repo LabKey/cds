@@ -315,7 +315,7 @@ Ext.define('Connector.view.Grid', {
                 store: this.initGridStore(),
                 border: false,
                 defaultColumnWidth: this.columnWidth,
-                margin: '-93 0 0 27',
+                margin: '-93 24 0 24',
                 ui: 'custom',
                 viewConfig: {
                     loadMask: false

@@ -1,6 +1,6 @@
 div.learnview {
   .module {
-    padding-bottom: 20px;
+    padding-bottom: 28px;
   }
 }
 
@@ -15,12 +15,17 @@ div.learnview {
   }
 
   h3 {
-    padding-bottom: 8px;
+    padding-bottom: 16px;
     clear: both;
+    font-size: 16px;
+    color: $black;
   }
 
   p {
-    color: #231F20;
+    color: #black;
+    font-size: 12px;
+    margin-right: 5%;
+    line-height: 16px;
 
     &.loading-data {
       color: $unselect-black;
@@ -28,8 +33,18 @@ div.learnview {
   }
 
   ul {
-    list-style-position: inside;
+    list-style-position: outside;
     list-style-type: disc;
+    padding-left: 16px;
+    margin-right: 5%;
+    line-height: 16px;
+  }
+
+  ol {
+    list-style-position: outside;
+    padding-left: 16px;
+    margin-right: 5%;
+    line-height: 16px;
   }
 
   .disabled {
@@ -72,13 +87,14 @@ div.learnview {
   @include pagePaddingLeft;
 }
 
-div.learnheader,
 div.learncolumnheader {
-//  @include rightFade;
-}
-
-div.learncolumnheader {
-  height: 25px;
+  padding-top: $pageLeftPadding;
+  padding-bottom: 12px;
+  margin-left: $pageLeftPadding;
+  margin-right: $pageLeftPadding;
+  border-bottom: 1px solid $heat-scale-4;
+  overflow: auto;
+  background-color: #fff;
 }
 
 div.learn-header-container {
@@ -110,48 +126,71 @@ h1.lhdv {
   top: 0px;
 }
 
-div.detail-wrapper:hover {
-  @include transition(background-color 0.2s ease-out);
-  background-color: $selectongrey-color;
-  cursor: pointer;
+div.detail-wrapper {
+  padding: 0 $pageLeftPadding;
+
+  .detail-container {
+    padding: 24px 0;
+
+    .study-description {
+      height: 123px;
+      overflow:hidden;
+
+      h2 {
+        font-size: 16px!important;
+      }
+    }
+  }
+
+  &:hover {
+    @include transition(background-color 0.2s ease-out);
+    background-color: $selectongrey-color;
+    cursor: pointer;
+  }
 }
 
 div.detail-container {
-  width: 95%;
-  margin-left: $pageLeftPadding;
-  margin-right: auto;
+  width: 100%;
 
   div.detail-header {
-    font-size: 12pt;
-    color: $dark-color;
-    font-family: $bodycaps-font;
+    font-size: 11px;
+    color: $heat-scale-2;
     font-weight: bold;
+    text-transform: uppercase;
   }
 }
 
 /* TODO: The Following study- selectors need to be renamed */
 div.study-detail {
   height: 170px;
-  border-bottom: 2px solid $primary-color;
-  padding-top: 15px;
+  border-bottom: 1px solid $heat-scale-4;
   overflow: hidden;
+
+  &:hover {
+    border-color: transparent;
+  }
 }
 
 div.study-description {
-  width: 40%;
-  padding-right: 10px;
+  width: 60%;
   float: left;
   font-family: $info-font;
 
   .phase-text {
-    font-size: 12pt;
-    color: $heat-scale-1;
+    font-size: 11px;
+    color: $heat-scale-2;
   }
 
   .description-text {
-    padding-top: 5px;
-    font-size: 12pt;
+    padding-top: 12px;
+    font-size: 11px;
+    line-height:15px;
     color: $heat-scale-1;
+    margin-right: 5%;
+
+    ol {
+      padding-left: 24px;
+    }
   }
 }
 
@@ -160,7 +199,7 @@ div.study-date {
   float: left;
   padding-right: 10px;
   font-family: $info-font;
-  font-size: 12pt;
+  font-size: 11px;
 
   .startdate-text {
     display: block;
@@ -177,15 +216,34 @@ div.study-date {
 }
 
 div.study-treatments {
-  width: 40%;
+  width: 20%;
   float: right;
   font-family: $info-font;
-  font-size: 12pt;
+  font-size: 11px;
   color: $heat-scale-1;
 }
 
 .learn-search-input {
-  float: right;
-  margin: 12px 8px;
+  clear: both;
+  display: block;
+  margin: 80px 0 12px 0;
+  width: 60%;
+
+  tbody,
+  tr,
+  td.x-form-item-body {
+    display: block;
+    width: 100%!important;
+  }
+
+  input {
+    width: 560px;
+    padding: 16px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+  }
+  input.x-form-focus {
+    border-color: $heat-scale-2!important;
+  }
 }
 

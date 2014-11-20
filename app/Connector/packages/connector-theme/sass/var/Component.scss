@@ -22,10 +22,10 @@ $heat-scale-2: #A09C9C;            // Heatmap Gray #2
 $heat-scale-3: #CCC8C8;            // Heatmap Gray #3
 $heat-scale-4: #E6E1E1;            // Heatmap Gray #4
 
-$title : 28pt;
-$headline : 18pt;
-$pageLeftPadding: 27px;
-$sectionTopPadding: 25px;
+$title : 26px;
+$headline : 18px;
+$pageLeftPadding: 24px;
+$sectionTopPadding: 24px;
 
 $bodycaps-font : Arial;
 $info-font : Arial, sans-serif;
@@ -145,11 +145,11 @@ $tip-body-color: $info-color;
 
 html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {
   margin: 0;
-  padding: 0
+  padding: 0;
 }
 
-:focus {outline:none;}
-::-moz-focus-inner {border:0;}
+*:focus {outline:none;}
+*::-moz-focus-inner {border:0;}
 
 h1 {
   font-size: 26px;
@@ -171,10 +171,6 @@ ul {
 }
 
 @media (max-width: 1300px) {
-  h1 {
-    font-size: 24pt;
-  }
-
   h2 {
     font-size: 20pt;
   }
@@ -185,10 +181,6 @@ ul {
 }
 
 @media (max-width: 1250px) {
-  h1 {
-    font-size: 22pt;
-  }
-
   h2 {
     font-size: 18pt;
   }
@@ -216,7 +208,7 @@ ul {
 
 @media (max-width: 1175px) {
   .noplotmsg h1 {
-    font-size: 16pt;
+    font-size: 26px;
   }
 }
 
@@ -487,6 +479,10 @@ div.emptytext {
   &-lg {
     margin-bottom: 20px;
   }
+}
+
+.x-css-shadow {
+  border-radius: 5px!important;
 }
 
 /* Visualization Library */

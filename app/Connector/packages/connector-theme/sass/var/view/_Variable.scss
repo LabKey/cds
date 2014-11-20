@@ -1,5 +1,10 @@
 .varselect .variable {
   display: inline-block;
+  padding-top: 10px;
+
+  h1 {
+    font-size: 16px;
+  }
 }
 
 .vardisable {
@@ -25,6 +30,7 @@
       display: inline-block;
       vertical-align: bottom;
       margin-left: 5px;
+      margin-top: 5px;
 
       li {
         font-family: $bodycaps-font;

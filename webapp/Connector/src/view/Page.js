@@ -20,8 +20,7 @@ Ext.define('Connector.view.Page', {
 		cls: 'pageheadercontainer',
 		style: {
             position: 'absolute',
-            top: '0px',
-			backgroundColor: '#ffff00'
+            top: '0px'
 		}
 	}, {
 		xtype: 'container',

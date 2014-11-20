@@ -211,7 +211,7 @@ Ext.define('Connector.view.Scatter', {
             region: 'south',
             height: 50,
             border: false, frame: false,
-            bodyStyle: 'background: linear-gradient(#ebebeb, #f0f0f0) !important;',
+            bodyStyle: 'background: #ffffff;',
             items: [{
                 xtype: 'container',
                 layout: {

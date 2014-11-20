@@ -99,9 +99,11 @@ div.definition-overflow {
 }
 
 .curseltitle {
-  @include bodycaps;
-  font-size: 12pt;
-  padding-bottom: 15px;
+  font-family: $data-font;
+  font-size: 16px;
+  font-color: $black;
+  padding-top: 9px;
+  padding-bottom: 24px;
 }
 
 .curselauth {
@@ -121,7 +123,15 @@ div.definition-overflow {
 
 /* Ext.Grid*/
 .x-column-header-text {
-  font-size: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: $heat-scale-2;
+}
+
+.x-grid-data-row {
+  line-height: 28px;
+  height: 28px;
 }
 
 .x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
@@ -171,8 +181,9 @@ div.definition-overflow {
   .x-column-header-over,
   .x-column-header-sort-ASC, .x-column-header-sort-DESC {
     background-image: none !important;
-    background-color: transparent;
+    background-color: $light-color;
     border: none;
+    color: $interactive-color!important;
   }
 
   .x-column-header-trigger {

@@ -1,26 +1,27 @@
 .line {
-  margin-left: $pageLeftPadding;
   height: 1px;
-  background: $primary-color;
-  background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from($heat-scale-2), to($primary-color));
-  background: -moz-linear-gradient(45deg, $heat-scale-2, $primary-color);
+  background: transparent;
+  padding-bottom: 24px;
+  border-top: 1px solid $heat-scale-4;
 }
 
 .row {
-  height: 19%;
-  min-height: 50px;
+  padding-left: $pageLeftPadding;
+  padding-right: $pageLeftPadding;
+  min-height: 120px;
+  padding-bottom: 24px;
   white-space: nowrap;
   min-width: 715px; /* 1024 - right pane width (305) */
 
   &:hover {
     @include transition(background-color 0.2s ease-out);
-    @include single-box-shadow($heat-scale-2, -2px, 2px, 2px);
     @include border-radius(2px);
     background-color: $selectongrey-color;
     cursor: pointer;
 
     .line {
       background-color: transparent;
+      border-top-color: transparent;
     }
   }
 }
@@ -30,44 +31,27 @@ div.column {
 }
 
 div.endcolumn {
-  float: none;
+  float: left;
 }
 
 /* By column is the 'by Column' you see in Summary Display */
 div.bycolumn {
-  width : 43%;
-  @include pagePaddingLeft;
+  width : 49%;
   @include standout;
+  font-size: 26px!important;
 
   .pp {
     color: $heat-scale-2;
   }
 }
 
-@media (max-width: 1500px) {
-  div.bycolumn {
-    font-size: 24pt;
-  }
-}
-
-@media (max-width: 1200px) {
-  div.bycolumn {
-    font-size: 20pt;
-  }
-}
-
-@media (max-width: 1100px) {
-  div.bycolumn {
-    font-size: $headline;
-  }
-}
-
 /* Detail column is the middle column of the Summary Display */
 div.detailcolumn {
   font-size: 12px;
-  width : 28%;
+  width : 20%;
   white-space: pre-wrap;
-  padding-top: 4px;
+  padding-top: 13px;
+  margin-right: 5%;
 
   a {
     &.nav:hover {
@@ -78,8 +62,7 @@ div.detailcolumn {
 }
 
 div.totalcolumn {
-  margin-left: 76%;
-  font-weight: bold;
-  white-space: pre-wrap;
-  width: 15%;
+  padding-top: 13px;
+  font-weight: normal;
+  width: 25%;
 }
