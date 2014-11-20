@@ -63,7 +63,7 @@ Ext.define('Connector.view.Home', {
                         '<tpl if="this.isEmpty(values)">',
                             '<div class="grouplist-empty" style="font-size: 13pt; font-family: Arial;">Feeds not available</div>',
                         '</tpl>',
-                        '<table style="font-size: 11pt;">',
+                        '<table style="font-size: 12px;">',
                             '<tpl for=".">',
                                 '<tr class="entry" style="margin-top: 10px;">',
                                     '<td style="width: 110px; vertical-align: text-top; color: #a09c9c;">{pubDate:this.renderDate}</td>',

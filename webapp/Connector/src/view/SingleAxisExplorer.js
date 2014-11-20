@@ -116,7 +116,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             return this.saview;
 
         var config = {
-            padding: '0 0 0 48',
+            padding: '0 0 0 24',
             store: this.store,
             flex: 1,
             resizeTask: task,

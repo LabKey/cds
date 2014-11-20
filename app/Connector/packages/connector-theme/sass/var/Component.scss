@@ -1,6 +1,6 @@
 /* Site wide coloring scheme */
-$select-color: #14C9CC;                       // Bright Blue
-$selectongrey-color: rgba(20, 201, 204, 0.2); // Light Blue
+$select-color: #14C9CC;            // Bright Blue
+$selectongrey-color: #A0EAEB;      // Light Blue
 /* read as 'select on grey' */
 
 $primary-color: #DCD8D8;           // Main Gray
@@ -23,7 +23,7 @@ $heat-scale-3: #CCC8C8;            // Heatmap Gray #3
 $heat-scale-4: #E6E1E1;            // Heatmap Gray #4
 
 $title : 26px;
-$headline : 18px;
+$headline : 16px;
 $pageLeftPadding: 24px;
 $sectionTopPadding: 24px;
 
@@ -72,7 +72,7 @@ $grid-row-cell-background-color: $light-color;
 
 /* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
-$grid-column-header-font-size: 11pt;
+$grid-column-header-font-size: 12px;
 $grid-header-background-color: transparent;
 $grid-header-over-background-color: $selectongrey-color;
 
@@ -170,23 +170,19 @@ ul {
   list-style: none;
 }
 
+div.study-description .description-text {
+  font-size: 12px;
+}
+
 @media (max-width: 1300px) {
   h2 {
     font-size: 20pt;
-  }
-
-  div.study-description .description-text {
-    font-size: 11pt;
   }
 }
 
 @media (max-width: 1250px) {
   h2 {
     font-size: 18pt;
-  }
-
-  div.study-description .description-text {
-    font-size: 11pt;
   }
 }
 
@@ -374,7 +370,7 @@ div.emptytext {
 }
 
 .#{$connector-prefix}form-item-label-top {
-  font-size: 11pt;
+  font-size: 12px;
 }
 
 .#{$connector-prefix}border-box textarea.#{$connector-prefix}form-field {
@@ -438,7 +434,7 @@ div.emptytext {
 }
 
 .section-title {
-  font-size: 17pt;
+  font-size: $headline;
 }
 
 .top-spacer {
