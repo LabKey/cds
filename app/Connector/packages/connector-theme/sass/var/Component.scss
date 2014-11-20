@@ -37,8 +37,8 @@ $css-shadow-border-radius: 0;
 $font-family: $info-font;
 
 // form/field/Base.scss
-$form-label-font: normal 10pt $info-font;
-$form-toolbar-field-font: normal 10pt $info-font;
+$form-label-font: normal 12px $info-font;
+$form-toolbar-field-font: normal 12px $info-font;
 
 // form/field/Text.scss
 $form-field-background-image: none;
@@ -46,7 +46,7 @@ $form-field-border-color: rgb(211, 211, 211);
 $form-field-focus-border-color: $dark-color;
 
 // form/field/Display.scss
-$form-display-field-font: normal 10pt $info-font;
+$form-display-field-font: normal 12px $info-font;
 
 // load mask
 $loadmask-background-color: $dark-color;
@@ -111,7 +111,7 @@ $tip-body-color: $info-color;
 @mixin smallStandout {
   text-transform: none;
   font-weight: normal;
-  font-size: 12px;
+  color: $heat-scale-2;
   font-family: $bodycaps-font;
   span {
     color: $dark-color;

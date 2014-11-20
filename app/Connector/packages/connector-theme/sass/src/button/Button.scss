@@ -27,7 +27,7 @@ a.x-btn {
   $color: $dark-color,
   $color-disabled: $dark-color,
 
-  $font-size : 10pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -49,7 +49,7 @@ a.x-btn {
   $color: $heat-scale-4,
   $color-disabled: $heat-scale-4,
 
-  $font-size : 10pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -83,7 +83,7 @@ a.x-btn {
   $color-over: $light-color,
   $color-disabled: $heat-scale-3,
 
-  $font-size : 10pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -123,7 +123,7 @@ a.x-btn {
   $color-over : $interactive-color,
   $color-disabled: $dark-color,
 
-  $font-size : 11pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -178,7 +178,7 @@ a.x-btn {
   $color-over : $interactive-color,
   $color-disabled: $dark-color,
 
-  $font-size : 9pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -203,7 +203,7 @@ a.x-btn {
 .x-btn-dropdown-alt-small-icon .x-btn-inner,
 .x-btn-dropdown-alt-small-noicon button,
 .x-btn-dropdown-alt-small-noicon .x-btn-inner {
-  height: 15px;
+  height: 22px;
   line-height: normal;
 }
 
@@ -232,9 +232,9 @@ a.x-btn {
   $color-over: $interactive-color,
   $color-disabled: $heat-scale-4,
 
-  $font-weight: bold,
+  $font-weight: normal,
 
-  $font-size : 8pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -267,9 +267,9 @@ a.x-btn {
   $color-over: $light-color,
   $color-disabled: rgba($interactive-color, 0.4),
 
-  $font-weight: bold,
+  $font-weight: normal,
 
-  $font-size : 8pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -297,7 +297,7 @@ a.x-btn {
   $color-over: $light-color,
   $color-disabled: $heat-scale-4,
 
-  $font-size : 11pt,
+  $font-size : 12px,
   $font-family: $info-font,
   $font-family-over: $info-font,
   $font-family-focus: $info-font,
@@ -345,11 +345,11 @@ a.x-btn {
 
 .x-btn-rounded-small-noicon button,
 .x-btn-rounded-accent-small-noicon button {
-  height: 14px;
+  height: 22px;
 }
 
 .x-btn-rounded-small-noicon .x-btn-inner {
-  height: 18px;
+  height: 22px;
 }
 
 .x-btn-arrow {
@@ -364,7 +364,7 @@ input:-webkit-autofill {
 input.x-btn-rounded-inverted-accent-small {
   padding: 2px 8px 3px;
   color: $interactive-color;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 8pt;
   font-family: $info-font;
 

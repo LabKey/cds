@@ -3,7 +3,7 @@
   background-color: $light-color;
   border: 1px solid lightgrey;
   border-radius: 5px;
-  font-size: 10pt;
+  font-size: 12px;
 
   h2 {
     font-size: 16px;
@@ -11,7 +11,8 @@
   }
 
   .label {
-    font-size: 12px;
+    font-size: 11px;
+    text-transform: none;
     display: block;
     color: $heat-scale-2;
     margin-bottom: 4px;
@@ -19,11 +20,14 @@
 
   .sorter {
     span.sorter-label {
+      font-size: 11px;
+      text-transform: none;
       display: block;
       color: $heat-scale-2;
     }
 
     span.sorter-content {
+      font-size: 12px;
       margin: 4px 0;
       padding: 4px 8px;
       display: block;
