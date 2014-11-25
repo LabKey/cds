@@ -46,9 +46,6 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Measures]',
                 hidden: true
             },{
-                uniqueName: '[SubjectVisit]',
-                hidden: true
-            },{
                 uniqueName: '[Subject]',
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',

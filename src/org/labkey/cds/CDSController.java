@@ -50,6 +50,7 @@ import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermissionClass;
+import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.study.DataSet;
@@ -225,28 +226,45 @@ public class CDSController extends SpringActionController
         @Override
         public boolean handlePost(Object o, BindException errors) throws Exception
         {
+            Container c = getContainer();
+            User u = getUser();
             List<String> selectedDatasets = getViewContext().getList("dataset");
-            UserSchema studySchema = QueryService.get().getUserSchema(getUser(), getContainer(), "study");
+            UserSchema studySchema = QueryService.get().getUserSchema(u, c, "study");
+            StudyService.Service studyService = StudyService.get();
+
+            //
+            // Populate fact loaders for each dataset
+            //
             for (String dsName : selectedDatasets)
             {
-                DataSet dataSet = StudyService.get().getDataset(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), dsName));
-                assert (null != dataSet) : "Couldn't find dataset " + dsName;
-
-                FactLoader loader = new FactLoader(studySchema, dataSet, getUser(), getContainer());
-                _factLoaders.add(loader);
+                DataSet dataSet = studyService.getDataset(c, studyService.getDatasetIdByName(c, dsName));
+                if (null == dataSet)
+                {
+                    errors.reject(ERROR_MSG, "Could not find dataset: '" + dsName + "'. Ensure that this dataset is properly exposed at the project level.");
+                    return false;
+                }
+                _factLoaders.add(new FactLoader(studySchema, dataSet, u, c));
             }
 
-            //Add any participants with no assay data to the cube...
-            //Should be more robust in finding this dataset
-            DataSet demographicsDataset = StudyService.get().getDataset(getContainer(), StudyService.get().getDatasetIdByName(getContainer(), "Demographics"));
-            assert (null != demographicsDataset) : "Couldn't find dataset: 'Demographics'";
-            _factLoaders.add(new DemographicsFactLoader(studySchema, demographicsDataset, getUser(), getContainer()));
+            //
+            // Add any participants with no assay data to the cube...
+            // Should be more robust in finding this dataset
+            //
+            DataSet demographicsDataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, DemographicsFactLoader.TABLE_NAME));
+            if (null == demographicsDataset)
+            {
+                errors.reject(ERROR_MSG, "Could not find dataset: '" + DemographicsFactLoader.TABLE_NAME + "'. It is required.");
+                return false;
+            }
+            _factLoaders.add(new DemographicsFactLoader(studySchema, demographicsDataset, u, c));
 
-            CDSManager.get().deleteFacts(getContainer());
+            //
+            // We're ready to go, delete old facts and populate the new ones. Then, reset the cube so it picks
+            // up new datas!
+            //
+            CDSManager.get().deleteFacts(c);
             for (FactLoader loader : _factLoaders)
                 loader.populateCube();
-
-            // TODO:
             resetCube();
 
             return true;
@@ -255,7 +273,7 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getSuccessView(Object o)
         {
-            return new  JspView("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, false));
+            return new JspView<>("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, false /* isUpdateParticipantGroups */));
         }
 
         @Override
@@ -267,8 +285,7 @@ public class CDSController extends SpringActionController
         @Override
         public NavTree appendNavTrail(NavTree root)
         {
-            root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Populate Fact Table");
-            return root;
+            return root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Populate Fact Table");
         }
     }
 

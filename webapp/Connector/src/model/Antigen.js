@@ -14,13 +14,13 @@ Ext.define('Connector.model.Antigen', {
 
     statics : {
         getAntigenAlias : function(measure) {
+            var alias = null;
             if (measure && measure.options && measure.options.antigen) {
-                var alias = measure.alias.substring(0, measure.alias.indexOf("_" + measure.name));
+                alias = measure.alias.substring(0, measure.alias.indexOf("_" + measure.name));
                 alias += "_" + measure.options.antigen.name;
-                return alias;
             }
 
-            return null;
+            return alias;
         }
     }
 });

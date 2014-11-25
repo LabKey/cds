@@ -71,21 +71,11 @@
         <Table schema="cds" name="facts" >
         </Table>
 
-        <Dimension visible="true" highCardinality="false" name="SubjectVisit" foreignKey="participantid">
-            <Hierarchy visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="subjectvisit" schema="study"/>
-                <Level name="Container" visible="true" column="Container" />
-                <Level name="Subject" visible="true" column="SubjectID" type="String" uniqueMembers="false" />
-                <Level name="Day" visible="true" column="Day" type="Integer" uniqueMembers="false" />
-            </Hierarchy>
-        </Dimension>
-
         <Dimension visible="true" highCardinality="false" name="Subject" foreignKey="participantid">
             <Hierarchy visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Container" visible="true" column="Folder" />
-                <Level name="Subject" visible="true" column="SubjectID" type="String" uniqueMembers="false" />
-                <!--<Level name="Day" visible="true" column="Day" type="Integer" uniqueMembers="false" />-->
+                <Level name="Container" visible="true" column="Study" />
+                <Level name="Subject" visible="true" column="ParticipantId" type="String" uniqueMembers="false" />
+                <Level name="ProtocolDay" visible="true" column="ProtocolDay" type="Numeric" uniqueMembers="false" />
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>

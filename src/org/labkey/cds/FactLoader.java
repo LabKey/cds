@@ -17,11 +17,11 @@ package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
+import org.labkey.api.action.NullSafeBindException;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.JdbcType;
 import org.labkey.api.data.SQLFragment;
-import org.labkey.api.data.SimpleFilter;
 import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.query.QueryDefinition;
@@ -31,6 +31,7 @@ import org.labkey.api.query.QueryView;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.study.DataSet;
+import org.springframework.validation.BindException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +66,9 @@ public class FactLoader
          * tables in the star schema.
          */
         _colsToMap = new ColumnMapper[] {
-            new ColumnMapper("ParticipantId", JdbcType.VARCHAR, (TableInfo)null, null, "SubjectID", "ParticipantId"),
+            new ColumnMapper("ParticipantId", JdbcType.VARCHAR, null, null, "SubjectID", "ParticipantId"),
             new ColumnMapper("Day", JdbcType.INTEGER, null, null, "Day"),
+            new ProtocolDayMapper(),
             //The study column is the same as the container column and available directly in the table
             //For this reason we just use the container to find the lookup into the studyproperties table
             new ColumnMapper("Study", JdbcType.GUID, coreSchema.getTable("Container"), null, "Container", "Folder"),
@@ -90,7 +92,7 @@ public class FactLoader
 
         for (ColumnMapper col : _colsToMap)
         {
-            selectCols.add(col.getSelectSql());
+            selectCols.add(col.getColumnAliasSql());
             if (null != col.getGroupByName())
                 groupByCols.add(col.getGroupByName());
         }
@@ -126,10 +128,8 @@ public class FactLoader
          for (ColumnMapper columnMapper : _colsToMap)
             columnMapper.ensureKeys();
 
-        _rowsInserted = new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(getPopulateSql());
-
-        //Vacuum Analyze
-//        new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("VACUUM ANALYZE cds.Facts; VACUUM ANALYZE cds.Antigens; VACUUM ANALYZE cds.People; VACUUM ANALYZE cds.Citations; VACUUM ANALYZE cds.Citable;");
+        SQLFragment sql = getPopulateSql();
+        _rowsInserted = new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(sql);
 
         return _rowsInserted;
     }
@@ -161,25 +161,33 @@ public class FactLoader
 
         ColumnMapper(String selectName, JdbcType type, TableInfo lookupTarget, @Nullable String constValue, String... altNames)
         {
-            this._type = type;
-            this._sourceColumn = findMappingColumn(lookupTarget, altNames);
-            this._selectName = selectName;
-            this._constValue = constValue;
-            this._lookupTarget = lookupTarget;
+            _type = type;
+            _sourceColumn = findMappingColumn(lookupTarget, altNames);
+            _selectName = selectName;
+            _constValue = constValue;
+            _lookupTarget = lookupTarget;
         }
 
-        protected String getSelectSql()
+        protected String getColumnAliasSql()
         {
+            String sql;
+
             if (null != _sourceColumn)
-                return _sourceColumn.getName() + " AS " + _selectName;
+                sql = _sourceColumn.getName() + " AS " + _selectName;
             else if (null != _constValue)
-                return _sourceTableInfo.getSqlDialect().getStringHandler().quoteStringLiteral(_constValue) + " AS " + _selectName;
+                sql = _sourceTableInfo.getSqlDialect().getStringHandler().quoteStringLiteral(_constValue) + " AS " + _selectName;
             else
-                return "CAST(NULL AS " + _sourceTableInfo.getSqlDialect().sqlTypeNameFromJdbcType(_type) + ")" + " AS " + _selectName;
+                sql = "CAST(NULL AS " + _sourceTableInfo.getSqlDialect().sqlTypeNameFromJdbcType(_type) + ")" + " AS " + _selectName;
+
+            return sql;
         }
 
+        @Nullable
         private ColumnInfo findLookupColumn(TableInfo target)
         {
+            if (target == null)
+                return null;
+
             String targetSchemaName = target.getSchema().getName();
             String targetTableName = target.getName();
             for (ColumnInfo col : _sourceTableInfo.getColumns())
@@ -196,11 +204,10 @@ public class FactLoader
             return null;
         }
 
+        @Nullable
         private ColumnInfo findMappingColumn(TableInfo target, String... altNames)
         {
-            ColumnInfo col = null;
-            if (null != target)
-                col = findLookupColumn(target);
+            ColumnInfo col = findLookupColumn(target);
 
             if (null != col)
                 return col;
@@ -213,7 +220,7 @@ public class FactLoader
             return null;
         }
 
-        private String getGroupByName()
+        protected String getGroupByName()
         {
             return null == _sourceColumn ? null : _sourceColumn.getName();
         }
@@ -239,10 +246,13 @@ public class FactLoader
                 return null;
 
             List<String> pkCols = _lookupTarget.getPkColumnNames();
+            SQLFragment sqlFragment = null;
             String pkName;
 
             if (pkCols.size() == 1)
                 pkName = pkCols.get(0);
+            else if (_selectName.equalsIgnoreCase("ProtocolDay"))
+                pkName = "RowId";
             else if (pkCols.size() == 2 && pkCols.get(0).equalsIgnoreCase("container"))
                 pkName = pkCols.get(1);
             else
@@ -255,11 +265,8 @@ public class FactLoader
                         SELECT 'c994c269-4924-102f-afd2-4b5bd87e1a4c', 'neut'  WHERE 'neut' NOT IN (SELECT id from cds.Assays WHERE container = 'c994c269-4924-102f-afd2-4b5bd87e1a4c')
                 */
 
-                SimpleFilter filter = SimpleFilter.createContainerFilter(_container);
                 String sql = "INSERT INTO cds." + _lookupTarget.getName() + " (container, " + pkName + ") SELECT ?, ? WHERE ? NOT IN (SELECT " + pkName + " from cds." + _lookupTarget.getName() + " WHERE container=?)";
-                SQLFragment sqlFragment = new SQLFragment(sql, _container, _constValue, _constValue, _container);
-
-                return sqlFragment;
+                sqlFragment = new SQLFragment(sql, _container, _constValue, _constValue, _container);
             }
             else if (null != _sourceColumn && _lookupTarget.getSchema().getName().equalsIgnoreCase("cds")) //TODO: Fix up missing keys in study schema
             {
@@ -277,21 +284,18 @@ public class FactLoader
 
                 SQLFragment source =  queryView.getTable().getFromSQL("x");
 
-                SQLFragment sql = new SQLFragment("INSERT INTO cds." + _lookupTarget.getName() + " (container, " + pkName + ") SELECT ? , " + _sourceColumn.getName() + " FROM ", _container);
-                sql.append(source);
-
-                return sql;
-
+                sqlFragment = new SQLFragment("INSERT INTO cds." + _lookupTarget.getName() + " (container, " + pkName + ") SELECT ? , " + _sourceColumn.getName() + " FROM ", _container);
+                sqlFragment.append(source);
             }
-            else
-                return null;
+
+            return sqlFragment;
         }
 
         public int ensureKeys()
         {
             SQLFragment ensureKeysSql = getEnsureKeysSql();
             if (null != ensureKeysSql)
-                _rowsInserted = new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(getEnsureKeysSql());
+                _rowsInserted = new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(ensureKeysSql);
             else
                 _rowsInserted = 0;
 
@@ -301,6 +305,27 @@ public class FactLoader
         public int getRowsInserted()
         {
             return _rowsInserted;
+        }
+    }
+
+    public class ProtocolDayMapper extends ColumnMapper
+    {
+        public ProtocolDayMapper()
+        {
+            super("ProtocolDay", JdbcType.INTEGER, null, null, "ProtocolDay");
+        }
+
+        @Override
+        protected String getColumnAliasSql()
+        {
+
+            return "SubjectVisit.Visit.ProtocolDay AS ProtocolDay";
+        }
+
+        @Override
+        protected String getGroupByName()
+        {
+            return "SubjectVisit.Visit.ProtocolDay";
         }
     }
 

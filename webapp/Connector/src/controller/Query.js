@@ -314,7 +314,7 @@ Ext.define('Connector.controller.Query', {
         });
 
         filterConfig.getData = getDataConfig;
-        filterConfig.level = '[SubjectVisit].[Day]'; // TODO: Retrieve from application metadata (cube.js)
+        filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
 
         return filterConfig;
     },
