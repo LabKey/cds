@@ -192,25 +192,7 @@ Ext.define('Connector.controller.Update', {
         var me = this;
         function check() {
             if (data.primaryCount >= 0 && data.dataCount >= 0) {
-                Ext.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL('cds', 'properties'),
-                    method: 'POST',
-                    jsonData: {
-                        primaryCount: data.primaryCount,
-                        dataCount: data.dataCount
-                    },
-                    callback : function() {
-                        if (Ext.isFunction(callback)) {
-                            callback.call(scope);
-                        }
-                    },
-                    failure : function() {
-                        me.log('Failed to update cds/properties.', true);
-                        if (Ext.isFunction(failureFn)) {
-                            failureFn.call(scope);
-                        }
-                    }
-                });
+                Statistics.update(data, callback, failureFn, scope);
             }
         }
 

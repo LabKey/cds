@@ -19,6 +19,7 @@ package org.labkey.cds;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
@@ -92,6 +93,8 @@ public class CDSController extends SpringActionController
             ;
         }
     }
+
+    private static final Logger LOG = Logger.getLogger(CDSController.class);
 
     private static final DefaultActionResolver _actionResolver = new DefaultActionResolver(CDSController.class);
 
@@ -294,8 +297,8 @@ public class CDSController extends SpringActionController
     {
         private int _rowId = -1;
         private Container _container;
-        private int _primaryCount = -1;
-        private int _dataCount = -1;
+        private int _primaryCount = 0;
+        private int _dataCount = 0;
 
         public int getRowId()
         {
@@ -352,14 +355,24 @@ public class CDSController extends SpringActionController
         public Object execute(PropertiesForm form, BindException errors) throws Exception
         {
             Container container = getContainer();
-            PropertiesForm model = CDSManager.get().getProperties(container);
+            CDSManager manager = CDSManager.get();
+            PropertiesForm model = manager.getProperties(container);
 
             //
             // Check if the user is attempting to update the values via POST
             //
             if (isPost())
             {
-                model = CDSManager.get().ensureProperties(model, form, container, getUser());
+                model = manager.ensureProperties(model, form, container, getUser());
+            }
+
+            //
+            // If properties have not been set the result could be null, just hand back a
+            // default form to the client
+            //
+            if (model == null)
+            {
+                model = new PropertiesForm();
             }
 
             //
