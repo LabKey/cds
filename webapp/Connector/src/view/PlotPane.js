@@ -20,13 +20,12 @@ Ext.define('Connector.view.PlotPane', {
     getMiddleContent : function(model) {
         var filter = model.get('filter');
         var measures = filter.get('plotMeasures');
-        var scales = filter.get('plotScales');
 
         var content = [{
             xtype: 'box',
             autoEl: {
                 tag: 'div',
-                html: 'This filter includes only subjects with data for the following variables.'
+                html: 'This filter includes only ' + (filter.get('isWhereFilter') ? '' : 'subjects with') + ' data for the following variables.'
             }
         }];
 
@@ -45,24 +44,15 @@ Ext.define('Connector.view.PlotPane', {
                     content.push({
                         xtype: 'box',
                         cls: 'smallstandout soft spacer',
-                        autoEl: {
-                            tag: 'div',
-                            html: label
-                        }
+                        html: label
                     });
                     content.push({
                         xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: measures[index].measure.queryLabel
-                        }
+                        html: Ext.htmlEncode(measures[index].measure.queryLabel)
                     });
                     content.push({
                         xtype: 'box',
-                        autoEl: {
-                            tag: 'div',
-                            html: measures[index].measure.label + this.getSublabel(measures[index].measure)
-                        }
+                        html: Ext.htmlEncode(measures[index].measure.label + this.getSublabel(measures[index].measure))
                     });
                 }
             }

@@ -31,7 +31,7 @@ Ext.define('Connector.app.store.StudyProducts', {
 
         if (productSet.length > 0) {
             var queryConfig = {
-                schemaName: 'study',
+                schemaName: Connector.studyContext.schemaName,
                 queryName: 'Product',
                 columns: Ext.Array.pluck(Connector.app.model.StudyProducts.getFields(), "name"),
                 success: this.onLoadQuery,

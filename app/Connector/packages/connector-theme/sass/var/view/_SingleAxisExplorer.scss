@@ -14,6 +14,15 @@ span.animator {
   -webkit-animation-name: indexframe;
 }
 
+.explorer-box {
+  margin-left: 24px;
+  margin-right: 108px; /* 60 + 48 to account for .bar .count */
+}
+
+.explorer-options {
+  margin-top: 25px;
+}
+
 .barchart {
   width: 90%;
   padding: 2px;
@@ -104,6 +113,7 @@ span.info {
   font-weight: bold;
   font-size: 12px;
   position: absolute;
+  right: -60px;
   @include unselectable;
 }
 

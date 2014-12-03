@@ -49,9 +49,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Signin": "../../../../webapp/Connector/src/controller/Signin.js",
   "Connector.controller.State": "../../../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../../../webapp/Connector/src/controller/Summary.js",
+  "Connector.controller.Update": "../../../../webapp/Connector/src/controller/Update.js",
   "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
   "Connector.grid.Panel": "../../../../webapp/Connector/src/grid/Panel.js",
   "Connector.model.Antigen": "../../../../webapp/Connector/src/model/Antigen.js",
+  "Connector.model.ChartData": "../../../../webapp/Connector/src/model/ChartData.js",
   "Connector.model.ColumnInfo": "../../../../webapp/Connector/src/model/ColumnInfo.js",
   "Connector.model.Detail": "../../../../webapp/Connector/src/model/Detail.js",
   "Connector.model.Dimension": "../../../../webapp/Connector/src/model/Dimension.js",
@@ -64,7 +66,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Members": "../../../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.RSSItem": "../../../../webapp/Connector/src/model/RSSItem.js",
   "Connector.model.State": "../../../../webapp/Connector/src/model/State.js",
+  "Connector.model.StudyAxisData": "../../../../webapp/Connector/src/model/StudyAxisData.js",
   "Connector.model.Summary": "../../../../webapp/Connector/src/model/Summary.js",
+  "Connector.model.UpdateLog": "../../../../webapp/Connector/src/controller/Update.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
   "Connector.model.VisitTag": "../../../../webapp/Connector/src/model/VisitTag.js",
   "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
@@ -84,7 +88,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTag": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
   "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
-  "Connector.view.Compare": "../../../../webapp/Connector/src/view/Compare.js",
+  "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
   "Connector.view.Dimension": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.DimensionSelector": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
@@ -114,7 +118,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.PageHeader": "../../../../webapp/Connector/src/view/PageHeader.js",
   "Connector.view.PlotPane": "../../../../webapp/Connector/src/view/PlotPane.js",
   "Connector.view.Popup": "../../../../webapp/Connector/src/view/Popup.js",
-  "Connector.view.Scatter": "../../../../webapp/Connector/src/view/Scatter.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
   "Connector.view.Signin": "../../../../webapp/Connector/src/view/Signin.js",
   "Connector.view.SigninForm": "../../../../webapp/Connector/src/view/Signin.js",
@@ -123,7 +126,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.Summary": "../../../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../../../webapp/Connector/src/view/Summary.js",
   "Connector.view.TermsOfUse": "../../../../webapp/Connector/src/view/TermsOfUse.js",
-  "Connector.view.Time": "../../../../webapp/Connector/src/view/Time.js",
   "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.AssayAnalyteList": "../../../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
@@ -211,9 +213,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.controller.Update": [],
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [],
   "Connector.model.Antigen": [],
+  "Connector.model.ChartData": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
@@ -226,7 +230,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
   "Connector.model.State": [],
+  "Connector.model.StudyAxisData": [],
   "Connector.model.Summary": [],
+  "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [],
@@ -246,7 +252,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.VisitTag": [],
   "Connector.types.Filter": [],
   "Connector.view.About": [],
-  "Connector.view.Compare": [],
+  "Connector.view.Chart": [],
   "Connector.view.DetailStatus": [],
   "Connector.view.Dimension": [],
   "Connector.view.DimensionSelector": [],
@@ -276,7 +282,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
   "Connector.view.Popup": [],
-  "Connector.view.Scatter": [],
   "Connector.view.Selection": [],
   "Connector.view.Signin": [],
   "Connector.view.SigninForm": [],
@@ -285,7 +290,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
   "Connector.view.TermsOfUse": [],
-  "Connector.view.Time": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [],
@@ -1194,11 +1198,13 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
+  "Connector.controller.Update": [],
   "Connector.factory.Module": [],
   "Connector.grid.Panel": [
     "widget.connector-gridpanel"
   ],
   "Connector.model.Antigen": [],
+  "Connector.model.ChartData": [],
   "Connector.model.ColumnInfo": [],
   "Connector.model.Detail": [],
   "Connector.model.Dimension": [],
@@ -1211,7 +1217,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
   "Connector.model.State": [],
+  "Connector.model.StudyAxisData": [],
   "Connector.model.Summary": [],
+  "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
   "Connector.panel.AxisSelectDisplay": [
@@ -1259,8 +1267,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.About": [
     "widget.about"
   ],
-  "Connector.view.Compare": [
-    "widget.compareview"
+  "Connector.view.Chart": [
+    "widget.plot"
   ],
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
@@ -1333,9 +1341,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
   "Connector.view.Popup": [],
-  "Connector.view.Scatter": [
-    "widget.plot"
-  ],
   "Connector.view.Selection": [
     "widget.selectionview"
   ],
@@ -1359,9 +1364,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.TermsOfUse": [
     "widget.terms"
-  ],
-  "Connector.view.Time": [
-    "widget.timeview"
   ],
   "Connector.view.Variable": [
     "widget.variableselector"

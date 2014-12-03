@@ -53,7 +53,6 @@
 <a href="<%=tableURL(userSchema, "facts")%>">Fact Table</a><br>
 <%=textLink("Populate Fact Table", CDSController.PopulateCubeAction.class)%>
 <%=textLink("Clear Fact Table", CDSController.ClearFactTableAction.class)%>
-<%=textLink("Warm Cache", CDSController.WarmCacheAction.class)%>
 <%=textLink("Update Participant Groups", CDSController.UpdateParticipantGroupsAction.class)%>
 <br>
 <%=textLink("Application", CDSController.AppAction.class)%>

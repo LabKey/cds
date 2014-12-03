@@ -57,7 +57,7 @@ Ext.define('Connector.view.module.ProductOtherProducts', {
         // });
 
         LABKEY.Query.executeSql({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             sql: "SELECT DISTINCT label FROM product p, treatmentvisitmap tvm, treatmentproductmap tpm "+
                  "WHERE cohortid IN ("+
                     "SELECT cohortid "+

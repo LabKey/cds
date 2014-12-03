@@ -20,6 +20,11 @@ Ext.define('Connector.panel.Selection', {
 
     showEmptyText: false,
 
+    tbarButtons : [
+        { text: 'filter', itemId: 'overlap' },   // will switch between 'filter subjects' and 'filter data'
+        { text: 'label selected subjects', itemId: 'subgroup', disabled: true, hidden: true }
+    ],
+
     initHeader : function() {
 
         // title
@@ -29,7 +34,8 @@ Ext.define('Connector.panel.Selection', {
                 tag: 'div',
                 cls: 'header',
                 html: this.title
-            }
+            },
+            flex: 1
         }];
 
         for (var i=0; i < this.headerButtons.length; i++) {
@@ -52,5 +58,26 @@ Ext.define('Connector.panel.Selection', {
                 data: [filterset]
             }
         });
+    },
+
+    loadFilters : function(filters) {
+        // the app currently only allows for 0 or 1 selection filter to be applied
+        if (filters.length <= 1) {
+            var filterBtn = this.down('#overlap');
+            var filterBtnText = 'filter';
+            var subgroupBtn = this.down('#subgroup');
+            var showSubgroupBtn = false;
+
+            if (filters.length == 1) {
+                filters[0].data.isSelection = true;
+                filterBtnText = filters[0].get("isWhereFilter") ? 'filter data' : 'filter subjects';
+                showSubgroupBtn = filters[0].get("isWhereFilter");
+            }
+
+            filterBtn.setText(filterBtnText);
+            subgroupBtn.setVisible(showSubgroupBtn)
+        }
+
+        this.displayFilters(filters);
     }
 });

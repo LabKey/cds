@@ -70,7 +70,7 @@ Ext.define('Connector.controller.FilterStatus', {
             click : this.onFilterClear
         });
 
-        this.control('filterpanel > toolbar > #sClear', {
+        this.control('filterpanel > container > #sClear', {
             click : this.onSelectionClear
         });
 

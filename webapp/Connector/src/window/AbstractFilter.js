@@ -111,17 +111,20 @@ Ext.define('Connector.window.AbstractFilter', {
             height: 30,
             items: ['->',{
                 itemId: 'dofilter',
-                text: 'Filter',
+                text: 'filter',
+                cls: 'filter-btn',
                 handler: this.applyFiltersAndColumns,
                 scope: this
             },{
                 itemId: 'docancel',
-                text : 'Cancel',
+                text : 'cancel',
+                cls: 'filter-btn',
                 handler : this.close,
                 scope : this
             },{
                 itemId: 'doclear',
-                text : 'Clear',
+                text : 'clear',
+                cls: 'filter-btn',
                 handler : this.onClear,
                 scope: this
             }]

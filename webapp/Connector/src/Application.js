@@ -32,6 +32,7 @@ Ext.define('Connector.Application', {
         'Connector', // View Manager must be registered first to properly initialize
         'State',
         'Query',
+        'Update',
         'Group',
         'Main',
         'Router',

@@ -18,16 +18,15 @@ Ext.override(Ext.button.Button, {
 
 var launchApp = function(cube) {
 
-        LABKEY.app.view.Selection.supportMemberClose = false;
-        LABKEY.app.model.Filter.dynamicOperatorTypes = true;
+    LABKEY.app.view.Selection.supportMemberClose = false;
+    LABKEY.app.model.Filter.dynamicOperatorTypes = true;
 
-        Ext.application({
-            name: 'Connector',
-            extend: 'Connector.Application',
-            autoCreateViewport: true,
-            olap: cube
-        });
-
+    Ext.application({
+        name: 'Connector',
+        extend: 'Connector.Application',
+        autoCreateViewport: true,
+        olap: cube
+    });
 };
 
 // Use the connector loader

@@ -52,12 +52,12 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("maxRows=1000");
-        _test.addUrlParameter("_showPlotData=true");
+        _test.addUrlParameter("maxRows=1000&_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
+        _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
     }
 
@@ -195,9 +195,15 @@ public class CDSHelper
         }
     }
 
-    public void useSelectionAsFilter()
+    public void useSelectionAsSubjectFilter()
     {
-        _test.click(Locators.cdsButtonLocator("use as filter"));
+        _test.click(Locators.cdsButtonLocator("filter subjects"));
+        waitForClearSelection(); // wait for animation
+    }
+
+    public void useSelectionAsDataFilter()
+    {
+        _test.click(Locators.cdsButtonLocator("filter data"));
         waitForClearSelection(); // wait for animation
     }
 
@@ -414,7 +420,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator filterMemberLocator()
         {
-            return Locator.tagWithClass("div", "memberitem");
+            return Locator.tagWithClass("div", "memberloc");
         }
 
         public static Locator.XPathLocator filterMemberLocator(String filterText)

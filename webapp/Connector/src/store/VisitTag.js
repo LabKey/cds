@@ -36,7 +36,7 @@ Ext.define('Connector.store.VisitTag', {
 
     load : function() {
         LABKEY.Query.selectRows({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             queryName: 'VisitTag',
             columns: 'Name,Caption,Created',
             filterArray: [LABKEY.Filter.create('SingleUse', true)],

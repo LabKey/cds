@@ -25,7 +25,7 @@ Ext.define('Connector.view.GridPane', {
             xtype: 'box',
             autoEl: {
                 tag: 'div',
-                html: 'This filter includes only subjects with data for the following variables.'
+                html: 'This filter includes only ' + (filter.get('isWhereFilter') ? '' : 'subjects with') + ' data for the following variables.'
             }
         }];
 
@@ -35,22 +35,47 @@ Ext.define('Connector.view.GridPane', {
                 if (gf != null && Ext.isDefined(gf)) {
                     // get this columns measure information
                     var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                    if (Ext.isObject(measure) && !shown[measure.alias]) {
+                    if (Ext.isObject(measure)) {
+
+                        // only show the measure label/caption for the first filter
+                        if (!shown[measure.alias]) {
+                            content.push({
+                                xtype: 'box',
+                                cls: 'smallstandout soft spacer',
+                                html: Ext.htmlEncode(Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption)
+                            });
+                            content.push({
+                                xtype: 'box',
+                                padding: '0 0 7px 0',
+                                html: Ext.htmlEncode(this.getSublabel(measure))
+                            })
+                        }
                         shown[measure.alias] = true;
+
+                        // the query service can lookup a measure, but only the base of a lookup
+                        var label = Ext.isString(measure.label) ? measure.label : '';
+                        if (gf.getColumnName().indexOf('/') > -1) {
+                            label = LABKEY.app.model.Filter.getGridFilterLabel(gf);
+                        }
+
+                        // issue 21879: split Equals One Of filter values into new lines
+                        var filterStr = LABKEY.app.model.Filter.getGridLabel(gf);
+                        var filterType = gf.getFilterType().getDisplayText();
+                        if (filterType == 'Equals One Of') {
+                            var values = [];
+                            Ext.each(gf.getValue(), function(value){
+                                Ext.each(value.split(';'), function(v){
+                                    if (v)
+                                        values.push(Ext.htmlEncode('- ' + v));
+                                });
+                            });
+
+                            filterStr = filterType + ':<br/><ul class="indent"><li>' + values.join('</li><li>') + '</li></ul>';
+                        }
+
                         content.push({
                             xtype: 'box',
-                            cls: 'smallstandout soft spacer',
-                            autoEl: {
-                                tag: 'div',
-                                html: Ext.isString(measure.longlabel) ? measure.longlabel : measure.shortCaption
-                            }
-                        });
-                        content.push({
-                            xtype: 'box',
-                            autoEl: {
-                                tag: 'div',
-                                html: (Ext.isString(measure.label) ? measure.label : '') + this.getSublabel(measure)
-                            }
+                            html: Ext.htmlEncode(label) + ' ' + filterStr
                         });
                     }
                 }

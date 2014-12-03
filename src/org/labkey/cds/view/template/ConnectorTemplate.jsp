@@ -50,8 +50,10 @@
     <script type="text/javascript">
         var Connector = {
             studyContext: {
+                schemaName: 'study',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
-                subjectVisitColumn: 'SubjectVisit'
+                subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
+                protocolDayColumn: 'Visit/ProtocolDay'
             },
             resourceContext: {
                 path: <%=PageFlowUtil.jsString(resourcePath)%>
@@ -142,6 +144,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/VisitTag.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Antigen.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/ChartData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyAxisData.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
@@ -177,7 +181,6 @@
 
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Compare.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
@@ -197,12 +200,11 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Scatter.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Signin.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/SingleAxisExplorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/TermsOfUse.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Time.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Viewport.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/view/module/BaseModule.js"></script>
@@ -216,13 +218,14 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Update.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Navigation.js"></script>
-    
+
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Data.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Router.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Signin.js"></script>

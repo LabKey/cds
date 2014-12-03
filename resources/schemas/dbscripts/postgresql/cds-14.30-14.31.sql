@@ -1,0 +1,1 @@
+ALTER TABLE cds.Facts ADD COLUMN ProtocolDay NUMERIC(15, 4);

@@ -1,6 +1,5 @@
 div.selitem {
-  width: 90%; /* remaining space for .circle */
-  padding: 4px 6px;
+  padding: 4px 0;
 }
 
 div.opselect {
@@ -89,6 +88,7 @@ div.wrapitem {
   display: inline-block;
   width: 100%;
   overflow: hidden;
+  cursor: pointer;
 
   select {
     margin: 0;
@@ -112,7 +112,9 @@ div.wrapitem {
 .memberitem {
 
   float: right;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  overflow: hidden;
 
   &:hover {
     .closeitem {
@@ -146,6 +148,7 @@ div.collapsed-member {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -181,6 +184,9 @@ div.activefilter {
     border: 1px solid transparent;
     padding: 2px 5px 2px 0;
     width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   div.status-over {
@@ -203,9 +209,9 @@ div.activefilter {
 }
 
 /* Connector.view.Selection */
-.sel-listing {
-  padding: 5px 1px 5px 30px;
-}
+//.sel-listing {
+//  padding: 5px 1px 5px 30px;
+//}
 
 .circle {
   width: 15px;
@@ -218,3 +224,10 @@ div.activefilter {
   float: left;
 }
 /* -- END Connector.view.Selection */
+
+ul.indent li {
+  padding-left: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

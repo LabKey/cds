@@ -11,6 +11,8 @@ Ext.define('Connector.view.About', {
 
     ui: 'custom',
 
+    data: {},
+
     tpl: new Ext.XTemplate(
     	'<tpl>',
 	    	'<div class="signin-content">',
@@ -43,11 +45,6 @@ Ext.define('Connector.view.About', {
 	            	'funded the program as part of its global health division.',
 	            '</p>',
 	        '</div>',
-	    '</tpl>'),
-
-	data : {},
-	
-    initComponent : function() {
-    	this.callParent();
-    }
+	    '</tpl>'
+    )
 });
