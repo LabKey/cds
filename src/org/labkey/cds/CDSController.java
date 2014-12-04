@@ -332,7 +332,7 @@ public class CDSController extends SpringActionController
 
         public String getContainerId()
         {
-            return _container.getId();
+            return _container != null ? _container.getId() : "";
         }
 
         @JsonIgnore
