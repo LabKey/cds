@@ -237,6 +237,19 @@ public class CDSHelper
         _test.waitForElement(Locator.css(".dimgroup").withText(byNoun));
     }
 
+    public void hideEmpty()
+    {
+        _test.click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+        _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
+        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("show empty"));
+    }
+
+    public void showEmpty()
+    {
+        _test.click(CDSHelper.Locators.cdsButtonLocator("show empty"));
+        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+    }
+
     public void viewInfo(String barLabel)
     {
         Locator.XPathLocator barLocator = Locator.tag("div").withClass("small").withDescendant(Locator.tag("span").withClass("barlabel").withText(barLabel));
