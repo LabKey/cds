@@ -9,17 +9,18 @@ Ext.define('Connector.controller.Router', {
     init : function() {
         /* This control is responsible for loading the application */
         this.control(
-                'app-main', {
-                    afterrender: this.onAppReady
-                }
+            'app-main', {
+                afterrender: this.onAppReady
+            }
         );
 
-        this.control('#eastview', {
+        this.control('app-main > #eastview', {
             afterrender: function(view) {
                 this.eastview = view;
             },
             scope: this
         });
+
         this.control('#logout', {
             afterrender: function(view) {
                 this.logoutlink = view;

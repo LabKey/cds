@@ -16,19 +16,6 @@ Ext.define('Connector.controller.Navigation', {
             // See Connector.panel.Header event 'headerclick'.
             headerclick : function() {
                 this.getViewManager().changeView(this.application.defaultController);
-            },
-            userSignedOut : function() {
-                LABKEY.user.isSignedIn = false;
-                window.location.reload();
-            },
-            afterrender : function(view) {
-                this.connectorheader = view;
-            }
-        });
-
-        this.control('app-main', {
-            afterrender : function(view) {
-                this.mainView = view;
             }
         });
 

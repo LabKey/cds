@@ -30,6 +30,7 @@
 
         <!-- App API Dependencies -->
         <script path="../../../internal/explodedModule/web/app/State.js"/>
+        <script path="../../../internal/explodedModule/web/app/HttpInterceptor.js"/>
         <script path="../../../internal/explodedModule/web/app/View.js"/>
         <script path="../../../internal/explodedModule/web/app/Route.js"/>
         <script path="../../../internal/explodedModule/web/app/Filter.js"/>

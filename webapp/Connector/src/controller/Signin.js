@@ -9,6 +9,40 @@ Ext.define('Connector.controller.Signin', {
 
     views: ['Signin', 'TermsOfUse'],
 
+    init : function() {
+
+        this.control('homeheader', {
+            boxready: this.resolveStatistics
+        });
+
+        this.control('connectorheader', {
+            userSignedOut : function() {
+                LABKEY.user.isSignedIn = false;
+                window.location.reload();
+            }
+        });
+
+        /* Flag that is true when an unauthorized request has been handled */
+        this.BAD_AUTH = false;
+        var me = this;
+
+        /* If the user recieves an unauthoriazed, return them to login screen */
+        this.application.on('httpunauthorized', function(status, text) {
+            me.BAD_AUTH = true;
+            Ext.Ajax.abortAll();
+            LABKEY.user.isSignedIn = false;
+            window.location.reload();
+            return false;
+        });
+
+        /* If requests have been aborted due to BAD_AUTH then ignore them */
+        this.application.on('httpaborted', function(status, text) {
+            return !me.BAD_AUTH;
+        });
+
+        this.callParent();
+    },
+
     createView : function(xtype, context) {
         var c = { ctx: context };
         var type;
@@ -63,15 +97,6 @@ Ext.define('Connector.controller.Signin', {
     showAction : function(xtype, context) {
     	//
 	},
-
-    init : function() {
-
-        this.control('homeheader', {
-            boxready: this.resolveStatistics
-        });
-
-        this.callParent();
-    },
 
     resolveStatistics : function(view) {
         var statDisplay = view.getComponent('statdisplay');

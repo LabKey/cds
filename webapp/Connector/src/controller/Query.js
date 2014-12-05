@@ -527,3 +527,7 @@ Ext.define('Connector.controller.Query', {
         return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
     }
 });
+
+Ext.define('Connector.controller.HttpInterceptor', {
+    extend: 'LABKEY.app.controller.HttpInterceptor'
+});
