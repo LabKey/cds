@@ -93,6 +93,9 @@ Ext.define('Connector.view.SigninForm', {
         var msgs = Connector.getService('Messaging').popMessages(), sep = '';
 
         Ext.each(msgs, function(msg) {
+            if (Ext.isEmpty(this.context.error)) {
+                this.context.error = '';
+            }
             this.context.error += sep + msg.message; sep = '\n';
         }, this);
 
