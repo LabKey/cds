@@ -31,6 +31,7 @@ Ext.define('Connector.controller.Signin', {
             me.BAD_AUTH = true;
             Ext.Ajax.abortAll();
             LABKEY.user.isSignedIn = false;
+            Connector.getService('Messaging').pushMessage('Your session has timed out. Please login to continue.');
             window.location.reload();
             return false;
         });

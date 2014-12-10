@@ -531,3 +531,7 @@ Ext.define('Connector.controller.Query', {
 Ext.define('Connector.controller.HttpInterceptor', {
     extend: 'LABKEY.app.controller.HttpInterceptor'
 });
+
+Ext.define('Connector.controller.Messaging', {
+    extend: 'LABKEY.app.controller.Messaging'
+});
