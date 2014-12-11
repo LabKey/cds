@@ -624,7 +624,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         cds.goToSummary();
         cds.clickBy("Studies");
-        click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+        cds.hideEmpty();
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.useSelectionAsSubjectFilter();
 
@@ -718,7 +718,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //assertTextPresent(TOOLTIP);
 
         cds.useSelectionAsSubjectFilter();
-        click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+        cds.hideEmpty();
         waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
         _asserts.assertFilterStatusCounts(32, 1, 2);
         cds.goToSummary();
