@@ -42,6 +42,8 @@ public class CDSLoginPage
         _test.setFormElement(emailField, user);
         _test.setFormElement(passwordField, password);
         _test.clickAndWait(signInButton);
+
+        _test.waitForElement(Locator.linkWithText("Logout"));
     }
 
     public static class Locators

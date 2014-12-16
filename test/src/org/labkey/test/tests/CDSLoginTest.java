@@ -70,12 +70,22 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertTrue(rememberMeCheckbox.findElement(getDriver()).isSelected());
         assertElementNotPresent(Locator.linkWithText("Logout"));
 
-        checkCheckbox(termsCheckbox);
-
         CDSLoginPage loginPage = new CDSLoginPage(this);
+        checkCheckbox(termsCheckbox);
+        loginPage.logIn();
+    }
+
+    @Test
+    public void testSessionTimeoutIntercept()
+    {
+        CDSLoginPage loginPage = new CDSLoginPage(this);
+        checkCheckbox(termsCheckbox);
         loginPage.logIn();
 
-        waitForElement(Locator.linkWithText("Logout"));
+        signOutHTTP();
+
+        clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
+        waitForElement(Locator.css("p.errormsg").withText("Your session has timed out. Please login to continue."));
     }
 
     @Nullable

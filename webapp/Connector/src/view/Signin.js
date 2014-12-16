@@ -84,11 +84,22 @@ Ext.define('Connector.view.SigninForm', {
     },
 
 	initComponent : function() {
-		this.data = this.context = {
+		this.context = {
 			agreeToTerms : !!Ext.util.Cookies.get(this.COOKIE_AGREE_TO_TERMS),
 			rememberEmail : Ext.util.Cookies.get(this.COOKIE_REMEMBER_EMAIL) != 'no',
 			email : Ext.util.Cookies.get(this.COOKIE_EMAIL) || ''
 		};
+
+        var msgs = Connector.getService('Messaging').popMessages(), sep = '';
+
+        Ext.each(msgs, function(msg) {
+            if (Ext.isEmpty(this.context.error)) {
+                this.context.error = '';
+            }
+            this.context.error += sep + msg.message; sep = '\n';
+        }, this);
+
+        this.data = this.context;
 
 		this.callParent();
 	},

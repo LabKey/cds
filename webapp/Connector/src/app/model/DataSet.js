@@ -117,7 +117,7 @@ Ext.define('Connector.app.model.DataSet', {
         }
 
         if (countForAssay > 0) {
-            LABKEY.Ajax.request({
+            Ext.Ajax.request({
                 url : LABKEY.ActionURL.buildURL("visualization", "getMeasures"),
                 method : 'GET',
                 params : {
