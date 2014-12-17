@@ -10,7 +10,8 @@ $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
 $select-on-grey-color: #03ADB0;
-$interactive-color: #9B0D96;       // Interactive
+//$interactive-color: #9B0D96;       // Interactive
+$interactive-color: #9B1497;       // Interactive
 $info-color: #F5A73A;              // Info
 
 $black: #303030;
@@ -22,8 +23,8 @@ $heat-scale-2: #A09C9C;            // Heatmap Gray #2
 $heat-scale-3: #CCC8C8;            // Heatmap Gray #3
 $heat-scale-4: #E6E1E1;            // Heatmap Gray #4
 
-$title : 26px;
-$headline : 16px;
+$title: 26px;
+$headline: 16px;
 $pageLeftPadding: 24px;
 $sectionTopPadding: 24px;
 
@@ -265,15 +266,18 @@ svg a {
 }
 
 .titlepanel {
-  padding-bottom: 7px;
   font-size: 16px!important;
   line-height: 16px;
-  padding-top: 24px;
-  @include pagePaddingLeft;
 
   span {
     @include bodycaps;
   }
+}
+
+.header-container {
+  padding-top: $pageLeftPadding;
+  padding-left: $pageLeftPadding;
+  padding-right: $pageLeftPadding;
 }
 
 .iScroll {
@@ -492,6 +496,40 @@ div.emptytext {
   fill: none;
   stroke: #FFF;
   stroke-width: .5px;
+}
+
+/* For the dropdowns, move to own scss */
+.dropdown-container {
+  border: 1px solid #D0D2D3;
+  border-radius: 5px;
+  padding: 12px 10px;
+
+  &:hover { cursor: pointer; }
+
+  .dropdown-input {
+    border: 0!important;
+    background: none!important;
+    font-family: $info-font;
+    padding: 0 5px;
+    line-height: 18px;
+    height: 18px;
+    color: $interactive-color;
+    vertical-align: -webkit-baseline-middle;
+
+    &:hover { cursor: pointer; }
+  }
+
+  span.parrow {
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 3px solid $interactive-color;
+    float: right;
+    position: absolute;
+    right: 0;
+    top: 8px;
+  }
 }
 
 @import 'windows';

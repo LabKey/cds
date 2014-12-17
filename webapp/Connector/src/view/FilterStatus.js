@@ -38,8 +38,8 @@ Ext.define('Connector.view.FilterStatus', {
             title: 'Active filters',
             id: 'filter-panel',
             headerButtons: [
-                { xtype: 'button', text: 'save', cls: 'filtersave', itemId: 'savegroup', style: 'margin: 4px 2px 0 2px;', hidden: hidden},
-                { xtype: 'button', text: 'clear', cls: 'filterclear', itemId: 'clear', style: 'margin: 4px 2px 0 2px;', hidden: hidden}
+                { xtype: 'button', text: 'save', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden},
+                { xtype: 'button', text: 'clear', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filterclear' /* for tests */, itemId: 'clear', hidden: hidden}
             ],
             filters: this.filters
         });
@@ -54,7 +54,7 @@ Ext.define('Connector.view.FilterStatus', {
         this.selectionpanel = Ext.create('Connector.panel.Selection', {
             id: 'selection-panel',
             headerButtons : [
-                { xtype: 'button', text: 'clear', cls: 'selectionclear', itemId: 'sClear', style: 'margin: 0 2px;'}
+                { xtype: 'button', text: 'clear', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'selectionclear', itemId: 'sClear'}
             ],
             filters: this.selections
         });

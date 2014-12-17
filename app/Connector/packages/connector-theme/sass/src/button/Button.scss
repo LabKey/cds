@@ -245,7 +245,37 @@ a.x-btn {
   $glyph-color : #FFFFFF
 );
 
-.x-btn-linked-small .x-btn-inner {
+@include extjs-button-ui (
+  $ui: 'linked-ul-small',
+
+  $border-radius : 0px,
+  $border-width : 0px,
+  $border-color: transparent,
+  $border-color-over: transparent,
+
+  $background-color: transparent,
+  $background-color-over: transparent,
+
+  $text-padding: 0px,
+
+  $color: $interactive-color,
+  $color-over: $interactive-color,
+  $color-disabled: $heat-scale-4,
+
+  $font-weight: normal,
+
+  $font-size : 12px,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $icon-size : 12px,
+  $glyph-color : #FFFFFF
+);
+
+.x-btn-linked-ul-small .x-btn-inner {
   text-decoration: underline;
 }
 
@@ -383,12 +413,7 @@ input.x-btn-rounded-inverted-accent-small {
 }
 
 .x-btn-rounded-inverted-accent-small {
-  padding: 2px 0;
   background-image: none;
-
-  .x-btn-wrap {
-    margin: 0 7px;
-  }
 }
 
 .x-btn-rounded-inverted-accent-small-over {

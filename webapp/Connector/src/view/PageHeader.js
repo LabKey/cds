@@ -63,7 +63,6 @@ Ext.define('Connector.view.PageHeader', {
 
     initComponent : function() {
 
-        var me = this;
         var data = this.data;
         this.lockPixels = data.lockPixels;
         var buttonConfig = data.buttons;
@@ -137,13 +136,8 @@ Ext.define('Connector.view.PageHeader', {
         }
 
         this.items = [{
-            xtype: 'box',
-            itemId: 'headerLabel',
-            html: data.label,
-            autoEl: {
-                tag: 'div',
-                cls: 'titlepanel'
-            }
+            xtype: 'actiontitle',
+            html: data.label
         }, {
             xtype: 'box',
             flex: 1

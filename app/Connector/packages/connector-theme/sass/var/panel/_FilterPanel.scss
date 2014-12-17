@@ -13,20 +13,12 @@ div.filterpanel {
   font-size: 12px;
   margin: 0 10px 0 10px;
 
-  .section-title {
-    margin-top: 10px;
-  }
-
   .header {
     font-size: $headline;
     font-family: $data-font;
     span {
       color: $dark-color;
     }
-  }
-
-  .section-title {
-    font-size: 16px!important;
   }
 }
 

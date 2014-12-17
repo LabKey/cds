@@ -197,12 +197,9 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             itemId: 'grouplabel',
             xtype: 'box',
             autoEl: {
-                tag: 'div',
-                cls: 'titlepanel',
-                children: [{
-                    tag: 'h1',
-                    html: Ext.String.htmlEncode(this.groupLabel)
-                }]
+                tag: 'h1',
+                cls: 'lhdv active',
+                html: Ext.htmlEncode(this.groupLabel)
             }
         },{
             xtype: 'container',

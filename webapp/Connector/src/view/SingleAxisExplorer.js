@@ -16,14 +16,73 @@ Ext.define('Connector.view.SingleAxisExplorer', {
         align: 'stretch'
     },
 
-    dimViewHeight: 160,
+    width : '100%',
+
+    dimViewHeight: 156,
 
     showEmpty: true,
 
     initComponent : function() {
 
         this.items = [
-            this.getDimensionView(),
+            {
+                xtype: 'container',
+                height: this.dimViewHeight,
+                cls: 'header-container',
+                style: 'margin-bottom: 5px;',
+                layout: {
+                    type: 'vbox'
+                },
+                items: [{
+                    xtype: 'actiontitle',
+                    text: 'Find subjects by...'
+                },{
+                    xtype: 'explorerheaderdataview'
+                },{
+                    // This allows for the following items to be bottom aligned
+                    xtype: 'box',
+                    flex: 1,
+                    autoEl: {
+                        tag: 'div'
+                    }
+                },{
+                    xtype: 'container',
+                    ui: 'custom',
+                    width: '100%',
+                    layout: {
+                        type: 'hbox'
+                    },
+                    items: [
+                        {
+                            id: 'sae-hierarchy-dropdown',
+                            xtype: 'dropdown',
+                            store: {
+                                xtype: 'store',
+                                model: 'Connector.model.Hierarchy'
+                            },
+                            valueField: 'name',
+                            displayField: 'label'
+                        },
+                        {xtype: 'box', autoEl: { tag: 'div' }, flex: 1},
+                        {
+                            xtype: 'box',
+                            style: 'padding-top: 15px; padding-right: 15px;',
+                            autoEl: {
+                                tag: 'div',
+                                cls: 'label',
+                                html: 'Showing number of: <span>Subjects</span>'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            style: 'margin-top: 9px;',
+                            text: (this.showEmpty ? 'hide empty' : 'show empty'),
+                            handler: this.onEmptySelection,
+                            scope: this
+                        }
+                    ]
+                }]
+            },
             this.initExplorerView()
         ];
 
@@ -58,33 +117,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             id    : 'single-axis-explorer',
             bodyStyle : 'overflow-y: auto;',
             cls : 'iScroll',
-            items : [{
-                xtype : 'panel',
-                ui    : 'custom',
-                cls: 'explorer-box explorer-options',
-                layout: {
-                    type : 'hbox'
-                },
-                height: 30,
-                width : 625,
-                items : [{
-                    xtype : 'box',
-                    width : 270,
-                    autoEl: {
-                        tag : 'div',
-                        cls : 'label',
-                        html: 'Showing number of: <span>Subjects</span>'
-                    }
-                },{
-                    xtype: 'roundedbutton',
-                    ui: 'darkrounded',
-                    text: (this.showEmpty ? 'hide empty' : 'show empty'),
-                    handler: this.onEmptySelection,
-                    scope: this
-                }]
-            },
-                this.getSingleAxisView(resizeTask)
-            ],
+            items : [ this.getSingleAxisView(resizeTask) ],
             listeners : {
                 afterlayout : function() {
                     var delay = (this.saview.animate ? 250 : 10);
@@ -98,18 +131,6 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             scope : this
         });
 
-    },
-
-    getDimensionView : function() {
-
-        if (!this.dimView) {
-            this.dimView = Ext.create('Connector.view.Dimension', {
-                height  : this.dimViewHeight,
-                padding : '15 0 0 0'
-            });
-        }
-
-        return this.dimView;
     },
 
     getSingleAxisView : function(task) {
@@ -135,9 +156,6 @@ Ext.define('Connector.view.SingleAxisExplorer', {
     },
 
     onDimensionChange : function(dim, hierarchyIndex) {
-        if (this.dimView) {
-            this.dimView.setDimension(dim, hierarchyIndex);
-        }
         if (this.saview) {
             this.saview.setDimension(dim, hierarchyIndex);
         }
@@ -149,9 +167,6 @@ Ext.define('Connector.view.SingleAxisExplorer', {
     },
 
     onHierarchyChange : function(hierarchyIndex) {
-        if (this.dimView) {
-            this.dimView.setHierarchy(hierarchyIndex);
-        }
         if (this.saview) {
             this.saview.setHierarchy(hierarchyIndex);
         }
@@ -178,160 +193,59 @@ Ext.define('Connector.view.SingleAxisExplorer', {
     }
 });
 
-Ext.define('Connector.view.Dimension', {
+Ext.define('Connector.view.ExplorerHeaderDataView', {
 
-    extend: 'Ext.container.Container',
+    extend: 'Ext.view.View',
 
-    requires: ['Connector.button.Image'],
+    alias: 'widget.explorerheaderdataview',
 
-    alias: 'widget.dimensionview',
+    loadMask: false,
 
-    layout: {
-        type : 'hbox',
-        align: 'stretch'
-    },
+    itemSelector: 'h1.lhdv',
 
-    cls: 'dimensionview',
+    selectedItemCls: 'active',
 
-    defaults: {
-        ui: 'custom',
-        flex: 1
-    },
-
-    selectorId: 'dimselect',
+    tpl: new Ext.XTemplate(
+        '<tpl for=".">',
+            '<h1 class="lhdv">{label:htmlEncode}</h1>',
+        '</tpl>'
+    ),
 
     initComponent : function() {
 
-        this.items = [{
-            xtype: 'dimselectorview',
-            itemId: this.selectorId,
-            ui: 'custom',
-            dim: this.ydim,
-            hidx: 0
-        }];
+        this._select = undefined; this._storeReady = false;
+        this.store = Connector.getService('Summary').getSummaryStore();
 
         this.callParent();
 
-        this.dimSelector = this.getComponent(this.selectorId);
-    },
+        this.store.on('load', this.onStoreLoad, this, {single: true});
 
-    setDimension : function(dim, hierarchyIndex) {
-        if (this.dimSelector) {
-            this.dimSelector.setDimension(dim, hierarchyIndex);
+        if (this.store.getCount() == 0 && !this.store.isLoading()) {
+            this.store.load();
+        }
+        else {
+            this._storeReady = true;
         }
     },
 
-    setHierarchy : function(index) {
-        if (this.dimSelector) {
-            this.dimSelector.setHierarchy(index);
+    onStoreLoad : function(store) {
+        this._storeReady = true;
+        if (Ext.isDefined(this._select)) {
+            this.changeSelection(this._select);
         }
-    }
-});
-
-Ext.define('Connector.view.DimensionSelector', {
-
-    extend : 'Ext.panel.Panel',
-
-    alias: 'widget.dimselectorview',
-
-    titleComponentId: 'dimtitle',
-
-    sortComponentId: 'dimsort',
-
-    initComponent : function() {
-
-        var btnId = Ext.id();
-
-        this.items = [{
-            itemId: this.titleComponentId,
-            xtype : 'panel',
-            ui : 'custom',
-            layout : {
-                type : 'hbox'
-            },
-            items : [{
-                itemId: 'dimlabel',
-                xtype : 'box',
-                tpl: new Ext.XTemplate(
-                    '<div class="dimgroup">',
-                        '{content:htmlEncode}',
-                    '</div>'
-                ),
-                data: {
-                    content: ''
-                }
-            },{
-                itemId: 'dimensionbtn',
-                xtype: 'imgbutton',
-                cls: 'dimselectdrop',
-                margin: '13 0 0 10',
-                vector: 27,
-                menu : {
-                    xtype: 'menu',
-                    ui: 'custom',
-                    itemId: 'dimensionmenu',
-                    margin: '0 0 10 0',
-                    showSeparator: false
-                }
-            }]
-        },{
-            itemId: this.sortComponentId,
-            xtype : 'panel',
-            ui : 'custom',
-            layout : {
-                type : 'hbox'
-            },
-            items : [{
-                itemId: 'sortlabel',
-                xtype : 'box',
-                tpl: new Ext.XTemplate(
-                    '<div class="dimensionsort">',
-                        'Sorted by: <span class="sorttype">{sort:htmlEncode}</span>',
-                    '</div>'
-                ),
-                data: {
-                    sort: ''
-                }
-            },{
-                id: btnId,
-                xtype: 'imgbutton',
-                itemId: 'sortdropdown',
-                cls: 'sortDropdown',
-                margin: '7 0 0 8',
-                vector: 21,
-                menu: {
-                    xtype: 'menu',
-                    autoShow: true,
-                    itemId: 'sortedmenu',
-                    margin: '0 0 0 0',
-                    showSeparator: false,
-                    ui: 'custom',
-                    btn: btnId
-                },
-                listeners: {
-                    afterrender : function(b) {
-                        b.showMenu(); b.hideMenu();
-                    }
-                }
-            }]
-        }];
-
-        this.callParent();
-
-        this.titleComponent = this.getComponent(this.titleComponentId);
-        this.sortComponent = this.getComponent(this.sortComponentId);
     },
 
-    setDimension : function(dim, hIdx) {
-        this.dim  = dim;
-        this.titleComponent.getComponent('dimlabel').update({ content: this.dim.pluralName });
-        this.setHierarchy(hIdx);
-    },
-
-    setHierarchy : function(index) {
-        this.hidx = index;
-        var hierarchy = this.dim.getHierarchies()[this.hidx];
-        this.sortComponent.getComponent('sortlabel').update({sort: hierarchy.label});
+    changeSelection : function(dimName) {
+        if (this._storeReady) {
+            this._select = undefined;
+            var idx = this.store.findExact('dimName', dimName);
+            if (idx > -1) {
+                this.getSelectionModel().select(this.store.getAt(idx), false, true);
+            }
+        }
+        else {
+            this._select = dimName;
+        }
     }
 });
 
@@ -344,7 +258,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     plugins : [{
         ptype: 'messaging',
         calculateY : function(cmp, box, msg) {
-            return box.y - 70;
+            return box.y - 10;
         }
     }],
 

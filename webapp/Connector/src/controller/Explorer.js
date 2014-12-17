@@ -23,48 +23,42 @@ Ext.define('Connector.controller.Explorer', {
             click: function(btn) { btn.showMenu(); }
         });
 
-        this.control('#dimensionmenu', {
-            click : this.onDimensionSelect
+        this.control('explorerheaderdataview', {
+            afterrender : function(header) {
+                this.on('dimension', function(dim) {
+                    header.changeSelection(dim.name);
+                });
+            },
+            select: this.onDimensionSelect
         });
 
-        this.control('#sortdropdown', {
-            click: function(btn) { btn.showMenu(); }
-        });
-
-        this.control('#sortedmenu', {
-            afterrender: function(menu) {
-                var updateDimension = function(m, dim) {
-                    m.removeAll();
-                    var btn = Ext.getCmp(m.btn);
-
-                    var h = dim.getHierarchies();
-                    if (h.length == 1) {
-                        btn.hide();
-                        return;
-                    }
-
-                    Ext.each(h, function(hierarchy, idx) {
-                        if (!hierarchy.hidden) {
-                            m.add({
-                                text: hierarchy.label,
-                                uniqueName: hierarchy.uniqueName,
-                                hierarchyIndex: idx
-                            });
+        this.control('#sae-hierarchy-dropdown', {
+            afterrender : function(dropdown) {
+                this.on('dimension', function(dim, hIdx) {
+                    dropdown.getStore().removeAll();
+                    var hierarchies = [], selected = undefined;
+                    Ext.each(dim.hierarchies, function(hierarchy, idx) {
+                        var model = Ext.create('Connector.model.Hierarchy', hierarchy);
+                        if (!model.get('hidden')) {
+                            if (idx == hIdx) {
+                                selected = model;
+                            }
+                            hierarchies.push(model);
                         }
                     });
 
-                    btn.show();
-                };
-
-                /* Hook this menu to listen for dimension changes */
-                this.on('dimension', function(dim) { updateDimension(menu, dim); }, this);
-
-                /* For the intial render */
-                if (this.dim) {
-                    updateDimension(menu, this.dim);
-                }
+                    dropdown.getStore().add(hierarchies);
+                    if (!Ext.isEmpty(hierarchies)) {
+                        if (Ext.isDefined(selected))
+                            dropdown.select(selected);
+                        else {
+                            console.warn('Did not find a hierarchy to select. Selecting first available...');
+                            dropdown.select(hierarchies[0]);
+                        }
+                    }
+                });
             },
-            click : this.onHierarchySelect
+            select: this.onHierarchySelect
         });
 
         this.clickTask = new Ext.util.DelayedTask(function(view, rec, node) {
@@ -98,12 +92,11 @@ Ext.define('Connector.controller.Explorer', {
         if (xtype == 'singleaxis') {
             var state = this.getStateManager();
             var s = this.getStore('Explorer');
-            s.olapProvider = state;
+            s.olapProvider = state; // required by LABKEY.app.store.OlapExplorer. Blargh
 
             var v = Ext.create('Connector.view.SingleAxisExplorer',{
                 flex : 3,
                 ui : 'custom',
-                width : '100%',
                 store : s,
                 selections : state.getSelections()
             });
@@ -131,14 +124,14 @@ Ext.define('Connector.controller.Explorer', {
             // this allows whether mouse hover over explorer items will cause a request for selection
             this.allowHover = true;
 
-            v.on('boxready', function() { this.loadExplorerView(context, v); }, this, {single: true});
+            v.on('boxready', function() { this.loadExplorerView(context); }, this, {single: true});
 
             return v;
         }
     },
 
     updateView : function(xtype, context) {
-        this.loadExplorerView(context, null);
+        this.loadExplorerView(context);
     },
 
     getViewTitle : function(xtype, context) {
@@ -163,9 +156,8 @@ Ext.define('Connector.controller.Explorer', {
         return context;
     },
 
-    loadExplorerView : function(context, view) {
-        var state = this.getStateManager();
-        state.onMDXReady(function(mdx) {
+    loadExplorerView : function(context) {
+        this.getStateManager().onMDXReady(function(mdx) {
             var dim = mdx.getDimension(context.dimension);
             if (dim) {
 
@@ -191,9 +183,6 @@ Ext.define('Connector.controller.Explorer', {
                     idx = 1;
                 }
 
-                if (view) {
-                    view.onDimensionChange.call(view, dim, idx);
-                }
                 this.fireEvent('dimension', dim, idx);
             }
             else {
@@ -203,15 +192,21 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     // fired when the dimension is changed via the menu
-    onDimensionSelect : function(m, item) {
-        this.goToExplorer(item.rec.data.hierarchy.split('.')[0], null);
+    onDimensionSelect : function(m, summaryModel /* Connector.model.Summary */) {
+        this.goToExplorer(summaryModel.get('dimName'), null);
     },
 
     // fired when the hierarchy is changed via the menu
-    onHierarchySelect : function(m, item) {
-        var hierarchy = this.dim.hierarchies[item.hierarchyIndex];
-        hierarchy = hierarchy.name.split('.')[1];
-        this.goToExplorer(this.dim.name, hierarchy);
+    onHierarchySelect : function(m, models) {
+        if (!Ext.isEmpty(models)) {
+            var model = models[0], dimName = this.dim.name;
+            this.getStateManager().onMDXReady(function(mdx) {
+                var hierarchy = mdx.getHierarchy(model.get('uniqueName'));
+                if (Ext.isObject(hierarchy)) {
+                    this.goToExplorer(dimName, hierarchy.name.split('.')[1]);
+                }
+            }, this);
+        }
     },
 
     onExplorerEnter : function(view, rec) {

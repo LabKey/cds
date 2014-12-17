@@ -31,6 +31,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.button.Image": "../../webapp/Connector/src/button/Image.js",
   "Connector.button.InfoButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../webapp/Connector/src/button/RoundedButton.js",
+  "Connector.component.ActionTitle": "../../webapp/Connector/src/component/ActionTitle.js",
+  "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.constant.ModuleViewsLookup": "../../webapp/Connector/src/constant/ModuleViewsLookup.js",
   "Connector.constant.Templates": "../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../webapp/Connector/src/controller/AbstractViewController.js",
@@ -64,6 +66,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.FilterGroup": "../../webapp/Connector/src/model/FilterGroup.js",
   "Connector.model.Grid": "../../webapp/Connector/src/model/Grid.js",
   "Connector.model.Group": "../../webapp/Connector/src/model/Group.js",
+  "Connector.model.Hierarchy": "../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.InfoPane": "../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.Members": "../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.RSSItem": "../../webapp/Connector/src/model/RSSItem.js",
@@ -92,8 +95,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.About": "../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../webapp/Connector/src/view/DetailStatus.js",
-  "Connector.view.Dimension": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
-  "Connector.view.DimensionSelector": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
+  "Connector.view.ExplorerHeaderDataView": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterStatus": "../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.Grid": "../../webapp/Connector/src/view/Grid.js",
   "Connector.view.GridPane": "../../webapp/Connector/src/view/GridPane.js",
@@ -200,6 +202,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.button.Image": [],
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
+  "Connector.component.ActionTitle": [],
+  "Connector.component.DropDown": [],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
@@ -233,6 +237,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.Grid": [],
   "Connector.model.Group": [],
+  "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
   "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
@@ -261,8 +266,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.About": [],
   "Connector.view.Chart": [],
   "Connector.view.DetailStatus": [],
-  "Connector.view.Dimension": [],
-  "Connector.view.DimensionSelector": [],
+  "Connector.view.ExplorerHeaderDataView": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.Grid": [],
   "Connector.view.GridPane": [],
@@ -1190,6 +1194,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.button.RoundedButton": [
     "widget.roundedbutton"
   ],
+  "Connector.component.ActionTitle": [
+    "widget.actiontitle"
+  ],
+  "Connector.component.DropDown": [
+    "widget.dropdown"
+  ],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
@@ -1225,6 +1235,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.FilterGroup": [],
   "Connector.model.Grid": [],
   "Connector.model.Group": [],
+  "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
   "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
@@ -1285,11 +1296,8 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.DetailStatus": [
     "widget.detailstatus"
   ],
-  "Connector.view.Dimension": [
-    "widget.dimensionview"
-  ],
-  "Connector.view.DimensionSelector": [
-    "widget.dimselectorview"
+  "Connector.view.ExplorerHeaderDataView": [
+    "widget.explorerheaderdataview"
   ],
   "Connector.view.FilterStatus": [
     "widget.filterstatus"

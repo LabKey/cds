@@ -33,20 +33,13 @@ Ext.define('Connector.view.Grid', {
                 xtype: 'container',
                 height: this.headerHeight,
                 ui: 'custom',
-                cls: 'dimensionview',
+                cls: 'header-container',
                 layout: {
                     type: 'hbox'
                 },
                 items: [{
-                    xtype: 'box',
-                    autoEl: {
-                        tag: 'div',
-                        cls: 'titlepanel',
-                        children: [{
-                            tag: 'span',
-                            html: 'view data grid'
-                        }]
-                    }
+                    xtype: 'actiontitle',
+                    text: 'View data grid'
                 },{
                     xtype: 'button',
                     cls: 'gridexportbtn',

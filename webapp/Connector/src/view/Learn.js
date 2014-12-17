@@ -23,7 +23,6 @@ Ext.define('Connector.view.Learn', {
         // url changes the headers will be updated and made visible based on the type of view -
         // parent learn view or study/assay detail page etc
         this.items = [this.getHeader()];
-//        this.items = [this.getHeader(), this.getLearnDetailHeader()];
 
         this.callParent();
     },
@@ -49,31 +48,7 @@ Ext.define('Connector.view.Learn', {
         }
         return this.headerViews.main;
     },
-/*
-    getLearnDetailHeader : function(id) {
-        if (!this.headerViews.learnDetail) {
-            this.headerViews.learnDetail = Ext.create('Connector.view.PageHeader', {
-                dimensions: this.getDimensions(),
 
-                hidden: true,
-
-                state: this.state,
-
-                // TODO: This should be bubblable but the this.control() in the controller
-                // does not seem to respect bubbled events
-                listeners: {
-                    selectdimension: function(model) {
-                        this.fireEvent('selectdimension', model);
-                    },
-                    scope: this
-                }
-            });
-        }
-        //this.headerViews.learnDetail.setId(id);
-
-        return this.headerViews.learnDetail;
-    },
-*/
     onSearchFilterChange : function(filter) {
         this.searchFilter = filter;
         var view = this.dataViews[0];
@@ -141,7 +116,6 @@ Ext.define('Connector.view.Learn', {
         if (this.dataViews && this.dataViews.length) {
             var dataViews = this.dataViews;
             delete this.dataViews;
-            //this.state.un('searchfilterchange', this.onFilterChange, this);
             var views = dataViews.length;
             var fadedViews = 0;
             Ext.each(dataViews, function(dataView) {
@@ -341,7 +315,7 @@ Ext.define('Connector.view.LearnHeader', {
 
     height: 160,
 
-    cls: 'learnheader',
+    cls: 'header-container',
 
     defaults: {
         ui: 'custom',
@@ -352,16 +326,11 @@ Ext.define('Connector.view.LearnHeader', {
 
         this.items = [
             {
-                xtype: 'box',
-                autoEl: {
-                    tag: 'div',
-                    cls: 'titlepanel',
-                    html: '<span>Learn about...</span>'
-                }
+                xtype: 'actiontitle',
+                text: 'Learn about...'
             },{
                 xtype: 'container',
                 itemId: 'dataviewcontainer',
-                cls: 'learn-header-container',
                 items: [{
                     xtype: 'learnheaderdataview',
                     itemId: 'headerdataview',
@@ -376,10 +345,6 @@ Ext.define('Connector.view.LearnHeader', {
                         this.fireEvent('searchchanged', value);
                         return true;
                     }, this)
-                    // autoEl: {
-                    //     tag: 'div',
-                    //     html: '<input type="text" class="learn-filter" placeholder="Search assays">'
-                    // }
                 }]
             }
         ];

@@ -145,7 +145,7 @@ Ext.define('Connector.view.GroupSave', {
                     xtype: 'button',
                     itemId: 'replace-grp-button',
                     style: 'margin-top: 15px;',
-                    ui: 'linked',
+                    ui: 'linked-ul',
                     text: 'replace an existing group',
                     handler: function() { this.changeMode(Connector.view.GroupSave.modes.REPLACE); },
                     scope: this
@@ -274,7 +274,7 @@ Ext.define('Connector.view.GroupSave', {
                     xtype: 'button',
                     itemId: 'create-grp-button',
                     style: 'margin-top: 15px;',
-                    ui: 'linked',
+                    ui: 'linked-ul',
                     text: 'create a new group',
                     handler: function() { this.changeMode(Connector.view.GroupSave.modes.CREATE); },
                     scope: this

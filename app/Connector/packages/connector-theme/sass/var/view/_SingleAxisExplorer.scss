@@ -15,18 +15,15 @@ span.animator {
 }
 
 .explorer-box {
-  margin-left: 24px;
-  margin-right: 108px; /* 60 + 48 to account for .bar .count */
-}
-
-.explorer-options {
-  margin-top: 25px;
+  margin-left: $pageLeftPadding;
+  margin-right: $pageLeftPadding;
+  border-top: 1px solid #e6e1e1;
 }
 
 .barchart {
   width: 90%;
   padding: 2px;
-  margin: 2px 24px 2px 0;
+  margin: $pageLeftPadding $pageLeftPadding 2px 0;
 
 }
 
@@ -41,7 +38,7 @@ span.animator {
 }
 
 .bar.small {
-  height: 24px;
+  height: $pageLeftPadding;
   margin: 12px 0 4px 32px;
   .x-btn {
     display: none;
@@ -204,10 +201,6 @@ div.saeempty {
 /* -- END Connector.view.SingleAxisExplorer */
 
 /* Connector.view.Dimension */
-.dimensionview {
-//  @include rightFade;
-}
-
 div.dimensionsort {
   color: $heat-scale-2;
   padding-top: 10px;
@@ -263,11 +256,3 @@ div.boldlabel span {
 }
 
 /* -- END Connector.view.Dimension */
-
-/* Connector.view.DimensionSelector */
-div.dimgroup {
-  @include pagePaddingLeft;
-  @include standout;
-}
-
-/* -- END Connector.view.DimensionSelector */

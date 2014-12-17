@@ -11,31 +11,9 @@ Ext.define('Connector.controller.Summary', {
 
     views : ['Summary'],
 
+    isService: true,
+
     init : function() {
-
-        this.control('#dimensionmenu', {
-            afterrender : function(m) {
-                var updateDims = function(store) {
-                    for (var r=0; r < store.getCount(); r++) {
-                        var rec = store.getAt(r);
-                        m.add({
-                            text: rec.data.label,
-                            rec: rec
-                        });
-                    }
-                    m.show();
-                };
-
-                var s = this.getSummaryStore();
-                if (s.getCount()) {
-                    updateDims(s);
-                }
-                else {
-                    s.on('load', updateDims, this, {single: true});
-                    s.load();
-                }
-            }
-        });
 
         this.control('groupsave', {
             groupsaved : function(grp, filter) {
