@@ -18,9 +18,7 @@ Ext.define('Connector.view.Grid', {
     headerHeight: 160,
 
     constructor : function(config) {
-
         this.callParent([config]);
-
         this.addEvents('applyfilter', 'removefilter', 'measureselected');
     },
 
@@ -41,21 +39,6 @@ Ext.define('Connector.view.Grid', {
                     xtype: 'actiontitle',
                     text: 'View data grid'
                 },{
-                    xtype: 'button',
-                    cls: 'gridexportbtn',
-                    text: 'export',
-                    margin: '27 0 0 5',
-                    handler: this.requestExport,
-                    scope: this
-                },{
-                    xtype: 'button',
-                    cls: 'gridcitationsbtn',
-                    text: 'citations',
-                    margin: '27 0 0 5',
-                    disabled: true,
-                    handler: function() {},
-                    scope: this
-                },{
                     // This allows for the following items to be right aligned
                     xtype: 'box',
                     flex: 1,
@@ -64,22 +47,26 @@ Ext.define('Connector.view.Grid', {
                     }
                 },{
                     xtype: 'button',
+                    cls: 'gridexportbtn',
+                    ui: 'rounded-inverted-accent-text',
+                    text: 'export',
+                    margin: '0 15 0 0',
+                    handler: this.requestExport,
+                    scope: this
+                },{
+                    xtype: 'button',
+                    cls: 'gridcitationsbtn',
+                    text: 'citations',
+                    ui: 'rounded-inverted-accent-text',
+                    margin: '0 15 0 0',
+                    disabled: true,
+                    handler: function() {},
+                    scope: this
+                },{
+                    xtype: 'button',
                     cls: 'gridcolumnsbtn',
-                    text: 'choose columns',
-                    margin: '27 20 0 5',
+                    text: 'select columns',
                     handler: this.showMeasureSelection,
-                    listeners: {
-                        afterrender : function(b) {
-                            var picker = this.getAxisSelector().getMeasurePicker();
-                            picker.on('beforeMeasuresStoreLoad', function(p, data) {
-                                if (Ext.isDefined(data) && Ext.isArray(data.measures)) {
-                                    this.setText('choose from ' + data.measures.length + ' columns');
-                                }
-                            }, b, {single: true});
-                            picker.getMeasures();
-                        },
-                        scope: this
-                    },
                     scope: this
                 }]
             },{
@@ -124,9 +111,14 @@ Ext.define('Connector.view.Grid', {
                 events: ['hideload']
             }
         });
+
+        this.showmsg = true;
+        this.addPlugin({
+            ptype: 'messaging'
+        });
     },
 
-    showMessage : function() {
+    _showOverlay : function() {
         if (!this.NO_SHOW) {
 
             //
@@ -139,7 +131,7 @@ Ext.define('Connector.view.Grid', {
             }
 
             if (valid) {
-                var nogrid = Ext.create('Ext.Component', {
+                Ext.create('Ext.Component', {
                     renderTo: this.getEl(),
                     cls: 'nogridmsg',
                     autoEl: {
@@ -169,7 +161,7 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    hideMessage : function() {
+    _hideOverlay : function() {
         this.NO_SHOW = true;
         if (this.nogridmsg) {
             this.nogridmsg.hide();
@@ -213,7 +205,7 @@ Ext.define('Connector.view.Grid', {
             if (prevGridId != null && prevGridId != newGrid.getId())
             {
                 this.remove(prevGridId, true);
-                this.hideMessage();
+                this._hideOverlay();
             }
 
             this.add(newGrid);
@@ -321,7 +313,7 @@ Ext.define('Connector.view.Grid', {
                         header.on('headertriggerclick', this.onTriggerClick, this);
                     },
                     boxready : function(grid) {
-                        this.showMessage();
+                        this._showOverlay();
                     },
                     viewready: function(grid) {
                         this.updateColumnMap(grid.down('headercontainer'));
@@ -390,13 +382,14 @@ Ext.define('Connector.view.Grid', {
 
     initGridStore : function() {
         var model = this.getModel();
+        var maxRows = Connector.model.Grid.getMaxRows();
 
         var store = Ext.create('LABKEY.ext4.data.Store', {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
             columns: model.get('columnSet'),
             filterArray: model.getFilterArray(true),
-            maxRows: Connector.model.Grid.getMaxRows()
+            maxRows: maxRows
         });
 
         store.on('beforeload', function(){
@@ -404,15 +397,22 @@ Ext.define('Connector.view.Grid', {
         }, this);
 
         store.on('load', function(store) {
+
+            var rowCount = store.getCount();
+
             var cmp = Ext.getCmp('gridrowcountcmp');
             if (cmp) {
-                cmp.update({count: store.getCount()});
+                cmp.update({count: rowCount});
             }
 
             // show/hide for a filter change need to place nicely with the show/hide for a column change
             // (i.e. new grid creation) so we only hide the mask on store load if the grid is already rendered
             if (this.getGrid().rendered) {
                 this.fireEvent('hideload', this);
+            }
+
+            if (rowCount >= maxRows) {
+                this.showLimitMessage(maxRows);
             }
         }, this);
 
@@ -477,9 +477,6 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             }
-//            else {
-//                console.log('failed to find filter column');
-//            }
 
         }, this);
     },
@@ -645,5 +642,20 @@ Ext.define('Connector.view.Grid', {
                 }
             });
         }
+    },
+
+    showLimitMessage : function(max) {
+
+        var msg = 'The app only shows up ' + max + ' rows. Export to see all data.';
+
+        var exportId = Ext.id();
+        var exportText = '<a id="' + exportId + '">Export</a>';
+        msg += ' ' + exportText;
+
+        var dismissId = Ext.id();
+        var dismissText = '<a id="' + dismissId + '">Dismiss</a>';
+        msg += ' ' + dismissText;
+
+        this.showMessage(msg);
     }
 });

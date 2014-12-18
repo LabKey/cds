@@ -129,30 +129,10 @@ div.definition-overflow {
   color: $heat-scale-2;
 }
 
-.x-grid-data-row {
-  line-height: 28px;
-  height: 28px;
-}
-
 .x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
   height: 13px;
   width: 13px;
   background-image: url(images/form/checkbox2.gif);
-}
-
-/* Connector.grid.Panel */
-.connector-grid {
-  .x-column-header-trigger {
-    background-image: url(images/filter.svg);
-
-    &:hover {
-      background-image: url(images/filter_selected.svg);
-    }
-  }
-
-  .filtered-column .x-column-header-trigger {
-    background-image: url(images/filter_selected.svg);
-  }
 }
 
 /* Connector.view.InfoPane */

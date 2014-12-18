@@ -310,7 +310,39 @@ a.x-btn {
   $glyph-color : #FFFFFF
 );
 
-.x-btn-rounded-inverted-accent-small {
+@include extjs-button-ui (
+  $ui: 'rounded-inverted-accent-text-small',
+
+  $border-radius : 16px,
+
+  $background-color: transparent,
+  $background-color-over: transparent,
+  $background-color-disabled: transparent,
+
+  $border-width : 0px,
+  $border-color: transparent,
+  $border-color-over: transparent,
+  $border-color-focus: transparent,
+  $border-color-pressed: transparent,
+  $border-color-disabled: transparent,
+
+  $color: $interactive-color,
+  $color-over : $black,
+  $color-disabled: $interactive-color,
+
+  $font-size : 12px,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $icon-size : 12px,
+  $glyph-color : #FFFFFF
+);
+
+.x-btn-rounded-inverted-accent-small,
+.x-btn-rounded-inverted-accent-text-small {
   padding: 6px 12px 4px 12px!important;
   background-image: none;
   height: 24px;

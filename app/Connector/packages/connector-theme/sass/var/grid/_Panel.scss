@@ -1,11 +1,14 @@
 .connector-grid {
 
-  .filtered-column {
+  .x-grid-data-row {
+    line-height: 28px;
+    height: 28px;
+  }
 
-    .x-column-header-trigger {
-      background-color: transparent;
-    }
-
+  .x-column-header-text {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
   }
 
   .x-grid-view {
@@ -15,50 +18,85 @@
   .x-column-header-trigger {
     display: inline-block;
     border-left: 1px solid transparent;
+    background-image: url(images/filter.svg);
+
+    &:hover {
+      background-image: url(images/filter_selected.svg);
+    }
   }
 
-  .x-column-header-inner {
-    height: 45px;
+  .filtered-column {
+    .x-column-header-trigger {
+      background-color: transparent;
+      background-image: url(images/filter_selected.svg);
+    }
   }
 
+  /* Group Headers */
   .x-group-header {
+
+    border: 0;
     text-align: left;
-    color: $light-color;
-    background-color: $light-color;
 
     .x-column-header-inner {
       background-color: $light-color;
+      border-bottom: 2px solid $interactive-color;
+      height: 50px;
     }
 
-    /* Column group headers do not show trigger */
+    .x-column-header-text {
+      position: absolute;
+      bottom: 5px;
+      color: $interactive-color;
+    }
+
+    /* Group headers do not show trigger */
     .x-column-header-trigger {
       display: none;
     }
+  }
 
-    .x-group-sub-header {
+  /* Column Headers */
+  .x-group-sub-header {
 
-      .x-column-header-trigger {
-        display: block;
-        position: absolute;
-        bottom: 0;
-        top: inherit;
-        height: 15px;
-      }
+    border: 0;
 
-      .x-column-header-inner {
-        position: relative;
-        background-color: transparent;
-      }
+    .x-column-header-trigger {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      top: inherit;
+      height: 15px;
+    }
 
-      .x-column-header-text {
-        white-space: normal;
-        position: absolute;
-        left: 4px;
-        bottom: 4px;
-        margin: 0;
-        width: 85%;
-        text-align: justify;
-      }
+    .x-column-header-inner {
+      height: 40px;
+      position: relative;
+      background-color: transparent;
+      border: 0;
+    }
+
+    .x-column-header-text {
+      white-space: normal;
+      position: absolute;
+      left: 4px;
+      bottom: 4px;
+      margin: 0;
+      width: 85%;
+      text-align: justify;
+      color: $heat-scale-2;
+    }
+  }
+
+  /* Column Header Hovered */
+  .x-column-header-over,
+  .x-column-header-sort-ASC,
+  .x-column-header-sort-DESC {
+    background-image: none;
+    background-color: $secondary-color;
+
+    .x-column-header-text {
+      color: $black;
     }
   }
 }

@@ -85,9 +85,9 @@ Ext.define('Connector.view.GroupSummary', {
         if (!this.summaryHeader) {
             this.summaryHeader = Ext.create('Connector.view.GroupSummaryHeader', {
                 group: this.group,
-                padding : '15 0 0 0',
                 listeners: {
                     scope: this,
+                    deletegroup: this.onDelete,
                     requestgroupdelete: function(id) {
                         this.fireEvent('requestgroupdelete', id);
                     },
@@ -99,8 +99,6 @@ Ext.define('Connector.view.GroupSummary', {
                     }
                 }
             });
-
-            this.summaryHeader.on('deletegroup', this.onDelete, this);
         }
         return this.summaryHeader;
     },
@@ -113,7 +111,6 @@ Ext.define('Connector.view.GroupSummary', {
             this.showMessage('Are you sure you want to delete "' + Ext.String.ellipsis(Ext.htmlEncode(group.get('label')), 35, true) + '"? <a id="' + id + '">Delete</a>&nbsp;<a id="' + cancelId + '">Cancel</a>', true, false, true);
             var deleteLink = Ext.get(id);
             if (deleteLink) {
-//                this.fireEvent('requestgroupdelete', this.group.data.id);
                 deleteLink.on('click', function() { this.fireEvent('requestgroupdelete', group.get('id')); }, this, {single: true});
             }
             var cancelLink = Ext.get(cancelId);
@@ -174,7 +171,9 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         align: 'stretch'
     },
 
-    cls: 'dimensionview',
+    cls: 'header-container',
+
+    height: 160,
 
     defaults: {
         ui: 'custom'
@@ -196,11 +195,8 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         this.items = [{
             itemId: 'grouplabel',
             xtype: 'box',
-            autoEl: {
-                tag: 'h1',
-                cls: 'lhdv active',
-                html: Ext.htmlEncode(this.groupLabel)
-            }
+            tpl: new Ext.XTemplate('<h1 class="lhdv active">{groupLabel:htmlEncode}</h1>'),
+            data: {groupLabel: this.groupLabel}
         },{
             xtype: 'container',
             cls: 'dimgroup',
@@ -224,8 +220,6 @@ Ext.define('Connector.view.GroupSummaryHeader', {
             }]
         }];
 
-        this.height = 160;
-
         this.callParent();
     },
 
@@ -244,7 +238,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
     updateView : function(group) {
         this.group = group;
         this.groupLabel = group.get('label');
-        this.getComponent('grouplabel').update('<h1>' + Ext.String.htmlEncode(this.groupLabel) + '</h1>');
+        this.getComponent('grouplabel').update({groupLabel: this.groupLabel});
         this.doLayout();
     }
 });
