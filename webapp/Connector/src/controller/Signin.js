@@ -15,13 +15,6 @@ Ext.define('Connector.controller.Signin', {
             boxready: this.resolveStatistics
         });
 
-        this.control('connectorheader', {
-            userSignedOut : function() {
-                LABKEY.user.isSignedIn = false;
-                window.location.reload();
-            }
-        });
-
         /* Flag that is true when an unauthorized request has been handled */
         this.BAD_AUTH = false;
         var me = this;

@@ -12,10 +12,11 @@ Ext.define('Connector.controller.Navigation', {
     init : function() {
 
         // Since the Connector.panel.Header does not have its own controller this controller is provided.
-        this.control('connectorheader', {
-            // See Connector.panel.Header event 'headerclick'.
-            headerclick : function() {
-                this.getViewManager().changeView(this.application.defaultController);
+        this.control('connectorheader > #logo', {
+            afterrender : function(logo) {
+                logo.getEl().on('click', function() {
+                    this.getViewManager().changeView(this.application.defaultController);
+                }, this);
             }
         });
 
@@ -28,15 +29,6 @@ Ext.define('Connector.controller.Navigation', {
             }
         });
 
-        this.control('app-main > panel > #summarynav > dataview', {
-            afterrender : function(nav) {
-                if (!this.summaryFilters)
-                    this.summaryFilters = [];
-                this.nav = nav;
-                this.nav.on('selectionchange', this.onSelectionChange, this);
-            }
-        });
-
         this.control('#primarynav', {
             afterrender : function(n) {
                 this.primaryNav = n;
@@ -45,55 +37,19 @@ Ext.define('Connector.controller.Navigation', {
         });
 
         this.getViewManager().on('afterchangeview', this.onViewChange, this);
-        this.getStateManager().on('filterchange', this.onFilterChange, this);
     },
 
-    createView : function(xtype, context) { },
+    createView : Ext.emptyFn,
 
-    updateView : function(xtype, context) { },
+    updateView : Ext.emptyFn,
 
     markActiveSelection : function() {
-        if (this.primaryNav) {
-            if (this.active) {
-                this.primaryNav.getNavigationView().selectByView(this.active);
-            }
+        if (this.primaryNav && this.active) {
+            this.primaryNav.getNavigationView().selectByView(this.active);
         }
     },
 
-    onFilterChange : function(filters) {
-        this.summaryFilters = filters;
-    },
-
-    onSelectionChange : function(view, recs) {
-        if (recs.length > 0) {
-
-            var sview = this.getViewManager().getViewInstance('summary');
-            if (sview) {
-                var state = this.getStateManager();
-
-                if (recs[0].data.value == 1) // All Subjects -- reset to default
-                {
-                    sview.getSummaryDataView().getStore().setFilterSet([LABKEY.app.constant.STATE_FILTER]);
-                    var f = state.getFilters();
-                    if (f && f.length > 0)
-                        this.summaryFilters = state.getFilters();
-                    state.clearFilters();
-                }
-                else if (this.summaryFilters.length > 0)// Active Filters
-                {
-                    state.setFilters(this.summaryFilters);
-                }
-                else // Active Filters -- without summaryFilters initialized, default to LABKEY.app.constant.STATE_FILTER
-                {
-                    var s = sview.getSummaryDataView().getStore();
-                    s.setFilterSet([LABKEY.app.constant.STATE_FILTER]);
-                    s.load();
-                }
-            }
-        }
-    },
-
-    onViewChange : function(controller, view, viewContext, title, skipState) {
+    onViewChange : function(controller) {
         this.active = controller.toLowerCase();
         this.markActiveSelection();
     }
