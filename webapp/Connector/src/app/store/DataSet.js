@@ -59,7 +59,7 @@ Ext.define('Connector.app.store.DataSet', {
 
     load : function() {
         LABKEY.Query.selectRows({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             queryName: 'DataSets',
             requiredVersion: 9.1,
             columns: Ext.Array.pluck(Connector.app.model.DataSet.getFields(), "name").join(','),

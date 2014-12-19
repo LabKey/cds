@@ -289,7 +289,8 @@ Ext.define('Connector.controller.Explorer', {
                     hierarchy: hierarchy.uniqueName,
                     level: rec.get('levelUniqueName'),
                     members: [{ uniqueName: rec.get('uniqueName') }],
-                    operator: hierarchy.defaultOperator
+                    operator: hierarchy.defaultOperator,
+                    isWhereFilter: hierarchy.filterType === 'WHERE'
                 });
             });
 

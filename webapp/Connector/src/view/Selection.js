@@ -19,25 +19,24 @@ Ext.define('Connector.view.Selection', {
                     // Plot Selection Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem sel-listing">Subjects with:</div>',
-                        '{[this.renderPlotSelection(values)]}',
+                        '<div class="selitem sel-listing">{[this.renderPlotSelection(values)]}</div>',
                     '</div>',
                 '</tpl>',
                 '<tpl if="this.isGrid(values) === true">',
                     // Grid Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                            '{[this.renderLabel(values)]}',
+                            '{[this.renderGridFilterLabel(values)]}',
                         '</div>',
                     '</div>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === true">',
-                    // Plot Filter
+                    // "In the plot" Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderMeasures(values)]}',
                         '</div>',
@@ -49,30 +48,29 @@ Ext.define('Connector.view.Selection', {
                         '<div class="circle"></div>',
                         '<tpl if="members.length &gt; 0">',
                             '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                            '<div class="selitem sel-listing">{level:this.renderType}</div>',
-                            '<tpl for="members">',
-                                '<tpl if="xindex == 1 && xcount &gt; 1">',
-                                    '<select>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
-                                    '</select>',
+                            '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
+                            '<tpl if="members.length &gt; 1 || isSelection === true">',
+                                '<tpl for="members">',
+                                    '<tpl if="xindex == 1 && xcount &gt; 1">',
+                                        '<select>',
+                                            '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
+                                            '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
+                                        '</select>',
+                                    '</tpl>',
+                                    '{% if (parent.isSelection !== true && xindex > 5) break; %}',
+                                    '<div class="status-over memberitem memberloc collapsed-member">',
+                                        '<span>{uniqueName:this.renderUniqueName}</span>',
+                                    '</div>',
                                 '</tpl>',
-                                '{% if (parent.dofade === true && xindex > 5) break; %}',
-                                '<div class="status-over memberitem collapsed-member">',
-                                    '<span>{uniqueName:this.renderUniqueName}</span>',
-                                '</div>',
-                            '</tpl>',
-                            '<tpl if="members.length &gt; 5">',
-                                '<div class="fader"><img class="ellipse"></div>',
+                                '<tpl if="members.length &gt; 5">',
+                                    '<div class="fader"><img class="ellipse"></div>',
+                                '</tpl>',
                             '</tpl>',
                         '</tpl>',
                     '</div>',
                 '</tpl>',
             '</tpl>',
             {
-                doFade : function(dofade) {
-                    return true === dofade;
-                },
                 isGrid : function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
@@ -98,9 +96,10 @@ Ext.define('Connector.view.Selection', {
                     if (op.indexOf('REQ_AND') > -1) { markup += ' disabled'; }
                     return markup;
                 },
-                renderType : function(lvl) {
+                renderType : function(values) {
+                    var lvl = values.level;
                     var label = '';
-                    Connector.STATE.onMDXReady(function(mdx) {
+                    Connector.getState().onMDXReady(function(mdx) {
                         var level = mdx.getLevel(lvl);
                         if (level) {
                             label = level.hierarchy.dimension.friendlyName;
@@ -119,7 +118,20 @@ Ext.define('Connector.view.Selection', {
                             }
                         }
                     });
-                    return Ext.htmlEncode(label);
+
+                    label = Ext.htmlEncode(label);
+                    if (!values.isSelection) {
+                        if (!values.isWhereFilter) {
+                            label = "Subjects: " + label;
+                        }
+
+                        // render filter with a single member on one line
+                        if (values.members.length == 1) {
+                            label += ": <div style=\"display:inline;\" class=\" memberloc\">" + this.renderUniqueName(values.members[0].uniqueName) + "</div>";
+                        }
+                    }
+
+                    return label;
                 },
                 renderUniqueName : function(uniqueName) {
                     var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
@@ -139,35 +151,49 @@ Ext.define('Connector.view.Selection', {
                     }
                     return Ext.htmlEncode(label + measureLabels.join(', '));
                 },
-                renderLabel : function(values) {
+                renderGridFilterLabel : function(values) {
                     var type = LABKEY.app.model.Filter.getGridHierarchy(values);
+
+                    if (values.gridFilter && values.gridFilter.length > 0) {
+                        // 21881: since this is presumed to be a grid filter then all
+                        // the applied filters should be the same measure/column
+                        var gf = values.gridFilter[0];
+
+                        // the query service can lookup a measure, but only the base of a lookup
+                        if (gf.getColumnName().indexOf('/') == -1) {
+                            var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
+                            if (Ext.isObject(measure) && Ext.isString(measure.label)) {
+                                type = measure.label;
+                            }
+                        }
+                    }
+
                     return Ext.htmlEncode(type + ": " + LABKEY.app.model.Filter.getGridLabel(values));
                 },
                 renderSelectionMeasure : function(measure, filters, id, idx) {
+                    var domString = '', filterValString = '', sep = '';
 
-                    var domString = '';
+                    if (measure && filters && filters.length > 0) {
 
-                    if (measure && filters && filters[0] && filters[1]) {
-                        var minVal = filters[0].getValue(),
-                            maxVal = filters[1].getValue();
+                        Ext.each(filters, function(filter) {
+                            var val = filter.getValue();
+                            var fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
 
-                        if (filters[0].getFilterType().getURLSuffix() === 'dategte') {
-                            var d = new Date(minVal);
-                            var year = (d.getFullYear()%1000);
-                            year = year.toString().length == 1 ? "0" + year : year;
-                            minVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
-                            d = new Date(maxVal);
-                            year = (d.getFullYear()%1000);
-                            year = year.toString().length == 1 ? "0" + year : year;
-                            maxVal = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
-                        }
+                            if (filter.getFilterType().getURLSuffix() === 'dategte') {
+                                var d = new Date(val);
+                                var year = (d.getFullYear()%1000);
+                                year = year.toString().length == 1 ? "0" + year : year;
+                                val = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
+                            }
+
+                            filterValString += sep + fil + ' ' + val;
+                            sep = ', ';
+                        });
 
                         domString =
-                                '<div class="status-over memberitem plot-selection">' +
+                                '<div class="status-over memberitem memberloc plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
-                                        measure.label +
-                                        ': &gt;= ' + minVal +
-                                        ', &lt;= ' + maxVal +
+                                    measure.measure.label + ': ' + filterValString +
                                 '</div>';
                     }
 
@@ -175,12 +201,25 @@ Ext.define('Connector.view.Selection', {
                 },
                 renderPlotSelection: function(values) {
                     var measures = values.plotMeasures,
-                        filters = values.gridFilter, // TODO: rename to sqlFilters
+                        filters = values.gridFilter,
                         xMeasure = measures[0],
                         yMeasure = measures[1],
-                        xFilters = filters.slice(0, 2),
-                        yFilters = filters.slice(2),
+                        xFilters = [],
+                        yFilters = [],
                         domString;
+
+                    // split measures into x/y based on column name
+                    Ext.each(filters, function(filter){
+                        if (filter) {
+                            if (xMeasure && filter.getColumnName() == xMeasure.measure.alias) {
+                                xFilters.push(filter);
+                            }
+
+                            if (yMeasure && filter.getColumnName() == yMeasure.measure.alias) {
+                                yFilters.push(filter);
+                            }
+                        }
+                    });
 
                     domString = this.renderSelectionMeasure(xMeasure, xFilters, values.id, 0);
                     domString = domString + this.renderSelectionMeasure(yMeasure, yFilters, values.id, 1);

@@ -30,7 +30,7 @@ Ext.define('Connector.app.model.DataSet', {
 
     queryDataFromStudy: function(id, callback) {
 		LABKEY.Query.executeSql({
-			schemaName: 'study',
+			schemaName: Connector.studyContext.schemaName,
 			sql: "SELECT COUNT(*) AS n FROM \""+this.get('Name').value+"\" WHERE " + Connector.studyContext.subjectColumn + ".Study.Label = '"+id+"'",
 			success: function(data) {
 				var count = data.rows[0].n;
@@ -117,7 +117,7 @@ Ext.define('Connector.app.model.DataSet', {
         }
 
         if (countForAssay > 0) {
-            LABKEY.Ajax.request({
+            Ext.Ajax.request({
                 url : LABKEY.ActionURL.buildURL("visualization", "getMeasures"),
                 method : 'GET',
                 params : {

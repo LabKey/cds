@@ -53,8 +53,7 @@ Ext.define('Connector.window.Facet', {
     applyFiltersAndColumns : function() {
         var view = this.getComponent('faceted');
         if (view.checkValid()) {
-            var filters = view.getFilters();
-            this.fireEvent('filter', this, view.getModel().get('column'), filters);
+            this.fireEvent('filter', this, view.getModel().get('column'), view.getFilters());
             this.close();
         }
     },

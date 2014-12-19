@@ -30,8 +30,11 @@ Ext.define('Connector.Application', {
 
     controllers: [
         'Connector', // View Manager must be registered first to properly initialize
+        'HttpInterceptor',
+        'Messaging',
         'State',
         'Query',
+        'Update',
         'Group',
         'Main',
         'Router',

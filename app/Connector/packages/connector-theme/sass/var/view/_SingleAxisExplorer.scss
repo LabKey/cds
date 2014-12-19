@@ -14,11 +14,18 @@ span.animator {
   -webkit-animation-name: indexframe;
 }
 
+.explorer-box {
+  margin-left: 48px;
+  margin-right: 108px; /* 60 + 48 to account for .bar .count */
+}
+
+.explorer-options {
+  margin-top: 25px;
+}
+
 .barchart {
-  width: 78%;
   padding: 2px;
   margin: 2px 0;
-
 }
 
 .bar {
@@ -48,7 +55,7 @@ span.animator {
 .bar .barlabel {
   font-family: $data-font;
   display: block;
-  padding: 5px 5px;
+  padding: 5px;
   position: relative;
   z-index: 2;
   @include unselectable;
@@ -57,6 +64,7 @@ span.animator {
 .bar.large .barlabel {
   font-size: 14pt;
   z-index: 5002;
+  padding: 10px 5px;
 }
 
 .bar.small .barlabel {
@@ -104,6 +112,7 @@ span.info {
   font-weight: bold;
   font-size: 14pt;
   position: absolute;
+  right: -60px;
   @include unselectable;
 }
 

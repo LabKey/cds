@@ -17,29 +17,19 @@
 %>
 <%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%@ page import="org.labkey.api.data.Container"%>
-<%@ page import="org.labkey.api.study.DataSet"%>
+<%@ page import="org.labkey.api.query.QueryService"%>
+<%@ page import="org.labkey.api.query.UserSchema" %>
+<%@ page import="org.labkey.api.study.DataSet" %>
 <%@ page import="org.labkey.api.study.Study" %>
 <%@ page import="org.labkey.api.study.StudyService" %>
 <%@ page import="org.labkey.api.study.StudyUrls" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.api.view.ViewContext" %>
 <%@ page import="org.labkey.cds.FactLoader" %>
-<%@ page import="java.util.List" %>
 <%@ page import="org.labkey.cds.PopulateBehavior" %>
-<%@ page import="org.labkey.api.query.UserSchema" %>
-<%@ page import="org.labkey.api.query.QueryService" %>
-<%@ page import="org.labkey.api.view.template.ClientDependency" %>
-<%@ page import="java.util.LinkedHashSet" %>
+<%@ page import="java.util.List" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
-<%!
-    public LinkedHashSet<ClientDependency> getClientDependencies()
-    {
-        LinkedHashSet<ClientDependency> resources = new LinkedHashSet<>();
-        resources.add(ClientDependency.fromFilePath("Ext4"));
-        return resources;
-    }
-%>
 <%
     ViewContext context = getViewContext();
     Container c = getContainer();
@@ -94,147 +84,6 @@ to be filled in by another mechanism.<br>
     SQL Used to populate table
     <%=h(mapper.getPopulateSql().toString(), true)%> -->
 <%} %>
-    <div id="validatemessages" style="display: none;"></div>
-    <input type="submit" onclick="validatePopulate(); return false;">
+    <input type="submit">
 </labkey:form>
-<script type="text/javascript">
-
-    var validatePopulate = function() {
-
-        var SUBJECT_COLUMN = LABKEY.moduleContext.study.subject.columnName;
-        var SUBJECT_VISIT = LABKEY.moduleContext.study.subject.tableName + 'Visit';
-        var HEADER = '<p style="color: red;">CUBE SCHEMA VALIDATION</p>';
-
-        var VACCINE_INNER =
-                'SELECT' +
-                        ' treatmentId, productId, Product.rowId, label, type' +
-                        ' FROM TreatmentProductMap' +
-                        ' JOIN Product' +
-                        ' ON TreatmentProductMap.productId = Product.rowId';
-
-        var VACCINE_OUTER =
-                'SELECT' +
-                        ' ParticipantTreatments.treatmentId, T.label, T.type' +
-                        ' FROM ParticipantTreatments' +
-                        ' JOIN ( ' + VACCINE_INNER + ' ) AS T' +
-                        ' ON T.treatmentId = ParticipantTreatments.treatmentId';
-
-        var checks = [{
-            schema: 'cds',
-            sql: 'SELECT clade, id, countryoforigin, tier, specimensource FROM antigens',
-            area: 'Antigen Dimension'
-        },{
-            schema: 'study',
-            sql: 'SELECT type, name, label, platform FROM StudyDesignAssays',
-            area: 'Assay Dimension'
-        },{
-            schema: 'study',
-            sql: 'SELECT ' + SUBJECT_COLUMN + ', ' + SUBJECT_COLUMN + '.ParticipantId AS Inner' + SUBJECT_COLUMN +', Folder, race, country, sex, randomization, ad5_grp, circumcised, hivinf, per_protocol, bmi_grp, species FROM Demographics',
-            area: 'Subject Dimension'
-        },{
-            schema: 'study',
-            sql: VACCINE_INNER,
-            area: 'Vaccine Dimension Inner Query'
-        },{
-            schema: 'study',
-            sql: VACCINE_OUTER,
-            area: 'Vaccine Dimension Outer Query'
-        },{
-            schema: 'study',
-            sql: 'SELECT Name FROM StudyDesignLabs',
-            area: 'Lab Dimension'
-        },{
-            schema: 'study',
-            sql: 'SELECT container, label FROM StudyProperties',
-            area: 'Study Dimension'
-        },{
-            schema: 'cds',
-            sql: 'SELECT participantid, antigen, assay, lab, study FROM Facts',
-            area: 'Facts Table'
-        },{
-            schema: 'cds',
-            sql: 'SELECT ' + SUBJECT_VISIT + '.' + SUBJECT_COLUMN + ', ' + SUBJECT_VISIT + '.Container FROM study.' + SUBJECT_VISIT + ' WHERE ' + SUBJECT_COLUMN + ' NOT IN (SELECT ' + SUBJECT_COLUMN + ' FROM study.Demographics)',
-            area: 'Subject Validation',
-            maxRows: 100000,
-            success : function(data) {
-                var success = true;
-
-                if (data.rows.length > 0) {
-
-                    var msg = HEADER;
-                    msg += '<p style="color: red;">The following subjects must be specified in their study\'s demographics table.</p>';
-                    msg += '<table><th>' + SUBJECT_COLUMN + '</th><th>Container</th>';
-                    Ext4.each(data.rows, function(row) {
-                        msg +=  '<tr>' +
-                                    '<td><a target="_blank" href="' + row[SUBJECT_COLUMN].url + '">' + row[SUBJECT_COLUMN].value + '</a></td>' +
-                                    '<td><a target="_blank" href="' + row['Container'].url + '">' + row['Container'].displayValue + '</a></td>' +
-                                '</tr>';
-                    });
-                    msg += '</table>';
-
-                    var messageEl = Ext4.get('validatemessages');
-                    messageEl.setStyle('display', 'block');
-                    messageEl.update(msg);
-
-                    success = false;
-                }
-                return success;
-            }
-        }];
-
-        var messageEl = Ext4.get('validatemessages');
-        messageEl.update('');
-
-        var showMessage = function(area, message) {
-            messageEl.setStyle('display', 'block');
-
-            var msg = HEADER;
-            msg += '<p style="color: red;">These generally mean that columns are missing from a table or a table is missing.<br/>These tables/columns are required by the Cube definition.</p>';
-            msg += '<p style="color: red;">' + area + ': ' + message + '</p>';
-
-            messageEl.update(msg);
-        };
-
-        var formEl = document.getElementById('populatecubeform');
-
-        var doQuery = function(index) {
-            var target = checks[index];
-            LABKEY.Query.executeSql({
-                schemaName: target.schema,
-                sql: target.sql,
-                maxRows: Ext4.isDefined(target.maxRows) ? target.maxRows : 0,
-                requiredVersion: 9.1,
-                success: function(data) {
-                    var valid = true;
-                    if (Ext4.isFunction(target.success)) {
-                        valid = (target.success.call(this, data) !== false);
-                    }
-
-                    if (valid) {
-                        if (index+1 < checks.length) {
-                            doQuery(index+1);
-                        }
-                        else {
-                            if (formEl) {
-                                formEl.submit();
-                            }
-                        }
-                    }
-                },
-                failure: function(response) {
-                    showMessage(target.area, response.exception);
-                }
-            });
-        };
-
-        // TODO: Need a more dynamic form of cube/query validation
-//        if (checks.length > 0) {
-//            doQuery(0);
-//        }
-        if (formEl) {
-            formEl.submit();
-        }
-    };
-
-</script>
 

@@ -16,7 +16,7 @@ Ext.define('Connector.app.store.DataSetData', {
 
     load : function() {
         LABKEY.Query.selectRows({
-            schemaName: 'study',
+            schemaName: Connector.studyContext.schemaName,
             queryName: this.tableName,
             success: this.loadData,
             scope : this
