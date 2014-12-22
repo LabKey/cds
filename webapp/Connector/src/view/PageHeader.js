@@ -38,11 +38,10 @@ Ext.define('Connector.view.PageHeader', {
         align: 'stretch'
     },
 
-    cls: 'pageheader learnheader',
+    cls: 'pageheader learnheader header-container',
 
     defaults: {
         ui: 'custom'
-//        flex: 1
     },
 
     //selectorId: 'dimselect',
@@ -135,20 +134,35 @@ Ext.define('Connector.view.PageHeader', {
             }
         }
 
-        this.items = [{
-            xtype: 'actiontitle',
-            html: data.label
-        }, {
+        this.items = [];
+
+        if (!Ext.isEmpty(data.label)) {
+            this.items.push({
+                xtype: 'actiontitle',
+                html: data.label
+            });
+        }
+
+        if (!Ext.isEmpty(data.title)) {
+            this.items.push({
+                xtype: 'box',
+                autoEl: {
+                    tag: 'h1',
+                    html: data.title
+                }
+            });
+        }
+
+        this.items.push({
             xtype: 'box',
             flex: 1
-        }];
+        });
 
         if (buttons) {
             this.items.push({
                 xtype: 'toolbar',
                 height: 38,
                 ui: 'footer',
-                // dock: 'bottom',
                 items: buttons
             })
         }

@@ -35,11 +35,9 @@ Ext.define('Connector.controller.Home', {
             v = Ext.create('Connector.view.Home', {});
         }
         else if (xtype == 'about') {
-            var about = Ext.create('Connector.view.About', {});
-
             var header = Ext.create('Connector.view.PageHeader', {
                 data: {
-                    label : "<h1>About the HIV Collaborative DataSpace</h1>",
+                    title: "About the HIV Collaborative DataSpace",
                     buttons : {
                         back: true
                     },
@@ -47,13 +45,11 @@ Ext.define('Connector.controller.Home', {
                 }
             });
 
-            var pageView = Ext.create('Connector.view.Page', {
-                contentViews: [about],
+            v = Ext.create('Connector.view.Page', {
                 header: header,
+                contentViews: [ Ext.create('Connector.view.About', {}) ],
                 pageID: 'homeAbout'
             });
-
-            v = pageView;
         }
 
         return v;

@@ -205,7 +205,7 @@ Ext.define('Connector.view.Learn', {
 
                     var header = Ext.create('Connector.view.PageHeader', {
                         data: {
-                            label : self.headerLabel(dimension,model),
+                            title : self.headerLabel(dimension,model),
                             buttons : {
                                 back: true,
                                 up: dimension.pluralName.toLowerCase(),
