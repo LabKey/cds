@@ -19,7 +19,7 @@ Ext.define('Connector.grid.Panel', {
 
     config: {
         defaultFieldWidth: 200,
-        editable: true,
+        editable: false, // If true, must reconcile with remoteSort
         pageSize: Connector.model.Grid.getMaxRows(),
         autoSave: false,
         multiSelect: true,
@@ -41,44 +41,27 @@ Ext.define('Connector.grid.Panel', {
         months: true
     },
 
+    /*
+     * The intent of these options is to infer column widths based on the data being shown
+     */
+    charWidth: 6,   //TODO: this should be measured, but measuring is expensive so we only want to do it once
+    colPadding: 10, //TODO: also should be calculated
+    maxColWidth: 400,
+
     initComponent : function() {
         this.initStore();
 
-        Ext.QuickTips.init({
-            constrainPosition: true
-        });
-
         Ext.applyIf(this, {
-            columns: [],
-
-            /*
-             * The intent of these options is to infer column widths based on the data being shown
-             */
-            charWidth  : 6,  //TODO: this should be measured, but measuring is expensive so we only want to do it once
-            colPadding : 10, //TODO: also should be calculated
-            maxColWidth: 400
+            columns: []
         });
 
-        if(this.showPagingToolbar){
-            this.dockedItems = this.dockedItems || [];
-            this.dockedItems.push({
-                xtype: 'pagingtoolbar',
-                store: this.store,   // same store GridPanel is using
-                dock: 'bottom',
-                ui: this.ui,
-                displayInfo: true
-            });
-        }
-
-        this.configurePlugins();
-
-        if(LABKEY.ext4.Util.hasStoreLoaded(this.store)){
+        if (LABKEY.ext4.Util.hasStoreLoaded(this.store)) {
             this.columns = this.getColumnsConfig();
         }
 
         this.callParent();
 
-        if(!this.columns.length){
+        if (Ext.isEmpty(this.columns)) {
             this.mon(this.store, 'load', this.setupColumnModel, this, {single: true});
             if(!this.store.isLoading()){
                 this.store.load({ params : {
@@ -106,13 +89,9 @@ Ext.define('Connector.grid.Panel', {
 
     ,initStore : function() {
         if(!this.store){
-            alert('Must provide a store or store config when creating a gridpanel');
+            console.error('Must provide a store or store config when creating a gridpanel');
             return;
         }
-
-        //allow creation of panel using store config object
-        if(!this.store.events)
-            this.store = Ext.create('LABKEY.ext4.data.Store', this.store);
 
         this.store.supressErrorAlert = true;
 
@@ -125,21 +104,6 @@ Ext.define('Connector.grid.Panel', {
 
         if(this.autoSave)
             this.store.autoSync = true;  //could we just obligate users to put this on the store directly?
-    }
-
-    //separated to allow subclasses to override
-    ,configurePlugins : function() {
-        this.plugins = this.plugins || [];
-
-        if(this.editable)
-            this.plugins.push(this.getEditingPlugin());
-    }
-
-    ,getEditingPlugin : function() {
-        return Ext.create('Ext.grid.plugin.CellEditing', {
-            pluginId: this.editingPluginId,
-            clicksToEdit: this.clicksToEdit
-        });
     }
 
     ,setupColumnModel : function() {
@@ -302,72 +266,3 @@ Ext.define('Connector.grid.Panel', {
         }
     }
 });
-
-LABKEY.ext4.GRIDBUTTONS = {
-    /**
-     *
-     * @param name
-     * @param config
-     */
-    getButton: function(name, config){
-        return LABKEY.ext4.GRIDBUTTONS[name] ? LABKEY.ext4.GRIDBUTTONS[name](config) : null;
-    },
-
-    //TODO: make these private?
-    ADDRECORD: function(config){
-        return Ext.Object.merge({
-            text: 'Add Record',
-            tooltip: 'Click to add a row',
-            handler: function(btn){
-                var grid = btn.up('gridpanel');
-                if(!grid.store || !LABKEY.ext4.Util.hasStoreLoaded(grid.store))
-                    return;
-
-                var cellEditing = grid.getPlugin('cellediting');
-                if(cellEditing)
-                    cellEditing.completeEdit();
-
-                var model = grid.store.createModel({});
-                grid.store.insert(0, [model]); //add a blank record in the first position
-            }
-        }, config);
-    },
-    DELETERECORD: function(config){
-        return Ext.Object.merge({
-            text: 'Delete Records',
-            tooltip: 'Click to delete selected rows',
-            handler: function(btn){
-                var grid = btn.up('gridpanel');
-                var selections = grid.getSelectionModel().getSelection();
-
-                if(!grid.store || !selections || !selections.length)
-                    return;
-
-                grid.store.remove(selections);
-            }
-        }, config);
-    },
-    SUBMIT: function(config){
-        return Ext.Object.merge({
-            text: 'Submit',
-            formBind: true,
-            handler: function(btn, key){
-                var panel = btn.up('gridpanel');
-                panel.store.on('write', function(store, success){
-                    Ext.Msg.alert("Success", "Your upload was successful!", function(){
-                        window.location = btn.successURL || LABKEY.ActionURL.buildURL('query', 'executeQuery', null, {schemaName: this.store.schemaName, 'query.queryName': this.store.queryName})
-                    }, panel);
-                }, this);
-                panel.store.sync();
-            }
-        }, config);
-    },
-    CANCEL: function(config){
-        return Ext.Object.merge({
-            text: 'Cancel',
-            handler: function(btn, key){
-                window.location = btn.returnURL || LABKEY.ActionURL.getParameter('srcURL') || LABKEY.ActionURL.buildURL('project', 'begin')
-            }
-        }, config)
-    }
-};
