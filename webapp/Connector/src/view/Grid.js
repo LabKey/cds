@@ -657,6 +657,7 @@ Ext.define('Connector.view.Grid', {
     showLimitMessage : function(max) {
 
         var msg = 'The app only shows up ' + max + ' rows. Export to see all data.';
+        var msgKey = 'GRID_LIMIT';
 
         var exportId = Ext.id();
         var exportText = '<a id="' + exportId + '">Export</a>';
@@ -666,6 +667,13 @@ Ext.define('Connector.view.Grid', {
         var dismissText = '<a id="' + dismissId + '">Dismiss</a>';
         msg += ' ' + dismissText;
 
-        this.showMessage(msg);
+        var shown = this.sessionMessage(msgKey, msg);
+        if (shown) {
+            Ext.get(exportId).on('click', this.requestExport, this);
+            Ext.get(dismissId).on('click', function() {
+                this.showmsg = true; this.hideMessage();
+                Connector.getService('Messaging').block(msgKey);
+            }, this);
+        }
     }
 });

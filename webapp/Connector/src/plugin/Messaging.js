@@ -23,6 +23,7 @@ Ext.define('Connector.plugin.Messaging', {
             deferMessage: this.deferMessage,
             hideMessage: this.hideMessage,
             showMessage: this.showMessage,
+            sessionMessage: this.sessionMessage,
             deferMessageTask: this.deferMessageTask
         });
     },
@@ -75,6 +76,7 @@ Ext.define('Connector.plugin.Messaging', {
     },
 
     showMessage : function(msg, force, keep, modal) {
+        var shown = false;
         if (this.showmsg || force) {
             this.clearMessage();
 
@@ -101,6 +103,17 @@ Ext.define('Connector.plugin.Messaging', {
                 modal: modal === true,
                 scope: this
             });
+
+            shown = true;
         }
+
+        return shown;
+    },
+
+    sessionMessage : function(key, msg) {
+        if (Ext.isString(key) && Connector.getService('Messaging').isAllowed(key)) {
+            return this.showMessage(msg);
+        }
+        return false;
     }
 });
