@@ -601,24 +601,33 @@ Ext.define('Connector.view.Grid', {
             var model = this.getModel();
 
             var exportParams = {
-                "schemaName": [model.get('schemaName')],
+                schemaName: [model.get('schemaName')],
                 "query.queryName": [model.get('queryName')],
-                "query.showRows": ["ALL"]
+                "query.showRows": ["ALL"],
+                columnNames: [],
+                columnAliases: []
             };
 
             // apply filters
-            var filters = model.getFilterArray(true);
-            Ext.each(filters, function(filter) {
+            Ext.each(model.getFilterArray(true), function(filter) {
                 exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
             });
 
+            // spply sorts
+            var sort = '', sep = '';
+            Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
+                sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
+                sep = ',';
+            });
+            if (!Ext.isEmpty(sort)) {
+                exportParams["query.sort"] = sort;
+            }
+
             // issue 20850: set export column headers to be "Dataset - Variable"
-            exportParams["columnNames"] = [];
-            exportParams["columnAliases"] = [];
             Ext.each(this.getGrid().getColumnsConfig(), function(colGroup){
                 Ext.each(colGroup.columns, function(col){
-                    exportParams["columnNames"].push(col.dataIndex);
-                    exportParams["columnAliases"].push(colGroup.text + " - " + col.header);
+                    exportParams.columnNames.push(col.dataIndex);
+                    exportParams.columnAliases.push(colGroup.text + " - " + col.header);
                 });
             });
 
