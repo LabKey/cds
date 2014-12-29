@@ -19,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
+import org.labkey.test.pages.DataGridVariableSelector;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -64,9 +64,9 @@ public class CDSHelper
     @LogMethod(quiet = true)
     public void pickSort(@LoggedParam String sortBy)
     {
-        _test.click(Locator.css(".sortDropdown"));
-        _test.waitAndClick(Locator.xpath("//span[text()='" + sortBy + "' and contains(@class, 'x-menu-item-text')]"));
-        _test.waitForElement(Locator.css("span.sorttype").withText(sortBy.toUpperCase()));
+        _test.click(Locator.id("sae-hierarchy-dropdown"));
+        _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+        _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
     }
 
     public void pickSort(String sort, String waitValue)
@@ -77,8 +77,8 @@ public class CDSHelper
 
     public void pickDimension(String dimension)
     {
-        _test.click(Locators.cdsDropDownButtonLocator("dimselectdrop"));
-        _test.waitAndClick(Locator.xpath("//span[@class='x-menu-item-text' and text()='" + dimension + "']"));
+        _test.click(Locators.dimensionHeaderLocator(dimension));
+        _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
 
     public void waitForFilterAnimation()
@@ -234,7 +234,7 @@ public class CDSHelper
         _test.waitForElement(loc);
         _test.click(loc);
         _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
-        _test.waitForElement(Locator.css(".dimgroup").withText(byNoun));
+        _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
     }
 
     public void hideEmpty()
@@ -264,7 +264,7 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
-        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-header-container");
+        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
         Locator.XPathLocator activeHeader = header.withClass("active");
 
@@ -366,10 +366,10 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withText("Learn About...")),
-        SUMMARY("Find subjects", Locator.tagWithClass("div", "titlepanel").withText("find subjects...")),
+        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("Learn about..."))),
+        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects based on their characteristics")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
-        GRID("View data grid", Locator.tagWithClass("div", "titlepanel").withText("view data grid"));
+        GRID("View data grid", DataGridVariableSelector.titleLocator);
 
         private String _linkText;
         private Locator.XPathLocator _expectedElement;
@@ -459,6 +459,16 @@ public class CDSHelper
         public static Locator.XPathLocator infoPaneSortButtonLocator()
         {
             return Locator.tagWithClass("button", "ipdropdown");
+        }
+
+        public static Locator.XPathLocator dimensionHeaderLocator(String dimension)
+        {
+            return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "lhdv").withText(dimension));
+        }
+
+        public static Locator.XPathLocator activeDimensionHeaderLocator(String dimension)
+        {
+            return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "active").withText(dimension));
         }
     }
 }

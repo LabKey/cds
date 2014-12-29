@@ -23,8 +23,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
-    private int columnCount = 0;
-    private Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withText("view data grid");
+    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("View data grid"));
 
     public DataGridVariableSelector(BaseWebDriverTest test)
     {
@@ -45,18 +44,13 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public Locator getOpenButton()
     {
-        return CDSHelper.Locators.cdsButtonLocator("choose from " + columnCount +" columns", "gridcolumnsbtn");
+        return CDSHelper.Locators.cdsButtonLocator("select columns", "gridcolumnsbtn");
     }
 
     @Override
     protected boolean isMeasureMultiSelect()
     {
         return true;
-    }
-
-    public void setColumnCount(int columnCount)
-    {
-        this.columnCount = columnCount;
     }
 
     public void addGridColumn(String source, String measure, boolean keepOpen, boolean keepSelection)

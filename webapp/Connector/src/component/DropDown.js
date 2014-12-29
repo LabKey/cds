@@ -17,7 +17,7 @@ Ext.define('Connector.component.DropDown', {
 
     constructor: function(config) {
 
-        this.comboItem = Ext.apply({}, this.comboConfig, {
+        this.comboItem = Ext.apply({}, config.comboConfig, {
             queryMode: 'local',
             valueField: config.valueField,
             displayField: config.displayField,

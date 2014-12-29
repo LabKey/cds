@@ -37,7 +37,8 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                     xtype: 'actiontitle',
                     text: 'Find subjects by...'
                 },{
-                    xtype: 'explorerheaderdataview'
+                    xtype: 'explorerheaderdataview',
+                    cls: 'dim-selector'
                 },{
                     // This allows for the following items to be bottom aligned
                     xtype: 'box',
@@ -61,7 +62,10 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                                 model: 'Connector.model.Hierarchy'
                             },
                             valueField: 'name',
-                            displayField: 'label'
+                            displayField: 'label',
+                            comboConfig: {
+                                name: 'sae-hierarchy'
+                            }
                         },
                         {xtype: 'box', autoEl: { tag: 'div' }, flex: 1},
                         {

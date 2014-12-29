@@ -26,7 +26,6 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.CustomModules;
-import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.DataGridSelector;
 import org.labkey.test.pages.DataGridVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
@@ -604,15 +603,11 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyGrid()
     {
         log("Verify Grid");
-        final int COLUMN_COUNT = 119;
 
         DataGridSelector grid = new DataGridSelector(this);
-
         DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
-        gridColumnSelector.setColumnCount(COLUMN_COUNT);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
-        waitForText("choose from " + COLUMN_COUNT + " columns");
 
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
@@ -769,14 +764,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public void verifyFilters()
     {
         log("Verify multi-select");
-        Locator dimensionGroup = Locator.css("div.dimgroup");
-        Locator dimensionSort = Locator.css("div.dimensionsort");
+        Locator hierarchySelector = Locator.input("sae-hierarchy");
 
         // 14910
         cds.goToSummary();
         waitAndClick(Locator.linkWithText("types"));
-        waitForElement(dimensionGroup.withText("Assays"));
-        waitForElement(dimensionSort.withText("SORTED BY: TYPE"));
+        waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Assays"));
+        waitForFormElementToEqual(hierarchySelector, "Type");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         waitForElementToDisappear(CDSHelper.Locators.barLabel.withText(CDSHelper.EMPTY_ASSAY));
         cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
@@ -877,50 +871,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Test
-    @Ignore("Single Noun Pages NYI")
-    public void verifyNounPages()
-    {
-        // placeholder pages
-        cds.clickBy("Assay antigens");
-        cds.pickSort("Tier", "1A");
-        cds.toggleExplorerBar("1A");
-        _asserts.assertNounInfoPage("MW965.26", Arrays.asList("Clade", "Tier", "MW965.26", "U08455"));
-        _asserts.assertNounInfoPage("SF162.LS", Arrays.asList("Clade", "Tier", "SF162.LS", "EU123924"));
-        cds.toggleExplorerBar("1B");
-        _asserts.assertNounInfoPage("ZM109F.PB4", Arrays.asList("Zambia", "Tier", "AY424138"));
-
-        cds.goToSummary();
-        cds.clickBy("Studies");
-        _asserts.assertNounInfoPage(CDSHelper.STUDIES[0], Arrays.asList("Igra M", "Fitzsimmons K", "Trial", "LabKey"));
-        _asserts.assertNounInfoPage(CDSHelper.STUDIES[1], Arrays.asList("Bellew M", "Arnold N", "Observational", "CHAVI"));
-        _asserts.assertNounInfoPage(CDSHelper.STUDIES[3], Arrays.asList("Piehler B", "Lum K", "Trial", "USMHRP"));
-
-        cds.goToSummary();
-        cds.clickBy("Assays");
-
-        AssayDetailsPage labResults = AssayDetailsPage.labResults(this);
-        _asserts.verifyAssayInfo(labResults);
-
-        AssayDetailsPage adccFerrari = AssayDetailsPage.adccFerrari(this);
-        _asserts.verifyAssayInfo(adccFerrari);
-
-        AssayDetailsPage luminexSampleLabKey = AssayDetailsPage.luminexSampleLabKey(this);
-        _asserts.verifyAssayInfo(luminexSampleLabKey);
-
-        AssayDetailsPage mrnaAssay = AssayDetailsPage.mrnaAssay(this);
-        _asserts.verifyAssayInfo(mrnaAssay);
-
-        AssayDetailsPage nabSampleLabKey = AssayDetailsPage.nabSampleLabKey(this);
-        _asserts.verifyAssayInfo(nabSampleLabKey);
-
-        cds.goToSummary();
-        cds.clickBy("Study products");
-
-        _asserts.assertVaccineTypeInfoPage("VRC-HIVADV014-00-VP", "The recombinant adenoviral vector product VRC-HIVADV014-00-VP (Ad5)");
-        _asserts.assertVaccineTypeInfoPage("VRC-HIVDNA016-00-VP", "VRC-HIVDNA016-00-VP is manufactured by Vical Incorporated");
-    }
-
-    @Test
     public void testLearnAboutStudies()
     {
         cds.viewLearnAboutPage("Studies");
@@ -960,19 +910,18 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Test
     public void testSummaryPageSingleAxisLinks()
     {
-        Locator dimensionGroup = Locator.css("div.dimgroup");
-        Locator dimensionSort = Locator.css("div.dimensionsort");
+        Locator hierarchySelector = Locator.input("sae-hierarchy");
 
         cds.goToSummary();
         waitAndClick(Locator.linkWithText("races & subtypes"));
-        waitForElement(dimensionGroup.withText("Subject characteristics"));
-        waitForElement(dimensionSort.withText("SORTED BY: RACE & SUBTYPE"));
+        waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Subject characteristics"));
+        waitForFormElementToEqual(hierarchySelector, "Race & Subtype");
         cds.goToSummary();
         sleep(250);
 
         waitAndClick(Locator.linkWithText("countries"));
-        waitForElement(dimensionGroup.withText("Subject characteristics"));
-        waitForElement(dimensionSort.withText("SORTED BY: COUNTRY"));
+        waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Subject characteristics"));
+        waitForFormElementToEqual(hierarchySelector, "Country");
         cds.goToSummary();
     }
 

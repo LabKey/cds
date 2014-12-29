@@ -334,6 +334,7 @@ Ext.define('Connector.view.LearnHeader', {
                 items: [{
                     xtype: 'learnheaderdataview',
                     itemId: 'headerdataview',
+                    cls: 'learn-selector',
                     dimensions: this.dimensions
                 }, {
                     xtype: 'textfield',
