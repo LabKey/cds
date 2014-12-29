@@ -109,4 +109,15 @@ public class DataGridSelector
         String displayText = "Row Count: " + count;
         _test.waitForElement(Locator.id("gridrowcount").withText(displayText));
     }
+
+    public void assertSortPresent(String columnName)
+    {
+        _test.waitForElement(Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName));
+    }
+
+    public void sort(String columnName)
+    {
+        _test.click(columnHeaderLocator(columnName));
+        assertSortPresent(columnName);
+    }
 }

@@ -291,7 +291,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
-        _asserts.assertFilterStatusCounts(10,1,2);
+        _asserts.assertFilterStatusCounts(10, 1, 2);
 
         //
         // update the current filter
@@ -488,12 +488,12 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         clickFolder("NotCHAVI001");
         _permissionsHelper.enterPermissionsUI();
         _permissionsHelper.uncheckInheritedPermissions();
-        clickButton("Save",0);
+        clickButton("Save", 0);
 
         //This is the workaround for issue 20329
         sleep(1000);
         _permissionsHelper.uncheckInheritedPermissions();
-        clickButton("Save",0);
+        clickButton("Save", 0);
 
         waitForElement(Locator.permissionRendered());
         _securityHelper.setProjectPerm("PermGroup1", "Reader");
@@ -678,15 +678,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.waitForCount(443);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
-//        log("update a column filter that already has a filter");
-//        grid.setFacet("Race", "Black");
-//        grid.waitForCount(1000);
-//        _asserts.assertFilterStatusCounts(27, 2, 3);
-
-//        log("Ensure filtering goes away when column does");
-//        gridColumnSelector.removeLookupColumn("NAb", "Lab", "PI");
-//        grid.waitForCount(128);
-
         grid.setFilter("Point IC50", "Is Greater Than", "60");
         grid.waitForCount(2);
         grid.clearFilters("Race");
@@ -696,6 +687,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.clearFilters("PI");
         grid.waitForCount(1000);
         assertTextPresent("All subjects"); // ensure there are no app filters remaining
+
+        grid.sort("Lab");
+        gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
+        grid.assertSortPresent("Lab");
     }
 
     @Test
