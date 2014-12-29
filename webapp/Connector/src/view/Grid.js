@@ -24,6 +24,11 @@ Ext.define('Connector.view.Grid', {
 
     initComponent : function() {
 
+        // At times the store can be completely replaced for a given grid. When this occurs we want to
+        // maintain the sorts that appeared on the previous store instance. They are temporarily stored
+        // on this property.
+        this.sorters = undefined;
+
         this.columnMap = {};
 
         this.items = [
@@ -195,6 +200,19 @@ Ext.define('Connector.view.Grid', {
         var prevGridId = this.grid ? this.grid.getId() : null;
 
         // reset the grid and column mapping
+        if (prevGridId != null) {
+            var sorters = this.grid.getStore().getSorters();
+            if (!Ext.isEmpty(sorters)) {
+                this.sorters = sorters;
+            }
+            else {
+                this.sorters = undefined;
+            }
+        }
+        else {
+            this.sorters = undefined;
+        }
+
         this.grid = null;
         this.columnMap = {};
 
@@ -386,14 +404,21 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel();
         var maxRows = Connector.model.Grid.getMaxRows();
 
-        var store = Ext.create('LABKEY.ext4.data.Store', {
+        var config = {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
             columns: model.get('columnSet'),
             filterArray: model.getFilterArray(true),
             maxRows: maxRows,
             remoteSort: true
-        });
+        };
+
+        if (Ext.isDefined(this.sorters)) {
+            config['sorters'] = this.sorters;
+            this.sorters = undefined;
+        }
+
+        var store = Ext.create('LABKEY.ext4.data.Store', config);
 
         store.on('beforeload', function(){
             this.fireEvent('showload', this);
