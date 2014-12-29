@@ -59,7 +59,7 @@ public class CDSModule extends DefaultModule
         return new ArrayList<WebPartFactory>(Arrays.asList(
                 new BaseWebPartFactory("CDS Management") {
                     @Override
-                    public WebPartView getWebPartView(ViewContext portalCtx, Portal.WebPart webPart) throws Exception
+                    public WebPartView getWebPartView(@NotNull ViewContext portalCtx, @NotNull Portal.WebPart webPart)
                     {
                         JspView view = new JspView("/org/labkey/cds/view/begin.jsp");
                         view.setTitle("CDS Management");
