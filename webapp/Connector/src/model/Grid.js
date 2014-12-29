@@ -253,12 +253,10 @@ Ext.define('Connector.model.Grid', {
         // set the wrapped default measures
         var wrapped = [];
         Ext.each(defaultMeasures, function(measure) {
-            var w = {
+            wrapped.push({
                 measure: measure,
                 time: 'date'
-            };
-
-            wrapped.push(w);
+            });
         });
         this.set('defaultMeasures', wrapped);
     },

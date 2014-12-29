@@ -213,11 +213,13 @@ Ext.define('Connector.view.Grid', {
         }, this, {single: true});
     },
 
-    onFilterChange : function(model, filterArray) {
-        if (this.grid) {
-            this.getGrid().getStore().filterArray = model.getFilterArray(true);
-            this.getGrid().getStore().load();
-            this.applyFilterColumnState(this.getGrid());
+    onFilterChange : function(model) {
+        var grid = this.getGrid();
+        if (grid) {
+            var store = grid.getStore();
+            store.filterArray = model.getFilterArray(true);
+            store.load();
+            this.applyFilterColumnState(grid);
         }
     },
 
