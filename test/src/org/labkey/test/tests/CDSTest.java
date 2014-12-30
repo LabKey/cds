@@ -609,6 +609,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
+        waitForText("Export to see all data."); // grid warning
+
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab");
