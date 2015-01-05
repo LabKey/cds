@@ -115,7 +115,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Lab Results", "CD4");
         xaxis.confirmSelection();
-        waitForElement(Locator.css(".curseltitle").containing("Y AXIS"));
+        waitForElement(Locator.css(".curseltitle").containing("for the Y Axis"));
         yaxis.pickMeasure("Lab Results", "Lymphocytes");
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
