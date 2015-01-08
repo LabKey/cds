@@ -29,6 +29,7 @@
         <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
 
         <!-- App API Dependencies -->
+        <script path="../../../internal/explodedModule/web/app/Application.js"/>
         <script path="../../../internal/explodedModule/web/app/State.js"/>
         <script path="../../../internal/explodedModule/web/app/HttpInterceptor.js"/>
         <script path="../../../internal/explodedModule/web/app/Messaging.js"/>

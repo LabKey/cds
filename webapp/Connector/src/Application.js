@@ -6,7 +6,7 @@
 Ext.define('Connector.Application', {
     name: 'Connector',
 
-    extend: 'Ext.app.Application',
+    extend: 'LABKEY.app.Application',
 
     requires: [
         'Connector.app.model.Assay',
@@ -71,17 +71,6 @@ Ext.define('Connector.Application', {
                 return this.getState.apply(me, arguments);
             };
         }
-    },
-
-    getService : function(name) {
-        // For now, just ask controllers who have the 'isService' flag.
-        var service = this.getController(name);
-
-        if (service && service.isService === true) {
-            return service;
-        }
-
-        return undefined;
     },
 
     getState : function() {

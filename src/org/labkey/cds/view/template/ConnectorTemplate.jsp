@@ -93,6 +93,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
 
     <!-- App API Dependencies -->
+    <script type="text/javascript" src="<%=text(contextPath)%>/app/Application.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/HttpInterceptor.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Messaging.js"></script>
