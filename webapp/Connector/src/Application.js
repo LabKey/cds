@@ -75,5 +75,9 @@ Ext.define('Connector.Application', {
 
     getState : function() {
         return this.getService('State');
+    },
+
+    setDataSource : function(datasource) {
+        this.getState().setDataSource(datasource);
     }
 });

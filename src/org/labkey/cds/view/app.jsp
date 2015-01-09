@@ -16,13 +16,10 @@
  */
 %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
-<%
-    String contextPath = request.getContextPath();
-%>
 <!-- Required for Ext.history -->
 <form id="history-form" class="x-hide-display">
     <input type="hidden" id="x-history-field" value="">
-    <iframe id="x-history-frame"></iframe>
+    <iframe id="x-history-frame" style="border: none;"></iframe>
 </form>
 <noscript>
     Sorry! Your browser does not support Javascript. Javascript is required for the HIV Data Connector.
