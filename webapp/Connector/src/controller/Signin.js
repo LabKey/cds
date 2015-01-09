@@ -38,45 +38,34 @@ Ext.define('Connector.controller.Signin', {
     },
 
     createView : function(xtype, context) {
-        var c = { ctx: context };
-        var type;
-        var v;
+        var c = { ctx: context }, v;
 
         switch (xtype) {
-        case 'signin':
-            type = 'Connector.view.Signin';
+            case 'signin':
 
-            Ext.applyIf(c, {
-                ui: 'custom',
-                state: this.getStateManager()
-            });
+                v = Ext.create('Connector.view.Signin', c);
 
-            v = Ext.create(type, c);
+                v.on('userSignedIn', function() { window.location.reload(); });
 
-            v.on('userSignedIn', function() {
-                // Start loading
-                this.application.olap.load();
-                window.location.reload();
-            }, this);
-            break;
-        case 'terms':
-            var header = Ext.create('Connector.view.PageHeader', {
-                data: {
-                    title: "Full Terms of Use Agreement: HIV Collaborative DataSpace",
-                    buttons: {
-                        back: true
-                    },
-                    scope: this
-                }
-            });
+                break;
+            case 'terms':
+                var header = Ext.create('Connector.view.PageHeader', {
+                    data: {
+                        title: "Full Terms of Use Agreement: HIV Collaborative DataSpace",
+                        buttons: {
+                            back: true
+                        },
+                        scope: this
+                    }
+                });
 
-            v = Ext.create('Connector.view.Page', {
-                contentViews: [Ext.create('Connector.view.TermsOfUse', {})],
-                header: header,
-                pageID: 'terms'
-            });
+                v = Ext.create('Connector.view.Page', {
+                    contentViews: [ Ext.create('Connector.view.TermsOfUse', {}) ],
+                    header: header,
+                    pageID: 'terms'
+                });
 
-            break;
+                break;
         }
 
         return v;

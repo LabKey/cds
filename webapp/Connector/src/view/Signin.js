@@ -202,7 +202,6 @@ Ext.define('Connector.view.Signin', {
 
     ui: 'custom',
 
-
     items: [{
     	xtype: 'container',
     	cls: 'signin-left',
