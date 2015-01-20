@@ -567,10 +567,10 @@ public class CDSController extends SpringActionController
         @Override
         public ApiResponse execute(StateForm form, BindException errors) throws Exception
         {
-            Map<String,String> properties = PropertyManager.getWritableProperties(getUser(), getContainer(), form.getCategory(), true);
+            PropertyManager.PropertyMap properties = PropertyManager.getWritableProperties(getUser(), getContainer(), form.getCategory(), true);
             properties.clear();
             properties.putAll(form.getProperties());
-            PropertyManager.saveProperties(properties);
+            properties.save();
 
             JSONObject ret = new JSONObject();
             ret.put("success", true);
