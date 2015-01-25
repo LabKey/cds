@@ -1,6 +1,9 @@
 <libraries xmlns="http://labkey.org/clientLibrary/xml/">
     <library compileInProductionMode="true">
 
+        <!-- jQuery Dependency -->
+        <script path="../../../internal/explodedModule/web/internal/jQuery/jquery-1.11.2.min.js"/>
+
         <!-- ExtJS Dependencies -->
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-all.js"/>
         <script path="../../../../staging/labkeyWebapp/ext-4.2.1/ext-patches.js"/>
