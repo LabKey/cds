@@ -156,6 +156,7 @@ Ext.Loader.addClassPathMappings({
   "Ext": "ext/src",
   "Ext.Msg": "ext/src/window/MessageBox.js",
   "Ext.rtl.EventObjectImpl": "ext/src/rtl/EventObject.js",
+  "LABKEY": "../../../../internal/webapp",
   "LABKEY.app.constant": "../../../../internal/webapp/app/State.js",
   "LABKEY.app.controller.AbstractViewController": "../../../../internal/webapp/app/AbstractViewController.js",
   "LABKEY.app.controller.HttpInterceptor": "../../../../internal/webapp/app/HttpInterceptor.js",
@@ -1140,6 +1141,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.window.Window": [
     "Ext.Window"
   ],
+  "LABKEY.app.Application": [],
   "LABKEY.app.constant": [],
   "LABKEY.app.controller.AbstractViewController": [],
   "LABKEY.app.controller.HttpInterceptor": [],
@@ -1153,7 +1155,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "LABKEY.app.model.State": [],
   "LABKEY.app.panel.MeasurePicker": [],
   "LABKEY.app.plugin.LoadingMask": [],
-  "LABKEY.app.store.OlapExplorer": [],
+  "LABKEY.app.store.OlapExplorer": [
+    "LABKEY.olapStore"
+  ],
   "LABKEY.app.view.OlapExplorer": [],
   "LABKEY.app.view.Selection": [],
   "Statistics": [],
@@ -2430,6 +2434,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.window.Window": [
     "widget.window"
   ],
+  "LABKEY.app.Application": [],
   "LABKEY.app.constant": [],
   "LABKEY.app.controller.AbstractViewController": [],
   "LABKEY.app.controller.HttpInterceptor": [],

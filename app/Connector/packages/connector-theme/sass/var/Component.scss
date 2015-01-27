@@ -335,28 +335,13 @@ div.emptytext {
   }
 
   .logoContainer {
-    position: relative;
-    left: 50%;
-    width: 500px;
-    margin: 25px 0px 25px -250px;
-    height: 90px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 650px;
 
     img {
-      position: absolute;
-      top: 0px;
-    }
-
-    .logo1 {
-      left: 0px;
-    }
-
-    .logo2 {
-      left: 50%;
-      margin-left: -10px;
-    }
-
-    .logo3 {
-      right: 10px;
+      height: 300px;
+      width: 620px;
     }
   }
 }
