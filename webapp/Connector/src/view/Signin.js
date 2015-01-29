@@ -79,7 +79,7 @@ Ext.define('Connector.view.SigninForm', {
 	    }),
 
     constructor : function(config) {
-        this.callParent(config);
+        this.callParent([config]);
         this.addEvents('userSignedIn');
     },
 
@@ -90,14 +90,15 @@ Ext.define('Connector.view.SigninForm', {
 			email : Ext.util.Cookies.get(this.COOKIE_EMAIL) || ''
 		};
 
-        var msgs = Connector.getService('Messaging').popMessages(), sep = '';
-
-        Ext.each(msgs, function(msg) {
-            if (Ext.isEmpty(this.context.error)) {
-                this.context.error = '';
-            }
-            this.context.error += sep + msg.message; sep = '\n';
-        }, this);
+        var hasMsg = !Ext.isEmpty(this.msgs), sep = '';
+        if (hasMsg) {
+            Ext.each(this.msgs, function(msg) {
+                if (Ext.isEmpty(this.context.error)) {
+                    this.context.error = '';
+                }
+                this.context.error += sep + msg.message; sep = '\n';
+            }, this);
+        }
 
         this.data = this.context;
 
@@ -202,24 +203,30 @@ Ext.define('Connector.view.Signin', {
 
     ui: 'custom',
 
-    items: [{
-    	xtype: 'container',
-    	cls: 'signin-left',
-    	layout: {
-    		type: 'vbox',
-    		align: 'stretch'
-    	},
-    	flex: 1,
-    	items: [{
-    		xtype: 'homeheader'
-    	}, {
-	    	xtype: 'about',
-	    	cls: 'auto-scroll-y',
-	    	flex: 1
-	    }]
-    }, {
-    	xtype: 'signinform'
-    }],
+    initComponent : function() {
+
+        this.items = [{
+            xtype: 'container',
+            cls: 'signin-left',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            flex: 1,
+            items: [{
+                xtype: 'homeheader'
+            }, {
+                xtype: 'about',
+                cls: 'auto-scroll-y',
+                flex: 1
+            }]
+        },{
+            xtype: 'signinform',
+            msgs: this.msgs
+        }];
+
+        this.callParent();
+    },
 
     afterRender : function() {
     	this.callParent();

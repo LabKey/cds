@@ -16,6 +16,7 @@ Ext.define('Connector.controller.Signin', {
         });
 
         /* Flag that is true when an unauthorized request has been handled */
+        var MSG_KEY = 'SIGNIN';
         this.BAD_AUTH = false;
         var me = this;
 
@@ -24,7 +25,7 @@ Ext.define('Connector.controller.Signin', {
             me.BAD_AUTH = true;
             Ext.Ajax.abortAll();
             LABKEY.user.isSignedIn = false;
-            Connector.getService('Messaging').pushMessage('Your session has timed out. Please login to continue.');
+            Connector.getService('Messaging').pushMessage(MSG_KEY, 'Your session has timed out. Please login to continue.');
             window.location.reload();
             return false;
         });
@@ -35,6 +36,9 @@ Ext.define('Connector.controller.Signin', {
         });
 
         this.callParent();
+
+        /* Ensure that we clear out the messaging each time the app loads to avoid showing stale messages */
+        this._msgs = Connector.getService('Messaging').popMessages(MSG_KEY);
     },
 
     createView : function(xtype, context) {
@@ -43,6 +47,7 @@ Ext.define('Connector.controller.Signin', {
         switch (xtype) {
             case 'signin':
 
+                c.msgs = this._msgs;
                 v = Ext.create('Connector.view.Signin', c);
 
                 v.on('userSignedIn', function() { window.location.reload(); });
