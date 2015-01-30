@@ -680,7 +680,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
     private String getPointProperty(String property, WebElement point)
     {
-        String titleAttribute = point.getAttribute("title");
+        String titleAttribute = point.findElement(By.cssSelector("title")).getText();
         String[] pointProperties = titleAttribute.split(",\n");
         Map<String, String> propertyMap = new HashMap<>();
 
