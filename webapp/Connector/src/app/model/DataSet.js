@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.app.model.DataSet', {
+Ext.define('Connector.app.model.Dataset', {
 
     extend : 'Ext.data.Model',
 
@@ -44,7 +44,7 @@ Ext.define('Connector.app.model.DataSet', {
     getAssayName : function() {
         var name = this.get('Name').value;
         var label = this.get('Label').value;
-        var store = this.store.dataSetStores[name] || this.store.dataSetStores[label];
+        var store = this.store.datasetStores[name] || this.store.datasetStores[label];
         var assay;
 
         if (store)
@@ -104,7 +104,7 @@ Ext.define('Connector.app.model.DataSet', {
 
         var name = this.get('Name').value;
         var label = this.get('Label').value;
-        var store = this.store.dataSetStores[name] || this.store.dataSetStores[label];
+        var store = this.store.datasetStores[name] || this.store.datasetStores[label];
 
         var countForAssay = 0;
         if (store)

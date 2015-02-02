@@ -3,13 +3,13 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.app.store.DataSet', {
+Ext.define('Connector.app.store.Dataset', {
 
     extend : 'Ext.data.Store',
 
-    model : 'Connector.app.model.DataSet',
+    model : 'Connector.app.model.Dataset',
 
-    dataSetStores : {},
+    datasetStores : {},
 
     // Start loading from another store
     startLoad : function() {
@@ -29,10 +29,10 @@ Ext.define('Connector.app.store.DataSet', {
         this.loadRawData(this.rawData);
     },
 
-    loadDataSets : function(data) {
+    loadDatasets : function(data) {
         this.rawData = data.rows;
 
-        this.dataSetStores = {};
+        this.datasetStores = {};
 
         this.startLoad();
 
@@ -40,7 +40,7 @@ Ext.define('Connector.app.store.DataSet', {
             var label = row.Label.value;
             var storeName = 'Connector.app.store.'+label;
             Ext.define(storeName, {
-                extend: 'Connector.app.store.DataSetData',
+                extend: 'Connector.app.store.DatasetData',
                 tableName: label
             });
             store = Ext.create(storeName);
@@ -51,7 +51,7 @@ Ext.define('Connector.app.store.DataSet', {
             });
             this.startLoad();
             store.load();
-            this.dataSetStores[label] = store;
+            this.datasetStores[label] = store;
         }, this);
 
         this.endLoad();
@@ -62,8 +62,8 @@ Ext.define('Connector.app.store.DataSet', {
             schemaName: Connector.studyContext.schemaName,
             queryName: 'DataSets',
             requiredVersion: 9.1,
-            columns: Ext.Array.pluck(Connector.app.model.DataSet.getFields(), "name").join(','),
-            success: this.loadDataSets,
+            columns: Ext.Array.pluck(Connector.app.model.Dataset.getFields(), "name").join(','),
+            success: this.loadDatasets,
             scope : this
         });
     }
