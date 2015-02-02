@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
-import org.labkey.api.action.NullSafeBindException;
 import org.labkey.api.data.ColumnInfo;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.JdbcType;
@@ -30,8 +29,7 @@ import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
-import org.labkey.api.study.DataSet;
-import org.springframework.validation.BindException;
+import org.labkey.api.study.Dataset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +42,14 @@ import java.util.List;
  */
 public class FactLoader
 {
-    private DataSet _sourceDataset;
+    private Dataset _sourceDataset;
     protected TableInfo _sourceTableInfo;
     protected final Container _container;
     protected User _user;
     protected ColumnMapper[] _colsToMap;
     protected int _rowsInserted = -1;
 
-    public FactLoader(UserSchema studySchema, DataSet sourceDataset, User user, Container c)
+    public FactLoader(UserSchema studySchema, Dataset sourceDataset, User user, Container c)
     {
         _sourceDataset = sourceDataset;
         _sourceTableInfo = studySchema.getTable(sourceDataset.getName());
@@ -144,7 +142,7 @@ public class FactLoader
         return _rowsInserted;
     }
 
-    public DataSet getSourceDataset()
+    public Dataset getSourceDataset()
     {
         return _sourceDataset;
     }

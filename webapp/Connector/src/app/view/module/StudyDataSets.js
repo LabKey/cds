@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.module.StudyDataSets', {
+Ext.define('Connector.view.module.StudyDatasets', {
 
     xtype : 'app.module.studydatasets',
 
@@ -17,11 +17,11 @@ Ext.define('Connector.view.module.StudyDataSets', {
             // Connector.constant.Templates.module.title,
             '<tpl if="values.categories">',
                 '<tpl for="categories">',
-                    '<tpl if="dataSets.length">',
+                    '<tpl if="datasets.length">',
                         '<div class="module">',
                             '<h3>{category}</h3>',
                             Connector.constant.Templates.module.availableDataLegend,
-                            '<tpl for="dataSets">',
+                            '<tpl for="datasets">',
                                 '<tpl if="values.hasDataFromStudy(parent.model.get(\'Label\'))">',
                                     '<div class="item-row">',
                                         '<div class="checkbox">',
@@ -53,12 +53,12 @@ Ext.define('Connector.view.module.StudyDataSets', {
         var study = data.model;
         var studyId = study.get('Label');
 
-        var store = StoreCache.getStore('Connector.app.store.DataSet');
+        var store = StoreCache.getStore('Connector.app.store.Dataset');
 
         var me = this;
 
-        function dataSetsLoaded(store, records) {
-            data.dataSets = records;
+        function datasetsLoaded(store, records) {
+            data.datasets = records;
             var categoriesById = {};
             data.categories = [];
             Ext.each(records, function(record) {
@@ -67,7 +67,7 @@ Ext.define('Connector.view.module.StudyDataSets', {
                     if (!categoriesById[category.value]) {
                         var o = {
                             category: category.displayValue,
-                            dataSets: [],
+                            datasets: [],
                             model: data.model
                         };
                         categoriesById[category.value] = o;
@@ -75,7 +75,7 @@ Ext.define('Connector.view.module.StudyDataSets', {
                     }
                     record.queryDataFromStudy(studyId, Ext.bind(function(hasData) {
                         if (record.hasDataFromStudy(studyId)) {
-                            categoriesById[category.value].dataSets.push(record);
+                            categoriesById[category.value].datasets.push(record);
                             this.update(data);
 
                             var assayName = record.getAssayName();
@@ -117,12 +117,12 @@ Ext.define('Connector.view.module.StudyDataSets', {
         }
 
         if (!store.data.length) {
-            store.on('load', dataSetsLoaded, this, {
+            store.on('load', datasetsLoaded, this, {
                 single: true
             });
             store.load();
         } else {
-            dataSetsLoaded(store, store.data.items);
+            datasetsLoaded(store, store.data.items);
         }
 
         this.callParent();

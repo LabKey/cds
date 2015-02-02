@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 <%@ page import="org.labkey.api.data.Container"%>
 <%@ page import="org.labkey.api.query.QueryService"%>
 <%@ page import="org.labkey.api.query.UserSchema" %>
-<%@ page import="org.labkey.api.study.DataSet" %>
+<%@ page import="org.labkey.api.study.Dataset" %>
 <%@ page import="org.labkey.api.study.Study" %>
 <%@ page import="org.labkey.api.study.StudyService" %>
 <%@ page import="org.labkey.api.study.StudyUrls" %>
@@ -35,7 +35,7 @@
     Container c = getContainer();
     Study study = StudyService.get().getStudy(c);
     PopulateBehavior behavior = (PopulateBehavior) this.getModelBean();
-    List<? extends DataSet> datasets = study.getDatasets();
+    List<? extends Dataset> datasets = study.getDatasets();
     List<String> selectedDatasets = context.getList("dataset");
     boolean selected = null != selectedDatasets && selectedDatasets.size() > 0;
     StudyUrls studyUrls = PageFlowUtil.urlProvider(StudyUrls.class);
@@ -55,7 +55,7 @@ to be filled in by another mechanism.<br>
 <%=this.formatErrorsForPath("form")%>
 <labkey:form method="post" id="populatecubeform">
 
-<% for(DataSet ds : datasets) {
+<% for(Dataset ds : datasets) {
     if (ds.isDemographicData())
         continue; //We don't populate fact table with demographic data. Assume all ptids already listed somehow
 %>

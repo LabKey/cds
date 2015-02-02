@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.app.store.DataSetData', {
+Ext.define('Connector.app.store.DatasetData', {
 
     extend : 'Ext.data.Store',
 
-    model : 'Connector.app.model.DataSetData',
+    model : 'Connector.app.model.DatasetData',
 
     loadData : function(data) {
 //        console.log("data.rows =",data.rows);

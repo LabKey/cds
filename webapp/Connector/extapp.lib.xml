@@ -183,16 +183,16 @@
         <script path="Connector/src/utility/StoreCache.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
-        <script path="Connector/src/app/model/DataSet.js"/>
-        <script path="Connector/src/app/model/DataSetData.js"/>
+        <script path="Connector/src/app/model/Dataset.js"/>
+        <script path="Connector/src/app/model/DatasetData.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
         <script path="Connector/src/app/model/Site.js"/>
         <script path="Connector/src/app/model/Study.js"/>
         <script path="Connector/src/app/model/StudyProducts.js"/>
 
         <script path="Connector/src/app/store/Assay.js"/>
-        <script path="Connector/src/app/store/DataSet.js"/>
-        <script path="Connector/src/app/store/DataSetData.js"/>
+        <script path="Connector/src/app/store/Dataset.js"/>
+        <script path="Connector/src/app/store/DatasetData.js"/>
         <script path="Connector/src/app/store/Labs.js"/>
         <script path="Connector/src/app/store/Site.js"/>
         <script path="Connector/src/app/store/Study.js"/>
@@ -215,7 +215,7 @@
         <script path="Connector/src/app/view/module/ProductOtherProducts.js"/>
         <script path="Connector/src/app/view/module/ProductStudies.js"/>
         <script path="Connector/src/app/view/module/StudyAssays.js"/>
-        <script path="Connector/src/app/view/module/StudyDataSets.js"/>
+        <script path="Connector/src/app/view/module/StudyDatasets.js"/>
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>
         <script path="Connector/src/app/view/module/StudySites.js"/>

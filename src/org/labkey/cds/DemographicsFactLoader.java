@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.labkey.api.query.QuerySettings;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
-import org.labkey.api.study.DataSet;
+import org.labkey.api.study.Dataset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class DemographicsFactLoader extends FactLoader
 {
     public static final String TABLE_NAME = "Demographics";
 
-    public DemographicsFactLoader(UserSchema studySchema, DataSet demographicsDataset, User user, Container c)
+    public DemographicsFactLoader(UserSchema studySchema, Dataset demographicsDataset, User user, Container c)
     {
         super(studySchema, demographicsDataset, user, c);
 
