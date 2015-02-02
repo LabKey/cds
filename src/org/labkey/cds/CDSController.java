@@ -54,7 +54,7 @@ import org.labkey.api.security.RequiresPermissionClass;
 import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
-import org.labkey.api.study.DataSet;
+import org.labkey.api.study.Dataset;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.util.URLHelper;
 import org.labkey.api.view.ActionURL;
@@ -240,20 +240,20 @@ public class CDSController extends SpringActionController
             //
             for (String dsName : selectedDatasets)
             {
-                DataSet dataSet = studyService.getDataset(c, studyService.getDatasetIdByName(c, dsName));
-                if (null == dataSet)
+                Dataset dataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, dsName));
+                if (null == dataset)
                 {
                     errors.reject(ERROR_MSG, "Could not find dataset: '" + dsName + "'. Ensure that this dataset is properly exposed at the project level.");
                     return false;
                 }
-                _factLoaders.add(new FactLoader(studySchema, dataSet, u, c));
+                _factLoaders.add(new FactLoader(studySchema, dataset, u, c));
             }
 
             //
             // Add any participants with no assay data to the cube...
             // Should be more robust in finding this dataset
             //
-            DataSet demographicsDataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, DemographicsFactLoader.TABLE_NAME));
+            Dataset demographicsDataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, DemographicsFactLoader.TABLE_NAME));
             if (null == demographicsDataset)
             {
                 errors.reject(ERROR_MSG, "Could not find dataset: '" + DemographicsFactLoader.TABLE_NAME + "'. It is required.");

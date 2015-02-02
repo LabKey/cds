@@ -244,16 +244,16 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DataSet.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DataSetData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DatasetData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DataSet.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DataSetData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Dataset.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DatasetData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
@@ -276,7 +276,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductOtherProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyAssays.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDataSets.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyDatasets.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>

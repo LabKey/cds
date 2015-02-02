@@ -46,12 +46,12 @@ Ext.define('Connector.view.module.AssayVariableList', {
     initComponent : function() {
         var data = this.data;
 
-        var store = StoreCache.getStore('Connector.app.store.DataSet');
+        var store = StoreCache.getStore('Connector.app.store.Dataset');
         var me = this;
 
         var assayName = data.model.get('Name');
 
-        function dataSetsLoaded(store, records) {
+        function datasetsLoaded(store, records) {
         	var assayData;
         	var queryCount = records.length;
             Ext.each(records, function(record) {
@@ -66,12 +66,12 @@ Ext.define('Connector.view.module.AssayVariableList', {
         }
 
         if (!store.data.length) {
-            store.on('load', dataSetsLoaded, this, {
+            store.on('load', datasetsLoaded, this, {
                 single: true
             });
             store.load();
         } else {
-            dataSetsLoaded.call(this, store, store.data.items);
+            datasetsLoaded.call(this, store, store.data.items);
         }
 
         this.callParent();
