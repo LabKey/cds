@@ -110,9 +110,9 @@ Ext.define('Connector.plugin.Messaging', {
         return shown;
     },
 
-    sessionMessage : function(key, msg) {
+    sessionMessage : function(key, msg, force) {
         if (Ext.isString(key) && Connector.getService('Messaging').isAllowed(key)) {
-            return this.showMessage(msg);
+            return this.showMessage(msg, force);
         }
         return false;
     }
