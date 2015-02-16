@@ -26,25 +26,22 @@ Ext.define('Connector.view.Variable', {
 
         this.callParent([config]);
 
-        this.addEvents(['requestvariable']);
+        this.addEvents('requestvariable');
     },
 
     initComponent : function() {
 
-        var modelComponent = {
+        if (this.model) {
+            this.setModel(this.model);
+        }
+
+        this.items = [{
             itemId: 'modelcomponent',
             xtype: 'box',
             cls: 'variable',
-            tpl: this.getModelTpl()
-        };
-
-        if (this.model) {
-            this.setModel(this.model);
-
-            modelComponent.data = this.data;
-        }
-
-        this.items = [modelComponent,{
+            tpl: this.getModelTpl(),
+            data: this.model ? this.data : undefined
+        },{
             xtype: 'button',
             itemId: 'cvbutton',
             cls: this.btnCls,
@@ -58,7 +55,7 @@ Ext.define('Connector.view.Variable', {
             hidden: true,
             vector: 29,
             cls: this.btnCls + ' ddbutton',
-            margin: '4 0 0 10',
+            margin: '12 0 0 10',
             handler: this.onBtnClick,
             scope: this
         }];
@@ -68,7 +65,7 @@ Ext.define('Connector.view.Variable', {
 
     getModelTpl : function() {
         return new Ext.XTemplate(
-            '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
+            '<h1 unselectable="on" style="vertical-align: super;">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
                 '<li>{schemaLabel:this.elipseEncode}</li>',
                 '<li>{[this.renderLabel(values)]}</li>',
@@ -124,7 +121,9 @@ Ext.define('Connector.view.Variable', {
     },
 
     onBtnClick : function() {
-        this.fireEvent('requestvariable', this, this.getModel());
+        if (!this.disabled) {
+            this.fireEvent('requestvariable', this, this.getModel());
+        }
     }
 });
 
@@ -137,7 +136,7 @@ Ext.define('Connector.panel.ColorSelector', {
 
     getModelTpl : function() {
         return new Ext.XTemplate(
-            '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
+            '<h1 unselectable="on" style="vertical-align: super;">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
                 '<li>{[this.renderLabel(values)]}</li>',
                 // The legend is always an nbsp on first render because we have to wait till after we get the data to
@@ -171,9 +170,10 @@ Ext.define('Connector.panel.ColorSelector', {
     },
 
     setLegend : function(legendData) {
-        var smallCanvas, bbox, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
+        CC = this;
+        var smallCanvas, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
 
-        Ext4.query('#color-legend')[0].innerHTML = ''; // Clear the current legend element.
+        Ext.get('color-legend').update(''); // Clear the current legend element.
 
         // issue 20541
         var iconSize = 18;
@@ -212,7 +212,6 @@ Ext.define('Connector.panel.ColorSelector', {
             this.windowCanvas = d3.select('#legend-window').append('svg');
         }
 
-        bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
         this.win.style.height = (8 + legendData.length * 20) + 'px';
 
         this.windowCanvas.attr('height', (8 + legendData.length * 20));

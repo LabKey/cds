@@ -144,15 +144,14 @@ Ext.define('Connector.view.Chart', {
             layout: {
                 type: 'hbox'
             },
-            defaults: {
+            items: [{
                 xtype: 'container',
                 width: '50%',
+                margin: '0 0 0 24',
                 layout: {
                     type: 'hbox',
-                    pack: 'center'
-                }
-            },
-            items: [{
+                    pack: 'start'
+                },
                 items: [{
                     id: 'yaxisselector',
                     xtype: 'variableselector',
@@ -162,6 +161,12 @@ Ext.define('Connector.view.Chart', {
                     })
                 }]
             },{
+                xtype: 'container',
+                width: '50%',
+                layout: {
+                    type: 'hbox',
+                    pack: 'end'
+                },
                 items: [{
                     id: 'colorselector',
                     xtype: 'colorselector',
@@ -562,8 +567,18 @@ Ext.define('Connector.view.Chart', {
             this.plot = null;
         }
 
+        var lastShowPointsAsBin = this.showPointsAsBin;
         this.showPointsAsBin = rows.length > this.binRowLimit;
-        this.showBinnedMessage();
+
+        // only call handlers when state has changed
+        if (lastShowPointsAsBin != this.showPointsAsBin) {
+            if (this.showPointsAsBin) {
+                this.onEnableBinning();
+            }
+            else {
+                this.onDisableBinning();
+            }
+        }
 
         if (noplot) {
             layer = this.getNoPlotLayer();
@@ -1312,28 +1327,49 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    showBinnedMessage : function() {
-        if (this.showPointsAsBin) {
-            var msgKey = 'PLOTBIN_LIMIT';
-            var learnId = Ext.id(), dismissId = Ext.id();
-            var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Dismiss</a>';
-            var shown = this.sessionMessage(msgKey, msg, true);
+    onEnableBinning : function() {
 
-            if (shown) {
-                var el = Ext.get(dismissId);
-                if (el) {
-                    el.on('click', function() {
-                        this.showmsg = true; this.hideMessage();
-                        Connector.getService('Messaging').block(msgKey);
-                    }, this, {single: true});
-                }
+        // Disable the color axis selector
+        Ext.getCmp('colorselector').disable();
 
-                el = Ext.get(learnId);
-                if (el) {
-                    /* Create the snazzy tooltip */
-                }
+        // Show binning message
+        var msgKey = 'PLOTBIN_LIMIT';
+        var learnId = Ext.id(), dismissId = Ext.id();
+        var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Dismiss</a>';
+        var shown = this.sessionMessage(msgKey, msg, true);
+
+        if (shown) {
+            var el = Ext.get(dismissId);
+            if (el) {
+                el.on('click', function() {
+                    this.showmsg = true; this.hideMessage();
+                    Connector.getService('Messaging').block(msgKey);
+                }, this, {single: true});
+            }
+
+            el = Ext.get(learnId);
+            if (el) {
+                el.on('click', function() {
+                    var limit = Ext.util.Format.number(this.binRowLimit, '0,000');
+                    hopscotch.getCalloutManager().createCallout({
+                        id: LABKEY.Utils.id(),
+                        target: document.querySelector('button.colorbtn'),
+                        placement: 'bottom',
+                        title: 'Heatmap mode',
+                        xOffset: -240, // assumes width of 280,
+                        arrowOffset: 235,
+                        content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
+                    });
+                    this.showmsg = true; this.hideMessage();
+                }, this);
             }
         }
+    },
+
+    onDisableBinning : function() {
+
+        // Enable the color axis selector
+        Ext.getCmp('colorselector').enable();
     },
 
     showPercentOverlapMessage : function(chartData) {
