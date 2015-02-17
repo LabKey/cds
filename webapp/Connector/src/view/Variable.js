@@ -166,19 +166,45 @@ Ext.define('Connector.panel.ColorSelector', {
         );
     },
 
-    showHover : function() {
-        var bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
-        this.win.style.top = (bbox.top + 40) + 'px';
-        this.win.style.left = (bbox.left - 130 + (bbox.width / 2)) + 'px';
-        this.win.style.display = '';
+    showHover : function(legendData) {
+        this.win = LABKEY.Utils.id();
+        hopscotch.getCalloutManager().createCallout({
+            id: this.win,
+            target: document.querySelector('#color-legend'),
+            placement: 'bottom',
+            xOffset: -100, // assumes width of 280,
+            arrowOffset: 'center',
+            content: '<div id="legend-window"></div>',
+            onShow: function() {
+                var windowCanvas = d3.select('#legend-window').append('svg');
+
+                windowCanvas.attr('height', (8 + legendData.length * 20));
+                var windowGlyphs = windowCanvas.selectAll('.legend-point').data(legendData);
+                windowGlyphs.enter().append('path').attr('class', 'legend-point');
+                windowGlyphs.exit().remove();
+                windowGlyphs.attr('d', function(d){return d.shape();})
+                        .attr('fill', function(d){return d.color;})
+                        .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
+
+                var windowLabels = windowCanvas.selectAll('.legend-text').data(legendData);
+                windowLabels.enter().append('text').attr('class', 'legend-text');
+                windowLabels.exit().remove();
+                windowLabels.text(function(d){return d.text})
+                        .attr('x', 25)
+                        .attr('y', function(d, i){return 13 + i * 20});
+            }
+        });
     },
 
     hideHover : function() {
-        this.win.style.display = 'none';
+        if (this.win) {
+            hopscotch.getCalloutManager().removeCallout(this.win);
+            this.win = undefined;
+        }
     },
 
     setLegend : function(legendData) {
-        var smallCanvas, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
+        var smallCanvas, glyphs, hoverRect, scope = this;
 
         Ext.get('color-legend').update(''); // Clear the current legend element.
 
@@ -202,39 +228,11 @@ Ext.define('Connector.panel.ColorSelector', {
                 .attr('fill-opacity', 0);
 
         hoverRect.on('mouseover', function(d){
-            scope.showHover.call(scope);
+            scope.showHover.call(scope, legendData);
         });
         hoverRect.on('mouseout', function(d){
             scope.hideHover.call(scope);
         });
-
-        if (!this.win) {
-            this.win = document.createElement('div');
-            this.win.setAttribute('id', 'legend-window');
-            this.win.setAttribute('class', 'arrow-window');
-            this.win.style.width = '250px';
-            this.win.style.padding = '5px';
-            this.win.style.display = 'none';
-            document.querySelector('body').appendChild(this.win);
-            this.windowCanvas = d3.select('#legend-window').append('svg');
-        }
-
-        this.win.style.height = (8 + legendData.length * 20) + 'px';
-
-        this.windowCanvas.attr('height', (8 + legendData.length * 20));
-        windowGlyphs = this.windowCanvas.selectAll('.legend-point').data(legendData);
-        windowGlyphs.enter().append('path').attr('class', 'legend-point');
-        windowGlyphs.exit().remove();
-        windowGlyphs.attr('d', function(d){return d.shape();})
-                .attr('fill', function(d){return d.color;})
-                .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
-
-        windowLabels = this.windowCanvas.selectAll('.legend-text').data(legendData);
-        windowLabels.enter().append('text').attr('class', 'legend-text');
-        windowLabels.exit().remove();
-        windowLabels.text(function(d){return d.text})
-                .attr('x', 25)
-                .attr('y', function(d, i){return 13 + i * 20});
     },
 
     onUpdateVariable : function(m) {
