@@ -1353,7 +1353,7 @@ Ext.define('Connector.view.Chart', {
                     var limit = Ext.util.Format.number(this.binRowLimit, '0,000');
                     hopscotch.getCalloutManager().createCallout({
                         id: LABKEY.Utils.id(),
-                        target: document.querySelector('button.colorbtn'),
+                        target: Ext.getCmp('colorselector').getActiveButton().getEl().dom,
                         placement: 'bottom',
                         title: 'Heatmap mode',
                         xOffset: -240, // assumes width of 280,

@@ -61,6 +61,8 @@ Ext.define('Connector.view.Variable', {
         }];
 
         this.callParent();
+
+        this.activeButton = this.getComponent('cvbutton');
     },
 
     getModelTpl : function() {
@@ -105,10 +107,12 @@ Ext.define('Connector.view.Variable', {
         var cv = this.getComponent('cvbutton');
         var dd = this.getComponent('ddbutton');
         if (haveLabel) {
+            this.activeButton = dd;
             cv.hide();
             dd.show();
         }
         else {
+            this.activeButton = cv;
             cv.show();
             dd.hide();
         }
@@ -124,6 +128,10 @@ Ext.define('Connector.view.Variable', {
         if (!this.disabled) {
             this.fireEvent('requestvariable', this, this.getModel());
         }
+    },
+
+    getActiveButton : function() {
+        return this.activeButton;
     }
 });
 
@@ -170,7 +178,6 @@ Ext.define('Connector.panel.ColorSelector', {
     },
 
     setLegend : function(legendData) {
-        CC = this;
         var smallCanvas, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
 
         Ext.get('color-legend').update(''); // Clear the current legend element.
