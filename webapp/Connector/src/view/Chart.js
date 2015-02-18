@@ -40,6 +40,14 @@ Ext.define('Connector.view.Chart', {
             hasStudyAxisData: false
         });
 
+        var params = LABKEY.ActionURL.getParameters();
+        if (Ext.isDefined(params['maxRows'])) {
+            var num = parseInt(params['maxRows']);
+            if (Ext.isNumber(num)) {
+                this.binRowLimit = num;
+            }
+        }
+
         this._ready = false;
         Connector.getService('Query').getDefaultMeasure(function(measure) {
             this.defaultMeasure = measure;
@@ -158,7 +166,11 @@ Ext.define('Connector.view.Chart', {
                     btnCls: 'yaxisbtn',
                     model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'y'
-                    })
+                    }),
+                    listeners: {
+                        requestvariable: this.onShowVariableSelection,
+                        scope: this
+                    }
                 }]
             },{
                 xtype: 'container',
@@ -173,7 +185,11 @@ Ext.define('Connector.view.Chart', {
                     btnCls: 'colorbtn',
                     model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'color'
-                    })
+                    }),
+                    listeners: {
+                        requestvariable: this.onShowVariableSelection,
+                        scope: this
+                    }
                 }]
             }]
         };
@@ -247,7 +263,11 @@ Ext.define('Connector.view.Chart', {
                     btnCls: 'xaxisbtn',
                     model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'x'
-                    })
+                    }),
+                    listeners: {
+                        requestvariable: this.onShowVariableSelection,
+                        scope: this
+                    }
                 },{
                     // FOR TESTING USE (add "_showPlotData" param to URL to show button)
                     id: 'plotshowdata',
@@ -258,6 +278,10 @@ Ext.define('Connector.view.Chart', {
                 }]
             }]
         };
+    },
+
+    onShowVariableSelection : function() {
+        this.fireEvent('hideload', this);
     },
 
     attachInternalListeners : function() {
@@ -568,6 +592,9 @@ Ext.define('Connector.view.Chart', {
         }
 
         var lastShowPointsAsBin = this.showPointsAsBin;
+        if (LABKEY.devMode) {
+            console.log('plotted rows:', rows.length);
+        }
         this.showPointsAsBin = rows.length > this.binRowLimit;
 
         // only call handlers when state has changed
@@ -1350,9 +1377,12 @@ Ext.define('Connector.view.Chart', {
             el = Ext.get(learnId);
             if (el) {
                 el.on('click', function() {
-                    var limit = Ext.util.Format.number(this.binRowLimit, '0,000');
-                    hopscotch.getCalloutManager().createCallout({
-                        id: LABKEY.Utils.id(),
+                    var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
+                        calloutMgr = hopscotch.getCalloutManager(),
+                        _id = LABKEY.Utils.id();
+
+                    calloutMgr.createCallout({
+                        id: _id,
                         target: Ext.getCmp('colorselector').getActiveButton().getEl().dom,
                         placement: 'bottom',
                         title: 'Heatmap mode',
@@ -1361,6 +1391,7 @@ Ext.define('Connector.view.Chart', {
                         content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
                     });
                     this.showmsg = true; this.hideMessage();
+                    this.on('hideload', function() { calloutMgr.removeCallout(_id); }, this, {single: true});
                 }, this);
             }
         }
