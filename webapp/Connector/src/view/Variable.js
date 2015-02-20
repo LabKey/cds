@@ -167,8 +167,9 @@ Ext.define('Connector.panel.ColorSelector', {
     },
 
     showHover : function(legendData) {
-        this.win = LABKEY.Utils.id();
-        hopscotch.getCalloutManager().createCallout({
+        this.win = Ext.id();
+        var calloutMgr = hopscotch.getCalloutManager();
+        calloutMgr.createCallout({
             id: this.win,
             target: document.querySelector('#color-legend'),
             placement: 'bottom',
@@ -194,6 +195,9 @@ Ext.define('Connector.panel.ColorSelector', {
                         .attr('y', function(d, i){return 13 + i * 20});
             }
         });
+
+        // 22570: hide the 'X' since this tip isn't closeable
+        Ext.get(calloutMgr.getCallout(this.win).element).addCls('no-close');
     },
 
     hideHover : function() {

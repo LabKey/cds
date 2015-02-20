@@ -577,6 +577,10 @@ div.hopscotch-bubble {
       border-right-color: $info-color;
     }
   }
+
+  &.no-close .hopscotch-bubble-close {
+    display: none !important;
+  }
 }
 
 @import 'windows';

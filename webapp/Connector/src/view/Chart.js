@@ -327,10 +327,6 @@ Ext.define('Connector.view.Chart', {
             this.noPlot();
         }
 
-        //if (this.msg) {
-        //    this.msg.getEl().setLeft(Math.floor(plotbox.width/2 - Math.floor(this.getEl().getTextWidth(this.msg.msg)/2)));
-        //}
-
         if (this.ywin && this.ywin.isVisible()) {
             this.updateMeasureSelection(this.ywin);
         }
@@ -1379,7 +1375,7 @@ Ext.define('Connector.view.Chart', {
                 el.on('click', function() {
                     var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
                         calloutMgr = hopscotch.getCalloutManager(),
-                        _id = LABKEY.Utils.id();
+                        _id = Ext.id();
 
                     calloutMgr.createCallout({
                         id: _id,
