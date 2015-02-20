@@ -187,6 +187,11 @@ Ext.define('Connector.view.Chart', {
                         typeLabel: 'color'
                     }),
                     listeners: {
+                        afterrender : function(c) {
+                            c.getEl().on('mouseover', function() { this.showWhyBinTask.delay(300); }, this);
+                            c.getEl().on('mouseout', function() { this.showWhyBinTask.cancel(); }, this);
+                            this.on('hideload', function() { this.showWhyBinTask.cancel(); }, this);
+                        },
                         requestvariable: this.onShowVariableSelection,
                         scope: this
                     }
@@ -293,6 +298,11 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.resizeTask = new Ext.util.DelayedTask(function() {
             this.onReady(this.handleResize, this);
+        }, this);
+        this.showWhyBinTask = new Ext.util.DelayedTask(function() {
+            if (this.showPointsAsBin) {
+                this._showWhyBinning();
+            }
         }, this);
 
         this.on('resize', function() {
@@ -1372,24 +1382,42 @@ Ext.define('Connector.view.Chart', {
 
             el = Ext.get(learnId);
             if (el) {
-                el.on('click', function() {
-                    var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
-                        calloutMgr = hopscotch.getCalloutManager(),
-                        _id = Ext.id();
-
-                    calloutMgr.createCallout({
-                        id: _id,
-                        target: Ext.getCmp('colorselector').getActiveButton().getEl().dom,
-                        placement: 'bottom',
-                        title: 'Heatmap mode',
-                        xOffset: -240, // assumes width of 280,
-                        arrowOffset: 235,
-                        content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
-                    });
-                    this.showmsg = true; this.hideMessage();
-                    this.on('hideload', function() { calloutMgr.removeCallout(_id); }, this, {single: true});
-                }, this);
+                el.on('click', function() { this.showWhyBinTask.delay(0); }, this);
             }
+        }
+    },
+
+    /**
+     * Shows the description of why the heatmap is enabled, color disabled
+     * Do not call this function directly, use this.showWhyBinTask.delay(ms) instead.
+     * @private
+     */
+    _showWhyBinning : function() {
+        if (!this.showWhyBin) {
+            this.showWhyBin = true;
+            var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
+                    calloutMgr = hopscotch.getCalloutManager(),
+                    _id = Ext.id();
+
+            calloutMgr.createCallout({
+                id: _id,
+                target: Ext.getCmp('colorselector').getActiveButton().getEl().dom,
+                placement: 'bottom',
+                title: 'Heatmap mode',
+                xOffset: -240, // assumes width of 280,
+                arrowOffset: 235,
+                content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
+                // If the user explcitly closes the tip, then don't ever show it again.
+                //onClose : function() {
+                //    me.showWhyBin = false;
+                //}
+            });
+            this.showmsg = true; this.hideMessage();
+
+            this.on('hideload', function() {
+                calloutMgr.removeCallout(_id);
+                this.showWhyBin = false;
+            }, this, {single: true});
         }
     },
 
