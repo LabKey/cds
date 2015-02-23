@@ -117,7 +117,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         clickProject(getProjectName());
         clickAndWait(Locator.linkWithText("Verify"));
-        waitForText("No data to show.", CDSHelper.CDS_WAIT);
+        waitForText(CDSHelper.CDS_WAIT, "No data to show.");
     }
 
     @Before
@@ -815,7 +815,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertFilterStatusCounts(132, 2, 3);  // or
         assertElementPresent(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
         cds.goToSummary();
-        waitForText(CDSHelper.STUDIES[1], CDSHelper.CDS_WAIT);
+        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[1]);
         cds.clickBy("Assays");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(Locator.css("option").withText("OR"));
@@ -834,7 +834,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.pickDimension("Studies");
         _asserts.assertSelectionStatusCounts(0, 0, 0);
         cds.clearSelection();
-        waitForText(CDSHelper.STUDIES[2], CDSHelper.CDS_WAIT);
+        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[2]);
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.pickDimension("Assays");
   //      _asserts.assertSelectionStatusCounts(32, 1, 2);

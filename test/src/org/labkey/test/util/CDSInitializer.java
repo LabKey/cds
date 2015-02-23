@@ -137,7 +137,7 @@ public class CDSInitializer
     private void importCDSData(String query, String dataFilePath)
     {
         _test.goToProjectHome();
-        _test.waitForTextWithRefresh("Fact Table", _test.defaultWaitForPage * 4);  //wait for study to fully load
+        _test.waitForTextWithRefresh(_test.defaultWaitForPage * 4, "Fact Table");  //wait for study to fully load
         _test.clickAndWait(Locator.linkWithText(query));
         _test._listHelper.clickImportData();
 
