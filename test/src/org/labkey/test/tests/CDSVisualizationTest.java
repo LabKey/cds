@@ -728,7 +728,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         public static Locator plotSelectionFilter = Locator.css(".activefilter .plot-selection");
         public static Locator plotSelectionCloseBtn = Locator.css("div.plot-selection div.closeitem");
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
-        public static Locator plotTick = Locator.css("g.tick-text > a > text");
+        public static Locator plotTick = Locator.css("g.tick-text > g > text");
         public static Locator plotPoint = Locator.css("svg a.point");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -392,7 +392,7 @@ Ext.define('Connector.controller.Query', {
 
         // look at the grid filters to determine measure set
         if (!Ext.isEmpty(filterConfig.gridFilter)) {
-            var gridFilters = filterConfig.gridFilter, column, measure, stringFilter;
+            var gridFilters = filterConfig.gridFilter, columnName, measure, stringFilter;
 
             for (var g=0; g < gridFilters.length; g++) {
                 var gf = gridFilters[g];
@@ -403,40 +403,46 @@ Ext.define('Connector.controller.Query', {
                         gf = LABKEY.Filter.getFiltersFromUrl(gf, 'query')[0];
                     }
 
-                    column = gf.getColumnName();
-                    measure = this.getMeasure(column);
+                    columnName = gf.getColumnName();
+                    measure = this.getMeasure(columnName);
                     if (measure) {
 
-                        var filterOnLookup = gf.getColumnName().indexOf('/') > -1;
+                        var filterOnLookup = columnName.indexOf('/') > -1;
 
                         // process the filter itself, if it is a lookup then we just include it directly
                         if (filterOnLookup) {
                             // here we fake up a measure. The getData API accepts filters of the form
                             // "study_Nab_Lab/PI" as "Lab.PI"
-                            var alias = gf.getColumnName().replace(/\//g, '_');
-                            var parts = gf.getColumnName().replace(/\//g, '.').split('_');
+                            var schema = measure.getSchemaName(),
+                                query = measure.getQueryName(),
+                                alias = columnName.replace(/\//g, '_');
 
-                            var colName;
-                            if (parts.length > 3) {
-                                // ["study", "SubjectVisit", "SubjectId", "Study/Label"] --> "SubjectId/Study/Label"
-                                colName = parts.splice(2, parts.length-1).join('/');
+                            // This avoids schemas/queries that have '_' in them
+                            var columnNamePortion = columnName.replace([schema, query].join('_'), '');
+                            if (columnNamePortion.indexOf('_') === 0) {
+                                columnNamePortion = columnNamePortion.substring(1);
+                            }
+
+                            var parts = columnNamePortion.replace(/\//g, '.').split('_'),
+                                safeColName;
+
+                            // ["study", "SubjectVisit", "SubjectId", "Study/Label"] --> "SubjectId/Study/Label"
+                            if (parts.length > 1) {
+                                safeColName = parts.join('/');
                             }
                             else {
-                                colName = parts[parts.length-1];
+                                safeColName = parts[parts.length-1];
                             }
 
-                            var nf = LABKEY.Filter.create(colName.replace(/\./g, '/'), gf.getValue(), gf.getFilterType());
+                            var nf = LABKEY.Filter.create(safeColName.replace(/\./g, '/'), gf.getValue(), gf.getFilterType());
 
                             if (!measureMap[alias]) {
-                                var allParts = gf.getColumnName().split('_');
-                                var schema = allParts[0], query = allParts[1];
-
                                 measureMap[alias] = {
                                     measure: {
                                         alias: alias,
                                         schemaName: schema,
                                         queryName: query,
-                                        name: colName,
+                                        name: safeColName,
                                         inNotNullSet: true // unfortunately, we don't know much about the lookup type
                                     },
                                     filterArray: []
@@ -478,7 +484,7 @@ Ext.define('Connector.controller.Query', {
                                 measureMap[measure.alias].measure.inNotNullSet = false;
                             }
 
-                            if (column === measure.name || isTimeBased) {
+                            if (columnName === measure.name || isTimeBased) {
                                 stringFilter = gf.getURLParameterName() + '=' + gf.getURLParameterValue();
                                 measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : stringFilter);
                             }
