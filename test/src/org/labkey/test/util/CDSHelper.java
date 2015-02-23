@@ -72,7 +72,7 @@ public class CDSHelper
     public void pickSort(String sort, String waitValue)
     {
         pickSort(sort);
-        _test.waitForText(waitValue, CDS_WAIT);
+        _test.waitForText(CDS_WAIT, waitValue);
     }
 
     public void pickDimension(String dimension)
