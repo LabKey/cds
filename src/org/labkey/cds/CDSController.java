@@ -38,6 +38,7 @@ import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.ColumnHeaderType;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
@@ -590,7 +591,7 @@ public class CDSController extends SpringActionController
         public ModelAndView getView(ExportForm form, BindException errors) throws Exception
         {
             QueryView view = new ExcelExportQueryView(form, errors);
-            view.exportToExcel(getViewContext().getResponse(), ExcelWriter.ExcelDocumentType.xlsx);
+            view.exportToExcel(getViewContext().getResponse(), form.getHeaderType(), ExcelWriter.ExcelDocumentType.xlsx);
             return null;
         }
 
@@ -646,6 +647,18 @@ public class CDSController extends SpringActionController
     {
         private String[] _columnNamesOrdered;
         private Map<String, String> _columnAliases = new HashMap<String, String>();
+
+        protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
+
+        public ColumnHeaderType getHeaderType()
+        {
+            return _headerType;
+        }
+
+        public void setHeaderType(ColumnHeaderType headerType)
+        {
+            _headerType = headerType;
+        }
 
         protected BindException doBindParameters(PropertyValues in)
         {
