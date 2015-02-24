@@ -52,9 +52,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotSelection;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotSelectionCloseBtn;
-import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotSelectionFilter;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 
 @Category({CustomModules.class, CDS.class})
@@ -560,7 +557,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         final ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
         color.openSelectorWindow();
         color.pickSource("Luminex");
-        assertFalse("Antigen picker found in color variable selector", doesElementAppear(new Checker()
+        assertFalse("Antigen picker found in color variable selector", waitFor(new Checker()
         {
             @Override
             public boolean check()
