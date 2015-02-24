@@ -43,6 +43,9 @@
     <title>HIV CDS</title>
 
     <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
+
+    <!-- stylesheets -->
+    <link type="text/css" href="<%=text(contextPath)%>/hopscotch/css/hopscotch.min.css" rel="stylesheet">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
@@ -62,10 +65,12 @@
 
         Ext = {}; Ext4 = Ext;
     </script>
+
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/hopscotch/js/hopscotch.min.js"></script>
 
     <% if (devMode) { %>
-    <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-1.11.2.js"></script>
 
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all<%= text(devMode ? "-debug" : "") %>.js"></script>
     <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
