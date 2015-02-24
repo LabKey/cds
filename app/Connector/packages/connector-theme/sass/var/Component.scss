@@ -517,6 +517,72 @@ div.emptytext {
   }
 }
 
+div.hopscotch-bubble {
+  color: $info-color;
+  border: 2px solid $info-color;
+  border-radius: 2px;
+
+  h3 {
+    color: $info-color;
+  }
+
+  // placement: bottom
+  .hopscotch-bubble-arrow-container.up {
+    top: -19px;
+
+    .hopscotch-bubble-arrow {
+      top: -14px;
+    }
+
+    .hopscotch-bubble-arrow-border {
+      border-bottom-color: $info-color;
+    }
+  }
+
+  // placement: top
+  .hopscotch-bubble-arrow-container.down {
+    bottom: -35px;
+
+    .hopscotch-bubble-arrow {
+      top: -21px;
+    }
+
+    .hopscotch-bubble-arrow-border {
+      border-top-color: $info-color;
+    }
+  }
+
+  // placement: left
+  .hopscotch-bubble-arrow-container.right {
+    right: -35px;
+
+    .hopscotch-bubble-arrow {
+      left: -3px;
+    }
+
+    .hopscotch-bubble-arrow-border {
+      border-left-color: $info-color;
+    }
+  }
+
+  // placement: right
+  .hopscotch-bubble-arrow-container.left {
+    left: -18px;
+
+    .hopscotch-bubble-arrow {
+      left: 3px;
+    }
+
+    .hopscotch-bubble-arrow-border {
+      border-right-color: $info-color;
+    }
+  }
+
+  &.no-close .hopscotch-bubble-close {
+    display: none !important;
+  }
+}
+
 @import 'windows';
 
 @import 'grid/Panel';

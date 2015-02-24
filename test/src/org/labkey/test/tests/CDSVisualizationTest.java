@@ -669,6 +669,39 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         switchToMainWindow();
     }
 
+    @Test
+    public void verifyBinnedPlot()
+    {
+        // make choices that put us over the 'maxRows' parameter specified on the URL
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        // set the x-axis
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("NAb", "Point IC80");
+        xaxis.setVariableOptions("0013095-2.11", "001428-2.42");
+        xaxis.confirmSelection();
+
+        // set the y-axis
+        waitForElement(Locator.css(".curseltitle").containing("for the Y Axis"));
+        yaxis.pickMeasure("NAb", "Curve IC80");
+        yaxis.confirmSelection();
+
+        // Verify the binning message
+        waitForText("Heatmap enabled");
+        click(Locator.linkWithText("Learn why"));
+        waitForText("The color variable is disabled");
+
+        // Verify the binning message layers correctly
+        xaxis.openSelectorWindow();
+        waitForTextToDisappear("Heatmap enabled");
+        xaxis.cancelSelection();
+
+        cds.clearAllFilters();
+    }
+
     @AfterClass
     public static void postTest()
     {

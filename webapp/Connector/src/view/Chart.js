@@ -25,11 +25,28 @@ Ext.define('Connector.view.Chart', {
 
     constructor : function(config) {
 
+        if (LABKEY.devMode) {
+            PLOT = this;
+        }
+
         Ext.apply(config, {
             isActiveView: true,
             refreshRequired: true,
             initialized: false
         });
+
+        Ext.applyIf(config, {
+            measures: [],
+            hasStudyAxisData: false
+        });
+
+        var params = LABKEY.ActionURL.getParameters();
+        if (Ext.isDefined(params['maxRows'])) {
+            var num = parseInt(params['maxRows']);
+            if (Ext.isNumber(num)) {
+                this.binRowLimit = num;
+            }
+        }
 
         this._ready = false;
         Connector.getService('Query').getDefaultMeasure(function(measure) {
@@ -37,11 +54,6 @@ Ext.define('Connector.view.Chart', {
             this._ready = true;
             this.fireEvent('onready', this);
         }, this);
-
-        Ext.applyIf(config, {
-            measures: [],
-            hasStudyAxisData: false
-        });
 
         this.callParent([config]);
 
@@ -73,6 +85,11 @@ Ext.define('Connector.view.Chart', {
                 component: this,
                 events: ['hideload']
             }
+        });
+
+        this.showmsg = true;
+        this.addPlugin({
+            ptype: 'messaging'
         });
     },
 
@@ -135,31 +152,49 @@ Ext.define('Connector.view.Chart', {
             layout: {
                 type: 'hbox'
             },
-            defaults: {
+            items: [{
                 xtype: 'container',
                 width: '50%',
+                margin: '0 0 0 24',
                 layout: {
                     type: 'hbox',
-                    pack: 'center'
-                }
-            },
-            items: [{
+                    pack: 'start'
+                },
                 items: [{
                     id: 'yaxisselector',
                     xtype: 'variableselector',
                     btnCls: 'yaxisbtn',
                     model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'y'
-                    })
+                    }),
+                    listeners: {
+                        requestvariable: this.onShowVariableSelection,
+                        scope: this
+                    }
                 }]
             },{
+                xtype: 'container',
+                width: '50%',
+                layout: {
+                    type: 'hbox',
+                    pack: 'end'
+                },
                 items: [{
                     id: 'colorselector',
                     xtype: 'colorselector',
                     btnCls: 'colorbtn',
                     model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'color'
-                    })
+                    }),
+                    listeners: {
+                        afterrender : function(c) {
+                            c.getEl().on('mouseover', function() { this.showWhyBinTask.delay(300); }, this);
+                            c.getEl().on('mouseout', function() { this.showWhyBinTask.cancel(); }, this);
+                            this.on('hideload', function() { this.showWhyBinTask.cancel(); }, this);
+                        },
+                        requestvariable: this.onShowVariableSelection,
+                        scope: this
+                    }
                 }]
             }]
         };
@@ -233,9 +268,12 @@ Ext.define('Connector.view.Chart', {
                     btnCls: 'xaxisbtn',
                     model: Ext.create('Connector.model.Variable', {
                         typeLabel: 'x'
-                    })
-                },
-                {
+                    }),
+                    listeners: {
+                        requestvariable: this.onShowVariableSelection,
+                        scope: this
+                    }
+                },{
                     // FOR TESTING USE (add "_showPlotData" param to URL to show button)
                     id: 'plotshowdata',
                     xtype: 'button',
@@ -247,6 +285,10 @@ Ext.define('Connector.view.Chart', {
         };
     },
 
+    onShowVariableSelection : function() {
+        this.fireEvent('hideload', this);
+    },
+
     attachInternalListeners : function() {
 
         this.on('afterrender', this._initAfterRender, this, {single: true});
@@ -256,6 +298,11 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.resizeTask = new Ext.util.DelayedTask(function() {
             this.onReady(this.handleResize, this);
+        }, this);
+        this.showWhyBinTask = new Ext.util.DelayedTask(function() {
+            if (this.showPointsAsBin) {
+                this._showWhyBinning();
+            }
         }, this);
 
         this.on('resize', function() {
@@ -288,10 +335,6 @@ Ext.define('Connector.view.Chart', {
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
             this.noPlot();
-        }
-
-        if (this.msg) {
-            this.msg.getEl().setLeft(Math.floor(plotbox.width/2 - Math.floor(this.getEl().getTextWidth(this.msg.msg)/2)));
         }
 
         if (this.ywin && this.ywin.isVisible()) {
@@ -335,32 +378,26 @@ Ext.define('Connector.view.Chart', {
                 opacity: 0
             }),
             aes: {
-                yLeft: function(row){return row.y}
+                yLeft: function(row) {return row.y}
             }
         });
     },
 
     mouseOverPoints : function(event, pointData, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
-            var strokeFillFn, opacityFn;
-
-            strokeFillFn = function(d) {
+            var strokeFillFn = function(d) {
                 if (d.subjectId.value === pointData.subjectId.value) {
                     return '#01BFC2';
                 }
                 return '#E6E6E6';
             };
 
-            opacityFn = function(d) {
-                return 1;
-            };
-
             var points = layerSel.selectAll('.point path');
 
             points.attr('fill', strokeFillFn)
                     .attr('stroke', strokeFillFn)
-                    .attr('fill-opacity', opacityFn)
-                    .attr('stroke-opacity', opacityFn);
+                    .attr('fill-opacity', 1)
+                    .attr('stroke-opacity', 1);
 
             points.each(function(d) {
                 // Re-append the node so it is on top of all the other nodes, this way highlighted points
@@ -441,7 +478,7 @@ Ext.define('Connector.view.Chart', {
     mouseOutBins : function(event, binData, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
             layerSel.selectAll('.vis-bin path')
-                    .attr('style', function(d){ return d.origStyle })
+                    .attr('style', function(d) { return d.origStyle })
                     .attr('fill-opacity', 1).attr('stroke-opacity', 1);
         }
     },
@@ -515,7 +552,7 @@ Ext.define('Connector.view.Chart', {
 
     getBoxLayer : function(layerScope) {
         var aes = this.getLayerAes.call(this, layerScope, true);
-        aes.hoverText = function(name, summary){
+        aes.hoverText = function(name, summary) {
             var text = name + '\n';
             text += 'Q1: ' + summary.Q1 + '\n';
             text += 'Q2: ' + summary.Q2 + '\n';
@@ -533,35 +570,72 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    initPlot : function(rows, properties, studyAxisInfo, noplot) {
+    /**
+     * @param chartData
+     * @param {object} [studyAxisInfo]
+     * @param {boolean} [noplot=false]
+     */
+    initPlot : function(chartData, studyAxisInfo, noplot) {
 
         // Below vars needed for brush and mouse event handlers.
-        var isBrushed = false, layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
+        var rows, properties, isBrushed = false,
+            layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
-        this.plotEl.update('');
-        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
+        if (chartData instanceof Connector.model.ChartData) {
+            rows = chartData.getDataRows();
+            properties = chartData.getProperties();
+        }
+        else {
+            rows = chartData;
+        }
+
+        if (!Ext.isBoolean(noplot)) {
+            noplot = false;
+        }
 
         if (!rows || !rows.length) {
-            this.showMessage('No information available to plot.');
+            this.showMessage('No information available to plot.', true);
             this.fireEvent('hideload', this);
             this.plot = null;
             this.noPlot();
             return;
         }
 
+        this.plotEl.update('');
+        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
+
         if (this.plot) {
             this.plot.clearGrid();
             this.plot = null;
         }
 
+        var lastShowPointsAsBin = this.showPointsAsBin;
+        if (LABKEY.devMode) {
+            console.log('plotted rows:', rows.length);
+        }
         this.showPointsAsBin = rows.length > this.binRowLimit;
+
+        // only call handlers when state has changed
+        if (lastShowPointsAsBin != this.showPointsAsBin) {
+            if (this.showPointsAsBin) {
+                this.onEnableBinning();
+            }
+            else {
+                this.onDisableBinning();
+            }
+        }
+        else if (this.showmsg && (chartData instanceof Connector.model.ChartData)) {
+            this.showPercentOverlapMessage(chartData);
+        }
 
         if (noplot) {
             layer = this.getNoPlotLayer();
-        }else if (properties.xaxis && properties.xaxis.isContinuous) {
+        }
+        else if (properties.xaxis && properties.xaxis.isContinuous) {
             // Scatter. Binned if over max row limit.
             layer = this.showPointsAsBin ? this.getBinLayer(layerScope) : this.getPointLayer(layerScope);
-        } else if (properties.xaxis && !properties.xaxis.isContinuous) {
+        }
+        else if (properties.xaxis && !properties.xaxis.isContinuous) {
             // Box plot (aka 1D).
             layer = this.getBoxLayer(layerScope);
         }
@@ -589,10 +663,16 @@ Ext.define('Connector.view.Chart', {
         };
 
         if (noplot) {
-            scales.x = scales.yLeft = {
+            scales.x = {
                 scaleType: 'continuous',
                 domain: [0, 0],
-                tickFormat: function(val) {return '';}
+                tickFormat: function() {return '';}
+            };
+
+            scales.yLeft = {
+                scaleType: 'continuous',
+                domain: [0, 0],
+                tickFormat: function() {return '';}
             };
         }
         else {
@@ -603,10 +683,12 @@ Ext.define('Connector.view.Chart', {
 
                 if (properties.xaxis.isNumeric) {
                     scales.x.tickFormat = numericTickFormat;
-                } else if (properties.xaxis.type === 'TIMESTAMP') {
+                }
+                else if (properties.xaxis.type === 'TIMESTAMP') {
                     scales.x.tickFormat = dateFormat;
                 }
-            } else {
+            }
+            else {
                 scales.x = {scaleType: 'discrete'};
             }
 
@@ -628,8 +710,8 @@ Ext.define('Connector.view.Chart', {
         }
 
         var plotAes = {
-            x: function(row){return row.x;},
-            yLeft: function(row){return row.y}
+            x: function(row) {return row.x;},
+            yLeft: function(row) {return row.y}
         };
 
         if (this.measures[2]) {
@@ -666,7 +748,7 @@ Ext.define('Connector.view.Chart', {
 
             // add brush handling
             var isSelectedWithBrush = function(extent, x, y) {
-                var isX, isY, xExtent, yExtent;
+                var isX, isY, xExtent, yExtent, isBrushed = false;
 
                 xExtent = [extent[0][0], extent[1][0]];
                 yExtent = [extent[0][1], extent[1][1]];
@@ -675,26 +757,26 @@ Ext.define('Connector.view.Chart', {
 
                 // Issue 20116
                 if (isX && isY) { // 2D
-                    return (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
-                } else if (isX) { // 1D
-                    return (x > xExtent[0] && x < xExtent[1]);
-                } else if (isY) { // 1D
-                    return (y > yExtent[0] && y < yExtent[1]);
+                    isBrushed = (x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1]);
+                }
+                else if (isX) { // 1D
+                    isBrushed = (x > xExtent[0] && x < xExtent[1]);
+                }
+                else if (isY) { // 1D
+                    isBrushed = (y > yExtent[0] && y < yExtent[1]);
                 }
 
-                return false;
+                return isBrushed;
             };
 
             var brushPoints = function(event, layerData, extent, plot, layerSelections) {
                 var sel = layerSelections[0]; // We only have one layer, so grab the first one.
                 var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-                var colorFn, opacityFn, strokeFn;
+                var colorFn, strokeFn;
                 var assocColorFn, assocStrokeFn;
 
                 colorFn = function(d) {
-                    var x = d.x, y = d.y;
-
-                    d.isSelected = isSelectedWithBrush(extent, x, y);
+                    d.isSelected = isSelectedWithBrush(extent, d.x, d.y);
                     d.origFill = d.origFill || this.getAttribute('fill');
 
                     if (d.isSelected) {
@@ -714,48 +796,42 @@ Ext.define('Connector.view.Chart', {
                     return '#E6E6E6';
                 };
 
-                sel.selectAll('.point path').attr('fill', colorFn)
-                        .attr('stroke', strokeFn);
-
+                // These 'assoc' color/stroke functions rely on the prior complete iteration on the data points
+                // to set the subjects {} correctly. This is why these functions are not merged.
                 assocColorFn = function(d) {
                     if (!d.isSelected && subjects[d.subjectId.value] === true) {
                         return '#01BFC2';
-                    } else{
-                        return this.getAttribute('fill');
                     }
+                    return this.getAttribute('fill');
                 };
 
                 assocStrokeFn = function(d) {
                     if (!d.isSelected && subjects[d.subjectId.value] === true) {
                         return '#01BFC2';
-                    } else {
-                        return this.getAttribute('stroke');
                     }
+                    return this.getAttribute('stroke');
                 };
 
-                opacityFn = function(d) {
-                    return 1;
-                };
-
-                sel.selectAll('.point path').attr('fill', assocColorFn)
+                sel.selectAll('.point path')
+                        .attr('fill', colorFn)
+                        .attr('fill', assocColorFn)
+                        .attr('stroke', strokeFn)
                         .attr('stroke', assocStrokeFn)
-                        .attr('fill-opacity', opacityFn)
-                        .attr('stroke-opacity', opacityFn);
+                        .attr('fill-opacity', 1)
+                        .attr('stroke-opacity', 1);
             };
 
             var brushBins = function(event, layerData, extent, plot, layerSelections) {
                 var sel = layerSelections[0]; // We only have one layer, so grab the first one.
                 var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-                var colorFn, opacityFn, assocColorFn, min, max;
+                var colorFn, assocColorFn, min, max;
 
                 // convert extent x/y values into aes scale as bins don't really have x/y values
-                if (extent[0][0] !== null && extent[1][0] !== null)
-                {
+                if (extent[0][0] !== null && extent[1][0] !== null) {
                     extent[0][0] = plot.scales.x.scale(extent[0][0]);
                     extent[1][0] = plot.scales.x.scale(extent[1][0]);
                 }
-                if (extent[0][1] !== null && extent[1][1] !== null)
-                {
+                if (extent[0][1] !== null && extent[1][1] !== null) {
                     // TODO: the min/max y values are flipped for bins vs points, why?
                     max = plot.scales.yLeft.scale(extent[0][1]);
                     min = plot.scales.yLeft.scale(extent[1][1]);
@@ -765,15 +841,11 @@ Ext.define('Connector.view.Chart', {
 
                 // set color, via style attribute, for the selected bins
                 colorFn = function(d) {
-                    var x = d.x, y = d.y;
-
-                    d.isSelected = isSelectedWithBrush(extent, x, y);
+                    d.isSelected = isSelectedWithBrush(extent, d.x, d.y);
 
                     // track the subjects that are included in the points for the selected bins
-                    if (d.isSelected && d.length > 0 && d[0].data)
-                    {
-                        for (var i = 0; i < d.length; i++)
-                        {
+                    if (d.isSelected && d.length > 0 && d[0].data) {
+                        for (var i = 0; i < d.length; i++) {
                             subjects[d[i].data.subjectId.value] = true;
                         }
                     }
@@ -787,10 +859,8 @@ Ext.define('Connector.view.Chart', {
 
                 // set color, via style attribute, for the unselected bins
                 assocColorFn = function(d) {
-                    if (!d.isSelected && d.length > 0 && d[0].data)
-                    {
-                        for (var i = 0; i < d.length; i++)
-                        {
+                    if (!d.isSelected && d.length > 0 && d[0].data) {
+                        for (var i = 0; i < d.length; i++) {
                             if (subjects[d[i].data.subjectId.value] === true)
                                 return 'fill: #01BFC2;';
                         }
@@ -799,27 +869,9 @@ Ext.define('Connector.view.Chart', {
                     return this.getAttribute('style');
                 };
 
-                // set the opacity for all bins, 3 states: select, associated, neither
-                opacityFn = function(d) {
-                    //if (d.isSelected)
-                    //    return 1;
-                    //
-                    //if (!d.isSelected && d.length > 0 && d[0].data)
-                    //{
-                    //    for (var i = 0; i < d.length; i++)
-                    //    {
-                    //        if (subjects[d[i].data.subjectId.value] === true)
-                    //            return 0.5;
-                    //    }
-                    //}
-                    //
-                    //return 0.15;
-                    return 1;
-                };
-
                 sel.selectAll('.vis-bin path').attr('style', assocColorFn)
-                        .attr('fill-opacity', opacityFn)
-                        .attr('stroke-opacity', opacityFn);
+                        .attr('fill-opacity', 1)
+                        .attr('stroke-opacity', 1);
             };
 
             plotConfig.brushing = {
@@ -828,34 +880,38 @@ Ext.define('Connector.view.Chart', {
                     layerScope.isBrushed = true;
                 },
                 brush : this.showPointsAsBin ? brushBins : brushPoints,
-                brushend : function(event, layerData, extent, plot, layerSelections) {
+                brushend : function(event, layerData, extent, plot/*, layerSelections*/) {
                     var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
                             xMeasure, yMeasure, sqlFilters = [null, null, null, null], yMin, yMax, xMin, xMax;
 
                     var transformVal = function(val, type, isMin, domain) {
+                        var trans = val;
                         if (type === 'INTEGER') {
-                            return isMin ? Math.floor(val) : Math.ceil(val);
+                            trans = isMin ? Math.floor(val) : Math.ceil(val);
                         }
                         else if (type === 'TIMESTAMP') {
-                            return isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
+                            trans = isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
                         }
-                        else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT'){
-                            var precision;
+                        else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT') {
+                            var precision, d = domain[1];
 
-                            if (domain[1] >= 1000) {
+                            if (d >= 1000) {
                                 precision = 0;
-                            } else if (domain[1] >= 100) {
+                            }
+                            else if (d >= 100) {
                                 precision = 1;
-                            } else if (domain[1] >= 10) {
+                            }
+                            else if (d >= 10) {
                                 precision = 2;
-                            } else {
+                            }
+                            else {
                                 precision = 3;
                             }
 
-                            return parseFloat(val.toFixed(precision));
+                            trans = parseFloat(val.toFixed(precision));
                         }
 
-                        return val;
+                        return trans;
                     };
 
                     xMeasure = measures[0];
@@ -920,13 +976,13 @@ Ext.define('Connector.view.Chart', {
 
                     // reset points
                     selections[0].selectAll('.point path')
-                            .attr('fill', function(d){ return d.origFill })
-                            .attr('stroke', function(d){ return d.origStroke })
+                            .attr('fill', function(d) { return d.origFill })
+                            .attr('stroke', function(d) { return d.origStroke })
                             .attr('fill-opacity', 0.5).attr('stroke-opacity', 0.5);
 
                     // reset bins
                     selections[0].selectAll('.vis-bin path')
-                            .attr('style', function(d){ return d.origStyle })
+                            .attr('style', function(d) { return d.origStyle })
                             .attr('fill-opacity', 1).attr('stroke-opacity', 1);
                 }
             };
@@ -949,7 +1005,7 @@ Ext.define('Connector.view.Chart', {
                 }
             }
             catch(err) {
-                this.showMessage(err.message);
+                this.showMessage(err.message, true);
                 this.fireEvent('hideload', this);
                 this.plot = null;
                 this.plotEl.update('');
@@ -981,7 +1037,7 @@ Ext.define('Connector.view.Chart', {
             var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear;
 
             if (!allowLog && axisValue == 'log') {
-                this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.');
+                this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.', true);
                 axisValue = 'linear';
             }
 
@@ -1013,26 +1069,29 @@ Ext.define('Connector.view.Chart', {
 
         // first, check the set of active filters
         var filters = Connector.getState().getFilters();
-        for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot() === true && filters[f].isGrid() === false) {
-                var m = filters[f].get('plotMeasures');
 
-                if (m[0]) {
-                    measures.x = m[0].measure;
+        var m, x, y, color;
+        Ext.each(filters, function(filter) {
+            if (filter.isPlot() === true && filter.isGrid() === false) {
+                m = filter.get('plotMeasures'), x = m[0], y = m[1], color = m[2];
+
+                if (x) {
+                    measures.x = x.measure;
                 }
 
-                if (m[1]) {
-                    measures.y = m[1].measure;
+                if (y) {
+                    measures.y = y.measure;
                 }
 
-                if (m[2]) {
-                    measures.color = m[2].measure;
+                if (color) {
+                    measures.color = color.measure;
                 }
 
                 this.fromFilter = true;
-                break;
+
+                return false;
             }
-        }
+        }, this);
 
         // second check the measure selections
         if (this.axisPanelX) {
@@ -1068,30 +1127,24 @@ Ext.define('Connector.view.Chart', {
         }
 
         // map the y-axis schema and query name for a time point x-axis variable
-        if (measures.x && measures.y)
-        {
-            if (!measures.x.schemaName && !measures.x.queryName)
-            {
-                var x = Ext.clone(measures.x);
-                x.schemaName = measures.y.schemaName;
-                x.queryName = measures.y.queryName;
-                measures.x = x;
-            }
+        if (measures.x && measures.y && (!measures.x.schemaName && !measures.x.queryName)) {
+            x = Ext.clone(measures.x);
+            x.schemaName = measures.y.schemaName;
+            x.queryName = measures.y.queryName;
+            measures.x = x;
         }
 
         // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
-        if (measures.color != null && measures.y != null && measures.x != null)
-        {
-            var queryMatch = ((measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
-                              (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName));
-            measures.color.requireLeftJoin = queryMatch;
+        if (measures.color != null && measures.y != null && measures.x != null) {
+            measures.color.requireLeftJoin =
+                    (measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
+                    (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName);
         }
 
         return measures;
     },
 
     onShowGraph : function() {
-        this.hideMessage();
         this.refreshRequired = false;
 
         var activeMeasures = this.getActiveMeasures();
@@ -1118,6 +1171,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.filterClear || activeMeasures.y == null) {
+            this.hideMessage();
             this.requireStudyAxis = false;
             this.getStudyAxisPanel().setVisible(false);
             Connector.getState().clearSelections(true);
@@ -1295,63 +1349,131 @@ Ext.define('Connector.view.Chart', {
         if (this.isActiveView) {
             this.dataQWP = {schema: selectRowsResponse.schemaName, query: selectRowsResponse.queryName};
 
-            if (this.msg) {
-                this.msg.hide();
-            }
-
             selectRowsResponse.measures = this.measures;
             selectRowsResponse.measureToColumn = getDataResponse.measureToColumn;
             selectRowsResponse.columnAliases = getDataResponse.columnAliases;
             var chartData = Ext.create('Connector.model.ChartData', selectRowsResponse);
 
             this.hasStudyAxisData = false;
-            this.showPercentOverlapMessage(chartData);
 
             if (this.requireStudyAxis) {
                 this.requestStudyAxisData(chartData);
             }
             else {
-                this.initPlot(chartData.getDataRows(), chartData.getProperties(), null, false);
+                this.initPlot(chartData);
             }
         }
     },
 
-    showPercentOverlapMessage : function(chartData) {
-        if(chartData.getPercentOverlap() < 1 && chartData.getProperties().xaxis.isContinuous){
-            var id = Ext.id();
-            var id2 = Ext.id();
-            var msg = 'Points outside the plotting area have no match on the other axis.';
-            msg += '&nbsp;<a id="' + id2 +'">Got it</a>&nbsp;<a id="' + id +'">Details</a>';
-            this.showMessage(msg, true);
+    onEnableBinning : function() {
 
-            var tpl = new Ext.XTemplate(
-                    '<div class="matchtip">',
-                    '<div>',
-                    '<p class="tiptitle">Plotting Matches</p>',
-                    '<p class="tiptext">Percent match: {overlap}%. Mismatches may be due to data point subject, visit, or assay antigen.</p>',
-                    '</div>',
-                    '</div>'
-            );
+        // Disable the color axis selector
+        Ext.getCmp('colorselector').disable();
 
-            var el = Ext.get(id);
+        // Show binning message
+        var msgKey = 'PLOTBIN_LIMIT';
+        var learnId = Ext.id(), dismissId = Ext.id();
+        var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Dismiss</a>';
+
+        var shown = this.sessionMessage(msgKey, msg, true);
+
+        if (shown) {
+            var el = Ext.get(dismissId);
             if (el) {
-                Ext.create('Ext.tip.ToolTip', {
-                    target : el,
-                    anchor : 'left',
-                    data : {
-                        overlap : Ext.util.Format.round(chartData.getPercentOverlap() * 100, 2)
-                    },
-                    tpl : tpl,
-                    autoHide: true,
-                    mouseOffset : [15,0],
-                    maxWidth: 500,
-                    minWidth: 200,
-                    bodyPadding: 0,
-                    padding: 0
-                });
+                el.on('click', function() {
+                    this.showmsg = true; this.hideMessage();
+                    Connector.getService('Messaging').block(msgKey);
+                }, this, {single: true});
             }
-            el = Ext.get(id2);
-            el.on('click', function() { this.hideMessage(); }, this);
+
+            el = Ext.get(learnId);
+            if (el) {
+                el.on('click', function() { this.showWhyBinTask.delay(0); }, this);
+            }
+        }
+    },
+
+    /**
+     * Shows the description of why the heatmap is enabled, color disabled
+     * Do not call this function directly, use this.showWhyBinTask.delay(ms) instead.
+     * @private
+     */
+    _showWhyBinning : function() {
+        if (!this.showWhyBin) {
+            this.showWhyBin = true;
+            var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
+                    calloutMgr = hopscotch.getCalloutManager(),
+                    _id = Ext.id();
+
+            calloutMgr.createCallout({
+                id: _id,
+                target: Ext.getCmp('colorselector').getActiveButton().getEl().dom,
+                placement: 'bottom',
+                title: 'Heatmap mode',
+                xOffset: -240, // assumes width of 280,
+                arrowOffset: 235,
+                content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
+                // If the user explcitly closes the tip, then don't ever show it again.
+                //onClose : function() {
+                //    me.showWhyBin = false;
+                //}
+            });
+            this.showmsg = true; this.hideMessage();
+
+            this.on('hideload', function() {
+                calloutMgr.removeCallout(_id);
+                this.showWhyBin = false;
+            }, this, {single: true});
+        }
+    },
+
+    onDisableBinning : function() {
+
+        // Enable the color axis selector
+        Ext.getCmp('colorselector').enable();
+    },
+
+    showPercentOverlapMessage : function(chartData) {
+        if (chartData.getPercentOverlap() < 1 && chartData.getProperties().xaxis.isContinuous) {
+            var msgKey = 'PEROVER_LIMIT';
+            var id = Ext.id(),
+                    id2 = Ext.id(),
+                    msg = 'Points outside the plotting area have no match on the other axis.&nbsp;<a id="' + id +'">Got it</a>&nbsp;<a id="' + id2 +'">Details</a>';
+
+            var shown = this.sessionMessage(msgKey, msg, true);
+
+            if (shown) {
+                var tpl = new Ext.XTemplate(
+                    '<div class="matchtip">',
+                        '<div>',
+                            '<p class="tiptitle">Plotting Matches</p>',
+                            '<p class="tiptext">Percent match: {overlap}%. Mismatches may be due to data point subject, visit, or assay antigen.</p>',
+                        '</div>',
+                    '</div>'
+                );
+
+                var el = Ext.get(id);
+                el.on('click', function() {
+                    this.showmsg = true; this.hideMessage();
+                    Connector.getService('Messaging').block(msgKey);
+                }, this, {single: true});
+
+                el = Ext.get(id2);
+                if (el) {
+                    Ext.create('Ext.tip.ToolTip', {
+                        target: el,
+                        anchor: 'left',
+                        data: { overlap: Ext.util.Format.round(chartData.getPercentOverlap() * 100, 2) },
+                        tpl: tpl,
+                        autoHide: true,
+                        mouseOffset: [15,0],
+                        maxWidth: 500,
+                        minWidth: 200,
+                        bodyPadding: 0,
+                        padding: 0
+                    });
+                }
+            }
         }
     },
 
@@ -1384,25 +1506,21 @@ Ext.define('Connector.view.Chart', {
         // map key to schema, query, name, and values
         var measuresMap = {}, additionalMeasuresArr = [];
 
-        Ext.each(["x", "y"], function(axis)
-        {
+        Ext.each(['x', 'y'], function(axis) {
             var schema, query, name;
             if (activeMeasures[axis])
             {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
-                if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen)
-                {
+                if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen) {
                     name = activeMeasures[axis].options.antigen.name;
                     var values = activeMeasures[axis].options.antigen.values;
                     this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                 }
-                else
-                {
+                else {
                     // A time-based X-measure also requires the Visit column be selected
-                    if (activeMeasures[axis].variableType === "TIME")
-                    {
+                    if (activeMeasures[axis].variableType === "TIME") {
                         name = "Visit";
                         this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
                     }
@@ -1495,7 +1613,7 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, null, null, true);
+        this.initPlot(map, null, true);
         this.resizeTask.delay(300);
         this.noplotmsg.show();
     },
@@ -1503,7 +1621,7 @@ Ext.define('Connector.view.Chart', {
     onFailure : function(response) {
         console.log(response);
         this.fireEvent('hideload', this);
-        this.showMessage('Failed to Load');
+        this.showMessage('Failed to Load', true);
     },
 
     updateMeasureSelection : function(win) {
@@ -1553,7 +1671,7 @@ Ext.define('Connector.view.Chart', {
         }
         else
         {
-            this.visibleWindow = false;
+            this.visibleWindow = undefined;
         }
     },
 
@@ -1629,7 +1747,8 @@ Ext.define('Connector.view.Chart', {
                             if (this.activeYSelection) {
                                 this.axisPanelY.setSelection(this.activeYSelection);
                                 this.activeYSelection = undefined;
-                            } else {
+                            }
+                            else {
                                 this.axisPanelY.clearSelection();
                             }
                             this.ywin.hide(targetEl);
@@ -1720,7 +1839,7 @@ Ext.define('Connector.view.Chart', {
                         text: 'remove variable',
                         itemId: 'removevarbtn',
                         ui: 'rounded-inverted-accent',
-                        handler: function(){
+                        handler: function() {
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
                             this.removeVariableFromFilter(0);
                             this.activeXSelection = undefined;
@@ -1756,7 +1875,8 @@ Ext.define('Connector.view.Chart', {
                             if (this.activeXSelection) {
                                 this.axisPanelX.setSelection(this.activeXSelection);
                                 this.activeXSelection = undefined;
-                            } else {
+                            }
+                            else {
                                 this.axisPanelX.clearSelection();
                             }
                             this.xwin.hide(targetEl);
@@ -1850,7 +1970,7 @@ Ext.define('Connector.view.Chart', {
                         text: 'remove variable',
                         itemId: 'removevarbtn',
                         ui: 'rounded-inverted-accent',
-                        handler: function(){
+                        handler: function() {
                             // Need to remove the color measure from the plot filter or we'll pull it down again.
                             this.removeVariableFromFilter(2);
                             this.activeColorSelection = undefined;
@@ -1861,7 +1981,7 @@ Ext.define('Connector.view.Chart', {
                     }, {
                         text: 'set color variable',
                         ui: 'rounded-inverted-accent',
-                        handler: function(){
+                        handler: function() {
                             this.showTask.delay(10);
                             this.colorwin.hide(targetEl);
                         },
@@ -1869,11 +1989,12 @@ Ext.define('Connector.view.Chart', {
                     }, {
                         text: 'cancel',
                         ui: 'rounded-inverted-accent',
-                        handler: function(){
+                        handler: function() {
                             if (this.activeColorSelection) {
                                 this.colorPanel.setSelection(this.activeColorSelection);
                                 this.activeColorSelection = undefined;
-                            } else {
+                            }
+                            else {
                                 this.colorPanel.clearSelection();
                             }
                             this.colorwin.hide(targetEl);
@@ -1941,36 +2062,6 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    showMessage : function(msg, append) {
-
-        var box = this.getBox();
-
-        if (!append)
-            this.hideMessage();
-        else if (this.msg && this.msg.isVisible()) {
-            this.msg.msg += '<br/>' + msg;
-            this.msg.update(this.msg.msg);
-            var x = Math.floor(box.width/2 - Math.floor(this.getEl().getTextWidth(msg)/2)) - 20;
-            this.msg.showAt(x,box.y+20);
-            return;
-        }
-
-        this.msg = Ext.create('Connector.window.SystemMessage', {
-            msg : msg,
-            x   : Math.floor(box.width/2 - Math.floor(this.getEl().getTextWidth(msg)/2)) - 20,
-            y   : (box.y+40), // height of message window,
-            autoShow : this.isActiveView
-        });
-    },
-
-    hideMessage : function() {
-        if (this.msg) {
-            this.msg.hide();
-            this.msg.destroy();
-            this.msg = null;
-        }
-    },
-
     onFilterChange : function(filters) {
         // plot lock prevents from listening to plots own changes to state filters
         if (this.plotLock) {
@@ -1988,7 +2079,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.isActiveView) {
-            this.showTask.delay(300);
+            this.showTask.delay(this.initialized ? 100 : 600);
         }
         else if (this.initialized) {
             this.refreshRequired = true;
@@ -2001,11 +2092,7 @@ Ext.define('Connector.view.Chart', {
         if (this.isActiveView) {
 
             if (this.refreshRequired) {
-                this.showTask.delay(300);
-            }
-
-            if (this.msg) {
-                this.msg.show();
+                this.showTask.delay(this.initialized ? 100 : 600);
             }
 
             if (Ext.isObject(this.visibleWindow)) {
@@ -2014,10 +2101,7 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             this.fireEvent('hideload', this);
-
-            if (this.msg) {
-                this.msg.hide();
-            }
+            this.hideMessage();
         }
     },
 
@@ -2091,12 +2175,14 @@ Ext.define('Connector.view.Chart', {
             if (curExtent[0][0] === null || curExtent[0][1] === null) {
                 // 1D, just clear the selection.
                 this.plot.clearBrush();
-            } else {
+            }
+            else {
                 // 2D selection.
                 if (measureIdx === 0) {
                     // clear the x-axis.
                     this.plot.setBrushExtent([[null, curExtent[0][1]],[null, curExtent[1][1]]]);
-                } else if (measureIdx === 1) {
+                }
+                else if (measureIdx === 1) {
                     // clear the y-axis.
                     this.plot.setBrushExtent([[curExtent[0][0], null],[curExtent[1][0], null]]);
                 }
@@ -2115,9 +2201,10 @@ Ext.define('Connector.view.Chart', {
     },
 
     requestStudyAxisData : function(chartData) {
-        var studyContainers = Object.keys(chartData.getContainerAlignmentDayMap()), inClause, sql;
-        inClause = '(\'' + studyContainers.join('\',\'') + '\')';
-        sql = 'SELECT\n' +
+        var alignMap = chartData.getContainerAlignmentDayMap(),
+            studyContainers = Object.keys(alignMap),
+            inClause = " ('" + studyContainers.join("','") + "')",
+            sql = 'SELECT\n' +
                 'StudyLabel,\n' +
                 'StudyContainer,\n'+
                 'TimepointType,\n' +
@@ -2157,16 +2244,16 @@ Ext.define('Connector.view.Chart', {
                 if (this.isActiveView) { // TODO: This is a bit weird we check this here...
                     executeSqlResp.measures = this.measures;
                     executeSqlResp.visitMap = chartData.getVisitMap();
-                    executeSqlResp.containerAlignmentDayMap = chartData.getContainerAlignmentDayMap();
+                    executeSqlResp.containerAlignmentDayMap = alignMap;
                     var studyAxisData = Ext.create('Connector.model.StudyAxisData', executeSqlResp);
 
                     this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
-                    this.initPlot(chartData.getDataRows(), chartData.getProperties(), studyAxisData, false);
+                    this.initPlot(chartData, studyAxisData);
                     this.initStudyAxis(studyAxisData);
                 }
             },
-            failure: function(resp) {console.error('Error retrieving study axis data')},
+            failure: function() {console.error('Error retrieving study axis data')},
             scope: this
         });
     },
@@ -2174,7 +2261,7 @@ Ext.define('Connector.view.Chart', {
     showVisitHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
             plotBBox = plotEl.getBoundingClientRect(),
-            hoverBBox, html, i;
+            hoverBBox, html;
 
         this.visitHoverEl = document.createElement('div');
         this.visitHoverEl.setAttribute('class', 'study-axis-window');
@@ -2242,7 +2329,8 @@ Ext.define('Connector.view.Chart', {
             this.plotEl.setStyle('padding', '0 0 0 150px');
             this.getStudyAxisPanel().setVisible(true);
             this.getStudyAxisPanel().setHeight(Math.min(100, 27 * numStudies));
-        } else {
+        }
+        else {
             this.plotEl.setStyle('padding', '0');
             this.getStudyAxisPanel().setVisible(false);
         }

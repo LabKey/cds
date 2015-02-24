@@ -191,7 +191,12 @@ Ext.define('Connector.view.Grid', {
      * @param view
      */
     onViewChange : function(controller, view) {
-        this.getModel().setActive(view === this.xtype);
+        var isActive = view === this.xtype;
+        this.getModel().setActive(isActive);
+
+        if (!isActive) {
+            this.hideMessage();
+        }
     },
 
     onColumnUpdate : function() {
@@ -220,8 +225,7 @@ Ext.define('Connector.view.Grid', {
         var newGrid = this.getGrid();
         newGrid.getStore().on('load', function() {
 
-            if (prevGridId != null && prevGridId != newGrid.getId())
-            {
+            if (prevGridId != null && prevGridId != newGrid.getId()) {
                 this.remove(prevGridId, true);
                 this._hideOverlay();
             }
@@ -232,13 +236,11 @@ Ext.define('Connector.view.Grid', {
     },
 
     onFilterChange : function(model) {
-        var grid = this.getGrid();
-        if (grid) {
-            var store = grid.getStore();
-            store.filterArray = model.getFilterArray(true);
-            store.load();
-            this.applyFilterColumnState(grid);
-        }
+        var grid = this.getGrid(),
+            store = grid.getStore();
+        store.filterArray = model.getFilterArray(true);
+        store.load();
+        this.applyFilterColumnState(grid);
     },
 
     getAxisSelector : function() {
@@ -396,10 +398,6 @@ Ext.define('Connector.view.Grid', {
         return this.model;
     },
 
-    getStore : function() {
-        return this.getGrid().getStore();
-    },
-
     initGridStore : function() {
         var model = this.getModel();
         var maxRows = Connector.model.Grid.getMaxRows();
@@ -420,7 +418,7 @@ Ext.define('Connector.view.Grid', {
 
         var store = Ext.create('LABKEY.ext4.data.Store', config);
 
-        store.on('beforeload', function(){
+        store.on('beforeload', function() {
             this.fireEvent('showload', this);
         }, this);
 
@@ -466,7 +464,8 @@ Ext.define('Connector.view.Grid', {
      */
     applyFilterColumnState : function(grid) {
 
-        var columns = grid.headerCt.getGridColumns();
+        var columns = grid.headerCt.getGridColumns(),
+            filterFieldMap = {}, colMeta;
 
         // remove all filter classes
         Ext.each(columns, function(column) {
@@ -475,7 +474,6 @@ Ext.define('Connector.view.Grid', {
             }
         }, this);
 
-        var filterFieldMap = {}, colMeta;
         Ext.iterate(this.columnMap, function(dataIndex) {
             colMeta = this.getColumnMetadata(dataIndex);
 
@@ -491,9 +489,7 @@ Ext.define('Connector.view.Grid', {
 
         }, this);
 
-        var filterArray = this.getModel().getFilterArray();
-
-        Ext.each(filterArray, function(filter) {
+        Ext.each(this.getModel().getFilterArray(), function(filter) {
             colMeta = filterFieldMap[filter.getColumnName()];
             if (colMeta) {
                 var columnIndex = this.columnMap[colMeta.dataIndex];
@@ -518,23 +514,20 @@ Ext.define('Connector.view.Grid', {
     },
 
     onColumnModelCustomize : function(grid, columnGroups) {
-        var model = this.getModel(), columns;
+        var model = this.getModel(),
+            modelMap = {},
+            columns,
+            models = model.get('metadata').columnModel;
 
-        var modelMap = {};
-        var models = model.get('metadata').columnModel;
-        Ext.each(models, function(model)
-        {
+        Ext.each(models, function(model) {
             modelMap[model.dataIndex] = model;
         }, this);
 
-        Ext.each(columnGroups, function(group)
-        {
+        Ext.each(columnGroups, function(group) {
             columns = group.columns;
-            Ext.each(columns, function(column)
-            {
+            Ext.each(columns, function(column) {
                 var model = modelMap[column.dataIndex];
-                if (model)
-                {
+                if (model) {
                     column.hidden = model.hidden;
                     column.header = Ext.htmlEncode(model.header);
                 }
@@ -545,7 +538,7 @@ Ext.define('Connector.view.Grid', {
         }, this);
     },
 
-    onTriggerClick : function(headerCt, column, evt, el) {
+    onTriggerClick : function(headerCt, column/*, evt, el */) {
         if (Ext.isString(column)) {
 
             var _name = column;
@@ -554,12 +547,12 @@ Ext.define('Connector.view.Grid', {
             // lookup column by name
             if (this.grid) {
                 var columns = this.getGrid().query('gridcolumn');
-                for (var c=0; c < columns.length; c++) {
-                    if (columns[c].text.indexOf(_name) >= 0) {
-                        column = columns[c];
-                        break;
+                Ext.each(columns, function(col) {
+                    if (col.text.indexOf(_name) >= 0) {
+                        column = col;
+                        return false;
                     }
-                }
+                });
             }
         }
 
@@ -592,7 +585,7 @@ Ext.define('Connector.view.Grid', {
                     clzz = 'Connector.window.Facet';
                 }
 
-                this.filterWin = Ext.create(clzz, config);
+                Ext.create(clzz, config);
             }
         }
         else {
@@ -604,17 +597,16 @@ Ext.define('Connector.view.Grid', {
     },
 
     showMeasureSelection : function() {
-        var measureWindow = this.getMeasureSelectionWindow();
-        var box = this.getBox();
+        var measureWindow = this.getMeasureSelectionWindow(),
+            box = this.getBox(),
+            mp = this.getAxisSelector().getMeasurePicker(),
+            filterState = this.getModel().get('filterState');
 
         measureWindow.setSize(box.width-100, box.height-100);
         measureWindow.show();
-//        measureWindow.showAt(47, 128);
 
         // Run the query to determine current measure counts
-        var mp = this.getAxisSelector().getMeasurePicker();
-        var filterState = this.getModel().get('filterState');
-        mp.setCountMemberSet(filterState.hasFilters ? this.getModel().get('filterState').subjects : null);
+        mp.setCountMemberSet(filterState.hasFilters ? filterState.subjects : null);
 
         // Open with 'Current columns' selected if we have a selection
         if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
@@ -625,7 +617,7 @@ Ext.define('Connector.view.Grid', {
     requestExport : function() {
         if (this.grid) {
 
-            var model = this.getModel();
+            var model = this.getModel(), sort = '', sep = '';
 
             var exportParams = {
                 schemaName: [model.get('schemaName')],
@@ -636,12 +628,11 @@ Ext.define('Connector.view.Grid', {
             };
 
             // apply filters
-            Ext.each(model.getFilterArray(true), function(filter) {
+            Ext.each(model.getFilterArray(true /* includeBaseFilters */), function(filter) {
                 exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
             });
 
-            // spply sorts
-            var sort = '', sep = '';
+            // apply sorts
             Ext.each(this.getGrid().getStore().getSorters(), function(sorter) {
                 sort += sep + (sorter.direction === 'DESC' ? '-' : '') + sorter.property;
                 sep = ',';
@@ -651,8 +642,8 @@ Ext.define('Connector.view.Grid', {
             }
 
             // issue 20850: set export column headers to be "Dataset - Variable"
-            Ext.each(this.getGrid().getColumnsConfig(), function(colGroup){
-                Ext.each(colGroup.columns, function(col){
+            Ext.each(this.getGrid().getColumnsConfig(), function(colGroup) {
+                Ext.each(colGroup.columns, function(col) {
                     exportParams.columnNames.push(col.dataIndex);
                     exportParams.columnAliases.push(colGroup.text + " - " + col.header);
                 });
@@ -670,7 +661,7 @@ Ext.define('Connector.view.Grid', {
                 form: newForm,
                 isUpload: true,
                 params: exportParams,
-                callback: function(options, success, response) {
+                callback: function(options, success/*, response*/) {
                     document.body.removeChild(newForm);
 
                     if (!success) {

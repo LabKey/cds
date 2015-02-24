@@ -26,25 +26,22 @@ Ext.define('Connector.view.Variable', {
 
         this.callParent([config]);
 
-        this.addEvents(['requestvariable']);
+        this.addEvents('requestvariable');
     },
 
     initComponent : function() {
 
-        var modelComponent = {
+        if (this.model) {
+            this.setModel(this.model);
+        }
+
+        this.items = [{
             itemId: 'modelcomponent',
             xtype: 'box',
             cls: 'variable',
-            tpl: this.getModelTpl()
-        };
-
-        if (this.model) {
-            this.setModel(this.model);
-
-            modelComponent.data = this.data;
-        }
-
-        this.items = [modelComponent,{
+            tpl: this.getModelTpl(),
+            data: this.model ? this.data : undefined
+        },{
             xtype: 'button',
             itemId: 'cvbutton',
             cls: this.btnCls,
@@ -58,17 +55,19 @@ Ext.define('Connector.view.Variable', {
             hidden: true,
             vector: 29,
             cls: this.btnCls + ' ddbutton',
-            margin: '4 0 0 10',
+            margin: '12 0 0 10',
             handler: this.onBtnClick,
             scope: this
         }];
 
         this.callParent();
+
+        this.activeButton = this.getComponent('cvbutton');
     },
 
     getModelTpl : function() {
         return new Ext.XTemplate(
-            '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
+            '<h1 unselectable="on" style="vertical-align: super;">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
                 '<li>{schemaLabel:this.elipseEncode}</li>',
                 '<li>{[this.renderLabel(values)]}</li>',
@@ -108,10 +107,12 @@ Ext.define('Connector.view.Variable', {
         var cv = this.getComponent('cvbutton');
         var dd = this.getComponent('ddbutton');
         if (haveLabel) {
+            this.activeButton = dd;
             cv.hide();
             dd.show();
         }
         else {
+            this.activeButton = cv;
             cv.show();
             dd.hide();
         }
@@ -124,7 +125,13 @@ Ext.define('Connector.view.Variable', {
     },
 
     onBtnClick : function() {
-        this.fireEvent('requestvariable', this, this.getModel());
+        if (!this.disabled) {
+            this.fireEvent('requestvariable', this, this.getModel());
+        }
+    },
+
+    getActiveButton : function() {
+        return this.activeButton;
     }
 });
 
@@ -137,7 +144,7 @@ Ext.define('Connector.panel.ColorSelector', {
 
     getModelTpl : function() {
         return new Ext.XTemplate(
-            '<h1 unselectable="on">{typeLabel:htmlEncode}&nbsp;=</h1>',
+            '<h1 unselectable="on" style="vertical-align: super;">{typeLabel:htmlEncode}&nbsp;=</h1>',
             '<ul>',
                 '<li>{[this.renderLabel(values)]}</li>',
                 // The legend is always an nbsp on first render because we have to wait till after we get the data to
@@ -159,21 +166,51 @@ Ext.define('Connector.panel.ColorSelector', {
         );
     },
 
-    showHover : function() {
-        var bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
-        this.win.style.top = (bbox.top + 40) + 'px';
-        this.win.style.left = (bbox.left - 130 + (bbox.width / 2)) + 'px';
-        this.win.style.display = '';
+    showHover : function(legendData) {
+        this.win = Ext.id();
+        var calloutMgr = hopscotch.getCalloutManager();
+        calloutMgr.createCallout({
+            id: this.win,
+            target: document.querySelector('#color-legend'),
+            placement: 'bottom',
+            xOffset: -100, // assumes width of 280,
+            arrowOffset: 'center',
+            content: '<div id="legend-window"></div>',
+            onShow: function() {
+                var windowCanvas = d3.select('#legend-window').append('svg');
+
+                windowCanvas.attr('height', (8 + legendData.length * 20));
+                var windowGlyphs = windowCanvas.selectAll('.legend-point').data(legendData);
+                windowGlyphs.enter().append('path').attr('class', 'legend-point');
+                windowGlyphs.exit().remove();
+                windowGlyphs.attr('d', function(d){return d.shape();})
+                        .attr('fill', function(d){return d.color;})
+                        .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
+
+                var windowLabels = windowCanvas.selectAll('.legend-text').data(legendData);
+                windowLabels.enter().append('text').attr('class', 'legend-text');
+                windowLabels.exit().remove();
+                windowLabels.text(function(d){return d.text})
+                        .attr('x', 25)
+                        .attr('y', function(d, i){return 13 + i * 20});
+            }
+        });
+
+        // 22570: hide the 'X' since this tip isn't closeable
+        Ext.get(calloutMgr.getCallout(this.win).element).addCls('no-close');
     },
 
     hideHover : function() {
-        this.win.style.display = 'none';
+        if (this.win) {
+            hopscotch.getCalloutManager().removeCallout(this.win);
+            this.win = undefined;
+        }
     },
 
     setLegend : function(legendData) {
-        var smallCanvas, bbox, glyphs, hoverRect, scope = this, windowGlyphs, windowLabels;
+        var smallCanvas, glyphs, hoverRect, scope = this;
 
-        Ext4.query('#color-legend')[0].innerHTML = ''; // Clear the current legend element.
+        Ext.get('color-legend').update(''); // Clear the current legend element.
 
         // issue 20541
         var iconSize = 18;
@@ -195,40 +232,11 @@ Ext.define('Connector.panel.ColorSelector', {
                 .attr('fill-opacity', 0);
 
         hoverRect.on('mouseover', function(d){
-            scope.showHover.call(scope);
+            scope.showHover.call(scope, legendData);
         });
         hoverRect.on('mouseout', function(d){
             scope.hideHover.call(scope);
         });
-
-        if (!this.win) {
-            this.win = document.createElement('div');
-            this.win.setAttribute('id', 'legend-window');
-            this.win.setAttribute('class', 'arrow-window');
-            this.win.style.width = '250px';
-            this.win.style.padding = '5px';
-            this.win.style.display = 'none';
-            document.querySelector('body').appendChild(this.win);
-            this.windowCanvas = d3.select('#legend-window').append('svg');
-        }
-
-        bbox = document.querySelector('#color-legend svg').getBoundingClientRect();
-        this.win.style.height = (8 + legendData.length * 20) + 'px';
-
-        this.windowCanvas.attr('height', (8 + legendData.length * 20));
-        windowGlyphs = this.windowCanvas.selectAll('.legend-point').data(legendData);
-        windowGlyphs.enter().append('path').attr('class', 'legend-point');
-        windowGlyphs.exit().remove();
-        windowGlyphs.attr('d', function(d){return d.shape();})
-                .attr('fill', function(d){return d.color;})
-                .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
-
-        windowLabels = this.windowCanvas.selectAll('.legend-text').data(legendData);
-        windowLabels.enter().append('text').attr('class', 'legend-text');
-        windowLabels.exit().remove();
-        windowLabels.text(function(d){return d.text})
-                .attr('x', 25)
-                .attr('y', function(d, i){return 13 + i * 20});
     },
 
     onUpdateVariable : function(m) {
