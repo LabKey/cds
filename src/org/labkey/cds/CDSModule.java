@@ -45,7 +45,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 14.31;
+        return 15.10;
     }
 
     public boolean hasScripts()
@@ -56,8 +56,9 @@ public class CDSModule extends DefaultModule
     @NotNull
     protected Collection<WebPartFactory> createWebPartFactories()
     {
-        return new ArrayList<WebPartFactory>(Arrays.asList(
-                new BaseWebPartFactory("CDS Management") {
+        return new ArrayList<WebPartFactory>(Collections.singletonList(
+                new BaseWebPartFactory("CDS Management")
+                {
                     @Override
                     public WebPartView getWebPartView(@NotNull ViewContext portalCtx, @NotNull Portal.WebPart webPart)
                     {
