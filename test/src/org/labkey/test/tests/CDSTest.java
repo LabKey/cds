@@ -26,7 +26,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.CustomModules;
-import org.labkey.test.pages.DataGridSelector;
+import org.labkey.test.pages.DataGrid;
 import org.labkey.test.pages.DataGridVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
@@ -141,8 +141,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         groups.add(HOME_PAGE_GROUP);
         ensureGroupsDeleted(groups);
 
-        cds.clearAllFilters();
-        cds.clearAllSelections();
+        cds.ensureNoFilter();
+        cds.ensureNoSelection();
 
         // go back to app starting location
         cds.goToAppHome();
@@ -213,7 +213,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElement(Locator.css("div.groupicon img"));
         assertElementPresent(clippedLabel);
-        cds.clearAllFilters();
+        cds.ensureNoFilter();
 
         getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
@@ -323,7 +323,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
         _asserts.assertFilterStatusCounts(84, 3, 3);
-        cds.clearAllFilters();
+        cds.ensureNoFilter();
 
         //
         // Check sort menu
@@ -604,8 +604,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         log("Verify Grid");
 
-        DataGridSelector grid = new DataGridSelector(this);
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this);
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(grid);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
@@ -614,7 +614,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab");
-        grid.waitForCount(1000);
+        grid.assertRowCount(2969);
 
         //
         // Navigate to Summary to apply a filter
@@ -631,64 +631,65 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Check to see if grid is properly filtering based on explorer filter
         //
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
-        grid.waitForCount(1000);
+        grid.assertRowCount(1643);
         cds.clearFilter();
-        grid.waitForCount(1000);
-        assertElementPresent(grid.cellLocator("LabKey Lab"));
+        grid.assertRowCount(2969);
+        assertElementPresent(DataGrid.Locators.cellLocator("LabKey Lab"));
 
         gridColumnSelector.addGridColumn("Demographics", "Sex", true, true);
         gridColumnSelector.addGridColumn("Demographics", "Race", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab", "Sex", "Race");
-        grid.waitForCount(1000);
+        grid.assertRowCount(2969);
 
         log("Remove a column");
         gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
         grid.assertColumnsNotPresent("Point IC50");
         grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
+        grid.assertRowCount(2969);
 
         grid.setFacet("Race", "White");
-        grid.waitForCount(1000);
+        grid.assertRowCount(702);
         _asserts.assertFilterStatusCounts(84,3,3);
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
         grid.ensureColumnsPresent("Point IC50");
-        grid.waitForCount(702);
+        grid.assertRowCount(702);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
-        grid.waitForCount(702);
+        grid.assertRowCount(702);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Filter on a looked-up column");
         grid.setFacet("PI", "Mark Igra");
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.waitForCount(443);
+        grid.assertRowCount(443);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         log("Filter undo on grid");
         cds.clearFilter();
-        grid.waitForCount(1000);
+        grid.assertRowCount(2969);
         _asserts.assertDefaultFilterStatusCounts();
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.waitForCount(443);
+        grid.assertRowCount(443);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         grid.setFilter("Point IC50", "Is Greater Than", "60");
-        grid.waitForCount(2);
+        grid.assertRowCount(2);
         grid.clearFilters("Race");
-        grid.waitForCount(13);
+        grid.assertRowCount(13);
         grid.clearFilters("Point IC50");
-        grid.waitForCount(1000);
+        grid.assertRowCount(2135);
         grid.clearFilters("PI");
-        grid.waitForCount(1000);
-        assertTextPresent("All subjects"); // ensure there are no app filters remaining
+        grid.assertRowCount(2969);
+        assertElementPresent(Locator.css(".filterpanel").containing("All subjects")); // ensure there are no app filters remaining
 
         grid.sort("Lab");
         gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
@@ -945,7 +946,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         updateParticipantGroups();
 
         // use this search method to only search body text instead of html source
-        assertTextPresentInThisOrder("No Participant Groups with Live Filters were defined.");
+        waitForElement(Locator.css("div.uslog").withText("Success!"));
+        waitForElement(Locator.css("div.uslog").withText("No Subject Groups with live filters are defined."));
 
         // create two groups one that is a live filter and one that is not
         cds.enterApplication();

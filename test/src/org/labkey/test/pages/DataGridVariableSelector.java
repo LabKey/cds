@@ -21,13 +21,17 @@ import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.function.Function;
+
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
+    DataGrid _dataGrid;
     public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("View data grid"));
 
-    public DataGridVariableSelector(BaseWebDriverTest test)
+    public DataGridVariableSelector(DataGrid dataGrid)
     {
-        super(test);
+        super(dataGrid._test);
+        _dataGrid = dataGrid;
     }
 
     @Override
@@ -130,7 +134,14 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
-        _test._ext4Helper.waitForMaskToDisappear();
+        _dataGrid.applyAndWaitForGrid(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
+                return null;
+            }
+        });
     }
 }
