@@ -188,6 +188,14 @@ Ext.define('Connector.view.SingleAxisExplorer', {
         }
     },
 
+    onBeforeViewChange : function(controller, view, oldContext) {
+        if (oldContext && oldContext.view === this.xtype) {
+            if (Connector.getState().hasSelections()) {
+                Connector.getState().moveSelectionToFilter();
+            }
+        }
+    },
+
     onViewChange : function(xtype) {
         if (xtype != 'singleaxis') {
             if (this.saview) {

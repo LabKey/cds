@@ -119,6 +119,7 @@ Ext.define('Connector.controller.Explorer', {
             });
 
             // View listeners
+            this.getViewManager().on('beforechangeview', v.onBeforeViewChange, v);
             this.getViewManager().on('afterchangeview', v.onViewChange, v);
 
             // this allows whether mouse hover over explorer items will cause a request for selection
