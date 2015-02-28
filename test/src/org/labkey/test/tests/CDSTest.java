@@ -23,7 +23,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.SortDirection;
 import org.labkey.test.TestTimeoutException;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.DataGrid;
@@ -32,15 +34,19 @@ import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
+import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
+import org.labkey.test.util.Maps;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -102,14 +108,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @LogMethod(quiet = true)
     private void updateParticipantGroups(String... exclusions)
     {
-        clickProject(getProjectName());
+        goToProjectHome();
         clickAndWait(Locator.linkWithText("Update Participant Groups"));
         for (String s : exclusions)
         {
             uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", s));
         }
         submit();
-        waitForText("Fact Table");
+        waitForElement(Locator.css("div.uslog").withText("Success!"), defaultWaitForPage);
+        Ext4Helper.setCssPrefix("x-");
     }
 
     @LogMethod(category = LogMethod.MethodType.SETUP)
@@ -207,7 +214,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         final String saveLabel = "Group \"A Plotted...\" saved.";
         Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
 
-        cds.saveGroup(HOME_PAGE_GROUP, "A Plottable group");
+        cds.saveLiveGroup(HOME_PAGE_GROUP, "A Plottable group");
         waitForText(saveLabel);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -361,7 +368,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(STUDY_GROUP, studyGroupDesc);
+        cds.saveLiveGroup(STUDY_GROUP, studyGroupDesc);
 
         // verify group save messaging
         //ISSUE 19997
@@ -785,7 +792,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectInfoPaneItem(CDSHelper.LABS[1], true);
         cds.selectInfoPaneItem(CDSHelper.LABS[2], false);
         click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
-        cds.saveGroup(GROUP_NAME, GROUP_DESC);
+        cds.saveLiveGroup(GROUP_NAME, GROUP_DESC);
         _asserts.assertFilterStatusCounts(14, 1, 2);
         cds.clearFilter();
         _asserts.assertDefaultFilterStatusCounts();
@@ -844,8 +851,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         //test more group saving
         cds.clickBy("Subject characteristics");
-        cds.pickSort("Sex at birth");
-        cds.selectBars("f");
+        cds.pickSort("Country");
+        cds.selectBars("USA");
 
         // save the group and request cancel
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -855,15 +862,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "cancelgroupsave"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
-        cds.selectBars("f");
+        cds.selectBars("USA");
 
         // save the group and request save
-        cds.saveGroup(GROUP_NAME2, null);
+        cds.saveLiveGroup(GROUP_NAME2, null);
 
-        cds.selectBars("f");
+        cds.selectBars("USA");
 
         // save a group with an interior group
-        cds.saveGroup(GROUP_NAME3, null);
+        cds.saveLiveGroup(GROUP_NAME3, null);
 
         cds.clearFilter();
     }
@@ -927,72 +934,62 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
     {
-        String[] liveGroupMembersBefore = new String[]{
-                "1",
-                "102", "103", "105",
-                "3006", "3007", "3008", "3009", "3012",
-                "249320489", "249325717"};
+        final String initialBMI = "Normal";
+        final String changedBMI = "Underweight";
 
-        String[] liveGroupMembersAfter = new String[] {
-                "1",
-                "249320489", "249325717"};
-
-        String[] excludedMembers = new String[]{
-                "102", "103", "105",
-                "3006", "3007", "3008", "3009", "3012"};
+        Set<String> staticGroupMembers = setBmisTo(4, initialBMI);
+        Set<String> liveGroupMembers = new HashSet<>(staticGroupMembers);
 
         // exit the app and verify no live filter groups exist
-        beginAt("/cds/" + getProjectName() + "/begin.view?");
         updateParticipantGroups();
+        assertElementPresent(Locator.css("div.uslog").withText("No Subject Groups with live filters are defined."));
 
-        // use this search method to only search body text instead of html source
-        waitForElement(Locator.css("div.uslog").withText("Success!"));
-        waitForElement(Locator.css("div.uslog").withText("No Subject Groups with live filters are defined."));
-
-        // create two groups one that is a live filter and one that is not
         cds.enterApplication();
         cds.goToSummary();
 
-        // create live filter group
+        // create two groups one that is a live filter and one that is not
         cds.clickBy("Subject characteristics");
-        cds.pickSort("Race");
-        cds.selectBars("White");
+        cds.pickSort("Baseline BMI category");
+        cds.selectBars(initialBMI);
         cds.useSelectionAsSubjectFilter();
-        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
-        waitForText("replace an existing group");
-        setFormElement(Locator.name("groupname"), GROUP_LIVE_FILTER);
-        click(Locator.radioButtonByNameAndValue("groupselect", "live"));
-        click(CDSHelper.Locators.cdsButtonLocator("save", "groupcreatesave"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(GROUP_LIVE_FILTER), WAIT_FOR_JAVASCRIPT);
+        cds.saveLiveGroup(GROUP_LIVE_FILTER, null);
+        cds.saveSnapshotGroup(GROUP_STATIC_FILTER, null);
 
-        // create static filter group
-        click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
-        waitForText("replace an existing group");
-        setFormElement(Locator.name("groupname"), GROUP_STATIC_FILTER);
-        click(Locator.radioButtonByNameAndValue("groupselect", "live"));
-        click(CDSHelper.Locators.cdsButtonLocator("save", "groupcreatesave"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(GROUP_STATIC_FILTER), WAIT_FOR_JAVASCRIPT);
+        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
+        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembers);
 
-        // exit the app and verify
-        beginAt("/cds/" + getProjectName() + "/begin.view?");
-        updateParticipantGroups();
-        waitForText(GROUP_LIVE_FILTER + " now has participants:");
-        _asserts.assertParticipantIdsOnPage(liveGroupMembersBefore, null);
-        assertTextNotPresent(GROUP_STATIC_FILTER);
+        Set<String> removedGroupMembers = setBmisTo(2, changedBMI);
+
+        // groups shouldn't be updated yet
+        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
+        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembers);
 
         // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
         updateParticipantGroups("NAb", "Lab Results", "ADCC");
-        waitForText(GROUP_LIVE_FILTER + " now has participants:");
-        assertTextNotPresent(GROUP_STATIC_FILTER);
-        _asserts.assertParticipantIdsOnPage(liveGroupMembersAfter, excludedMembers);
+        liveGroupMembers.removeAll(removedGroupMembers);
+        assertElementPresent(Locator.css("div.uslog").containing(String.format("\"%s\" now has %d subjects.", GROUP_LIVE_FILTER, liveGroupMembers.size())));
+        assertElementNotPresent(Locator.css("div.uslog").containing(GROUP_STATIC_FILTER));
 
         // verify that our static group still ha the original members in it now
-        clickTab("Manage");
-        clickAndWait(Locator.linkContainingText("Manage Participant Groups"));
-        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, liveGroupMembersAfter, excludedMembers);
-        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembersBefore, null);
+        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
+        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembers);
+    }
+
+    private Set<String> setBmisTo(Integer participantCount, String value)
+    {
+        Ext4Helper.resetCssPrefix();
+        beginAt(WebTestHelper.buildURL("study", getProjectName(), "dataset", Maps.of("datasetId", "5003"))); // Demographics
+        DataRegionTable dataset = new DataRegionTable("Dataset", this);
+        dataset.setSort("SubjectId", SortDirection.ASC);
+        Set<String> modifiedParticipants = new HashSet<>();
+        for (int i = 0; i < participantCount; i++)
+        {
+            clickAndWait(Locator.linkWithText("edit").index(i));
+            setFormElement(Locator.name("quf_bmi_grp"), value);
+            modifiedParticipants.add(getFormElement(Locator.name("quf_SubjectId")));
+            clickButton("Submit");
+        }
+        return modifiedParticipants;
     }
 
     private void ensureGroupsDeleted(List<String> groups)

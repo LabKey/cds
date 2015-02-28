@@ -15,13 +15,11 @@
  */
 package org.labkey.test.pages;
 
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.util.function.Function;
+import com.google.common.base.Function;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
