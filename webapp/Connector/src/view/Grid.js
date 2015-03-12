@@ -408,6 +408,7 @@ Ext.define('Connector.view.Grid', {
             columns: model.get('columnSet'),
             filterArray: model.getFilterArray(true),
             maxRows: maxRows,
+            pageSize: maxRows,
             remoteSort: true
         };
 
@@ -425,6 +426,7 @@ Ext.define('Connector.view.Grid', {
         store.on('load', function(store) {
 
             var rowCount = store.getCount();
+            console.log('store has', rowCount, 'records.');
 
             var cmp = Ext.getCmp('gridrowcountcmp');
             if (cmp) {
