@@ -17,8 +17,6 @@ Ext.define('Connector.view.Grid', {
 
     headerHeight: 160,
 
-    paging: true,
-
     constructor : function(config) {
         this.callParent([config]);
         this.addEvents('applyfilter', 'removefilter', 'measureselected');
@@ -125,70 +123,6 @@ Ext.define('Connector.view.Grid', {
         });
     },
 
-    _getFooter : function() {
-        return {
-            xtype: 'container',
-            height: this.headerHeight,
-            ui: 'custom',
-            margin: '10 0 0 15',
-            layout: {
-                type: 'hbox',
-                align: 'center'
-            },
-            items: [{
-                // This allows for the following items to be centered
-                xtype: 'box',
-                flex: 1,
-                autoEl: {
-                    tag: 'div'
-                }
-            },{
-                xtype: 'button',
-                text: '<<',
-                margin: '0 15 0 0',
-                scope: this
-            },
-            {
-                xtype: 'button',
-                text: '<',
-                margin: '0 15 0 0',
-                scope: this
-            },
-            {
-                xtype: 'textfield',
-                //cls: 'wrapitem circle wholeitem selitem sel-listing',
-                //cls: 'circle',
-                hideLabel: true,
-                width: 30
-                //height: 30
-            },
-            {
-                xtype: 'label',
-                text: 'of 100',
-                margin: '5 10 0 5'
-            },
-            {
-                xtype: 'button',
-                text: '>',
-                margin: '0 15 0 0',
-                scope: this
-            },
-            {
-                xtype: 'button',
-                text: '>>',
-                margin: '0 15 0 0',
-                scope: this
-            },{
-                // This allows for the following items to be centered
-                xtype: 'box',
-                flex: 1,
-                autoEl: {
-                    tag: 'div'
-                }
-            }]
-        };
-    },
-
     _showOverlay : function() {
         if (!this.NO_SHOW) {
 
@@ -293,14 +227,10 @@ Ext.define('Connector.view.Grid', {
 
             if (prevGridId != null && prevGridId != newGrid.getId()) {
                 this.remove(prevGridId, true);
-                if(this.paging && this.footer)
-                    this.remove(this.footer, true);
                 this._hideOverlay();
             }
 
             this.add(newGrid);
-            if (this.paging)
-                this.footer = this.add(this._getFooter());
 
         }, this, {single: true});
     },
@@ -478,7 +408,6 @@ Ext.define('Connector.view.Grid', {
             columns: model.get('columnSet'),
             filterArray: model.getFilterArray(true),
             maxRows: maxRows,
-            pageSize: 50,
             remoteSort: true
         };
 
@@ -520,11 +449,7 @@ Ext.define('Connector.view.Grid', {
 
         var box = this.getBox();
         var width = box.width - 27;
-        var height;
-        if (this.paging)
-            height = box.height - this.headerHeight + 43;
-        else
-            height = box.height - this.headerHeight + 93;
+        var height = box.height - this.headerHeight + 93;
 
         return {
             width: width,
