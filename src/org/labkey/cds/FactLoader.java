@@ -100,15 +100,17 @@ public class FactLoader
         return sql;
     }
 
-    public String getGroupBySqlTranslated()
+
+    SQLFragment getGroupBySqlTranslated()
     {
         UserSchema schema = QueryService.get().getUserSchema(_user, _container, "study");
         QuerySettings settings = new TempQuerySettings(getGroupBySql());
 
         QueryView queryView = new QueryView(schema, settings, null);
 
-        return queryView.getTable().getFromSQL("x").toString();
+        return queryView.getTable().getFromSQL("x");
     }
+
 
     public SQLFragment getPopulateSql()
     {
@@ -118,8 +120,9 @@ public class FactLoader
 
         String selectColsStr = StringUtils.join(selectCols, ", ");
 
-        return new SQLFragment("INSERT INTO cds.facts (" + selectColsStr + ")  \nSELECT " + selectColsStr + " FROM \n" + getGroupBySqlTranslated());
+        return new SQLFragment("INSERT INTO cds.facts (" + selectColsStr + ")  \nSELECT " + selectColsStr + " FROM \n").append(getGroupBySqlTranslated());
     }
+
 
     public int populateCube()
     {

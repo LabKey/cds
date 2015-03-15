@@ -55,7 +55,7 @@
     <br>
     <!--
     SQL Used to populate table
-    <%=h(loader.getPopulateSql().toString(), true)%> -->
+    <%=h(loader.getPopulateSql().toDebugString(), true)%> -->
 <% } %>
 <br>
 <%=textLink("CDS Management", CDSController.BeginAction.class)%><br>
