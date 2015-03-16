@@ -17,6 +17,8 @@ Ext.define('Connector.view.Grid', {
 
     headerHeight: 160,
 
+    paging: true,
+
     constructor : function(config) {
         this.callParent([config]);
         this.addEvents('applyfilter', 'removefilter', 'measureselected');
@@ -120,6 +122,74 @@ Ext.define('Connector.view.Grid', {
         this.showmsg = true;
         this.addPlugin({
             ptype: 'messaging'
+        });
+    },
+
+    _createFooter : function() {
+
+        return Ext.create ('Ext.container.Container', {
+            height: this.headerHeight,
+            ui: 'custom',
+            margin: '10 0 0 15',
+            id: 'grid-paging-footer',
+            layout: {
+                type: 'hbox',
+                align: 'center'
+            },
+            items: [{
+                // This allows for the following items to be centered
+                xtype: 'box',
+                flex: 1,
+                autoEl: {
+                    tag: 'div'
+                }
+            },{
+                xtype: 'button',
+                text: '<<',
+                margin: '0 15 0 0',
+                handler: this.requestFirstPage,
+                scope: this
+            },{
+                xtype: 'button',
+                text: '<',
+                margin: '0 15 0 0',
+                handler: this.requestPreviousPage,
+                scope: this
+            },{
+                xtype: 'textfield',
+                id: 'grid-page-number',
+                hideLabel: true,
+                width: 30,
+                value: 1,
+                enableKeyEvents: true,
+                listeners: {
+                    specialkey: this.requestPage
+                }
+            },{
+                xtype: 'label',
+                text: 'of ' + Math.ceil(this.getGrid().getStore().totalCount/this.getGrid().getStore().pageSize),
+                margin: '5 10 0 5'
+
+            },{
+                xtype: 'button',
+                text: '>',
+                margin: '0 15 0 0',
+                handler: this.requestNextPage,
+                scope: this
+            },{
+                xtype: 'button',
+                text: '>>',
+                margin: '0 15 0 0',
+                handler: this.requestLastPage,
+                scope: this
+            },{
+                // This allows for the following items to be centered
+                xtype: 'box',
+                flex: 1,
+                autoEl: {
+                    tag: 'div'
+                }
+            }]
         });
     },
 
@@ -227,10 +297,14 @@ Ext.define('Connector.view.Grid', {
 
             if (prevGridId != null && prevGridId != newGrid.getId()) {
                 this.remove(prevGridId, true);
+                if(this.paging && this.footer)
+                    this.remove(this.footer, true);
                 this._hideOverlay();
             }
 
             this.add(newGrid);
+            if (this.paging)
+                this.footer = this.add(this._createFooter());
 
         }, this, {single: true});
     },
@@ -407,8 +481,8 @@ Ext.define('Connector.view.Grid', {
             queryName: model.get('queryName'),
             columns: model.get('columnSet'),
             filterArray: model.getFilterArray(true),
-            maxRows: maxRows,
-            pageSize: maxRows,
+            maxRows: this.paging ? 25 : maxRows,
+            pageSize: this.paging ? 25 : maxRows,
             remoteSort: true
         };
 
@@ -426,7 +500,6 @@ Ext.define('Connector.view.Grid', {
         store.on('load', function(store) {
 
             var rowCount = store.getCount();
-            console.log('store has', rowCount, 'records.');
 
             var cmp = Ext.getCmp('gridrowcountcmp');
             if (cmp) {
@@ -439,7 +512,7 @@ Ext.define('Connector.view.Grid', {
                 this.fireEvent('hideload', this);
             }
 
-            if (rowCount >= maxRows) {
+            if (rowCount >= maxRows && !this.paging) {
                 this.showLimitMessage(maxRows);
             }
         }, this);
@@ -451,7 +524,11 @@ Ext.define('Connector.view.Grid', {
 
         var box = this.getBox();
         var width = box.width - 27;
-        var height = box.height - this.headerHeight + 93;
+        var height;
+        if (this.paging)
+            height = box.height - this.headerHeight + 43;
+        else
+            height = box.height - this.headerHeight + 93;
 
         return {
             width: width,
@@ -671,6 +748,59 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             });
+        }
+    },
+
+    updatePageNumber: function() {
+        var store = this.getGrid().getStore();
+        if (this.footer) {
+            var page = this.footer.getComponent('grid-page-number');
+            if (page)
+                page.setValue(store.currentPage);
+        }
+    },
+
+    requestFirstPage: function() {
+        this.getGrid().getStore().loadPage(1);
+        this.updatePageNumber();
+    },
+
+    requestPreviousPage: function() {
+        var store = this.getGrid().getStore();
+        if (store.currentPage > 1)
+        {
+            store.previousPage();
+            this.updatePageNumber();
+        }
+    },
+
+    requestNextPage: function() {
+        var store = this.getGrid().getStore();
+        if (store.currentPage < Math.ceil(store.totalCount/store.pageSize))
+        {
+            store.nextPage();
+            this.updatePageNumber();
+        }
+    },
+
+    requestLastPage: function() {
+        var store = this.getGrid().getStore();
+        store.loadPage(Math.ceil(store.totalCount/store.pageSize));
+        this.updatePageNumber();
+    },
+
+    requestPage: function(f,e) {
+        if (e.getKey() == e.ENTER)
+        {
+            var main = this.getBubbleParent().getBubbleParent();
+            var store = main.getGrid().getStore();
+
+            var pageNo = parseInt(this.getValue());
+            if (pageNo <= Math.ceil(store.totalCount / store.pageSize) && pageNo > 0)
+            {
+                store.loadPage(pageNo);
+                main.updatePageNumber();
+            }
         }
     },
 
