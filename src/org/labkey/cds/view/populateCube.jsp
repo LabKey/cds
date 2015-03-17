@@ -82,7 +82,7 @@ to be filled in by another mechanism.<br>
     <br>
     <!--
     SQL Used to populate table
-    <%=h(mapper.getPopulateSql().toString(), true)%> -->
+    <%=h(mapper.getPopulateSql().toDebugString(), true)%> -->
 <%} %>
     <input type="submit">
 </labkey:form>
