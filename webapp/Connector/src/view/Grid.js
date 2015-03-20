@@ -166,6 +166,7 @@ Ext.define('Connector.view.Grid', {
                     specialkey: this.requestPage
                 }
             },{
+                id: 'grid-page-total',
                 xtype: 'label',
                 text: 'of ' + Math.ceil(this.getGrid().getStore().totalCount/this.getGrid().getStore().pageSize),
                 margin: '5 10 0 5'
@@ -191,6 +192,23 @@ Ext.define('Connector.view.Grid', {
                 }
             }]
         });
+    },
+
+    _updateFooter : function() {
+        if (this.footer) {
+
+            var totalPagesEl = this.footer.getComponent('grid-page-total');
+            var totalPages = Math.ceil(this.getGrid().getStore().totalCount/this.getGrid().getStore().pageSize);
+            if (totalPagesEl)
+                totalPagesEl.setText("of " + totalPages);
+
+            var currentPageEl = this.footer.getComponent('grid-page-number');
+            if (currentPageEl && parseInt(currentPageEl.getValue()) > totalPages) {
+                this.requestFirstPage()
+            }
+
+            this.updatePageNumber();
+        }
     },
 
     _showOverlay : function() {
@@ -481,8 +499,8 @@ Ext.define('Connector.view.Grid', {
             queryName: model.get('queryName'),
             columns: model.get('columnSet'),
             filterArray: model.getFilterArray(true),
-            maxRows: this.paging ? 25 : maxRows,
-            pageSize: this.paging ? 25 : maxRows,
+            maxRows: maxRows,
+            pageSize: maxRows,
             remoteSort: true
         };
 
@@ -515,6 +533,9 @@ Ext.define('Connector.view.Grid', {
             if (rowCount >= maxRows && !this.paging) {
                 this.showLimitMessage(maxRows);
             }
+
+            this._updateFooter();
+
         }, this);
 
         return store;
@@ -756,7 +777,9 @@ Ext.define('Connector.view.Grid', {
         if (this.footer) {
             var page = this.footer.getComponent('grid-page-number');
             if (page)
+            {
                 page.setValue(store.currentPage);
+            }
         }
     },
 

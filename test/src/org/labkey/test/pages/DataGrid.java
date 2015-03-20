@@ -145,9 +145,9 @@ public class DataGrid
 
     public void assertRowCount(int count)
     {
-        if (count > 1000)
+        if (count > 25)
         {
-            _test.waitForElements(Locators.dataRow, 1000);
+            _test.waitForElements(Locators.dataRow, 25);
             Assert.assertEquals("Wrong number of rows in export", count, getExportRowCount());
         }
         else
@@ -156,9 +156,24 @@ public class DataGrid
         }
     }
 
+    public void assertPageTotal(int pages)
+    {
+        _test.waitForElement(Locators.totalPages.containing(Integer.toString(pages)));
+    }
+
+    public void assertCurrentPage(int page)
+    {
+        _test.waitForFormElementToEqual(Locators.currentPage, Integer.toString(page));
+    }
+
     public void assertSortPresent(String columnName)
     {
         _test.waitForElement(Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName));
+    }
+
+    public void assertCellContent(String content)
+    {
+        _test.waitForElement(Locators.cellLocator(content));
     }
 
     @LogMethod
@@ -191,6 +206,12 @@ public class DataGrid
         }
     }
 
+    public void setCurrentPage(int page)
+    {
+        _test.setFormElement(Locators.currentPage, Integer.toString(page));
+        _test.pressEnter(Locators.currentPage);
+    }
+
     public File exportGrid()
     {
         return _test.clickAndWaitForDownload(Locator.css("a.gridexportbtn"));
@@ -211,6 +232,8 @@ public class DataGrid
         public static Locator.CssLocator grid = Locator.css("div.connector-grid");
         public static Locator.CssLocator dataRow = grid.append(Locator.css("tr.x-grid-data-row"));
         public static Locator.CssLocator sysmsg = Locator.css("div.sysmsg");
+        public static Locator.CssLocator totalPages = Locator.css("label.x-box-item");
+        public static Locator.CssLocator currentPage = Locator.css("input.x-form-field");
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {
