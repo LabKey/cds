@@ -624,6 +624,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertRowCount(2969);
         grid.assertPageTotal(119);
 
+        //
+        // Check paging buttons with known dataset. Verify with first and last subject id on page.
+        //
+        log("Verify grid paging");
         grid.sort("Subject Id");
         click(CDSHelper.Locators.cdsButtonLocator(">>"));
         grid.assertCurrentPage(119);
@@ -674,6 +678,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84,3,3);
 
+        //
+        // Check paging buttons and page selector with filtered dataset.
+        //
+        log("Verify grid paging with filtered dataset");
         grid.sort("Subject Id");
         click(CDSHelper.Locators.cdsButtonLocator(">"));
         grid.assertCurrentPage(2);
