@@ -184,7 +184,7 @@ Ext.define('Connector.model.Grid', {
 
         getMaxRows : function() {
 
-            var max = 500;
+            var max = 25;
             var params = LABKEY.ActionURL.getParameters();
 
             if (Ext.isDefined(params['maxRows'])) {

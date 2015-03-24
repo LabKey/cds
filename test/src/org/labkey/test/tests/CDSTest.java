@@ -616,12 +616,31 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        waitForText("Export to see all data."); // grid warning
+        waitForText("View data grid"); // grid warning
 
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab");
         grid.assertRowCount(2969);
+        grid.assertPageTotal(119);
+
+        //
+        // Check paging buttons with known dataset. Verify with first and last subject id on page.
+        //
+        log("Verify grid paging");
+        grid.sort("Subject Id");
+        click(CDSHelper.Locators.cdsButtonLocator(">>"));
+        grid.assertCurrentPage(119);
+        grid.assertCellContent("9181");
+        grid.assertCellContent("9199");
+
+        click(CDSHelper.Locators.cdsButtonLocator("<"));
+        grid.assertCurrentPage(118);
+        grid.assertCellContent("9156");
+        grid.assertCellContent("9180");
+        click(CDSHelper.Locators.cdsButtonLocator("<<"));
+        grid.assertCellContent("193001");
+        grid.assertCellContent("193002");
 
         //
         // Navigate to Summary to apply a filter
@@ -656,18 +675,35 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         grid.setFacet("Race", "White");
         grid.assertRowCount(702);
+        grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84,3,3);
+
+        //
+        // Check paging buttons and page selector with filtered dataset.
+        //
+        log("Verify grid paging with filtered dataset");
+        grid.sort("Subject Id");
+        click(CDSHelper.Locators.cdsButtonLocator(">"));
+        grid.assertCurrentPage(2);
+        grid.assertCellContent("9149");
+        grid.assertCellContent("9102");
+
+        grid.setCurrentPage(20);
+        grid.assertCellContent("193087");
+        grid.assertCellContent("193088");
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
         grid.ensureColumnsPresent("Point IC50");
         grid.assertRowCount(702);
+        grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
         grid.assertRowCount(702);
+        grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Filter on a looked-up column");
@@ -675,17 +711,20 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.assertRowCount(443);
+        grid.assertPageTotal(18);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         log("Filter undo on grid");
         cds.clearFilter();
         grid.assertRowCount(2969);
+        grid.assertPageTotal(119);
         _asserts.assertDefaultFilterStatusCounts();
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.assertRowCount(443);
+        grid.assertPageTotal(18);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         grid.setFilter("Point IC50", "Is Greater Than", "60");
@@ -694,8 +733,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertRowCount(13);
         grid.clearFilters("Point IC50");
         grid.assertRowCount(2135);
+        grid.assertPageTotal(86);
         grid.clearFilters("PI");
         grid.assertRowCount(2969);
+        grid.assertPageTotal(119);
         assertElementPresent(Locator.css(".filterpanel").containing("All subjects")); // ensure there are no app filters remaining
 
         grid.sort("Lab");
