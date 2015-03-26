@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,19 @@
  */
 package org.labkey.test.util;
 
+import com.google.common.base.Function;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.pages.DataGridVariableSelector;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.List;
 
 import static com.sun.jna.Platform.isMac;
 
@@ -52,7 +56,7 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("maxRows=1000&_showPlotData=true");
+        _test.addUrlParameter("_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
@@ -62,32 +66,49 @@ public class CDSHelper
     }
 
     @LogMethod(quiet = true)
-    public void pickSort(@LoggedParam String sortBy)
+    public void pickSort(@LoggedParam final String sortBy)
     {
         _test.click(Locator.id("sae-hierarchy-dropdown"));
-        _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+
+        applyAndWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+                return null;
+            }
+        });
+
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
     }
 
-    public void pickSort(String sort, String waitValue)
+    public void pickDimension(final String dimension)
     {
-        pickSort(sort);
-        _test.waitForText(CDS_WAIT, waitValue);
-    }
+        applyAndWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(Locators.dimensionHeaderLocator(dimension));
+                return null;
+            }
+        });
 
-    public void pickDimension(String dimension)
-    {
-        _test.click(Locators.dimensionHeaderLocator(dimension));
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
 
-    public void waitForFilterAnimation()
+    public void saveLiveGroup(String name, @Nullable String description)
     {
-        Locator floatingFilterLoc = Locator.css(".barlabel.selected");
-        _test.waitForElementToDisappear(floatingFilterLoc);
+        saveGroup(name, description, "live");
     }
 
-    public void saveGroup(String name, @Nullable String description)
+    public void saveSnapshotGroup(String name, @Nullable String description)
+    {
+        saveGroup(name, description, "snapshot");
+    }
+
+    private void saveGroup(String name, @Nullable String description, String type)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
         _test.waitForText("Live: Update group with new data");
@@ -95,7 +116,21 @@ public class CDSHelper
         _test.setFormElement(Locator.name("groupname"), name);
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
-        _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
+
+        if ("snapshot".equals(type))
+        {
+            _test.click(Ext4Helper.Locators.radiobutton(_test, "Snapshot: Keep this group static"));
+        }
+
+        applyAndMaybeWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
+                return null;
+            }
+        });
     }
 
     public void saveOverGroup(String name)
@@ -107,7 +142,17 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("save", "groupupdatesave"));
     }
 
-    public void selectBarsHelper(boolean isShift, String... bars)
+    public void selectBars(String... bars)
+    {
+        selectBars(false, bars);
+    }
+
+    public void shiftSelectBars(String... bars)
+    {
+        selectBars(true, bars);
+    }
+
+    public void selectBars(boolean isShift, String... bars)
     {
         if (bars == null || bars.length == 0)
             throw new IllegalArgumentException("Please specify bars to select.");
@@ -138,13 +183,18 @@ public class CDSHelper
 
     private void clickBar(String barLabel)
     {
-        Locator detailStatusPanelLoc = Locator.css("ul.detailstatus"); // becomes stale after filter is applied
-        WebElement detailStatusPanel = detailStatusPanelLoc.waitForElement(_test.getDriver(), CDS_WAIT);
+        WebElement detailStatusPanel = Locator.css("ul.detailstatus").waitForElement(_test.getDriver(), CDS_WAIT); // becomes stale after filter is applied
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locators.barLabel.withText(barLabel).toBy()));
         _test.clickAt(_test.getElement(Locators.barLabel.withText(barLabel)), 1, 1, 0); // Click left end of bar; other elements might obscure click on Chrome
         _test.waitForElement(Locators.filterMemberLocator(barLabel), CDS_WAIT);
-//        _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
+        _test.shortWait().until(ExpectedConditions.stalenessOf(detailStatusPanel));
         waitForFilterAnimation();
+    }
+
+    private void waitForFilterAnimation()
+    {
+        Locator floatingFilterLoc = Locator.css(".barlabel.selected");
+        _test.waitForElementToDisappear(floatingFilterLoc);
     }
 
     public void applySelection(String barLabel)
@@ -156,16 +206,6 @@ public class CDSHelper
     {
         selectBars(barLabel);
         _test.waitForElement(Locators.filterMemberLocator(filteredLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
-    }
-
-    public void selectBars(String... bars)
-    {
-        selectBarsHelper(false, bars);
-    }
-
-    public void shiftSelectBars(String... bars)
-    {
-        selectBarsHelper(true, bars);
     }
 
     public void goToAppHome()
@@ -181,18 +221,44 @@ public class CDSHelper
 
     public void clearFilter()
     {
-        _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
-        _test.waitAndClick(Locators.cdsButtonLocator("clear", "filterclear"));
+        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
+
+        applyAndMaybeWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                clearButton.click();
+                return null;
+            }
+        });
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
 
-    public void clearAllFilters()
+    public void ensureNoFilter()
     {
         // clear filters
         if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filterclear").notHidden()))
         {
             clearFilter();
         }
+    }
+
+    public void undoClearFilter()
+    {
+        _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
+
+        applyAndMaybeWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(Locator.linkWithText("Undo"));
+                return null;
+            }
+        });
+
+        _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
     }
 
     public void useSelectionAsSubjectFilter()
@@ -213,7 +279,7 @@ public class CDSHelper
         waitForClearSelection();
     }
 
-    public void clearAllSelections()
+    public void ensureNoSelection()
     {
         // clear selections
         if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "selectionclear").notHidden()))
@@ -224,29 +290,56 @@ public class CDSHelper
 
     private void waitForClearSelection()
     {
-        Locator.XPathLocator panel = Locator.tagWithClass("div", "selectionpanel");
-        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(panel.toBy()));
+        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.selectionpanel")));
+        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("span.status-subcount")));
     }
 
-    public void clickBy(String byNoun)
+    public void clickBy(final String byNoun)
     {
-        Locator.XPathLocator loc = Locators.getByLocator(byNoun);
-        _test.waitForElement(loc);
-        _test.click(loc);
-        _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
-        _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
+        final WebElement link = _test.waitForElement(Locators.getByLocator(byNoun));
+
+        applyAndWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                link.click();
+                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
+                _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
+                return null;
+            }
+        });
+
     }
 
     public void hideEmpty()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+        applyAndWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+                return null;
+            }
+        });
+
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("show empty"));
     }
 
     public void showEmpty()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("show empty"));
+        applyAndWaitForBars(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(CDSHelper.Locators.cdsButtonLocator("show empty"));
+                return null;
+            }
+        });
+
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("hide empty"));
     }
 
@@ -361,6 +454,37 @@ public class CDSHelper
     {
         String radioLabel = (setAND ? "(AND)" : "(OR)");
         _test.click(Locator.tagWithClass("label", "x-form-cb-label").containing(radioLabel));
+    }
+
+    private void applyAndMaybeWaitForBars(Function<Void, Void> function)
+    {
+        if (_test.isElementPresent(Locator.id("single-axis-explorer")))
+        {
+            applyAndWaitForBars(function);
+        }
+        else
+        {
+            function.apply(null);
+        }
+    }
+
+    private void applyAndWaitForBars(Function<Void, Void> function)
+    {
+        List<WebElement> bars = Locator.css("div.bar").findElements(_test.getDriver());
+
+        function.apply(null);
+
+        if (bars.size() > 0)
+            _test.shortWait().until(ExpectedConditions.stalenessOf(bars.get(0)));
+        waitForBarAnimation();
+    }
+
+    private void waitForBarAnimation()
+    {
+        Locator animatingBar = Locator.tagWithClass("div", "bar").withPredicate(
+                Locator.tagWithClass("span", "count").withoutText("0")).append(
+                Locator.tagWithClass("span", "index"));
+        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(animatingBar));
     }
 
     public enum NavigationLink

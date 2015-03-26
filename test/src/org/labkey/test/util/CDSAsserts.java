@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
  */
 package org.labkey.test.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
-import org.labkey.test.tests.CDSTest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CDSAsserts
@@ -111,18 +111,20 @@ public class CDSAsserts
     }
 
     @LogMethod
-    public void assertParticipantIds(String groupName, String[] membersIncluded, String[] membersExcluded)
+    public void assertParticipantIds(String groupName, Set<String> groupMemberPtids)
     {
+        Ext4Helper.resetCssPrefix();
+        if (!_test.isElementPresent(Locator.id("participantCategoriesGrid")))
+        {
+            _test.goToProjectHome();
+            _test.clickTab("Manage");
+            _test.clickAndWait(Locator.linkContainingText("Manage Subject Groups"));
+        }
+
         _test.waitForText(groupName);
 
-        String ids = _test._studyHelper.getParticipantIds(groupName, "Participant");
-        if (membersIncluded != null)
-            for (String member : membersIncluded)
-                assertTrue(ids.contains(member));
-
-        if (membersExcluded != null)
-            for (String member : membersExcluded)
-                assertFalse(ids.contains(member));
+        Set<String> ids = new HashSet<>(Arrays.asList(_test._studyHelper.getParticipantIds(groupName, "Subject").split(",[\\s]*")));
+        assertEquals("Wrong ptids in group '" + groupName, groupMemberPtids, ids);
     }
 
     private void assertPeopleTip(String cls, String name, String portraitFilename, String role)

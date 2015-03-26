@@ -86,8 +86,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     public void preTest()
     {
         cds.enterApplication();
-        cds.clearAllFilters();
-        cds.clearAllSelections();
+        cds.ensureNoFilter();
+        cds.ensureNoSelection();
     }
 
     protected static final String MOUSEOVER_FILL = "#01BFC2";
@@ -699,7 +699,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForTextToDisappear("Heatmap enabled");
         xaxis.cancelSelection();
 
-        cds.clearAllFilters();
+        cds.ensureNoFilter();
     }
 
     @AfterClass

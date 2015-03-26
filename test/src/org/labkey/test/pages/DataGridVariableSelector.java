@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,21 @@
  */
 package org.labkey.test.pages;
 
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import com.google.common.base.Function;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
+    DataGrid _dataGrid;
     public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("View data grid"));
 
-    public DataGridVariableSelector(BaseWebDriverTest test)
+    public DataGridVariableSelector(DataGrid dataGrid)
     {
-        super(test);
+        super(dataGrid._test);
+        _dataGrid = dataGrid;
     }
 
     @Override
@@ -130,7 +132,14 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
-        _test._ext4Helper.waitForMaskToDisappear();
+        _dataGrid.applyAndWaitForGrid(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
+                return null;
+            }
+        });
     }
 }
