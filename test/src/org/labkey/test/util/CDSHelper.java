@@ -476,8 +476,7 @@ public class CDSHelper
 
         if (bars.size() > 0)
             _test.shortWait().until(ExpectedConditions.stalenessOf(bars.get(0)));
-        if(!_test.isElementPresent(Locator.tagWithClass("div", "saeempty")))
-            waitForBarAnimation();
+        waitForBarAnimation();
     }
 
     private void waitForBarAnimation()
