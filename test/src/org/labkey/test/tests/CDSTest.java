@@ -717,7 +717,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         log("Filter undo on grid");
         cds.clearFilter();
-        grid.assertRowCount(2969);
+        // Checking row counts on large datasets takes too long, just check number of pages.
         grid.assertPageTotal(119);
         _asserts.assertDefaultFilterStatusCounts();
 
@@ -733,10 +733,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.clearFilters("Race");
         grid.assertRowCount(13);
         grid.clearFilters("Point IC50");
-        grid.assertRowCount(2135);
         grid.assertPageTotal(86);
         grid.clearFilters("PI");
-        grid.assertRowCount(2969);
         grid.assertPageTotal(119);
         assertElementPresent(Locator.css(".filterpanel").containing("All subjects")); // ensure there are no app filters remaining
 
@@ -888,8 +886,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[2]);
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.pickDimension("Assays");
-  //      _asserts.assertSelectionStatusCounts(32, 1, 2);
-        //cds.useSelectionAsSubjectFilter();
         cds.goToSummary();
 
         //test more group saving
