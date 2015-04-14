@@ -662,6 +662,97 @@ Ext.define('Connector.view.Chart', {
             return d.toDateString();
         };
 
+        var me = this, slice = Array.prototype.slice;;
+
+        var xAxisClick = function(plot, pointData, layerSel, layerScope) {
+            alert("Clickity click click!");
+        };
+
+        var xAxisMouseOut = function (target, index, y, layerScope) {
+            if (!layerScope.isBrushed) {
+                // Clear plot highlights
+                var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
+
+                if (plot.scales.color && plot.scales.color.scale) {
+                    colorScale = plot.scales.color.scale;
+                    colorAcc = plot.aes.color;
+                }
+
+                colorFn = function(d) {
+                    if (colorScale && colorAcc) {
+                        return colorScale(colorAcc.getValue(d));
+                    }
+
+                    return '#000000';
+                };
+
+                layerScope.plot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
+                        .attr('stroke', colorFn)
+                        .attr('fill-opacity', 0.5)
+                        .attr('stroke-opacity', 0.5);
+
+                // Clear label highlighting
+                var tickFillFn = function(t) {
+                    return 'white';
+                };
+
+                var ticks = layerScope.plot.renderer.canvas.selectAll('.tick-text rect');
+                ticks.attr('fill', tickFillFn);
+            }
+        }
+
+        var xAxisMouseOver = function(target, index, y, layerScope) {
+            if (!layerScope.isBrushed) {
+                // Plot highlights
+                var subjectIds = [];
+                var strokeFillFn = function(d) {
+                    if (subjectIds.indexOf(d.subjectId.value) != -1) {
+                        return '#01BFC2';
+                    }
+                    return '#E6E6E6';
+                };
+
+                var points = layerScope.plot.renderer.canvas.selectAll('.point path');
+
+                points.each(function(d) {
+                    if (d.x === target && subjectIds.indexOf(d.subjectId.value) === -1) {
+                        subjectIds.push(d.subjectId.value);
+                    }
+                });
+
+                points.attr('fill', strokeFillFn)
+                        .attr('stroke', strokeFillFn)
+                        .attr('fill-opacity', 1)
+                        .attr('stroke-opacity', 1);
+
+                points.each(function(d) {
+                    // Re-append the node so it is on top of all the other nodes, this way highlighted points
+                    // are always visible.
+                    var node = this.parentNode;
+                    if (subjectIds.indexOf(d.subjectId.value) != -1) {
+                        node.parentNode.appendChild(node);
+                    }
+                });
+
+                // Highlight label
+                var tickFillFn = function(t) {
+                    if (target === t)
+                        return '#01BFC2';
+                    else
+                        return 'white';
+                };
+
+                var ticks = layerScope.plot.renderer.canvas.selectAll('.tick-text rect');
+                ticks.attr('fill', tickFillFn);
+            }
+        };
+
+        var xAxisClickFn = function() { xAxisClick.apply(me, slice.call(arguments, 0).concat(layerScope)); };
+
+        var xAxisMouseOverFn = function() { xAxisMouseOver.apply(me, slice.call(arguments, 0).concat(layerScope)); };
+
+        var xAxisMouseOutFn = function() { xAxisMouseOut.apply(me, slice.call(arguments, 0).concat(layerScope)); };
+
         if (noplot) {
             scales.x = {
                 scaleType: 'continuous',
@@ -689,7 +780,12 @@ Ext.define('Connector.view.Chart', {
                 }
             }
             else {
-                scales.x = {scaleType: 'discrete'};
+                scales.x = {
+                    scaleType: 'discrete',
+                    tickClick: xAxisClickFn,
+                    tickMouseOver: xAxisMouseOverFn,
+                    tickMouseOut: xAxisMouseOutFn
+                };
             }
 
             scales.yLeft = {
