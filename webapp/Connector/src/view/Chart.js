@@ -695,9 +695,16 @@ Ext.define('Connector.view.Chart', {
                 var tickFillFn = function(t) {
                     return 'white';
                 };
+                
+                var labelFillFn = function(t) {
+                    return '#666363';
+                };
 
                 var ticks = layerScope.plot.renderer.canvas.selectAll('.tick-text rect');
                 ticks.attr('fill', tickFillFn);
+
+                var label = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
+                label.attr('fill', labelFillFn);
             }
         }
 
@@ -742,8 +749,18 @@ Ext.define('Connector.view.Chart', {
                         return 'white';
                 };
 
+                var labelFillFn = function(t) {
+                    if (target === t)
+                        return 'white';
+                    else
+                        return '#666363';
+                };
+
                 var ticks = layerScope.plot.renderer.canvas.selectAll('.tick-text rect');
                 ticks.attr('fill', tickFillFn);
+
+                var label = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
+                label.attr('fill', labelFillFn);
             }
         };
 
