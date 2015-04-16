@@ -1687,17 +1687,16 @@ Ext.define('Connector.view.Chart', {
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 open : function() {},
                 measureConfig: {
-                    allColumns: false,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    filter: LABKEY.Query.Visualization.Filter.create({
-                        schemaName: Connector.studyContext.schemaName,
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
-                    }),
-                    showHidden: this.canShowHidden,
                     cls: 'yaxispicker',
                     sourceCls: sCls,
-                    multiSelect: false
+                    multiSelect: false,
+                    displaySourceCounts: true,
+                    sourceCountSchema: Connector.studyContext.schemaName,
+                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                        measuresOnly: true,
+                        includeHidden: this.canShowHidden
+                    })
                 },
                 displayConfig: {
                     mainTitle : 'Choose a Variable for the Y Axis...'
@@ -1790,18 +1789,16 @@ Ext.define('Connector.view.Chart', {
                 title     : 'X Axis',
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
-                    allColumns : true,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    includeTimpointMeasures : true,
-                    filter     : LABKEY.Query.Visualization.Filter.create({
-                        schemaName: Connector.studyContext.schemaName,
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
-                    }),
-                    showHidden : this.canShowHidden,
                     cls        : 'xaxispicker',
                     sourceCls  : sCls,
-                    multiSelect: false
+                    multiSelect: false,
+                    displaySourceCounts: true,
+                    sourceCountSchema: Connector.studyContext.schemaName,
+                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                        includeTimpointMeasures : true,
+                        includeHidden: this.canShowHidden
+                    })
                 },
                 displayConfig : {
                     mainTitle : 'Choose a Variable for the X Axis...'
@@ -1920,21 +1917,18 @@ Ext.define('Connector.view.Chart', {
                 title     : 'Color',
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
-                    allColumns : true,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    includeTimpointMeasures : false,
-                    filter     : LABKEY.Query.Visualization.Filter.create({
-                        schemaName: Connector.studyContext.schemaName,
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+                    cls : 'coloraxispicker',
+                    sourceCls : sCls,
+                    multiSelect : false,
+                    displaySourceCounts : true,
+                    sourceCountSchema : Connector.studyContext.schemaName,
+                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                        includeHidden: this.canShowHidden
                     }),
                     userFilter : function(row) {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
-                    },
-                    showHidden : this.canShowHidden,
-                    cls        : 'coloraxispicker',
-                    sourceCls  : sCls,
-                    multiSelect: false
+                    }
                 },
                 displayConfig : {
                     mainTitle : 'Choose a Color Variable...'

@@ -25,8 +25,8 @@ Ext.define('Connector.controller.Query', {
     },
 
     _initMeasures : function() {
-        if (!this.MEMBER_CACHE) {
-            this.MEMBER_CACHE = {};
+        if (!this.MEASURE_STORE) {
+            this.MEASURE_STORE = Ext4.create('Ext.data.Store', {model: 'LABKEY.ext4.Measure'});
         }
 
         var cacheReady = false;
@@ -110,8 +110,9 @@ Ext.define('Connector.controller.Query', {
                             queryName: Connector.studyContext.subjectVisit
                         });
 
-                        // Add these into the MEMBER_CACHE
+                        // Add these into the MEASURE_STORE
                         measure['alias'] = LABKEY.MeasureUtil.getAlias(measure);
+                        measure['variableType'] = 'GRID_DEFAULT';
                         this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                     }
 
@@ -159,7 +160,7 @@ Ext.define('Connector.controller.Query', {
 
         var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
 
-        return [{
+        var days = new LABKEY.Query.Visualization.Measure({
             alias: 'Days',
             sortOrder: -4,
             schemaName: Connector.studyContext.schemaName,
@@ -173,7 +174,9 @@ Ext.define('Connector.controller.Query', {
             type: 'INTEGER',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
             variableType: 'TIME'
-        },{
+        });
+
+        var weeks = new LABKEY.Query.Visualization.Measure({
             alias: 'Weeks',
             sortOrder: -3,
             schemaName: Connector.studyContext.schemaName,
@@ -185,7 +188,9 @@ Ext.define('Connector.controller.Query', {
             type: 'DOUBLE',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
             variableType: 'TIME'
-        },{
+        });
+
+        var months = new LABKEY.Query.Visualization.Measure({
             alias: 'Months',
             sortOrder: -2,
             schemaName: Connector.studyContext.schemaName,
@@ -197,7 +202,9 @@ Ext.define('Connector.controller.Query', {
             type: 'DOUBLE',
             description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
             variableType: 'TIME'
-        },{
+        });
+
+        var savedGroups = new LABKEY.Query.Visualization.Measure({
             alias: 'SavedGroups',
             sortOrder: -1,
             schemaName: Connector.studyContext.schemaName,
@@ -211,12 +218,14 @@ Ext.define('Connector.controller.Query', {
             type: 'VARCHAR',
             isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
             variableType: 'USER_GROUPS'
-        }];
+        });
+
+        return [days, weeks, months, savedGroups];
     },
 
     addMeasure : function(measure) {
-        if (!Ext.isObject(this.MEMBER_CACHE[measure.alias])) {
-            this.MEMBER_CACHE[measure.alias] = measure;
+        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
+            this.MEASURE_STORE.add(measure);
         }
     },
 
@@ -229,12 +238,42 @@ Ext.define('Connector.controller.Query', {
 
         // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
         var cleanAlias = copyAlias.split('/')[0];
-        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEMBER_CACHE[cleanAlias])) {
-            return Ext.clone(this.MEMBER_CACHE[cleanAlias]);
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEASURE_STORE.getById(cleanAlias))) {
+            return Ext.clone(this.MEASURE_STORE.getById(cleanAlias).raw);
         }
         else {
             console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
         }
+    },
+
+    /**
+     * Returns an array of measure objects from the cached store data that match the filters based on the config parameters.
+     * @param config An object which contains the following filterable properties.
+     * @param {String} config.queryType Filter for a specific queryType (i.e. DATASET)
+     * @param {Boolean} config.measuresOnly Whether or not to filter the measure objects to just those specifically declared as "measures" in the ColumnInfo
+     * @param {Boolean} config.includeTimpointMeasures Whether or not to include the timepoint/group measures
+     * @param {Boolean} config.includeHidden Whether or not the include hidden columns
+     */
+    getMeasuresStoreData : function(config) {
+        if (!this._ready) {
+            console.warn('Requested measure store data before measure caching prepared.');
+        }
+
+        var measures = [];
+
+        Ext.each(this.MEASURE_STORE.getRange(), function(record){
+            var queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
+            var measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
+            var timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
+            var hiddenMatch = config.includeHidden || !record.get('hidden');
+            var notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
+
+            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch) {
+                measures.push(Ext.clone(record.raw));
+            }
+        });
+
+        return measures;
     },
 
     getDataSorts : function() {
