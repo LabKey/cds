@@ -96,7 +96,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         return BrowserType.CHROME;
     }
 
-    @BeforeClass @LogMethod(category = LogMethod.MethodType.SETUP)
+    @BeforeClass @LogMethod
     public static void doSetup() throws Exception
     {
         CDSTest initTest = (CDSTest)getCurrentTest();
@@ -119,7 +119,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         Ext4Helper.setCssPrefix("x-");
     }
 
-    @LogMethod(category = LogMethod.MethodType.SETUP)
+    @LogMethod
     private void verifyFactTable()
     {
         clickProject(getProjectName());

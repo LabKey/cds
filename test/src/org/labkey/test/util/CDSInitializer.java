@@ -41,7 +41,7 @@ public class CDSInitializer
         _desiredStudies = studies;
     }
 
-    @LogMethod(category = LogMethod.MethodType.SETUP)
+    @LogMethod
     public void setupDataspace()
     {
         setupProject();
