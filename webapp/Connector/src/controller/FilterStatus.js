@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -212,8 +212,9 @@ Ext.define('Connector.controller.FilterStatus', {
         state.on('selectionchange', view.onSelectionChange, view);
 
         this.getViewManager().register(view);
-        this.getViewManager().getEast().on('tabchange', function() { view.hideMessage(false); }, this);
-        this.getViewManager().on('afterchangeview', function() { view.hideMessage(false); }, this);
+        this.getViewManager().getEast().on('tabchange', view.onAfterViewChange, view);
+        this.getViewManager().on('beforechangeview', view.onBeforeViewChange, view);
+        this.getViewManager().on('afterchangeview', view.onAfterViewChange, view);
 
         return view;
     },

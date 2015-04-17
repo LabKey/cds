@@ -181,7 +181,7 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
         {
-            return new HtmlView("<form method='post'>Click the button below to delete all facts from the fact table<br><input type=submit value='Delete Facts'>");
+            return new JspView("/org/labkey/cds/view/clearFacts.jsp");
         }
 
         @Override

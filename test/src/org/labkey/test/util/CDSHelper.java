@@ -56,7 +56,7 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("maxRows=1000&_showPlotData=true");
+        _test.addUrlParameter("_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
@@ -476,7 +476,8 @@ public class CDSHelper
 
         if (bars.size() > 0)
             _test.shortWait().until(ExpectedConditions.stalenessOf(bars.get(0)));
-        waitForBarAnimation();
+        if(!_test.isElementPresent(Locator.tagWithClass("div", "saeempty")))
+            waitForBarAnimation();
     }
 
     private void waitForBarAnimation()

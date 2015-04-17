@@ -571,6 +571,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectBars(CDSHelper.STUDIES[1]);
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
        _asserts.assertSelectionStatusCounts(100, 1, 2);
+        cds.clearSelection();
 
         // verify multi-level filtering
         cds.goToSummary();
@@ -616,12 +617,31 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        waitForText("Export to see all data."); // grid warning
+        waitForText("View data grid"); // grid warning
 
         gridColumnSelector.addGridColumn("NAb", "Point IC50", true, true);
         gridColumnSelector.addGridColumn("NAb", "Lab", false, true);
         grid.ensureColumnsPresent("Point IC50", "Lab");
         grid.assertRowCount(2969);
+        grid.assertPageTotal(119);
+
+        //
+        // Check paging buttons with known dataset. Verify with first and last subject id on page.
+        //
+        log("Verify grid paging");
+        grid.sort("Subject Id");
+        click(CDSHelper.Locators.cdsButtonLocator(">>"));
+        grid.assertCurrentPage(119);
+        grid.assertCellContent("9181");
+        grid.assertCellContent("9199");
+
+        click(CDSHelper.Locators.cdsButtonLocator("<"));
+        grid.assertCurrentPage(118);
+        grid.assertCellContent("9156");
+        grid.assertCellContent("9180");
+        click(CDSHelper.Locators.cdsButtonLocator("<<"));
+        grid.assertCellContent("193001");
+        grid.assertCellContent("193002");
 
         //
         // Navigate to Summary to apply a filter
@@ -656,18 +676,35 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         grid.setFacet("Race", "White");
         grid.assertRowCount(702);
+        grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84,3,3);
+
+        //
+        // Check paging buttons and page selector with filtered dataset.
+        //
+        log("Verify grid paging with filtered dataset");
+        grid.sort("Subject Id");
+        click(CDSHelper.Locators.cdsButtonLocator(">"));
+        grid.assertCurrentPage(2);
+        grid.assertCellContent("9149");
+        grid.assertCellContent("9102");
+
+        grid.setCurrentPage(20);
+        grid.assertCellContent("193087");
+        grid.assertCellContent("193088");
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
         grid.ensureColumnsPresent("Point IC50");
         grid.assertRowCount(702);
+        grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
         grid.assertRowCount(702);
+        grid.assertPageTotal(29);
         _asserts.assertFilterStatusCounts(84, 3, 3);
 
         log("Filter on a looked-up column");
@@ -675,17 +712,20 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.assertRowCount(443);
+        grid.assertPageTotal(18);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         log("Filter undo on grid");
         cds.clearFilter();
-        grid.assertRowCount(2969);
+        // Checking row counts on large datasets takes too long, just check number of pages.
+        grid.assertPageTotal(119);
         _asserts.assertDefaultFilterStatusCounts();
 
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.assertRowCount(443);
+        grid.assertPageTotal(18);
         _asserts.assertFilterStatusCounts(15, 2, 2);
 
         grid.setFilter("Point IC50", "Is Greater Than", "60");
@@ -693,9 +733,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.clearFilters("Race");
         grid.assertRowCount(13);
         grid.clearFilters("Point IC50");
-        grid.assertRowCount(2135);
+        grid.assertPageTotal(86);
         grid.clearFilters("PI");
-        grid.assertRowCount(2969);
+        grid.assertPageTotal(119);
         assertElementPresent(Locator.css(".filterpanel").containing("All subjects")); // ensure there are no app filters remaining
 
         grid.sort("Lab");
@@ -732,6 +772,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         sleep(500);
         cds.clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
+        cds.clearSelection();
         cds.goToSummary();
         // end 14902
 
@@ -741,8 +782,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertTextNotPresent(TOOLTIP);
         cds.applySelection(CDSHelper.STUDIES[2]);
         _asserts.assertSelectionStatusCounts(100, 1, 0);
-        cds.goToSummary();
         cds.clearSelection();
+        cds.goToSummary();
         cds.clickBy("Assays");
         cds.applySelection(CDSHelper.ASSAYS[0]);
         _asserts.assertSelectionStatusCounts(12, 1, 2);
@@ -752,9 +793,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertSelectionStatusCounts(64, 2, 3);
         //cds.applySelection(CDSHelper.ASSAYS[2]);
      //   _asserts.assertSelectionStatusCounts(132, 2, 3);
+        cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
-        cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts();
         cds.pickSort("Country");
         cds.applySelection("South Africa");
@@ -840,13 +881,11 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
         _asserts.assertSelectionStatusCounts(0, 0, 0);
         cds.pickDimension("Studies");
-        _asserts.assertSelectionStatusCounts(0, 0, 0);
-        cds.clearSelection();
+        _asserts.assertFilterStatusCounts(0, 0, 0);
+        cds.clearFilter();
         waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[2]);
         cds.selectBars(CDSHelper.STUDIES[0]);
         cds.pickDimension("Assays");
-  //      _asserts.assertSelectionStatusCounts(32, 1, 2);
-        cds.useSelectionAsSubjectFilter();
         cds.goToSummary();
 
         //test more group saving
