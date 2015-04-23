@@ -218,9 +218,10 @@ Ext.define('Connector.controller.Query', {
             console.warn('Requested measure store data before measure caching prepared.');
         }
 
+        var sources = {}, sourceArray = [];
         var measures = [];
 
-        Ext.each(this.MEASURE_STORE.getRange(), function(record){
+        Ext.each(this.MEASURE_STORE.getRange(), function(record) {
             var queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
             var measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
             var timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
@@ -229,10 +230,24 @@ Ext.define('Connector.controller.Query', {
 
             if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch) {
                 measures.push(Ext.clone(record.raw));
-            }
-        });
 
-        return measures;
+                var key = record.get('schemaName') + '|' + record.get('queryName');
+                var source = this.SOURCE_STORE.getById(key);
+
+                if (!sources[key] && source) {
+                    sources[key] = true;
+                    sourceArray.push(Ext.clone(source.data));
+                }
+                else if (!source) {
+                    throw 'Unable to find source for \'' + key + '\'';
+                }
+            }
+        }, this);
+
+        return {
+            sources: sourceArray,
+            measures: measures
+        };
     },
 
     getDataSorts : function() {

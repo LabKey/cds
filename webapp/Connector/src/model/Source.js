@@ -7,8 +7,10 @@ Ext.define('Connector.model.Source', {
         {name: 'schemaName'},
         {name: 'queryName'},
         {name: 'queryLabel'},
+        {name: 'longLabel'},
         {name: 'description'},
         {name: 'variableType'},
-        {name: 'category'}
+        {name: 'category'},
+        { name: 'subjectCount', type: 'int', defaultValue: -1 }
     ]
 });

@@ -351,7 +351,7 @@ Ext.define('Connector.view.Grid', {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeTimpointMeasures: true,
                         includeHidden: this.canShowHidden
-                    })
+                    }).measures
                 },
                 displayConfig: {
                     mainTitle: 'Choose Measures for the Data Grid...'

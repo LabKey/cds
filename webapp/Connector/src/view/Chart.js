@@ -23,6 +23,8 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
+    newSelectors: false,
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -337,11 +339,11 @@ Ext.define('Connector.view.Chart', {
             this.noPlot();
         }
 
-        if (this.ywin && this.ywin.isVisible()) {
+        if (!this.newSelectors && this.ywin && this.ywin.isVisible()) {
             this.updateMeasureSelection(this.ywin);
         }
 
-        if (this.xwin && this.xwin.isVisible()) {
+        if (!this.newSelectors && this.xwin && this.xwin.isVisible()) {
             this.updateMeasureSelection(this.xwin);
         }
 
@@ -1679,101 +1681,131 @@ Ext.define('Connector.view.Chart', {
 
         if (!this.ywin) {
 
-            var sCls = 'yaxissource';
+            if (this.newSelectors) {
+                this.newYAxisSelector = Ext.create('Connector.panel.Selector', {
+                    headerTitle: 'y-axis'
+                });
 
-            this.axisPanelY = Ext.create('Connector.panel.AxisSelector', {
-                flex: 1,
-                title: 'Y Axis',
-                bodyStyle: 'padding: 15px 27px 0 27px;',
-                open : function() {},
-                measureConfig: {
-                    cls: 'yaxispicker',
+                this.ywin = Ext.create('Ext.window.Window', {
+                    ui: 'axiswindow',
+                    modal: true,
+                    draggable: false,
+                    header: false,
+                    closeAction: 'hide',
+                    resizable: false,
+                    border: false,
+                    height: 650,
+                    width: 520,
+                    //shadow: false,
+                    layout: {
+                        type: 'fit'
+                    },
+                    style: 'padding: 0',
+                    items: [this.newYAxisSelector]
+                });
+
+                this.newYAxisSelector.on('cancel', function() {
+                    this.ywin.close();
+                }, this);
+            }
+            else {
+                var sCls = 'yaxissource';
+
+                this.axisPanelY = Ext.create('Connector.panel.AxisSelector', {
+                    flex: 1,
+                    title: 'Y Axis',
+                    bodyStyle: 'padding: 15px 27px 0 27px;',
+                    open : function() {},
+                    measureConfig: {
+                        cls: 'yaxispicker',
+                        sourceCls: sCls,
+                        multiSelect: false,
+                        displaySourceCounts: true,
+                        sourceCountSchema: Connector.studyContext.schemaName,
+                        measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                            queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                            measuresOnly: true,
+                            includeHidden: this.canShowHidden
+                        }).measures
+                    },
+                    displayConfig: {
+                        mainTitle : 'Choose a Variable for the Y Axis...'
+                    },
+                    scalename: 'yscale',
+                    disableAntigenFilter: false
+                });
+
+                this.ywin = Ext.create('Ext.window.Window', {
+                    id: 'plotymeasurewin',
+                    ui: 'axiswindow',
+                    cls: 'axiswindow plotaxiswindow',
                     sourceCls: sCls,
-                    multiSelect: false,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                        measuresOnly: true,
-                        includeHidden: this.canShowHidden
-                    })
-                },
-                displayConfig: {
-                    mainTitle : 'Choose a Variable for the Y Axis...'
-                },
-                scalename: 'yscale',
-                disableAntigenFilter: false
-            });
-
-            this.ywin = Ext.create('Ext.window.Window', {
-                id: 'plotymeasurewin',
-                ui: 'axiswindow',
-                cls: 'axiswindow plotaxiswindow',
-                sourceCls: sCls,
-                axisPanel: this.axisPanelY,
-                modal: true,
-                draggable: false,
-                header: false,
-                closeAction: 'hide',
-                resizable: false,
-                minHeight: 500,
-                maxHeight: 700,
-                minWidth: 600,
-                maxWidth: 975,
-                layout: {
-                    type: 'vbox',
-                    align: 'stretch'
-                },
-                items: [this.axisPanelY],
-                dockedItems : [{
-                    xtype : 'toolbar',
-                    dock : 'bottom',
-                    ui : 'footer',
-                    padding : 15,
-                    items : ['->',{
-                        text: 'set y axis',
-                        handler: function() {
-                            if (this.axisPanelY.hasSelection()) {
-                                this.initialized = true;
-                                this.showTask.delay(10);
+                    axisPanel: this.axisPanelY,
+                    modal: true,
+                    draggable: false,
+                    header: false,
+                    closeAction: 'hide',
+                    resizable: false,
+                    minHeight: 500,
+                    maxHeight: 700,
+                    minWidth: 600,
+                    maxWidth: 975,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items: [this.axisPanelY],
+                    dockedItems : [{
+                        xtype : 'toolbar',
+                        dock : 'bottom',
+                        ui : 'footer',
+                        padding : 15,
+                        items : ['->',{
+                            text: 'set y axis',
+                            handler: function() {
+                                if (this.axisPanelY.hasSelection()) {
+                                    this.initialized = true;
+                                    this.showTask.delay(10);
+                                    this.ywin.hide(targetEl);
+                                }
+                            },
+                            scope: this
+                        },{
+                            text: 'cancel',
+                            handler: function() {
+                                if (this.activeYSelection) {
+                                    this.axisPanelY.setSelection(this.activeYSelection);
+                                    this.activeYSelection = undefined;
+                                }
+                                else {
+                                    this.axisPanelY.clearSelection();
+                                }
                                 this.ywin.hide(targetEl);
-                            }
+                            },
+                            scope : this
+                        }]
+                    }],
+                    listeners: {
+                        show : function(win) {
+                            this.setVisibleWindow(win);
+                            this.runUniqueQuery(this.axisPanelY);
+                        },
+                        hide : function() {
+                            this.clearVisibleWindow();
                         },
                         scope: this
-                    },{
-                        text: 'cancel',
-                        handler: function() {
-                            if (this.activeYSelection) {
-                                this.axisPanelY.setSelection(this.activeYSelection);
-                                this.activeYSelection = undefined;
-                            }
-                            else {
-                                this.axisPanelY.clearSelection();
-                            }
-                            this.ywin.hide(targetEl);
-                        },
-                        scope : this
-                    }]
-                }],
-                listeners: {
-                    show : function(win) {
-                        this.setVisibleWindow(win);
-                        this.runUniqueQuery(this.axisPanelY);
                     },
-                    hide : function() {
-                        this.clearVisibleWindow();
-                    },
-                    scope: this
-                },
-                scope : this
-            });
+                    scope : this
+                });
+
+                this.updateMeasureSelection(this.ywin);
+
+                if (this.axisPanelY.hasSelection()) {
+                    this.activeYSelection = this.axisPanelY.getSelection()[0];
+                }
+            }
         }
 
-        this.updateMeasureSelection(this.ywin);
-
-        if (this.axisPanelY.hasSelection()) {
-            this.activeYSelection = this.axisPanelY.getSelection()[0];
-        }
         this.ywin.show(targetEl);
     },
 
@@ -1798,7 +1830,7 @@ Ext.define('Connector.view.Chart', {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeTimpointMeasures : true,
                         includeHidden: this.canShowHidden
-                    })
+                    }).measures
                 },
                 displayConfig : {
                     mainTitle : 'Choose a Variable for the X Axis...'
@@ -1925,7 +1957,7 @@ Ext.define('Connector.view.Chart', {
                     measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeHidden: this.canShowHidden
-                    }),
+                    }).measures,
                     userFilter : function(row) {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }
