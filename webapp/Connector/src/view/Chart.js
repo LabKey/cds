@@ -23,6 +23,13 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
+    plugins : [{
+        ptype: 'messaging',
+        calculateY : function(cmp, box, msg) {
+            return box.y - 10;
+        }
+    }],
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -58,6 +65,11 @@ Ext.define('Connector.view.Chart', {
         this.callParent([config]);
 
         this.addEvents('onready');
+
+        this.labelTextColor = '#666363';
+        this.labelTextHltColor = 'white';
+        this.labelBkgdColor = 'white';
+        this.labelBkgdHltColor = '#01BFC2'
     },
 
     initComponent : function() {
@@ -369,6 +381,8 @@ Ext.define('Connector.view.Chart', {
                 el.setStyle('margin-left', 'auto');
             }
         }
+
+        this.highlightSelectedFn();
     },
 
     getNoPlotLayer : function() {
@@ -385,28 +399,7 @@ Ext.define('Connector.view.Chart', {
 
     mouseOverPoints : function(event, pointData, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
-            var strokeFillFn = function(d) {
-                if (d.subjectId.value === pointData.subjectId.value) {
-                    return '#01BFC2';
-                }
-                return '#E6E6E6';
-            };
-
-            var points = layerSel.selectAll('.point path');
-
-            points.attr('fill', strokeFillFn)
-                    .attr('stroke', strokeFillFn)
-                    .attr('fill-opacity', 1)
-                    .attr('stroke-opacity', 1);
-
-            points.each(function(d) {
-                // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                // are always visible.
-                var node = this.parentNode;
-                if (d.subjectId.value === pointData.subjectId.value) {
-                    node.parentNode.appendChild(node);
-                }
-            });
+            this.highlightPoints(layerScope.plot, null, [pointData.subjectId.value]);
         }
     },
 
@@ -431,47 +424,19 @@ Ext.define('Connector.view.Chart', {
                     .attr('stroke', colorFn)
                     .attr('fill-opacity', 0.5)
                     .attr('stroke-opacity', 0.5);
+
+            this.highlightSelected(plot);
         }
     },
 
     mouseOverBins : function(event, binData, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
-            // get the set of subjectIds in the binData
-            var subjects = {};
-            if (binData.length > 0 && binData[0].data)
-            {
-                for (var i = 0; i < binData.length; i++)
-                    subjects[binData[i].data.subjectId.value] = true;
-            }
+            var subjectIds = [];
+            binData.forEach(function(b) {
+                subjectIds.push(b.data.subjectId.value);
+            });
 
-            var isSubjectInMouseBin = function(d, yesVal, noVal) {
-                if (d.length > 0 && d[0].data)
-                {
-                    for (var i = 0; i < d.length; i++)
-                    {
-                        if (subjects[d[i].data.subjectId.value] === true)
-                            return yesVal;
-                    }
-                }
-
-                return noVal;
-            };
-
-            var colorFn = function(d) {
-                // keep original color of the bin (note: uses style instead of fill attribute)
-                d.origStyle = d.origStyle || this.getAttribute('style');
-
-                return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
-            };
-
-            var opacityFn = function(d) {
-                return isSubjectInMouseBin(d, 1, 0.15);
-            };
-
-            layerSel.selectAll('.vis-bin path')
-                    .attr('style', colorFn)
-                    .attr('fill-opacity', opacityFn)
-                    .attr('stroke-opacity', opacityFn);
+            this.highlightBins(layerScope.plot, null, subjectIds);
         }
     },
 
@@ -481,6 +446,8 @@ Ext.define('Connector.view.Chart', {
                     .attr('style', function(d) { return d.origStyle })
                     .attr('fill-opacity', 1).attr('stroke-opacity', 1);
         }
+
+        this.highlightSelected(layerScope.plot);
     },
 
     pointHoverText : function(row) {
@@ -662,118 +629,92 @@ Ext.define('Connector.view.Chart', {
             return d.toDateString();
         };
 
-        var me = this, slice = Array.prototype.slice;;
+        var me = this, slice = Array.prototype.slice;
 
-        var xAxisClick = function(plot, pointData, layerSel, layerScope) {
-            alert("Clickity click click!");
+        this.highlightSelectedFn = function () {
+            if (me.plot && !layerScope.isBrushed) {
+                me.highlightLabels.call(me, me.plot, me.getSelectionValues(), me.labelTextHltColor, me.labelBkgdHltColor, true);
+                me.highlightSelected.call(me, me.plot);
+            }
+        };
+
+        Connector.getState().registerSelectionChangeCb(this.highlightSelectedFn);
+
+        this.tmpSelection = null;
+
+        var xAxisClick = function(target, index, y, layerScope, e) {
+            // tmpSelection keeps label highlighted while selection created
+            this.tmpSelection = target;
+
+            // node is needed for animation
+            if (layerScope.plot.renderer) {
+                var nodes = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
+                var node = null;
+                nodes[0].forEach(function (e)
+                {
+                    if (e.innerHTML === target)
+                        node = e;
+                });
+
+                // CMD key has different values in different browsers
+                var multi = e.ctrlKey||e.shiftKey||(e.keyCode===224)||(e.keyCode===17)||(e.keyCode===91)||(e.keyCode===93);
+                this.onXAxisSelect(node, this, properties.xaxis.colName, target, multi);
+            }
+
+            this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         };
 
         var xAxisMouseOut = function (target, index, y, layerScope) {
-            if (!layerScope.isBrushed) {
+            // Do not do mouse over/out for selected labels or labels in process of selection
+            if (!layerScope.isBrushed && !this.isSelection(target) && this.tmpSelection != target) {
                 // Clear plot highlights
-                var plot = layerScope.plot, colorFn, colorScale = null, colorAcc = null;
-
-                if (plot.scales.color && plot.scales.color.scale) {
-                    colorScale = plot.scales.color.scale;
-                    colorAcc = plot.aes.color;
-                }
-
-                colorFn = function(d) {
-                    if (colorScale && colorAcc) {
-                        return colorScale(colorAcc.getValue(d));
-                    }
-
-                    return '#000000';
-                };
-
-                layerScope.plot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
-                        .attr('stroke', colorFn)
-                        .attr('fill-opacity', 0.5)
-                        .attr('stroke-opacity', 0.5);
+                if(this.showPointsAsBin)
+                    this.clearHighlightBins(layerScope.plot, true);
+                else
+                    this.clearHighlightPoints(this.plot, true);
 
                 // Clear label highlighting
-                var tickFillFn = function(t) {
-                    return 'white';
-                };
-                
-                var labelFillFn = function(t) {
-                    return '#666363';
-                };
-
-                var ticks = layerScope.plot.renderer.canvas.selectAll('.tick-text rect');
-                ticks.attr('fill', tickFillFn);
-
-                var label = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
-                label.attr('fill', labelFillFn);
-            }
-        }
-
-        var xAxisMouseOver = function(target, index, y, layerScope) {
-            if (!layerScope.isBrushed) {
-                // Plot highlights
-                var subjectIds = [];
-                var strokeFillFn = function(d) {
-                    if (subjectIds.indexOf(d.subjectId.value) != -1) {
-                        return '#01BFC2';
-                    }
-                    return '#E6E6E6';
-                };
-
-                var points = layerScope.plot.renderer.canvas.selectAll('.point path');
-
-                points.each(function(d) {
-                    if (d.x === target && subjectIds.indexOf(d.subjectId.value) === -1) {
-                        subjectIds.push(d.subjectId.value);
-                    }
-                });
-
-                points.attr('fill', strokeFillFn)
-                        .attr('stroke', strokeFillFn)
-                        .attr('fill-opacity', 1)
-                        .attr('stroke-opacity', 1);
-
-                points.each(function(d) {
-                    // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                    // are always visible.
-                    var node = this.parentNode;
-                    if (subjectIds.indexOf(d.subjectId.value) != -1) {
-                        node.parentNode.appendChild(node);
-                    }
-                });
-
-                // Highlight label
-                var tickFillFn = function(t) {
-                    if (target === t)
-                        return '#01BFC2';
-                    else
-                        return 'white';
-                };
-
-                var labelFillFn = function(t) {
-                    if (target === t)
-                        return 'white';
-                    else
-                        return '#666363';
-                };
-
-                var ticks = layerScope.plot.renderer.canvas.selectAll('.tick-text rect');
-                ticks.attr('fill', tickFillFn);
-
-                var label = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
-                label.attr('fill', labelFillFn);
+                var targets = [];
+                targets.push(target);
+                this.highlightLabels.call(this, this.plot, targets, this.labelTextColor, this.labelBkgdColor, false);
             }
         };
 
-        var xAxisClickFn = function() { xAxisClick.apply(me, slice.call(arguments, 0).concat(layerScope)); };
+        var xAxisMouseOver = function(target, index, y, layerScope) {
+            // Do not do mouse over/out for selected labels or labels in process of selection
+            if (!layerScope.isBrushed && !this.isSelection(target) && this.tmpSelection != target) {
+                // Plot highlights
+                if(this.showPointsAsBin)
+                    this.highlightBins(this.plot, target);
+                else
+                    this.highlightPoints(this.plot, target);
 
-        var xAxisMouseOverFn = function() { xAxisMouseOver.apply(me, slice.call(arguments, 0).concat(layerScope)); };
+                // Highlight label
+                var targets = [];
+                targets.push(target);
+                this.highlightLabels.call(this, this.plot, targets, this.labelTextColor, this.labelBkgdHltColor, false);
+            }
+        };
 
-        var xAxisMouseOutFn = function() { xAxisMouseOut.apply(me, slice.call(arguments, 0).concat(layerScope)); };
+        var xAxisClickFn = function(t, index, y) {
+            xAxisClick.apply(me, slice.call(arguments, 0).concat(layerScope).concat(event));
+        };
+
+        var xAxisMouseOverFn = function() {
+            xAxisMouseOver.apply(me, slice.call(arguments, 0).concat(layerScope));
+        };
+
+        var xAxisMouseOutFn = function() {
+            xAxisMouseOut.apply(me, slice.call(arguments, 0).concat(layerScope));
+        };
 
         if (noplot) {
             scales.x = {
                 scaleType: 'continuous',
                 domain: [0, 0],
+                tickRectCls: 'xaxis-tick-rect',
+                tickRectWidthOffset: 30,
+                tickRectHeightOffset: 30,
                 tickFormat: function() {return '';}
             };
 
@@ -799,9 +740,13 @@ Ext.define('Connector.view.Chart', {
             else {
                 scales.x = {
                     scaleType: 'discrete',
+                    tickCls: 'xaxis-tick-text',
+                    tickRectCls: 'xaxis-tick-rect',
                     tickClick: xAxisClickFn,
                     tickMouseOver: xAxisMouseOverFn,
-                    tickMouseOut: xAxisMouseOutFn
+                    tickMouseOut: xAxisMouseOutFn,
+                    tickRectWidthOffset: 30,
+                    tickRectHeightOffset: 30
                 };
             }
 
@@ -850,7 +795,8 @@ Ext.define('Connector.view.Chart', {
             borderWidth: 2,
             borderColor: '#CCC8C8', // $heat-scale-3
             tickColor: '#FFFFFF', // $light-color
-            tickTextColor: '#666363', // $heat-scale-1
+            tickTextColor: this.labelTextColor, // $heat-scale-1
+            tickTextBkgdColor: this.labelBkgdColor,
             scales: scales
         };
 
@@ -990,6 +936,12 @@ Ext.define('Connector.view.Chart', {
             plotConfig.brushing = {
                 dimension: properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : function() {
+                    if(me.showPointsAsBin)
+                        me.clearHighlightBins(layerScope.plot, false);
+                    else
+                        me.clearHighlightPoints(layerScope.plot, false);
+
+                    me.clearHighlightLabels(layerScope.plot);
                     layerScope.isBrushed = true;
                 },
                 brush : this.showPointsAsBin ? brushBins : brushPoints,
@@ -1099,6 +1051,15 @@ Ext.define('Connector.view.Chart', {
                             .attr('fill-opacity', 1).attr('stroke-opacity', 1);
                 }
             };
+
+            this.clickTask = new Ext.util.DelayedTask(function(node, view, name, target, multi) {
+                //plotConfig.brushing.brushclear(null, null, null, [view.plot.renderer.canvas]);
+                if(layerScope.isBrushed)
+                    view.plot.clearBrush();
+                this.runXAxisSelectAnimation(node, view, name, target, multi, this.afterSelectionAnimation, this);
+            }, this);
+
+            this.highlightSelectedFn();
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
@@ -1130,6 +1091,315 @@ Ext.define('Connector.view.Chart', {
         }
 
         this.fireEvent('hideload', this);
+    },
+
+    highlightBins : function (plot, target, subjects) {
+        // get the set of subjectIds in the binData
+        var subjectIds = [];
+        if(subjects) {
+            subjects.forEach(function(s) {
+                subjectIds.push(s);
+            });
+        }
+
+        if (plot.renderer)
+        {
+            var bins = plot.renderer.canvas.selectAll('.vis-bin path');
+            var selections = this.getSelectionValues();
+
+            var isSubjectInMouseBin = function (d, yesVal, noVal)
+            {
+                if (d.length > 0 && d[0].data)
+                {
+                    for (var i = 0; i < d.length; i++)
+                    {
+                        if (subjectIds.indexOf(d[i].data.subjectId.value) != -1)
+                        //if (subjects[d[i].data.subjectId.value] === true)
+                            return yesVal;
+                    }
+                }
+
+                return noVal;
+            };
+
+            bins.each(function (d)
+            {
+                // Check if value matches target or another selection
+                for (var i = 0; i < d.length; i++)
+                {
+                    var data = d[i].data;
+                    if (data.x === target && subjectIds.indexOf(data.subjectId.value) === -1)
+                    {
+                        subjectIds.push(data.subjectId.value);
+                    }
+                    else if (selections.indexOf(data.x) != -1 && subjectIds.indexOf(data.subjectId.value) === -1)
+                    {
+                        subjectIds.push(data.subjectId.value);
+                    }
+                }
+            });
+
+
+            var colorFn = function (d)
+            {
+                // keep original color of the bin (note: uses style instead of fill attribute)
+                d.origStyle = d.origStyle || this.getAttribute('style');
+
+                return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
+            };
+
+            var opacityFn = function (d)
+            {
+                return isSubjectInMouseBin(d, 1, 0.15);
+            };
+
+            plot.renderer.canvas.selectAll('.vis-bin path')
+                    .attr('style', colorFn)
+                    .attr('fill-opacity', opacityFn)
+                    .attr('stroke-opacity', opacityFn);
+        }
+    },
+
+    clearHighlightBins : function (plot, preserveSelected) {
+        plot.renderer.canvas.selectAll('.vis-bin path')
+                .attr('style', function(d) { return d.origStyle })
+                .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+
+        if(preserveSelected)
+            this.highlightSelected(plot);
+    },
+
+    highlightPoints : function (plot, target, subjects) {
+        var subjectIds = [];
+        if(subjects) {
+            subjects.forEach(function(s) {
+                subjectIds.push(s);
+            });
+        }
+        var strokeFillFn = function(d) {
+            if (subjectIds.indexOf(d.subjectId.value) != -1) {
+                return '#01BFC2';
+            }
+            return '#E6E6E6';
+        };
+
+        if (plot.renderer)
+        {
+            var points = plot.renderer.canvas.selectAll('.point path');
+            var selections = this.getSelectionValues();
+
+            points.each(function (d)
+            {
+                // Check if value matches target or another selection
+                if (d.x === target && subjectIds.indexOf(d.subjectId.value) === -1)
+                {
+                    subjectIds.push(d.subjectId.value);
+                }
+                else if (selections.indexOf(d.x) != -1 && subjectIds.indexOf(d.subjectId.value) === -1)
+                {
+                    subjectIds.push(d.subjectId.value);
+                }
+            });
+
+            points.attr('fill', strokeFillFn)
+                    .attr('stroke', strokeFillFn)
+                    .attr('fill-opacity', 1)
+                    .attr('stroke-opacity', 1);
+
+            points.each(function (d)
+            {
+                // Re-append the node so it is on top of all the other nodes, this way highlighted points
+                // are always visible.
+                var node = this.parentNode;
+                if (subjectIds.indexOf(d.subjectId.value) != -1)
+                {
+                    node.parentNode.appendChild(node);
+                }
+            });
+        }
+    },
+
+    clearHighlightPoints : function (plot, preserveSelected) {
+        var colorFn, colorScale = null, colorAcc = null;
+
+        if (plot.scales.color && plot.scales.color.scale) {
+            colorScale = plot.scales.color.scale;
+            colorAcc = plot.aes.color;
+        }
+
+        colorFn = function(d) {
+            if (colorScale && colorAcc) {
+                return colorScale(colorAcc.getValue(d));
+            }
+
+            return '#000000';
+        };
+
+        if (plot.renderer) {
+            plot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
+                    .attr('stroke', colorFn)
+                    .attr('fill-opacity', 0.5)
+                    .attr('stroke-opacity', 0.5);
+        }
+
+        if (preserveSelected) {
+            this.highlightSelected(plot);
+        }
+    },
+
+    highlightSelected : function (plot) {
+        var targets = this.getSelectionValues(), me = this;
+        if (targets.length < 1) {
+            if(me.showPointsAsBin)
+                me.clearHighlightBins(plot, false);
+            else
+                me.clearHighlightPoints(plot, false);
+        }
+
+        targets.forEach(function(t) {
+            if(me.showPointsAsBin)
+                me.highlightBins(plot, t);
+            else
+                me.highlightPoints(plot, t);
+        })
+    },
+
+    getSelectionValues : function () {
+        var selections = Connector.getState().getSelections();
+        var values = [];
+        selections.forEach(function(s) {
+            var gridData = s.getData().gridFilter;
+            if(gridData.length > 0 && typeof gridData[0].getValue() === "string")
+                values = gridData[0].getValue().split(';');
+        });
+
+        return values;
+    },
+
+    isSelection : function (target) {
+        var values = this.getSelectionValues();
+        var found = false;
+        values.forEach(function(t) {
+            if(t === target)
+                found = true;
+        });
+
+        return found;
+    },
+
+    clearHighlightLabels : function(plot) {
+        var me = this;
+        var tickFillFn = function(t) {
+            return me.labelBkgdColor;
+        };
+
+        var labelFillFn = function(t) {
+            return me.labelTextColor;
+        };
+
+        if (plot.renderer) {
+            var ticks = plot.renderer.canvas.selectAll('.tick-text rect.highlight');
+            ticks.attr('fill', tickFillFn);
+
+            var label = plot.renderer.canvas.selectAll('.tick-text text');
+            label.attr('fill', labelFillFn);
+        }
+    },
+
+    highlightLabels : function(plot, targets, textColor, bkgdColor, clearOthers) {
+
+        var me = this;
+
+        if (targets.length < 1)
+            this.clearHighlightLabels(plot);
+
+        targets.forEach(function(target) {
+            var tickFillFn = function(t) {
+                if (target === t)
+                    return bkgdColor;
+
+                if (clearOthers && targets.indexOf(t) === -1)
+                    return me.labelBkgdColor;
+                else
+                    return this.getAttribute("fill");
+            };
+
+            var labelFillFn = function(t) {
+                if (target === t)
+                    return textColor;
+
+                if (clearOthers && targets.indexOf(t) === -1)
+                    return me.labelTextColor;
+                else
+                    return this.getAttribute("fill");
+
+            };
+
+            if (plot.renderer) {
+                var ticks = plot.renderer.canvas.selectAll('.tick-text rect.highlight');
+                ticks.attr('fill', tickFillFn);
+
+                var label = plot.renderer.canvas.selectAll('.tick-text text');
+                label.attr('fill', labelFillFn);
+            }
+        });
+    },
+
+    onXAxisSelect : function(node, view, name, target, multi) {
+        this.clickTask.delay(150, null, null, [node, view, name, target, multi]);
+    },
+
+    runXAxisSelectAnimation : function(node, view, name, target, multi) {
+
+        this.allowHover = false;
+
+        Animation.floatTo(node, '', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function(node, view, name, target, multi) {
+            this.allowHover = true;
+            this.afterSelectionAnimation(node, view, name, target, multi);
+        }, this, [node, view, name, target, multi]);
+    },
+
+    afterSelectionAnimation : function(node, view, name, target, multi)
+    {
+        var sqlFilters = [null, null, null, null];
+        var xMeasure = this.measures[0], yMeasure = this.measures[1];
+        var wrapped = [ this._getAxisWrappedMeasure(xMeasure), this._getAxisWrappedMeasure(yMeasure) ];
+        var values = "";
+        var selections = Connector.getState().getSelections();
+
+        if(multi) {
+            var i;
+            for(i=0; i<selections.length; i++) {
+                var data = selections[i].getData().gridFilter[0];
+                if (data.getColumnName() === name) {
+                    values = values.concat(data.getValue());
+                    values = values.concat(';');
+                }
+            }
+        }
+        values = values.concat(target);
+
+        if(multi && selections.length > 0)
+            sqlFilters[0] = LABKEY.Filter.create(name, values, LABKEY.Filter.Types.EQUALS_ONE_OF);
+        else
+            sqlFilters[0] = LABKEY.Filter.create(name, values, LABKEY.Filter.Types.EQUAL);
+
+        var filter = Ext4.create('Connector.model.Filter', {
+            gridFilter: sqlFilters,
+            plotMeasures: wrapped,
+            hierarchy: 'Subject',
+            isPlot: true,
+            isGrid: true,
+            operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+            filterSource: 'GETDATA',
+            isWhereFilter: true,
+            showInverseFilter: true
+        });
+
+        Connector.getState().addSelection([filter], true, false, true);
+        this.tmpSelection = null;
+        this.highlightLabels(this.plot, this.getSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
+
     },
 
     getScale : function(axis) {

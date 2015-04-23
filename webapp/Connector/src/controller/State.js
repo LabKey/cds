@@ -69,6 +69,49 @@ Ext.define('Connector.controller.State', {
         return 'Connector.model.Filter';
     },
 
+    inverseSelection : function() {
+        var selections = this.getSelections(), selection = null;
+
+        //Only handle one selection
+        if(selections.length > 0) {
+            selection = selections[0];
+        }
+
+        if(selection.getData() && selection.getData().gridFilter.length > 0) {
+            var sqlFilters = [null, null, null, null];
+            var data = selection.getData();
+            var oldFilter = data.gridFilter[0];
+
+            // Only support inverse of equal or equals one of right now
+            switch(selections[0].data.gridFilter[0].getFilterType())
+            {
+                case LABKEY.Filter.Types.EQUALS_ONE_OF:
+                    sqlFilters[0] = LABKEY.Filter.create(oldFilter.getColumnName(), oldFilter.getValue(), LABKEY.Filter.Types.EQUALS_NONE_OF);
+                    break;
+                case LABKEY.Filter.Types.EQUAL:
+                    sqlFilters[0] = LABKEY.Filter.create(oldFilter.getColumnName(), oldFilter.getValue(), LABKEY.Filter.Types.NOT_EQUAL);
+                    break;
+                default:
+                    sqlFilters = data.gridFilter;
+            }
+
+
+            var filter = Ext4.create('Connector.model.Filter', {
+                gridFilter: sqlFilters,
+                plotMeasures: data.plotMeasures,
+                hierarchy: data.hierarchy,
+                isPlot: data.isPlot,
+                isGrid: data.isGrid,
+                operator: data.operator,
+                filterSource: data.filterSource,
+                isWhereFilter: data.isWhereFilter,
+                showInverseFilter: data.showInverseFilter
+            });
+
+            this.addSelection([filter], true, false, true);
+        }
+    },
+
     moveSelectionToFilter : function() {
         var s, f, ss, ff, g, gf, pm, fSet, mSet;
 

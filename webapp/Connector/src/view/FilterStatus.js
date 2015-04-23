@@ -98,12 +98,15 @@ Ext.define('Connector.view.FilterStatus', {
         }
     },
 
-    onSelectionChange : function(selections, opChange) {
+    onSelectionChange : function(selections, opChange, callback) {
         this.hideMessage(true);
         this.selections = selections;
         if (!opChange && this.selectionpanel) {
             this.selectionpanel.loadFilters(selections);
         }
+
+        if (callback && typeof callback == 'function')
+            callback();
     },
 
     onUndo : function() {

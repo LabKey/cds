@@ -78,6 +78,10 @@ Ext.define('Connector.controller.FilterStatus', {
             click : this.runSelectToFilterAnimation
         });
 
+        this.control('#inverse', {
+            click : this.runInverseSelectToFilterAnimation
+        });
+
         this.control('detailstatus', {
             itemclick: this.onDetailSelect
         });
@@ -219,8 +223,12 @@ Ext.define('Connector.controller.FilterStatus', {
         return view;
     },
 
-    runSelectToFilterAnimation : function(b) {
+    runSelectToFilterAnimation : function() {
         this.getStateManager().moveSelectionToFilter();
+    },
+
+    runInverseSelectToFilterAnimation : function() {
+        this.getStateManager().moveSelectionToFilter(this.getStateManager().inverseSelection());
     },
 
     createView : function(xtype, context) {

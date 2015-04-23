@@ -246,6 +246,18 @@ a {
   }
 }
 
+svg g {
+  .xaxis-tick-text {
+    cursor: pointer;
+  }
+  .highlight {
+    cursor: pointer;
+  }
+  .xaxis-tick-rect {
+    cursor: pointer;
+  }
+}
+
 svg a {
   &:hover, &:active {
     text-decoration: none;
