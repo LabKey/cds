@@ -26,7 +26,11 @@ Ext.define('Connector.controller.Query', {
 
     _initMeasures : function() {
         if (!this.MEASURE_STORE) {
-            this.MEASURE_STORE = Ext4.create('Ext.data.Store', {model: 'LABKEY.ext4.Measure'});
+            this.MEASURE_STORE = Ext.create('Ext.data.Store', {model: 'Connector.model.Measure'});
+        }
+
+        if (!this.SOURCE_STORE) {
+            this.SOURCE_STORE = Ext.create('Ext.data.Store', {model: 'Connector.model.Source'});
         }
 
         var cacheReady = false;
@@ -51,9 +55,13 @@ Ext.define('Connector.controller.Query', {
                 Ext.each(measures, function(measure) {
                     this.addMeasure(measure);
                 }, this);
-                Ext.each(this.getTimeMeasures(), function(time) {
-                    this.addMeasure(time);
+
+                // bootstrap client-defined measures
+                var measureContext = Connector.measure.Configuration.context.measures;
+                Ext.iterate(measureContext, function(alias, measure) {
+                    this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                 }, this);
+
                 cacheReady = true;
                 doReady.call(this);
             },
@@ -156,76 +164,27 @@ Ext.define('Connector.controller.Query', {
         return this.timeAliases;
     },
 
-    getTimeMeasures : function() {
-
-        var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
-
-        var days = new LABKEY.Query.Visualization.Measure({
-            alias: 'Days',
-            sortOrder: -4,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: Connector.studyContext.subjectVisit,
-            queryLabel: 'Time points',
-            queryDescription: timePointQueryDescription,
-            inNotNullSet: false,
-            isKeyVariable: true,
-            name: Connector.studyContext.protocolDayColumn,
-            label: 'Study days',
-            type: 'INTEGER',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
-            variableType: 'TIME'
-        });
-
-        var weeks = new LABKEY.Query.Visualization.Measure({
-            alias: 'Weeks',
-            sortOrder: -3,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: Connector.studyContext.subjectVisit,
-            inNotNullSet: false,
-            queryLabel: 'Time points',
-            name: Connector.studyContext.protocolDayColumn,
-            label: 'Study weeks',
-            type: 'DOUBLE',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
-            variableType: 'TIME'
-        });
-
-        var months = new LABKEY.Query.Visualization.Measure({
-            alias: 'Months',
-            sortOrder: -2,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: Connector.studyContext.subjectVisit,
-            inNotNullSet: false,
-            queryLabel: 'Time points',
-            name: Connector.studyContext.protocolDayColumn,
-            label: 'Study months',
-            type: 'DOUBLE',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
-            variableType: 'TIME'
-        });
-
-        var savedGroups = new LABKEY.Query.Visualization.Measure({
-            alias: 'SavedGroups',
-            sortOrder: -1,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: 'SubjectGroupMap',
-            queryLabel: 'User groups',
-            inNotNullSet: false,
-            queryDescription: 'Creates a categorical x axis of the selected user groups',
-            name: 'GroupId',
-            label: 'My saved groups',
-            description: 'Creates a categorical x axis of the selected saved groups',
-            type: 'VARCHAR',
-            isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
-            variableType: 'USER_GROUPS'
-        });
-
-        return [days, weeks, months, savedGroups];
-    },
-
     addMeasure : function(measure) {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
-            this.MEASURE_STORE.add(measure);
+            var datas = Ext.apply(measure, Connector.measure.Configuration.context.measures[measure.alias]);
+            this.MEASURE_STORE.add(datas);
+            this.addSource(datas);
+        }
+    },
+
+    addSource : function(measure) {
+        var key = measure.schemaName + '|' + measure.queryName;
+        if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
+            var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.sources[key]);
+            this.SOURCE_STORE.add({
+                key: key,
+                sortOrder: datas.sortOrder,
+                schemaName: datas.schemaName,
+                queryName: datas.queryName,
+                queryLabel: datas.queryLabel,
+                description: datas.queryDescription,
+                variableType: datas.variableType
+            });
         }
     },
 

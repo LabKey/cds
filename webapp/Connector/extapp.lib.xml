@@ -66,6 +66,7 @@
 
         <!-- CDS Module Dependencies -->
         <script path="Connector/cube.js"/>
+        <script path="Connector/measure.js"/>
 
         <!-- Connector Application -->
         <script path="Connector/src/types/Filter.js"/>
@@ -77,6 +78,8 @@
         <script path="Connector/src/model/Explorer.js"/>
         <script path="Connector/src/model/Filter.js"/>
         <script path="Connector/src/model/FilterGroup.js"/>
+        <script path="Connector/src/model/Measure.js"/>
+        <script path="Connector/src/model/Source.js"/>
         <script path="Connector/src/model/InfoPane.js"/>
         <script path="Connector/src/model/Summary.js"/>
         <script path="Connector/src/model/Group.js"/>
