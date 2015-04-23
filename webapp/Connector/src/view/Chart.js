@@ -1096,35 +1096,44 @@ Ext.define('Connector.view.Chart', {
         }, this);
 
         // second check the measure selections
-        if (this.axisPanelX) {
-            sel = this.axisPanelX.getSelection();
-            if (sel && sel.length > 0) {
-                measures.x = sel[0].data;
-                measures.x.options = this.axisPanelX.getVariableOptionValues();
-
-                // special case to look for userGroups as a variable option to use as filter values for the x measure
-                // and to user antigen filters for categorical x-axis which matches the antigen field
-                if (measures.x.options.userGroups)
-                    measures.x.values = measures.x.options.userGroups;
-                else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name)
-                    measures.x.values = measures.x.options.antigen.values;
-
+        if (this.newSelectors) {
+            if (this.activeYSelection) {
+                measures.y = this.activeYSelection.data;
+                measures.y.options = {};
                 this.fromFilter = false;
             }
         }
-        if (this.axisPanelY) {
-            sel = this.axisPanelY.getSelection();
-            if (sel && sel.length > 0) {
-                measures.y = sel[0].data;
-                measures.y.options = this.axisPanelY.getVariableOptionValues();
-                this.fromFilter = false;
+        else {
+            if (this.axisPanelX) {
+                sel = this.axisPanelX.getSelection();
+                if (sel && sel.length > 0) {
+                    measures.x = sel[0].data;
+                    measures.x.options = this.axisPanelX.getVariableOptionValues();
+
+                    // special case to look for userGroups as a variable option to use as filter values for the x measure
+                    // and to user antigen filters for categorical x-axis which matches the antigen field
+                    if (measures.x.options.userGroups)
+                        measures.x.values = measures.x.options.userGroups;
+                    else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name)
+                        measures.x.values = measures.x.options.antigen.values;
+
+                    this.fromFilter = false;
+                }
             }
-        }
-        if (this.colorPanel) {
-            sel = this.colorPanel.getSelection();
-            if (sel && sel.length > 0) {
-                measures.color = sel[0].data;
-                this.fromFilter = false;
+            if (this.axisPanelY) {
+                sel = this.axisPanelY.getSelection();
+                if (sel && sel.length > 0) {
+                    measures.y = sel[0].data;
+                    measures.y.options = this.axisPanelY.getVariableOptionValues();
+                    this.fromFilter = false;
+                }
+            }
+            if (this.colorPanel) {
+                sel = this.colorPanel.getSelection();
+                if (sel && sel.length > 0) {
+                    measures.color = sel[0].data;
+                    this.fromFilter = false;
+                }
             }
         }
 
@@ -1683,7 +1692,20 @@ Ext.define('Connector.view.Chart', {
 
             if (this.newSelectors) {
                 this.newYAxisSelector = Ext.create('Connector.panel.Selector', {
-                    headerTitle: 'y-axis'
+                    headerTitle: 'y-axis',
+                    listeners: {
+                        selectionmade: function(selected) {
+                            this.activeYSelection = selected;
+                            this.initialized = true;
+                            this.showTask.delay(10);
+                            this.ywin.hide(targetEl);
+                        },
+                        cancel: function() {
+                            this.activeYSelection = undefined;
+                            this.ywin.hide(targetEl);
+                        },
+                        scope: this
+                    }
                 });
 
                 this.ywin = Ext.create('Ext.window.Window', {
@@ -1703,10 +1725,6 @@ Ext.define('Connector.view.Chart', {
                     style: 'padding: 0',
                     items: [this.newYAxisSelector]
                 });
-
-                this.newYAxisSelector.on('cancel', function() {
-                    this.ywin.close();
-                }, this);
             }
             else {
                 var sCls = 'yaxissource';

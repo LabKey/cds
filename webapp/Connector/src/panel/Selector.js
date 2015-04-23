@@ -24,9 +24,13 @@ Ext.define('Connector.panel.Selector', {
     constructor : function(config) {
         this.callParent([config]);
 
-        this.addEvents('cancel', 'select');
+        this.addEvents('cancel', 'selectionmade');
 
         //<style type="text/css">
+        //.selector-advanced {
+        //    background-color: #E6E1E1;
+        //}
+        //
         //.selector-footer {
         //    background-color: #f0f0f0;
         //    padding: 16px 72px;
@@ -149,6 +153,7 @@ Ext.define('Connector.panel.Selector', {
                             callback: function() {
                                 view.hide();
                                 me.showMeasures(source);
+                                selModel.clearSelections();
                             }
                         });
                     },
@@ -156,7 +161,7 @@ Ext.define('Connector.panel.Selector', {
                 }
             });
 
-            this.insert(1, this.sourcePane);
+            this.insert(this.items.length-2, this.sourcePane);
         }
 
         this.getComponent('loader').hide();
@@ -178,6 +183,7 @@ Ext.define('Connector.panel.Selector', {
                 flex: 1,
                 itemSelector: 'div.source-item',
                 selectedItemCls: 'source-selected',
+                style: 'overflow-y: auto;',
                 store: this.measureStore,
                 tpl: new Ext.XTemplate(
                     '<div style="margin: 16px 64px 16px 64px;">',
@@ -212,7 +218,7 @@ Ext.define('Connector.panel.Selector', {
                 }
             });
 
-            this.insert(1, this.measurePane);
+            this.insert(this.items.length-2, this.measurePane);
         }
 
         var key = source.get('key');
@@ -227,6 +233,9 @@ Ext.define('Connector.panel.Selector', {
             title: this.headerTitle,
             navText: 'Sources',
             action: function() {
+                if (me.advancedPane) {
+                    me.advancedPane.hide();
+                }
                 me.measurePane.getEl().slideOut('r', {
                     duration: 400,
                     callback: function() {
@@ -240,7 +249,60 @@ Ext.define('Connector.panel.Selector', {
         this.getSelectButton().show();
     },
 
-    showDimensions : function(/* TBD */) {},
+    configureAdvancedOptions : function() {
+
+        if (!this.advancedPane) {
+            this.advancedPane = Ext.create('Ext.Component', {
+                border: false,
+                frame: false,
+                hidden: true,
+                flex: 1,
+                baseCls: 'selector-advanced',
+                tpl: new Ext.XTemplate(
+                    '<div>',
+                        '<span>Advanced Options:</span>',
+                        '<ul>',
+                            '<tpl for="dims">',
+                                '<tpl if="data.hidden != true">',
+                                    '<li>{data.name:htmlEncode} ({data.alias:htmlEncode})</li>',
+                                '</tpl>',
+                            '</tpl>',
+                        '</ul>',
+                    '</div>'
+                ),
+                data: {}
+            });
+
+            this.insert(this.items.length-2, this.advancedPane);
+        }
+
+        if (this.activeMeasure) {
+            var dims = this.activeMeasure.get('dimensions');
+            var ms = Connector.getService('Query').MEASURE_STORE;
+
+            // check if a white-list of dimensions was declared
+            if (Ext.isArray(dims)) {
+                var newDims = [], _dim;
+                Ext.each(dims, function(alias) {
+                    _dim = ms.getById(alias);
+                    if (_dim && _dim.get('isDimension') === true) {
+                        newDims.push(_dim);
+                    }
+                });
+                dims = newDims;
+            }
+            else {
+                dims = ms.queryBy(function(m) {
+                    return m.get('isDimension') === true && m.get('queryName') === this.activeMeasure.get('queryName');
+                }, this);
+            }
+
+            this.advancedPane.update({
+                dims: dims
+            });
+            this.advancedPane.show();
+        }
+    },
 
     initHeader : function() {
 
@@ -343,10 +405,15 @@ Ext.define('Connector.panel.Selector', {
     },
 
     makeSelection : function() {
+        if (Ext.isDefined(this.activeMeasure)) {
+            this.fireEvent('selectionmade', this.activeMeasure);
+        }
     },
 
     setActiveMeasure : function(measure) {
         this.activeMeasure = measure;
         this.getSelectButton().enable();
+
+        this.configureAdvancedOptions();
     }
 });

@@ -7,6 +7,7 @@ Ext.define('Connector.model.Measure', {
         {name : 'name'},
         {name : 'label'},
         {name : 'description'},
+        {name : 'dimensions', defaultValue: undefined},
         {name : 'isUserDefined'},
         {name : 'isMeasure', defaultValue: false},
         {name : 'isDimension', defaultValue: false},

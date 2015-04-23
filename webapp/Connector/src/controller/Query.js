@@ -166,7 +166,16 @@ Ext.define('Connector.controller.Query', {
 
     addMeasure : function(measure) {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
+
             var datas = Ext.apply(measure, Connector.measure.Configuration.context.measures[measure.alias]);
+
+            if (measure.isDimension === true) {
+                var dimMeta = Connector.measure.Configuration.context.dimensions[measure.alias];
+                if (dimMeta) {
+                    datas = Ext.apply(datas, dimMeta);
+                }
+            }
+
             this.MEASURE_STORE.add(datas);
             this.addSource(datas);
         }
@@ -176,15 +185,9 @@ Ext.define('Connector.controller.Query', {
         var key = measure.schemaName + '|' + measure.queryName;
         if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
             var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.sources[key]);
-            this.SOURCE_STORE.add({
-                key: key,
-                sortOrder: datas.sortOrder,
-                schemaName: datas.schemaName,
-                queryName: datas.queryName,
-                queryLabel: datas.queryLabel,
-                description: datas.queryDescription,
-                variableType: datas.variableType
-            });
+            datas.key = key;
+
+            this.SOURCE_STORE.add(datas);
         }
     },
 

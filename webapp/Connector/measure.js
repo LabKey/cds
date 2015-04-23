@@ -15,7 +15,20 @@ Ext.define('Connector.measure.Configuration', {
                 }
             },
 
-            dimensions: [{}],
+            dimensions: {
+                'study_Demographics_SubjectId': {
+                    hidden: true
+                },
+                'study_Lab Results_SubjectId': {
+                    hidden: true
+                },
+                'study_Demographics_DataSets': {
+                    hidden: true
+                },
+                'study_Lab Results_DataSets': {
+                    hidden: true
+                }
+            },
 
             // override information about a measure by alias
             // OR declare a measure. All measures defined here will be added and assumed to be understood
@@ -76,6 +89,9 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'VARCHAR',
                     isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
                     variableType: 'USER_GROUPS'
+                },
+                'study_Demographics_Height': {
+                    dimensions: ['study_Demographics_EnrolledClinicalSite']
                 }
             }
         }
