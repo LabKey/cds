@@ -1097,9 +1097,24 @@ Ext.define('Connector.view.Chart', {
 
         // second check the measure selections
         if (this.newSelectors) {
+            if (this.activeXSelection) {
+                measures.x = this.activeXSelection;
+
+                // special case to look for userGroups as a variable option to use as filter values for the x measure
+                // and to user antigen filters for categorical x-axis which matches the antigen field
+                if (measures.x.options.userGroups)
+                    measures.x.values = measures.x.options.userGroups;
+                else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name)
+                    measures.x.values = measures.x.options.antigen.values;
+
+                this.fromFilter = false;
+            }
             if (this.activeYSelection) {
-                measures.y = this.activeYSelection.data;
-                measures.y.options = {};
+                measures.y = this.activeYSelection;
+                this.fromFilter = false;
+            }
+            if (this.activeColorSelection) {
+                measures.color = this.activeColorSelection;
                 this.fromFilter = false;
             }
         }
@@ -1150,6 +1165,12 @@ Ext.define('Connector.view.Chart', {
             measures.color.requireLeftJoin =
                     (measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
                     (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName);
+        }
+
+        if (this.fromFilter) {
+            this.activeXSelection = measures.x;
+            this.activeYSelection = measures.y;
+            this.activeColorSelection = measures.color;
         }
 
         return measures;
@@ -1680,8 +1701,7 @@ Ext.define('Connector.view.Chart', {
         if (Ext.isObject(this.visibleWindow) && this.visibleWindow.hideLock === true) {
             this.visibleWindow.hideLock = false;
         }
-        else
-        {
+        else {
             this.visibleWindow = undefined;
         }
     },
@@ -1693,6 +1713,14 @@ Ext.define('Connector.view.Chart', {
             if (this.newSelectors) {
                 this.newYAxisSelector = Ext.create('Connector.panel.Selector', {
                     headerTitle: 'y-axis',
+                    activeMeasure: this.activeYSelection,
+                    sourceMeasureFilter: {
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                        measuresOnly: true,
+                        includeHidden: this.canShowHidden
+                    },
+                    memberCountsFn: this.getSubjectsIn,
+                    memberCountsFnScope: this,
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeYSelection = selected;
@@ -1718,7 +1746,6 @@ Ext.define('Connector.view.Chart', {
                     border: false,
                     height: 650,
                     width: 520,
-                    //shadow: false,
                     layout: {
                         type: 'fit'
                     },
@@ -1831,244 +1858,329 @@ Ext.define('Connector.view.Chart', {
 
         if (!this.xwin) {
 
-            var sCls = 'xaxissource';
-
-            this.axisPanelX = Ext.create('Connector.panel.AxisSelector', {
-                flex      : 1,
-                ui        : 'axispanel',
-                title     : 'X Axis',
-                bodyStyle: 'padding: 15px 27px 0 27px;',
-                measureConfig : {
-                    cls        : 'xaxispicker',
-                    sourceCls  : sCls,
-                    multiSelect: false,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+            if (this.newSelectors) {
+                this.newXAxisSelector = Ext.create('Connector.panel.Selector', {
+                    headerTitle: 'x-axis',
+                    activeMeasure: this.activeXSelection,
+                    sourceMeasureFilter: {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                        includeTimpointMeasures : true,
+                        includeTimpointMeasures: true,
                         includeHidden: this.canShowHidden
-                    }).measures
-                },
-                displayConfig : {
-                    mainTitle : 'Choose a Variable for the X Axis...'
-                },
-                scalename : 'xscale',
-                visitTagStore: this.visitTagStore,
-                disableAntigenFilter: false
-            });
-
-            this.xwin = Ext.create('Ext.window.Window', {
-                id        : 'plotxmeasurewin',
-                cls       : 'axiswindow plotaxiswindow',
-                sourceCls : sCls,
-                axisPanel : this.axisPanelX,
-                modal     : true,
-                draggable : false,
-                header : false,
-                closeAction: 'hide',
-                resizable : false,
-                minHeight : 500,
-                maxHeight: 700,
-                minWidth: 600,
-                maxWidth: 975,
-                layout : {
-                    type : 'vbox',
-                    align: 'stretch'
-                },
-                items   : [this.axisPanelX],
-                dockedItems : [{
-                    xtype : 'toolbar',
-                    dock : 'bottom',
-                    ui : 'footer',
-                    padding : 15,
-                    items : ['->', {
-                        text: 'remove variable',
-                        itemId: 'removevarbtn',
-                        ui: 'rounded-inverted-accent',
-                        handler: function() {
-                            // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            this.removeVariableFromFilter(0);
+                    },
+                    listeners: {
+                        selectionmade: function(selected) {
+                            this.activeXSelection = selected;
+                            this.initialized = true;
+                            this.showTask.delay(10);
+                            this.xwin.hide(targetEl);
+                        },
+                        cancel: function() {
                             this.activeXSelection = undefined;
-                            this.axisPanelX.clearSelection();
                             this.xwin.hide(targetEl);
                         },
                         scope: this
-                    }, {
-                        text  : 'set x axis',
-                        ui    : 'rounded-inverted-accent',
-                        handler : function() {
-                            var yHasSelection, yModel;
+                    }
+                });
 
-                            yModel = Ext.getCmp('yaxisselector').getModel().data;
-                            yHasSelection = ((yModel.schemaLabel !== "" && yModel.queryLabel !== "") || (this.hasOwnProperty('axisPanelY') && this.axisPanelY.hasSelection()));
+                this.xwin = Ext.create('Ext.window.Window', {
+                    ui: 'axiswindow',
+                    modal: true,
+                    draggable: false,
+                    header: false,
+                    closeAction: 'hide',
+                    resizable: false,
+                    border: false,
+                    height: 650,
+                    width: 520,
+                    layout: {
+                        type: 'fit'
+                    },
+                    style: 'padding: 0',
+                    items: [this.newXAxisSelector]
+                });
+            }
+            else {
+                var sCls = 'xaxissource';
 
-                            if (yHasSelection && this.axisPanelX.hasSelection()) {
-                                this.initialized = true;
-                                this.showTask.delay(10);
-                                this.xwin.hide(targetEl);
-                            }
-                            else if (this.axisPanelX.hasSelection()) {
-                                this.xwin.hide(targetEl, function() {
-                                    this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
-                                }, this);
-                            }
-                        },
-                        scope: this
-                    }, {
-                        text  : 'cancel',
-                        ui    : 'rounded-inverted-accent',
-                        handler : function() {
-                            if (this.activeXSelection) {
-                                this.axisPanelX.setSelection(this.activeXSelection);
+                this.axisPanelX = Ext.create('Connector.panel.AxisSelector', {
+                    flex      : 1,
+                    ui        : 'axispanel',
+                    title     : 'X Axis',
+                    bodyStyle: 'padding: 15px 27px 0 27px;',
+                    measureConfig : {
+                        cls        : 'xaxispicker',
+                        sourceCls  : sCls,
+                        multiSelect: false,
+                        displaySourceCounts: true,
+                        sourceCountSchema: Connector.studyContext.schemaName,
+                        measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                            queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                            includeTimpointMeasures : true,
+                            includeHidden: this.canShowHidden
+                        }).measures
+                    },
+                    displayConfig : {
+                        mainTitle : 'Choose a Variable for the X Axis...'
+                    },
+                    scalename : 'xscale',
+                    visitTagStore: this.visitTagStore,
+                    disableAntigenFilter: false
+                });
+
+                this.xwin = Ext.create('Ext.window.Window', {
+                    id        : 'plotxmeasurewin',
+                    cls       : 'axiswindow plotaxiswindow',
+                    sourceCls : sCls,
+                    axisPanel : this.axisPanelX,
+                    modal     : true,
+                    draggable : false,
+                    header : false,
+                    closeAction: 'hide',
+                    resizable : false,
+                    minHeight : 500,
+                    maxHeight: 700,
+                    minWidth: 600,
+                    maxWidth: 975,
+                    layout : {
+                        type : 'vbox',
+                        align: 'stretch'
+                    },
+                    items   : [this.axisPanelX],
+                    dockedItems : [{
+                        xtype : 'toolbar',
+                        dock : 'bottom',
+                        ui : 'footer',
+                        padding : 15,
+                        items : ['->', {
+                            text: 'remove variable',
+                            itemId: 'removevarbtn',
+                            ui: 'rounded-inverted-accent',
+                            handler: function() {
+                                // Need to remove the color measure from the plot filter or we'll pull it down again.
+                                this.removeVariableFromFilter(0);
                                 this.activeXSelection = undefined;
-                            }
-                            else {
                                 this.axisPanelX.clearSelection();
-                            }
-                            this.xwin.hide(targetEl);
+                                this.xwin.hide(targetEl);
+                            },
+                            scope: this
+                        }, {
+                            text  : 'set x axis',
+                            ui    : 'rounded-inverted-accent',
+                            handler : function() {
+                                var yHasSelection, yModel;
+
+                                yModel = Ext.getCmp('yaxisselector').getModel().data;
+                                yHasSelection = ((yModel.schemaLabel !== "" && yModel.queryLabel !== "") || (this.hasOwnProperty('axisPanelY') && this.axisPanelY.hasSelection()));
+
+                                if (yHasSelection && this.axisPanelX.hasSelection()) {
+                                    this.initialized = true;
+                                    this.showTask.delay(10);
+                                    this.xwin.hide(targetEl);
+                                }
+                                else if (this.axisPanelX.hasSelection()) {
+                                    this.xwin.hide(targetEl, function() {
+                                        this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
+                                    }, this);
+                                }
+                            },
+                            scope: this
+                        }, {
+                            text  : 'cancel',
+                            ui    : 'rounded-inverted-accent',
+                            handler : function() {
+                                if (this.activeXSelection) {
+                                    this.axisPanelX.setSelection(this.activeXSelection);
+                                    this.activeXSelection = undefined;
+                                }
+                                else {
+                                    this.axisPanelX.clearSelection();
+                                }
+                                this.xwin.hide(targetEl);
+                            },
+                            scope : this
+                        }]
+                    }],
+                    listeners : {
+                        show : function(win) {
+                            this.setVisibleWindow(win);
+                            this.runUniqueQuery(this.axisPanelX);
                         },
-                        scope : this
-                    }]
-                }],
-                listeners : {
-                    show : function(win) {
-                        this.setVisibleWindow(win);
-                        this.runUniqueQuery(this.axisPanelX);
+                        hide : function() {
+                            this.clearVisibleWindow();
+                        },
+                        scope: this
                     },
-                    hide : function() {
-                        this.clearVisibleWindow();
-                    },
-                    scope: this
-                },
-                scope : this
-            });
+                    scope : this
+                });
+
+                this.updateMeasureSelection(this.xwin);
+
+                if (this.axisPanelX.hasSelection()) {
+                    this.activeXSelection = this.axisPanelX.getSelection()[0];
+                }
+
+                // issue 20412: conditionally show 'remove variable' button
+                var filter = this.getPlotsFilter();
+                this.xwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[0]);
+            }
         }
-
-        this.updateMeasureSelection(this.xwin);
-
-        if (this.axisPanelX.hasSelection()) {
-            this.activeXSelection = this.axisPanelX.getSelection()[0];
-        }
-
-        // issue 20412: conditionally show 'remove variable' button
-        var filter = this.getPlotsFilter();
-        this.xwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[0]);
 
         this.xwin.show(targetEl);
     },
 
     showColorSelection : function(targetEl) {
         if (!this.colorwin) {
-            var sCls = 'colorsource';
-            this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
-                flex      : 1,
-                ui        : 'axispanel',
-                title     : 'Color',
-                bodyStyle: 'padding: 15px 27px 0 27px;',
-                measureConfig : {
-                    cls : 'coloraxispicker',
-                    sourceCls : sCls,
-                    multiSelect : false,
-                    displaySourceCounts : true,
-                    sourceCountSchema : Connector.studyContext.schemaName,
-                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+
+            if (this.newSelectors) {
+                this.newColorAxisSelector = Ext.create('Connector.panel.Selector', {
+                    headerTitle: 'x-axis',
+                    sourceMeasureFilter: {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeHidden: this.canShowHidden
-                    }).measures,
-                    userFilter : function(row) {
-                        return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
-                    }
-                },
-                displayConfig : {
-                    mainTitle : 'Choose a Color Variable...'
-                },
-                scalename : 'colorscale'
-            });
-
-            this.colorwin = Ext.create('Ext.window.Window', {
-                id        : 'plotcolorwin',
-                cls       : 'axiswindow plotaxiswindow',
-                sourceCls : sCls,
-                axisPanel : this.colorPanel,
-                modal     : true,
-                draggable : false,
-                header : false,
-                closeAction: 'hide',
-                resizable : false,
-                minHeight : 500,
-                maxHeight: 700,
-                minWidth: 600,
-                maxWidth: 975,
-                layout : {
-                    type : 'vbox',
-                    align: 'stretch'
-                },
-                items   : [this.colorPanel],
-                dockedItems : [{
-                    xtype: 'toolbar',
-                    dock: 'bottom',
-                    ui : 'footer',
-                    padding: 15,
-                    items : ['->', {
-                        text: 'remove variable',
-                        itemId: 'removevarbtn',
-                        ui: 'rounded-inverted-accent',
-                        handler: function() {
-                            // Need to remove the color measure from the plot filter or we'll pull it down again.
-                            this.removeVariableFromFilter(2);
-                            this.activeColorSelection = undefined;
-                            this.colorPanel.clearSelection();
-                            this.colorwin.hide(targetEl);
-                        },
-                        scope: this
-                    }, {
-                        text: 'set color variable',
-                        ui: 'rounded-inverted-accent',
-                        handler: function() {
+                    },
+                    listeners: {
+                        selectionmade: function(selected) {
+                            this.activeColorSelection = selected;
+                            this.initialized = true;
                             this.showTask.delay(10);
                             this.colorwin.hide(targetEl);
                         },
-                        scope: this
-                    }, {
-                        text: 'cancel',
-                        ui: 'rounded-inverted-accent',
-                        handler: function() {
-                            if (this.activeColorSelection) {
-                                this.colorPanel.setSelection(this.activeColorSelection);
-                                this.activeColorSelection = undefined;
-                            }
-                            else {
-                                this.colorPanel.clearSelection();
-                            }
+                        cancel: function() {
+                            this.activeColorSelection = undefined;
                             this.colorwin.hide(targetEl);
                         },
                         scope: this
-                    }]
-                }],
-                listeners: {
-                    show: function(win) {
-                        this.setVisibleWindow(win);
-                        this.runUniqueQuery(this.colorPanel);
+                    }
+                });
+
+                this.colorwin = Ext.create('Ext.window.Window', {
+                    ui: 'axiswindow',
+                    modal: true,
+                    draggable: false,
+                    header: false,
+                    closeAction: 'hide',
+                    resizable: false,
+                    border: false,
+                    height: 650,
+                    width: 520,
+                    layout: {
+                        type: 'fit'
                     },
-                    hide: function() {
-                        this.clearVisibleWindow();
+                    style: 'padding: 0',
+                    items: [this.newColorAxisSelector]
+                });
+            }
+            else {
+                var sCls = 'colorsource';
+                this.colorPanel = Ext.create('Connector.panel.AxisSelector', {
+                    flex      : 1,
+                    ui        : 'axispanel',
+                    title     : 'Color',
+                    bodyStyle: 'padding: 15px 27px 0 27px;',
+                    measureConfig : {
+                        cls : 'coloraxispicker',
+                        sourceCls : sCls,
+                        multiSelect : false,
+                        displaySourceCounts : true,
+                        sourceCountSchema : Connector.studyContext.schemaName,
+                        measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                            queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                            includeHidden: this.canShowHidden
+                        }).measures,
+                        userFilter : function(row) {
+                            return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                        }
+                    },
+                    displayConfig : {
+                        mainTitle : 'Choose a Color Variable...'
+                    },
+                    scalename : 'colorscale'
+                });
+
+                this.colorwin = Ext.create('Ext.window.Window', {
+                    id        : 'plotcolorwin',
+                    cls       : 'axiswindow plotaxiswindow',
+                    sourceCls : sCls,
+                    axisPanel : this.colorPanel,
+                    modal     : true,
+                    draggable : false,
+                    header : false,
+                    closeAction: 'hide',
+                    resizable : false,
+                    minHeight : 500,
+                    maxHeight: 700,
+                    minWidth: 600,
+                    maxWidth: 975,
+                    layout : {
+                        type : 'vbox',
+                        align: 'stretch'
+                    },
+                    items   : [this.colorPanel],
+                    dockedItems : [{
+                        xtype: 'toolbar',
+                        dock: 'bottom',
+                        ui : 'footer',
+                        padding: 15,
+                        items : ['->', {
+                            text: 'remove variable',
+                            itemId: 'removevarbtn',
+                            ui: 'rounded-inverted-accent',
+                            handler: function() {
+                                // Need to remove the color measure from the plot filter or we'll pull it down again.
+                                this.removeVariableFromFilter(2);
+                                this.activeColorSelection = undefined;
+                                this.colorPanel.clearSelection();
+                                this.colorwin.hide(targetEl);
+                            },
+                            scope: this
+                        }, {
+                            text: 'set color variable',
+                            ui: 'rounded-inverted-accent',
+                            handler: function() {
+                                this.showTask.delay(10);
+                                this.colorwin.hide(targetEl);
+                            },
+                            scope: this
+                        }, {
+                            text: 'cancel',
+                            ui: 'rounded-inverted-accent',
+                            handler: function() {
+                                if (this.activeColorSelection) {
+                                    this.colorPanel.setSelection(this.activeColorSelection);
+                                    this.activeColorSelection = undefined;
+                                }
+                                else {
+                                    this.colorPanel.clearSelection();
+                                }
+                                this.colorwin.hide(targetEl);
+                            },
+                            scope: this
+                        }]
+                    }],
+                    listeners: {
+                        show: function(win) {
+                            this.setVisibleWindow(win);
+                            this.runUniqueQuery(this.colorPanel);
+                        },
+                        hide: function() {
+                            this.clearVisibleWindow();
+                        },
+                        scope: this
                     },
                     scope: this
-                },
-                scope: this
-            });
+                });
+
+                this.updateMeasureSelection(this.colorwin);
+
+                if (this.colorPanel.hasSelection()) {
+                    this.activeColorSelection = this.colorPanel.getSelection()[0];
+                }
+
+                // issue 20412: conditionally show 'remove variable' button
+                var filter = this.getPlotsFilter();
+                this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
+            }
         }
-
-        this.updateMeasureSelection(this.colorwin);
-
-        if (this.colorPanel.hasSelection()) {
-            this.activeColorSelection = this.colorPanel.getSelection()[0];
-        }
-
-        // issue 20412: conditionally show 'remove variable' button
-        var filter = this.getPlotsFilter();
-        this.colorwin.down('#removevarbtn').setVisible(filter && filter.get('plotMeasures')[2]);
 
         this.colorwin.show(targetEl);
     },

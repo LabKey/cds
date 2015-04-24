@@ -15,55 +15,26 @@ Ext.define('Connector.panel.Selector', {
 
     sectionTitle: 'Sources',
 
-    sourceMeasureFilter: {
-        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-        measuresOnly: true,
-        includeHidden: this.canShowHidden
-    },
+    sourceMeasureFilter: undefined,
+
+    memberCountsFn: undefined,
+    memberCountsFnScope: undefined,
 
     constructor : function(config) {
+
+        if (!Ext.isObject(config.sourceMeasureFilter)) {
+            throw this.$className + ' requires a \'sourceMeasureFilter\' configuration.';
+        }
+
+        if (Ext.isObject(config.activeMeasure)) {
+            if (config.activeMeasure.$className !== 'Connector.model.Measure') {
+                config.activeMeasure = Ext.create('Connector.model.Measure', config.activeMeasure);
+            }
+        }
+
         this.callParent([config]);
 
         this.addEvents('cancel', 'selectionmade');
-
-        //<style type="text/css">
-        //.selector-advanced {
-        //    background-color: #E6E1E1;
-        //}
-        //
-        //.selector-footer {
-        //    background-color: #f0f0f0;
-        //    padding: 16px 72px;
-        //}
-        //
-        //.source-item {
-        //    height: 25px;
-        //    padding: 7px 8px 0 8px;
-        //    font-family: Arial, sans-serif;
-        //}
-        //
-        //.source-item:hover {
-        //    background-color: #A0EAEB;
-        //    cursor: pointer;
-        //}
-        //
-        //.source-selected,
-        //.source-selected:hover {
-        //    background-color: #14C9CC;
-        //    color: #FFFFFF;
-        //}
-        //
-        //.back-action {
-        //    color: #9B1497;
-        //    font-family: Arial, sans-serif;
-        //    font-size: 12px;
-        //    font-weight: bold;
-        //}
-        //
-        //.back-action:hover {
-        //    cursor: pointer;
-        //}
-        //</style>
     },
 
     initComponent : function() {
@@ -98,9 +69,39 @@ Ext.define('Connector.panel.Selector', {
             this.sourcesStore.loadRawData(data.sources);
             this.measureStore.loadRawData(data.measures);
 
-            this.showSources();
+            this.loadSourceCounts();
+
+            if (this.activeMeasure) {
+                // find the source for the active measure
+                var sourceKey = this.activeMeasure.get('schemaName') + '|' + this.activeMeasure.get('queryName');
+                var source = this.sourcesStore.getById(sourceKey);
+                if (source) {
+                    this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
+                    this.showMeasures(source, this.activeMeasure);
+                }
+                else {
+                    this.showSources();
+                    console.warn('Unable to find source \'' + sourceKey + '\'. Might not work for the applied \'sourceMeasureFilter\'');
+                }
+            }
+            else {
+                this.showSources();
+            }
 
         }, this);
+    },
+
+    loadSourceCounts : function() {
+
+        var sources = this.sourcesStore.getRange();
+        Connector.getService('Query').getSourceCounts(sources, function(s, counts) {
+            Ext.each(sources, function(source) {
+                var count = counts[source.get('queryName')];
+                if (Ext.isDefined(count)) {
+                    source.set('subjectCount', count);
+                }
+            });
+        }, this, this.memberCountsFn, this.memberCountsFnScope);
     },
 
     showSources : function() {
@@ -174,7 +175,11 @@ Ext.define('Connector.panel.Selector', {
         this.getSelectButton().hide();
     },
 
-    showMeasures : function(source) {
+    /**
+     * @param source
+     * @param [activeMeasure]
+     */
+    showMeasures : function(source, activeMeasure) {
 
         if (!this.measurePane) {
             this.measurePane = Ext.create('Ext.view.View', {
@@ -228,6 +233,7 @@ Ext.define('Connector.panel.Selector', {
 
         var me = this;
 
+        this.getComponent('loader').hide();
         this.measurePane.show();
         this.setHeaderData({
             title: this.headerTitle,
@@ -247,6 +253,12 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
         this.getSelectButton().show();
+
+        if (activeMeasure) {
+            Ext.defer(function() {
+                this.measurePane.getSelectionModel().select(activeMeasure, true);
+            }, 500, this);
+        }
     },
 
     configureAdvancedOptions : function() {
@@ -299,6 +311,7 @@ Ext.define('Connector.panel.Selector', {
 
             this.advancedPane.update({
                 dims: dims
+                // ideally, this will support gathering options supplied from the activeMeasure.options
             });
             this.advancedPane.show();
         }
@@ -337,7 +350,12 @@ Ext.define('Connector.panel.Selector', {
             listeners: {
                 afterrender: {
                     fn: function(header) {
-                        this.bindHeader(header, initialData);
+                        if (this.headerData) {
+                            this.bindHeader(header, this.headerData);
+                        }
+                        else {
+                            this.bindHeader(header, initialData);
+                        }
                     },
                     scope: this,
                     single: true
@@ -348,7 +366,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindHeader : function(header, data) {
-        if (header && data) {
+        if (header && header.getEl() && data) {
             if (Ext.isFunction(data.action)) {
                 var backActionEl = Ext.DomQuery.select('.back-action', header.getEl().id);
                 if (backActionEl.length > 0) {
@@ -359,6 +377,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     setHeaderData : function(data) {
+        this.headerData = data;
         var h = this.getComponent('selector-header');
         h.update(data);
         this.bindHeader(h, data);
@@ -406,7 +425,9 @@ Ext.define('Connector.panel.Selector', {
 
     makeSelection : function() {
         if (Ext.isDefined(this.activeMeasure)) {
-            this.fireEvent('selectionmade', this.activeMeasure);
+            var selectedMeasure = Ext.clone(this.activeMeasure.data);
+            selectedMeasure.options = {};
+            this.fireEvent('selectionmade', selectedMeasure);
         }
     },
 

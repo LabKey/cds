@@ -547,6 +547,44 @@ Ext.define('Connector.controller.Query', {
 
     cleanMeasure : function(measure) {
         return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
+    },
+
+    getSourceCounts : function(sourceModels, callback, scope, membersFn, membersFnScope) {
+
+        if (Ext.isFunction(callback)) {
+
+            var makeRequest = function(members) {
+
+                var json = {
+                    schema: Connector.studyContext.schemaName,
+                    //colName: undefined,
+                    members: Ext.isArray(members) ? members : undefined,
+                    sources: []
+                };
+
+                Ext.each(sourceModels, function(source) {
+                    json.sources.push(source.get('queryName'));
+                });
+
+                Ext.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
+                    method: 'POST',
+                    jsonData: json,
+                    success: function(response) {
+                        var counts = Ext.decode(response.responseText).counts;
+                        callback.call(scope || this, sourceModels, counts);
+                    },
+                    scope: this
+                });
+            };
+
+            if (Ext.isFunction(membersFn)) {
+                membersFn.call(membersFnScope, makeRequest, this);
+            }
+            else {
+                makeRequest();
+            }
+        }
     }
 });
 

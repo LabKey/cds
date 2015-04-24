@@ -48,6 +48,46 @@
     <link type="text/css" href="<%=text(contextPath)%>/hopscotch/css/hopscotch.min.css" rel="stylesheet">
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
+    <!-- This will be migrated once styling is finalized for Connector.panel.Selector -->
+    <style type="text/css">
+        .selector-advanced {
+            background-color: #E6E1E1;
+        }
+
+        .selector-footer {
+            background-color: #f0f0f0;
+            padding: 16px 72px;
+        }
+
+        .source-item {
+            height: 25px;
+            padding: 7px 8px 0 8px;
+            font-family: Arial, sans-serif;
+        }
+
+        .source-item:hover {
+            background-color: #A0EAEB;
+            cursor: pointer;
+        }
+
+        .source-selected,
+        .source-selected:hover {
+            background-color: #14C9CC;
+            color: #FFFFFF;
+        }
+
+        .back-action {
+            color: #9B1497;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .back-action:hover {
+            cursor: pointer;
+        }
+    </style>
+
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
     <script type="text/javascript">
