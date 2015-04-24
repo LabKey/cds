@@ -657,7 +657,7 @@ Ext.define('Connector.view.Chart', {
                 });
 
                 // CMD key has different values in different browsers
-                var multi = e.ctrlKey||e.shiftKey||(e.keyCode===224)||(e.keyCode===17)||(e.keyCode===91)||(e.keyCode===93);
+                var multi = e.ctrlKey||e.shiftKey||(e.metaKey);
                 this.onXAxisSelect(node, this, properties.xaxis.colName, target, multi);
             }
 
