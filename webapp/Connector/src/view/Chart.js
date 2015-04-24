@@ -2033,7 +2033,7 @@ Ext.define('Connector.view.Chart', {
 
             if (this.newSelectors) {
                 this.newColorAxisSelector = Ext.create('Connector.panel.Selector', {
-                    headerTitle: 'x-axis',
+                    headerTitle: 'color',
                     sourceMeasureFilter: {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeHidden: this.canShowHidden
@@ -2081,8 +2081,8 @@ Ext.define('Connector.view.Chart', {
                         cls : 'coloraxispicker',
                         sourceCls : sCls,
                         multiSelect : false,
-                        displaySourceCounts : true,
-                        sourceCountSchema : Connector.studyContext.schemaName,
+                        displaySourceCounts: true,
+                        sourceCountSchema: Connector.studyContext.schemaName,
                         measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
                             queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                             includeHidden: this.canShowHidden

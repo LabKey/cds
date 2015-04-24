@@ -150,7 +150,7 @@ Ext.define('Connector.panel.Selector', {
                         var me = this;
 
                         view.getEl().slideOut('l', {
-                            duration: 400,
+                            duration: 200,
                             callback: function() {
                                 view.hide();
                                 me.showMeasures(source);
@@ -238,12 +238,14 @@ Ext.define('Connector.panel.Selector', {
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
+            showSectionTitle: true,
+            sectionTitle: source.get('queryLabel') || source.get('queryName'),
             action: function() {
                 if (me.advancedPane) {
                     me.advancedPane.hide();
                 }
                 me.measurePane.getEl().slideOut('r', {
-                    duration: 400,
+                    duration: 250,
                     callback: function() {
                         me.measurePane.hide();
                         me.showSources();
@@ -339,6 +341,9 @@ Ext.define('Connector.panel.Selector', {
                             '</span>',
                         '<tpl else>',
                             '<span style="font-size: 12px; font-weight: bold; color: #303030; font-family: Arial, sans-serif;">{navText:htmlEncode}</span>',
+                        '</tpl>',
+                        '<tpl if="showSectionTitle">',
+                            '<h1 style="float: right; margin-top: -12px;">{sectionTitle:htmlEncode}</h1>',
                         '</tpl>',
                         '<tpl if="showCount">',
                             '<span style="float: right;">Subject count</span>',
