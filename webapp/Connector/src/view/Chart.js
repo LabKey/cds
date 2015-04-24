@@ -645,21 +645,9 @@ Ext.define('Connector.view.Chart', {
         var xAxisClick = function(target, index, y, layerScope, e) {
             // tmpSelection keeps label highlighted while selection created
             this.tmpSelection = target;
-
-            // node is needed for animation
-            if (layerScope.plot.renderer) {
-                var nodes = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
-                var node = null;
-                nodes[0].forEach(function (e)
-                {
-                    if (e.innerHTML === target)
-                        node = e;
-                });
-
-                // CMD key has different values in different browsers
-                var multi = e.ctrlKey||e.shiftKey||(e.metaKey);
-                this.onXAxisSelect(node, this, properties.xaxis.colName, target, multi);
-            }
+            
+            var multi = e.ctrlKey||e.shiftKey||(e.metaKey);
+            this.onXAxisSelect(e.target, this, properties.xaxis.colName, target, multi);
 
             this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         };
