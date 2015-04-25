@@ -4,9 +4,9 @@ Ext.define('Connector.measure.Configuration', {
 
             // override information about sources defined by the server
             sources: {
-                'study|Demographics': {
-                    queryLabel: 'Subject Characteristics'
-                },
+                //'study|Demographics': {
+                //    queryLabel: 'Subject Characteristics'
+                //},
                 'study|SubjectVisit': {
                     queryLabel: 'Time points'
                 },
