@@ -266,24 +266,41 @@ Ext.define('Connector.panel.Selector', {
     configureAdvancedOptions : function() {
 
         if (!this.advancedPane) {
-            this.advancedPane = Ext.create('Ext.Component', {
+
+            Ext.define('AdvancedPane', {
+                extend: 'Ext.Component',
+
+                bindDimensions : function(dimensions) {
+                    this.update({
+                        dims: dimensions
+                    });
+                }
+            });
+
+            this.advancedPane = new AdvancedPane({
                 border: false,
                 frame: false,
-                hidden: true,
                 flex: 1,
+                hidden: true,
                 baseCls: 'selector-advanced',
-                tpl: new Ext.XTemplate(
-                    '<div>',
-                        '<span>Advanced Options:</span>',
-                        '<ul>',
+                tpl: [
+                    '<div style="margin: 16px 64px 16px 64px;">',
+                        '<table style="width: 100%;">',
                             '<tpl for="dims">',
                                 '<tpl if="data.hidden != true">',
-                                    '<li>{data.name:htmlEncode} ({data.alias:htmlEncode})</li>',
+                                    //'<li>{data.name:htmlEncode} ({data.alias:htmlEncode})</li>',
+                                    // TODO: Make these sub-templates
+                                    '<tr style="margin-bottom: 5px;">',
+                                        '<td style="color: #666363;">{data.label:htmlEncode}:</td>',
+                                        '<td width="85%;" style="margin-bottom: 5px;">',
+                                            '<div style="background-color: #F0F0F0; padding: 6px 16px; border-radius: 20px;">Value</div>',
+                                        '</td>',
+                                    '</tr>',
                                 '</tpl>',
                             '</tpl>',
-                        '</ul>',
+                        '</table>',
                     '</div>'
-                ),
+                ],
                 data: {}
             });
 
@@ -308,13 +325,10 @@ Ext.define('Connector.panel.Selector', {
             else {
                 dims = ms.queryBy(function(m) {
                     return m.get('isDimension') === true && m.get('queryName') === this.activeMeasure.get('queryName');
-                }, this);
+                }, this).getRange();
             }
 
-            this.advancedPane.update({
-                dims: dims
-                // ideally, this will support gathering options supplied from the activeMeasure.options
-            });
+            this.advancedPane.bindDimensions(dims);
             this.advancedPane.show();
         }
     },
