@@ -585,6 +585,48 @@ Ext.define('Connector.controller.Query', {
                 makeRequest();
             }
         }
+    },
+
+    /**
+     * Retrieves the selectDistinct API results for a given data dimension
+     * for the given set of filters.
+     * @param measure - string (alias)|measure
+     * @param filterSet
+     * @param callback
+     * @param scope
+     */
+    getDimensionData : function(measure, filterSet, callback, scope) {
+        if (Ext.isFunction(callback)) {
+            this.onQueryReady(function() {
+                if (Ext.isString(measure)) {
+                    measure = this.getMeasure(measure);
+                }
+
+                if (measure) {
+
+                    var distinct = {
+                        schemaName: measure.schemaName,
+                        queryName: measure.queryName,
+                        column: measure.name,
+                        success: function(data) {
+                            callback.call(scope, data.values);
+                        },
+                        failure: function() {
+                            callback.call(scope, []);
+                        }
+                    };
+
+                    if (Ext.isArray(filterSet) && !Ext.isEmpty(filterSet)) {
+                        distinct.filterArray = filterSet;
+                    }
+
+                    LABKEY.Query.selectDistinctRows(distinct);
+                }
+                else {
+                    callback.call(scope, []);
+                }
+            }, this);
+        }
     }
 });
 
