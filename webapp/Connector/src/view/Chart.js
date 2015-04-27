@@ -960,7 +960,7 @@ Ext.define('Connector.view.Chart', {
                     }
 
                     var wrapped = [ me._getAxisWrappedMeasure(xMeasure), me._getAxisWrappedMeasure(yMeasure) ];
-                    var filter = Ext4.create('Connector.model.Filter', {
+                    var filter = Ext.create('Connector.model.Filter', {
                         gridFilter: sqlFilters,
                         plotMeasures: wrapped,
                         hierarchy: 'Subject',
