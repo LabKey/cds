@@ -66,7 +66,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     private static final String[] DESIRED_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144", "StudyAxisTest1", "StudyAxisTest11", "StudyAxisTest2", "StudyAxisTestA", "StudyAxisTestB"};
 
     @BeforeClass
-    @LogMethod(category = LogMethod.MethodType.SETUP)
+    @LogMethod
     public static void doSetup() throws Exception
     {
         CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
