@@ -247,13 +247,7 @@ a {
 }
 
 svg g {
-  .xaxis-tick-text {
-    cursor: pointer;
-  }
-  .highlight {
-    cursor: pointer;
-  }
-  .xaxis-tick-rect {
+  .xaxis-tick-text, .highlight, .xaxis-tick-rect {
     cursor: pointer;
   }
 }
