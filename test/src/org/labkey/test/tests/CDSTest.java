@@ -914,31 +914,31 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clearFilter();
     }
 
-    @Test
+    @Test @Ignore
     public void testLearnAboutStudies()
     {
         cds.viewLearnAboutPage("Studies");
 
         List<String> studies = Arrays.asList(CDSHelper.STUDIES);
-       // _asserts.verifyLearnAboutPage(studies);
+        _asserts.verifyLearnAboutPage(studies);
     }
 
-    @Test
+    @Test @Ignore
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");
 
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS);
-       // _asserts.verifyLearnAboutPage(assays);
+        _asserts.verifyLearnAboutPage(assays);
     }
 
-    @Test
+    @Test @Ignore
     public void testLearnAboutStudyProducts()
     {
         cds.viewLearnAboutPage("Study products");
 
         List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "Placebo", "VRC-HIVDNA016-00-VP");
-      //  _asserts.verifyLearnAboutPage(studyProducts);
+        _asserts.verifyLearnAboutPage(studyProducts);
     }
 
     @Test
