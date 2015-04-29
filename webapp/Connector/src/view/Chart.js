@@ -1221,7 +1221,7 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                 return colorScale(colorAcc.getValue(d));
             }
             // special case for non-data points
-            if(this.getElementsByTagName('nofill').length > 0)
+            if(this.classList.contains("nofill"))
                 return "transparent";
 
             return '#000000';
