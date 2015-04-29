@@ -341,19 +341,17 @@ Ext.define('Connector.view.Grid', {
                 ui: 'axispanel',
                 bodyStyle: 'padding: 15px 27px 0 27px;',
                 measureConfig : {
-                    allColumns: true,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    includeTimpointMeasures: true,
+                    cls: 'gridcolumnpicker',
+                    sourceCls: this.axisSourceCls,
                     supportSelectionGroup: true,
                     supportSessionGroup: true,
-                    sourceCls: this.axisSourceCls,
-                    filter: LABKEY.Query.Visualization.Filter.create({
-                        schemaName: Connector.studyContext.schemaName,
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
-                    }),
-                    showHidden: this.canShowHidden,
-                    cls: 'gridcolumnpicker'
+                    displaySourceCounts: true,
+                    sourceCountSchema: Connector.studyContext.schemaName,
+                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
+                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                        includeTimpointMeasures: true,
+                        includeHidden: this.canShowHidden
+                    }).measures
                 },
                 displayConfig: {
                     mainTitle: 'Choose Measures for the Data Grid...'
@@ -697,21 +695,23 @@ Ext.define('Connector.view.Grid', {
     },
 
     showMeasureSelection : function() {
-        var measureWindow = this.getMeasureSelectionWindow(),
-            box = this.getBox(),
-            mp = this.getAxisSelector().getMeasurePicker(),
-            filterState = this.getModel().get('filterState');
+        Connector.getService('Query').onQueryReady(function(query){
+            var measureWindow = this.getMeasureSelectionWindow(),
+                    box = this.getBox(),
+                    mp = this.getAxisSelector().getMeasurePicker(),
+                    filterState = this.getModel().get('filterState');
 
-        measureWindow.setSize(box.width-100, box.height-100);
-        measureWindow.show();
+            measureWindow.setSize(box.width-100, box.height-100);
+            measureWindow.show();
 
-        // Run the query to determine current measure counts
-        mp.setCountMemberSet(filterState.hasFilters ? filterState.subjects : null);
+            // Run the query to determine current measure counts
+            mp.setCountMemberSet(filterState.hasFilters ? filterState.subjects : null);
 
-        // Open with 'Current columns' selected if we have a selection
-        if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
-            mp.getSourcesView().getSelectionModel().select(mp.getSourceStore().getAt(0));
-        }
+            // Open with 'Current columns' selected if we have a selection
+            if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
+                mp.getSourcesView().getSelectionModel().select(mp.getSourceStore().getAt(0));
+            }
+        }, this);
     },
 
     requestExport : function() {
