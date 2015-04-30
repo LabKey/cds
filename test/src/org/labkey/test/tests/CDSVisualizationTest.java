@@ -38,8 +38,13 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,8 +53,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.sun.jna.Platform.isMac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
@@ -140,6 +147,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.confirmSelection();
         assertSVG(WT_PLSE_LOG);
 
+        //comment starts here
+
         // TODO: Figure out and enable these hover selectors with completed data filters feature
 //        Actions builder = new Actions(getDriver());
 //       List<WebElement> points;
@@ -185,32 +194,34 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 //
 //        // Brush the same area, then apply that selection as a filter.
 //        builder.moveToElement(points.get(10)).moveByOffset(-45, -55).clickAndHold().moveByOffset(130, 160).release().perform();
-//        waitForElement(plotSelection);
+//        waitForElement(Locators.plotSelection);
 //
-//        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
+//        assertEquals("An unexpected number of plot selections were visible.", 2, Locators.plotSelection.findElements(getDriver()).size());
 //        _asserts.assertSelectionStatusCounts(8, 1, 2);
 //
-//        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
-//        waitForElementToDisappear(plotSelectionCloseBtn.index(1));
+//        Locators.plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the x variable from the selection.
+//        waitForElementToDisappear(Locators.plotSelectionCloseBtn.index(1));
 //        _asserts.assertSelectionStatusCounts(13, 1, 2);
-//        plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
-//        assertElementNotPresent(plotSelection);
+//        Locators.plotSelectionCloseBtn.findElement(getDriver()).click(); // remove the y variable from the selection.
+//        assertElementNotPresent(Locators.plotSelection);
 //
 //        // Select them again and apply them as a filter.
 //        builder.moveToElement(points.get(10)).moveByOffset(-25, -15).clickAndHold().moveByOffset(45, 40).release().perform();
-//       waitForElement(plotSelection);
+//       waitForElement(Locators.plotSelection);
 //
-//        assertEquals("An unexpected number of plot selections were visible.", 2, plotSelection.findElements(getDriver()).size());
+//        assertEquals("An unexpected number of plot selections were visible.", 2, Locators.plotSelection.findElements(getDriver()).size());
 //        _asserts.assertSelectionStatusCounts(3, 1, 2);
 //
 //        cds.useSelectionAsDataFilter();
-//        assertEquals("An unexpected number of plot selection filters were visible", 2, plotSelectionFilter.findElements(getDriver()).size());
+//        assertEquals("An unexpected number of plot selection filters were visible", 2, Locators.plotSelectionFilter.findElements(getDriver()).size());
 //        _asserts.assertFilterStatusCounts(3, 1, 2);
 //
 //        // Test that variable selectors are reset when filters are cleared (Issue 20138).
 //        cds.clearFilter();
 //        waitForElement(Locator.css(".yaxisbtn span.x-btn-button").withText("choose variable"));
 //        waitForElement(Locator.css(".xaxisbtn span.x-btn-button").withText("choose variable"));
+
+        //commented out section end
     }
 
 
@@ -255,6 +266,39 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(Locators.plotTick.withText("Asian"));
         assertElementPresent(plotBox, 8);
         assertElementPresent(plotPoint, 468);
+
+        //Verify x axis categories are selectable as filters
+        mouseOver(Locators.plotTick.withText("Asian"));
+        assertEquals("incorrect number of points highlighted after mousing over x axis category",62, getPointCountByColor(MOUSEOVER_FILL));
+        click(Locators.plotTick.withText("Asian"));
+        //ensure filter buttons are present
+        waitForElement(Locators.filterDataButton);
+        assertElementPresent(Locators.removeButton);
+        //ensure correct number of points are highlighted
+        assertEquals("incorrect number of points highlighted after clicking x axis category",62, getPointCountByColor(MOUSEOVER_FILL));
+        //ensure correct total number of points
+        assertEquals("incorrect total number of points after clicking x axis category",468, getPointCount());
+        //apply category selection as a filter
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("filter data"));
+        waitForPointCount(62, 2000);
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+        //clear filter
+        yaxis.openSelectorWindow();
+        yaxis.pickMeasure("Lab Results", "Hemoglobin");
+        yaxis.confirmSelection();
+        xaxis.openSelectorWindow();
+        xaxis.pickMeasure("Demographics", "Race");
+        xaxis.confirmSelection();
+        waitForPointCount(468, 2000);
+        //verify multi-select of categories
+        selectXAxes(false, "Indian", "American Indian/Alaska Native", "Native Hawaiian/Pacific Islander", "Native Hawaiian or Other Pacific Islander");
+        //ensure correct number of points are highlighted
+        assertEquals("incorrect number of points highlighted after clicking x axis categories",128, getPointCountByColor(MOUSEOVER_FILL));
+        assertEquals("incorrect total number of points after clicking x axis categories",468, getPointCount());
+        //apply selection as exlusive filter
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
+        waitForPointCount(340, 2000);
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
     }
 
     @Test
@@ -723,6 +767,76 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         return propertyMap.get(property);
     }
 
+    private void selectXAxes(boolean isShift, String... axes)
+    {
+            if (axes == null || axes.length == 0)
+                throw new IllegalArgumentException("Please specify axes to select.");
+
+            Keys multiSelectKey;
+            if (isShift)
+                multiSelectKey = Keys.SHIFT;
+            else if (isMac())
+                multiSelectKey = Keys.COMMAND;
+            else
+                multiSelectKey = Keys.CONTROL;
+
+            click(Locators.plotTick.withText(axes[0]));
+
+            if (axes.length > 1)
+            {
+                Actions builder = new Actions(getDriver());
+                builder.keyDown(multiSelectKey).build().perform();
+
+                for (int i = 1; i < axes.length; i++)
+                {
+                    click(Locators.plotTick.withText(axes[i]));
+                }
+                builder.keyUp(multiSelectKey).build().perform();
+            }
+    }
+
+    private int getPointCountByColor(String colorCode)
+    {
+        List<WebElement> points = Locator.css("svg g a.point path").findElements(getDriver());
+        int ret = 0;
+        for(WebElement point : points)
+        {
+            if(point.getAttribute("fill").equals(colorCode))
+            {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
+    private int getPointCount()
+    {
+        return Locator.css("svg g a.point path").findElements(getDriver()).size();
+    }
+
+    private void waitForPointCount(int count, int msTimeout)
+    {
+        final Integer pointCount = count;
+        long secTimeout = msTimeout / 1000;
+        secTimeout = secTimeout > 0 ? secTimeout : 1;
+        WebDriverWait wait = new WebDriverWait(getDriver(), secTimeout);
+        try
+        {
+            wait.until(new ExpectedCondition<Boolean>()
+            {
+                @Override
+                public Boolean apply(WebDriver d)
+                {
+                    return pointCount.equals(getPointCount());
+                }
+            });
+        }
+        catch (TimeoutException ex)
+        {
+            fail("Timeout waiting for point count [" + secTimeout + "sec]: " + count);
+        }
+    }
+
     @LogMethod
     private void createParticipantGroups()
     {
@@ -760,5 +874,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
         public static Locator plotTick = Locator.css("g.tick-text > g > text");
         public static Locator plotPoint = Locator.css("svg a.point");
+        public static Locator filterDataButton = Locator.xpath("//span[text()='filter data']");
+        public static Locator removeButton = Locator.xpath("//span[text()='remove']");
     }
 }
