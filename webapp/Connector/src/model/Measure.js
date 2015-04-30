@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 Ext.define('Connector.model.Measure', {
     extend : 'Ext.data.Model',
     idProperty : 'alias', // default to alias, this can be overridden by the stores proxy/reader
