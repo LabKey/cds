@@ -618,8 +618,8 @@ Ext.define('Connector.view.Chart', {
 
         this.selectionInProgress = null;
 
-        var xAxisClickFn = function(t, index, y) {
-            me.xAxisClick.apply(me, slice.call(arguments, 0).concat(layerScope).concat(event));
+        var xAxisClickFn = function(event, selection, t, index, y) {
+            me.xAxisClick.apply(me, slice.call(arguments, 0).concat(layerScope));
         };
 
         var xAxisMouseOverFn = function() {
@@ -996,7 +996,7 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideload', this);
     },
 
-    xAxisClick : function(target, index, y, layerScope, e) {
+    xAxisClick : function(e, selection, target, index, y, layerScope) {
         // selectionInProgress keeps label highlighted while selection created
         this.selectionInProgress = target;
 
@@ -1006,10 +1006,10 @@ Ext.define('Connector.view.Chart', {
         {
             var nodes = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
             var node = null;
-            nodes[0].forEach(function (e)
+            nodes[0].forEach(function (n)
             {
-                if (e.innerHTML === target)
-                    node = e;
+                if (n.innerHTML === target)
+                    node = n;
             });
 
             if (node)
