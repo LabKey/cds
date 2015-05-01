@@ -387,10 +387,7 @@ Ext.define('Connector.view.Chart', {
 
     getNoPlotLayer : function() {
         return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.Point({
-                plotNullPoints: true,
-                opacity: 0
-            }),
+            geom: new LABKEY.vis.Geom.Point({}),
             aes: {
                 yLeft: function(row) {return row.y}
             }
@@ -1208,7 +1205,7 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         }
     },
 
-    clearHighlightPoints : function (plot, preserveSelected) {
+    clearHighlightPoints : function (plot) {
         var colorFn, colorScale = null, colorAcc = null;
 
         if (plot.scales.color && plot.scales.color.scale) {
@@ -1220,9 +1217,6 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
             if (colorScale && colorAcc) {
                 return colorScale(colorAcc.getValue(d));
             }
-            // special case for non-data points
-            if(this.classList.contains("nofill"))
-                return "transparent";
 
             return '#000000';
         };
@@ -1232,10 +1226,6 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                     .attr('stroke', colorFn)
                     .attr('fill-opacity', 0.5)
                     .attr('stroke-opacity', 0.5);
-        }
-
-        if (preserveSelected) {
-            this.highlightSelected(plot);
         }
     },
 
