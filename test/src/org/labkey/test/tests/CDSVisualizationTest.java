@@ -247,7 +247,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.pickMeasure("Demographics", "Sex");
         xaxis.confirmSelection();
 
-        waitForElement(Locators.plotTick.withText("f"));
+        waitForElement(Locators.plotTick.withText("f"), 20000);
         assertElementPresent(plotBox, 2);
         assertElementPresent(plotPoint, 468);
 
@@ -263,7 +263,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.pickMeasure("Demographics", "Race");
         xaxis.confirmSelection();
 
-        waitForElement(Locators.plotTick.withText("Asian"));
+        waitForElement(Locators.plotTick.withText("Asian"), 20000);
         assertElementPresent(plotBox, 8);
         assertElementPresent(plotPoint, 468);
 
