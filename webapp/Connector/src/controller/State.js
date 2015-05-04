@@ -70,21 +70,20 @@ Ext.define('Connector.controller.State', {
     },
 
     inverseSelection : function() {
-        var selections = this.getSelections(), selection = null;
+        var selections = this.getSelections(),
+            data;
 
         //Only handle one selection
-        if(selections.length > 0) {
-            selection = selections[0];
+        if (selections.length > 0) {
+            data = selections[0].getData();
         }
 
-        if(selection.getData() && selection.getData().gridFilter.length > 0) {
+        if (data && !Ext.isEmpty(data.gridFilter)) {
             var sqlFilters = [null, null, null, null];
-            var data = selection.getData();
             var oldFilter = data.gridFilter[0];
 
             // Only support inverse of equal or equals one of right now
-            switch(selections[0].data.gridFilter[0].getFilterType())
-            {
+            switch (oldFilter.getFilterType()) {
                 case LABKEY.Filter.Types.EQUALS_ONE_OF:
                     sqlFilters[0] = LABKEY.Filter.create(oldFilter.getColumnName(), oldFilter.getValue(), LABKEY.Filter.Types.EQUALS_NONE_OF);
                     break;
@@ -95,9 +94,8 @@ Ext.define('Connector.controller.State', {
                     sqlFilters = data.gridFilter;
             }
 
-
-            var filter = Ext4.create('Connector.model.Filter', {
-                gridFilter: sqlFilters,
+            var filter = Ext.create('Connector.model.Filter', {
+                gridFilter: data.gridFilter,
                 plotMeasures: data.plotMeasures,
                 hierarchy: data.hierarchy,
                 isPlot: data.isPlot,

@@ -87,7 +87,7 @@ Ext.define('Connector.view.FilterStatus', {
 
     showUndoMessage : function(msg) {
         var id = Ext.id();
-        if(msg)
+        if (msg)
             this.showMessage(msg + ' <a id="' + id + '">Undo</a>', true, true);
         else
             this.showMessage('Filter removed. <a id="' + id + '">Undo</a>', true, true);
@@ -98,15 +98,16 @@ Ext.define('Connector.view.FilterStatus', {
         }
     },
 
-    onSelectionChange : function(selections, opChange, callback) {
+    onSelectionChange : function(selections, opChange, callback, scope) {
         this.hideMessage(true);
         this.selections = selections;
         if (!opChange && this.selectionpanel) {
             this.selectionpanel.loadFilters(selections);
         }
 
-        if (callback && typeof callback == 'function')
-            callback();
+        if (Ext.isFunction(callback)) {
+            callback.call(scope || this);
+        }
     },
 
     onUndo : function() {

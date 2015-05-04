@@ -228,8 +228,8 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     runInverseSelectToFilterAnimation : function() {
-        this.getStateManager().inverseSelection()
-        this.runSelectToFilterAnimation();
+        this.getStateManager().inverseSelection();
+        this.getStateManager().moveSelectionToFilter();
     },
 
     createView : function(xtype, context) {

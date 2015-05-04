@@ -69,9 +69,9 @@ Ext.define('Connector.view.Chart', {
         this.addEvents('onready');
 
         this.labelTextColor = '#666363';
-        this.labelTextHltColor = 'white';
+        this.labelTextHltColor = '#FFFFFF';
         this.labelBkgdColor = 'transparent';
-        this.labelBkgdHltColor = '#01BFC2'
+        this.labelBkgdHltColor = '#01BFC2';
     },
 
     initComponent : function() {
@@ -936,7 +936,7 @@ Ext.define('Connector.view.Chart', {
                         //TODO: sqlFilters.push(LABKEY.Filter.create(antigenAlias, antigens, LABKEY.Filter.Types.IN));
                     }
 
-                    this.createSelectionFilter(sqlFilters);
+                    me.createSelectionFilter(sqlFilters);
                 },
                 brushclear : function(event, allData, plot, selections) {
                     layerScope.isBrushed = false;
@@ -1249,9 +1249,10 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         var selections = Connector.getState().getSelections();
         var values = [];
         selections.forEach(function(s) {
-            var gridData = s.getData().gridFilter;
-            if(gridData.length > 0 && typeof gridData[0].getValue() === "string")
+            var gridData = s.get('gridFilter');
+            if (gridData.length > 0 && Ext.isString(gridData[0].getValue())) {
                 values = gridData[0].getValue().split(';');
+            }
         });
 
         return values;
@@ -1333,11 +1334,15 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         }, this, [node, view, name, target, multi]);
     },
 
-    createSelectionFilter : function(sqlFilters) {
+    /**
+     * @param {Array} sqlFilters
+     * @param {Boolean} [allowInverseFilter=false]
+     */
+    createSelectionFilter : function(sqlFilters, allowInverseFilter) {
         var xMeasure = this.measures[0], yMeasure = this.measures[1];
         var wrapped = [ this._getAxisWrappedMeasure(xMeasure), this._getAxisWrappedMeasure(yMeasure) ];
 
-        var filter = Ext4.create('Connector.model.Filter', {
+        var filter = Ext.create('Connector.model.Filter', {
             gridFilter: sqlFilters,
             plotMeasures: wrapped,
             hierarchy: 'Subject',
@@ -1346,22 +1351,21 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
             operator: LABKEY.app.model.Filter.OperatorTypes.OR,
             filterSource: 'GETDATA',
             isWhereFilter: true,
-            showInverseFilter: true
+            showInverseFilter: allowInverseFilter === true
         });
 
         Connector.getState().addSelection([filter], true, false, true);
     },
 
-    afterSelectionAnimation : function(node, view, name, target, multi)
-    {
+    afterSelectionAnimation : function(node, view, name, target, multi) {
         var sqlFilters = [null, null, null, null];
         var values = "";
         var selections = Connector.getState().getSelections();
+        var data;
 
-        if(multi) {
-            var i;
-            for(i=0; i<selections.length; i++) {
-                var data = selections[i].getData().gridFilter[0];
+        if (multi) {
+            for (var i=0; i < selections.length; i++) {
+                data = selections[i].get('gridFilter')[0];
                 if (data.getColumnName() === name) {
                     values = values.concat(data.getValue());
                     values = values.concat(';');
@@ -1370,12 +1374,12 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         }
         values = values.concat(target);
 
-        if(multi && selections.length > 0)
+        if (multi && selections.length > 0)
             sqlFilters[0] = LABKEY.Filter.create(name, values, LABKEY.Filter.Types.EQUALS_ONE_OF);
         else
             sqlFilters[0] = LABKEY.Filter.create(name, values, LABKEY.Filter.Types.EQUAL);
 
-        this.createSelectionFilter(sqlFilters);
+        this.createSelectionFilter(sqlFilters, true);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 
@@ -1394,7 +1398,7 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
     },
 
     setScale : function(scale, axis, properties, studyAxisRange) {
-        // This function should likley be renamed, and refactored so it's less side-effecty.
+        // This function should likely be renamed, and refactored so it has less side-effects.
         if (scale.scaleType !== 'discrete') {
             var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear;
 
@@ -1435,7 +1439,7 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         var m, x, y, color;
         Ext.each(filters, function(filter) {
             if (filter.isPlot() === true && filter.isGrid() === false) {
-                m = filter.get('plotMeasures'), x = m[0], y = m[1], color = m[2];
+                m = filter.get('plotMeasures'); x = m[0]; y = m[1]; color = m[2];
 
                 if (x) {
                     measures.x = x.measure;
