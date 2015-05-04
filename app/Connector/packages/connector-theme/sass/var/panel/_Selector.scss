@@ -1,0 +1,37 @@
+/* Connector.view.Selector */
+.selector-advanced {
+  background-color: #E6E1E1;
+}
+
+.selector-footer {
+  background-color: #f0f0f0;
+  padding: 16px 72px;
+}
+
+.source-item {
+  height: 25px;
+  padding: 7px 8px 0 8px;
+  font-family: Arial, sans-serif;
+
+  &:hover {
+    background-color: #A0EAEB;
+    cursor: pointer;
+  }
+}
+
+.source-selected,
+.source-selected:hover {
+  background-color: #14C9CC;
+  color: #FFFFFF;
+}
+
+.back-action {
+  color: #9B1497;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

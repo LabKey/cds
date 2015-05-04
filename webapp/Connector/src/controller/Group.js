@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -260,7 +260,7 @@ Ext.define('Connector.controller.Group', {
                                 alert('Failed to update Group');
                             };
 
-                            var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
+                            var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
                             var description = targetGroup.get('description');
                             var isLive = targetGroup.get('isLive');
 
@@ -301,7 +301,7 @@ Ext.define('Connector.controller.Group', {
                         alert('Failed to update Group');
                     };
 
-                    var ids = Ext4.Array.pluck(Ext4.Array.flatten(cs.axes[1].positions),'name');
+                    var ids = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions),'name');
                     me.doGroupUpdate({
                         id: group.id,
                         ids: ids,

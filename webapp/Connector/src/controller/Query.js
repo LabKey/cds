@@ -25,8 +25,12 @@ Ext.define('Connector.controller.Query', {
     },
 
     _initMeasures : function() {
-        if (!this.MEMBER_CACHE) {
-            this.MEMBER_CACHE = {};
+        if (!this.MEASURE_STORE) {
+            this.MEASURE_STORE = Ext.create('Ext.data.Store', {model: 'Connector.model.Measure'});
+        }
+
+        if (!this.SOURCE_STORE) {
+            this.SOURCE_STORE = Ext.create('Ext.data.Store', {model: 'Connector.model.Source'});
         }
 
         var cacheReady = false;
@@ -51,9 +55,13 @@ Ext.define('Connector.controller.Query', {
                 Ext.each(measures, function(measure) {
                     this.addMeasure(measure);
                 }, this);
-                Ext.each(this.getTimeMeasures(), function(time) {
-                    this.addMeasure(time);
+
+                // bootstrap client-defined measures
+                var measureContext = Connector.measure.Configuration.context.measures;
+                Ext.iterate(measureContext, function(alias, measure) {
+                    this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                 }, this);
+
                 cacheReady = true;
                 doReady.call(this);
             },
@@ -110,8 +118,9 @@ Ext.define('Connector.controller.Query', {
                             queryName: Connector.studyContext.subjectVisit
                         });
 
-                        // Add these into the MEMBER_CACHE
+                        // Add these into the MEASURE_STORE
                         measure['alias'] = LABKEY.MeasureUtil.getAlias(measure);
+                        measure['variableType'] = 'GRID_DEFAULT';
                         this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                     }
 
@@ -155,68 +164,30 @@ Ext.define('Connector.controller.Query', {
         return this.timeAliases;
     },
 
-    getTimeMeasures : function() {
+    addMeasure : function(measure) {
+        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
 
-        var timePointQueryDescription = 'Creates a categorical x axis, unlike the other time axes that are ordinal.';
+            var datas = Ext.apply(measure, Connector.measure.Configuration.context.measures[measure.alias]);
 
-        return [{
-            alias: 'Days',
-            sortOrder: -4,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: Connector.studyContext.subjectVisit,
-            queryLabel: 'Time points',
-            queryDescription: timePointQueryDescription,
-            inNotNullSet: false,
-            isKeyVariable: true,
-            name: Connector.studyContext.protocolDayColumn,
-            label: 'Study days',
-            type: 'INTEGER',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study day.',
-            variableType: 'TIME'
-        },{
-            alias: 'Weeks',
-            sortOrder: -3,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: Connector.studyContext.subjectVisit,
-            inNotNullSet: false,
-            queryLabel: 'Time points',
-            name: Connector.studyContext.protocolDayColumn,
-            label: 'Study weeks',
-            type: 'DOUBLE',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study week.',
-            variableType: 'TIME'
-        },{
-            alias: 'Months',
-            sortOrder: -2,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: Connector.studyContext.subjectVisit,
-            inNotNullSet: false,
-            queryLabel: 'Time points',
-            name: Connector.studyContext.protocolDayColumn,
-            label: 'Study months',
-            type: 'DOUBLE',
-            description: timePointQueryDescription + ' Each visit with data for the y axis is labeled separately with its study month.',
-            variableType: 'TIME'
-        },{
-            alias: 'SavedGroups',
-            sortOrder: -1,
-            schemaName: Connector.studyContext.schemaName,
-            queryName: 'SubjectGroupMap',
-            queryLabel: 'User groups',
-            inNotNullSet: false,
-            queryDescription: 'Creates a categorical x axis of the selected user groups',
-            name: 'GroupId',
-            label: 'My saved groups',
-            description: 'Creates a categorical x axis of the selected saved groups',
-            type: 'VARCHAR',
-            isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
-            variableType: 'USER_GROUPS'
-        }];
+            if (measure.isDimension === true) {
+                var dimMeta = Connector.measure.Configuration.context.dimensions[measure.alias];
+                if (dimMeta) {
+                    datas = Ext.apply(datas, dimMeta);
+                }
+            }
+
+            this.MEASURE_STORE.add(datas);
+            this.addSource(datas);
+        }
     },
 
-    addMeasure : function(measure) {
-        if (!Ext.isObject(this.MEMBER_CACHE[measure.alias])) {
-            this.MEMBER_CACHE[measure.alias] = measure;
+    addSource : function(measure) {
+        var key = measure.schemaName + '|' + measure.queryName;
+        if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
+            var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.sources[key]);
+            datas.key = key;
+
+            this.SOURCE_STORE.add(datas);
         }
     },
 
@@ -229,12 +200,57 @@ Ext.define('Connector.controller.Query', {
 
         // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
         var cleanAlias = copyAlias.split('/')[0];
-        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEMBER_CACHE[cleanAlias])) {
-            return Ext.clone(this.MEMBER_CACHE[cleanAlias]);
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEASURE_STORE.getById(cleanAlias))) {
+            return Ext.clone(this.MEASURE_STORE.getById(cleanAlias).raw);
         }
         else {
             console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
         }
+    },
+
+    /**
+     * Returns an array of measure objects from the cached store data that match the filters based on the config parameters.
+     * @param config An object which contains the following filterable properties.
+     * @param {String} config.queryType Filter for a specific queryType (i.e. DATASET)
+     * @param {Boolean} config.measuresOnly Whether or not to filter the measure objects to just those specifically declared as "measures" in the ColumnInfo
+     * @param {Boolean} config.includeTimpointMeasures Whether or not to include the timepoint/group measures
+     * @param {Boolean} config.includeHidden Whether or not the include hidden columns
+     */
+    getMeasuresStoreData : function(config) {
+        if (!this._ready) {
+            console.warn('Requested measure store data before measure caching prepared.');
+        }
+
+        var sources = {}, sourceArray = [];
+        var measures = [];
+
+        Ext.each(this.MEASURE_STORE.getRange(), function(record) {
+            var queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
+            var measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
+            var timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
+            var hiddenMatch = config.includeHidden || !record.get('hidden');
+            var notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
+
+            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch) {
+                measures.push(Ext.clone(record.raw));
+
+                var key = record.get('schemaName') + '|' + record.get('queryName');
+                var source = this.SOURCE_STORE.getById(key);
+
+                if (!sources[key] && source) {
+                    sources[key] = true;
+                    sourceArray.push(Ext.clone(source.data));
+                }
+                else if (!source) {
+                    throw 'Unable to find source for \'' + key + '\'';
+                }
+            }
+        }, this);
+
+        return {
+            sources: sourceArray,
+            measures: measures
+        };
     },
 
     getDataSorts : function() {
@@ -531,6 +547,86 @@ Ext.define('Connector.controller.Query', {
 
     cleanMeasure : function(measure) {
         return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
+    },
+
+    getSourceCounts : function(sourceModels, callback, scope, membersFn, membersFnScope) {
+
+        if (Ext.isFunction(callback)) {
+
+            var makeRequest = function(members) {
+
+                var json = {
+                    schema: Connector.studyContext.schemaName,
+                    //colName: undefined,
+                    members: Ext.isArray(members) ? members : undefined,
+                    sources: []
+                };
+
+                Ext.each(sourceModels, function(source) {
+                    json.sources.push(source.get('queryName'));
+                });
+
+                Ext.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
+                    method: 'POST',
+                    jsonData: json,
+                    success: function(response) {
+                        var counts = Ext.decode(response.responseText).counts;
+                        callback.call(scope || this, sourceModels, counts);
+                    },
+                    scope: this
+                });
+            };
+
+            if (Ext.isFunction(membersFn)) {
+                membersFn.call(membersFnScope, makeRequest, this);
+            }
+            else {
+                makeRequest();
+            }
+        }
+    },
+
+    /**
+     * Retrieves the selectDistinct API results for a given data dimension
+     * for the given set of filters.
+     * @param measure - string (alias)|measure
+     * @param filterSet
+     * @param callback
+     * @param scope
+     */
+    getDimensionData : function(measure, filterSet, callback, scope) {
+        if (Ext.isFunction(callback)) {
+            this.onQueryReady(function() {
+                if (Ext.isString(measure)) {
+                    measure = this.getMeasure(measure);
+                }
+
+                if (measure) {
+
+                    var distinct = {
+                        schemaName: measure.schemaName,
+                        queryName: measure.queryName,
+                        column: measure.name,
+                        success: function(data) {
+                            callback.call(scope, data.values);
+                        },
+                        failure: function() {
+                            callback.call(scope, []);
+                        }
+                    };
+
+                    if (Ext.isArray(filterSet) && !Ext.isEmpty(filterSet)) {
+                        distinct.filterArray = filterSet;
+                    }
+
+                    LABKEY.Query.selectDistinctRows(distinct);
+                }
+                else {
+                    callback.call(scope, []);
+                }
+            }, this);
+        }
     }
 });
 

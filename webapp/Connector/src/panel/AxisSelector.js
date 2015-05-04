@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -145,9 +145,6 @@ Ext.define('Connector.panel.AxisSelector', {
         }
 
         Ext.applyIf(this.measureConfig, {
-            includeTimpointMeasures: false,
-            allColumns: true,
-            showHidden: false,
             multiSelect: true,
             flex: 1,
             sourceCls: undefined
@@ -156,7 +153,6 @@ Ext.define('Connector.panel.AxisSelector', {
         Ext.apply(this.measureConfig, {
             sourceGroupHeader : 'Datasets',
             measuresAllHeader : 'All columns for this assay',
-            getAdditionalMeasuresArray : this.getAdditionalMeasuresArray,
             getSessionMeasures: this.getSessionMeasures,
             bubbleEvents: ['beforeMeasuresStoreLoad', 'measuresStoreLoaded', 'measureChanged']
         });
@@ -172,10 +168,6 @@ Ext.define('Connector.panel.AxisSelector', {
 
         this.variableChooserPanel = panel;
         return this.variableChooserPanel;
-    },
-
-    getAdditionalMeasuresArray : function() {
-        return !this.includeTimpointMeasures ? [] : Connector.getService('Query').getTimeMeasures();
     },
 
     getSessionMeasures : function() {

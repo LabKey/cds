@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,11 +11,15 @@ Ext.define('Connector.controller.Chart', {
 
     init : function() {
 
+        var queryService = Connector.getService('Query');
+
         this.control('#yaxisselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
-                    plot.showYMeasureSelection(view.getEl());
+                    queryService.onQueryReady(function(query) {
+                        plot.showYMeasureSelection(view.getEl());
+                    });
                 }
             }
         });
@@ -24,7 +28,9 @@ Ext.define('Connector.controller.Chart', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
-                    plot.showXMeasureSelection(view.getEl());
+                    queryService.onQueryReady(function(query) {
+                        plot.showXMeasureSelection(view.getEl());
+                    });
                 }
             }
         });
@@ -33,7 +39,9 @@ Ext.define('Connector.controller.Chart', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
-                    plot.showColorSelection(view.getEl());
+                    queryService.onQueryReady(function(query) {
+                        plot.showColorSelection(view.getEl());
+                    });
                 }
             }
         });
