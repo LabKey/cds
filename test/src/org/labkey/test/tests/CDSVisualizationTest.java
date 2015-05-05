@@ -280,7 +280,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("incorrect total number of points after clicking x axis category",468, getPointCount());
         //apply category selection as a filter
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("filter data"));
-        waitForPointCount(62, 10000);
+        waitForPointCount(62, 20000);
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
         //clear filter
         yaxis.openSelectorWindow();
@@ -289,7 +289,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Demographics", "Race");
         xaxis.confirmSelection();
-        waitForPointCount(468, 10000);
+        waitForPointCount(468, 20000);
         //verify multi-select of categories
         selectXAxes(false, "Indian", "American Indian/Alaska Native", "Native Hawaiian/Pacific Islander", "Native Hawaiian or Other Pacific Islander");
         //ensure correct number of points are highlighted
@@ -297,7 +297,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("incorrect total number of points after clicking x axis categories",468, getPointCount());
         //apply selection as exlusive filter
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
-        waitForPointCount(340, 10000);
+        waitForPointCount(340, 20000);
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
     }
 
