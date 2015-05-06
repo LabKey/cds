@@ -22,7 +22,7 @@ Ext.define('Connector.panel.Selection', {
 
     tbarButtons : [
         { text: 'filter', itemId: 'overlap' },   // will switch between 'filter subjects' and 'filter data'
-        { text: 'label selected subjects', itemId: 'subgroup', disabled: true, hidden: true }
+        { text: 'remove', itemId: 'inverse'},
     ],
 
     initHeader : function() {
@@ -65,17 +65,17 @@ Ext.define('Connector.panel.Selection', {
         if (filters.length <= 1) {
             var filterBtn = this.down('#overlap');
             var filterBtnText = 'filter';
-            var subgroupBtn = this.down('#subgroup');
-            var showSubgroupBtn = false;
+            var removeBtn = this.down('#inverse');
+            var showRemoveBtn = false;
 
             if (filters.length == 1) {
                 filters[0].data.isSelection = true;
                 filterBtnText = filters[0].get("isWhereFilter") ? 'filter data' : 'filter subjects';
-                showSubgroupBtn = filters[0].get("isWhereFilter");
+                showRemoveBtn = filters[0].get("showInverseFilter");
             }
 
             filterBtn.setText(filterBtnText);
-            subgroupBtn.setVisible(showSubgroupBtn)
+            removeBtn.setVisible(showRemoveBtn);
         }
 
         this.displayFilters(filters);
