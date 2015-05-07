@@ -5,6 +5,64 @@ a.x-btn {
   }
 }
 
+@include extjs-button-ui (
+  $ui: 'paging-widget-pages-small',
+
+  $border-radius : 10px,
+
+  $background-color: white,
+  $background-color-over: #a1d9da,
+  $background-color-focus: #14c9cc,
+  $background-color-pressed: #14c9cc,
+
+  $border-width : 0px,
+  $text-padding: 0px,
+
+  $font-size : 11px,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $glyph-color : #FFFFFF
+);
+
+.x-btn-paging-widget-pages-small {
+  margin: 2px 0px 0px 0px!important;
+  padding: 3px 6px 5px 5px!important;
+  height: 20px;
+  width: auto;
+}
+
+.x-btn-paging-widget-pages-small:hover .x-btn-inner{
+  color: rgba(0, 0, 0, 0.87);
+  color: #222222; /* Fallback for older browsers */
+}
+
+.x-btn-paging-widget-pages-small:active .x-btn-inner{
+  color: rgba(255, 255, 255, 1) !important;
+  color: white; /* Fallback for older browsers */
+}
+
+.x-btn-paging-widget-pages-small .x-btn-inner{
+  color: rgba(0, 0, 0, 0.54);
+  color: #777777; /* Fallback for older browsers */
+}
+
+.x-btn-paging-widget-pages-disabled {
+//  cursor: default;
+}
+
+.x-btn-paging-widget-pages-small.selected {
+  background-color: #14c9cc !important;
+}
+
+.x-btn-paging-widget-pages-small.selected .x-btn-inner {
+  color: rgba(255, 255, 255, 1) !important;
+  color: white; /* Fallback for older browsers */
+}
+
 /* Connector.button.RoundedButton */
 @include extjs-button-ui (
   $ui: 'rounded-small',

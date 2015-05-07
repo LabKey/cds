@@ -265,6 +265,32 @@ svg a {
   }
 }
 
+.grid-paging-widget {
+  background: #FFFFFF;
+  border: 1px solid #e6e6e5;
+  border-radius: 16px;
+}
+
+.paging-arrow-svg-back {
+  height: 8px !important;
+  width: 8px !important;
+  margin: 3px 0px 0px 1px;
+}
+
+.paging-arrow-svg-next {
+  height: 8px !important;
+  width: 8px !important;
+  margin: 3px 0px 0px 3px;
+}
+
+.paging-back-button {
+  background-color: white !important;
+}
+
+.page-button-container .x-box-inner {
+  height: 30px !important
+}
+
 .titlepanel {
   font-size: 16px!important;
   line-height: 16px;

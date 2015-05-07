@@ -3,6 +3,239 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
+Ext.define('Connector.view.Grid.Pager', {
+
+    extend: 'Ext.container.Container',
+
+    layout: {
+        type: 'hbox'
+    },
+
+    alias: 'widget.gridpager',
+
+    floating: true,
+    draggable: true,
+    shadow: false,
+
+    border: 1, // TODO: just for layout setup. remove.
+    cls: 'grid-paging-widget',
+    width: 260,
+    height: 32,
+    me: this,
+
+    initComponent : function() {
+        this.items = [{
+            xtype: 'button',
+            cls: 'paging-back-button',
+            ui: 'rounded-small',
+            icon: LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_normal.svg',
+            iconCls: 'paging-arrow-svg-back',
+            margin: '1 0 0 1',
+            handler: this.requestPreviousPage,
+            scope: this
+        },{
+            xtype: 'container',
+            cls: 'page-button-container',
+            layout: {
+                type: 'hbox',
+                pack: 'center'
+            },
+            defaults: {
+                xtype: 'button',
+                ui: 'paging-widget-pages',
+                flex: 1,
+                handler: this.requestPage,
+                scope: this
+            },
+            items : [{
+                id: 'pager-first',
+                text: "1"
+            },{
+                id: 'pager-ellipsisLeft',
+                text: "..."
+            },{
+                id: 'pager-previous',
+                text: "300"
+            },{
+                id: 'pager-middle',
+                text: "301"
+            },{
+                id: 'pager-next',
+                text: "302"
+            },{
+                id: 'pager-ellipsisRight',
+                text: "..."
+            },{
+                id: 'pager-last',
+                text: "700"
+            }],
+            border: 1,
+            height: 30,
+            width: 200
+        },{
+            xtype: 'button',
+            cls: 'paging-back-button',
+            ui: 'rounded-small',
+            icon: LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_normal.svg',
+            iconCls: 'paging-arrow-svg-next',
+            margin: '1 0 0 0',
+            handler: this.requestNextPage,
+            scope: this
+        }];
+
+        this.callParent();
+    },
+
+    update : function(first, current, last) {
+        var firstButton = Ext.getCmp('pager-first');
+        var ellipLeft = Ext.getCmp('pager-ellipsisLeft');
+        var prevButton = Ext.getCmp('pager-previous');
+        var middleButton = Ext.getCmp('pager-middle');
+        var nextButton = Ext.getCmp('pager-next');
+        var ellipRight = Ext.getCmp('pager-ellipsisRight');
+        var lastButton = Ext.getCmp('pager-last');
+
+        if(firstButton && ellipLeft && prevButton && middleButton && nextButton && ellipRight && lastButton) {
+
+            if(first === last) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText('...').disable();
+                prevButton.setText('...').disable();
+                middleButton.setText('...').disable();
+                nextButton.setText('...').disable();
+                ellipRight.setText('...').disable();
+                lastButton.setText('...').disable();
+            } else if(first === (last - 1)) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText(last.toString()).enable();
+                prevButton.setText('...').disable();
+                middleButton.setText('...').disable();
+                nextButton.setText('...').disable();
+                ellipRight.setText('...').disable();
+                lastButton.setText('...').disable();
+            } else if(first === (last - 2)) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText((first + 1).toString()).enable();
+                prevButton.setText(last.toString()).enable();
+                middleButton.setText('...').disable();
+                nextButton.setText('...').disable();
+                ellipRight.setText('...').disable();
+                lastButton.setText('...').disable();
+            } else if(first === (last - 3)) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText((first + 1).toString()).enable();
+                prevButton.setText((first + 2).toString()).enable();
+                middleButton.setText(last.toString()).enable();
+                nextButton.setText('...').disable();
+                ellipRight.setText('...').disable();
+                lastButton.setText('...').disable();
+            } else if(first === (last - 4)) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText((first + 1).toString()).enable();
+                prevButton.setText((first + 2).toString()).enable();
+                middleButton.setText((first + 3).toString()).enable();
+                nextButton.setText(last.toString()).enable();
+                ellipRight.setText('...').disable();
+                lastButton.setText('...').disable();
+            } else if(first === (last - 5)) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText((first + 1).toString()).enable();
+                prevButton.setText((first + 2).toString()).enable();
+                middleButton.setText((first + 3).toString()).enable();
+                nextButton.setText((first + 4).toString()).enable();
+                ellipRight.setText(last.toString()).enable();
+                lastButton.setText('...');
+            } else if(first === (last - 6)) {
+                firstButton.setText(first.toString()).enable();
+                ellipLeft.setText((first + 1).toString()).enable();
+                prevButton.setText((first + 2).toString()).enable();
+                middleButton.setText((first + 3).toString()).enable();
+                nextButton.setText((first + 4).toString()).enable();
+                ellipRight.setText((first + 5).toString()).enable();
+                lastButton.setText(last.toString()).enable();
+            } else {
+                firstButton.setText(first.toString()).enable();
+                lastButton.setText(last.toString()).enable();
+
+                var middle;
+                if(current <= first + 3) {
+                    middle = first + 3;
+                } else if(current >= last - 3) {
+                    middle = last - 3;
+                } else {
+                    middle = current;
+                }
+                middleButton.setText(middle.toString()).enable();
+
+                if( middle <= first + 3 ) {
+                    ellipLeft.setText((first + 1).toString()).enable();
+                    prevButton.setText((first + 2).toString()).enable();
+                } else {
+                    ellipLeft.setText("...").disable();
+                    prevButton.setText((middle - 1).toString()).enable();
+                }
+
+                if( middle >= last - 3 ) {
+                    nextButton.setText((last - 2).toString()).enable();
+                    ellipRight.setText((last -1).toString()).enable();
+                } else {
+                    nextButton.setText((middle + 1).toString()).enable();
+                    ellipRight.setText('...').disable();
+                }
+            }
+
+            var btnArray = [];
+            btnArray.push(firstButton);
+            btnArray.push(ellipLeft);
+            btnArray.push(prevButton);
+            btnArray.push(middleButton);
+            btnArray.push(nextButton);
+            btnArray.push(ellipRight);
+            btnArray.push(lastButton);
+
+            var currentStr = current.toString();
+            btnArray.forEach(function(btn) {
+                btn.removeCls('selected');
+                if(btn.getText() === currentStr)
+                    btn.addClass('selected');
+            });
+        }
+    },
+
+    registerStore: function(newStore) {
+        this.store = newStore;
+    },
+
+    requestPreviousPage: function() {
+        if (this.store.currentPage > 1)
+        {
+            this.store.previousPage();
+            this.update(1, this.store.currentPage, Math.ceil(this.store.totalCount/this.store.pageSize));
+        }
+    },
+
+    requestNextPage: function() {
+        var totalPages = Math.ceil(this.store.totalCount/this.store.pageSize);
+        if (this.store.currentPage < totalPages)
+        {
+            this.store.nextPage();
+            this.update(1, this.store.currentPage, totalPages);
+        }
+    },
+
+    requestPage: function(f,e) {
+        var pageNo = parseInt(f.getText());
+        var totalPages = Math.ceil(this.store.totalCount/this.store.pageSize);
+        if (pageNo <= totalPages && pageNo > 0)
+        {
+                this.store.loadPage(pageNo);
+                this.update(1, this.store.currentPage, totalPages);
+        }
+    }
+
+});
+
+
 Ext.define('Connector.view.Grid', {
 
     extend: 'Ext.container.Container',
@@ -16,6 +249,10 @@ Ext.define('Connector.view.Grid', {
     columnWidth: 125,
 
     headerHeight: 160,
+
+    titleHeight: 93,
+
+    id: 'connector-view-grid',
 
     paging: true,
 
@@ -89,7 +326,6 @@ Ext.define('Connector.view.Grid', {
         ];
 
         this.callParent();
-
         var model = this.getModel();
 
         // bind model to view
@@ -104,6 +340,9 @@ Ext.define('Connector.view.Grid', {
 
         // bind view to view
         this.on('resize', this.onViewResize, this);
+
+        // destroy footer
+        this.on('destroy', this.onDestroy, this);
 
         // plugin to handle loading mask for the grid
         this.addPlugin({
@@ -123,92 +362,8 @@ Ext.define('Connector.view.Grid', {
         this.addPlugin({
             ptype: 'messaging'
         });
-    },
 
-    _createFooter : function() {
-
-        return Ext.create ('Ext.container.Container', {
-            height: this.headerHeight,
-            ui: 'custom',
-            margin: '10 0 0 15',
-            id: 'grid-paging-footer',
-            layout: {
-                type: 'hbox',
-                align: 'center'
-            },
-            items: [{
-                // This allows for the following items to be centered
-                xtype: 'box',
-                flex: 1,
-                autoEl: {
-                    tag: 'div'
-                }
-            },{
-                xtype: 'button',
-                text: '<<',
-                margin: '0 15 0 0',
-                handler: this.requestFirstPage,
-                scope: this
-            },{
-                xtype: 'button',
-                text: '<',
-                margin: '0 15 0 0',
-                handler: this.requestPreviousPage,
-                scope: this
-            },{
-                xtype: 'textfield',
-                id: 'grid-page-number',
-                hideLabel: true,
-                width: 30,
-                value: 1,
-                enableKeyEvents: true,
-                listeners: {
-                    specialkey: this.requestPage
-                }
-            },{
-                id: 'grid-page-total',
-                xtype: 'label',
-                text: 'of ' + Math.ceil(this.getGrid().getStore().totalCount/this.getGrid().getStore().pageSize),
-                margin: '5 10 0 5'
-
-            },{
-                xtype: 'button',
-                text: '>',
-                margin: '0 15 0 0',
-                handler: this.requestNextPage,
-                scope: this
-            },{
-                xtype: 'button',
-                text: '>>',
-                margin: '0 15 0 0',
-                handler: this.requestLastPage,
-                scope: this
-            },{
-                // This allows for the following items to be centered
-                xtype: 'box',
-                flex: 1,
-                autoEl: {
-                    tag: 'div'
-                }
-            }]
-        });
-    },
-
-    _updateFooter : function() {
-        if (this.footer) {
-
-            var totalPagesEl = this.footer.getComponent('grid-page-total');
-            var totalPages = Math.ceil(this.getGrid().getStore().totalCount/this.getGrid().getStore().pageSize);
-            if (totalPagesEl)
-                totalPagesEl.setText("of " + totalPages);
-
-            var currentPageEl = this.footer.getComponent('grid-page-number');
-            if (currentPageEl && parseInt(currentPageEl.getValue()) > totalPages) {
-                this.requestFirstPage()
-            }
-
-            this.updatePageNumber();
-        }
+        this.footer = Ext.create('Connector.view.Grid.Pager', this);
     },
 
     _showOverlay : function() {
@@ -267,6 +422,7 @@ Ext.define('Connector.view.Grid', {
                 if (this.grid) {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
+                    this.footer.alignTo('primarytabpanel', 'c-tl', [size.width/2, (size.height + 11)]);
                 }
             }
         }, 50, this);
@@ -284,7 +440,18 @@ Ext.define('Connector.view.Grid', {
 
         if (!isActive) {
             this.hideMessage();
+            this.footer.hide();
+        } else {
+            // grid does this on initialization, so if already initialized need to do it here
+            if(this.grid) {
+                var size = this.getWidthHeight();
+                this.footer.show();
+                this.footer.alignTo('primarytabpanel', 'c-tl', [size.width / 2, (size.height + 11)]);
+            }
         }
+
+        //this.footer.destroy();
+        //this.remove(this.footer, true);
     },
 
     onColumnUpdate : function() {
@@ -311,18 +478,22 @@ Ext.define('Connector.view.Grid', {
 
         // add the new grid once the store has finished loading
         var newGrid = this.getGrid();
-        newGrid.getStore().on('load', function() {
+        newGrid.getStore().on('load', function()
+        {
 
-            if (prevGridId != null && prevGridId != newGrid.getId()) {
+            if (prevGridId != null && prevGridId != newGrid.getId())
+            {
                 this.remove(prevGridId, true);
-                if(this.paging && this.footer)
-                    this.remove(this.footer, true);
                 this._hideOverlay();
             }
 
             this.add(newGrid);
-            if (this.paging)
-                this.footer = this.add(this._createFooter());
+
+            var size = this.getWidthHeight();
+            var store = this.getGrid().getStore();
+            this.footer.show();
+            this.footer.alignTo('primarytabpanel', 'c-tl', [size.width/2, (size.height + 11)]);
+            this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
 
         }, this, {single: true});
     },
@@ -515,6 +686,8 @@ Ext.define('Connector.view.Grid', {
             this.fireEvent('showload', this);
         }, this);
 
+        this.footer.registerStore(store);
+
         store.on('load', function(store) {
 
             var rowCount = store.getCount();
@@ -534,7 +707,10 @@ Ext.define('Connector.view.Grid', {
                 this.showLimitMessage(maxRows);
             }
 
-            this._updateFooter();
+            var size = this.getWidthHeight();
+            this.footer.show();
+            this.footer.alignTo('primarytabpanel', 'c-tl', [size.width/2, (size.height + 11)]);
+            this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
 
         }, this);
 
@@ -546,10 +722,11 @@ Ext.define('Connector.view.Grid', {
         var box = this.getBox();
         var width = box.width - 27;
         var height;
-        if (this.paging)
-            height = box.height - this.headerHeight + 43;
-        else
-            height = box.height - this.headerHeight + 93;
+        //if (this.paging)
+        //    height = box.height - this.headerHeight + 43;
+        //else
+            //height = box.height - this.headerHeight + 93;
+        height = box.height - this.headerHeight + this.titleHeight;
 
         return {
             width: width,
@@ -769,61 +946,6 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             });
-        }
-    },
-
-    updatePageNumber: function() {
-        var store = this.getGrid().getStore();
-        if (this.footer) {
-            var page = this.footer.getComponent('grid-page-number');
-            if (page)
-            {
-                page.setValue(store.currentPage);
-            }
-        }
-    },
-
-    requestFirstPage: function() {
-        this.getGrid().getStore().loadPage(1);
-        this.updatePageNumber();
-    },
-
-    requestPreviousPage: function() {
-        var store = this.getGrid().getStore();
-        if (store.currentPage > 1)
-        {
-            store.previousPage();
-            this.updatePageNumber();
-        }
-    },
-
-    requestNextPage: function() {
-        var store = this.getGrid().getStore();
-        if (store.currentPage < Math.ceil(store.totalCount/store.pageSize))
-        {
-            store.nextPage();
-            this.updatePageNumber();
-        }
-    },
-
-    requestLastPage: function() {
-        var store = this.getGrid().getStore();
-        store.loadPage(Math.ceil(store.totalCount/store.pageSize));
-        this.updatePageNumber();
-    },
-
-    requestPage: function(f,e) {
-        if (e.getKey() == e.ENTER)
-        {
-            var main = this.getBubbleParent().getBubbleParent();
-            var store = main.getGrid().getStore();
-
-            var pageNo = parseInt(this.getValue());
-            if (pageNo <= Math.ceil(store.totalCount / store.pageSize) && pageNo > 0)
-            {
-                store.loadPage(pageNo);
-                main.updatePageNumber();
-            }
         }
     },
 

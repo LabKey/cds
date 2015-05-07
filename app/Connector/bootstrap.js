@@ -98,6 +98,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.ExplorerHeaderDataView": "../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.FilterStatus": "../../webapp/Connector/src/view/FilterStatus.js",
   "Connector.view.Grid": "../../webapp/Connector/src/view/Grid.js",
+  "Connector.view.Grid.Pager": "../../webapp/Connector/src/view/Grid.js",
   "Connector.view.GridPane": "../../webapp/Connector/src/view/GridPane.js",
   "Connector.view.GroupListView": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.view.GroupSave": "../../webapp/Connector/src/view/GroupSave.js",
@@ -270,6 +271,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.ExplorerHeaderDataView": [],
   "Connector.view.FilterStatus": [],
   "Connector.view.Grid": [],
+  "Connector.view.Grid.Pager": [],
   "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [],
   "Connector.view.GroupSave": [],
@@ -1308,6 +1310,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.Grid": [
     "widget.groupdatagrid"
+  ],
+  "Connector.view.Grid.Pager": [
+    "widget.gridpager"
   ],
   "Connector.view.GridPane": [],
   "Connector.view.GroupListView": [
