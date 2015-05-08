@@ -136,6 +136,7 @@
 
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/measure.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
 
@@ -146,6 +147,8 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/FilterGroup.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Measure.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/Source.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/InfoPane.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Group.js"></script>
@@ -171,6 +174,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
 
     <!-- Application plugins -->

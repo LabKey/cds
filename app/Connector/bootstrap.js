@@ -5,6 +5,7 @@
  * metadata-driven class system features 
  */
 Ext.Loader.addClassPathMappings({
+  "AdvancedPane": "../../webapp/Connector/src/panel/Selector.js",
   "Animation": "../../webapp/Connector/src/utility/Animation.js",
   "Connector.Application": "../../webapp/Connector/src/Application.js",
   "Connector.app.model.Assay": "../../webapp/Connector/src/app/model/Assay.js",
@@ -68,8 +69,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Group": "../../webapp/Connector/src/model/Group.js",
   "Connector.model.Hierarchy": "../../webapp/Connector/src/model/Dimension.js",
   "Connector.model.InfoPane": "../../webapp/Connector/src/model/InfoPane.js",
+  "Connector.model.Measure": "../../webapp/Connector/src/model/Measure.js",
   "Connector.model.Members": "../../webapp/Connector/src/model/InfoPane.js",
   "Connector.model.RSSItem": "../../webapp/Connector/src/model/RSSItem.js",
+  "Connector.model.Source": "../../webapp/Connector/src/model/Source.js",
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.StudyAxisData": "../../webapp/Connector/src/model/StudyAxisData.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
@@ -83,6 +86,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.FilterPanel": "../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../webapp/Connector/src/panel/GroupList.js",
   "Connector.panel.Selection": "../../webapp/Connector/src/panel/Selection.js",
+  "Connector.panel.Selector": "../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
   "Connector.plugin.LoadingMask": "../../webapp/Connector/src/plugin/LoadingMask.js",
   "Connector.plugin.Messaging": "../../webapp/Connector/src/plugin/Messaging.js",
@@ -178,6 +182,7 @@ Ext.Loader.addClassPathMappings({
   "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
+  "AdvancedPane": [],
   "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
@@ -241,8 +246,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Group": [],
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
+  "Connector.model.Measure": [],
   "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
+  "Connector.model.Source": [],
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
   "Connector.model.Summary": [],
@@ -256,6 +263,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
   "Connector.panel.Selection": [],
+  "Connector.panel.Selector": [],
   "Connector.plugin.HeaderLock": [],
   "Connector.plugin.LoadingMask": [],
   "Connector.plugin.Messaging": [],
@@ -1166,6 +1174,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
+  "AdvancedPane": [],
   "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
@@ -1243,8 +1252,10 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Group": [],
   "Connector.model.Hierarchy": [],
   "Connector.model.InfoPane": [],
+  "Connector.model.Measure": [],
   "Connector.model.Members": [],
   "Connector.model.RSSItem": [],
+  "Connector.model.Source": [],
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
   "Connector.model.Summary": [],
@@ -1271,6 +1282,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
+  ],
+  "Connector.panel.Selector": [
+    "widget.newselector"
   ],
   "Connector.plugin.HeaderLock": [
     "plugin.headerlock"

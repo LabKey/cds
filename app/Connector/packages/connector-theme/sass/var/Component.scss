@@ -246,6 +246,12 @@ a {
   }
 }
 
+svg g {
+  .xaxis-tick-text, .highlight, .xaxis-tick-rect {
+    cursor: pointer;
+  }
+}
+
 svg a {
   &:hover, &:active {
     text-decoration: none;
@@ -619,6 +625,7 @@ div.hopscotch-bubble {
 
 @import 'panel/FilterPanel';
 @import 'panel/GroupList';
+@import 'panel/Selector';
 
 @import 'plugin/LoadingMask';
 

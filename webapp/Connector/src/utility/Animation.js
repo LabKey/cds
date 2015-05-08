@@ -42,7 +42,11 @@ Ext.define('Animation', {
 
             // Create DOM Element replicate
             var dom = document.createElement(animateElementType);
-            dom.innerHTML = child.dom.innerHTML;
+            //IE and Safari not finding innerHTML
+            if(child.dom.innerHTML)
+                dom.innerHTML = child.dom.innerHTML;
+            else
+                dom.innerHTML = child.dom.__data__;
             dom.setAttribute('class', animateElementClass);
             dom.setAttribute('style', 'position: absolute; width: ' + (child.getTextWidth()+20) + 'px; left: ' + cbox[0] + 'px; top: ' + cbox[1] + 'px;');
 
