@@ -442,11 +442,13 @@ Ext.define('Connector.view.Grid', {
             this.hideMessage();
             this.footer.hide();
         } else {
-            // grid does this on initialization, so if already initialized need to do it here
+            // initialize footer if grid exists
             if(this.grid) {
                 var size = this.getWidthHeight();
+                var store = this.getGrid().getStore();
                 this.footer.show();
                 this.footer.alignTo('primarytabpanel', 'c-tl', [size.width / 2, (size.height + 11)]);
+                this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
             }
         }
 
@@ -707,9 +709,6 @@ Ext.define('Connector.view.Grid', {
                 this.showLimitMessage(maxRows);
             }
 
-            var size = this.getWidthHeight();
-            this.footer.show();
-            this.footer.alignTo('primarytabpanel', 'c-tl', [size.width/2, (size.height + 11)]);
             this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
 
         }, this);
