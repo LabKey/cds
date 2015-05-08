@@ -30,7 +30,7 @@ a.x-btn {
 
 .x-btn-paging-widget-pages-small {
   margin: 2px 0px 0px 0px!important;
-  padding: 3px 6px 5px 5px!important;
+  padding: 4px 6px 4px 5px!important;
   height: 20px;
   width: auto;
 }
@@ -51,7 +51,11 @@ a.x-btn {
 }
 
 .x-btn-paging-widget-pages-disabled {
-//  cursor: default;
+  cursor: default !important;
+}
+
+.x-btn.x-item-disabled {
+  cursor: default !important;
 }
 
 .x-btn-paging-widget-pages-small.selected {

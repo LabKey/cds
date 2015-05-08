@@ -30,7 +30,7 @@ Ext.define('Connector.view.Grid.Pager', {
             ui: 'rounded-small',
             icon: LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_normal.svg',
             iconCls: 'paging-arrow-svg-back',
-            margin: '1 0 0 1',
+            margin: '3 0 0 1',
             handler: this.requestPreviousPage,
             scope: this
         },{
@@ -71,14 +71,15 @@ Ext.define('Connector.view.Grid.Pager', {
             }],
             border: 1,
             height: 30,
-            width: 200
+            margin: '1 0 0 0',
+            width: 208
         },{
             xtype: 'button',
             cls: 'paging-back-button',
             ui: 'rounded-small',
             icon: LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_normal.svg',
             iconCls: 'paging-arrow-svg-next',
-            margin: '1 0 0 0',
+            margin: '3 0 0 0',
             handler: this.requestNextPage,
             scope: this
         }];
@@ -505,6 +506,7 @@ Ext.define('Connector.view.Grid', {
             store = grid.getStore();
         store.filterArray = model.getFilterArray(true);
         store.load();
+        this.getGrid().getStore().loadPage(1);
         this.applyFilterColumnState(grid);
     },
 
