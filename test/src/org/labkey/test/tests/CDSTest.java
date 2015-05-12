@@ -629,16 +629,16 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         log("Verify grid paging");
         grid.sort("Subject Id");
-        click(Locator.css("a#pager-last"));
+        grid.goToLastPage();
         grid.assertCurrentPage(119);
         grid.assertCellContent("9181");
         grid.assertCellContent("9199");
 
-        click(Locator.css("a.paging-back-button"));
+        grid.clickPreviousBtn();
         grid.assertCurrentPage(118);
         grid.assertCellContent("9156");
         grid.assertCellContent("9180");
-        click(Locator.css("a#pager-first"));
+        grid.goToFirstPage();
         grid.assertCellContent("193001");
         grid.assertCellContent("193002");
 
@@ -683,16 +683,17 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         log("Verify grid paging with filtered dataset");
         grid.sort("Subject Id");
-        click(Locator.css("a.paging-next-button"));
+        grid.clickNextBtn();
         grid.assertCurrentPage(2);
         grid.assertCellContent("9149");
         grid.assertCellContent("9102");
 
-        click(Locator.css("a#pager-previous"));
+        grid.clickPreviousBtn();
+        grid.goToPreviousPage();
         grid.assertCurrentPage(3);
         grid.assertCellContent("249325733");
 
-        click(Locator.css("a#pager-next"));
+        grid.goToNextPage();
         grid.assertCurrentPage(5);
         grid.assertCellContent("249325732");
         grid.assertCellContent("249325731");
