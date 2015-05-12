@@ -71,13 +71,13 @@ Ex. x, y; a, b; m, n</description>
       <column columnName="test4">
         <datatype>integer</datatype>
         <columnTitle>Test4</columnTitle>
-        <keyVariable>true</keyVariable>
+        <recommendedVariable>true</recommendedVariable>
         <defaultScale>LOG</defaultScale>
       </column>
       <column columnName="test5">
         <datatype>double</datatype>
         <columnTitle>Test5</columnTitle>
-        <keyVariable>true</keyVariable>
+        <recommendedVariable>true</recommendedVariable>
         <defaultScale>LOG</defaultScale>
       </column>
     </columns>

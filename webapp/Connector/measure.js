@@ -47,7 +47,7 @@ Ext.define('Connector.measure.Configuration', {
                     queryLabel: 'Time points',
                     queryDescription: 'Creates a categorical x axis, unlike the other time axes that are ordinal.',
                     inNotNullSet: false,
-                    isKeyVariable: true,
+                    isRecommendedVariable: true,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study days',
                     type: 'INTEGER',
