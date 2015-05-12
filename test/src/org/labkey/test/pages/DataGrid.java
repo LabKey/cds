@@ -163,7 +163,7 @@ public class DataGrid
 
     public void assertCurrentPage(int page)
     {
-        _test.waitForFormElementToEqual(Locators.currentPage, Integer.toString(page));
+        _test.assertElementContains(Locators.currentPage, Integer.toString(page));
     }
 
     public void assertSortPresent(String columnName)
@@ -232,8 +232,8 @@ public class DataGrid
         public static Locator.CssLocator grid = Locator.css("div.connector-grid");
         public static Locator.CssLocator dataRow = grid.append(Locator.css("tr.x-grid-data-row"));
         public static Locator.CssLocator sysmsg = Locator.css("div.sysmsg");
-        public static Locator.CssLocator totalPages = Locator.css("label.x-box-item");
-        public static Locator.CssLocator currentPage = Locator.css("input.x-form-field");
+        public static Locator.CssLocator totalPages = Locator.css("span.x-btn-inner.x-btn-inner-center");
+        public static Locator.CssLocator currentPage = Locator.css("a.x-btn-paging-widget-pages-small.selected span.x-btn-inner");
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {

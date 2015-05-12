@@ -75,7 +75,7 @@ Ext.define('Connector.view.Grid.Pager', {
             width: 208
         },{
             xtype: 'button',
-            cls: 'paging-back-button',
+            cls: 'paging-next-button',
             ui: 'rounded-small',
             icon: LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_normal.svg',
             iconCls: 'paging-arrow-svg-next',
@@ -88,6 +88,9 @@ Ext.define('Connector.view.Grid.Pager', {
     },
 
     update : function(first, current, last) {
+
+        //var first = 1000, current = 1000, last = 3000;
+
         var firstButton = Ext.getCmp('pager-first');
         var ellipLeft = Ext.getCmp('pager-ellipsisLeft');
         var prevButton = Ext.getCmp('pager-previous');
