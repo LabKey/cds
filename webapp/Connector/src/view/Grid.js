@@ -61,25 +61,25 @@ Ext.define('Connector.view.Grid.Pager', {
             },
             items : [{
                 id: 'pager-first',
-                text: "1"
+                text: "..."
             },{
                 id: 'pager-ellipsisLeft',
                 text: "..."
             },{
                 id: 'pager-previous',
-                text: "300"
+                text: "..."
             },{
                 id: 'pager-middle',
-                text: "301"
+                text: "..."
             },{
                 id: 'pager-next',
-                text: "302"
+                text: "..."
             },{
                 id: 'pager-ellipsisRight',
                 text: "..."
             },{
                 id: 'pager-last',
-                text: "700"
+                text: "..."
             }],
             border: 1,
             height: 30,
