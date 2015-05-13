@@ -63,7 +63,7 @@ Ext.define('Connector.app.model.Dataset', {
         data = data || {};
         Ext.applyIf(data, {
             variables: {
-                key: [],
+                recommended: [],
                 other: []
             }
         });
@@ -132,8 +132,8 @@ Ext.define('Connector.app.model.Dataset', {
                     Ext.each(response.measures, function(measure) {
                         if (measure.shownInDetailsView) {
                             ++measureCount;
-                            if (measure.isKeyVariable) {
-                                data.variables.key.push(measure);
+                            if (measure.isRecommendedVariable) {
+                                data.variables.recommended.push(measure);
                             } else {
                                 data.variables.other.push(measure);
                             }

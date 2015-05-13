@@ -86,7 +86,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-        deleteProject(getProjectName(), afterTest);
+        _containerHelper.deleteProject(getProjectName(), afterTest);
     }
 
     @Before
