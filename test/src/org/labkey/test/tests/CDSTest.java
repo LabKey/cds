@@ -87,7 +87,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-        deleteProject(getProjectName(), afterTest);
+        _containerHelper.deleteProject(getProjectName(), afterTest);
     }
 
     @Override
