@@ -1,3 +1,4 @@
+<%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%
 /*
  * Copyright (c) 2014 LabKey Corporation
@@ -57,6 +58,7 @@
 <br>
 <%=textLink("Application", CDSController.AppAction.class)%>
 <%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%>
+<%=textLink("Load Archive", CDSController.ImportArchiveAction.class)%>
 <%
     }
     else

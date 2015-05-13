@@ -42,6 +42,9 @@ import org.labkey.api.data.ColumnHeaderType;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
+import org.labkey.api.pipeline.PipelineJob;
+import org.labkey.api.pipeline.PipelineService;
+import org.labkey.api.pipeline.PipelineUrls;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryView;
@@ -57,6 +60,7 @@ import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.study.Dataset;
 import org.labkey.api.study.StudyService;
+import org.labkey.api.util.PageFlowUtil;
 import org.labkey.api.util.URLHelper;
 import org.labkey.api.view.ActionURL;
 import org.labkey.api.view.HtmlView;
@@ -64,6 +68,7 @@ import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.template.PageConfig;
+import org.labkey.cds.data.CDSImportLoader;
 import org.labkey.cds.model.Citable;
 import org.labkey.cds.model.CitableAuthor;
 import org.labkey.cds.model.Citation;
@@ -224,7 +229,7 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
         {
-            return new JspView("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, false), errors);
+            return new JspView<>("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, false), errors);
         }
 
         @Override
@@ -413,13 +418,13 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
         {
-            return new JspView("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, true), errors);
+            return new JspView<>("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, true), errors);
         }
 
         @Override
         public ModelAndView getSuccessView(Object o)
         {
-            return new JspView("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, true));
+            return new JspView<>("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, true));
         }
 
         @Override
@@ -685,6 +690,62 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
+        }
+    }
+
+    public static class CopyBean
+    {
+        String path;
+
+        public String getPath()
+        {
+            return path;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setPath(String path)
+        {
+            this.path = path;
+        }
+    }
+
+    @RequiresPermissionClass(AdminPermission.class)
+    public class ImportArchiveAction extends FormViewAction<CopyBean>
+    {
+        @Override
+        public void validateCommand(CopyBean target, Errors errors)
+        {
+        }
+
+        @Override
+        public ModelAndView getView(CopyBean copyBean, boolean reshow, BindException errors) throws Exception
+        {
+            return new JspView("/org/labkey/cds/view/importArchive.jsp");
+        }
+
+        @Override
+        public boolean handlePost(CopyBean form, BindException errors) throws Exception
+        {
+//            if (null == form.getPath() || !new File(form.getPath()).exists())
+//            {
+//                errors.reject(ERROR_MSG, "Directory not found: " + form.getPath());
+//                return false;
+//            }
+            PipelineJob j = new CDSImportLoader(getContainer(), getUser(), form.getPath());
+            PipelineService.get().queueJob(j);
+            return true;
+        }
+
+        @Override
+        public URLHelper getSuccessURL(CopyBean copyBean)
+        {
+            return PageFlowUtil.urlProvider(PipelineUrls.class).urlBegin(getContainer());
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
         }
     }
 }
