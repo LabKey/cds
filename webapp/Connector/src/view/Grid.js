@@ -30,8 +30,20 @@ Ext.define('Connector.view.Grid.Pager', {
             ui: 'rounded-small',
             icon: LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_normal.svg',
             iconCls: 'paging-arrow-svg-back',
-            margin: '3 0 0 1',
+            margin: '3 0 0 -2',
             handler: this.requestPreviousPage,
+            listeners: {
+                mouseover: {
+                    fn: function() {
+                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_hover.svg');
+                    }
+                },
+                mouseout: {
+                    fn: function() {
+                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_normal.svg');
+                    }
+                }
+            },
             scope: this
         },{
             xtype: 'container',
@@ -72,7 +84,7 @@ Ext.define('Connector.view.Grid.Pager', {
             border: 1,
             height: 30,
             margin: '1 0 0 0',
-            width: 208
+            width: 212
         },{
             xtype: 'button',
             cls: 'paging-next-button',
@@ -81,6 +93,18 @@ Ext.define('Connector.view.Grid.Pager', {
             iconCls: 'paging-arrow-svg-next',
             margin: '3 0 0 0',
             handler: this.requestNextPage,
+            listeners: {
+                mouseover: {
+                    fn: function() {
+                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_hover.svg');
+                    }
+                },
+                mouseout: {
+                    fn: function() {
+                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_normal.svg');
+                    }
+                }
+            },
             scope: this
         }];
 
@@ -102,64 +126,80 @@ Ext.define('Connector.view.Grid.Pager', {
         if(firstButton && ellipLeft && prevButton && middleButton && nextButton && ellipRight && lastButton) {
 
             if(first === last) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText('...').disable();
-                prevButton.setText('...').disable();
-                middleButton.setText('...').disable();
-                nextButton.setText('...').disable();
-                ellipRight.setText('...').disable();
-                lastButton.setText('...').disable();
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.hide();
+                prevButton.hide();
+                middleButton.hide();
+                nextButton.hide();
+                ellipRight.hide();
+                lastButton.hide();
+                this.setWidth(75);
+                this.items.items[1].setWidth(27);
             } else if(first === (last - 1)) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText(last.toString()).enable();
-                prevButton.setText('...').disable();
-                middleButton.setText('...').disable();
-                nextButton.setText('...').disable();
-                ellipRight.setText('...').disable();
-                lastButton.setText('...').disable();
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.setText(last.toString()).show().enable();
+                prevButton.hide();
+                middleButton.hide();
+                nextButton.hide();
+                ellipRight.hide();
+                lastButton.hide();
+                this.setWidth(105);
+                this.items.items[1].setWidth(57);
             } else if(first === (last - 2)) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText((first + 1).toString()).enable();
-                prevButton.setText(last.toString()).enable();
-                middleButton.setText('...').disable();
-                nextButton.setText('...').disable();
-                ellipRight.setText('...').disable();
-                lastButton.setText('...').disable();
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.setText((first + 1).toString()).show().enable();
+                prevButton.setText(last.toString()).show().enable();
+                middleButton.hide();
+                nextButton.hide();
+                ellipRight.hide();
+                lastButton.hide();
+                this.setWidth(135);
+                this.items.items[1].setWidth(87);
             } else if(first === (last - 3)) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText((first + 1).toString()).enable();
-                prevButton.setText((first + 2).toString()).enable();
-                middleButton.setText(last.toString()).enable();
-                nextButton.setText('...').disable();
-                ellipRight.setText('...').disable();
-                lastButton.setText('...').disable();
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.setText((first + 1).toString()).show().enable();
+                prevButton.setText((first + 2).toString()).show().enable();
+                middleButton.setText(last.toString()).show().enable();
+                nextButton.hide();
+                ellipRight.hide();
+                lastButton.hide();
+                this.setWidth(165);
+                this.items.items[1].setWidth(117);
             } else if(first === (last - 4)) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText((first + 1).toString()).enable();
-                prevButton.setText((first + 2).toString()).enable();
-                middleButton.setText((first + 3).toString()).enable();
-                nextButton.setText(last.toString()).enable();
-                ellipRight.setText('...').disable();
-                lastButton.setText('...').disable();
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.setText((first + 1).toString()).show().enable();
+                prevButton.setText((first + 2).toString()).show().enable();
+                middleButton.setText((first + 3).toString()).show().enable();
+                nextButton.setText(last.toString()).show().enable();
+                ellipRight.hide();
+                lastButton.hide();
+                this.setWidth(195);
+                this.items.items[1].setWidth(147);
             } else if(first === (last - 5)) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText((first + 1).toString()).enable();
-                prevButton.setText((first + 2).toString()).enable();
-                middleButton.setText((first + 3).toString()).enable();
-                nextButton.setText((first + 4).toString()).enable();
-                ellipRight.setText(last.toString()).enable();
-                lastButton.setText('...');
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.setText((first + 1).toString()).show().enable();
+                prevButton.setText((first + 2).toString()).show().enable();
+                middleButton.setText((first + 3).toString()).show().enable();
+                nextButton.setText((first + 4).toString()).show().enable();
+                ellipRight.setText(last.toString()).show().enable();
+                lastButton.hide();
+                this.setWidth(225);
+                this.items.items[1].setWidth(177);
             } else if(first === (last - 6)) {
-                firstButton.setText(first.toString()).enable();
-                ellipLeft.setText((first + 1).toString()).enable();
-                prevButton.setText((first + 2).toString()).enable();
-                middleButton.setText((first + 3).toString()).enable();
-                nextButton.setText((first + 4).toString()).enable();
-                ellipRight.setText((first + 5).toString()).enable();
-                lastButton.setText(last.toString()).enable();
+                firstButton.setText(first.toString()).show().enable();
+                ellipLeft.setText((first + 1).toString()).show().enable();
+                prevButton.setText((first + 2).toString()).show().enable();
+                middleButton.setText((first + 3).toString()).show().enable();
+                nextButton.setText((first + 4).toString()).show().enable();
+                ellipRight.setText((first + 5).toString()).show().enable();
+                lastButton.setText(last.toString()).show().enable();
+                this.setWidth(260);
+                this.items.items[1].setWidth(212);
             } else {
-                firstButton.setText(first.toString()).enable();
-                lastButton.setText(last.toString()).enable();
+                firstButton.setText(first.toString()).show().enable();
+                lastButton.setText(last.toString()).show().enable();
+                this.setWidth(260);
+                this.items.items[1].setWidth(212);
 
                 var middle;
                 if(current <= first + 3) {
@@ -169,22 +209,22 @@ Ext.define('Connector.view.Grid.Pager', {
                 } else {
                     middle = current;
                 }
-                middleButton.setText(middle.toString()).enable();
+                middleButton.setText(middle.toString()).show().enable();
 
                 if( middle <= first + 3 ) {
-                    ellipLeft.setText((first + 1).toString()).enable();
-                    prevButton.setText((first + 2).toString()).enable();
+                    ellipLeft.setText((first + 1).toString()).show().enable();
+                    prevButton.setText((first + 2).toString()).show().enable();
                 } else {
-                    ellipLeft.setText("...").disable();
-                    prevButton.setText((middle - 1).toString()).enable();
+                    ellipLeft.setText("...").show().disable();
+                    prevButton.setText((middle - 1).toString()).show().enable();
                 }
 
                 if( middle >= last - 3 ) {
-                    nextButton.setText((last - 2).toString()).enable();
-                    ellipRight.setText((last -1).toString()).enable();
+                    nextButton.setText((last - 2).toString()).show().enable();
+                    ellipRight.setText((last -1).toString()).show().enable();
                 } else {
-                    nextButton.setText((middle + 1).toString()).enable();
-                    ellipRight.setText('...').disable();
+                    nextButton.setText((middle + 1).toString()).show().enable();
+                    ellipRight.setText('...').show().disable();
                 }
             }
 
