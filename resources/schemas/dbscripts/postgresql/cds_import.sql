@@ -63,5 +63,5 @@ CREATE TABLE cds.import_ICS (
   ics_magnitude_background NUMERIC(15,4),
   ics_magnitude_unit VARCHAR(100),
 
-  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, individual_id)
+  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, individual_id, study_day)
 );
