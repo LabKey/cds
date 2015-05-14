@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl xmlns="http://labkey.org/etl/xml">
+    <name>Load CDS Application Tables</name>
+    <description>Populate tables used to drive the Dataspace application</description>
+    <transforms>
+        <transform id="PopulateStudies" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
+            </taskref>
+        </transform>
+    </transforms>
+    <schedule>
+        <poll interval="10h"/>
+        <!--<cron expression="0 30 3 * * ?"/>-->
+    </schedule>
+    <!--<transforms>-->
+        <!--<transform id="ExtendedPatients" type="StoredProcedure">-->
+            <!--<description>Calculates date of death or last contact for a patient, and patient ages at events of interest</description>-->
+            <!--<procedure schemaName="argos" procedureName="PopulateExtendedPatients" useTransaction="true">-->
+            <!--</procedure>-->
+        <!--</transform>-->
+        <!--<transform id="RefreshCube" type="TaskrefTransformStep">-->
+            <!--<taskref ref="org.labkey.di.steps.CubeMaintenanceTask">-->
+                <!--<settings>-->
+                    <!--<setting name="cube" value="SpecimenCube"/>-->
+                    <!--<setting name="schema" value="Argos"/>-->
+                    <!--<setting name="configId" value="Argos:/Argos"/>-->
+                    <!--<setting name="scope" value="site"/>-->
+                <!--</settings>-->
+            <!--</taskref>-->
+        <!--</transform>-->
+    <!--</transforms>-->
+</etl>

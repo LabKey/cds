@@ -29,11 +29,11 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DataspaceCopyConfig extends CopyConfig
+public class CDSImportCopyConfig extends CopyConfig
 {
     QueryUpdateService.InsertOption option = QueryUpdateService.InsertOption.IMPORT;
 
-    DataspaceCopyConfig(String sourceSchema, String source, String targetSchema, String target)
+    CDSImportCopyConfig(String sourceSchema, String source, String targetSchema, String target)
     {
         super(sourceSchema, source, targetSchema, target);
     }
@@ -88,7 +88,7 @@ public class DataspaceCopyConfig extends CopyConfig
         return pump.getRowCount();
     }
 
-    static class TSVCopyConfig extends DataspaceCopyConfig
+    static class TSVCopyConfig extends CDSImportCopyConfig
     {
         String tsvFileName;
 

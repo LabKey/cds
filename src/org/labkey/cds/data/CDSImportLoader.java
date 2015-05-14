@@ -30,34 +30,34 @@ public class CDSImportLoader extends PipelineJob
 {
     static Logger _log = Logger.getLogger(CDSImportLoader.class);
 
-    static DataspaceCopyConfig[] dataspaceTables = new DataspaceCopyConfig[]
+    static CDSImportCopyConfig[] dataspaceTables = new CDSImportCopyConfig[]
     {
         // Core Tables
-        new DataspaceCopyConfig.TSVCopyConfig("Study"),
-        new DataspaceCopyConfig.TSVCopyConfig("Product"),
-        new DataspaceCopyConfig.TSVCopyConfig("Personnel"),
-        new DataspaceCopyConfig.TSVCopyConfig("Site"),
-        new DataspaceCopyConfig.TSVCopyConfig("Lab"),
+        new CDSImportCopyConfig.TSVCopyConfig("Study"),
+        new CDSImportCopyConfig.TSVCopyConfig("Product"),
+        new CDSImportCopyConfig.TSVCopyConfig("Personnel"),
+        new CDSImportCopyConfig.TSVCopyConfig("Site"),
+        new CDSImportCopyConfig.TSVCopyConfig("Lab"),
 
         // Dependent Tables
-        new DataspaceCopyConfig.TSVCopyConfig("StudyTreatmentArm"),
-        new DataspaceCopyConfig.TSVCopyConfig("StudyPersonnel"),
-        new DataspaceCopyConfig.TSVCopyConfig("StudySiteFunction"),
-        new DataspaceCopyConfig.TSVCopyConfig("ProductInsert"),
-        new DataspaceCopyConfig.TSVCopyConfig("StudyArmVisit"),
-        new DataspaceCopyConfig.TSVCopyConfig("StudyArmVisitTag"),
-        new DataspaceCopyConfig.TSVCopyConfig("StudyArmVisitProduct"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudyTreatmentArm"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudyPersonnel"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudySiteFunction"),
+        new CDSImportCopyConfig.TSVCopyConfig("ProductInsert"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudyArmVisit"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudyArmVisitTag"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudyArmVisitProduct"),
 
         // Mapping Tables
-        new DataspaceCopyConfig.TSVCopyConfig("StudyProduct"),
-        new DataspaceCopyConfig.TSVCopyConfig("StudySitePersonnel"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudyProduct"),
+        new CDSImportCopyConfig.TSVCopyConfig("StudySitePersonnel"),
 
         // Datasets
-        new DataspaceCopyConfig.TSVCopyConfig("Demographic"),
-        new DataspaceCopyConfig.TSVCopyConfig("ICS"),
-        new DataspaceCopyConfig.TSVCopyConfig("ELISpot"),
-        new DataspaceCopyConfig.TSVCopyConfig("NAb"),
-        new DataspaceCopyConfig.TSVCopyConfig("BAMA")
+        new CDSImportCopyConfig.TSVCopyConfig("Demographic"),
+        new CDSImportCopyConfig.TSVCopyConfig("ICS"),
+        new CDSImportCopyConfig.TSVCopyConfig("ELISpot"),
+        new CDSImportCopyConfig.TSVCopyConfig("NAb"),
+        new CDSImportCopyConfig.TSVCopyConfig("BAMA")
     };
 
     //
@@ -123,9 +123,9 @@ public class CDSImportLoader extends PipelineJob
     }
 
 
-    public void execute(DataspaceCopyConfig[] configs, @Nullable File dir) throws IOException, SQLException, PipelineJobException
+    public void execute(CDSImportCopyConfig[] configs, @Nullable File dir) throws IOException, SQLException, PipelineJobException
     {
-        for (DataspaceCopyConfig config : configs)
+        for (CDSImportCopyConfig config : configs)
         {
             if (checkInterrupted())
                 throw new CancelledException();
@@ -141,7 +141,7 @@ public class CDSImportLoader extends PipelineJob
         }
     }
 
-    public boolean executeCopy(DataspaceCopyConfig config, @Nullable File dir) throws IOException, SQLException
+    public boolean executeCopy(CDSImportCopyConfig config, @Nullable File dir) throws IOException, SQLException
     {
         DbSchema targetSchema = DbSchema.get(config.getTargetSchema().getName());
 
