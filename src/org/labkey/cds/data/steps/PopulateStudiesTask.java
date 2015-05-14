@@ -6,7 +6,7 @@ import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.module.FolderType;
-import org.labkey.api.module.ModuleLoader;
+import org.labkey.api.module.FolderTypeManager;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.security.User;
@@ -41,7 +41,7 @@ public class PopulateStudiesTask extends TaskRefTaskImpl
         Container project = containerUser.getContainer();
         User user = containerUser.getUser();
 
-        if (project.isProject() && project.getFolderType().equals(ModuleLoader.getInstance().getFolderType(StudyService.DATASPACE_FOLDERTYPE_NAME)))
+        if (project.isProject() && project.getFolderType().equals(FolderTypeManager.get().getFolderType(StudyService.DATASPACE_FOLDERTYPE_NAME)))
         {
             for (Container child : project.getChildren())
             {
@@ -57,7 +57,7 @@ public class PopulateStudiesTask extends TaskRefTaskImpl
                 studyNames.add(study.getProt());
             }
 
-            FolderType folderType = ModuleLoader.getInstance().getFolderType("Study");
+            FolderType folderType = FolderTypeManager.get().getFolderType("Study");
 
             for (String studyName : studyNames)
             {
