@@ -34,10 +34,30 @@ public class CDSImportLoader extends PipelineJob
     {
         // Core Tables
         new DataspaceCopyConfig.TSVCopyConfig("Study"),
+        new DataspaceCopyConfig.TSVCopyConfig("Product"),
+        new DataspaceCopyConfig.TSVCopyConfig("Personnel"),
+        new DataspaceCopyConfig.TSVCopyConfig("Site"),
+        new DataspaceCopyConfig.TSVCopyConfig("Lab"),
+
+        // Dependent Tables
+        new DataspaceCopyConfig.TSVCopyConfig("StudyTreatmentArm"),
+        new DataspaceCopyConfig.TSVCopyConfig("StudyPersonnel"),
+        new DataspaceCopyConfig.TSVCopyConfig("StudySiteFunction"),
+        new DataspaceCopyConfig.TSVCopyConfig("ProductInsert"),
+        new DataspaceCopyConfig.TSVCopyConfig("StudyArmVisit"),
+        new DataspaceCopyConfig.TSVCopyConfig("StudyArmVisitTag"),
+        new DataspaceCopyConfig.TSVCopyConfig("StudyArmVisitProduct"),
+
+        // Mapping Tables
+        new DataspaceCopyConfig.TSVCopyConfig("StudyProduct"),
+        new DataspaceCopyConfig.TSVCopyConfig("StudySitePersonnel"),
 
         // Datasets
         new DataspaceCopyConfig.TSVCopyConfig("Demographic"),
-        new DataspaceCopyConfig.TSVCopyConfig("ICS")
+        new DataspaceCopyConfig.TSVCopyConfig("ICS"),
+        new DataspaceCopyConfig.TSVCopyConfig("ELISpot"),
+        new DataspaceCopyConfig.TSVCopyConfig("NAb"),
+        new DataspaceCopyConfig.TSVCopyConfig("BAMA")
     };
 
     //
