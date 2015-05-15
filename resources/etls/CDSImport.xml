@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl xmlns="http://labkey.org/etl/xml">
+    <name>Import Dataspace Archive</name>
+    <description>Populate Dataspace import tables from archive</description>
+    <transforms>
+        <transform id="CDSImport" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.CDSImportTask">
+                <settings>
+                    <setting name="directory" value="C:/code/labkey/trunk/build/deploy/files/Dataspace/@files/DataspaceArchive"/>
+                </settings>
+            </taskref>
+        </transform>
+    </transforms>
+</etl>
