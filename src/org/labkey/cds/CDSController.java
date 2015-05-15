@@ -37,13 +37,11 @@ import org.labkey.api.action.NullSafeBindException;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
-import org.labkey.api.data.Container;
 import org.labkey.api.data.ColumnHeaderType;
+import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
-import org.labkey.api.pipeline.PipelineJob;
-import org.labkey.api.pipeline.PipelineService;
 import org.labkey.api.pipeline.PipelineUrls;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryService;
@@ -68,7 +66,6 @@ import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.template.PageConfig;
-import org.labkey.cds.data.CDSImportLoader;
 import org.labkey.cds.model.Citable;
 import org.labkey.cds.model.CitableAuthor;
 import org.labkey.cds.model.Citation;
@@ -731,8 +728,8 @@ public class CDSController extends SpringActionController
 //                errors.reject(ERROR_MSG, "Directory not found: " + form.getPath());
 //                return false;
 //            }
-            PipelineJob j = new CDSImportLoader(getContainer(), getUser(), form.getPath());
-            PipelineService.get().queueJob(j);
+//            PipelineJob j = new CDSImportLoader(getContainer(), getUser(), form.getPath());
+//            PipelineService.get().queueJob(j);
             return true;
         }
 
