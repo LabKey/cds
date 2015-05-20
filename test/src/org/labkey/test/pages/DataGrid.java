@@ -252,12 +252,12 @@ public class DataGrid
         public static Locator.CssLocator sysmsg = Locator.css("div.sysmsg");
         public static Locator.CssLocator totalPages = Locator.css("span.x-btn-inner.x-btn-inner-center");
         public static Locator.CssLocator currentPage = Locator.css("a.x-btn-paging-widget-pages-small.selected span.x-btn-inner");
-        public static Locator.CssLocator lastPage = Locator.css("a#pager-last");
-        public static Locator.CssLocator firstPage = Locator.css("a#pager-first");
+        public static Locator.CssLocator lastPage = Locator.css("a.pager-last");
+        public static Locator.CssLocator firstPage = Locator.css("a.pager-first");
         public static Locator.CssLocator previousBtn = Locator.css("a.paging-back-button");
         public static Locator.CssLocator nextBtn = Locator.css("a.paging-next-button");
-        public static Locator.CssLocator previousPage = Locator.css("a#pager-previous");
-        public static Locator.CssLocator nextPage = Locator.css("a#pager-next");
+        public static Locator.CssLocator previousPage = Locator.css("a.pager-previous");
+        public static Locator.CssLocator nextPage = Locator.css("a.pager-next");
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {

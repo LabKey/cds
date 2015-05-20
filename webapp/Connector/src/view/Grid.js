@@ -3,283 +3,6 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.Grid.Pager', {
-
-    extend: 'Ext.container.Container',
-
-    layout: {
-        type: 'hbox'
-    },
-
-    alias: 'widget.gridpager',
-
-    floating: true,
-    draggable: true,
-    shadow: false,
-
-    border: 1, // TODO: just for layout setup. remove.
-    cls: 'grid-paging-widget',
-    width: 260,
-    height: 32,
-    me: this,
-
-    initComponent : function() {
-        this.items = [{
-            xtype: 'button',
-            cls: 'paging-back-button',
-            ui: 'rounded-small',
-            icon: LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_normal.svg',
-            iconCls: 'paging-arrow-svg-back',
-            margin: '3 0 0 -2',
-            handler: this.requestPreviousPage,
-            listeners: {
-                mouseover: {
-                    fn: function() {
-                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_hover.svg');
-                    }
-                },
-                mouseout: {
-                    fn: function() {
-                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_leftArrow_normal.svg');
-                    }
-                }
-            },
-            scope: this
-        },{
-            xtype: 'container',
-            cls: 'page-button-container',
-            layout: {
-                type: 'hbox',
-                pack: 'center'
-            },
-            defaults: {
-                xtype: 'button',
-                ui: 'paging-widget-pages',
-                flex: 1,
-                handler: this.requestPage,
-                scope: this
-            },
-            items : [{
-                id: 'pager-first',
-                text: "..."
-            },{
-                id: 'pager-ellipsisLeft',
-                text: "..."
-            },{
-                id: 'pager-previous',
-                text: "..."
-            },{
-                id: 'pager-middle',
-                text: "..."
-            },{
-                id: 'pager-next',
-                text: "..."
-            },{
-                id: 'pager-ellipsisRight',
-                text: "..."
-            },{
-                id: 'pager-last',
-                text: "..."
-            }],
-            border: 1,
-            height: 30,
-            margin: '1 0 0 0',
-            width: 212
-        },{
-            xtype: 'button',
-            cls: 'paging-next-button',
-            ui: 'rounded-small',
-            icon: LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_normal.svg',
-            iconCls: 'paging-arrow-svg-next',
-            margin: '3 0 0 0',
-            handler: this.requestNextPage,
-            listeners: {
-                mouseover: {
-                    fn: function() {
-                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_hover.svg');
-                    }
-                },
-                mouseout: {
-                    fn: function() {
-                        this.setIcon(LABKEY.contextPath + '/Connector/images/icon_paging_rightArrow_normal.svg');
-                    }
-                }
-            },
-            scope: this
-        }];
-
-        this.callParent();
-    },
-
-    update : function(first, current, last) {
-
-        //var first = 1000, current = 1000, last = 3000;
-
-        var firstButton = Ext.getCmp('pager-first');
-        var ellipLeft = Ext.getCmp('pager-ellipsisLeft');
-        var prevButton = Ext.getCmp('pager-previous');
-        var middleButton = Ext.getCmp('pager-middle');
-        var nextButton = Ext.getCmp('pager-next');
-        var ellipRight = Ext.getCmp('pager-ellipsisRight');
-        var lastButton = Ext.getCmp('pager-last');
-
-        if(firstButton && ellipLeft && prevButton && middleButton && nextButton && ellipRight && lastButton) {
-
-            if(first === last) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.hide();
-                prevButton.hide();
-                middleButton.hide();
-                nextButton.hide();
-                ellipRight.hide();
-                lastButton.hide();
-                this.setWidth(75);
-                this.items.items[1].setWidth(27);
-            } else if(first === (last - 1)) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.setText(last.toString()).show().enable();
-                prevButton.hide();
-                middleButton.hide();
-                nextButton.hide();
-                ellipRight.hide();
-                lastButton.hide();
-                this.setWidth(105);
-                this.items.items[1].setWidth(57);
-            } else if(first === (last - 2)) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.setText((first + 1).toString()).show().enable();
-                prevButton.setText(last.toString()).show().enable();
-                middleButton.hide();
-                nextButton.hide();
-                ellipRight.hide();
-                lastButton.hide();
-                this.setWidth(135);
-                this.items.items[1].setWidth(87);
-            } else if(first === (last - 3)) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.setText((first + 1).toString()).show().enable();
-                prevButton.setText((first + 2).toString()).show().enable();
-                middleButton.setText(last.toString()).show().enable();
-                nextButton.hide();
-                ellipRight.hide();
-                lastButton.hide();
-                this.setWidth(165);
-                this.items.items[1].setWidth(117);
-            } else if(first === (last - 4)) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.setText((first + 1).toString()).show().enable();
-                prevButton.setText((first + 2).toString()).show().enable();
-                middleButton.setText((first + 3).toString()).show().enable();
-                nextButton.setText(last.toString()).show().enable();
-                ellipRight.hide();
-                lastButton.hide();
-                this.setWidth(195);
-                this.items.items[1].setWidth(147);
-            } else if(first === (last - 5)) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.setText((first + 1).toString()).show().enable();
-                prevButton.setText((first + 2).toString()).show().enable();
-                middleButton.setText((first + 3).toString()).show().enable();
-                nextButton.setText((first + 4).toString()).show().enable();
-                ellipRight.setText(last.toString()).show().enable();
-                lastButton.hide();
-                this.setWidth(225);
-                this.items.items[1].setWidth(177);
-            } else if(first === (last - 6)) {
-                firstButton.setText(first.toString()).show().enable();
-                ellipLeft.setText((first + 1).toString()).show().enable();
-                prevButton.setText((first + 2).toString()).show().enable();
-                middleButton.setText((first + 3).toString()).show().enable();
-                nextButton.setText((first + 4).toString()).show().enable();
-                ellipRight.setText((first + 5).toString()).show().enable();
-                lastButton.setText(last.toString()).show().enable();
-                this.setWidth(260);
-                this.items.items[1].setWidth(212);
-            } else {
-                firstButton.setText(first.toString()).show().enable();
-                lastButton.setText(last.toString()).show().enable();
-                this.setWidth(260);
-                this.items.items[1].setWidth(212);
-
-                var middle;
-                if(current <= first + 3) {
-                    middle = first + 3;
-                } else if(current >= last - 3) {
-                    middle = last - 3;
-                } else {
-                    middle = current;
-                }
-                middleButton.setText(middle.toString()).show().enable();
-
-                if( middle <= first + 3 ) {
-                    ellipLeft.setText((first + 1).toString()).show().enable();
-                    prevButton.setText((first + 2).toString()).show().enable();
-                } else {
-                    ellipLeft.setText("...").show().disable();
-                    prevButton.setText((middle - 1).toString()).show().enable();
-                }
-
-                if( middle >= last - 3 ) {
-                    nextButton.setText((last - 2).toString()).show().enable();
-                    ellipRight.setText((last -1).toString()).show().enable();
-                } else {
-                    nextButton.setText((middle + 1).toString()).show().enable();
-                    ellipRight.setText('...').show().disable();
-                }
-            }
-
-            var btnArray = [];
-            btnArray.push(firstButton);
-            btnArray.push(ellipLeft);
-            btnArray.push(prevButton);
-            btnArray.push(middleButton);
-            btnArray.push(nextButton);
-            btnArray.push(ellipRight);
-            btnArray.push(lastButton);
-
-            var currentStr = current.toString();
-            btnArray.forEach(function(btn) {
-                btn.removeCls('selected');
-                if(btn.getText() === currentStr)
-                    btn.addClass('selected');
-            });
-        }
-    },
-
-    registerStore: function(newStore) {
-        this.store = newStore;
-    },
-
-    requestPreviousPage: function() {
-        if (this.store.currentPage > 1)
-        {
-            this.store.previousPage();
-            this.update(1, this.store.currentPage, Math.ceil(this.store.totalCount/this.store.pageSize));
-        }
-    },
-
-    requestNextPage: function() {
-        var totalPages = Math.ceil(this.store.totalCount/this.store.pageSize);
-        if (this.store.currentPage < totalPages)
-        {
-            this.store.nextPage();
-            this.update(1, this.store.currentPage, totalPages);
-        }
-    },
-
-    requestPage: function(f,e) {
-        var pageNo = parseInt(f.getText());
-        var totalPages = Math.ceil(this.store.totalCount/this.store.pageSize);
-        if (pageNo <= totalPages && pageNo > 0)
-        {
-                this.store.loadPage(pageNo);
-                this.update(1, this.store.currentPage, totalPages);
-        }
-    }
-
-});
-
-
 Ext.define('Connector.view.Grid', {
 
     extend: 'Ext.container.Container',
@@ -407,7 +130,12 @@ Ext.define('Connector.view.Grid', {
             ptype: 'messaging'
         });
 
-        this.footer = Ext.create('Connector.view.Grid.Pager', this);
+        this.footer = Ext.create('Connector.component.GridPager', {
+            listeners: {
+                updatepage: this.showAlignFooter,
+                scope: this
+            }
+        });
     },
 
     _showOverlay : function() {
@@ -466,7 +194,7 @@ Ext.define('Connector.view.Grid', {
                 if (this.grid) {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
-                    this.footer.alignTo('primarytabpanel', 'c-tl', [size.width/2, (size.height + 11)]);
+                    this.showAlignFooter();
                 }
             }
         }, 50, this);
@@ -485,19 +213,10 @@ Ext.define('Connector.view.Grid', {
         if (!isActive) {
             this.hideMessage();
             this.footer.hide();
-        } else {
-            // initialize footer if grid exists
-            if(this.grid) {
-                var size = this.getWidthHeight();
-                var store = this.getGrid().getStore();
-                this.footer.show();
-                this.footer.alignTo('primarytabpanel', 'c-tl', [size.width / 2, (size.height + 11)]);
-                this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
-            }
         }
-
-        //this.footer.destroy();
-        //this.remove(this.footer, true);
+        else if (this.grid) {
+            this.showAlignFooter();
+        }
     },
 
     onColumnUpdate : function() {
@@ -524,22 +243,13 @@ Ext.define('Connector.view.Grid', {
 
         // add the new grid once the store has finished loading
         var newGrid = this.getGrid();
-        newGrid.getStore().on('load', function()
-        {
-
-            if (prevGridId != null && prevGridId != newGrid.getId())
-            {
+        newGrid.getStore().on('load', function() {
+            if (prevGridId != null && prevGridId != newGrid.getId()) {
                 this.remove(prevGridId, true);
                 this._hideOverlay();
             }
 
             this.add(newGrid);
-
-            var size = this.getWidthHeight();
-            var store = this.getGrid().getStore();
-            this.footer.show();
-            this.footer.alignTo('primarytabpanel', 'c-tl', [size.width/2, (size.height + 11)]);
-            this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
 
         }, this, {single: true});
     },
@@ -644,6 +354,7 @@ Ext.define('Connector.view.Grid', {
                     },
                     boxready : function(grid) {
                         this._showOverlay();
+                        this.showAlignFooter();
                     },
                     viewready: function(grid) {
                         this.updateColumnMap(grid.down('headercontainer'));
@@ -751,9 +462,6 @@ Ext.define('Connector.view.Grid', {
             if (rowCount >= maxRows && !this.paging) {
                 this.showLimitMessage(maxRows);
             }
-
-            this.footer.update(1, store.currentPage, Math.ceil(store.totalCount/store.pageSize));
-
         }, this);
 
         return store;
@@ -762,17 +470,10 @@ Ext.define('Connector.view.Grid', {
     getWidthHeight : function() {
 
         var box = this.getBox();
-        var width = box.width - 27;
-        var height;
-        //if (this.paging)
-        //    height = box.height - this.headerHeight + 43;
-        //else
-            //height = box.height - this.headerHeight + 93;
-        height = box.height - this.headerHeight + this.titleHeight;
 
         return {
-            width: width,
-            height: height
+            width: box.width - 27,
+            height: box.height - this.headerHeight + this.titleHeight
         };
     },
 
@@ -1013,6 +714,16 @@ Ext.define('Connector.view.Grid', {
                 this.showmsg = true; this.hideMessage();
                 Connector.getService('Messaging').block(msgKey);
             }, this);
+        }
+    },
+
+    showAlignFooter : function() {
+        if (this.footer) {
+            var size = this.getWidthHeight();
+            if (!this.footer.isVisible()) {
+                this.footer.show();
+            }
+            this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
         }
     }
 });
