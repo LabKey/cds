@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS cds.import_StudyArmVisitProduct CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyArmVisit CASCADE;
 DROP TABLE IF EXISTS cds.import_ProductInsert CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyTreatmentArm CASCADE;
+DROP TABLE IF EXISTS cds.import_StudyArm CASCADE;
 DROP TABLE IF EXISTS cds.import_StudySiteFunction CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyPersonnel CASCADE;
 
@@ -30,25 +31,26 @@ CREATE TABLE cds.import_Study (
   network VARCHAR(250),
   study_label VARCHAR(250),
   study_short_name VARCHAR(250),
-  study_title VARCHAR(250),
+  study_title VARCHAR(500),
   study_type VARCHAR(250),
   study_status VARCHAR(250),
   study_stage VARCHAR(250),
-  study_subject_type VARCHAR(250),
+  study_population VARCHAR(250),
   study_species VARCHAR(250),
-  study_cohort VARCHAR(250),
 
-  first_enr_date DATE,
-  followup_complete_date DATE,
+  study_first_enr_date DATE,
+  study_fu_complete_date DATE,
   study_start_date DATE,
-  study_completion_date DATE,
+  study_public_date DATE,
 
   study_description TEXT,
+  study_rationale TEXT,
   study_hypothesis TEXT,
   study_objectives TEXT,
   study_methods TEXT,
   study_findings TEXT,
   study_discussion TEXT,
+  study_context TEXT,
 
   CONSTRAINT PK_import_Study PRIMARY KEY (prot)
 );
@@ -57,24 +59,25 @@ CREATE TABLE cds.import_Product (
   product_id INTEGER NOT NULL,
   product_name VARCHAR(250) NOT NULL UNIQUE,
   product_type VARCHAR(250),
-  product_class_x_vector VARCHAR(250),
   product_class VARCHAR(250),
-  product_vector VARCHAR(250),
-  product_description VARCHAR(250),
+  product_subclass VARCHAR(250),
+  product_class_label VARCHAR(250),
   product_developer VARCHAR(250),
   product_manufacturer VARCHAR(250),
+
+  product_description TEXT,
 
   CONSTRAINT PK_import_Product PRIMARY KEY (product_id)
 );
 
 -- one record per Insert per Product
 CREATE TABLE cds.import_ProductInsert (
+  product_insert_id INTEGER NOT NULL,
   product_id INTEGER NOT NULL REFERENCES cds.import_Product (product_id),
-  insert_region_name VARCHAR(250) NOT NULL,
-  insert_clade VARCHAR(250) NOT NULL,
+  product_insert_region_name VARCHAR(250) NOT NULL,
+  product_insert_clade VARCHAR(250) NOT NULL,
 
-  -- TODO: Open question about what the exact key is of this table
-  CONSTRAINT PK_import_ProductInsert PRIMARY KEY (product_id)
+  CONSTRAINT PK_import_ProductInsert PRIMARY KEY (product_insert_id, product_id)
 );
 
 -- one record per Product in a Study
@@ -85,35 +88,37 @@ CREATE TABLE cds.import_StudyProduct (
   CONSTRAINT PK_import_StudyProduct PRIMARY KEY (prot, product_id)
 );
 
-CREATE TABLE cds.import_StudyTreatmentArm (
+CREATE TABLE cds.import_StudyArm (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  rx_code VARCHAR(250) NOT NULL,
-  part VARCHAR(250),
-  arm_group VARCHAR(250),
-  part_group_arm_label VARCHAR(250),
-  arm_description VARCHAR(250),
-  product_class_list_label VARCHAR(250),
-  product_list_label VARCHAR(250),
+  study_arm VARCHAR(250) NOT NULL,
+  study_part VARCHAR(250),
+  study_group VARCHAR(250),
+  study_randomization VARCHAR(100),
+  study_part_group_arm_randomization_label VARCHAR(250),
+  study_arm_description VARCHAR(250),
+  study_arm_description_coded_label VARCHAR(250),
+  product_class_combination_label VARCHAR(250),
+  product_combination_label VARCHAR(250),
   treatment_regimen_code VARCHAR(250),
-  randomization VARCHAR(100),
-  last_evaccday INTEGER, -- NOT NULL?
+  study_arm_last_exp_vacc_day INTEGER, -- NOT NULL?
 
-  CONSTRAINT PK_import_StudyTreatmentArm PRIMARY KEY (prot, rx_code)
+  CONSTRAINT PK_import_StudyArm PRIMARY KEY (prot, study_arm)
 );
 
 -- one record per Visit in a Study Arm
 CREATE TABLE cds.import_StudyArmVisit (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  rx_code VARCHAR(250) NOT NULL,
+  study_arm VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
-  visit_code VARCHAR(250),
-  study_week INTEGER NOT NULL, -- Possibly allow null
-  study_month INTEGER NOT NULL, -- Possibly allow null
-  visit_type VARCHAR(250),
-  visit_label VARCHAR(250),
-  visit_detail_label VARCHAR(250),
+--   network VARCHAR(250),
+  study_visit_code VARCHAR(250),
+  study_week INTEGER NOT NULL,
+  study_month INTEGER NOT NULL,
+  study_arm_visit_type VARCHAR(250),
+  study_arm_visit_label VARCHAR(250),
+  study_arm_visit_detail_label VARCHAR(250),
 
-  CONSTRAINT PK_import_StudyArmVisit PRIMARY KEY (prot, rx_code, study_day)
+  CONSTRAINT PK_import_StudyArmVisit PRIMARY KEY (prot, study_arm, study_day)
 );
 
 CREATE TABLE cds.import_StudyArmVisitTag (
