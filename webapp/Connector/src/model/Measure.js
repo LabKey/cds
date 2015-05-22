@@ -24,8 +24,8 @@ Ext.define('Connector.model.Measure', {
         {name : 'schemaName'},
         {name : 'lookup', defaultValue: {}},
         {name : 'type'},
-        {name : 'isKeyVariable', type: 'boolean', defaultValue: false},
-        {name : 'keyVariableGrouper', convert: function(val, rec){ return rec.data.isKeyVariable ? '0' : '1'; }},
+        {name : 'isRecommendedVariable', type: 'boolean', defaultValue: false},
+        {name : 'recommendedVariableGrouper', convert: function(val, rec){ return rec.data.isRecommendedVariable ? '0' : '1'; }},
         {name : 'defaultScale'},
         {name : 'sortOrder', defaultValue: 0},
         {name : 'variableType', defaultValue: null}, // i.e. TIME, USER_GROUPS (default to null for query based variables)

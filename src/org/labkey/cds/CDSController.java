@@ -586,7 +586,7 @@ public class CDSController extends SpringActionController
     /***** experimenting with derby/mondrian ******/
 
     @RequiresPermissionClass(ReadPermission.class)
-    @Action(ActionType.Export)
+    @Action(ActionType.Export.class)
     public class ExportRowsXLSXAction extends SimpleViewAction<ExportForm>
     {
         @Override

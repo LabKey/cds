@@ -385,6 +385,7 @@
       <column columnName="baseline_ad5_titer">
         <datatype>double</datatype>
         <columnTitle>Baseline Ad5 Titer</columnTitle>
+        <recommendedVariable>true</recommendedVariable>
       </column>
       <column columnName="circumcised">
         <datatype>varchar</datatype>
@@ -519,6 +520,7 @@
       <column columnName="SystolicBloodPressure">
         <datatype>integer</datatype>
         <columnTitle>Systolic Blood Pressure</columnTitle>
+        <recommendedVariable>true</recommendedVariable>
       </column>
       <column columnName="Weight_kg">
         <datatype>integer</datatype>
@@ -539,6 +541,7 @@
       <column columnName="DiastolicBloodPressure">
         <datatype>integer</datatype>
         <columnTitle>Diastolic Blood Pressure</columnTitle>
+        <recommendedVariable>true</recommendedVariable>
       </column>
       <column columnName="Pregnancy">
         <datatype>boolean</datatype>
@@ -610,6 +613,7 @@
       <column columnName="CD4">
         <datatype>integer</datatype>
         <columnTitle>CD4</columnTitle>
+        <recommendedVariable>true</recommendedVariable>
       </column>
       <column columnName="Hemoglobin">
         <datatype>double</datatype>
