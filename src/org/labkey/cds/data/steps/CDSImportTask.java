@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.DbScope;
+import org.labkey.api.data.SQLFragment;
+import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.etl.DataIteratorBuilder;
 import org.labkey.api.etl.DataIteratorContext;
 import org.labkey.api.pipeline.PipelineJobException;
@@ -37,20 +39,20 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("Lab"),
 
         // Dependent Tables
-        new TSVCopyConfig("StudyTreatmentArm"),
         new TSVCopyConfig("StudyPersonnel"),
         new TSVCopyConfig("StudySiteFunction"),
         new TSVCopyConfig("ProductInsert"),
-        new TSVCopyConfig("StudyArmVisit"),
-        new TSVCopyConfig("StudyArmVisitTag"),
-        new TSVCopyConfig("StudyArmVisitProduct"),
+        new TSVCopyConfig("StudyPartGroupArm"),
+        new TSVCopyConfig("StudyPartGroupArmVisit"),
+        new TSVCopyConfig("StudyPartGroupArmVisitTag"),
+        new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
 
         // Mapping Tables
         new TSVCopyConfig("StudyProduct"),
         new TSVCopyConfig("StudySitePersonnel"),
 
         // Datasets
-        new TSVCopyConfig("Demographic"),
+        new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("ICS"),
         new TSVCopyConfig("ELISpot"),
         new TSVCopyConfig("NAb"),
@@ -82,9 +84,14 @@ public class CDSImportTask extends TaskRefTaskImpl
 
     private void execute(CDSImportCopyConfig[] configs, @Nullable File dir, Logger logger) throws IOException, SQLException, PipelineJobException
     {
-        for (CDSImportCopyConfig config : configs)
+        boolean truncateSuccessful = executeTruncate(configs, logger);
+
+        if (truncateSuccessful)
         {
-            executeCopy(config, dir, logger);
+            for (CDSImportCopyConfig config : configs)
+            {
+                executeCopy(config, dir, logger);
+            }
         }
     }
 
@@ -154,4 +161,57 @@ public class CDSImportTask extends TaskRefTaskImpl
         return true;
     }
 
+
+    private boolean executeTruncate(CDSImportCopyConfig[] configs, Logger logger)
+    {
+        logger.info("Initiating truncate for supplied copy configurations.");
+
+        if (configs != null && configs.length > 0)
+        {
+            SQLFragment sql = new SQLFragment("TRUNCATE ");
+            String sep = "";
+            String info = "Truncating ";
+            String schemaName = configs[0].getTargetSchema().getName();
+
+            // reverse order, without mutating
+            for (int i = configs.length-1; i >= 0; i--)
+            {
+                CDSImportCopyConfig config = configs[i];
+                String table = config.getTargetSchema() + "." + config.getTargetQuery();
+                sql.append(sep).append(table);
+
+                info += sep + table;
+                sep = ", ";
+            }
+            sql.append(";");
+
+            logger.info(info);
+
+            DbSchema targetSchema = DbSchema.get(schemaName);
+            try (DbScope.Transaction tx = targetSchema.getScope().ensureTransaction())
+            {
+                SqlExecutor executor = new SqlExecutor(targetSchema);
+
+                long start = System.currentTimeMillis();
+
+                executor.execute(sql);
+                tx.commit();
+
+                long finish = System.currentTimeMillis();
+
+                logger.info("Truncated tables in " + DateUtil.formatDuration(finish - start) + ".");
+            }
+            catch (Exception x)
+            {
+                logger.error(null == x.getMessage() ? x.toString() : x.getMessage());
+                return false;
+            }
+            finally
+            {
+                assert !targetSchema.getScope().isTransactionActive();
+            }
+        }
+
+        return true;
+    }
 }
