@@ -30,6 +30,7 @@ Ext.define('Connector.model.Measure', {
         {name : 'sortOrder', defaultValue: 0},
         {name : 'variableType', defaultValue: null}, // i.e. TIME, USER_GROUPS (default to null for query based variables)
         {name : 'queryType', defaultValue: null}, // see LABKEY.Query.Visualization.Filter.QueryType
-        {name : 'sourceCount', defaultValue: undefined}
+        {name : 'sourceCount', defaultValue: undefined},
+        {name : 'uniqueKeys', defaultValue: null}
     ]
 });
