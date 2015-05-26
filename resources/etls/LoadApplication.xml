@@ -7,5 +7,9 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
             </taskref>
         </transform>
+        <transform id="studies" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="ds_study" containerFilter="CurrentAndSubfolders" />
+            <destination schemaName="cds" queryName="study" targetOption="truncate" />
+        </transform>
     </transforms>
 </etl>
