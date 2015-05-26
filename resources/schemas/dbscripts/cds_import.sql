@@ -7,14 +7,14 @@ DROP TABLE IF EXISTS cds.import_ICS CASCADE;
 DROP TABLE IF EXISTS cds.import_NAb CASCADE;
 DROP TABLE IF EXISTS cds.import_ELISpot CASCADE;
 DROP TABLE IF EXISTS cds.import_BAMA CASCADE;
-DROP TABLE IF EXISTS cds.import_SubjectCharacteristics CASCADE;
+DROP TABLE IF EXISTS cds.import_StudySubject CASCADE;
 
 -- Drop Dependent Tables
-DROP TABLE IF EXISTS cds.import_StudyGroupArmVisitTag CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyGroupArmVisitProduct CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyGroupArmVisit CASCADE;
+DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitTag CASCADE;
+DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitProduct CASCADE;
+DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisit CASCADE;
 DROP TABLE IF EXISTS cds.import_ProductInsert CASCADE;
-DROP TABLE IF EXISTS cds.import_StudyGroupArm CASCADE;
+DROP TABLE IF EXISTS cds.import_StudyPartGroupArm CASCADE;
 DROP TABLE IF EXISTS cds.import_StudySiteFunction CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyPersonnel CASCADE;
 
@@ -87,17 +87,15 @@ CREATE TABLE cds.import_StudyProduct (
   CONSTRAINT PK_import_StudyProduct PRIMARY KEY (prot, product_id)
 );
 
-CREATE TABLE cds.import_StudyGroupArm (
+CREATE TABLE cds.import_StudyPartGroupArm (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   study_arm VARCHAR(250) NOT NULL,
-  study_group VARCHAR(250),
+  study_group VARCHAR(250) NOT NULL,
   study_part VARCHAR(250),
   study_randomization VARCHAR(100),
---   study_part_group_arm_randomization_label VARCHAR(250),
-  study_arm_description_coded_label VARCHAR(250),
-  product_class_combination_label VARCHAR(250),
-  product_combination_label VARCHAR(250),
-  treatment_regimen_code VARCHAR(250),
+  study_arm_description_coded_label VARCHAR(100), -- formerly, treatment_regimen_code
+  product_class_combination_label VARCHAR(100),
+  product_combination_label VARCHAR(100),
   study_arm_last_exp_vacc_day INTEGER, -- NOT NULL?
 
   study_arm_description TEXT,
@@ -107,12 +105,12 @@ CREATE TABLE cds.import_StudyGroupArm (
 
 -- one record per Visit in a Study Group Arm
 -- each arm in a group is on the same schedule in reality
-CREATE TABLE cds.import_StudyGroupArmVisit (
+CREATE TABLE cds.import_StudyPartGroupArmVisit (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   study_arm VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
+  study_part VARCHAR(250),
   study_day INTEGER NOT NULL,
---   network VARCHAR(250),
   study_visit_code VARCHAR(250),
   study_week INTEGER NOT NULL,
   study_month INTEGER NOT NULL,
@@ -120,27 +118,27 @@ CREATE TABLE cds.import_StudyGroupArmVisit (
   study_arm_visit_label VARCHAR(250),
   study_arm_visit_detail_label VARCHAR(250),
 
-  CONSTRAINT PK_import_StudyGroupArmVisit PRIMARY KEY (prot, study_arm, study_group, study_day)
+  CONSTRAINT PK_import_StudyPartGroupArmVisit PRIMARY KEY (prot, study_arm, study_group, study_day)
 );
 
-CREATE TABLE cds.import_StudyGroupArmVisitTag (
+CREATE TABLE cds.import_StudyPartGroupArmVisitTag (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   study_arm VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   study_visit_tag VARCHAR(250),
 
-  CONSTRAINT PK_import_StudyGroupArmVisitTag PRIMARY KEY (prot, study_group, study_arm, study_day, study_visit_tag)
+  CONSTRAINT PK_import_StudyPartGroupArmVisitTag PRIMARY KEY (prot, study_group, study_arm, study_day, study_visit_tag)
 );
 
-CREATE TABLE cds.import_StudyGroupArmVisitProduct (
+CREATE TABLE cds.import_StudyPartGroupArmVisitProduct (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   study_arm VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   product_id INTEGER NOT NULL REFERENCES cds.import_Product (product_id),
 
-  CONSTRAINT PK_import_StudyGroupArmVisitProduct PRIMARY KEY (prot, study_group, study_arm, study_day, product_id)
+  CONSTRAINT PK_import_StudyPartGroupArmVisitProduct PRIMARY KEY (prot, study_group, study_arm, study_day, product_id)
 );
 
 CREATE TABLE cds.import_Site (
@@ -201,19 +199,22 @@ CREATE TABLE cds.import_Lab (
 );
 
 -- Dataset Tables
-CREATE TABLE cds.import_SubjectCharacteristics (
+CREATE TABLE cds.import_StudySubject (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
-  species VARCHAR(250),
-  subspecies VARCHAR(250),
-  sex_at_birth VARCHAR(250),
-  age_at_enrollment VARCHAR(250),
-  nih_race VARCHAR(250),
-  nih_ethnicity VARCHAR(250),
+  subject_species VARCHAR(250),
+  subject_subspecies VARCHAR(250),
+  subject_sex_at_birth VARCHAR(250),
+  subject_age_enrollment VARCHAR(250),
+  subject_race_nih VARCHAR(250),
+  subject_hispanic VARCHAR(250),
+  subject_country_enrollment VARCHAR(250),
+  subject_bmi_enrollment NUMERIC(15,4),
+  subject_circumcised_enrollment VARCHAR(250),
 
   -- TODO: Bunch more to come 5.14.2015
 
-  CONSTRAINT PK_import_SubjectCharacteristics PRIMARY KEY (prot, subject_id)
+  CONSTRAINT PK_import_StudySubject PRIMARY KEY (prot, subject_id)
 );
 
 CREATE TABLE cds.import_ICS (
