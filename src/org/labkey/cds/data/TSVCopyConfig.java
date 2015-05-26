@@ -30,10 +30,10 @@ public class TSVCopyConfig extends CDSImportCopyConfig
         if (null == dir)
             return super.selectFromSource(container, user, context, dir, log);
 
-        File tsvFile = new File(dir, tsvFileName + ".tsv");
-        if (!tsvFile.exists())
+        File tsvFile = getByExtension(dir, ".tsv", ".txt");
+        if (null == tsvFile || !tsvFile.exists())
         {
-            context.getErrors().addRowError(new ValidationException("Could not find data file: " + tsvFileName + ".tsv"));
+            context.getErrors().addRowError(new ValidationException("Could not find data file: \'" + tsvFileName + "\' (.tsv, .txt)."));
             return null;
         }
 
@@ -43,5 +43,20 @@ public class TSVCopyConfig extends CDSImportCopyConfig
         TabLoader tabLoader = (TabLoader) new TabLoader.TsvFactory().createLoader(new FileInputStream(tsvFile), true);
         tabLoader.setInferTypes(false);
         return tabLoader;
+    }
+
+    @Nullable
+    private File getByExtension(File dir, String... extensions)
+    {
+        File file = null;
+
+        for (String ext : extensions)
+        {
+            file = new File(dir, tsvFileName + ext);
+            if (file.exists())
+                break;
+        }
+
+        return file;
     }
 }
