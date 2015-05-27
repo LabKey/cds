@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS cds.import_StudySitePersonnel CASCADE;
 -- Drop Dataset Tables
 DROP TABLE IF EXISTS cds.import_ICS CASCADE;
 DROP TABLE IF EXISTS cds.import_NAb CASCADE;
-DROP TABLE IF EXISTS cds.import_ELISpot CASCADE;
+DROP TABLE IF EXISTS cds.import_ELS_IFNg CASCADE;
 DROP TABLE IF EXISTS cds.import_BAMA CASCADE;
 DROP TABLE IF EXISTS cds.import_StudySubject CASCADE;
 
@@ -217,28 +217,47 @@ CREATE TABLE cds.import_StudySubject (
   CONSTRAINT PK_import_StudySubject PRIMARY KEY (prot, subject_id)
 );
 
+-- CREATE TABLE cds.import_ICS (
+--   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
+--   subject_id VARCHAR(250) NOT NULL,
+--   study_day INTEGER NOT NULL,
+--   specimen_type VARCHAR(250) NOT NULL,
+--   assay_id VARCHAR(250),
+-- --   lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
+--   cell_type VARCHAR(250),
+--   summary_level VARCHAR(250),
+--   antigen_panel VARCHAR(250),
+--   antigen_subpanel VARCHAR(250),
+--   functional_marker_name VARCHAR(250),
+--   functional_marker_type VARCHAR(250),
+--
+--   ics_response_call BOOLEAN,
+--   ics_magnitude NUMERIC(15,4),
+--   ics_magnitude_raw NUMERIC(15,4),
+--   ics_magnitude_background NUMERIC(15,4),
+--   ics_magnitude_unit VARCHAR(100),
+--
+--   CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day)
+-- );
+
 CREATE TABLE cds.import_ICS (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
-  specimen_type VARCHAR(250),
+  specimen_type VARCHAR(250) NOT NULL,
   assay_id VARCHAR(250),
-  lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
   cell_type VARCHAR(250),
-  summary_level VARCHAR(250),
   antigen_panel VARCHAR(250),
-  antigen_subpanel VARCHAR(250),
   functional_marker_name VARCHAR(250),
-  functional_marker_type VARCHAR(250),
+  ics_lab_source_key INTEGER NOT NULL,
 
-  ics_response_call BOOLEAN,
   ics_magnitude NUMERIC(15,4),
   ics_magnitude_raw NUMERIC(15,4),
   ics_magnitude_background NUMERIC(15,4),
-  ics_magnitude_unit VARCHAR(100),
 
-  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
+  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day, specimen_type, assay_id, antigen_panel, cell_type, functional_marker_name, ics_lab_source_key)
 );
+
 
 CREATE TABLE cds.import_NAb (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
@@ -261,27 +280,46 @@ CREATE TABLE cds.import_NAb (
   CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
 );
 
-CREATE TABLE cds.import_ELISpot (
+-- CREATE TABLE cds.import_ELS_IFNg (
+--   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
+--   subject_id VARCHAR(250) NOT NULL,
+--   study_day INTEGER NOT NULL,
+--   specimen_type VARCHAR(250),
+--   assay_id VARCHAR(250),
+--   lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
+--   cell_type VARCHAR(250),
+--   summary_level VARCHAR(250),
+--   antigen_panel VARCHAR(250),
+--   antigen_subpanel VARCHAR(250),
+--   functional_marker_name VARCHAR(250),
+--   functional_marker_type VARCHAR(250),
+--
+--   els_ifng_response_call BOOLEAN,
+--   els_ifng_magnitude NUMERIC(15,4),
+--   els_ifng_magnitude_raw NUMERIC(15,4),
+--   els_ifng_magnitude_background NUMERIC(15,4),
+--   els_ifng_magnitude_unit VARCHAR(20),
+--
+--   CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
+-- );
+
+CREATE TABLE cds.import_ELS_IFNg (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   specimen_type VARCHAR(250),
   assay_id VARCHAR(250),
-  lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
+  antigen VARCHAR(250),
   cell_type VARCHAR(250),
-  summary_level VARCHAR(250),
-  antigen_panel VARCHAR(250),
-  antigen_subpanel VARCHAR(250),
   functional_marker_name VARCHAR(250),
-  functional_marker_type VARCHAR(250),
+  els_ifng_lab_source_key INTEGER NOT NULL,
 
-  els_response_call BOOLEAN,
-  els_magnitude NUMERIC(15,4),
-  els_magnitude_raw NUMERIC(15,4),
-  els_magnitude_background NUMERIC(15,4),
-  els_magnitude_unit VARCHAR(20),
+  els_ifng_response BOOLEAN,
+  els_ifng_magnitude NUMERIC(15,4),
+  els_ifng_magnitude_raw NUMERIC(15,4),
+  els_ifng_magnitude_background NUMERIC(15,4),
 
-  CONSTRAINT PK_import_ELISpot PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
+  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, assay_id, antigen, cell_type, functional_marker_name, els_ifng_lab_source_key)
 );
 
 CREATE TABLE cds.import_BAMA (
