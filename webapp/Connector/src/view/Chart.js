@@ -23,6 +23,10 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
+    xGutterHeight: 160,
+
+    yGutterWidth: 210,
+
     plugins : [{
         ptype: 'messaging',
         calculateY : function(cmp, box, msg) {
@@ -338,6 +342,28 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
+    getPlotSize : function(box) {
+        var size = {width:0,height:0};
+
+        if(this.requireStudyAxis) {
+            size.width = box.width - 150;
+        }else if(this.requireYGutter) {
+            size.width = box.width - this.yGutterWidth;
+        }else {
+            size.width = box.width;
+        }
+
+        if(this.requireStudyAxis) {
+            size.height = box.height;
+        }else if(this.requireXGutter) {
+            size.height = box.height - this.xGutterHeight;
+        }else {
+            size.height = box.height;
+        }
+
+        return size;
+    },
+
     handleResize : function() {
 
         if (!this.isActiveView) {
@@ -345,6 +371,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         var plotbox = this.plotEl.getBox();
+        var size = this.getPlotSize(plotbox);
 
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
@@ -360,7 +387,15 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.plot) {
-            this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
+            this.plot.setSize(size.width, size.height, true);
+        }
+
+        if (this.xGutterPlot) {
+            this.xGutterPlot.setSize(size.width + (this.requireYGutter ? this.yGutterWidth : 25), this.xGutterHeight, true)
+        }
+
+        if (this.yGutterPlot) {
+            this.yGutterPlot.setSize(this.yGutterWidth, size.height, true);
         }
 
         if (this.getStudyAxisPanel().isVisible() && this.studyAxis && this.hasStudyAxisData) {
@@ -398,14 +433,14 @@ Ext.define('Connector.view.Chart', {
 
     mouseOverPoints : function(event, pointData, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
-            this.highlightPoints(layerScope.plot, null, [pointData.subjectId.value]);
+            this.highlightPoints(null, [pointData.subjectId.value]);
         }
     },
 
     mouseOutPoints : function(event, pointData, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
-            this.clearHighlightedData(layerScope.plot);
-            this.highlightSelected(layerScope.plot);
+            this.clearHighlightedData();
+            this.highlightSelected();
         }
     },
 
@@ -416,14 +451,14 @@ Ext.define('Connector.view.Chart', {
                 subjectIds.push(b.data.subjectId.value);
             });
 
-            this.highlightBins(layerScope.plot, null, subjectIds);
+            this.highlightBins(null, subjectIds);
         }
     },
 
     mouseOutBins : function(event, binData, layerSel, layerScope) {
         if(!layerScope.isBrushed) {
-            this.clearHighlightedData(layerScope.plot);
-            this.highlightSelected(layerScope.plot);
+            this.clearHighlightedData();
+            this.highlightSelected();
         }
     },
 
@@ -448,9 +483,11 @@ Ext.define('Connector.view.Chart', {
         var me = this;
         var layerArgs = [layerScope], slice = Array.prototype.slice;
 
-        var mouseOverPointsFn = function() { me.mouseOverPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
+        var mouseOverPointsFn = function() {
+            me.mouseOverPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
 
-        var mouseOutPointsFn = function() { me.mouseOutPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
+        var mouseOutPointsFn = function() {
+            me.mouseOutPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
 
         var mouseOverBinsFn = function() { me.mouseOverBins.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
 
@@ -514,6 +551,30 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
+    getGutterPointLayer : function(layerScope) {
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.Point({
+                size: 3,
+                plotNullPoints: true,
+                position: 'jitter',
+                opacity: 0.5
+            }),
+            aes: this.getLayerAes.call(this, layerScope, false)
+        });
+    },
+
+    getGutterBinLayer : function(layerScope) {
+        return new LABKEY.vis.Layer({
+            geom: new LABKEY.vis.Geom.Bin({
+                shape: 'square',
+                colorRange: ["#E6E6E6", "#000000"],
+                size: 10, // for squares you want a bigger size
+                plotNullPoints: true
+            }),
+            aes: this.getLayerAes.call(this, layerScope, false)
+        });
+    },
+
     /**
      * @param chartData
      * @param {object} [studyAxisInfo]
@@ -525,9 +586,24 @@ Ext.define('Connector.view.Chart', {
         var rows, properties, isBrushed = false,
             layerScope = {plot: null, isBrushed: isBrushed}, plot, layer;
 
+        // Vars for gutter plots
+        var xNullRows, yNullRows, yAxisMargin=46;
+
         if (chartData instanceof Connector.model.ChartData) {
             rows = chartData.getDataRows();
             properties = chartData.getProperties();
+            yNullRows = chartData.getYNullMap();
+            xNullRows = chartData.getXNullMap();
+
+            // Margin between main plot and Y gutter plot
+            var domainMax = chartData.getYDomain()[1];
+            if(domainMax > 1)
+                yAxisMargin = (chartData.getYDomain()[1] | 0).toString().length;
+            else if(domainMax >= .1)
+                yAxisMargin = 4;
+            else
+                yAxisMargin = 5;
+            yAxisMargin = (yAxisMargin > 5 ? 6 * 6 : yAxisMargin * 6) + 10;
         }
         else {
             rows = chartData;
@@ -543,6 +619,20 @@ Ext.define('Connector.view.Chart', {
             this.plot = null;
             this.noPlot();
             return;
+        }
+
+        if(yNullRows && yNullRows.length != 0) {
+            this.requireXGutter = true;
+            this.percentXGutterUndef = chartData.getPercentYNulls();
+        } else {
+            this.requireXGutter = false;
+        }
+
+        if(xNullRows && xNullRows.length != 0) {
+            this.requireYGutter = true;
+            this.percentYGutterUndef = chartData.getPercentXNulls();
+        } else {
+            this.requireYGutter = false;
         }
 
         this.plotEl.update('');
@@ -588,7 +678,7 @@ Ext.define('Connector.view.Chart', {
         var scales = {};
         var numericTickFormat = function(val) {
             var s = val.toString();
-            if (s.indexOf('.') > -1)
+            if (s.indexOf('.') > -1 && s.indexOf('e') == -1)
             {
                 s = s.split('.');
                 if (s[s.length-1].length > 2)
@@ -611,7 +701,7 @@ Ext.define('Connector.view.Chart', {
         this.highlightSelectedFn = function () {
             if (me.plot && !layerScope.isBrushed) {
                 me.highlightLabels.call(me, me.plot, me.getCategoricalSelectionValues(), me.labelTextHltColor, me.labelBkgdHltColor, true);
-                me.highlightSelected.call(me, me.plot);
+                me.highlightSelected.call(me);
             }
         };
 
@@ -645,7 +735,8 @@ Ext.define('Connector.view.Chart', {
         else {
             if (properties.xaxis.isContinuous) {
                 scales.x = {
-                    scaleType: 'continuous'
+                    scaleType: 'continuous',
+                    domain: chartData.getXDomain()
                 };
 
                 if (properties.xaxis.isNumeric) {
@@ -671,7 +762,9 @@ Ext.define('Connector.view.Chart', {
 
             scales.yLeft = {
                 scaleType: 'continuous',
-                tickFormat: numericTickFormat
+                tickFormat: numericTickFormat,
+                tickDigits: 5,
+                domain: chartData.getYDomain()
             };
 
             if (this.measures[2]) {
@@ -696,14 +789,16 @@ Ext.define('Connector.view.Chart', {
             plotAes.shape = function(row) {return row.color};
         }
 
+        var size = this.getPlotSize(box);
+
         var plotConfig = {
             renderTo: this.plotEl.id,
             rendererType: 'd3',
             throwErrors: true,
             clipRect: false,
-            margins: {top: 25, left: 25+43, right: 25+25, bottom: this.requireStudyAxis ? 43 : 25+43},
-            width     : this.requireStudyAxis ? box.width - 150 : box.width,
-            height    : box.height,
+            margins: {top: 25, left: this.requireYGutter ? yAxisMargin : 68, right: 50, bottom: this.requireStudyAxis ? 43 : 30},
+            width     : size.width,
+            height    : size.height,
             data      : rows,
             legendPos : 'none',
             aes: plotAes,
@@ -718,10 +813,103 @@ Ext.define('Connector.view.Chart', {
             scales: scales
         };
 
-        if (!noplot) {
-            var studyAxisRange = studyAxisInfo ? studyAxisInfo.getRange() : {min: null, max: null};
-            this.setScale(plotConfig.scales.x, 'x', properties, studyAxisRange);
-            this.setScale(plotConfig.scales.yLeft, 'y', properties, studyAxisRange);
+        var gutterXPlotConfig;
+        if(this.requireXGutter) {
+            var gutterXMargins = {top: 1, left: this.requireYGutter ? this.yGutterWidth+yAxisMargin : 68, right: plotConfig.margins.right, bottom: 1};
+            gutterXPlotConfig = {
+                renderTo: this.plotEl.id,
+                rendererType: 'd3',
+                clipRect: false,
+                labels: {
+                    y: {
+                        value: "Undefined Y Value",
+                        fontSize: 12,
+                        position: 10,
+                        cls: "xGutter-label",
+                        listeners: {
+                            mouseover: function() {
+                                me._showWhyXGutter()},
+                            mouseout: function() {
+                                me._closeWhyXGutter()}
+                        }
+                    }
+                },
+                margins: gutterXMargins,
+                height: this.xGutterHeight,
+                width: plotConfig.width + (this.requireYGutter ? this.yGutterWidth : 25),
+                data: yNullRows,
+                aes: {
+                    xTop: function(row) {return row.x;},
+                    y: function(row) {return row.y;}
+                },
+                bgColor: '#FFFFFF', // $light-color
+                gridColor: '#FFFFFF', // $light-color
+                gridLineColor: '#F0F0F0', // $secondary-color
+                gridLineWidth: 1.25,
+                borderWidth: 2,
+                borderColor: '#CCC8C8', // $heat-scale-3
+                tickColor: '#FFFFFF', // $light-color
+                tickTextColor: this.labelTextColor, // $heat-scale-1
+                scales: {
+                    xTop: {scaleType: 'continuous', domain: chartData.getXDomain()},
+                    yLeft: {scaleType: 'discrete', tickFormat: function() {return '';}}
+                }
+            }
+        }
+
+        var gutterYPlotConfig;
+        if(this.requireYGutter) {
+            var gutterYMargins = {top: plotConfig.margins.top, left: 43, right: 20, bottom: plotConfig.margins.bottom};
+            gutterYPlotConfig = {
+                //renderTo: 'study-axis',
+                renderTo: this.plotEl.id,
+                rendererType: 'd3',
+                clipRect: false,
+                height: plotConfig.height,
+                width: this.yGutterWidth,
+                data: xNullRows,
+                margins: gutterYMargins,
+                labels: {
+                    x: {
+                        value: "Undefined X Value",
+                        fontSize: 12,
+                        position: 10,
+                        cls: "yGutter-label",
+                        listeners: {
+                            mouseover: function() {
+                                me._showWhyYGutter()},
+                            mouseout: function() {
+                                me._closeWhyYGutter()}
+                        }
+                    }
+                },
+                aes: {
+                    x: function(row) {return row.x;},
+                    yRight: function(row) {return row.y;}
+                },
+                bgColor: '#FFFFFF', // $light-color
+                gridColor: '#FFFFFF', // $light-color
+                gridLineColor: '#F0F0F0', // $secondary-color
+                gridLineWidth: 1.25,
+                borderWidth: 2,
+                borderColor: '#CCC8C8', // $heat-scale-3
+                tickColor: '#FFFFFF', // $light-color
+                tickTextColor: this.labelTextColor, // $heat-scale-1
+                scales: {
+                    x: {scaleType: 'discrete', tickFormat: function() {return '';}},
+                    yRight: {scaleType: 'continuous', domain: chartData.getYDomain()}
+                }
+            }
+        }
+
+        if (!noplot)
+        {
+            if (studyAxisInfo)
+            {
+                var studyAxisRange = studyAxisInfo ? studyAxisInfo.getRange() : {min: null, max: null};
+                this.setScale(plotConfig.scales.x, 'x', properties, studyAxisRange);
+                this.setScale(plotConfig.scales.yLeft, 'y', properties, studyAxisRange);
+            }
 
             // add brush handling
             var isSelectedWithBrush = function(extent, x, y) {
@@ -751,6 +939,15 @@ Ext.define('Connector.view.Chart', {
                 var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
                 var colorFn, strokeFn;
                 var assocColorFn, assocStrokeFn;
+
+                // TODO: For now just do brushing on main plot not gutter plots
+                if(me.requireYGutter) {
+                    sel[0][0] = null;
+                    if(me.requireXGutter) {
+                        sel[0][2] = null;
+                    }
+                } else if(me.requireXGutter)
+                    sel[0][1] = null;
 
                 colorFn = function(d) {
                     d.isSelected = isSelectedWithBrush(extent, d.x, d.y);
@@ -803,6 +1000,15 @@ Ext.define('Connector.view.Chart', {
                 var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
                 var colorFn, assocColorFn, min, max;
 
+                // TODO: For now just do brushing on main plot not gutter plots
+                if(me.requireYGutter) {
+                    sel[0][0] = null;
+                    if(me.requireXGutter) {
+                        sel[0][2] = null;
+                    }
+                } else if(me.requireXGutter)
+                    sel[0][1] = null;
+
                 // convert extent x/y values into aes scale as bins don't really have x/y values
                 if (extent[0][0] !== null && extent[1][0] !== null) {
                     extent[0][0] = plot.scales.x.scale(extent[0][0]);
@@ -854,7 +1060,7 @@ Ext.define('Connector.view.Chart', {
             plotConfig.brushing = {
                 dimension: properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : function() {
-                    me.clearHighlightedData(layerScope.plot);
+                    me.clearHighlightedData();
                     me.clearHighlightLabels(layerScope.plot);
                     layerScope.isBrushed = true;
                 },
@@ -970,6 +1176,30 @@ Ext.define('Connector.view.Chart', {
         var measures = this.measures; // hoisted for brushend.
         var requiresPivot = Connector.model.ChartData.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
 
+        if(this.requireYGutter && gutterYPlotConfig) {
+            this.yGutterPlot = new LABKEY.vis.Plot(gutterYPlotConfig);
+            layerScope.yGutterPlot = this.yGutterPlot;
+            if (this.yGutterPlot) {
+                if(this.showPointsAsBin) {
+                    this.yGutterPlot.addLayer(this.getGutterBinLayer(layerScope));
+                } else
+                {
+                    this.yGutterPlot.addLayer(this.getGutterPointLayer(layerScope));
+                }
+                try {
+                    this.yGutterPlot.render();
+                }
+                catch(err) {
+                    this.showMessage(err.message, true);
+                    this.fireEvent('hideload', this);
+                    this.yGutterPlot = null;
+                    console.error(err);
+                    console.error(err.stack);
+                    return;
+                }
+            }
+        }
+
         if (this.plot) {
             this.plot.addLayer(layer);
             try {
@@ -989,6 +1219,30 @@ Ext.define('Connector.view.Chart', {
                 console.error(err);
                 console.error(err.stack);
                 return;
+            }
+        }
+
+        if(this.requireXGutter && gutterXPlotConfig) {
+            this.xGutterPlot = new LABKEY.vis.Plot(gutterXPlotConfig);
+            layerScope.xGutterPlot = this.xGutterPlot;
+            if (this.xGutterPlot) {
+                if(this.showPointsAsBin) {
+                    this.xGutterPlot.addLayer(this.getGutterBinLayer(layerScope));
+                } else
+                {
+                    this.xGutterPlot.addLayer(this.getGutterPointLayer(layerScope));
+                }
+                try {
+                    this.xGutterPlot.render();
+                }
+                catch(err) {
+                    this.showMessage(err.message, true);
+                    this.fireEvent('hideload', this);
+                    this.xGutterPlot = null;
+                    console.error(err);
+                    console.error(err.stack);
+                    return;
+                }
             }
         }
 
@@ -1024,8 +1278,8 @@ Ext.define('Connector.view.Chart', {
         // Do not do mouse over/out for selected labels or labels in process of selection
         if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
             // Clear plot highlights
-            this.clearHighlightedData(layerScope.plot);
-            this.highlightSelected(layerScope.plot);
+            this.clearHighlightedData();
+            this.highlightSelected();
 
             // Clear label highlighting
             var targets = [];
@@ -1039,9 +1293,9 @@ Ext.define('Connector.view.Chart', {
         if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
             // Plot highlights
             if(this.showPointsAsBin)
-                this.highlightBins(this.plot, target);
+                this.highlightBins(target);
             else
-                this.highlightPoints(this.plot, target);
+                this.highlightPoints(target);
 
             // Highlight label
             var targets = [];
@@ -1052,7 +1306,7 @@ Ext.define('Connector.view.Chart', {
 
 
 
-retrieveBinSubjectIds : function (plot, target, subjects) {
+    retrieveBinSubjectIds : function (plot, target, subjects) {
         var subjectIds = [];
         if(subjects) {
             subjects.forEach(function(s) {
@@ -1086,16 +1340,16 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         return subjectIds;
     },
 
-    highlightBins : function (plot, target, subjects) {
+    highlightBins : function (target, subjects) {
         // get the set of subjectIds in the binData
-        var subjectIds = this.retrieveBinSubjectIds(plot, target, subjects);
+        var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects);
         if(subjects) {
             subjects.forEach(function(s) {
                 subjectIds.push(s);
             });
         }
 
-        if (plot.renderer)
+        if (this.plot.renderer)
         {
             var isSubjectInMouseBin = function (d, yesVal, noVal)
             {
@@ -1125,24 +1379,46 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                 return isSubjectInMouseBin(d, 1, 0.15);
             };
 
-            plot.renderer.canvas.selectAll('.vis-bin path')
+            this.plot.renderer.canvas.selectAll('.vis-bin path')
+                    .attr('style', colorFn)
+                    .attr('fill-opacity', opacityFn)
+                    .attr('stroke-opacity', opacityFn);
+
+            if(this.requireXGutter && this.xGutterPlot)
+                this.xGutterPlot.renderer.canvas.selectAll('.vis-bin path')
+                    .attr('style', colorFn)
+                    .attr('fill-opacity', opacityFn)
+                    .attr('stroke-opacity', opacityFn);
+
+            if(this.requireYGutter && this.yGutterPlot)
+                this.yGutterPlot.renderer.canvas.selectAll('.vis-bin path')
                     .attr('style', colorFn)
                     .attr('fill-opacity', opacityFn)
                     .attr('stroke-opacity', opacityFn);
         }
     },
 
-    clearHighlightBins : function (plot) {
-        plot.renderer.canvas.selectAll('.vis-bin path')
-                .attr('style', function(d) { return d.origStyle })
+    clearHighlightBins : function () {
+        this.plot.renderer.canvas.selectAll('.vis-bin path')
+                .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
                 .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+
+        if(this.requireXGutter && this.xGutterPlot)
+            this.xGutterPlot.renderer.canvas.selectAll('.vis-bin path')
+                    .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
+                    .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+
+        if(this.requireYGutter && this.yGutterPlot)
+            this.yGutterPlot.renderer.canvas.selectAll('.vis-bin path')
+                    .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
+                    .attr('fill-opacity', 1).attr('stroke-opacity', 1);
     },
 
-    clearHighlightedData : function (plot) {
+    clearHighlightedData : function () {
         if(this.showPointsAsBin)
-            this.clearHighlightBins(plot);
+            this.clearHighlightBins();
         else
-            this.clearHighlightPoints(plot);
+            this.clearHighlightPoints();
     },
 
     retrievePointSubjectIds : function(plot, target, subjects) {
@@ -1175,8 +1451,8 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         return subjectIds;
     },
 
-    highlightPoints : function (plot, target, subjects) {
-        var subjectIds = this.retrievePointSubjectIds(plot, target, subjects);
+    highlightPoints : function (target, subjects) {
+        var subjectIds = this.retrievePointSubjectIds(this.plot, target, subjects);
 
         var strokeFillFn = function(d) {
             if (subjectIds.indexOf(d.subjectId.value) != -1) {
@@ -1185,9 +1461,14 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
             return '#E6E6E6';
         };
 
-        if (plot.renderer)
+        if (this.plot.renderer)
         {
-            var points = plot.renderer.canvas.selectAll('.point path');
+            var points = this.plot.renderer.canvas.selectAll('.point path');
+            if(this.requireXGutter && this.xGutterPlot)
+                points[0] = points[0].concat(this.xGutterPlot.renderer.canvas.selectAll('.point path')[0]);
+
+            if(this.requireYGutter && this.yGutterPlot)
+                points[0] = points[0].concat(this.yGutterPlot.renderer.canvas.selectAll('.point path')[0]);
 
             points.attr('fill', strokeFillFn)
                     .attr('stroke', strokeFillFn)
@@ -1207,12 +1488,12 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         }
     },
 
-    clearHighlightPoints : function (plot) {
+    clearHighlightPoints : function () {
         var colorFn, colorScale = null, colorAcc = null;
 
-        if (plot.scales.color && plot.scales.color.scale) {
-            colorScale = plot.scales.color.scale;
-            colorAcc = plot.aes.color;
+        if (this.plot.scales.color && this.plot.scales.color.scale) {
+            colorScale = this.plot.scales.color.scale;
+            colorAcc = this.plot.aes.color;
         }
 
         colorFn = function(d) {
@@ -1223,25 +1504,37 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
             return '#000000';
         };
 
-        if (plot.renderer) {
-            plot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
+        if (this.plot.renderer) {
+            this.plot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
                     .attr('stroke', colorFn)
                     .attr('fill-opacity', 0.5)
                     .attr('stroke-opacity', 0.5);
         }
+
+        if(this.requireXGutter && this.xGutterPlot)
+            this.xGutterPlot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
+                    .attr('stroke', colorFn)
+                    .attr('fill-opacity', 0.5)
+                    .attr('stroke-opacity', 0.5);
+
+        if(this.requireYGutter && this.yGutterPlot)
+            this.yGutterPlot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
+                    .attr('stroke', colorFn)
+                    .attr('fill-opacity', 0.5)
+                    .attr('stroke-opacity', 0.5);
     },
 
-    highlightSelected : function (plot) {
+    highlightSelected : function () {
         var targets = this.getCategoricalSelectionValues(), me = this;
         if (targets.length < 1) {
-            me.clearHighlightedData(plot);
+            me.clearHighlightedData();
         }
 
         targets.forEach(function(t) {
             if(me.showPointsAsBin)
-                me.highlightBins(plot, t);
+                me.highlightBins(t);
             else
-                me.highlightPoints(plot, t);
+                me.highlightPoints(t);
         })
     },
 
@@ -1769,7 +2062,7 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         // Show binning message
         var msgKey = 'PLOTBIN_LIMIT';
         var learnId = Ext.id(), dismissId = Ext.id();
-        var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Dismiss</a>';
+        var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Got it</a>';
 
         var shown = this.sessionMessage(msgKey, msg, true);
 
@@ -1787,6 +2080,52 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                 el.on('click', function() { this.showWhyBinTask.delay(0); }, this);
             }
         }
+    },
+
+    _showWhyXGutter : function() {
+        var calloutMgr = hopscotch.getCalloutManager(),
+                _id = Ext.id();
+
+        calloutMgr.createCallout({
+            id: _id,
+            target: document.querySelector("svg g text.xGutter-label"),
+            placement: 'top',
+            title: 'Undefined Y Value Plot',
+            content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, ' +
+            'analysis or other factors.<br><br>Percent with undefined y value: ' + this.percentXGutterUndef + "%",
+            xOffset: -20
+        })
+
+        this.on('hidexguttermsg', function() {
+            calloutMgr.removeCallout(_id);
+        }, this);
+    },
+
+    _closeWhyXGutter : function() {
+        this.fireEvent('hidexguttermsg', this);
+    },
+
+    _showWhyYGutter : function() {
+        var calloutMgr = hopscotch.getCalloutManager(),
+                _id = Ext.id();
+
+        calloutMgr.createCallout({
+            id: _id,
+            target: document.querySelector("svg g text.yGutter-label"),
+            placement: 'top',
+            title: 'Undefined X Value Plot',
+            content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, ' +
+            'analysis or other factors.<br><br>Percent with undefined x value: ' + this.percentYGutterUndef + "%",
+            arrowOffset: 40
+        })
+
+        this.on('hideyguttermsg', function() {
+            calloutMgr.removeCallout(_id);
+        }, this);
+    },
+
+    _closeWhyYGutter : function() {
+        this.fireEvent('hideyguttermsg', this);
     },
 
     /**
@@ -1834,7 +2173,7 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
             var msgKey = 'PEROVER_LIMIT';
             var id = Ext.id(),
                     id2 = Ext.id(),
-                    msg = 'Points outside the plotting area have no match on the other axis.&nbsp;<a id="' + id +'">Got it</a>&nbsp;<a id="' + id2 +'">Details</a>';
+                    msg = 'Points in gutter plots have no match on the other axis.&nbsp;<a id="' + id +'">Got it</a>&nbsp;<a id="' + id2 +'">Details</a>';
 
             var shown = this.sessionMessage(msgKey, msg, true);
 
@@ -1842,8 +2181,8 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                 var tpl = new Ext.XTemplate(
                     '<div class="matchtip">',
                         '<div>',
-                            '<p class="tiptitle">Plotting Matches</p>',
-                            '<p class="tiptext">Percent match: {overlap}%. Mismatches may be due to data point subject, visit, or assay antigen.</p>',
+                            '<p class="tiptext">Percent overlap: {overlap}%.<br>Mismatches may be due to differing subject, ' +
+                            'visit, assay, antigen, analysis or other factors.</p>',
                         '</div>',
                     '</div>'
                 );
