@@ -39,11 +39,6 @@ public class CDSUserSchema extends SimpleUserSchema
 
     public CDSUserSchema(User user, Container container)
     {
-        this(user, container, false);
-    }
-
-    public CDSUserSchema(User user, Container container, boolean restricted)
-    {
         super(SCHEMA_NAME, "Schema for HIV Collaborative Dataspace. Detail data is stored in datasets of study schema.", user, container, DbSchema.get("cds"));
         _restricted = true;
     }

@@ -7,9 +7,17 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
             </taskref>
         </transform>
-        <transform id="studies" type="org.labkey.di.pipeline.TransformTask">
-            <source schemaName="study" queryName="ds_study" containerFilter="CurrentAndSubfolders" />
-            <destination schemaName="cds" queryName="study" targetOption="truncate" />
+        <transform id="PopulateDemographics" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDemograhicsTask">
+            </taskref>
         </transform>
+        <!--<transform id="studies" type="org.labkey.di.pipeline.TransformTask">-->
+            <!--<source schemaName="study" queryName="ds_study" containerFilter="CurrentAndSubfolders" />-->
+            <!--<destination schemaName="cds" queryName="study" targetOption="truncate" />-->
+        <!--</transform>-->
+        <!--<transform id="demographics" type="DataspaceQueryTransformStep">-->
+            <!--<source schemaName="study" queryName="ds_demographics" /> &lt;!&ndash;containerColumnName="prot"&ndash;&gt;-->
+            <!--<destination schemaName="study" queryName="demographic" targetOption="truncate" />-->
+        <!--</transform>-->
     </transforms>
 </etl>

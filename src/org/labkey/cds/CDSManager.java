@@ -204,6 +204,7 @@ public class CDSManager
         try
         {
             deleteFacts(c);
+//            for (String s : new String[] {"CitableAuthors", "Citations", "Citable", "Properties", "Study"})
             for (String s : new String[] {"Antigens",
                               "CitableAuthors", "Citations", "Citable",
                               "AssayPublications", "Assays",

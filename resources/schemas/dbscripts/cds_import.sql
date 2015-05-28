@@ -205,7 +205,7 @@ CREATE TABLE cds.import_StudySubject (
   subject_species VARCHAR(250),
   subject_subspecies VARCHAR(250),
   subject_sex_at_birth VARCHAR(250),
-  subject_age_enrollment VARCHAR(250),
+  subject_age_enrollment_years VARCHAR(250),
   subject_race_nih VARCHAR(250),
   subject_hispanic VARCHAR(250),
   subject_country_enrollment VARCHAR(250),
@@ -249,13 +249,13 @@ CREATE TABLE cds.import_ICS (
   cell_type VARCHAR(250),
   antigen_panel VARCHAR(250),
   functional_marker_name VARCHAR(250),
-  ics_lab_source_key INTEGER NOT NULL,
+  ics_lab_source_key INTEGER,
 
   ics_magnitude NUMERIC(15,4),
   ics_magnitude_raw NUMERIC(15,4),
   ics_magnitude_background NUMERIC(15,4),
 
-  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day, specimen_type, assay_id, antigen_panel, cell_type, functional_marker_name, ics_lab_source_key)
+  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day, specimen_type, assay_id, antigen_panel, cell_type, functional_marker_name)
 );
 
 
@@ -312,14 +312,14 @@ CREATE TABLE cds.import_ELS_IFNg (
   antigen VARCHAR(250),
   cell_type VARCHAR(250),
   functional_marker_name VARCHAR(250),
-  els_ifng_lab_source_key INTEGER NOT NULL,
+  els_ifng_lab_source_key INTEGER,
 
   els_ifng_response BOOLEAN,
   els_ifng_magnitude NUMERIC(15,4),
   els_ifng_magnitude_raw NUMERIC(15,4),
   els_ifng_magnitude_background NUMERIC(15,4),
 
-  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, assay_id, antigen, cell_type, functional_marker_name, els_ifng_lab_source_key)
+  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, assay_id, antigen, cell_type, functional_marker_name)
 );
 
 CREATE TABLE cds.import_BAMA (
