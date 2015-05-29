@@ -10,7 +10,7 @@ a.x-btn {
 
   $border-radius : 10px,
 
-  $background-color: white,
+  $background-color: #FFFFFF,
   $background-color-over: #a1d9da,
 
   $border-width : 0px,
@@ -27,25 +27,26 @@ a.x-btn {
 );
 
 .x-btn-paging-widget-pages-small {
-  margin: 2px 0px 0px 0px!important;
-  padding: 4px 6px 4px 5px!important;
+  margin: 2px 0 0 0 !important;
+  padding: 4px 6px 4px 5px !important;
   height: 20px;
   width: auto;
 }
 
-.x-btn-paging-widget-pages-small:hover .x-btn-inner{
-  color: rgba(0, 0, 0, 0.87);
+.x-btn-paging-widget-pages-small:hover .x-btn-inner {
   color: #222222; /* Fallback for older browsers */
+  color: rgba(0, 0, 0, 0.87);
 }
 
-.x-btn-paging-widget-pages-small:active .x-btn-inner{
-  color: rgba(255, 255, 255, 1) !important;
+.x-btn-paging-widget-pages-small:active .x-btn-inner {
+  color: #FFFFFF; /* Fallback for older browsers */
   color: white; /* Fallback for older browsers */
+  color: rgba(255, 255, 255, 1) !important;
 }
 
-.x-btn-paging-widget-pages-small .x-btn-inner{
-  color: rgba(0, 0, 0, 0.54);
+.x-btn-paging-widget-pages-small .x-btn-inner {
   color: #777777; /* Fallback for older browsers */
+  color: rgba(0, 0, 0, 0.54);
 }
 
 .x-btn-paging-widget-pages-disabled {
@@ -58,11 +59,11 @@ a.x-btn {
 
 .x-btn-paging-widget-pages-small.selected {
   background-color: #14c9cc !important;
-}
 
-.x-btn-paging-widget-pages-small.selected .x-btn-inner {
-  color: rgba(255, 255, 255, 1) !important;
-  color: white; /* Fallback for older browsers */
+  .x-btn-inner {
+    color: #FFFFFF; /* Fallback for older browsers */
+    color: rgba(255, 255, 255, 1) !important;
+  }
 }
 
 /* Connector.button.RoundedButton */
@@ -197,7 +198,7 @@ a.x-btn {
 .x-btn-dropdown-small {
   height: 24px;
   width: 24px;
-  padding: 3px 0px 0px 1px;
+  padding: 3px 0 0 1px;
 
   .x-btn-arrow {
     background-image: none;
@@ -440,7 +441,7 @@ a.x-btn {
 .x-btn-rounded-accent-small {
   padding: 5px 5px 4px 5px;
   background-image: none;
-  border-width: 0px;
+  border-width: 0;
 }
 
 .x-btn-rounded-small.contrast {
@@ -517,8 +518,8 @@ input.x-btn-rounded-inverted-accent-small {
 }
 
 .x-btn-rounded-inverted-accent-icon-small {
-  padding: 0px 4px 1px 2px;
-  top: 0px;
+  padding: 0 4px 1px 2px;
+  top: 0;
 
   .info {
     top: -4px;

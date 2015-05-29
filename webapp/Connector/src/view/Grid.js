@@ -722,8 +722,8 @@ Ext.define('Connector.view.Grid', {
             var size = this.getWidthHeight();
             if (!this.footer.isVisible()) {
                 this.footer.show();
+                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
             }
-            this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
         }
     }
 });
