@@ -206,13 +206,19 @@ public class CDSManager
             deleteFacts(c);
 //            for (String s : new String[] {"CitableAuthors", "Citations", "Citable", "Properties", "Study"})
             for (String s : new String[] {"Antigens",
-                              "CitableAuthors", "Citations", "Citable",
-                              "AssayPublications", "Assays",
-                              "VaccineComponents", "Vaccines",
-                              "Labs", "Studies", "Sites", "People", "Feedback", "Properties"})
+                    "CitableAuthors", "Citations", "Citable",
+                    "AssayPublications", "Assays",
+                    "VaccineComponents", "Vaccines",
+                    "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
+                    // New Tables
+                    "Study"
+            })
             {
                 TableInfo t = CDSSchema.getInstance().getSchema().getTable(s);
-                new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("DELETE FROM " + t.getSelectName() + " WHERE Container = ?", c);
+                if (null != t)
+                {
+                    new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("DELETE FROM " + t.getSelectName() + " WHERE Container = ?", c);
+                }
             }
             String orphans;
             assert (orphans = orphanedRows(c)) == null : "Orphaned rows in tables: " + orphans;

@@ -34,29 +34,30 @@ public class CDSImportTask extends TaskRefTaskImpl
         // Core Tables
         new TSVCopyConfig("Study"),
         new TSVCopyConfig("Product"),
-        new TSVCopyConfig("Personnel"),
-        new TSVCopyConfig("Site"),
-        new TSVCopyConfig("Lab"),
+//        new TSVCopyConfig("Personnel"),
+//        new TSVCopyConfig("Site"),
+//        new TSVCopyConfig("Lab"),
 
         // Dependent Tables
-        new TSVCopyConfig("StudyPersonnel"),
-        new TSVCopyConfig("StudySiteFunction"),
-        new TSVCopyConfig("ProductInsert"),
+//        new TSVCopyConfig("StudyPersonnel"),
+//        new TSVCopyConfig("StudySiteFunction"),
+//        new TSVCopyConfig("ProductInsert"),
         new TSVCopyConfig("StudyPartGroupArm"),
         new TSVCopyConfig("StudyPartGroupArmVisit"),
-        new TSVCopyConfig("StudyPartGroupArmVisitTag"),
-        new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
+//        new TSVCopyConfig("StudyPartGroupArmVisitTag"),
+//        new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
 
         // Mapping Tables
         new TSVCopyConfig("StudyProduct"),
-        new TSVCopyConfig("StudySitePersonnel"),
+        new TSVCopyConfig("StudySubjectArm"),
+//        new TSVCopyConfig("StudySitePersonnel"),
 
         // Datasets
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("ICS"),
-        new TSVCopyConfig("ELS_IFNg"),
-        new TSVCopyConfig("NAb"),
-        new TSVCopyConfig("BAMA")
+//        new TSVCopyConfig("ELS_IFNg"),
+//        new TSVCopyConfig("NAb"),
+//        new TSVCopyConfig("BAMA")
     };
 
     @Override
@@ -183,7 +184,7 @@ public class CDSImportTask extends TaskRefTaskImpl
                 info += sep + table;
                 sep = ", ";
             }
-            sql.append(";");
+            sql.append(" CASCADE;");
 
             logger.info(info);
 

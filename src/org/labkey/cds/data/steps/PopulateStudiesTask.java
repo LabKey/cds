@@ -6,39 +6,31 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.ContainerFilterable;
 import org.labkey.api.data.ContainerManager;
-import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
-import org.labkey.api.module.FolderType;
 import org.labkey.api.module.FolderTypeManager;
 import org.labkey.api.pipeline.PipelineJobException;
-import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.query.BatchValidationException;
+import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryException;
-import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.security.User;
-import org.labkey.api.study.Dataset;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.study.TimepointType;
 import org.labkey.api.util.DateUtil;
 import org.labkey.cds.CDSSchema;
 import org.labkey.cds.CDSSimpleTable;
 import org.labkey.cds.CDSUserSchema;
-import org.labkey.cds.model.CDSStudy;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class PopulateStudiesTask extends AbstractPopulateTask
 {
@@ -53,9 +45,9 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             clean(project, user, logger);
 
             // Retrieve the set of studies available in the 'import_' schema
-            Map<String, Map<String, Object>> importStudiesMap = getImportStudies(project, user, logger);
+            Set<String> studyNames = getStudyNames(project, user, logger);
 
-            if (null == importStudiesMap)
+            if (null == studyNames)
             {
                 return;
             }
@@ -64,7 +56,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             long start = System.currentTimeMillis();
             int created = 0;
             BatchValidationException errors = new BatchValidationException();
-            for (String studyName : importStudiesMap.keySet())
+            for (String studyName : studyNames)
             {
                 Container c = ContainerManager.getChild(project, studyName);
 
@@ -79,17 +71,20 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             long finish = System.currentTimeMillis();
             logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
 
+            // Get the collesced metadata for the studies (including container)
+            Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
+
             // Import Study metadata
-            for (String studyName : importStudiesMap.keySet())
+            for (String studyName : studies.keySet())
             {
-                if (importStudiesMap.containsKey(studyName))
+                if (studies.containsKey(studyName))
                 {
                     Container c = ContainerManager.getChild(project, studyName);
 
                     try
                     {
                         List<Map<String, Object>> rows = new ArrayList<>();
-                        rows.add(importStudiesMap.get(studyName));
+                        rows.add(studies.get(studyName));
 
                         TableInfo updatable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
                         QueryUpdateService qud = updatable.getUpdateService();
@@ -119,22 +114,49 @@ public class PopulateStudiesTask extends AbstractPopulateTask
 
     private void clean(Container project, User user, Logger logger)
     {
-        logger.info("Starting cleanup of studies in " + project.getPath());
-
-        long start = System.currentTimeMillis();
         int numStudies = project.getChildren().size();
 
-        for (Container child : project.getChildren())
+        if (numStudies > 0)
         {
-            ContainerManager.delete(child, user);
-        }
-        long finish = System.currentTimeMillis();
+            logger.info("Starting cleanup of " + numStudies + " studies in " + project.getPath());
 
-        logger.info("Cleaned up " + numStudies + " studies in " + DateUtil.formatDuration(finish - start) + ".");
+            long start = System.currentTimeMillis();
+
+            for (Container child : project.getChildren())
+            {
+                ContainerManager.delete(child, user);
+            }
+            long finish = System.currentTimeMillis();
+
+            logger.info("Cleaned up " + numStudies + " studies in " + DateUtil.formatDuration(finish - start) + ".");
+        }
+        else
+        {
+            logger.info("No studies needed to be cleaned up.");
+        }
     }
 
     @Nullable
-    private Map<String, Map<String, Object>> getImportStudies(Container project, User user, Logger logger)
+    private Set<String> getStudyNames(Container project, User user, Logger logger)
+    {
+        TableInfo tiStudyHasSubjects = DefaultSchema.get(user, project).getSchema("study").getTable("ds_study_has_subjects");
+
+        // Get all the studies
+        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(tiStudyHasSubjects);
+        Map<String, Object>[] importStudies = new SqlSelector(tiStudyHasSubjects.getSchema(), sql).getMapArray();
+
+        Set<String> studies = new HashSet<>();
+        for (Map<String, Object> map : importStudies)
+        {
+            studies.add((String) map.get("prot"));
+        }
+
+        return studies;
+    }
+
+
+    @Nullable
+    private Map<String, Map<String, Object>> getStudies(Container project, User user, Logger logger)
     {
         QueryService queryService = QueryService.get();
         QueryDefinition qd = queryService.getQueryDef(user, project, "study", "ds_study");
@@ -156,8 +178,8 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         ((ContainerFilterable) tiImportStudy).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
 
         // Get all the studies
-        SQLFragment sql = new SQLFragment("SELECT * FROM").append(tiImportStudy);
-        Map<String, Object>[] importStudies = new SqlSelector(CDSSchema.getInstance().getSchema(), sql).getMapArray();
+        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(tiImportStudy);
+        Map<String, Object>[] importStudies = new SqlSelector(tiImportStudy.getSchema(), sql).getMapArray();
 
         Map<String, Map<String, Object>> importStudiesMap = new HashMap<>();
         for (Map<String, Object> map : importStudies)

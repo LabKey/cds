@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS cds.import_BAMA CASCADE;
 DROP TABLE IF EXISTS cds.import_StudySubject CASCADE;
 
 -- Drop Dependent Tables
+DROP TABLE IF EXISTS cds.import_StudySubjectArm CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitTag CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitProduct CASCADE;
 DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisit CASCADE;
@@ -89,9 +90,9 @@ CREATE TABLE cds.import_StudyProduct (
 
 CREATE TABLE cds.import_StudyPartGroupArm (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  study_arm VARCHAR(250) NOT NULL,
+  study_part VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
-  study_part VARCHAR(250),
+  study_arm VARCHAR(250) NOT NULL,
   study_randomization VARCHAR(100),
   study_arm_description_coded_label VARCHAR(100), -- formerly, treatment_regimen_code
   product_class_combination_label VARCHAR(100),
@@ -100,16 +101,16 @@ CREATE TABLE cds.import_StudyPartGroupArm (
 
   study_arm_description TEXT,
 
-  CONSTRAINT PK_import_StudyArm PRIMARY KEY (prot, study_group, study_arm)
+  CONSTRAINT PK_import_StudyArm PRIMARY KEY (prot, study_part, study_group, study_arm)
 );
 
 -- one record per Visit in a Study Group Arm
 -- each arm in a group is on the same schedule in reality
 CREATE TABLE cds.import_StudyPartGroupArmVisit (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  study_arm VARCHAR(250) NOT NULL,
+  study_part VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
-  study_part VARCHAR(250),
+  study_arm VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   study_visit_code VARCHAR(250),
   study_week INTEGER NOT NULL,
@@ -118,7 +119,7 @@ CREATE TABLE cds.import_StudyPartGroupArmVisit (
   study_arm_visit_label VARCHAR(250),
   study_arm_visit_detail_label VARCHAR(250),
 
-  CONSTRAINT PK_import_StudyPartGroupArmVisit PRIMARY KEY (prot, study_arm, study_group, study_day)
+  CONSTRAINT PK_import_StudyPartGroupArmVisit PRIMARY KEY (prot, study_part, study_arm, study_group, study_day)
 );
 
 CREATE TABLE cds.import_StudyPartGroupArmVisitTag (
@@ -217,35 +218,20 @@ CREATE TABLE cds.import_StudySubject (
   CONSTRAINT PK_import_StudySubject PRIMARY KEY (prot, subject_id)
 );
 
--- CREATE TABLE cds.import_ICS (
---   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
---   subject_id VARCHAR(250) NOT NULL,
---   study_day INTEGER NOT NULL,
---   specimen_type VARCHAR(250) NOT NULL,
---   assay_id VARCHAR(250),
--- --   lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
---   cell_type VARCHAR(250),
---   summary_level VARCHAR(250),
---   antigen_panel VARCHAR(250),
---   antigen_subpanel VARCHAR(250),
---   functional_marker_name VARCHAR(250),
---   functional_marker_type VARCHAR(250),
---
---   ics_response_call BOOLEAN,
---   ics_magnitude NUMERIC(15,4),
---   ics_magnitude_raw NUMERIC(15,4),
---   ics_magnitude_background NUMERIC(15,4),
---   ics_magnitude_unit VARCHAR(100),
---
---   CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day)
--- );
+CREATE TABLE cds.import_StudySubjectArm (
+  prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
+  subject_id VARCHAR(250) NOT NULL, -- Reference import_StudySubject?
+  study_arm VARCHAR(250) NOT NULL, -- This seems to be ambiguous, should require part/group as well
+
+  CONSTRAINT PK_import_StudySubjectArm PRIMARY KEY (prot, subject_id, study_arm)
+);
 
 CREATE TABLE cds.import_ICS (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   specimen_type VARCHAR(250) NOT NULL,
-  assay_id VARCHAR(250),
+  assay_identifier VARCHAR(250),
   cell_type VARCHAR(250),
   antigen_panel VARCHAR(250),
   functional_marker_name VARCHAR(250),
@@ -255,7 +241,7 @@ CREATE TABLE cds.import_ICS (
   ics_magnitude_raw NUMERIC(15,4),
   ics_magnitude_background NUMERIC(15,4),
 
-  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day, specimen_type, assay_id, antigen_panel, cell_type, functional_marker_name)
+  CONSTRAINT PK_import_ICS PRIMARY KEY (prot, subject_id, study_day, specimen_type, assay_identifier, antigen_panel, cell_type, functional_marker_name)
 );
 
 
@@ -264,7 +250,7 @@ CREATE TABLE cds.import_NAb (
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   specimen_type VARCHAR(250),
-  assay_id VARCHAR(250),
+  assay_identifier VARCHAR(250),
   lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
   target_cell VARCHAR(250),
   isolate_name VARCHAR(250),
@@ -280,35 +266,12 @@ CREATE TABLE cds.import_NAb (
   CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
 );
 
--- CREATE TABLE cds.import_ELS_IFNg (
---   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
---   subject_id VARCHAR(250) NOT NULL,
---   study_day INTEGER NOT NULL,
---   specimen_type VARCHAR(250),
---   assay_id VARCHAR(250),
---   lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
---   cell_type VARCHAR(250),
---   summary_level VARCHAR(250),
---   antigen_panel VARCHAR(250),
---   antigen_subpanel VARCHAR(250),
---   functional_marker_name VARCHAR(250),
---   functional_marker_type VARCHAR(250),
---
---   els_ifng_response_call BOOLEAN,
---   els_ifng_magnitude NUMERIC(15,4),
---   els_ifng_magnitude_raw NUMERIC(15,4),
---   els_ifng_magnitude_background NUMERIC(15,4),
---   els_ifng_magnitude_unit VARCHAR(20),
---
---   CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
--- );
-
 CREATE TABLE cds.import_ELS_IFNg (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   specimen_type VARCHAR(250),
-  assay_id VARCHAR(250),
+  assay_identifier VARCHAR(250),
   antigen VARCHAR(250),
   cell_type VARCHAR(250),
   functional_marker_name VARCHAR(250),
@@ -319,7 +282,7 @@ CREATE TABLE cds.import_ELS_IFNg (
   els_ifng_magnitude_raw NUMERIC(15,4),
   els_ifng_magnitude_background NUMERIC(15,4),
 
-  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, assay_id, antigen, cell_type, functional_marker_name)
+  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, assay_identifier, antigen, cell_type, functional_marker_name)
 );
 
 CREATE TABLE cds.import_BAMA (
@@ -327,7 +290,7 @@ CREATE TABLE cds.import_BAMA (
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   specimen_type VARCHAR(250),
-  assay_id VARCHAR(250),
+  assay_identifier VARCHAR(250),
   lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
   instrument_code VARCHAR(250),
   detection_type VARCHAR(250),

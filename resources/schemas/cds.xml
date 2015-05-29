@@ -17,6 +17,36 @@
 
  -->
 <ns:tables xmlns:ns="http://labkey.org/data/xml">
+    <ns:table tableName="Study" tableDbType="TABLE">
+        <ns:columns>
+            <ns:column columnName="study_name"/>
+            <ns:column columnName="Container">
+                <ns:isKeyField>false</ns:isKeyField>
+            </ns:column>
+            <ns:column columnName="network"/>
+            <ns:column columnName="label"/>
+            <ns:column columnName="short_name"/>
+            <ns:column columnName="title"/>
+            <ns:column columnName="type"/>
+            <ns:column columnName="status"/>
+            <ns:column columnName="stage"/>
+            <ns:column columnName="population"/>
+            <ns:column columnName="species"/>
+            <ns:column columnName="study_cohort"/>
+            <ns:column columnName="first_enr_date"/>
+            <ns:column columnName="followup_complete_date"/>
+            <ns:column columnName="start_date"/>
+            <ns:column columnName="public_date"/>
+            <ns:column columnName="rationale"/>
+            <ns:column columnName="description"/>
+            <ns:column columnName="hypothesis"/>
+            <ns:column columnName="objectives"/>
+            <ns:column columnName="methods"/>
+            <ns:column columnName="findings"/>
+            <ns:column columnName="discussion"/>
+            <ns:column columnName="context"/>
+        </ns:columns>
+    </ns:table>
     <ns:table tableName="Labs" tableDbType="TABLE">
         <ns:columns>
             <ns:column columnName="Id"/>
