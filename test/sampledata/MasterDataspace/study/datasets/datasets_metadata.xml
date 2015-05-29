@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables xmlns="http://labkey.org/data/xml">
+  <table tableName="Demographic" tableDbType="TABLE">
+    <description>Contains up to one row of Demographic data for each Subject combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="species">
+        <datatype>varchar</datatype>
+        <columnTitle>Species</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="subspecies">
+        <datatype>varchar</datatype>
+        <columnTitle>Subspecies</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="sexatbirth">
+        <datatype>varchar</datatype>
+        <columnTitle>Sexatbirth</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="race">
+        <datatype>varchar</datatype>
+        <columnTitle>Race</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="ethnicity">
+        <datatype>varchar</datatype>
+        <columnTitle>Ethnicity</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="country">
+        <datatype>varchar</datatype>
+        <columnTitle>Country</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="circumcisionstatusenrollment">
+        <datatype>varchar</datatype>
+        <columnTitle>Circumcisionstatusenrollment</columnTitle>
+      </column>
+      <column columnName="protocolcompletion">
+        <datatype>varchar</datatype>
+        <columnTitle>Protocolcompletion</columnTitle>
+      </column>
+      <column columnName="bmi">
+        <datatype>integer</datatype>
+        <columnTitle>Bmi</columnTitle>
+      </column>
+      <column columnName="age">
+        <datatype>integer</datatype>
+        <columnTitle>Age</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Demographic</tableTitle>
+  </table>
+  <table tableName="ICS" tableDbType="TABLE">
+    <description>Contains up to one row of ICS (Intracellular Cytokine Staining) data for each Subject/Visit combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+        <formatString>#</formatString>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="celltype">
+        <datatype>varchar</datatype>
+        <columnTitle>Celltype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigenpanel">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigenpanel</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigensubpanel">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigensubpanel</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="specimentype">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimentype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="responsecall">
+        <datatype>boolean</datatype>
+        <columnTitle>Responsecall</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="functionalmarkertype">
+        <datatype>varchar</datatype>
+        <columnTitle>Functionalmarkertype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="functionalmarkername">
+        <datatype>varchar</datatype>
+        <columnTitle>Functionalmarkername</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="datasummarylevel">
+        <datatype>varchar</datatype>
+        <columnTitle>Datasummarylevel</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="magnitudebg">
+        <datatype>double</datatype>
+        <columnTitle>Magnitudebg</columnTitle>
+      </column>
+      <column columnName="magnituderaw">
+        <datatype>double</datatype>
+        <columnTitle>Magnituderaw</columnTitle>
+      </column>
+      <column columnName="magnitudebgsubtracted">
+        <datatype>double</datatype>
+        <columnTitle>Magnitudebgsubtracted</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Intracellular Cytokine Staining</tableTitle>
+  </table>
+  <table tableName="ELISPOT" tableDbType="TABLE">
+    <description>Contains up to one row of ELISPOT (Enzyme-Linked ImmunoSpot) data for each Subject/Visit combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+        <formatString>#</formatString>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="antigenpanel">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigenpanel</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigensubpanel">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigensubpanel</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="specimentype">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimentype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="datasummarylevel">
+        <datatype>varchar</datatype>
+        <columnTitle>Datasummarylevel</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="responsecall">
+        <datatype>boolean</datatype>
+        <columnTitle>Responsecall</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="functionalmarkertype">
+        <datatype>varchar</datatype>
+        <columnTitle>Functionalmarkertype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="functionalmarkername">
+        <datatype>varchar</datatype>
+        <columnTitle>Functionalmarkername</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="magnitudebg">
+        <datatype>double</datatype>
+        <columnTitle>Magnitudebg</columnTitle>
+      </column>
+      <column columnName="magnituderaw">
+        <datatype>double</datatype>
+        <columnTitle>Magnituderaw</columnTitle>
+      </column>
+      <column columnName="magnitudebgsubtracted">
+        <datatype>double</datatype>
+        <columnTitle>Magnitudebgsubtracted</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Enzyme-Linked ImmunoSpot</tableTitle>
+  </table>
+  <table tableName="NAb" tableDbType="TABLE">
+    <description>Contains up to one row of NAb (Neutralizing antibody) data for each Subject/Visit combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+        <formatString>#</formatString>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="targetcell">
+        <datatype>varchar</datatype>
+        <columnTitle>Targetcell</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="specimentype">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimentype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="responsecall">
+        <datatype>boolean</datatype>
+        <columnTitle>Responsecall</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigenclade">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigenclade</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="envelopeisolatename">
+        <datatype>varchar</datatype>
+        <columnTitle>Envelopeisolatename</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="envelopeneutralizationtier">
+        <datatype>varchar</datatype>
+        <columnTitle>Envelopeneutralizationtier</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="titeric50">
+        <datatype>double</datatype>
+        <columnTitle>Titeric50</columnTitle>
+      </column>
+      <column columnName="titeric80">
+        <datatype>double</datatype>
+        <columnTitle>Titeric80</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Neutralizing antibody</tableTitle>
+  </table>
+  <table tableName="Ad5" tableDbType="TABLE">
+    <description>Contains up to one row of Ad5 (Adenovirus Type 5) data for each Subject/Visit combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+        <formatString>#</formatString>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="ad5neutralizingantibody">
+        <datatype>varchar</datatype>
+        <columnTitle>Ad5neutralizingantibody</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="specimentype">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimentype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="responsecall">
+        <datatype>boolean</datatype>
+        <columnTitle>Responsecall</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="titeric50">
+        <datatype>double</datatype>
+        <columnTitle>Titeric50</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Adenovirus Type 5</tableTitle>
+  </table>
+  <table tableName="BAMA" tableDbType="TABLE">
+    <description>Contains up to one row of BAMA (Binding Ab multiplex assay) data for each Subject/Visit combination.</description>
+    <columns>
+      <column columnName="SubjectId">
+        <datatype>varchar</datatype>
+        <columnTitle>Subject Id</columnTitle>
+        <description>Subject identifier</description>
+        <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>ptid</importAlias>
+        </importAliases>
+        <fk>
+          <fkDbSchema>study</fkDbSchema>
+          <fkTable>Subject</fkTable>
+          <fkColumnName>SubjectId</fkColumnName>
+        </fk>
+      </column>
+      <column columnName="SequenceNum">
+        <datatype>double</datatype>
+        <columnTitle>Sequence Num</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#SequenceNum</propertyURI>
+        <nullable>false</nullable>
+        <importAliases>
+          <importAlias>visit</importAlias>
+          <importAlias>visitid</importAlias>
+        </importAliases>
+        <formatString>#</formatString>
+      </column>
+      <column columnName="date">
+        <datatype>timestamp</datatype>
+        <columnTitle>Date</columnTitle>
+        <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
+      </column>
+      <column columnName="specimentype">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimentype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="isotype">
+        <datatype>varchar</datatype>
+        <columnTitle>Isotype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="dilution">
+        <datatype>varchar</datatype>
+        <columnTitle>Dilution</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigenname">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigenname</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="instrumenttype">
+        <datatype>varchar</datatype>
+        <columnTitle>Instrumenttype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="detectiontype">
+        <datatype>varchar</datatype>
+        <columnTitle>Detectiontype</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="responsecall">
+        <datatype>boolean</datatype>
+        <columnTitle>Responsecall</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="lab">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="magnitudebg">
+        <datatype>double</datatype>
+        <columnTitle>Magnitudebg</columnTitle>
+      </column>
+      <column columnName="magnituderaw">
+        <datatype>double</datatype>
+        <columnTitle>Magnituderaw</columnTitle>
+      </column>
+      <column columnName="magnitudebgsubtracted">
+        <datatype>double</datatype>
+        <columnTitle>Magnitudebgsubtracted</columnTitle>
+      </column>
+    </columns>
+    <tableTitle>Binding Ab multiplex assay</tableTitle>
+  </table>
+</tables>

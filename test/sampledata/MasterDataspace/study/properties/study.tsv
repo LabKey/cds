@@ -1,0 +1,2 @@
+Label	StartDate	EndDate	TimepointType	SubjectNounSingular	SubjectNounPlural	SubjectColumnName	Grant	Investigator	Species	ParticipantAliasDatasetId	ParticipantAliasProperty	ParticipantAliasSourceProperty	AssayPlan	Description	DescriptionRendererType	DateBased	LSID
+Dataspace	2015-05-11 00:00:00.0		VISIT	Subject	Subjects	SubjectId									TEXT_WITH_LINKS	false	urn:lsid:labkey.com:Study.Folder-7:7
