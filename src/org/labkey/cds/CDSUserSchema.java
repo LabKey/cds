@@ -16,16 +16,17 @@
 package org.labkey.cds;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.module.Module;
-import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.SimpleUserSchema;
 import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
+import org.labkey.api.visualization.VisualizationProvider;
 
 
 /**
@@ -86,5 +87,10 @@ public class CDSUserSchema extends SimpleUserSchema
         });
     }
 
-
+    @Nullable
+    @Override
+    public VisualizationProvider createVisualizationProvider()
+    {
+        return new CDSVisualizationProvider(this);
+    }
 }
