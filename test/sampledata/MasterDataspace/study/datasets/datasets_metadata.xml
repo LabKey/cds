@@ -65,6 +65,10 @@
         <datatype>integer</datatype>
         <columnTitle>Bmi</columnTitle>
       </column>
+      <column columnName="agegroup">
+        <datatype>integer</datatype>
+        <columnTitle>Agegroup</columnTitle>
+      </column>
       <column columnName="age">
         <datatype>integer</datatype>
         <columnTitle>Age</columnTitle>

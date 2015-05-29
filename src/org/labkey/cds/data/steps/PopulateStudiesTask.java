@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class PopulateStudiesTask extends AbstractPopulateTask
 {
-    protected void populate(Logger logger)
+    protected void populate(Logger logger) throws PipelineJobException
     {
         Container project = containerUser.getContainer();
         User user = containerUser.getUser();

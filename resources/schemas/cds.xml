@@ -110,31 +110,31 @@
                     <ns:fkDbSchema>study</ns:fkDbSchema>
                 </ns:fk>
             </ns:column>
-            <ns:column columnName="Day">
-            </ns:column>
-            <ns:column columnName="ProtocolDay">
-            </ns:column>
-            <ns:column columnName="Assay">
-                <ns:fk>
-                    <ns:fkColumnName>Name</ns:fkColumnName>
-                    <ns:fkTable>StudyDesignAssays</ns:fkTable>
-                    <ns:fkDbSchema>study</ns:fkDbSchema>
-                </ns:fk>
-            </ns:column>
-            <ns:column columnName="Lab">
-                <ns:fk>
-                    <ns:fkColumnName>Name</ns:fkColumnName>
-                    <ns:fkTable>StudyDesignLabs</ns:fkTable>
-                    <ns:fkDbSchema>study</ns:fkDbSchema>
-                </ns:fk>
-            </ns:column>
-            <ns:column columnName="Antigen">
-                <ns:fk>
-                    <ns:fkColumnName>Id</ns:fkColumnName>
-                    <ns:fkTable>Antigens</ns:fkTable>
-                    <ns:fkDbSchema>cds</ns:fkDbSchema>
-                </ns:fk>
-            </ns:column>
+            <!--<ns:column columnName="Day">-->
+            <!--</ns:column>-->
+            <!--<ns:column columnName="ProtocolDay">-->
+            <!--</ns:column>-->
+            <!--<ns:column columnName="Assay">-->
+                <!--<ns:fk>-->
+                    <!--<ns:fkColumnName>Name</ns:fkColumnName>-->
+                    <!--<ns:fkTable>StudyDesignAssays</ns:fkTable>-->
+                    <!--<ns:fkDbSchema>study</ns:fkDbSchema>-->
+                <!--</ns:fk>-->
+            <!--</ns:column>-->
+            <!--<ns:column columnName="Lab">-->
+                <!--<ns:fk>-->
+                    <!--<ns:fkColumnName>Name</ns:fkColumnName>-->
+                    <!--<ns:fkTable>StudyDesignLabs</ns:fkTable>-->
+                    <!--<ns:fkDbSchema>study</ns:fkDbSchema>-->
+                <!--</ns:fk>-->
+            <!--</ns:column>-->
+            <!--<ns:column columnName="Antigen">-->
+                <!--<ns:fk>-->
+                    <!--<ns:fkColumnName>Id</ns:fkColumnName>-->
+                    <!--<ns:fkTable>Antigens</ns:fkTable>-->
+                    <!--<ns:fkDbSchema>cds</ns:fkDbSchema>-->
+                <!--</ns:fk>-->
+            <!--</ns:column>-->
 
             <ns:column columnName="Study">
                 <ns:fk>

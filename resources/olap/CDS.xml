@@ -1,196 +1,60 @@
 <Schema name="CDS" description="HIV Collaborative Dataspace">
 
-
-    <Dimension visible="true" highCardinality="false" name="Antigen">
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Name">
-            <Table schema="cds" name="antigens">
-            </Table>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
-                <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
-            </Level>
-        </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Clade">
-            <Table schema="cds" name="antigens">
-            </Table>
-            <Level name="Clade" visible="true" column="clade" type="String" uniqueMembers="true" >
-            </Level>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
-                <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
-            </Level>
-        </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Tier">
-            <Table schema="cds" name="antigens" >
-            </Table>
-            <Level name="Tier" visible="true" column="tier" type="String" uniqueMembers="true" >
-            </Level>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
-                <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
-            </Level>
-        </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="id" name="Sample Type">
-            <Table schema="cds" name="antigens">
-            </Table>
-            <Level name="Sample Type" visible="true" column="specimensource" type="String" uniqueMembers="true" >
-            </Level>
-            <Level name="Name" visible="true" column="id" type="String" uniqueMembers="true" >
-                <Property name="Country Of Origin" column="countryoforigin" type="String" dependsOnLevelValue="true"/>
-            </Level>
-        </Hierarchy>
-    </Dimension>
-
-
-    <Dimension visible="true" highCardinality="false" name="Assay">
-        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Name">
-            <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
-            </Level>
-        </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Type">
-            <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Type" visible="true" column="type" type="String" uniqueMembers="true"  />
-            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
-            </Level>
-        </Hierarchy>
-        <Hierarchy visible="true" hasAll="true" primaryKey="name" name="Platform">
-            <Table schema="study" name="StudyDesignAssays" />
-            <Level name="Platform" visible="true" column="platform" type="String" uniqueMembers="true"  />
-            <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" >
-            </Level>
-        </Hierarchy>
-    </Dimension>
-
-
-
     <Cube name="DataspaceCube" visible="true" defaultMeasure="RowCount" cache="true" enabled="true">
+
+        <Measure name="ParticipantCount" column="participantid" aggregator="distinct-count" visible="true">
+        </Measure>
+
+        <Measure name="RowCount" column="participantid" aggregator="count" visible="true">
+        </Measure>
 
         <Annotations>
             <Annotation name="SchemaName">Study</Annotation>
             <Annotation name="AllowMDX">FALSE</Annotation>
         </Annotations>
 
-        <Table schema="cds" name="facts" >
+        <Table schema="cds" name="facts">
         </Table>
 
         <Dimension visible="true" highCardinality="false" name="Subject" foreignKey="participantid">
+
             <Hierarchy visible="true" hasAll="true" primaryKey="subjectid">
-                <Level name="Container" visible="true" column="Study" />
+                <Level name="Container" visible="true" column="Study"/>
                 <Level name="Subject" visible="true" column="ParticipantId" type="String" uniqueMembers="false" />
-                <Level name="ProtocolDay" visible="true" column="ProtocolDay" type="Numeric" uniqueMembers="false" />
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
+                <Table name="demographic" schema="study"/>
                 <Level name="Race" visible="true" type="String" uniqueMembers="true">
                     <KeyExpression><SQL>IFDEFINED(race)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
+            <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographic" schema="study"/>
+                <Level name="Sex" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(sexatbirth)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
+            <Hierarchy name="Age" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographic" schema="study"/>
+                <Level name="AgeDecadeBucket" visible="true" column="agegroup" type="Integer" uniqueMembers="true"/>
+                <Level name="Age" visible="true" column="age" type="Integer" uniqueMembers="true"/>
+            </Hierarchy>
+            <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
+                <Table name="demographic" schema="study"/>
+                <Level name="Ethnicity" visible="true" type="String" uniqueMembers="true">
+                    <KeyExpression><SQL>IFDEFINED(ethnicity)</SQL></KeyExpression>
+                </Level>
+            </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
+                <Table name="demographic" schema="study"/>
                 <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" />
             </Hierarchy>
-            <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Sex" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(sex)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
-            <Hierarchy name="Randomization" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Randomization" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(randomization)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
-            <Hierarchy name="Ad5grp" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Ad5grp" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(ad5_grp)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
-            <Hierarchy name="Circumcised" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Circumcised" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(circumcised)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
-            <Hierarchy name="Hivinf" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Hivinf" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(hivinf)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
-            <Hierarchy name="PerProtocol" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="PerProtocol" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(per_protocol)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
-            <Hierarchy name="BmiGrp" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="BmiGrp" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(bmi_grp)</SQL></KeyExpression>
-                </Level>
-            </Hierarchy>
             <Hierarchy name="Species" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographics" schema="study"/>
-                <Level name="Species" visible="true" type="String" uniqueMembers="true">
-                    <KeyExpression><SQL>IFDEFINED(species)</SQL></KeyExpression>
-                </Level>
+                <Table name="demographic" schema="study"/>
+                <Level name="Species" visible="true" column="species" type="String" uniqueMembers="true" />
+                <Level name="Subspecies" visible="true" column="subspecies" type="String" uniqueMembers="true" />
             </Hierarchy>
+
         </Dimension>
-
-        <Dimension visible="true" highCardinality="false" name="Vaccine" foreignKey="participantid">
-            <Hierarchy name="Name" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantTreatments">
-                <Join leftKey="treatmentid" rightKey="treatmentid">
-                    <Table name="ParticipantTreatments" schema="study"/>
-                    <Join leftKey="productid" rightKey="rowid">
-                        <Table name="TreatmentProductMap" schema="study"/>
-                        <Table name="Product" schema="study"/>
-                    </Join>
-                </Join>
-                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" />
-            </Hierarchy>
-            <Hierarchy name="Type" hasAll="true" primaryKey="subjectid" primaryKeyTable="ParticipantTreatments">
-                <Join leftKey="treatmentid" rightKey="treatmentid">
-                    <Table name="ParticipantTreatments" schema="study"/>
-                    <Join leftKey="productid" rightKey="rowid">
-                        <Table name="TreatmentProductMap" schema="study"/>
-                        <Table name="Product" schema="study"/>
-                    </Join>
-                </Join>
-                <Level name="Type" table="Product" visible="true" column="type" type="String" uniqueMembers="true" />
-                <Level name="Name" table="Product" visible="true" column="label" type="String" uniqueMembers="true" />
-            </Hierarchy>
-        </Dimension>
-
-        <DimensionUsage source="Antigen" name="Antigen" visible="true" foreignKey="antigen" highCardinality="false">
-        </DimensionUsage>
-
-
-        <DimensionUsage source="Assay" name="Assay" visible="true" foreignKey="assay" highCardinality="false">
-        </DimensionUsage>
-
-        <Dimension visible="true" highCardinality="false" name="Lab" foreignKey="lab">
-            <Hierarchy visible="true" hasAll="true" primaryKey="Name">
-                <Table schema="study" name="StudyDesignLabs" />
-                <Level name="Name" visible="true" column="Name" type="String" uniqueMembers="true" >
-                </Level>
-            </Hierarchy>
-        </Dimension>
-
-        <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
-            <Hierarchy visible="true" hasAll="true" primaryKey="container">
-                <Table schema="study" name="StudyProperties" />
-                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" hideMemberIf="IfBlankName">
-                </Level>
-            </Hierarchy>
-        </Dimension>
-
-
-        <Measure name="ParticipantCount" column="participantid" aggregator="distinct-count" visible="true">
-        </Measure>
-
-
-        <Measure name="RowCount" column="participantid" aggregator="count" visible="true">
-        </Measure>
     </Cube>
-
 </Schema>

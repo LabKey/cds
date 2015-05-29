@@ -5,6 +5,7 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QueryDefinition;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public class PopulateDemograhicsTask extends AbstractPopulateTask
 {
-    protected void populate(Logger logger)
+    protected void populate(Logger logger) throws PipelineJobException
     {
         // If !hasErrors?
         Container project = containerUser.getContainer();
@@ -57,6 +58,11 @@ public class PopulateDemograhicsTask extends AbstractPopulateTask
                 try
                 {
                     TableInfo demographicsTI = DefaultSchema.get(user, container).getSchema("study").getTable("Demographic");
+
+                    sql = new SQLFragment("SELECT * FROM ").append(demographicsTI);
+                    Map<String, Object>[] allRows = new SqlSelector(demographicsTI.getSchema(), sql).getMapArray();
+                    demographicsTI.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);
+
                     demographicsTI.getUpdateService().insertRows(user, container, Arrays.asList(subjects), errors, null, null);
                 }
                 catch (Exception e)

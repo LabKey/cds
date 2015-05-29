@@ -1,19 +1,19 @@
 SELECT
--- KEYS
-import_demographics.prot AS study_name,
-import_demographics.subject_id AS participantid,
+  -- KEYS
+  dd.prot AS study_name,
+  dd.subject_id AS participantid,
 
--- VARCHAR
-import_demographics.subject_species AS species,
-import_demographics.subject_subspecies AS subspecies,
-import_demographics.subject_sex_at_birth AS sexatbirth,
-import_demographics.subject_race_nih AS race,
-import_demographics.subject_hispanic AS ethnicity,
-import_demographics.subject_country_enrollment AS country,
-import_demographics.subject_circumcised_enrollment AS circumcisionstatusenrollment,
+  -- VARCHAR
+  dd.subject_species AS species,
+  dd.subject_subspecies AS subspecies,
+  dd.subject_sex_at_birth AS sexatbirth,
+  dd.subject_race_nih AS race,
+  dd.subject_hispanic AS ethnicity,
+  dd.subject_country_enrollment AS country,
+  dd.subject_circumcised_enrollment AS circumcisionstatusenrollment,
 
--- INTEGER
-import_demographics.subject_age_enrollment_years AS age,
--- import_demographics.subject_bmi_enrollment AS bmi,
-
-FROM cds.import_studysubject AS import_demographics
+  -- INTEGER
+  CAST(ROUND(10 * Floor(dd.subject_age_enrollment_years / 10.0)) AS INTEGER) AS agegroup,
+  dd.subject_age_enrollment_years AS age
+  -- import_demographics.subject_bmi_enrollment AS bmi,
+FROM cds.import_studysubject AS dd

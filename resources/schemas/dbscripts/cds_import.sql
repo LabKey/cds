@@ -206,7 +206,7 @@ CREATE TABLE cds.import_StudySubject (
   subject_species VARCHAR(250),
   subject_subspecies VARCHAR(250),
   subject_sex_at_birth VARCHAR(250),
-  subject_age_enrollment_years VARCHAR(250),
+  subject_age_enrollment_years INTEGER,
   subject_race_nih VARCHAR(250),
   subject_hispanic VARCHAR(250),
   subject_country_enrollment VARCHAR(250),

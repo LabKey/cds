@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS cds.Facts CASCADE;
 DROP TABLE IF EXISTS cds.Study CASCADE;
 
 CREATE TABLE cds.Study (
@@ -29,4 +30,10 @@ CREATE TABLE cds.Study (
   context TEXT,
 
   CONSTRAINT PK_Study PRIMARY KEY (study_name)
+);
+
+CREATE TABLE cds.Facts (
+  participantid VARCHAR(32) NOT NULL,
+  container ENTITYID NOT NULL, -- dataspace project
+  study ENTITYID
 );

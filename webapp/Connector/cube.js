@@ -69,69 +69,25 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Subject.Race]',
                     defaultOperator: 'OR',
-                    label: 'Race & Subtype',
+                    label: 'Race',
                     levels: [{
                         uniqueName: '[Subject.Race].[Race]',
                         activeCount: true,
                         countPriority: 20,
-                        countSingular: 'Race & subtype',
-                        countPlural: 'Races & subtypes'
+                        countSingular: 'Race',
+                        countPlural: 'Races'
                     }]
                 },{
                     uniqueName: '[Subject.Country]',
+                    label: 'Country at enrollment',
                     levels: [{
                         uniqueName: '[Subject.Country].[Country]',
                         countSingular: 'Country',
                         countPlural: 'Countries'
                     }]
                 },{
-                    uniqueName: '[Subject.Randomization]',
-                    label: 'Randomization',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.Randomization].[Randomization]',
-                        countSingular: 'Randomization',
-                        countPlural: 'Randomizations'
-                    }]
-                },{
-                    uniqueName: '[Subject.Ad5grp]',
-                    label: 'Baseline Ad5 titer category',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.Ad5grp].[Ad5grp]',
-                        countSingular: 'Baseline Ad5 titer category',
-                        countPlural: 'Baseline Ad5 titer categories'
-                    }]
-                },{
-                    uniqueName: '[Subject.Circumcised]',
-                    label: 'Circumcision Status',
-                    supportsSummary: false
-                },{
-                    uniqueName: '[Subject.Hivinf]',
-                    label: 'HIV infection status',
-                    levels: [{
-                        uniqueName: '[Subject.Hivinf].[Hivinf]',
-                        countSingular: 'HIV infection status',
-                        countPlural: 'HIV infection statuses'
-                    }]
-                },{
-                    uniqueName: '[Subject.PerProtocol]',
-                    label: 'Protocol completion',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.PerProtocol].[PerProtocol]',
-                        countSingular: 'Protocol completion',
-                        countPlural: 'Protocol completions'
-                    }]
-                },{
-                    uniqueName: '[Subject.BmiGrp]',
-                    label: 'Baseline BMI category',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.BmiGrp].[BmiGrp]',
-                        countSingular: 'Baseline BMI category',
-                        countPlural: 'Baseline BMI categories'
-                    }]
+                    uniqueName: '[Subject.Ethnicity]',
+                    label: 'Hispanic or Latino origin'
                 },{
                     uniqueName: '[Subject.Species]',
                     levels: [{

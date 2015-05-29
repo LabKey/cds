@@ -11,6 +11,9 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateDemograhicsTask">
             </taskref>
         </transform>
+        <transform id="PopulateFacts" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask" />
+        </transform>
         <!--<transform id="studies" type="org.labkey.di.pipeline.TransformTask">-->
             <!--<source schemaName="study" queryName="ds_study" containerFilter="CurrentAndSubfolders" />-->
             <!--<destination schemaName="cds" queryName="study" targetOption="truncate" />-->

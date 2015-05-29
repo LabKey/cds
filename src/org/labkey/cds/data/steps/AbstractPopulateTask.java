@@ -23,5 +23,5 @@ abstract public class AbstractPopulateTask extends TaskRefTaskImpl
         return Collections.emptyList();
     }
 
-    abstract protected void populate(Logger logger);
+    abstract protected void populate(Logger logger) throws PipelineJobException;
 }
