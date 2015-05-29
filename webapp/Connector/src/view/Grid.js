@@ -194,7 +194,7 @@ Ext.define('Connector.view.Grid', {
                 if (this.grid) {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
-                    this.showAlignFooter();
+                    this.showAlignFooter(null, null, true);
                 }
             }
         }, 50, this);
@@ -717,13 +717,21 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    showAlignFooter : function() {
-        if (this.footer) {
+    showAlignFooter : function(comp, caller, resize) {
+        if (this.footer && this.grid) {
             var size = this.getWidthHeight();
             if (!this.footer.isVisible()) {
                 this.footer.show();
                 this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
             }
+
+            if(this.footer.realign) {
+                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
+                this.footer.realign = false;
+            }
+
+            if(resize)
+                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
         }
     }
 });

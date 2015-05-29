@@ -15,6 +15,8 @@ Ext.define('Connector.component.GridPager', {
     cls: 'grid-paging-widget',
     width: 260,
     height: 32,
+    pagesShowing: 7,
+    realign: true,
 
     constructor : function(config) {
         this.callParent([config]);
@@ -134,17 +136,21 @@ Ext.define('Connector.component.GridPager', {
 
         // Determine if the number of pages available is less than the number of buttons. If so,
         // update the display to only show necessary buttons
+        var pageButtons = 0;
         for (var i=0; i < buttons.length; i++) {
             if (first === (last - i)) {
                 buttons.each(function(btn, idx) {
                     if (idx == 0) {
                         this._setShowBtn(btn, first);
+                        pageButtons++;
                     }
                     else if (idx < i) {
                         this._setShowBtn(btn, first + idx);
+                        pageButtons++;
                     }
                     else if (idx === i) {
                         this._setShowBtn(btn, last);
+                        pageButtons++;
                     }
                     else {
                         btn.hide();
@@ -160,17 +166,21 @@ Ext.define('Connector.component.GridPager', {
             }
         }
 
+        if(this.pagesShowing != pageButtons) {
+            this.pagesShowing = pageButtons;
+            this.realign = true;
+        }
+
         if (last < 1) {
             buttons.each(function(btn) {
                 btn.hide();
             }, this);
-            this.setWidth(48);
-            pageButtonCt.setWidth(0);
+            this.setWidth(81);
+            pageButtonCt.setWidth(33);
+            this._setShowBtn(buttons.get(0), first);
+            this.realign = true;
         } else
         {
-            //if(!this.isVisible())
-            //    this.show();
-
             // If we are somewhere in the middle, we show the '...' increments outside of the middle
             if (showIncrements && buttons.length > 0)
             {
