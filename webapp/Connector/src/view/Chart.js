@@ -27,6 +27,8 @@ Ext.define('Connector.view.Chart', {
 
     yGutterWidth: 210,
 
+    studyAxisWidthOffset: 150,
+
     plugins : [{
         ptype: 'messaging',
         calculateY : function(cmp, box, msg) {
@@ -343,22 +345,18 @@ Ext.define('Connector.view.Chart', {
     },
 
     getPlotSize : function(box) {
-        var size = {width:0,height:0};
+        var size = {width:box.width,height:box.height};
 
         if(this.requireStudyAxis) {
-            size.width = box.width - 150;
+            size.width = box.width - this.studyAxisWidthOffset;
         }else if(this.requireYGutter) {
             size.width = box.width - this.yGutterWidth;
-        }else {
-            size.width = box.width;
         }
 
         if(this.requireStudyAxis) {
             size.height = box.height;
         }else if(this.requireXGutter) {
             size.height = box.height - this.xGutterHeight;
-        }else {
-            size.height = box.height;
         }
 
         return size;
@@ -520,11 +518,12 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    getPointLayer : function(layerScope) {
+    getPointLayer : function(layerScope, position) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Point({
                 size: 3,
                 plotNullPoints: true,
+                position: position, // jitter or undefined
                 opacity: 0.5
             }),
             aes: this.getLayerAes.call(this, layerScope, false)
@@ -551,28 +550,45 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    getGutterPointLayer : function(layerScope) {
-        return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.Point({
-                size: 3,
-                plotNullPoints: true,
-                position: 'jitter',
-                opacity: 0.5
-            }),
-            aes: this.getLayerAes.call(this, layerScope, false)
-        });
+    getBasePlotConfig : function() {
+        return {
+            renderTo: this.plotEl.id,
+            rendererType: 'd3',
+            throwErrors: true,
+            clipRect: false,
+            legendPos : 'none',
+            bgColor: '#FFFFFF', // $light-color
+            gridColor: '#FFFFFF', // $light-color
+            gridLineColor: '#F0F0F0', // $secondary-color
+            gridLineWidth: 1.25,
+            borderWidth: 2,
+            borderColor: '#CCC8C8', // $heat-scale-3
+            tickColor: '#FFFFFF', // $light-color
+            tickTextColor: this.labelTextColor // $heat-scale-1
+        };
     },
 
-    getGutterBinLayer : function(layerScope) {
-        return new LABKEY.vis.Layer({
-            geom: new LABKEY.vis.Geom.Bin({
-                shape: 'square',
-                colorRange: ["#E6E6E6", "#000000"],
-                size: 10, // for squares you want a bigger size
-                plotNullPoints: true
-            }),
-            aes: this.getLayerAes.call(this, layerScope, false)
-        });
+    getMainPlotConfig : function(margins, size, data, aes, scales) {
+        var plotConfig = this.getBasePlotConfig();
+        plotConfig.margins = margins;
+        plotConfig.width = size.width;
+        plotConfig.height = size.height;
+        plotConfig.data = data;
+        plotConfig.aes = aes;
+        plotConfig.scales = scales;
+        return plotConfig;
+    },
+
+    getGutterPlotConfig : function(margins, height, width, data, aes, scales, labels) {
+        var plotConfig = this.getBasePlotConfig();
+        plotConfig.margins = margins;
+        plotConfig.width = width;
+        plotConfig.height = height;
+        plotConfig.data = data;
+        plotConfig.aes = aes;
+        plotConfig.scales = scales;
+        plotConfig.labels = labels;
+        return plotConfig;
     },
 
     /**
@@ -603,7 +619,8 @@ Ext.define('Connector.view.Chart', {
                 yAxisMargin = 4;
             else
                 yAxisMargin = 5;
-            yAxisMargin = (yAxisMargin > 5 ? 6 * 6 : yAxisMargin * 6) + 10;
+            //yAxisMargin = (yAxisMargin > 5 ? 6 * 6 : yAxisMargin * 6) + 10;
+            yAxisMargin = (Math.min(yAxisMargin, 6) * 6) + 10;
         }
         else {
             rows = chartData;
@@ -791,115 +808,62 @@ Ext.define('Connector.view.Chart', {
 
         var size = this.getPlotSize(box);
 
-        var plotConfig = {
-            renderTo: this.plotEl.id,
-            rendererType: 'd3',
-            throwErrors: true,
-            clipRect: false,
-            margins: {top: 25, left: this.requireYGutter ? yAxisMargin : 68, right: 50, bottom: this.requireStudyAxis ? 43 : 30},
-            width     : size.width,
-            height    : size.height,
-            data      : rows,
-            legendPos : 'none',
-            aes: plotAes,
-            bgColor: '#FFFFFF', // $light-color
-            gridColor: '#FFFFFF', // $light-color
-            gridLineColor: '#F0F0F0', // $secondary-color
-            gridLineWidth: 1.25,
-            borderWidth: 2,
-            borderColor: '#CCC8C8', // $heat-scale-3
-            tickColor: '#FFFFFF', // $light-color
-            tickTextColor: this.labelTextColor, // $heat-scale-1
-            scales: scales
-        };
+        var mainMargins = {top: 25, left: this.requireYGutter ? yAxisMargin : 68, right: 50, bottom: this.requireStudyAxis ? 43 : 30};
+        var plotConfig = this.getMainPlotConfig(mainMargins, size, rows, plotAes, scales);
 
         var gutterXPlotConfig;
         if(this.requireXGutter) {
             var gutterXMargins = {top: 1, left: this.requireYGutter ? this.yGutterWidth+yAxisMargin : 68, right: plotConfig.margins.right, bottom: 1};
-            gutterXPlotConfig = {
-                renderTo: this.plotEl.id,
-                rendererType: 'd3',
-                clipRect: false,
-                labels: {
-                    y: {
-                        value: "Undefined Y Value",
-                        fontSize: 12,
-                        position: 10,
-                        cls: "xGutter-label",
-                        listeners: {
-                            mouseover: function() {
-                                me._showWhyXGutter()},
-                            mouseout: function() {
-                                me._closeWhyXGutter()}
-                        }
+            var gutterXLabels = {
+                y: {
+                    value: "Undefined Y Value",
+                    fontSize: 12,
+                    position: 10,
+                    cls: "xGutter-label",
+                    listeners: {
+                        mouseover: function() {me._showWhyXGutter()},
+                        mouseout: function() { me._closeWhyXGutter()}
                     }
-                },
-                margins: gutterXMargins,
-                height: this.xGutterHeight,
-                width: plotConfig.width + (this.requireYGutter ? this.yGutterWidth : 0),
-                data: yNullRows,
-                aes: {
-                    xTop: function(row) {return row.x;},
-                    y: function(row) {return row.y;}
-                },
-                bgColor: '#FFFFFF', // $light-color
-                gridColor: '#FFFFFF', // $light-color
-                gridLineColor: '#F0F0F0', // $secondary-color
-                gridLineWidth: 1.25,
-                borderWidth: 2,
-                borderColor: '#CCC8C8', // $heat-scale-3
-                tickColor: '#FFFFFF', // $light-color
-                tickTextColor: this.labelTextColor, // $heat-scale-1
-                scales: {
-                    xTop: {scaleType: 'continuous', domain: chartData.getXDomain()},
-                    yLeft: {scaleType: 'discrete', tickFormat: function() {return '';}}
                 }
-            }
+            };
+            var gutterXWidth = plotConfig.width + (this.requireYGutter ? this.yGutterWidth : 0);
+            var gutterXAes = {
+                xTop: function(row) {return row.x;},
+                y: function(row) {return row.y;}
+            };
+            var gutterXScales = {
+                xTop: {scaleType: 'continuous', domain: chartData.getXDomain()},
+                yLeft: {scaleType: 'discrete', tickFormat: function() {return '';}}
+            };
+
+            gutterXPlotConfig = this.getGutterPlotConfig(gutterXMargins, this.xGutterHeight, gutterXWidth, yNullRows, gutterXAes, gutterXScales, gutterXLabels);
         }
 
         var gutterYPlotConfig;
         if(this.requireYGutter) {
             var gutterYMargins = {top: plotConfig.margins.top, left: 43, right: 20, bottom: plotConfig.margins.bottom};
-            gutterYPlotConfig = {
-                //renderTo: 'study-axis',
-                renderTo: this.plotEl.id,
-                rendererType: 'd3',
-                clipRect: false,
-                height: plotConfig.height,
-                width: this.yGutterWidth,
-                data: xNullRows,
-                margins: gutterYMargins,
-                labels: {
-                    x: {
-                        value: "Undefined X Value",
-                        fontSize: 12,
-                        position: 10,
-                        cls: "yGutter-label",
-                        listeners: {
-                            mouseover: function() {
-                                me._showWhyYGutter()},
-                            mouseout: function() {
-                                me._closeWhyYGutter()}
-                        }
+            var gutterYLabels = {
+                x: {
+                    value: "Undefined X Value",
+                    fontSize: 12,
+                    position: 10,
+                    cls: "yGutter-label",
+                    listeners: {
+                        mouseover: function() {me._showWhyYGutter()},
+                        mouseout: function() {me._closeWhyYGutter()}
                     }
-                },
-                aes: {
-                    x: function(row) {return row.x;},
-                    yRight: function(row) {return row.y;}
-                },
-                bgColor: '#FFFFFF', // $light-color
-                gridColor: '#FFFFFF', // $light-color
-                gridLineColor: '#F0F0F0', // $secondary-color
-                gridLineWidth: 1.25,
-                borderWidth: 2,
-                borderColor: '#CCC8C8', // $heat-scale-3
-                tickColor: '#FFFFFF', // $light-color
-                tickTextColor: this.labelTextColor, // $heat-scale-1
-                scales: {
-                    x: {scaleType: 'discrete', tickFormat: function() {return '';}},
-                    yRight: {scaleType: 'continuous', domain: chartData.getYDomain()}
                 }
-            }
+            };
+            var gutterYAes = {
+                x: function(row) {return row.x;},
+                yRight: function(row) {return row.y;}
+            };
+            var gutterYScales = {
+                x: {scaleType: 'discrete', tickFormat: function() {return '';}},
+                yRight: {scaleType: 'continuous', domain: chartData.getYDomain()}
+            };
+
+            gutterYPlotConfig = this.getGutterPlotConfig(gutterYMargins, plotConfig.height, this.yGutterWidth, xNullRows, gutterYAes, gutterYScales, gutterYLabels);
         }
 
         if (!noplot)
@@ -1181,10 +1145,10 @@ Ext.define('Connector.view.Chart', {
             layerScope.yGutterPlot = this.yGutterPlot;
             if (this.yGutterPlot) {
                 if(this.showPointsAsBin) {
-                    this.yGutterPlot.addLayer(this.getGutterBinLayer(layerScope));
+                    this.yGutterPlot.addLayer(this.getBinLayer(layerScope));
                 } else
                 {
-                    this.yGutterPlot.addLayer(this.getGutterPointLayer(layerScope));
+                    this.yGutterPlot.addLayer(this.getPointLayer(layerScope, 'jitter'));
                 }
                 try {
                     this.yGutterPlot.render();
@@ -1227,10 +1191,10 @@ Ext.define('Connector.view.Chart', {
             layerScope.xGutterPlot = this.xGutterPlot;
             if (this.xGutterPlot) {
                 if(this.showPointsAsBin) {
-                    this.xGutterPlot.addLayer(this.getGutterBinLayer(layerScope));
+                    this.xGutterPlot.addLayer(this.getBinLayer(layerScope));
                 } else
                 {
-                    this.xGutterPlot.addLayer(this.getGutterPointLayer(layerScope));
+                    this.xGutterPlot.addLayer(this.getPointLayer(layerScope, 'jitter'));
                 }
                 try {
                     this.xGutterPlot.render();
@@ -1379,39 +1343,33 @@ Ext.define('Connector.view.Chart', {
                 return isSubjectInMouseBin(d, 1, 0.15);
             };
 
-            this.plot.renderer.canvas.selectAll('.vis-bin path')
-                    .attr('style', colorFn)
-                    .attr('fill-opacity', opacityFn)
-                    .attr('stroke-opacity', opacityFn);
+            var bins = this.plot.renderer.canvas.selectAll('.vis-bin path');
+            if (this.requireXGutter && this.xGutterPlot)
+                bins[0] = bins[0].concat(this.xGutterPlot.renderer.canvas.selectAll('.vis-bin path')[0]);
 
-            if(this.requireXGutter && this.xGutterPlot)
-                this.xGutterPlot.renderer.canvas.selectAll('.vis-bin path')
-                    .attr('style', colorFn)
-                    .attr('fill-opacity', opacityFn)
-                    .attr('stroke-opacity', opacityFn);
+            if (this.requireYGutter && this.yGutterPlot)
+                bins[0] = bins[0].concat(this.yGutterPlot.renderer.canvas.selectAll('.vis-bin path')[0]);
 
-            if(this.requireYGutter && this.yGutterPlot)
-                this.yGutterPlot.renderer.canvas.selectAll('.vis-bin path')
-                    .attr('style', colorFn)
-                    .attr('fill-opacity', opacityFn)
-                    .attr('stroke-opacity', opacityFn);
+            bins.attr('style', colorFn)
+                .attr('fill-opacity', opacityFn)
+                .attr('stroke-opacity', opacityFn);
         }
     },
 
     clearHighlightBins : function () {
-        this.plot.renderer.canvas.selectAll('.vis-bin path')
-                .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
+        if (this.plot.renderer)
+        {
+            var bins = this.plot.renderer.canvas.selectAll('.vis-bin path');
+            if (this.requireXGutter && this.xGutterPlot)
+                bins[0] = bins[0].concat(this.xGutterPlot.renderer.canvas.selectAll('.vis-bin path')[0]);
+
+            if (this.requireYGutter && this.yGutterPlot)
+                bins[0] = bins[0].concat(this.yGutterPlot.renderer.canvas.selectAll('.vis-bin path')[0]);
+
+            bins.attr('style', function (d) {return d.origStyle || this.getAttribute('style');})
                 .attr('fill-opacity', 1).attr('stroke-opacity', 1);
 
-        if(this.requireXGutter && this.xGutterPlot)
-            this.xGutterPlot.renderer.canvas.selectAll('.vis-bin path')
-                    .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
-                    .attr('fill-opacity', 1).attr('stroke-opacity', 1);
-
-        if(this.requireYGutter && this.yGutterPlot)
-            this.yGutterPlot.renderer.canvas.selectAll('.vis-bin path')
-                    .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
-                    .attr('fill-opacity', 1).attr('stroke-opacity', 1);
+        }
     },
 
     clearHighlightedData : function () {
@@ -1505,23 +1463,18 @@ Ext.define('Connector.view.Chart', {
         };
 
         if (this.plot.renderer) {
-            this.plot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
+            var points = this.plot.renderer.canvas.selectAll('.point path');
+            if(this.requireXGutter && this.xGutterPlot)
+                points[0] = points[0].concat(this.xGutterPlot.renderer.canvas.selectAll('.point path')[0]);
+
+            if(this.requireYGutter && this.yGutterPlot)
+                points[0] = points[0].concat(this.yGutterPlot.renderer.canvas.selectAll('.point path')[0]);
+
+            points.attr('fill', colorFn)
                     .attr('stroke', colorFn)
                     .attr('fill-opacity', 0.5)
                     .attr('stroke-opacity', 0.5);
         }
-
-        if(this.requireXGutter && this.xGutterPlot)
-            this.xGutterPlot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
-                    .attr('stroke', colorFn)
-                    .attr('fill-opacity', 0.5)
-                    .attr('stroke-opacity', 0.5);
-
-        if(this.requireYGutter && this.yGutterPlot)
-            this.yGutterPlot.renderer.canvas.selectAll('.point path').attr('fill', colorFn)
-                    .attr('stroke', colorFn)
-                    .attr('fill-opacity', 0.5)
-                    .attr('stroke-opacity', 0.5);
     },
 
     highlightSelected : function () {
@@ -2094,7 +2047,7 @@ Ext.define('Connector.view.Chart', {
             content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, ' +
             'analysis or other factors.<br><br>Percent with undefined y value: ' + this.percentXGutterUndef + "%",
             xOffset: -20
-        })
+        });
 
         this.on('hidexguttermsg', function() {
             calloutMgr.removeCallout(_id);
@@ -2117,7 +2070,7 @@ Ext.define('Connector.view.Chart', {
             content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, ' +
             'analysis or other factors.<br><br>Percent with undefined x value: ' + this.percentYGutterUndef + "%",
             arrowOffset: 40
-        })
+        });
 
         this.on('hideyguttermsg', function() {
             calloutMgr.removeCallout(_id);
@@ -3186,7 +3139,7 @@ Ext.define('Connector.view.Chart', {
 
     resizePlotContainers : function(numStudies) {
         if (this.requireStudyAxis && this.hasStudyAxisData) {
-            this.plotEl.setStyle('padding', '0 0 0 150px');
+            this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
             this.getStudyAxisPanel().setHeight(Math.min(100, 27 * numStudies));
         }
