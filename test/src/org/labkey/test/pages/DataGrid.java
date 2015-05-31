@@ -163,7 +163,7 @@ public class DataGrid
 
     public void assertCurrentPage(int page)
     {
-        _test.waitForFormElementToEqual(Locators.currentPage, Integer.toString(page));
+        _test.assertElementContains(Locators.currentPage, Integer.toString(page));
     }
 
     public void assertSortPresent(String columnName)
@@ -206,12 +206,6 @@ public class DataGrid
         }
     }
 
-    public void setCurrentPage(int page)
-    {
-        _test.setFormElement(Locators.currentPage, Integer.toString(page));
-        _test.pressEnter(Locators.currentPage);
-    }
-
     public File exportGrid()
     {
         return _test.clickAndWaitForDownload(Locator.css("a.gridexportbtn"));
@@ -227,13 +221,43 @@ public class DataGrid
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
+    public void goToLastPage() {
+        _test.click(Locators.lastPage);
+    }
+
+    public void goToFirstPage() {
+        _test.click(Locators.firstPage);
+    }
+
+    public void clickPreviousBtn() {
+        _test.click(Locators.previousBtn);
+    }
+
+    public void clickNextBtn() {
+        _test.click(Locators.nextBtn);
+    }
+
+    public void goToPreviousPage() {
+        _test.click(Locators.previousPage);
+    }
+
+    public void goToNextPage() {
+        _test.click(Locators.nextPage);
+    }
+
     public static class Locators
     {
         public static Locator.CssLocator grid = Locator.css("div.connector-grid");
         public static Locator.CssLocator dataRow = grid.append(Locator.css("tr.x-grid-data-row"));
         public static Locator.CssLocator sysmsg = Locator.css("div.sysmsg");
-        public static Locator.CssLocator totalPages = Locator.css("label.x-box-item");
-        public static Locator.CssLocator currentPage = Locator.css("input.x-form-field");
+        public static Locator.CssLocator totalPages = Locator.css("span.x-btn-inner.x-btn-inner-center");
+        public static Locator.CssLocator currentPage = Locator.css("a.x-btn-paging-widget-pages-small.selected span.x-btn-inner");
+        public static Locator.CssLocator lastPage = Locator.css("a.pager-last");
+        public static Locator.CssLocator firstPage = Locator.css("a.pager-first");
+        public static Locator.CssLocator previousBtn = Locator.css("a.paging-back-button");
+        public static Locator.CssLocator nextBtn = Locator.css("a.paging-next-button");
+        public static Locator.CssLocator previousPage = Locator.css("a.pager-previous");
+        public static Locator.CssLocator nextPage = Locator.css("a.pager-next");
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {
