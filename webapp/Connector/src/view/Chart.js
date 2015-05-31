@@ -664,7 +664,7 @@ Ext.define('Connector.view.Chart', {
         if (LABKEY.devMode) {
             console.log('plotted rows:', rows.length);
         }
-        this.showPointsAsBin = rows.length > this.binRowLimit;
+        this.showPointsAsBin = (rows.length + (xNullRows?xNullRows.length:0) + (yNullRows?yNullRows.length:0)) > this.binRowLimit;
 
         // only call handlers when state has changed
         if (lastShowPointsAsBin != this.showPointsAsBin) {
