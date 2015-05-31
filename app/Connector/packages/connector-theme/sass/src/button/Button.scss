@@ -5,6 +5,67 @@ a.x-btn {
   }
 }
 
+@include extjs-button-ui (
+  $ui: 'paging-widget-pages-small',
+
+  $border-radius : 10px,
+
+  $background-color: #FFFFFF,
+  $background-color-over: #a1d9da,
+
+  $border-width : 0px,
+  $text-padding: 0px,
+
+  $font-size : 11px,
+  $font-family: $info-font,
+  $font-family-over: $info-font,
+  $font-family-focus: $info-font,
+  $font-family-pressed: $info-font,
+  $font-family-disabled: $info-font,
+
+  $glyph-color : #FFFFFF
+);
+
+.x-btn-paging-widget-pages-small {
+  margin: 2px 0 0 0 !important;
+  padding: 4px 6px 4px 5px !important;
+  height: 20px;
+  width: auto;
+}
+
+.x-btn-paging-widget-pages-small:hover .x-btn-inner {
+  color: #222222; /* Fallback for older browsers */
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.x-btn-paging-widget-pages-small:active .x-btn-inner {
+  color: #FFFFFF; /* Fallback for older browsers */
+  color: white; /* Fallback for older browsers */
+  color: rgba(255, 255, 255, 1) !important;
+}
+
+.x-btn-paging-widget-pages-small .x-btn-inner {
+  color: #777777; /* Fallback for older browsers */
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.x-btn-paging-widget-pages-disabled {
+  cursor: default !important;
+}
+
+.x-btn.x-item-disabled {
+  cursor: default !important;
+}
+
+.x-btn-paging-widget-pages-small.selected {
+  background-color: #14c9cc !important;
+
+  .x-btn-inner {
+    color: #FFFFFF; /* Fallback for older browsers */
+    color: rgba(255, 255, 255, 1) !important;
+  }
+}
+
 /* Connector.button.RoundedButton */
 @include extjs-button-ui (
   $ui: 'rounded-small',
@@ -137,7 +198,7 @@ a.x-btn {
 .x-btn-dropdown-small {
   height: 24px;
   width: 24px;
-  padding: 3px 0px 0px 1px;
+  padding: 3px 0 0 1px;
 
   .x-btn-arrow {
     background-image: none;
@@ -380,7 +441,7 @@ a.x-btn {
 .x-btn-rounded-accent-small {
   padding: 5px 5px 4px 5px;
   background-image: none;
-  border-width: 0px;
+  border-width: 0;
 }
 
 .x-btn-rounded-small.contrast {
@@ -457,8 +518,8 @@ input.x-btn-rounded-inverted-accent-small {
 }
 
 .x-btn-rounded-inverted-accent-icon-small {
-  padding: 0px 4px 1px 2px;
-  top: 0px;
+  padding: 0 4px 1px 2px;
+  top: 0;
 
   .info {
     top: -4px;
