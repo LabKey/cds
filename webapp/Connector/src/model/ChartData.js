@@ -24,6 +24,8 @@ Ext.define('Connector.model.ChartData', {
         {name : 'visitMap', defaultValue: {}},
         {name : 'xNullMap', defaultValue: {}},
         {name : 'yNullMap', defaultValue: {}},
+        {name : 'xDomain', defaultValue: [0,0]},
+        {name : 'yDomain', defaultValue: [0,0]},
         {name : 'percentXNulls', defaultValue: 0},
         {name : 'percentYNulls', defaultValue: 0}
     ],
@@ -198,7 +200,7 @@ Ext.define('Connector.model.ChartData', {
                 rows = this.getDataRows(),
                 len = rows.length,
                 validCount = 0,
-                xDomain = [0,0], yDomain = [0,0];
+                xDomain = [null,null], yDomain = [null,null];
 
         var xVal, yVal, colorVal, xIsNum, yIsNum, negX = false, negY = false, xAntigen, yAntigen;
         for (r = 0; r < len; r++) {
@@ -218,9 +220,9 @@ Ext.define('Connector.model.ChartData', {
                     xAntigen = rows[r][mTC[x.options.antigen.name]].value;
                 }
                 if(Ext.typeOf(xVal) === "number") {
-                    if(xVal < xDomain[0])
+                    if(xDomain[0] == null || xVal < xDomain[0])
                         xDomain[0] = xVal;
-                    if(xVal > xDomain[1])
+                    if(xDomain[1] == null || xVal > xDomain[1])
                         xDomain[1] = xVal;
                 }
             }
@@ -230,9 +232,9 @@ Ext.define('Connector.model.ChartData', {
 
             yVal = this._getValue(y, _yid, rows[r]);
             if(Ext.typeOf(yVal) === "number") {
-                if(yVal < yDomain[0])
+                if(yDomain[0] == null || yVal < yDomain[0])
                     yDomain[0] = yVal;
-                if(yVal > yDomain[1])
+                if(yDomain[1] == null || yVal > yDomain[1])
                     yDomain[1] = yVal;
             }
             yAntigen = rows[r][_yid].antigen;

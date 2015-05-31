@@ -836,7 +836,7 @@ Ext.define('Connector.view.Chart', {
                 },
                 margins: gutterXMargins,
                 height: this.xGutterHeight,
-                width: plotConfig.width + (this.requireYGutter ? this.yGutterWidth : 25),
+                width: plotConfig.width + (this.requireYGutter ? this.yGutterWidth : 0),
                 data: yNullRows,
                 aes: {
                     xTop: function(row) {return row.x;},
