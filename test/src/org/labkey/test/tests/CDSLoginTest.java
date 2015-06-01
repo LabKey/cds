@@ -35,7 +35,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 
-@Category({CustomModules.class, CDS.class})
+@Category({CDS.class})
 public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private final CDSHelper _cds = new CDSHelper(this);

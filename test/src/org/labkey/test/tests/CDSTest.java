@@ -50,7 +50,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@Category({CustomModules.class, CDS.class})
+@Category({CDS.class})
 public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private static final String GROUP_NULL = "Group creation cancelled";

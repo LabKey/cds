@@ -61,7 +61,7 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 
-@Category({CustomModules.class, CDS.class})
+@Category({CDS.class})
 public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
