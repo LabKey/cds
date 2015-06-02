@@ -23,41 +23,41 @@
                 <Level name="Subject" visible="true" column="ParticipantId" type="String" uniqueMembers="false" />
             </Hierarchy>
             <Hierarchy name="Race" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographic" schema="study"/>
+                <Table name="demographics" schema="study"/>
                 <Level name="Race" visible="true" type="String" uniqueMembers="true">
                     <KeyExpression><SQL>IFDEFINED(race)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
             <Hierarchy name="Sex" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographic" schema="study"/>
+                <Table name="demographics" schema="study"/>
                 <Level name="Sex" visible="true" type="String" uniqueMembers="true">
                     <KeyExpression><SQL>IFDEFINED(sexatbirth)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
             <Hierarchy name="Age" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographic" schema="study"/>
-                <Level name="AgeDecadeBucket" visible="true" column="agegroup" type="Integer" uniqueMembers="true"/>
-                <Level name="Age" visible="true" column="age" type="Integer" uniqueMembers="true"/>
+                <Table name="demographics" schema="study"/>
+                <Level name="AgeDecadeBucket" visible="true" column="agegroup_enrollment" type="Integer" uniqueMembers="true"/>
+                <Level name="Age" visible="true" column="age_enrollment" type="Integer" uniqueMembers="true"/>
             </Hierarchy>
             <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographic" schema="study"/>
+                <Table name="demographics" schema="study"/>
                 <Level name="Ethnicity" visible="true" type="String" uniqueMembers="true">
                     <KeyExpression><SQL>IFDEFINED(ethnicity)</SQL></KeyExpression>
                 </Level>
             </Hierarchy>
             <Hierarchy name="Country" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographic" schema="study"/>
-                <Level name="Country" visible="true" column="country" type="String" uniqueMembers="true" />
+                <Table name="demographics" schema="study"/>
+                <Level name="Country" visible="true" column="country_enrollment" type="String" uniqueMembers="true" />
             </Hierarchy>
             <Hierarchy name="Species" visible="true" hasAll="true" primaryKey="subjectid">
-                <Table name="demographic" schema="study"/>
+                <Table name="demographics" schema="study"/>
                 <Level name="Species" visible="true" column="species" type="String" uniqueMembers="true" />
                 <Level name="Subspecies" visible="true" column="subspecies" type="String" uniqueMembers="true" />
             </Hierarchy>
 
         </Dimension>
 
-        <Dimension visible="true" highCardinality="false" name="Study" foreignKey="participantid">
+        <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
 
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="container">
                 <Table name="study" schema="cds"/>
@@ -68,6 +68,11 @@
             <Hierarchy name="Network" visible="true" hasAll="true" primaryKey="container">
                 <Table name="study" schema="cds"/>
                 <Level name="Network" visible="true" column="network" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+            <Hierarchy name="Treatment" visible="true" hasAll="true" primaryKey="container">
+                <Table name="study" schema="cds"/>
                 <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
