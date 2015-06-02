@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-public class PopulateDemograhicsTask extends AbstractPopulateTask
+public class PopulateDemographicsTask extends AbstractPopulateTask
 {
     protected void populate(Logger logger) throws PipelineJobException
     {
@@ -57,11 +57,12 @@ public class PopulateDemograhicsTask extends AbstractPopulateTask
             {
                 try
                 {
-                    TableInfo demographicsTI = DefaultSchema.get(user, container).getSchema("study").getTable("Demographic");
+                    TableInfo demographicsTI = DefaultSchema.get(user, container).getSchema("study").getTable("Demographics");
 
                     sql = new SQLFragment("SELECT * FROM ").append(demographicsTI);
                     Map<String, Object>[] allRows = new SqlSelector(demographicsTI.getSchema(), sql).getMapArray();
-                    demographicsTI.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);
+                    if (allRows.length > 0)
+                        demographicsTI.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);
 
                     demographicsTI.getUpdateService().insertRows(user, container, Arrays.asList(subjects), errors, null, null);
                 }

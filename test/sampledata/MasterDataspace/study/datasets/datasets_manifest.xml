@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasets metaDataFile="datasets_metadata.xml" xmlns="http://labkey.org/study/xml">
   <datasets>
-    <dataset name="Demographic" id="5001" demographicData="true" type="Standard">
+    <dataset name="Demographics" id="5001" demographicData="true" type="Standard">
       <tags/>
     </dataset>
     <dataset name="ICS" id="5002" type="Standard">

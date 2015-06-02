@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tables xmlns="http://labkey.org/data/xml">
-  <table tableName="Demographic" tableDbType="TABLE">
+  <table tableName="Demographics" tableDbType="TABLE">
     <description>Contains up to one row of Demographic data for each Subject combination.</description>
     <columns>
       <column columnName="SubjectId">
@@ -45,36 +45,33 @@
       </column>
       <column columnName="ethnicity">
         <datatype>varchar</datatype>
-        <columnTitle>Ethnicity</columnTitle>
+        <columnTitle>Hispanic</columnTitle>
         <dimension>true</dimension>
       </column>
-      <column columnName="country">
+      <column columnName="country_enrollment">
         <datatype>varchar</datatype>
-        <columnTitle>Country</columnTitle>
+        <columnTitle>Country at Enrollment</columnTitle>
         <dimension>true</dimension>
       </column>
-      <column columnName="circumcisionstatusenrollment">
+      <column columnName="circumcised_enrollment">
         <datatype>varchar</datatype>
-        <columnTitle>Circumcisionstatusenrollment</columnTitle>
+        <columnTitle>Circumcised at Enrollment</columnTitle>
+        <dimension>true</dimension>
       </column>
-      <column columnName="protocolcompletion">
-        <datatype>varchar</datatype>
-        <columnTitle>Protocolcompletion</columnTitle>
+      <column columnName="bmi_enrollment">
+        <datatype>double</datatype>
+        <columnTitle>BMI at Enrollment</columnTitle>
       </column>
-      <column columnName="bmi">
+      <column columnName="agegroup_enrollment">
         <datatype>integer</datatype>
-        <columnTitle>Bmi</columnTitle>
+        <columnTitle>Age Group at Enrollment</columnTitle>
       </column>
-      <column columnName="agegroup">
+      <column columnName="age_enrollment">
         <datatype>integer</datatype>
-        <columnTitle>Agegroup</columnTitle>
-      </column>
-      <column columnName="age">
-        <datatype>integer</datatype>
-        <columnTitle>Age</columnTitle>
+        <columnTitle>Age at Enrollment</columnTitle>
       </column>
     </columns>
-    <tableTitle>Demographic</tableTitle>
+    <tableTitle>Demographics</tableTitle>
   </table>
   <table tableName="ICS" tableDbType="TABLE">
     <description>Contains up to one row of ICS (Intracellular Cytokine Staining) data for each Subject/Visit combination.</description>

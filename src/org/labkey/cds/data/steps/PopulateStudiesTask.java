@@ -26,6 +26,7 @@ import org.labkey.cds.CDSSimpleTable;
 import org.labkey.cds.CDSUserSchema;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,7 +65,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                 {
                     c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
                     c.setFolderType(FolderTypeManager.get().getFolderType("Study"), user);
-                    StudyService.get().createStudy(c, user, studyName, TimepointType.DATE, false);
+                    StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
                     created++;
                 }
             }
@@ -155,7 +156,6 @@ public class PopulateStudiesTask extends AbstractPopulateTask
     }
 
 
-    @Nullable
     private Map<String, Map<String, Object>> getStudies(Container project, User user, Logger logger)
     {
         QueryService queryService = QueryService.get();
@@ -167,12 +167,12 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         if (!qerrors.isEmpty())
         {
             // TODO: Process errors to logger?
-            return null;
+            return Collections.emptyMap();
         }
         else if (null == tiImportStudy)
         {
             logger.error("Unable to find source query for studies.");
-            return null;
+            return Collections.emptyMap();
         }
 
         ((ContainerFilterable) tiImportStudy).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));

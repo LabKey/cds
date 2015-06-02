@@ -8,7 +8,7 @@
             </taskref>
         </transform>
         <transform id="PopulateDemographics" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.PopulateDemograhicsTask">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDemographicsTask">
             </taskref>
         </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">
