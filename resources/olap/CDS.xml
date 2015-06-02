@@ -59,6 +59,11 @@
 
         <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
 
+            <Hierarchy visible="true" hasAll="true" primaryKey="container">
+                <Table name="study" schema="cds"/>
+                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="container">
                 <Table name="study" schema="cds"/>
                 <Level name="Type" visible="true" column="type" type="String" uniqueMembers="true" />
