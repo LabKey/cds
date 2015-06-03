@@ -389,7 +389,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.xGutterPlot) {
-            this.xGutterPlot.setSize(size.width + (this.requireYGutter ? this.yGutterWidth : 25), this.xGutterHeight, true)
+            this.xGutterPlot.setSize(size.width + (this.requireYGutter ? this.yGutterWidth : 0), this.xGutterHeight, true)
         }
 
         if (this.yGutterPlot) {
@@ -1120,7 +1120,7 @@ Ext.define('Connector.view.Chart', {
 
                     // reset bins
                     selections[0].selectAll('.vis-bin path')
-                            .attr('style', function(d) { return d.origStyle })
+                            .attr('style', function(d) { return d.origStyle || this.getAttribute('style') })
                             .attr('fill-opacity', 1).attr('stroke-opacity', 1);
                 }
             };
