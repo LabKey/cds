@@ -219,7 +219,7 @@ Ext.define('Connector.model.ChartData', {
                 if (!xAntigen && x.options.antigen && rows[r][mTC[x.options.antigen.name]]) {
                     xAntigen = rows[r][mTC[x.options.antigen.name]].value;
                 }
-                if(Ext.typeOf(xVal) === "number") {
+                if(Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
                     if(xDomain[0] == null || xVal < xDomain[0])
                         xDomain[0] = xVal;
                     if(xDomain[1] == null || xVal > xDomain[1])
@@ -231,7 +231,7 @@ Ext.define('Connector.model.ChartData', {
             }
 
             yVal = this._getValue(y, _yid, rows[r]);
-            if(Ext.typeOf(yVal) === "number") {
+            if(Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date") {
                 if(yDomain[0] == null || yVal < yDomain[0])
                     yDomain[0] = yVal;
                 if(yDomain[1] == null || yVal > yDomain[1])
