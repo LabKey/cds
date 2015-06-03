@@ -619,7 +619,6 @@ Ext.define('Connector.view.Chart', {
                 yAxisMargin = 4;
             else
                 yAxisMargin = 5;
-            //yAxisMargin = (yAxisMargin > 5 ? 6 * 6 : yAxisMargin * 6) + 10;
             yAxisMargin = (Math.min(yAxisMargin, 6) * 6) + 10;
         }
         else {
@@ -831,10 +830,25 @@ Ext.define('Connector.view.Chart', {
                 xTop: function(row) {return row.x;},
                 y: function(row) {return row.y;}
             };
+            if (this.measures[2]) {
+                gutterXAes.color = function(row) {return row.color};
+                gutterXAes.shape = function(row) {return row.color};
+            }
             var gutterXScales = {
                 xTop: {scaleType: 'continuous', domain: chartData.getXDomain()},
                 yLeft: {scaleType: 'discrete', tickFormat: function() {return '';}}
             };
+
+            if (this.measures[2]) {
+                gutterXScales.color = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceColor()
+                };
+                gutterXScales.shape = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceShape()
+                };
+            }
 
             gutterXPlotConfig = this.getGutterPlotConfig(gutterXMargins, this.xGutterHeight, gutterXWidth, yNullRows, gutterXAes, gutterXScales, gutterXLabels);
         }
@@ -858,10 +872,25 @@ Ext.define('Connector.view.Chart', {
                 x: function(row) {return row.x;},
                 yRight: function(row) {return row.y;}
             };
+            if (this.measures[2]) {
+                gutterYAes.color = function(row) {return row.color};
+                gutterYAes.shape = function(row) {return row.color};
+            }
             var gutterYScales = {
                 x: {scaleType: 'discrete', tickFormat: function() {return '';}},
                 yRight: {scaleType: 'continuous', domain: chartData.getYDomain()}
             };
+
+            if (this.measures[2]) {
+                gutterYScales.color = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceColor()
+                };
+                gutterYScales.shape = {
+                    scaleType: 'discrete',
+                    range: LABKEY.vis.Scale.DataspaceShape()
+                };
+            }
 
             gutterYPlotConfig = this.getGutterPlotConfig(gutterYMargins, plotConfig.height, this.yGutterWidth, xNullRows, gutterYAes, gutterYScales, gutterYLabels);
         }
