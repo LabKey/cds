@@ -26,49 +26,59 @@
       <column columnName="species">
         <datatype>varchar</datatype>
         <columnTitle>Species</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="subspecies">
         <datatype>varchar</datatype>
         <columnTitle>Subspecies</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="sexatbirth">
         <datatype>varchar</datatype>
         <columnTitle>Sexatbirth</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="race">
         <datatype>varchar</datatype>
         <columnTitle>Race</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="ethnicity">
         <datatype>varchar</datatype>
         <columnTitle>Hispanic</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="country_enrollment">
         <datatype>varchar</datatype>
         <columnTitle>Country at Enrollment</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="circumcised_enrollment">
         <datatype>varchar</datatype>
         <columnTitle>Circumcised at Enrollment</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="bmi_enrollment">
         <datatype>double</datatype>
         <columnTitle>BMI at Enrollment</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="agegroup_enrollment">
         <datatype>integer</datatype>
         <columnTitle>Age Group at Enrollment</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
       <column columnName="age_enrollment">
         <datatype>integer</datatype>
         <columnTitle>Age at Enrollment</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
     </columns>
     <tableTitle>Demographics</tableTitle>
@@ -107,62 +117,65 @@
         <columnTitle>Date</columnTitle>
         <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
       </column>
-      <column columnName="celltype">
+      <column columnName="third_key">
         <datatype>varchar</datatype>
-        <columnTitle>Celltype</columnTitle>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <isKeyField>true</isKeyField>
+      </column>
+      <column columnName="visit_day">
+        <datatype>integer</datatype>
+        <columnTitle>Protocol Visit Day</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="cell_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Cell Type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigenpanel">
+      <column columnName="antigen_panel">
         <datatype>varchar</datatype>
-        <columnTitle>Antigenpanel</columnTitle>
+        <columnTitle>Antigen Panel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigensubpanel">
+      <column columnName="antigen_subpanel">
         <datatype>varchar</datatype>
-        <columnTitle>Antigensubpanel</columnTitle>
+        <columnTitle>Antigen Subpanel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="specimentype">
+      <column columnName="specimen_type">
         <datatype>varchar</datatype>
-        <columnTitle>Specimentype</columnTitle>
+        <columnTitle>Specimen Type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="responsecall">
-        <datatype>boolean</datatype>
-        <columnTitle>Responsecall</columnTitle>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="functionalmarkertype">
+      <column columnName="functional_marker_name">
         <datatype>varchar</datatype>
-        <columnTitle>Functionalmarkertype</columnTitle>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="functionalmarkername">
-        <datatype>varchar</datatype>
-        <columnTitle>Functionalmarkername</columnTitle>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="datasummarylevel">
-        <datatype>varchar</datatype>
-        <columnTitle>Datasummarylevel</columnTitle>
+        <columnTitle>Functional Marker Name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
-        <datatype>varchar</datatype>
+        <datatype>integer</datatype>
         <columnTitle>Lab</columnTitle>
-        <dimension>true</dimension>
       </column>
-      <column columnName="magnitudebg">
+      <column columnName="magnitude_background">
         <datatype>double</datatype>
-        <columnTitle>Magnitudebg</columnTitle>
+        <columnTitle>Magnitude Background</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
-      <column columnName="magnituderaw">
+      <column columnName="magnitude_raw">
         <datatype>double</datatype>
-        <columnTitle>Magnituderaw</columnTitle>
+        <columnTitle>Magnitude Raw</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
-      <column columnName="magnitudebgsubtracted">
+      <column columnName="magnitude">
         <datatype>double</datatype>
-        <columnTitle>Magnitudebgsubtracted</columnTitle>
+        <columnTitle>Magnitude</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
     <tableTitle>Intracellular Cytokine Staining</tableTitle>
@@ -204,54 +217,65 @@
       <column columnName="antigenpanel">
         <datatype>varchar</datatype>
         <columnTitle>Antigenpanel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="antigensubpanel">
         <datatype>varchar</datatype>
         <columnTitle>Antigensubpanel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="specimentype">
         <datatype>varchar</datatype>
         <columnTitle>Specimentype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="datasummarylevel">
         <datatype>varchar</datatype>
         <columnTitle>Datasummarylevel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="responsecall">
         <datatype>boolean</datatype>
         <columnTitle>Responsecall</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="functionalmarkertype">
         <datatype>varchar</datatype>
         <columnTitle>Functionalmarkertype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="functionalmarkername">
         <datatype>varchar</datatype>
         <columnTitle>Functionalmarkername</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
         <datatype>varchar</datatype>
         <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="magnitudebg">
         <datatype>double</datatype>
         <columnTitle>Magnitudebg</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="magnituderaw">
         <datatype>double</datatype>
         <columnTitle>Magnituderaw</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="magnitudebgsubtracted">
         <datatype>double</datatype>
         <columnTitle>Magnitudebgsubtracted</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
     <tableTitle>Enzyme-Linked ImmunoSpot</tableTitle>
@@ -293,45 +317,54 @@
       <column columnName="targetcell">
         <datatype>varchar</datatype>
         <columnTitle>Targetcell</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="specimentype">
         <datatype>varchar</datatype>
         <columnTitle>Specimentype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="responsecall">
         <datatype>boolean</datatype>
         <columnTitle>Responsecall</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="antigenclade">
         <datatype>varchar</datatype>
         <columnTitle>Antigenclade</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="envelopeisolatename">
         <datatype>varchar</datatype>
         <columnTitle>Envelopeisolatename</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="envelopeneutralizationtier">
         <datatype>varchar</datatype>
         <columnTitle>Envelopeneutralizationtier</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
         <datatype>varchar</datatype>
         <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="titeric50">
         <datatype>double</datatype>
         <columnTitle>Titeric50</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="titeric80">
         <datatype>double</datatype>
         <columnTitle>Titeric80</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
     <tableTitle>Neutralizing antibody</tableTitle>
@@ -373,26 +406,31 @@
       <column columnName="ad5neutralizingantibody">
         <datatype>varchar</datatype>
         <columnTitle>Ad5neutralizingantibody</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="specimentype">
         <datatype>varchar</datatype>
         <columnTitle>Specimentype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="responsecall">
         <datatype>boolean</datatype>
         <columnTitle>Responsecall</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
         <datatype>varchar</datatype>
         <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="titeric50">
         <datatype>double</datatype>
         <columnTitle>Titeric50</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
     <tableTitle>Adenovirus Type 5</tableTitle>
@@ -434,54 +472,65 @@
       <column columnName="specimentype">
         <datatype>varchar</datatype>
         <columnTitle>Specimentype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="isotype">
         <datatype>varchar</datatype>
         <columnTitle>Isotype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="dilution">
         <datatype>varchar</datatype>
         <columnTitle>Dilution</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="antigenname">
         <datatype>varchar</datatype>
         <columnTitle>Antigenname</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="instrumenttype">
         <datatype>varchar</datatype>
         <columnTitle>Instrumenttype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="detectiontype">
         <datatype>varchar</datatype>
         <columnTitle>Detectiontype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="responsecall">
         <datatype>boolean</datatype>
         <columnTitle>Responsecall</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
         <datatype>varchar</datatype>
         <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="magnitudebg">
         <datatype>double</datatype>
         <columnTitle>Magnitudebg</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="magnituderaw">
         <datatype>double</datatype>
         <columnTitle>Magnituderaw</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="magnitudebgsubtracted">
         <datatype>double</datatype>
         <columnTitle>Magnitudebgsubtracted</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
     <tableTitle>Binding Ab multiplex assay</tableTitle>

@@ -11,16 +11,17 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateDemographicsTask">
             </taskref>
         </transform>
+        <transform id="PopulateICS" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_ics"/>
+                    <setting name="targetDataset" value="ICS" />
+                </settings>
+            </taskref>
+        </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask" />
         </transform>
-        <!--<transform id="studies" type="org.labkey.di.pipeline.TransformTask">-->
-            <!--<source schemaName="study" queryName="ds_study" containerFilter="CurrentAndSubfolders" />-->
-            <!--<destination schemaName="cds" queryName="study" targetOption="truncate" />-->
-        <!--</transform>-->
-        <!--<transform id="demographics" type="DataspaceQueryTransformStep">-->
-            <!--<source schemaName="study" queryName="ds_demographics" /> &lt;!&ndash;containerColumnName="prot"&ndash;&gt;-->
-            <!--<destination schemaName="study" queryName="demographic" targetOption="truncate" />-->
-        <!--</transform>-->
     </transforms>
 </etl>
