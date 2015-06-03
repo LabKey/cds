@@ -630,7 +630,7 @@ Ext.define('Connector.view.Chart', {
             noplot = false;
         }
 
-        if (!rows || !rows.length) {
+        if ((!rows || !rows.length) && (!yNullRows || !yNullRows.length) && (!xNullRows || !xNullRows.length)) {
             this.showMessage('No information available to plot.', true);
             this.fireEvent('hideload', this);
             this.plot = null;
