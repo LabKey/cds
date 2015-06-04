@@ -246,24 +246,30 @@ CREATE TABLE cds.import_ICS (
 
 
 CREATE TABLE cds.import_NAb (
+
+  -- KEYS
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
+  nab_lab_source_key INTEGER, -- TODO: Consider FK to import_Lab
   specimen_type VARCHAR(250),
   assay_identifier VARCHAR(250),
-  lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
-  target_cell VARCHAR(250),
-  isolate_name VARCHAR(250),
-  isolate_clade VARCHAR(250),
-  isolate_tier VARCHAR(250),
-  antibody VARCHAR(250),
+--   data_summary_level VARCHAR(250), -- Missing in 1.0
+--   target_cell VARCHAR(250), -- Replaced by assay_identifier in 1.0
+  antigen_isolate_name VARCHAR(250),
+  antigen_isolate_clade VARCHAR(250),
+  antigen_neutralization_tier VARCHAR(250),
 
+  -- ADDITIONAL DIMENSIONS
+  analyte VARCHAR(250),
+  nab_magnitude_report_method VARCHAR(250),
+
+  -- MEASURES
+  nab_magnitude INTEGER,
   nab_response BOOLEAN,
-  nab_ic50 NUMERIC(15,4),
-  nab_ic80 NUMERIC(15,4),
-  nab_magnitude_unit VARCHAR(20),
 
-  CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
+--   CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day, nab_lab_source_key, assay_identifier, specimen_type, antigen_isolate_clade, antigen_neutralization_tier, antigen_isolate_name)
+  CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day, nab_lab_source_key, assay_identifier, specimen_type, antigen_isolate_name)
 );
 
 CREATE TABLE cds.import_ELS_IFNg (

@@ -1,1 +1,1 @@
-SubjectId	SequenceNum	date	QCStateLabel	targetcell	specimentype	responsecall	antigenclade	envelopeisolatename	envelopeneutralizationtier	lab	titeric50	titeric80
+SubjectId	SequenceNum	date	QCStateLabel	third_key	visit_day	assay_identifier	lab	specimen_type	antigen_isolate_clade	antigen_neutralization_tier	antigen_isolate_name	nab_magnitude	response_call

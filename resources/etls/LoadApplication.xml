@@ -20,6 +20,15 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateNAB" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_nab"/>
+                    <setting name="targetDataset" value="NAb" />
+                </settings>
+            </taskref>
+        </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask" />
         </transform>

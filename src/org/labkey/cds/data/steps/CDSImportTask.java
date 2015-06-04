@@ -56,7 +56,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("ICS"),
 //        new TSVCopyConfig("ELS_IFNg"),
-//        new TSVCopyConfig("NAb"),
+        new TSVCopyConfig("NAB"),
 //        new TSVCopyConfig("BAMA")
     };
 

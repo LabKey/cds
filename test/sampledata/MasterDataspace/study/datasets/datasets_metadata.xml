@@ -314,57 +314,70 @@
         <columnTitle>Date</columnTitle>
         <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
       </column>
-      <column columnName="targetcell">
+      <column columnName="third_key">
         <datatype>varchar</datatype>
-        <columnTitle>Targetcell</columnTitle>
+        <columnTitle>Third Key</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
+        <isKeyField>true</isKeyField>
       </column>
-      <column columnName="specimentype">
+      <column columnName="visit_day">
+        <datatype>integer</datatype>
+        <columnTitle>Visit Day</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="assay_identifier">
         <datatype>varchar</datatype>
-        <columnTitle>Specimentype</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="responsecall">
-        <datatype>boolean</datatype>
-        <columnTitle>Responsecall</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="antigenclade">
-        <datatype>varchar</datatype>
-        <columnTitle>Antigenclade</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="envelopeisolatename">
-        <datatype>varchar</datatype>
-        <columnTitle>Envelopeisolatename</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="envelopeneutralizationtier">
-        <datatype>varchar</datatype>
-        <columnTitle>Envelopeneutralizationtier</columnTitle>
+        <columnTitle>Assay Identifier</columnTitle>
+        <description>Name identifying assay</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
-        <datatype>varchar</datatype>
+        <datatype>integer</datatype>
         <columnTitle>Lab</columnTitle>
+        <description>Details regarding the provenance of the assay results.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="specimen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimen type</columnTitle>
+        <description>The type of specimen used in the assay. For NAb assays (Ad5 and HIV), this is generally serum or plasma.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="titeric50">
-        <datatype>double</datatype>
-        <columnTitle>Titeric50</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      <column columnName="antigen_isolate_clade">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen Clade</columnTitle>
+        <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
-      <column columnName="titeric80">
-        <datatype>double</datatype>
-        <columnTitle>Titeric80</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      <column columnName="antigen_neutralization_tier">
+        <datatype>varchar</datatype>
+        <columnTitle>Envelope Neutralization Tier</columnTitle>
+        <description>A classification specfic to HIV NAb assay design, in which an antigen is assessed for its ease of neutralization (1=most easily neutralized, 3=least easily neutralized)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigen_isolate_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Envelope Isolate Name</columnTitle>
+        <description>The name of the ENV isolate used in the construction of the NAb antigen.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="nab_magnitude">
+        <datatype>integer</datatype>
+        <columnTitle>Magnitude</columnTitle>
+        <description>Titer calculated at the specified inhibitory concentration.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="response_call">
+        <datatype>boolean</datatype>
+        <columnTitle>Response call</columnTitle>
+        <description>Indicates if neutralization is detected.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <dimension>true</dimension>
       </column>
     </columns>
     <tableTitle>Neutralizing antibody</tableTitle>
