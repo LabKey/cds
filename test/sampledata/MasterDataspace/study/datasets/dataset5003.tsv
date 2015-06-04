@@ -1,1 +1,1 @@
-SubjectId	SequenceNum	date	QCStateLabel	antigenpanel	antigensubpanel	specimentype	datasummarylevel	responsecall	functionalmarkertype	functionalmarkername	lab	magnitudebg	magnituderaw	magnitudebgsubtracted
+SubjectId	SequenceNum	date	QCStateLabel	visit_day	third_key	assay_identifier	antigen	cell_type	specimen_type	functional_marker_name	response_call	magnitude	magnitude_raw	magnitude_background

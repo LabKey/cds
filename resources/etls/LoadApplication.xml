@@ -29,6 +29,15 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateELISpot" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_elispot"/>
+                    <setting name="targetDataset" value="ELISPOT" />
+                </settings>
+            </taskref>
+        </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask" />
         </transform>

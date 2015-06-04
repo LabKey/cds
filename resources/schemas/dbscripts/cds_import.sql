@@ -276,19 +276,23 @@ CREATE TABLE cds.import_ELS_IFNg (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
+  els_ifng_lab_source_key INTEGER,
+
   specimen_type VARCHAR(250),
   assay_identifier VARCHAR(250),
   antigen VARCHAR(250),
+--   antigen_subpanel VARCHAR(250), -- MISSING FROM 1.0
   cell_type VARCHAR(250),
+--   functional_marker_type VARCHAR(250), -- MISSING FROM 1.0
   functional_marker_name VARCHAR(250),
-  els_ifng_lab_source_key INTEGER,
+--   summary_level VARCHAR(250), -- MISSING FROM 1.0
 
   els_ifng_response BOOLEAN,
   els_ifng_magnitude NUMERIC(15,4),
   els_ifng_magnitude_raw NUMERIC(15,4),
   els_ifng_magnitude_background NUMERIC(15,4),
 
-  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, assay_identifier, antigen, cell_type, functional_marker_name)
+  CONSTRAINT PK_import_ELS_IFNg PRIMARY KEY (prot, subject_id, study_day, els_ifng_lab_source_key, specimen_type, assay_identifier, antigen, cell_type, functional_marker_name)
 );
 
 CREATE TABLE cds.import_BAMA (

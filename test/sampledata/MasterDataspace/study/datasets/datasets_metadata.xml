@@ -214,67 +214,74 @@
         <columnTitle>Date</columnTitle>
         <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
       </column>
-      <column columnName="antigenpanel">
+      <column columnName="visit_day">
+        <datatype>integer</datatype>
+        <columnTitle>Visit Day</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="third_key">
         <datatype>varchar</datatype>
-        <columnTitle>Antigenpanel</columnTitle>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <isKeyField>true</isKeyField>
+      </column>
+      <column columnName="assay_identifier">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay Identifier</columnTitle>
+        <description>Name identifying assay</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
+      <column columnName="antigen">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen Panel</columnTitle>
+        <description>The name of the panel of antigens (peptide pools) for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for thegene-based sub-panels making up the panel.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigensubpanel">
+      <column columnName="cell_type">
         <datatype>varchar</datatype>
-        <columnTitle>Antigensubpanel</columnTitle>
+        <columnTitle>Cell Type</columnTitle>
+        <description>Type of cell or cell subset assessed for antigen-stimulated expression of peptide(s). This cell type is usually CD4+ or CD8+ T-cells, but other cell types can also be assessed.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="specimentype">
+      <column columnName="specimen_type">
         <datatype>varchar</datatype>
-        <columnTitle>Specimentype</columnTitle>
+        <columnTitle>Specimen type</columnTitle>
+        <description>The type of specimen used in the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="datasummarylevel">
+      <column columnName="functional_marker_name">
         <datatype>varchar</datatype>
-        <columnTitle>Datasummarylevel</columnTitle>
+        <columnTitle>Functional Marker Name</columnTitle>
+        <description>The name of the marker assessed, (IFNg, cytokine).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="responsecall">
+      <column columnName="response_call">
         <datatype>boolean</datatype>
-        <columnTitle>Responsecall</columnTitle>
+        <columnTitle>Response call</columnTitle>
+        <description>Indicates if response was detected as calculated using bootstrap response call.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="functionalmarkertype">
-        <datatype>varchar</datatype>
-        <columnTitle>Functionalmarkertype</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="functionalmarkername">
-        <datatype>varchar</datatype>
-        <columnTitle>Functionalmarkername</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="lab">
-        <datatype>varchar</datatype>
-        <columnTitle>Lab</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="magnitudebg">
-        <datatype>double</datatype>
-        <columnTitle>Magnitudebg</columnTitle>
+      <column columnName="magnitude">
+        <datatype>integer</datatype>
+        <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
+        <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation, adjusted for number of spot forming cells without antigen stimulation.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
-      <column columnName="magnituderaw">
+      <column columnName="magnitude_raw">
         <datatype>double</datatype>
-        <columnTitle>Magnituderaw</columnTitle>
+        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
+        <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
-      <column columnName="magnitudebgsubtracted">
+      <column columnName="magnitude_background">
         <datatype>double</datatype>
-        <columnTitle>Magnitudebgsubtracted</columnTitle>
+        <columnTitle>Magnitude (% cells) - Background</columnTitle>
+        <description>Mean Number of Spot-forming Cells (SFC) in the absence of antigen stimulation.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
