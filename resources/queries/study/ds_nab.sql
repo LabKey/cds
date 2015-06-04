@@ -2,7 +2,7 @@ SELECT
 subject_id AS participantid,
 CAST(study_day AS DOUBLE) AS sequencenum,
 study_day AS visit_day,
-prot || '|' || subject_id || '|' || study_day || '|' || nab_lab_source_key || '|' || assay_identifier || '|' || specimen_type || '|' || antigen_isolate_name AS third_key,
+prot || '|' || subject_id || '|' || study_day || '|' || assay_identifier || '|' || specimen_type || '|' || antigen_isolate_name || '|' || nab_lab_source_key AS third_key,
 prot,
 
 -- DIMENSIONS

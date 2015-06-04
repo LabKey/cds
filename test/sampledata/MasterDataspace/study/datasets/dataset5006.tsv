@@ -1,1 +1,1 @@
-SubjectId	SequenceNum	date	QCStateLabel	specimentype	isotype	dilution	antigenname	instrumenttype	detectiontype	responsecall	lab	magnitudebg	magnituderaw	magnitudebgsubtracted
+SubjectId	SequenceNum	date	QCStateLabel	visit_day	third_key	specimen_type	assay_identifier	antigen	analyte	magnitude_report_method	response_call	lab	magnitude

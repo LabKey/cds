@@ -57,7 +57,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("ICS"),
         new TSVCopyConfig("ELS_IFNg"),
         new TSVCopyConfig("NAB"),
-//        new TSVCopyConfig("BAMA")
+        new TSVCopyConfig("BAMA")
     };
 
     @Override

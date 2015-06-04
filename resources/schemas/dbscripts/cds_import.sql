@@ -268,6 +268,7 @@ CREATE TABLE cds.import_NAb (
   nab_magnitude INTEGER,
   nab_response BOOLEAN,
 
+  -- TODO: antigen_isolate_clade and antigen_neutralization_tier are 60% empty in example data. Indicitive of real data? Not including as keys.
 --   CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day, nab_lab_source_key, assay_identifier, specimen_type, antigen_isolate_clade, antigen_neutralization_tier, antigen_isolate_name)
   CONSTRAINT PK_import_NAb PRIMARY KEY (prot, subject_id, study_day, nab_lab_source_key, assay_identifier, specimen_type, antigen_isolate_name)
 );
@@ -296,24 +297,27 @@ CREATE TABLE cds.import_ELS_IFNg (
 );
 
 CREATE TABLE cds.import_BAMA (
+
+  -- KEYS
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
   subject_id VARCHAR(250) NOT NULL,
   study_day INTEGER NOT NULL,
   specimen_type VARCHAR(250),
   assay_identifier VARCHAR(250),
-  lab_id VARCHAR(250), -- TODO: Consider FK to import_Lab
-  instrument_code VARCHAR(250),
-  detection_type VARCHAR(250),
-  dilution VARCHAR(25),
+  bama_lab_source_key VARCHAR(250), -- TODO: Consider FK to import_Lab
   antigen VARCHAR(250),
-  antibody_isotype VARCHAR(250),
+  analyte VARCHAR(250),
+  bama_magnitude_report_method VARCHAR(250),
 
-  bama_response_call BOOLEAN,
-  bama_response_call_method VARCHAR(250),
+--   instrument_code VARCHAR(250), -- MISSING FROM 1.0
+--   detection_type VARCHAR(250), -- MISSING FROM 1.0
+--   dilution VARCHAR(25), -- MISSING FROM 1.0
+
+  -- MEASURES
+  bama_response BOOLEAN,
   bama_magnitude NUMERIC(15,4),
-  bama_magnitude_raw NUMERIC(15,4),
-  bama_magnitude_background NUMERIC(15,4),
-  bama_magnitude_unit VARCHAR(20),
+--   bama_magnitude_raw NUMERIC(15,4), -- MISSING FROM 1.0
+--   bama_magnitude_background NUMERIC(15,4), -- MISSING FROM 1.0
 
-  CONSTRAINT PK_import_BAMA PRIMARY KEY (prot, subject_id, study_day) -- TODO: Consider adding all the keys as primary
+  CONSTRAINT PK_import_BAMA PRIMARY KEY (prot, subject_id, study_day, specimen_type, assay_identifier, antigen, analyte, bama_magnitude_report_method, bama_lab_source_key)
 );

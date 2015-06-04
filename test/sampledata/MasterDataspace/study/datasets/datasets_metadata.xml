@@ -270,7 +270,7 @@
         <datatype>integer</datatype>
         <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation, adjusted for number of spot forming cells without antigen stimulation.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
       <column columnName="magnitude_raw">
         <datatype>double</datatype>
@@ -489,67 +489,64 @@
         <columnTitle>Date</columnTitle>
         <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
       </column>
-      <column columnName="specimentype">
+      <column columnName="visit_day">
+        <datatype>integer</datatype>
+        <columnTitle>Visit Day</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="third_key">
         <datatype>varchar</datatype>
-        <columnTitle>Specimentype</columnTitle>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <isKeyField>true</isKeyField>
+      </column>
+      <column columnName="specimen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Specimen type</columnTitle>
+        <description>The type of specimen used in the assay</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="isotype">
+      <column columnName="assay_identifier">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay Identifier</columnTitle>
+        <description>Name identifying assay</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigen">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen Name</columnTitle>
+        <description>The name of the antigen</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="analyte">
         <datatype>varchar</datatype>
         <columnTitle>Isotype</columnTitle>
+        <description>The binding anitbody isotype that is quantified by the assay</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="dilution">
+      <column columnName="magnitude_report_method">
         <datatype>varchar</datatype>
-        <columnTitle>Dilution</columnTitle>
+        <columnTitle>Magnitude Report Method</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
       </column>
-      <column columnName="antigenname">
-        <datatype>varchar</datatype>
-        <columnTitle>Antigenname</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="instrumenttype">
-        <datatype>varchar</datatype>
-        <columnTitle>Instrumenttype</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="detectiontype">
-        <datatype>varchar</datatype>
-        <columnTitle>Detectiontype</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
-      </column>
-      <column columnName="responsecall">
+      <column columnName="response_call">
         <datatype>boolean</datatype>
-        <columnTitle>Responsecall</columnTitle>
+        <columnTitle>Response call</columnTitle>
+        <description>An antigen-specific and frequently study-specific combination of thresholds and comparisons to baseline and reference</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="lab">
-        <datatype>varchar</datatype>
+        <datatype>integer</datatype>
         <columnTitle>Lab</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <dimension>true</dimension>
       </column>
-      <column columnName="magnitudebg">
+      <column columnName="magnitude">
         <datatype>double</datatype>
-        <columnTitle>Magnitudebg</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-      </column>
-      <column columnName="magnituderaw">
-        <datatype>double</datatype>
-        <columnTitle>Magnituderaw</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-      </column>
-      <column columnName="magnitudebgsubtracted">
-        <datatype>double</datatype>
-        <columnTitle>Magnitudebgsubtracted</columnTitle>
+        <columnTitle>Magnitude</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
     </columns>
