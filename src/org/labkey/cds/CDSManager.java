@@ -19,6 +19,7 @@ package org.labkey.cds;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.DbSchema;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SimpleFilter;
@@ -204,6 +205,8 @@ public class CDSManager
         try
         {
             deleteFacts(c);
+            DbSchema dbSchema = CDSSchema.getInstance().getSchema();
+
 //            for (String s : new String[] {"CitableAuthors", "Citations", "Citable", "Properties", "Study"})
             for (String s : new String[] {"Antigens",
                     "CitableAuthors", "Citations", "Citable",
@@ -211,13 +214,13 @@ public class CDSManager
                     "VaccineComponents", "Vaccines",
                     "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
                     // New Tables
-                    "Study"
+                    "Study", "StudyProductMap"
             })
             {
-                TableInfo t = CDSSchema.getInstance().getSchema().getTable(s);
+                TableInfo t = dbSchema.getTable(s);
                 if (null != t)
                 {
-                    new SqlExecutor(CDSSchema.getInstance().getSchema()).execute("DELETE FROM " + t.getSelectName() + " WHERE Container = ?", c);
+                    new SqlExecutor(dbSchema).execute("DELETE FROM " + t.getSelectName() + " WHERE Container = ?", c);
                 }
             }
             String orphans;

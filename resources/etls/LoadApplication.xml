@@ -11,33 +11,33 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateDemographicsTask">
             </taskref>
         </transform>
-        <!--<transform id="PopulateICS" type="TaskrefTransformStep">-->
-            <!--<taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">-->
-                <!--<settings>-->
-                    <!--<setting name="sourceSchema" value="study"/>-->
-                    <!--<setting name="sourceQuery" value="ds_ics"/>-->
-                    <!--<setting name="targetDataset" value="ICS" />-->
-                <!--</settings>-->
-            <!--</taskref>-->
-        <!--</transform>-->
-        <!--<transform id="PopulateNAB" type="TaskrefTransformStep">-->
-            <!--<taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">-->
-                <!--<settings>-->
-                    <!--<setting name="sourceSchema" value="study"/>-->
-                    <!--<setting name="sourceQuery" value="ds_nab"/>-->
-                    <!--<setting name="targetDataset" value="NAb" />-->
-                <!--</settings>-->
-            <!--</taskref>-->
-        <!--</transform>-->
-        <!--<transform id="PopulateELISpot" type="TaskrefTransformStep">-->
-            <!--<taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">-->
-                <!--<settings>-->
-                    <!--<setting name="sourceSchema" value="study"/>-->
-                    <!--<setting name="sourceQuery" value="ds_elispot"/>-->
-                    <!--<setting name="targetDataset" value="ELISPOT" />-->
-                <!--</settings>-->
-            <!--</taskref>-->
-        <!--</transform>-->
+        <transform id="PopulateICS" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_ics"/>
+                    <setting name="targetDataset" value="ICS" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateNAB" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_nab"/>
+                    <setting name="targetDataset" value="NAb" />
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateELISpot" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_elispot"/>
+                    <setting name="targetDataset" value="ELISPOT" />
+                </settings>
+            </taskref>
+        </transform>
         <transform id="PopulateBAMA" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
                 <settings>
@@ -45,6 +45,14 @@
                     <setting name="sourceQuery" value="ds_bama"/>
                     <setting name="targetDataset" value="BAMA" />
                 </settings>
+            </taskref>
+        </transform>
+        <transform id="product" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="cds" queryName="import_product" />
+            <destination schemaName="cds" queryName="product" targetOption="truncate" />
+        </transform>
+        <transform id="PopulateStudyProduct" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudyProductTask">
             </taskref>
         </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">

@@ -59,7 +59,7 @@ public class PopulateDemographicsTask extends AbstractPopulateTask
                 {
                     TableInfo demographicsTI = DefaultSchema.get(user, container).getSchema("study").getTable("Demographics");
 
-                    sql = new SQLFragment("SELECT * FROM ").append(demographicsTI);
+                    sql = new SQLFragment("SELECT * FROM ").append(demographicsTI, "demographics");
                     Map<String, Object>[] allRows = new SqlSelector(demographicsTI.getSchema(), sql).getMapArray();
                     if (allRows.length > 0)
                         demographicsTI.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);

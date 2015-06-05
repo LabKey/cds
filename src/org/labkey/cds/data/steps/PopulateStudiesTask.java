@@ -9,6 +9,7 @@ import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.module.FolderType;
 import org.labkey.api.module.FolderTypeManager;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
@@ -43,7 +44,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         if (project.isProject() && project.getFolderType().equals(FolderTypeManager.get().getFolderType(StudyService.DATASPACE_FOLDERTYPE_NAME)))
         {
             // Delete All Containers
-            clean(project, user, logger);
+//            clean(project, user, logger);
 
             // Retrieve the set of studies available in the 'import_' schema
             Set<String> studyNames = getStudyNames(project, user, logger);
@@ -57,6 +58,8 @@ public class PopulateStudiesTask extends AbstractPopulateTask
             long start = System.currentTimeMillis();
             int created = 0;
             BatchValidationException errors = new BatchValidationException();
+            FolderType studyFolderType = FolderTypeManager.get().getFolderType("Study");
+
             for (String studyName : studyNames)
             {
                 Container c = ContainerManager.getChild(project, studyName);
@@ -64,16 +67,24 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                 if (c == null)
                 {
                     c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
-                    c.setFolderType(FolderTypeManager.get().getFolderType("Study"), user);
+                    c.setFolderType(studyFolderType, user);
                     StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
                     created++;
                 }
+                else
+                {
+                    logger.info("Container already exists for study (" + studyName + ")");
+                }
             }
+
+            // TODO: Delete studies that no longer have info
+
             long finish = System.currentTimeMillis();
             logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
 
             // Get the collesced metadata for the studies (including container)
             Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
+            List<Map<String, Object>> rows = new ArrayList<>();
 
             // Import Study metadata
             for (String studyName : studies.keySet())
@@ -84,7 +95,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
 
                     try
                     {
-                        List<Map<String, Object>> rows = new ArrayList<>();
+                        rows.clear();
                         rows.add(studies.get(studyName));
 
                         TableInfo updatable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
