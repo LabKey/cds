@@ -8,7 +8,12 @@
             </taskref>
         </transform>
         <transform id="PopulateDemographics" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.PopulateDemographicsTask">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="study"/>
+                    <setting name="sourceQuery" value="ds_demographics"/>
+                    <setting name="targetDataset" value="Demographics" />
+                </settings>
             </taskref>
         </transform>
         <transform id="PopulateICS" type="TaskrefTransformStep">

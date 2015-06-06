@@ -1,6 +1,7 @@
 SELECT
   -- KEYS
   dd.prot AS study_name,
+  dd.prot,
   dd.subject_id AS participantid,
 
   -- VARCHAR

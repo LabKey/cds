@@ -214,7 +214,7 @@ public class CDSManager
                     "VaccineComponents", "Vaccines",
                     "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
                     // New Tables
-                    "Study", "StudyProductMap"
+                    "StudyProductMap", "Study"
             })
             {
                 TableInfo t = dbSchema.getTable(s);

@@ -37,6 +37,7 @@ public class PopulateDatasetTask extends AbstractPopulateTask
         Container project = containerUser.getContainer();
         User user = containerUser.getUser();
         DefaultSchema projectSchema = DefaultSchema.get(user, project);
+        String datasetName = settings.get(TARGET_DATASET);
 
         QuerySchema sourceSchema = projectSchema.getSchema(settings.get(SOURCE_SCHEMA));
 
@@ -52,17 +53,21 @@ public class PopulateDatasetTask extends AbstractPopulateTask
             throw new PipelineJobException("You provided an invalid \"" + SOURCE_QUERY + "\" parameter.");
         }
 
-        TableInfo targetDataset = projectSchema.getSchema("study").getTable(settings.get(TARGET_DATASET));
+        TableInfo targetDataset = projectSchema.getSchema("study").getTable(datasetName);
 
         if (null == targetDataset)
         {
-            throw new PipelineJobException("A dataset with the name \"" + settings.get(TARGET_DATASET) + "\" does not exist.");
+            throw new PipelineJobException("A dataset with the name \"" + datasetName + "\" does not exist.");
         }
 
         SQLFragment sql;
         BatchValidationException errors = new BatchValidationException();
         long start;
         long finish;
+
+        long fullStart = System.currentTimeMillis();
+        int deleteCount = 0;
+        int insertCount = 0;
 
         // Assumes all child containers are studies
         for (Container container : project.getChildren())
@@ -75,17 +80,18 @@ public class PopulateDatasetTask extends AbstractPopulateTask
             {
                 try
                 {
-                    targetDataset = DefaultSchema.get(user, container).getSchema("study").getTable(settings.get(TARGET_DATASET));
+                    targetDataset = DefaultSchema.get(user, container).getSchema("study").getTable(datasetName);
 
                     sql = new SQLFragment("SELECT * FROM ").append(targetDataset);
                     Map<String, Object>[] allRows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
                     if (allRows.length > 0)
                     {
-                        logger.info("Starting delete of " + allRows.length + " rows from " + TARGET_DATASET + " dataset. (" + container.getName() + ")");
+                        logger.info("Starting delete of " + allRows.length + " rows from " + datasetName + " dataset. (" + container.getName() + ")");
                         start = System.currentTimeMillis();
                         targetDataset.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);
                         finish = System.currentTimeMillis();
                         logger.info("Delete took " + DateUtil.formatDuration(finish - start) + ".");
+                        deleteCount += allRows.length;
                     }
 
                     logger.info("Inserting " + subjects.length + " rows into \"" + targetDataset.getName() + "\" dataset. (" + container.getName() + ")");
@@ -93,6 +99,7 @@ public class PopulateDatasetTask extends AbstractPopulateTask
                     targetDataset.getUpdateService().insertRows(user, container, Arrays.asList(subjects), errors, null, null);
                     finish = System.currentTimeMillis();
                     logger.info("Insert took " + DateUtil.formatDuration(finish - start) + ".");
+                    insertCount += subjects.length;
 
                     if (errors.hasErrors())
                     {
@@ -108,5 +115,8 @@ public class PopulateDatasetTask extends AbstractPopulateTask
                 }
             }
         }
+        long fullFinish = System.currentTimeMillis();
+
+        logger.info("PopulateDatasetTask for Dataset \"" + datasetName + "\" took " + DateUtil.formatDuration(fullFinish - fullStart) + ". Deleted " + deleteCount + " rows. Inserted " + insertCount + " rows.");
     }
 }
