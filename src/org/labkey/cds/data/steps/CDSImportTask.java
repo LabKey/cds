@@ -9,7 +9,9 @@ import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.etl.DataIteratorBuilder;
 import org.labkey.api.etl.DataIteratorContext;
+import org.labkey.api.pipeline.PipeRoot;
 import org.labkey.api.pipeline.PipelineJobException;
+import org.labkey.api.pipeline.PipelineService;
 import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.QueryUpdateService;
@@ -28,6 +30,7 @@ import java.util.List;
 public class CDSImportTask extends TaskRefTaskImpl
 {
     private static final String DIRECTORY = "directory";
+    private static final String PIPELINE_TOKEN = "{pipeline}";
 
     private static CDSImportCopyConfig[] dataspaceTables = new CDSImportCopyConfig[]
     {
@@ -64,6 +67,19 @@ public class CDSImportTask extends TaskRefTaskImpl
     public RecordedActionSet run(Logger logger) throws PipelineJobException
     {
         String dir = settings.get(DIRECTORY);
+
+        if (dir.contains(PIPELINE_TOKEN))
+        {
+            PipeRoot pipelineRoot = PipelineService.get().getPipelineRootSetting(containerUser.getContainer());
+            if (null != pipelineRoot)
+            {
+                dir = dir.replace(PIPELINE_TOKEN, pipelineRoot.getRootPath().getPath());
+            }
+            else
+            {
+                throw new PipelineJobException(PIPELINE_TOKEN + " was found in the path but the pipeline root has not been establised for folder: " + containerUser.getContainer().getPath());
+            }
+        }
 
         try
         {
