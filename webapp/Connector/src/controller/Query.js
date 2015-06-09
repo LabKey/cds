@@ -52,6 +52,7 @@ Ext.define('Connector.controller.Query', {
                 queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
             })],
             success: function(measures) {
+                // add all of the response measures to the cached store
                 Ext.each(measures, function(measure) {
                     this.addMeasure(measure);
                 }, this);
@@ -59,6 +60,7 @@ Ext.define('Connector.controller.Query', {
                 // bootstrap client-defined measures
                 var measureContext = Connector.measure.Configuration.context.measures;
                 Ext.iterate(measureContext, function(alias, measure) {
+                    measure.alias = alias;
                     this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                 }, this);
 
@@ -166,14 +168,12 @@ Ext.define('Connector.controller.Query', {
 
     addMeasure : function(measure) {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
+            // overlay any measure metadata
+            var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.measures[measure.alias]);
 
-            var datas = Ext.apply(measure, Connector.measure.Configuration.context.measures[measure.alias]);
-
+            // overlay any dimension metadata (used for Advanced Options panel of Variable Selector)
             if (measure.isDimension === true) {
-                var dimMeta = Connector.measure.Configuration.context.dimensions[measure.alias];
-                if (dimMeta) {
-                    datas = Ext.apply(datas, dimMeta);
-                }
+                datas = Ext.apply(datas, Connector.measure.Configuration.context.dimensions[measure.alias]);
             }
 
             this.MEASURE_STORE.add(datas);
@@ -184,6 +184,7 @@ Ext.define('Connector.controller.Query', {
     addSource : function(measure) {
         var key = measure.schemaName + '|' + measure.queryName;
         if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
+            // overlay any source metadata
             var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.sources[key]);
             datas.key = key;
 
