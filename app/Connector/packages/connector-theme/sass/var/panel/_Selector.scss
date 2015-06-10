@@ -1,37 +1,90 @@
 /* Connector.view.Selector */
-.selector-advanced {
-  background-color: #E6E1E1;
-}
+.variable-selector {
+  .header {
+    background-color: $heat-scale-6;
+    padding: 18px 48px;
 
-.selector-footer {
-  background-color: #f0f0f0;
-  padding: 16px 72px;
-}
+    .main-title {
+      @include dialogheader;
+      font-size: 16px;
+    }
 
-.source-item {
-  height: 25px;
-  padding: 7px 8px 0 8px;
-  font-family: Arial, sans-serif;
+    .sub-title {
+      margin-top: 3px;
 
-  &:hover {
-    background-color: #A0EAEB;
-    cursor: pointer;
+      .subject-count {
+        position: absolute;
+        right: 48px;
+        bottom: 19px;
+        color: $heat-scale-2;
+        font-weight: bold;
+      }
+
+      .nav-text {
+        color: $black;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: $info-font;
+      }
+
+      .back-action {
+        color: $interactive-color;
+
+        .arrow {
+          background-image: url(images/navigatebackward.svg);
+          width: 16px;
+          position: absolute;
+          left: 32px;
+          bottom: 20px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .section-title {
+        padding-left: 24px;
+        color: $black;
+        font-size: 20px;
+        @include header;
+      }
+    }
   }
-}
 
-.source-selected,
-.source-selected:hover {
-  background-color: #14C9CC;
-  color: #FFFFFF;
-}
+  .footer {
+    background-color: $heat-scale-6;
+    padding: 18px 48px;
+  }
 
-.back-action {
-  color: #9B1497;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  font-weight: bold;
+  .content {
+    background-color: $light-color;
+    padding: 10px 40px;
 
-  &:hover {
-    cursor: pointer;
+    .look-disabled {
+      color: $heat-scale-3;
+    }
+
+    .content-item {
+      height: 25px;
+      padding: 7px 8px 0 8px;
+      font-family: $info-font;
+
+      &:hover {
+        background-color: $selectongrey-color;
+        cursor: pointer;
+      }
+    }
+
+    .content-selected, .content-selected:hover {
+      background-color: $select-color;
+      color: $light-color;
+    }
+  }
+
+  .advanced {
+    background-color: $heat-scale-5;
+    padding: 18px 48px;
+    height: 220px;
   }
 }

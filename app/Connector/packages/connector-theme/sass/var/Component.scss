@@ -18,10 +18,12 @@ $black: #303030;
 $unselect-black: rgba(0, 0, 0, 0.4);
 
 /* these could be an actual scale using a function -- stick with Artefact colors for now */
-$heat-scale-1: #666363;            // Heatmap Gray #1
-$heat-scale-2: #A09C9C;            // Heatmap Gray #2
-$heat-scale-3: #CCC8C8;            // Heatmap Gray #3
-$heat-scale-4: #E6E1E1;            // Heatmap Gray #4
+$heat-scale-1: #666363;
+$heat-scale-2: #A09C9C;
+$heat-scale-3: #CCC8C8;
+$heat-scale-4: #E6E1E1;
+$heat-scale-5: #E5E5E5;
+$heat-scale-6: #EEEEEE;
 
 $title: 26px;
 $headline: 16px;
@@ -90,6 +92,11 @@ $tip-body-color: $info-color;
   font-family: $data-font;
   font-weight: normal;
 }
+
+@mixin dialogheader {
+  font-family: $data-font;
+  color: $heat-scale-2;
+};
 
 @mixin bodycaps {
   font-family: $bodycaps-font;

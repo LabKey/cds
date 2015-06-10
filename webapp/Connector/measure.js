@@ -19,38 +19,38 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study|ICS': {
                     dimensions: [
-                        {alias: 'study_ICS_cell_type'},
-                        {alias: 'study_ICS_functional_marker_name'},
-                        {alias: 'study_ICS_antigen_panel'},
-                        {alias: 'study_ICS_specimen_type'},
-                        {alias: 'study_ICS_lab'}
+                        'study_ICS_cell_type',
+                        'study_ICS_functional_marker_name',
+                        'study_ICS_antigen_panel',
+                        'study_ICS_specimen_type',
+                        'study_ICS_lab'
                     ]
                 },
                 'study|NAb': {
                     dimensions: [
-                        {alias: 'study_NAb_assay_identifier'},
-                        {alias: 'study_NAb_antigen_neutralization_tier'},
-                        {alias: 'study_NAb_specimen_type'},
-                        {alias: 'study_NAb_lab'}
+                        'study_NAb_assay_identifier',
+                        'study_NAb_antigen_neutralization_tier',
+                        'study_NAb_specimen_type',
+                        'study_NAb_lab'
                     ]
                 },
                 'study|BAMA': {
                     dimensions: [
-                        {alias: 'study_BAMA_analyte'},
-                        {alias: 'study_BAMA_antigen'},
-                        {alias: 'study_BAMA_dilution'},
-                        {alias: 'study_BAMA_detection_type'},
-                        {alias: 'study_BAMA_instrument_type'},
-                        {alias: 'study_BAMA_specimen_type'},
-                        {alias: 'study_BAMA_lab'}
+                        'study_BAMA_analyte',
+                        'study_BAMA_antigen',
+                        'study_BAMA_dilution',
+                        'study_BAMA_detection_type',
+                        'study_BAMA_instrument_type',
+                        'study_BAMA_specimen_type',
+                        'study_BAMA_lab'
                     ]
                 },
                 'study|ELISPOT': {
                     dimensions: [
-                        {alias: 'study_ELISPOT_functional_marker_name'},
-                        {alias: 'study_ELISPOT_antigen'},
-                        {alias: 'study_ELISPOT_specimen_type'},
-                        {alias: 'study_ELISPOT_lab'}
+                        'study_ELISPOT_functional_marker_name',
+                        'study_ELISPOT_antigen',
+                        'study_ELISPOT_specimen_type',
+                        'study_ELISPOT_lab'
                     ]
                 }
             },
@@ -172,7 +172,10 @@ Ext.define('Connector.measure.Configuration', {
 
                 // Example overriding Advanced panel dimensions from the source. To be removed.
                 'study_ELISPOT_specimen_type': {
-                    dimensions: [{alias: 'study_ELISPOT_cell_type'}]
+                    dimensions: ['study_ELISPOT_cell_type']
+                },
+                'study_ELISPOT_assay_identifier': {
+                    dimensions: []
                 }
             }
         }

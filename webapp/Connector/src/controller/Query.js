@@ -169,7 +169,8 @@ Ext.define('Connector.controller.Query', {
     addMeasure : function(measure) {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
             // overlay any measure metadata
-            var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.measures[measure.alias]);
+            var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.measures[measure.alias]);
 
             // overlay any dimension metadata (used for Advanced Options panel of Variable Selector)
             if (measure.isDimension === true) {
@@ -185,11 +186,23 @@ Ext.define('Connector.controller.Query', {
         var key = measure.schemaName + '|' + measure.queryName;
         if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
             // overlay any source metadata
-            var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.sources[key]);
+            var datas = this.getModelClone(measure, Connector.model.Source.getFields());
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[key]);
             datas.key = key;
 
             this.SOURCE_STORE.add(datas);
         }
+    },
+
+    getModelClone : function(record, fields) {
+        return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'))
+    },
+
+    getMeasureRecordByAlias : function(alias) {
+        if (!this._ready) {
+            console.warn('Requested measure before measure caching prepared.');
+        }
+        return this.MEASURE_STORE.getById(alias);
     },
 
     getMeasure : function(measureAlias) {
@@ -197,16 +210,15 @@ Ext.define('Connector.controller.Query', {
             console.warn('Requested measure before measure caching prepared.');
         }
 
-        var copyAlias = Ext.clone(measureAlias);
-
         // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
-        var cleanAlias = copyAlias.split('/')[0];
-        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEASURE_STORE.getById(cleanAlias))) {
-            return Ext.clone(this.MEASURE_STORE.getById(cleanAlias).raw);
+        var cleanAlias = Ext.clone(measureAlias).split('/')[0];
+
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias))) {
+            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias).raw);
         }
-        else {
-            console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
-        }
+
+        console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
+        return null;
     },
 
     /**

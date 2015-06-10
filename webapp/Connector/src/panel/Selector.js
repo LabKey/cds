@@ -9,7 +9,11 @@ Ext.define('Connector.panel.Selector', {
 
     alias: 'widget.newselector',
 
+    cls: 'variable-selector',
+
     border: false,
+    height: 660,
+    width: 520,
 
     layout: {
         type: 'vbox',
@@ -17,7 +21,6 @@ Ext.define('Connector.panel.Selector', {
     },
 
     headerTitle: 'Variable Selector',
-
     sectionTitle: 'Sources',
 
     sourceMeasureFilter: undefined,
@@ -43,6 +46,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     initComponent : function() {
+        this.queryService = Connector.getService('Query');
 
         this.sourcesStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Source'
@@ -52,54 +56,70 @@ Ext.define('Connector.panel.Selector', {
         });
 
         this.items = [
-            this.initHeader(),
-            {
-                itemId: 'loader',
-                border: false,
-                flex: 1
-            },
-            this.initFooter()
+            this.getHeader(),
+            this.getLoaderPane(),
+            this.getFooter()
         ];
 
         this.callParent();
 
-        this.loadSourcesAndMeasures();
+        this.queryService.onQueryReady(function() {
+            this.loadSourcesAndMeasures();
+        }, this);
+    },
+
+    getLoaderPane : function() {
+        if (!this.loaderPane) {
+            this.loaderPane = Ext.create('Ext.Component', {
+                border: false,
+                flex: 1
+            });
+        }
+
+        return this.loaderPane;
     },
 
     loadSourcesAndMeasures : function() {
-        Connector.getService('Query').onQueryReady(function(queryService) {
 
-            var data = queryService.getMeasuresStoreData(this.sourceMeasureFilter);
+        var data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
 
-            this.sourcesStore.loadRawData(data.sources);
-            this.measureStore.loadRawData(data.measures);
+        this.sourcesStore.loadRawData(data.sources);
+        this.measureStore.loadRawData(data.measures);
 
-            this.loadSourceCounts();
+        this.loadSourceCounts();
 
-            if (this.activeMeasure) {
-                // find the source for the active measure
-                var sourceKey = this.activeMeasure.get('schemaName') + '|' + this.activeMeasure.get('queryName');
-                var source = this.sourcesStore.getById(sourceKey);
-                if (source) {
-                    this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
-                    this.showMeasures(source, this.activeMeasure);
-                }
-                else {
-                    this.showSources();
-                    console.warn('Unable to find source \'' + sourceKey + '\'. Might not work for the applied \'sourceMeasureFilter\'');
-                }
+        if (this.activeMeasure) {
+            this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
+        }
+
+        var source = this.getSourceForMeasure(this.activeMeasure);
+        if (source) {
+            this.showMeasures(source, this.activeMeasure);
+        }
+        else {
+            this.showSources();
+        }
+    },
+
+    getSourceForMeasure : function(measure) {
+        var source = null;
+        if (measure)
+        {
+            var sourceKey = measure.get('schemaName') + '|' + measure.get('queryName');
+            source = this.sourcesStore.getById(sourceKey);
+
+            if (source == null) {
+                console.warn('Unable to find source \'' + sourceKey + '\'. Might not work for the applied \'sourceMeasureFilter\'');
             }
-            else {
-                this.showSources();
-            }
+        }
 
-        }, this);
+        return source;
     },
 
     loadSourceCounts : function() {
 
         var sources = this.sourcesStore.getRange();
-        Connector.getService('Query').getSourceCounts(sources, function(s, counts) {
+        this.queryService.getSourceCounts(sources, function(s, counts) {
             Ext.each(sources, function(source) {
                 var count = counts[source.get('queryName')];
                 if (Ext.isDefined(count)) {
@@ -109,37 +129,37 @@ Ext.define('Connector.panel.Selector', {
         }, this, this.memberCountsFn, this.memberCountsFnScope);
     },
 
-    showSources : function() {
+    getSourcePane : function() {
         if (!this.sourcePane) {
             this.sourcePane = Ext.create('Ext.view.View', {
                 border: false,
                 hidden: true,
                 flex: 1,
-                itemSelector: 'div.source-item',
+                autoScroll: true,
+                cls: 'content',
+                itemSelector: 'div.content-item',
                 store: this.sourcesStore,
                 tpl: new Ext.XTemplate(
-                    '<div style="margin: 16px 64px 16px 64px;">',
-                        '<tpl for=".">' +
-                            '<div class="source-item" style="{subjectCount:this.greyMe}">',
-                                '<span>{queryLabel:htmlEncode}',
-                                    '<tpl if="this.showLabel(queryLabel, longLabel)">',
+                    '<tpl for=".">' +
+                        '<div class="content-item {subjectCount:this.greyMe}">',
+                            '<span>{queryLabel:htmlEncode}',
+                                '<tpl if="this.showLabel(queryLabel, longLabel)">',
                                     '&nbsp;({longLabel:htmlEncode})',
-                                    '</tpl>',
-                                '</span>',
-                                '<tpl if="subjectCount != -1">',
-                                    '<span style="float: right;">{subjectCount:this.commaFormat}</span>',
                                 '</tpl>',
-                            '</div>',
-                        '</tpl>',
-                    '</div>',
+                            '</span>',
+                            '<tpl if="subjectCount != -1">',
+                                '<span style="float: right;">{subjectCount:this.commaFormat}</span>',
+                            '</tpl>',
+                        '</div>',
+                    '</tpl>',
                     {
                         commaFormat : function(v) {
                             return Ext.util.Format.number(v, '0,000');
                         },
                         greyMe : function(v) {
-                            if (v == -1)
+                            if (v == -1 || v > 0)
                                 return '';
-                            return v > 0 ? '' : 'color: #CCC8C8;';
+                            return 'look-disabled';
                         },
                         showLabel : function(queryLabel, longLabel) {
                             return longLabel && longLabel.length > 0 && (queryLabel != longLabel);
@@ -155,7 +175,7 @@ Ext.define('Connector.panel.Selector', {
                         var me = this;
 
                         view.getEl().slideOut('l', {
-                            duration: 200,
+                            duration: 250,
                             callback: function() {
                                 view.hide();
                                 me.showMeasures(source);
@@ -167,11 +187,15 @@ Ext.define('Connector.panel.Selector', {
                 }
             });
 
-            this.insert(this.items.length-2, this.sourcePane);
+            this.insert(this.items.length - 2, this.sourcePane);
         }
 
-        this.getComponent('loader').hide();
-        this.sourcePane.show();
+        return this.sourcePane;
+    },
+
+    showSources : function() {
+        this.getLoaderPane().hide();
+        this.getSourcePane().show();
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
@@ -180,46 +204,41 @@ Ext.define('Connector.panel.Selector', {
         this.getSelectButton().hide();
     },
 
-    /**
-     * @param source
-     * @param [activeMeasure]
-     */
-    showMeasures : function(source, activeMeasure) {
-
+    getMeasurePane : function()
+    {
         if (!this.measurePane) {
             this.measurePane = Ext.create('Ext.view.View', {
                 border: false,
                 hidden: true,
                 flex: 1,
-                itemSelector: 'div.source-item',
-                selectedItemCls: 'source-selected',
-                style: 'overflow-y: auto;',
+                autoScroll: true,
+                cls: 'content',
+                itemSelector: 'div.content-item',
+                selectedItemCls: 'content-selected',
                 store: this.measureStore,
                 tpl: new Ext.XTemplate(
-                    '<div style="margin: 16px 64px 16px 64px;">',
-                        '<tpl for=".">' +
-                            '<div class="source-item" style="{sourceCount:this.greyMe}">',
-                                '<span>{label:htmlEncode}</span>',
-                                '<tpl if="sourceCount != undefined">',
-                                    '<span style="float: right;">{sourceCount:this.commaFormat}</span>',
-                                '</tpl>',
-                            '</div>',
-                        '</tpl>',
-                    '</div>',
+                    '<tpl for=".">' +
+                        '<div class="content-item {sourceCount:this.greyMe}">',
+                            '<span>{label:htmlEncode}</span>',
+                            '<tpl if="sourceCount != undefined">',
+                                '<span style="float: right;">{sourceCount:this.commaFormat}</span>',
+                            '</tpl>',
+                        '</div>',
+                    '</tpl>',
                     {
                         commaFormat : function(v) {
                             return Ext.util.Format.number(v, '0,000');
                         },
                         greyMe : function(v) {
-                            if (!Ext.isDefined(v))
+                            if (!Ext.isDefined(v) || v > 0)
                                 return '';
-                            return v > 0 ? '' : 'color: #CCC8C8;';
+                            return 'look-disabled';
                         }
                     }
                 ),
                 listeners: {
                     afterrender: function() {
-                        //this.sourcePane.getEl().fadeIn();
+                        //this.measurePane.getEl().fadeIn();
                     },
                     select: function(selModel, measure) {
                         this.setActiveMeasure(measure);
@@ -228,22 +247,30 @@ Ext.define('Connector.panel.Selector', {
                 }
             });
 
-            this.insert(this.items.length-2, this.measurePane);
+            this.insert(this.items.length - 2, this.measurePane);
         }
+
+        return this.measurePane;
+    },
+
+    /**
+     * @param source
+     * @param [activeMeasure]
+     */
+    showMeasures : function(source, activeMeasure) {
 
         var key = source.get('key');
         this.measureStore.filterBy(function(measure) {
             return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
         });
 
-        var me = this;
+        this.getLoaderPane().hide();
+        this.getMeasurePane().show();
 
-        this.getComponent('loader').hide();
-        this.measurePane.show();
+        var me = this;
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
-            showSectionTitle: true,
             sectionTitle: source.get('queryLabel') || source.get('queryName'),
             action: function() {
                 if (me.advancedPane) {
@@ -259,52 +286,38 @@ Ext.define('Connector.panel.Selector', {
             },
             showCount: false
         });
+
         this.getSelectButton().show();
 
         if (activeMeasure) {
             Ext.defer(function() {
-                this.measurePane.getSelectionModel().select(activeMeasure, true);
+                this.getMeasurePane().getSelectionModel().select(activeMeasure, true);
             }, 500, this);
         }
     },
 
-    configureAdvancedOptions : function() {
-
+    getAdvancedPane : function() {
         if (!this.advancedPane) {
-
-            Ext.define('AdvancedPane', {
-                extend: 'Ext.Component',
-
-                bindDimensions : function(dimensions) {
-                    this.update({
-                        dims: dimensions
-                    });
-                }
-            });
-
-            this.advancedPane = new AdvancedPane({
+            this.advancedPane = Ext.create('Ext.Component', {
                 border: false,
                 frame: false,
-                flex: 1,
+                autoScroll: true,
                 hidden: true,
-                baseCls: 'selector-advanced',
+                cls: 'advanced',
                 tpl: [
-                    '<div style="margin: 16px 64px 16px 64px;">',
-                        '<table style="width: 100%;">',
-                            '<tpl for="dims">',
-                                '<tpl if="data.hidden != true">',
-                                    //'<li>{data.name:htmlEncode} ({data.alias:htmlEncode})</li>',
-                                    // TODO: Make these sub-templates
-                                    '<tr style="margin-bottom: 5px;">',
-                                        '<td style="color: #666363;">{data.label:htmlEncode}:</td>',
-                                        '<td width="85%;" style="margin-bottom: 5px;">',
-                                            '<div style="background-color: #F0F0F0; padding: 6px 16px; border-radius: 20px;">Value</div>',
-                                        '</td>',
-                                    '</tr>',
-                                '</tpl>',
+                    '<table style="width: 100%;">',
+                        '<tpl for="options">',
+                            '<tpl if="data.hidden != true">',
+                                // TODO: Make these sub-templates
+                                '<tr style="margin-bottom: 5px;">',
+                                    '<td style="color: #666363;">{data.label:htmlEncode}:</td>',
+                                    '<td width="65%;" style="margin-bottom: 5px;">',
+                                        '<div style="background-color: #FFFFFF; margin: 2px 0; padding: 8px 16px; border-radius: 20px;">Value</div>',
+                                    '</td>',
+                                '</tr>',
                             '</tpl>',
-                        '</table>',
-                    '</div>'
+                        '</tpl>',
+                    '</table>'
                 ],
                 data: {}
             });
@@ -312,81 +325,119 @@ Ext.define('Connector.panel.Selector', {
             this.insert(this.items.length-2, this.advancedPane);
         }
 
-        if (this.activeMeasure) {
-            var dims = this.activeMeasure.get('dimensions');
-            var ms = Connector.getService('Query').MEASURE_STORE;
+        return this.advancedPane;
+    },
 
-            // check if a white-list of dimensions was declared
-            if (Ext.isArray(dims)) {
-                var newDims = [], _dim;
-                Ext.each(dims, function(alias) {
-                    _dim = ms.getById(alias);
-                    if (_dim && _dim.get('isDimension') === true) {
-                        newDims.push(_dim);
-                    }
-                });
-                dims = newDims;
-            }
-            else {
-                dims = ms.queryBy(function(m) {
-                    return m.get('isDimension') === true && m.get('queryName') === this.activeMeasure.get('queryName');
-                }, this).getRange();
-            }
+    configureAdvancedOptions : function() {
 
-            this.advancedPane.bindDimensions(dims);
-            this.advancedPane.show();
+        if (this.activeMeasure)
+        {
+            var options = this.getOptionsForMeasure(this.activeMeasure);
+            this.getAdvancedPane().update({options: options});
+            this.slideAdvancedOptionsPane(options && options.length > 0);
         }
     },
 
-    initHeader : function() {
-
-        var initialData = {
-            title: this.headerTitle,
-            showCount: false
-        };
-
-        return {
-            itemId: 'selector-header',
-            xtype: 'box',
-            height: 80,
-            tpl: new Ext.XTemplate(
-                '<div style="margin: 16px 72px;">',
-                    '<div><span style="font-size: 16px; color: #A09C9C; font-family: Georgia, serif;">{title:htmlEncode}</span></div>',
-                    '<div style="margin-top: 10px;">',
-                        '<tpl if="action">',
-                            '<span class="back-action">',
-                                '<span style="position: absolute; left: 40px; bottom: 16px; font-size: 24px;">&larr;</span>',
-                                '<span>{navText:htmlEncode}</span>',
-                            '</span>',
-                        '<tpl else>',
-                            '<span style="font-size: 12px; font-weight: bold; color: #303030; font-family: Arial, sans-serif;">{navText:htmlEncode}</span>',
-                        '</tpl>',
-                        '<tpl if="showSectionTitle">',
-                            '<h1 style="float: right; margin-top: -12px;">{sectionTitle:htmlEncode}</h1>',
-                        '</tpl>',
-                        '<tpl if="showCount">',
-                            '<span style="float: right;">Subject count</span>',
-                        '</tpl>',
-                    '</div>',
-                '</div>'
-            ),
-            data: initialData,
-            listeners: {
-                afterrender: {
-                    fn: function(header) {
-                        if (this.headerData) {
-                            this.bindHeader(header, this.headerData);
-                        }
-                        else {
-                            this.bindHeader(header, initialData);
-                        }
-                    },
-                    scope: this,
-                    single: true
+    slideAdvancedOptionsPane : function(hasOptions) {
+        // slide in our out the panel depending on if we have options to show or not
+        var pane = this.getAdvancedPane();
+        if (hasOptions)
+        {
+            if (pane.isHidden())
+            {
+                pane.show();
+                pane.getEl().slideIn('b', {
+                    duration: 250
+                });
+            }
+        }
+        else if (!pane.isHidden())
+        {
+            pane.getEl().slideOut('b', {
+                duration: 250,
+                callback: function() {
+                    pane.hide();
                 }
-            },
-            style: 'background-color: #f0f0f0;'
-        };
+            });
+        }
+    },
+
+    getOptionsForMeasure : function(measure) {
+        // check if a white-list of dimensions was declared for the measure or its source
+        var dimensions = measure.get('dimensions');
+        var source = this.getSourceForMeasure(measure);
+        if (dimensions == undefined && source) {
+            dimensions = source.get('dimensions');
+        }
+
+        if (Ext.isArray(dimensions))
+        {
+            var newDimensions = [];
+            Ext.each(dimensions, function(dim) {
+                // the array of dimensions will, by default, be a list of column aliases
+                if (typeof dim == "string")
+                {
+                    var _dim = this.queryService.getMeasureRecordByAlias(dim);
+                    if (_dim) {
+                        newDimensions.push(_dim);
+                    }
+                }
+            }, this);
+            dimensions = newDimensions;
+        }
+        else
+        {
+            // TODO: if no dimensions array on measure or source, should we default to 'isDimension' columns in the source?
+            //dimensions = this.queryService.MEASURE_STORE.queryBy(function(m) {
+            //    return m.get('isDimension') === true && m.get('queryName') === this.activeMeasure.get('queryName');
+            //}, this).getRange();
+        }
+
+        return dimensions;
+    },
+
+    getHeader : function() {
+        if (!this.headerPanel) {
+            var initialData = {
+                title: this.headerTitle,
+                showCount: false
+            };
+
+            var tpl = new Ext.XTemplate(
+                '<div class="main-title">{title:htmlEncode}</div>',
+                '<div class="sub-title">',
+                    '<tpl if="action">',
+                        '<span class="nav-text back-action">',
+                            '<span class="arrow">&nbsp;</span>',
+                            '<span>{navText:htmlEncode}</span>',
+                        '</span>',
+                    '<tpl else>',
+                        '<span class="nav-text">{navText:htmlEncode}</span>',
+                    '</tpl>',
+                    '<span class="section-title">{sectionTitle:htmlEncode}</span>',
+                    '<tpl if="showCount">',
+                        '<span class="subject-count">Subject count</span>',
+                    '</tpl>',
+                '</div>'
+            );
+
+            this.headerPanel = Ext.create('Ext.Component', {
+                cls: 'header',
+                tpl: tpl,
+                data: initialData,
+                listeners: {
+                    afterrender: {
+                        fn: function(header) {
+                            this.bindHeader(header, this.headerData ? this.headerData : initialData);
+                        },
+                        scope: this,
+                        single: true
+                    }
+                }
+            });
+        }
+
+        return this.headerPanel;
     },
 
     bindHeader : function(header, data) {
@@ -402,49 +453,51 @@ Ext.define('Connector.panel.Selector', {
 
     setHeaderData : function(data) {
         this.headerData = data;
-        var h = this.getComponent('selector-header');
-        h.update(data);
-        this.bindHeader(h, data);
+        this.getHeader().update(data);
+        this.bindHeader(this.getHeader(), data);
     },
 
-    initFooter : function() {
-        return {
-            itemId: 'selector-footer',
-            height: 60,
-            bodyCls: 'selector-footer',
-            border: false,
-            layout: {
-                type: 'hbox',
-                pack: 'end'
-            },
-            items: [{
-                xtype: 'button',
-                ui: 'rounded-inverted-accent-text',
-                text: 'Cancel',
-                handler: function() {
-                    this.fireEvent('cancel');
+    getFooter : function() {
+        if (!this.footerPanel) {
+            this.footerPanel = Ext.create('Ext.panel.Panel', {
+                bodyCls: 'footer',
+                border: false,
+                layout: {
+                    type: 'hbox',
+                    pack: 'end'
                 },
-                scope: this
-            },{
-                itemId: 'select-button',
-                xtype: 'button',
-                disabled: true,
-                hidden: true,
-                text: 'Set ' + this.headerTitle,
-                handler: this.makeSelection,
-                scope: this,
-                listeners: {
-                    show: function(btn) {
-                        btn.setDisabled(!Ext.isDefined(this.activeMeasure));
+                items: [{
+                    itemId: 'cancel-button',
+                    xtype: 'button',
+                    ui: 'rounded-inverted-accent-text',
+                    text: 'Cancel',
+                    handler: function() {
+                        this.fireEvent('cancel');
                     },
                     scope: this
-                }
-            }]
-        };
+                },{
+                    itemId: 'select-button',
+                    xtype: 'button',
+                    disabled: true,
+                    hidden: true,
+                    text: 'Set ' + this.headerTitle,
+                    handler: this.makeSelection,
+                    scope: this,
+                    listeners: {
+                        show: function(btn) {
+                            btn.setDisabled(!Ext.isDefined(this.activeMeasure));
+                        },
+                        scope: this
+                    }
+                }]
+            });
+        }
+
+        return this.footerPanel;
     },
 
     getSelectButton : function() {
-        return this.getComponent('selector-footer').getComponent('select-button');
+        return this.getFooter().getComponent('select-button');
     },
 
     makeSelection : function() {

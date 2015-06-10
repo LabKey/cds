@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 128 128" enable-background="new 0 0 128 128" xml:space="preserve">
+<symbol  id="Deleted_Symbol_2_1_" viewBox="-6 -5.3 12 12">
+	<g>
+		<path fill="#FFFFFF" d="M-4-4.8c-0.8,0-1.5,0.7-1.5,1.5v8c0,0.8,0.7,1.5,1.5,1.5h8c0.8,0,1.5-0.7,1.5-1.5v-8
+			c0-0.8-0.7-1.5-1.5-1.5H-4z"/>
+		<path fill="#CFD1D2" d="M4,5.7c0.6,0,1-0.4,1-1v-8c0-0.6-0.4-1-1-1h-8c-0.6,0-1,0.4-1,1v8c0,0.6,0.4,1,1,1H4 M4,6.7h-8
+			c-1.1,0-2-0.9-2-2v-8c0-1.1,0.9-2,2-2h8c1.1,0,2,0.9,2,2v8C6,5.8,5.1,6.7,4,6.7L4,6.7z"/>
+	</g>
+</symbol>
+<g id="Layer_1">
+	<g>
+		<defs>
+			<rect id="SVGID_33_" x="0" y="0" width="128" height="128"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_33_"  overflow="visible"/>
+		</clipPath>
+		<path clip-path="url(#SVGID_2_)" fill="#96268E" d="M113.8,57.8H29.3l39.1-39.1c2.4-2.4,2.4-6.4,0-8.8c-2.4-2.4-6.4-2.4-8.8,0
+			L9.8,59.6C8.6,60.8,8,62.4,8,64c0,1.6,0.6,3.2,1.8,4.4l49.8,49.8c2.4,2.4,6.4,2.4,8.8,0c2.4-2.4,2.4-6.4,0-8.8L29.1,70.1l84.7,0.1
+			c3.4,0,6.2-2.8,6.2-6.2C120,60.5,117.2,57.8,113.8,57.8z"/>
+	</g>
+	<g id="Checkbox_-_checked">
+		<g id="Deleted_Symbol_2">
+		</g>
+	</g>
+	<g id="radio_button_Selected_2">
+	</g>
+	<g id="small_help">
+	</g>
+	<g id="plot_icon">
+	</g>
+</g>
+<g id="Layer_7">
+</g>
+</svg>

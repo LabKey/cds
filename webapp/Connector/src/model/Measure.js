@@ -35,7 +35,7 @@ Ext.define('Connector.model.Measure', {
         {name : 'sortOrder', type: 'int', defaultValue: 0},
         {name : 'variableType', defaultValue: null}, // i.e. TIME, USER_GROUPS (default to null for query based variables)
         {name : 'queryType', defaultValue: null}, // see LABKEY.Query.Visualization.Filter.QueryType
-        {name : 'sourceCount', type: 'int', defaultValue: -1},
+        {name : 'sourceCount', type: 'int', defaultValue: undefined},
         {name : 'uniqueKeys', defaultValue: undefined},
 
         // Array of configs for what options to display in the Advanced options panel of the Variable Selector.

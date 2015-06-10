@@ -2108,8 +2108,6 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                     closeAction: 'hide',
                     resizable: false,
                     border: false,
-                    height: 650,
-                    width: 520,
                     layout: {
                         type: 'fit'
                     },
@@ -2254,8 +2252,6 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                     closeAction: 'hide',
                     resizable: false,
                     border: false,
-                    height: 650,
-                    width: 520,
                     layout: {
                         type: 'fit'
                     },
@@ -2425,8 +2421,6 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
                     closeAction: 'hide',
                     resizable: false,
                     border: false,
-                    height: 650,
-                    width: 520,
                     layout: {
                         type: 'fit'
                     },
