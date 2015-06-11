@@ -7,6 +7,10 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
             </taskref>
         </transform>
+        <transform id="PopulateVisits" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudyVisitTask">
+            </taskref>
+        </transform>
         <transform id="PopulateDemographics" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
                 <settings>
