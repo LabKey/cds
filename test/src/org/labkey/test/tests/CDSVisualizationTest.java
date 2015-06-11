@@ -297,7 +297,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("incorrect total number of points after clicking x axis categories",468, getPointCount());
         //apply selection as exlusive filter
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
-        waitForPointCount(128, 10000);
+        waitForPointCount(468 - 128, 10000);
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
     }
 
