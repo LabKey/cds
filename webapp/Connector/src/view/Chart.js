@@ -1052,7 +1052,7 @@ Ext.define('Connector.view.Chart', {
 
 
 
-retrieveBinSubjectIds : function (plot, target, subjects) {
+    retrieveBinSubjectIds : function (plot, target, subjects) {
         var subjectIds = [];
         if(subjects) {
             subjects.forEach(function(s) {
@@ -1541,55 +1541,68 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
     },
 
     onShowGraph : function() {
-        this.refreshRequired = false;
 
-        var activeMeasures = this.getActiveMeasures();
+        if(!this.isHidden())
+        {
+            this.refreshRequired = false;
+            this.filterChange = false;
 
-        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
-        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
-        this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
+            var activeMeasures = this.getActiveMeasures();
 
-        if (this.filterClear) {
-            if (this.axisPanelY) {
-                this.axisPanelY.clearSelection();
-                Ext.getCmp('yaxisselector').clearModel();
+            this.fireEvent('axisselect', this, 'y', [activeMeasures.y]);
+            this.fireEvent('axisselect', this, 'x', [activeMeasures.x]);
+            this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
+
+            if (this.filterClear)
+            {
+                if (this.axisPanelY)
+                {
+                    this.axisPanelY.clearSelection();
+                    Ext.getCmp('yaxisselector').clearModel();
+                }
+
+                if (this.axisPanelX)
+                {
+                    this.axisPanelX.clearSelection();
+                    Ext.getCmp('xaxisselector').clearModel();
+                }
+
+                if (this.colorPanel)
+                {
+                    this.colorPanel.clearSelection();
+                    Ext.getCmp('colorselector').clearModel();
+                }
             }
 
-            if (this.axisPanelX) {
-                this.axisPanelX.clearSelection();
-                Ext.getCmp('xaxisselector').clearModel();
+            if (this.filterClear || activeMeasures.y == null)
+            {
+                this.hideMessage();
+                this.requireStudyAxis = false;
+                this.getStudyAxisPanel().setVisible(false);
+                Connector.getState().clearSelections(true);
+                this.filterClear = false;
+                this.noPlot();
             }
+            else
+            {
+                this.measures = [activeMeasures.x, activeMeasures.y, activeMeasures.color];
 
-            if (this.colorPanel) {
-                this.colorPanel.clearSelection();
-                Ext.getCmp('colorselector').clearModel();
+                this.fireEvent('showload', this);
+
+                this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
+
+                // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
+                if (!this.fromFilter && activeMeasures.y !== null)
+                {
+                    this.updatePlotBasedFilter(activeMeasures);
+                }
+                else
+                {
+                    this.initialized = true;
+                }
+
+                this.requestChartData(activeMeasures);
             }
-        }
-
-        if (this.filterClear || activeMeasures.y == null) {
-            this.hideMessage();
-            this.requireStudyAxis = false;
-            this.getStudyAxisPanel().setVisible(false);
-            Connector.getState().clearSelections(true);
-            this.filterClear = false;
-            this.noPlot();
-        }
-        else {
-            this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
-
-            this.fireEvent('showload', this);
-
-            this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
-
-            // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
-            if (!this.fromFilter && activeMeasures.y !== null) {
-                this.updatePlotBasedFilter(activeMeasures);
-            }
-            else {
-                this.initialized = true;
-            }
-
-            this.requestChartData(activeMeasures);
         }
     },
 
@@ -2604,6 +2617,8 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
         else if (this.initialized) {
             this.refreshRequired = true;
         }
+
+        this.filterChange = true;
     },
 
     onViewChange : function(controller, view) {
@@ -2620,6 +2635,9 @@ retrieveBinSubjectIds : function (plot, target, subjects) {
             }
         }
         else {
+            if(this.filterChange) {
+                this.refreshRequired = true;
+            }
             this.fireEvent('hideload', this);
             this.hideMessage();
         }
