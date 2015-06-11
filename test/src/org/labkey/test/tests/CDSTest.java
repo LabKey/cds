@@ -50,7 +50,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@Category({CustomModules.class, CDS.class})
+@Category({CDS.class})
 public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private static final String GROUP_NULL = "Group creation cancelled";
@@ -629,16 +629,16 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         log("Verify grid paging");
         grid.sort("Subject Id");
-        click(CDSHelper.Locators.cdsButtonLocator(">>"));
+        grid.goToLastPage();
         grid.assertCurrentPage(119);
         grid.assertCellContent("9181");
         grid.assertCellContent("9199");
 
-        click(CDSHelper.Locators.cdsButtonLocator("<"));
+        grid.clickPreviousBtn();
         grid.assertCurrentPage(118);
         grid.assertCellContent("9156");
         grid.assertCellContent("9180");
-        click(CDSHelper.Locators.cdsButtonLocator("<<"));
+        grid.goToFirstPage();
         grid.assertCellContent("193001");
         grid.assertCellContent("193002");
 
@@ -679,18 +679,24 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertFilterStatusCounts(84,3,3);
 
         //
-        // Check paging buttons and page selector with filtered dataset.
+        // More page button tests
         //
         log("Verify grid paging with filtered dataset");
         grid.sort("Subject Id");
-        click(CDSHelper.Locators.cdsButtonLocator(">"));
+        grid.clickNextBtn();
         grid.assertCurrentPage(2);
         grid.assertCellContent("9149");
         grid.assertCellContent("9102");
 
-        grid.setCurrentPage(20);
-        grid.assertCellContent("193087");
-        grid.assertCellContent("193088");
+        grid.clickPreviousBtn();
+        grid.goToPreviousPage();
+        grid.assertCurrentPage(3);
+        grid.assertCellContent("249325733");
+
+        grid.goToNextPage();
+        grid.assertCurrentPage(5);
+        grid.assertCellContent("249325732");
+        grid.assertCellContent("249325731");
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);

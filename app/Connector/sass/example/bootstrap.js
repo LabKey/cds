@@ -33,6 +33,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../../../webapp/Connector/src/component/ActionTitle.js",
   "Connector.component.DropDown": "../../../../webapp/Connector/src/component/DropDown.js",
+  "Connector.component.GridPager": "../../../../webapp/Connector/src/component/GridPager.js",
   "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
   "Connector.constant.Templates": "../../../../webapp/Connector/src/constant/Templates.js",
   "Connector.controller.AbstractViewController": "../../../../webapp/Connector/src/controller/AbstractViewController.js",
@@ -208,6 +209,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
   "Connector.component.DropDown": [],
+  "Connector.component.GridPager": [],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
   "Connector.controller.AbstractViewController": [],
@@ -1209,6 +1211,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.component.DropDown": [
     "widget.dropdown"
+  ],
+  "Connector.component.GridPager": [
+    "widget.gridpager"
   ],
   "Connector.constant.ModuleViewsLookup": [],
   "Connector.constant.Templates": [],
