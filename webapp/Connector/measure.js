@@ -176,6 +176,9 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'study_ELISPOT_assay_identifier': {
                     dimensions: []
+                },
+                'study_ELISPOT_antigen': {
+                    label: 'Antigen'
                 }
             }
         }

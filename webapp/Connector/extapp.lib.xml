@@ -95,6 +95,7 @@
         <script path="Connector/src/button/Image.js"/>
         <script path="Connector/src/button/RoundedButton.js"/>
         <script path="Connector/src/component/ActionTitle.js"/>
+        <script path="Connector/src/component/AdvancedOption.js"/>
         <script path="Connector/src/component/DropDown.js"/>
         <script path="Connector/src/component/GridPager.js"/>
         <script path="Connector/src/window/AbstractFilter.js"/>

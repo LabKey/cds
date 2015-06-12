@@ -85,6 +85,34 @@
   .advanced {
     background-color: $heat-scale-5;
     padding: 18px 48px;
-    height: 220px;
+
+    .x-panel-body {
+      background-color: transparent;
+
+      .x-field-label-cell {
+        vertical-align: middle;
+      }
+
+      .x-form-item-label {
+        color: $heat-scale-1;
+      }
+
+      .x-form-display-field {
+        background-color: #FFFFFF;
+        margin-top: 4px;
+        padding: 8px 16px 7px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+
+        background-image: url(images/dropdown_expand.svg);
+        background-size: 12px;
+        background-repeat: no-repeat;
+        background-position: 250px center;
+      }
+
+      .hierarchical .x-form-display-field {
+        background-image: url(images/navigateforward.svg);
+      }
+    }
   }
 }

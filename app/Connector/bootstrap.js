@@ -32,6 +32,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.button.InfoButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../webapp/Connector/src/component/ActionTitle.js",
+  "Connector.component.AdvancedOption": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../webapp/Connector/src/component/GridPager.js",
   "Connector.constant.ModuleViewsLookup": "../../webapp/Connector/src/constant/ModuleViewsLookup.js",
@@ -208,6 +209,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
+  "Connector.component.AdvancedOption": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
   "Connector.constant.ModuleViewsLookup": [],
@@ -1208,6 +1210,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.component.ActionTitle": [
     "widget.actiontitle"
+  ],
+  "Connector.component.AdvancedOption": [
+    "widget.advancedoptionfield"
   ],
   "Connector.component.DropDown": [
     "widget.dropdown"

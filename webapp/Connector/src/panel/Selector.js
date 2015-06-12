@@ -196,12 +196,16 @@ Ext.define('Connector.panel.Selector', {
     showSources : function() {
         this.getLoaderPane().hide();
         this.getSourcePane().show();
+
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
             showCount: true
         });
-        this.getSelectButton().hide();
+
+        this.getButton('cancel-link').hide();
+        this.getButton('cancel-button').show();
+        this.getButton('select-button').hide();
     },
 
     getMeasurePane : function()
@@ -287,7 +291,9 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        this.getSelectButton().show();
+        this.getButton('cancel-link').show();
+        this.getButton('cancel-button').hide();
+        this.getButton('select-button').show();
 
         if (activeMeasure) {
             Ext.defer(function() {
@@ -298,28 +304,13 @@ Ext.define('Connector.panel.Selector', {
 
     getAdvancedPane : function() {
         if (!this.advancedPane) {
-            this.advancedPane = Ext.create('Ext.Component', {
+            this.advancedPane = Ext.create('Ext.form.Panel', {
                 border: false,
                 frame: false,
+                height: 220,
                 autoScroll: true,
                 hidden: true,
-                cls: 'advanced',
-                tpl: [
-                    '<table style="width: 100%;">',
-                        '<tpl for="options">',
-                            '<tpl if="data.hidden != true">',
-                                // TODO: Make these sub-templates
-                                '<tr style="margin-bottom: 5px;">',
-                                    '<td style="color: #666363;">{data.label:htmlEncode}:</td>',
-                                    '<td width="65%;" style="margin-bottom: 5px;">',
-                                        '<div style="background-color: #FFFFFF; margin: 2px 0; padding: 8px 16px; border-radius: 20px;">Value</div>',
-                                    '</td>',
-                                '</tr>',
-                            '</tpl>',
-                        '</tpl>',
-                    '</table>'
-                ],
-                data: {}
+                cls: 'advanced'
             });
 
             this.insert(this.items.length-2, this.advancedPane);
@@ -328,13 +319,26 @@ Ext.define('Connector.panel.Selector', {
         return this.advancedPane;
     },
 
+    bindDimensions : function(dimensions) {
+        Ext.each(dimensions, function(dimension){
+            if (!dimension.get('hidden')) {
+                this.getAdvancedPane().add(Ext.create('Connector.component.AdvancedOption', { dimension: dimension }));
+            }
+        }, this);
+    },
+
     configureAdvancedOptions : function() {
 
         if (this.activeMeasure)
         {
-            var options = this.getOptionsForMeasure(this.activeMeasure);
-            this.getAdvancedPane().update({options: options});
-            this.slideAdvancedOptionsPane(options && options.length > 0);
+            this.getAdvancedPane().removeAll();
+
+            var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
+            this.bindDimensions(dimensions);
+
+            //TODO: time options + scale
+
+            this.slideAdvancedOptionsPane(dimensions && dimensions.length > 0);
         }
     },
 
@@ -362,7 +366,7 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
-    getOptionsForMeasure : function(measure) {
+    getDimensionsForMeasure : function(measure) {
         // check if a white-list of dimensions was declared for the measure or its source
         var dimensions = measure.get('dimensions');
         var source = this.getSourceForMeasure(measure);
@@ -467,9 +471,18 @@ Ext.define('Connector.panel.Selector', {
                     pack: 'end'
                 },
                 items: [{
-                    itemId: 'cancel-button',
+                    itemId: 'cancel-link',
                     xtype: 'button',
                     ui: 'rounded-inverted-accent-text',
+                    hidden: true,
+                    text: 'Cancel',
+                    handler: function() {
+                        this.fireEvent('cancel');
+                    },
+                    scope: this
+                },{
+                    itemId: 'cancel-button',
+                    xtype: 'button',
                     text: 'Cancel',
                     handler: function() {
                         this.fireEvent('cancel');
@@ -496,21 +509,22 @@ Ext.define('Connector.panel.Selector', {
         return this.footerPanel;
     },
 
-    getSelectButton : function() {
-        return this.getFooter().getComponent('select-button');
+    getButton : function(id) {
+        return this.getFooter().getComponent(id);
     },
 
     makeSelection : function() {
         if (Ext.isDefined(this.activeMeasure)) {
             var selectedMeasure = Ext.clone(this.activeMeasure.data);
             selectedMeasure.options = {};
+            // this.getAdvancedPane().getValues(false, false, false, true /*useDataValues*/)
             this.fireEvent('selectionmade', selectedMeasure);
         }
     },
 
     setActiveMeasure : function(measure) {
         this.activeMeasure = measure;
-        this.getSelectButton().enable();
+        this.getButton('select-button').enable();
 
         this.configureAdvancedOptions();
     }
