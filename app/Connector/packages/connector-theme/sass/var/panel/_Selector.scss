@@ -104,13 +104,32 @@
         border-radius: 20px;
         cursor: pointer;
 
-        background-image: url(images/dropdown_expand.svg);
-        background-size: 12px;
-        background-repeat: no-repeat;
-        background-position: 250px center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+        .label {
+          color: $black;
+        }
+
+        .sublabel {
+          color: $heat-scale-2;
+        }
+
+        .empty {
+          color: $interactive-color;
+        }
+
+        .icon {
+          width: 12px;
+          float: right;
+          background-image: url(images/dropdown_expand.svg);
+          background-size: 12px;
+          background-repeat: no-repeat;
+        }
       }
 
-      .hierarchical .x-form-display-field {
+      .hierarchical .x-form-display-field .icon {
         background-image: url(images/navigateforward.svg);
       }
     }

@@ -49,10 +49,12 @@ Ext.define('Connector.panel.Selector', {
         this.queryService = Connector.getService('Query');
 
         this.sourcesStore = Ext.create('Ext.data.Store', {
-            model: 'Connector.model.Source'
+            model: 'Connector.model.Source',
+            sorters: [{property: 'queryLabel'}]
         });
         this.measureStore = Ext.create('Ext.data.Store', {
-            model: 'Connector.model.Measure'
+            model: 'Connector.model.Measure',
+            sorters: [{property: 'label'}]
         });
 
         this.items = [
@@ -321,8 +323,13 @@ Ext.define('Connector.panel.Selector', {
 
     bindDimensions : function(dimensions) {
         Ext.each(dimensions, function(dimension){
-            if (!dimension.get('hidden')) {
-                this.getAdvancedPane().add(Ext.create('Connector.component.AdvancedOption', { dimension: dimension }));
+            if (!dimension.get('hidden'))
+            {
+                var option = Ext.create('Connector.component.AdvancedOption', {
+                    dimension: dimension
+                });
+
+                this.getAdvancedPane().add(option);
             }
         }, this);
     },
