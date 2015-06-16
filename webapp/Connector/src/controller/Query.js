@@ -33,6 +33,11 @@ Ext.define('Connector.controller.Query', {
             this.SOURCE_STORE = Ext.create('Ext.data.Store', {model: 'Connector.model.Source'});
         }
 
+        // map to cache the distinct values array for a measure alias
+        if (!this.MEASURE_DISTINCT_VALUES) {
+            this.MEASURE_DISTINCT_VALUES = {};
+        }
+
         var cacheReady = false;
         var gridMeasuresReady = false;
 
@@ -219,6 +224,38 @@ Ext.define('Connector.controller.Query', {
 
         console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
         return null;
+    },
+
+    getMeasureDistinctValues : function(measure, callback, scope) {
+        if (measure)
+        {
+            // get the distinct values from the cache, by measure alias, or query for the distinct values
+            var cachedValues = this.MEASURE_DISTINCT_VALUES[measure.get('alias')];
+            if (Ext.isDefined(cachedValues))
+            {
+                if (Ext.isFunction(callback)) {
+                    callback.call(scope || this, cachedValues);
+                }
+            }
+            else
+            {
+                LABKEY.Query.selectDistinctRows({
+                    schemaName: measure.get('schemaName'),
+                    queryName: measure.get('queryName'),
+                    column: measure.get('name'),
+                    filterArray: [LABKEY.Filter.create(measure.get('name'), null, LABKEY.Filter.Types.NOT_MISSING)],
+                    scope: this,
+                    success: function(data) {
+                        // cache the distinct values array result by measure alias
+                        this.MEASURE_DISTINCT_VALUES[measure.get('alias')] = data.values;
+
+                        if (Ext.isFunction(callback)) {
+                            callback.call(scope || this, data.values);
+                        }
+                    }
+                });
+            }
+        }
     },
 
     /**

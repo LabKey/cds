@@ -33,6 +33,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.button.RoundedButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../webapp/Connector/src/component/ActionTitle.js",
   "Connector.component.AdvancedOption": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionBaseDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionCheckboxDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionRadioDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../webapp/Connector/src/component/GridPager.js",
   "Connector.constant.ModuleViewsLookup": "../../webapp/Connector/src/constant/ModuleViewsLookup.js",
@@ -210,6 +213,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
   "Connector.component.AdvancedOption": [],
+  "Connector.component.AdvancedOptionBaseDropdown": [],
+  "Connector.component.AdvancedOptionCheckboxDropdown": [],
+  "Connector.component.AdvancedOptionRadioDropdown": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
   "Connector.constant.ModuleViewsLookup": [],
@@ -1214,6 +1220,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.component.AdvancedOption": [
     "widget.advancedoptionfield"
   ],
+  "Connector.component.AdvancedOptionBaseDropdown": [],
+  "Connector.component.AdvancedOptionCheckboxDropdown": [],
+  "Connector.component.AdvancedOptionRadioDropdown": [],
   "Connector.component.DropDown": [
     "widget.dropdown"
   ],

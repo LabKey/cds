@@ -89,31 +89,38 @@
     .x-panel-body {
       background-color: transparent;
 
-      .x-field-label-cell {
+      .x-fieldset {
+        padding: 0;
+      }
+
+      .field-label {
+        display: inline-block;
+        color: $heat-scale-1;
+        width: 35%;
         vertical-align: middle;
       }
 
-      .x-form-item-label {
-        color: $heat-scale-1;
-      }
-
-      .x-form-display-field {
+      .field-display {
+        display: inline-block;
         background-color: #FFFFFF;
-        margin-top: 4px;
+        width: 65%;
         padding: 8px 16px 7px 16px;
-        border-radius: 20px;
+        border-radius: 15px;
         cursor: pointer;
 
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-
-        .label {
+        .main-label {
+          display: inline-block;
           color: $black;
-        }
+          width: 85%;
+          vertical-align: bottom;
 
-        .sublabel {
-          color: $heat-scale-2;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+
+          .sub-value {
+            color: $heat-scale-2;
+          }
         }
 
         .empty {
@@ -129,8 +136,54 @@
         }
       }
 
-      .hierarchical .x-form-display-field .icon {
+      .expanded .field-display .icon {
+        background-image: url(images/dropdown_collapse.svg);
+      }
+
+      .hierarchical .field-display .icon {
         background-image: url(images/navigateforward.svg);
+      }
+    }
+  }
+}
+
+.advanced-dropdown {
+  border-radius: 15px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $heat-scale-3 !important;
+
+  .x-panel-body {
+    background-color: transparent;
+
+    .field-display {
+      width: 100%;
+      padding: 8px 16px 7px 16px;
+      border-radius: 15px;
+    }
+
+    .body-panel {
+      background-color: $heat-scale-6;
+      padding: 8px 0 8px 16px;
+
+      .x-form-checkbox {
+        background-image: url(images/form/checkbox2.gif);
+      }
+
+      .cb-all-panel, .cb-panel, .radio-panel {
+        margin-bottom: 0;
+      }
+
+      .cb-all-panel {
+        margin-left: 4px;
+      }
+
+      .cb-all-panel .x-form-cb-label-after, .cb-panel .x-form-cb-label-after {
+        padding-left: 8px;
+      }
+
+      .radio-panel .x-form-cb-label-after {
+        margin-left: 8px;
       }
     }
   }
