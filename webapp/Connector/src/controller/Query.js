@@ -281,7 +281,12 @@ Ext.define('Connector.controller.Query', {
             var hiddenMatch = config.includeHidden || !record.get('hidden');
             var notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
 
-            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch) {
+            // The userFilter is a function used to further filter down the available measures.
+            // Needed so the color picker only displays categorical measures.
+            var userFilterMatch = !Ext4.isFunction(config.userFilter) || config.userFilter(record.data);
+
+            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch && userFilterMatch)
+            {
                 measures.push(Ext.clone(record.raw));
 
                 var key = record.get('schemaName') + '|' + record.get('queryName');

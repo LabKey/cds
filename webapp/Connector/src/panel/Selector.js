@@ -325,13 +325,24 @@ Ext.define('Connector.panel.Selector', {
         Ext.each(dimensions, function(dimension){
             if (!dimension.get('hidden'))
             {
-                var option = Ext.create('Connector.component.AdvancedOption', {
+                var option = Ext.create('Connector.component.AdvancedOptionDimension', {
                     dimension: dimension
                 });
 
                 this.getAdvancedPane().add(option);
             }
         }, this);
+    },
+
+    bindScale : function() {
+        if (this.activeMeasure.shouldShowScale())
+        {
+            var option = Ext.create('Connector.component.AdvancedOptionScale', {
+                measure: this.activeMeasure
+            });
+
+            this.getAdvancedPane().add(option);
+        }
     },
 
     configureAdvancedOptions : function() {
@@ -343,7 +354,9 @@ Ext.define('Connector.panel.Selector', {
             var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
             this.bindDimensions(dimensions);
 
-            //TODO: time options + scale
+            //TODO: time options
+
+            this.bindScale();
 
             this.slideAdvancedOptionsPane(dimensions && dimensions.length > 0);
         }

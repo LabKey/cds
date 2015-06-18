@@ -32,10 +32,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.button.InfoButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../../../webapp/Connector/src/component/ActionTitle.js",
-  "Connector.component.AdvancedOption": "../../../../webapp/Connector/src/component/AdvancedOption.js",
-  "Connector.component.AdvancedOptionBaseDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
-  "Connector.component.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
-  "Connector.component.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionBase": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionDimension": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionScale": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../../../webapp/Connector/src/component/GridPager.js",
   "Connector.constant.ModuleViewsLookup": "../../../../webapp/Connector/src/constant/ModuleViewsLookup.js",
@@ -83,6 +82,9 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.UpdateLog": "../../../../webapp/Connector/src/controller/Update.js",
   "Connector.model.Variable": "../../../../webapp/Connector/src/model/Variable.js",
   "Connector.model.VisitTag": "../../../../webapp/Connector/src/model/VisitTag.js",
+  "Connector.panel.AdvancedOptionBaseDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.ColorSelector": "../../../../webapp/Connector/src/view/Variable.js",
@@ -212,10 +214,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
-  "Connector.component.AdvancedOption": [],
-  "Connector.component.AdvancedOptionBaseDropdown": [],
-  "Connector.component.AdvancedOptionCheckboxDropdown": [],
-  "Connector.component.AdvancedOptionRadioDropdown": [],
+  "Connector.component.AdvancedOptionBase": [],
+  "Connector.component.AdvancedOptionDimension": [],
+  "Connector.component.AdvancedOptionScale": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
   "Connector.constant.ModuleViewsLookup": [],
@@ -263,6 +264,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
+  "Connector.panel.AdvancedOptionBaseDropdown": [],
+  "Connector.panel.AdvancedOptionCheckboxDropdown": [],
+  "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.ColorSelector": [],
@@ -1217,12 +1221,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.component.ActionTitle": [
     "widget.actiontitle"
   ],
-  "Connector.component.AdvancedOption": [
-    "widget.advancedoptionfield"
-  ],
-  "Connector.component.AdvancedOptionBaseDropdown": [],
-  "Connector.component.AdvancedOptionCheckboxDropdown": [],
-  "Connector.component.AdvancedOptionRadioDropdown": [],
+  "Connector.component.AdvancedOptionBase": [],
+  "Connector.component.AdvancedOptionDimension": [],
+  "Connector.component.AdvancedOptionScale": [],
   "Connector.component.DropDown": [
     "widget.dropdown"
   ],
@@ -1276,6 +1277,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
+  "Connector.panel.AdvancedOptionBaseDropdown": [],
+  "Connector.panel.AdvancedOptionCheckboxDropdown": [],
+  "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AxisSelectDisplay": [
     "widget.axisselectdisplay"
   ],

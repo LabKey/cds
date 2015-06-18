@@ -55,5 +55,9 @@ Ext.define('Connector.model.Measure', {
         // If the selection method for this option involves a hierarchical relationship with other columns,
         // this property lists the child column's alias.
         {name : 'hierarchicalSelectionChild', defaultValue: undefined}
-    ]
+    ],
+
+    shouldShowScale : function() {
+        return this.get('variableType') == null && this.get('type') !== 'VARCHAR' && this.get('type') !== 'TIMESTAMP' && this.get('type') !== 'BOOLEAN';
+    }
 });

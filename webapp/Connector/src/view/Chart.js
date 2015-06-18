@@ -2418,7 +2418,10 @@ Ext.define('Connector.view.Chart', {
                     headerTitle: 'color',
                     sourceMeasureFilter: {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                        includeHidden: this.canShowHidden
+                        includeHidden: this.canShowHidden,
+                        userFilter : function(row) {
+                            return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
+                        }
                     },
                     listeners: {
                         selectionmade: function(selected) {
