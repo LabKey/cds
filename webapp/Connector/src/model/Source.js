@@ -19,7 +19,7 @@ Ext.define('Connector.model.Source', {
 
         // Misc properties about the source display in the application
         {name: 'sortOrder', type: 'int', defaultValue: 0},
-        {name: 'variableType', defaultValue: undefined}, // TODO: is this actually needed for the Source model?
+        {name: 'variableType', defaultValue: undefined},
         {name: 'category', defaultValue: undefined},
         {name: 'subjectCount', type: 'int', defaultValue: -1},
 

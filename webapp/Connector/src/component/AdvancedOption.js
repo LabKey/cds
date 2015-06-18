@@ -6,6 +6,8 @@ Ext.define('Connector.component.AdvancedOptionBase', {
     border: false,
     allowMultiSelect: false,
     isHierarchical: false,
+    storeValueField: 'value',
+    storeLabelField: 'label',
 
     initComponent : function() {
         this.items = [this.getHiddenField(), this.getDisplayField()];
@@ -52,7 +54,10 @@ Ext.define('Connector.component.AdvancedOptionBase', {
     setValue : function(value) {
         this.value = value;
         this.getHiddenField().setValue(value);
+        this.getDisplayField().update(this.getLabelDisplayValue(value));
+    },
 
+    getLabelDisplayValue : function(value) {
         var displayValue = null, subDisplayValue = null, cls = '';
         if (Ext.isArray(value) && value.length > 0)
         {
@@ -62,7 +67,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             subDisplayValue = isAll ? value.join(', ') : null;
         }
         else if (Ext.isString(value) && this.getRecordFromStore(value) != null) {
-            displayValue = this.getRecordFromStore(value).get('label');
+            displayValue = this.getRecordFromStore(value).get(this.storeLabelField);
         }
         else
         {
@@ -70,7 +75,21 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             cls = 'empty';
         }
 
-        this.getDisplayField().update({value: displayValue, subValue: subDisplayValue, cls: cls});
+        return {
+            value: displayValue,
+            subValue: subDisplayValue,
+            cls: cls
+        };
+    },
+
+    getDropdownPanelConfig : function() {
+        return {
+            name: this.fieldName,
+            store: this.store,
+            initSelection: this.value,
+            valueField: this.storeValueField,
+            labelField: this.storeLabelField
+        };
     },
 
     getDropdownPanel : function() {
@@ -80,11 +99,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
                 dropdownClassName = 'Connector.panel.AdvancedOptionRadioDropdown';
             }
 
-            this.dropdownPanel = Ext.create(dropdownClassName, {
-                name: this.fieldName,
-                store: this.store,
-                initSelection: this.value
-            });
+            this.dropdownPanel = Ext.create(dropdownClassName, this.getDropdownPanelConfig());
 
             this.dropdownPanel.on('selectionchange', function(dropdown, newSelection){
                 this.setValue(newSelection);
@@ -119,7 +134,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
 
     getRecordFromStore : function(value) {
         if (this.store) {
-            return this.store.findRecord('value', value, 0, false, true, true);
+            return this.store.findRecord(this.storeValueField, value, 0, false, true, true);
         }
         return null;
     }
@@ -150,7 +165,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
 
     populateStore : function(distinctValues) {
         this.store = Ext.create('Ext.data.Store', {
-            fields : [{name: 'value', convert: function(value, record) { return record.raw; }}],
+            fields : [{name: this.storeValueField, convert: function(value, record) { return record.raw; }}],
             data: distinctValues
         });
 
@@ -162,13 +177,13 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         var defaultSel = this.dimension.get('defaultSelection');
 
         if (defaultSel.all) {
-            this.setValue(this.store.collect('value', true));
+            this.setValue(this.store.collect(this.storeValueField, true));
         }
         else if (Ext.isDefined(defaultSel.value) && this.getRecordFromStore(defaultSel.value) != null) {
             this.setValue([defaultSel.value]);
         }
         else if (this.store.getCount() > 0) {
-            this.setValue([this.store.first().get('value')]);
+            this.setValue([this.store.first().get(this.storeValueField)]);
         }
     },
 
@@ -189,6 +204,9 @@ Ext.define('Connector.component.AdvancedOptionScale', {
 
     extend: 'Connector.component.AdvancedOptionBase',
 
+    fieldName: 'scale',
+    fieldLabel: 'Scale',
+
     constructor : function(config) {
         if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
             console.error('Advanced option scale field must be defined using a Measure record.');
@@ -198,11 +216,8 @@ Ext.define('Connector.component.AdvancedOptionScale', {
     },
 
     initComponent : function() {
-        this.fieldName = 'scale';
-        this.fieldLabel = 'Scale';
-
         this.store = Ext.create('Ext.data.Store', {
-            fields: ['label', 'value'],
+            fields: [this.storeValueField, this.storeLabelField],
             data: [
                 {value: 'LINEAR', label: 'Linear'},
                 {value: 'LOG', label: 'Log'}
@@ -212,6 +227,67 @@ Ext.define('Connector.component.AdvancedOptionScale', {
         this.setValue(this.value || this.measure.get('defaultScale'));
 
         this.callParent();
+    }
+});
+
+
+Ext.define('Connector.component.AdvancedOptionTime', {
+
+    extend: 'Connector.component.AdvancedOptionBase',
+
+    fieldName: null,
+    fieldLabel: null,
+    singleUseOnly: true,
+    storeValueField: 'Name',
+    storeLabelField: 'Caption',
+
+    constructor : function(config) {
+        if (config.measure == undefined || config.measure.$className !== 'Connector.model.Measure') {
+            console.error('Advanced option scale field must be defined using a Measure record.');
+        }
+
+        this.callParent([config]);
+    },
+
+    initComponent : function() {
+        this.value = null;
+        this.allowMultiSelect = !this.singleUseOnly;
+
+        this.store = Connector.getApplication().getStore(this.singleUseOnly ? 'VisitTagSingleUse' : 'VisitTagMultiUse');
+        if (this.store.isLoading()) {
+            this.store.on('load', function() {
+                this.setValue(this.value);
+            }, this);
+        }
+        else {
+            this.setValue(this.value);
+        }
+
+        this.callParent();
+    },
+
+    getLabelDisplayValue : function(value) {
+        var displayValue = 'Unaligned';
+        if (value && this.getRecordFromStore(value)) {
+            displayValue = this.getRecordFromStore(value).get(this.storeLabelField);
+        }
+
+        return {value: displayValue};
+    },
+
+    getDropdownPanelConfig : function() {
+        var config = this.callParent();
+
+        // for 'Align by' time option, append the 'Unaligned' radio item
+        if (this.singleUseOnly) {
+            config.additionalItems = [{
+                boxLabel: 'Unaligned',
+                inputValue: null,
+                checked: true
+            }];
+        }
+
+        return config;
     }
 });
 
@@ -228,6 +304,7 @@ Ext.define('Connector.panel.AdvancedOptionBaseDropdown', {
 
     store: null,
     initSelection: null,
+    additionalItems: [],
 
     constructor : function(config) {
         this.callParent([config]);
@@ -307,13 +384,12 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
     getDropdownCheckboxGroup : function() {
         if (!this.dropdownCheckboxGroup)
         {
-            var checkboxItems = [];
+            var checkboxItems = Ext.clone(this.additionalItems) || [];
             Ext.each(this.store.getRange(), function(record) {
                 checkboxItems.push({
-                    name: this.name + '-check',
-                    boxLabel: record.get('label') || record.get('value'),
-                    inputValue: record.get('value'),
-                    checked: this.initSelection.indexOf(record.get('value')) > -1,
+                    boxLabel: record.get(this.labelField) || record.get(this.valueField),
+                    inputValue: record.get(this.valueField),
+                    checked: this.initSelection && this.initSelection.indexOf(record.get(this.valueField)) > -1,
                     listeners: {
                         scope: this,
                         change: function(cb, newValue) {
@@ -326,6 +402,11 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                         }
                     }
                 });
+            }, this);
+
+            // set the 'name' property for all items in this checkbox group
+            Ext.each(checkboxItems, function(item){
+                item.name = this.name + '-check';
             }, this);
 
             this.dropdownCheckboxGroup = Ext.create('Ext.form.CheckboxGroup', {
@@ -351,14 +432,18 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
     getDropdownRadioGroup : function() {
         if (!this.dropdownRadioGroup)
         {
-            var radioItems = [];
+            var radioItems = Ext.clone(this.additionalItems) || [];
             Ext.each(this.store.getRange(), function(record) {
                 radioItems.push({
-                    name: this.name + '-radio',
-                    boxLabel: record.get('label') || record.get('value'),
-                    inputValue: record.get('value'),
-                    checked: this.initSelection.indexOf(record.get('value')) > -1
+                    boxLabel: record.get(this.labelField) || record.get(this.valueField),
+                    inputValue: record.get(this.valueField),
+                    checked: this.initSelection && this.initSelection.indexOf(record.get(this.valueField)) > -1
                 });
+            }, this);
+
+            // set the 'name' property for all items in this radio group
+            Ext.each(radioItems, function(item){
+                item.name = this.name + '-radio';
             }, this);
 
             this.dropdownRadioGroup = Ext.create('Ext.form.RadioGroup', {

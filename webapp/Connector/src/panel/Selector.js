@@ -50,11 +50,24 @@ Ext.define('Connector.panel.Selector', {
 
         this.sourcesStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Source',
-            sorters: [{property: 'queryLabel'}]
+            sorters: [
+                {
+                    property: 'category',
+                    transform: function(value) {
+                        return value || ' ';
+                    }
+                },
+                {property: 'queryLabel'}
+            ]
         });
         this.measureStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Measure',
-            sorters: [{property: 'label'}]
+            sorters: [
+                {property: 'queryLabel'},
+                {property: 'isRecommendedVariable', direction: 'DESC'},
+                {property: 'sortOrder'},
+                {property: 'label'}
+            ]
         });
 
         this.items = [
@@ -142,7 +155,10 @@ Ext.define('Connector.panel.Selector', {
                 itemSelector: 'div.content-item',
                 store: this.sourcesStore,
                 tpl: new Ext.XTemplate(
-                    '<tpl for=".">' +
+                    '<tpl for=".">',
+                        '<tpl if="category != null && parent[xindex-2] && parent[xindex-2].category != category">',
+                           '<div class="content-category">{category:htmlEncode}</div>',
+                        '</tpl>',
                         '<div class="content-item {subjectCount:this.greyMe}">',
                             '<span>{queryLabel:htmlEncode}',
                                 '<tpl if="this.showLabel(queryLabel, longLabel)">',
@@ -223,7 +239,13 @@ Ext.define('Connector.panel.Selector', {
                 selectedItemCls: 'content-selected',
                 store: this.measureStore,
                 tpl: new Ext.XTemplate(
-                    '<tpl for=".">' +
+                    '<tpl for=".">',
+                        '<tpl if="isRecommendedVariable && xindex == 1">',
+                            '<div class="content-grouping">Recommended</div>',
+                        '</tpl>',
+                        '<tpl if="!isRecommendedVariable && parent[xindex-2] && parent[xindex-2].isRecommendedVariable">',
+                            '<div class="content-grouping extrapadding">Additional</div>',
+                        '</tpl>',
                         '<div class="content-item {sourceCount:this.greyMe}">',
                             '<span>{label:htmlEncode}</span>',
                             '<tpl if="sourceCount != undefined">',
@@ -323,25 +345,46 @@ Ext.define('Connector.panel.Selector', {
 
     bindDimensions : function(dimensions) {
         Ext.each(dimensions, function(dimension){
-            if (!dimension.get('hidden'))
-            {
-                var option = Ext.create('Connector.component.AdvancedOptionDimension', {
-                    dimension: dimension
-                });
-
-                this.getAdvancedPane().add(option);
+            if (!dimension.get('hidden')) {
+                this.getAdvancedPane().add(
+                    Ext.create('Connector.component.AdvancedOptionDimension', {
+                        dimension: dimension
+                    })
+                );
             }
         }, this);
     },
 
     bindScale : function() {
-        if (this.activeMeasure.shouldShowScale())
-        {
-            var option = Ext.create('Connector.component.AdvancedOptionScale', {
-                measure: this.activeMeasure
-            });
+        if (this.activeMeasure.shouldShowScale()) {
+            this.getAdvancedPane().add(
+                Ext.create('Connector.component.AdvancedOptionScale', {
+                    measure: this.activeMeasure
+                })
+            );
+        }
+    },
 
-            this.getAdvancedPane().add(option);
+    bindTimeOptions : function() {
+        if (this.activeMeasure.get('variableType') == 'TIME')
+        {
+            //this.getAdvancedPane().add(
+            //    Ext.create('Connector.component.AdvancedOptionTime', {
+            //        measure: this.activeMeasure,
+            //        fieldName: 'visitType',
+            //        fieldLabel: 'Visit type',
+            //        singleUseOnly: false
+            //    })
+            //);
+
+            this.getAdvancedPane().add(
+                Ext.create('Connector.component.AdvancedOptionTime', {
+                    measure: this.activeMeasure,
+                    fieldName: 'alignmentVisitTag',
+                    fieldLabel: 'Aligned by',
+                    singleUseOnly: true
+                })
+            );
         }
     },
 
@@ -353,12 +396,10 @@ Ext.define('Connector.panel.Selector', {
 
             var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
             this.bindDimensions(dimensions);
-
-            //TODO: time options
-
+            this.bindTimeOptions();
             this.bindScale();
 
-            this.slideAdvancedOptionsPane(dimensions && dimensions.length > 0);
+            this.slideAdvancedOptionsPane(this.getAdvancedPane().items.items.length > 0);
         }
     },
 

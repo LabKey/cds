@@ -58,6 +58,6 @@ Ext.define('Connector.model.Measure', {
     ],
 
     shouldShowScale : function() {
-        return this.get('variableType') == null && this.get('type') !== 'VARCHAR' && this.get('type') !== 'TIMESTAMP' && this.get('type') !== 'BOOLEAN';
+        return this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
     }
 });

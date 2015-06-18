@@ -12,12 +12,21 @@ Ext.define('Connector.measure.Configuration', {
             // See Connector.model.Source for the set of properties and default values.
             sources: {
                 'study|SubjectVisit': {
-                    queryLabel: 'Time points'
+                    queryLabel: 'Time points',
+                    variableType: 'TIME'
                 },
                 'study|SubjectGroupMap': {
-                    queryLabel: 'User groups'
+                    queryLabel: 'User groups',
+                    variableType: 'USER_GROUPS'
+                },
+                'study|Ad5': {
+                    category: 'Assays'
+                },
+                'study|Demographics': {
+                    category: 'Assays'
                 },
                 'study|ICS': {
+                    category: 'Assays',
                     dimensions: [
                         'study_ICS_cell_type',
                         'study_ICS_functional_marker_name',
@@ -27,6 +36,7 @@ Ext.define('Connector.measure.Configuration', {
                     ]
                 },
                 'study|NAb': {
+                    category: 'Assays',
                     dimensions: [
                         'study_NAb_assay_identifier',
                         'study_NAb_antigen_neutralization_tier',
@@ -35,6 +45,7 @@ Ext.define('Connector.measure.Configuration', {
                     ]
                 },
                 'study|BAMA': {
+                    category: 'Assays',
                     dimensions: [
                         'study_BAMA_analyte',
                         'study_BAMA_antigen',
@@ -46,6 +57,7 @@ Ext.define('Connector.measure.Configuration', {
                     ]
                 },
                 'study|ELISPOT': {
+                    category: 'Assays',
                     dimensions: [
                         'study_ELISPOT_functional_marker_name',
                         'study_ELISPOT_antigen',

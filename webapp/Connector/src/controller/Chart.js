@@ -108,7 +108,7 @@ Ext.define('Connector.controller.Chart', {
         if (xtype == plotType)
         {
             v = Ext.create('Connector.view.Chart', {
-                visitTagStore : this.getStore('VisitTag')
+                visitTagStore : this.getStore('VisitTagSingleUse')
             });
 
             state.clearSelections();
