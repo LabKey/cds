@@ -9,15 +9,13 @@ import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
-import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
-import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
 
 import java.util.Arrays;
 import java.util.Map;
 
-public class PopulateStudyVisitTask extends AbstractPopulateTask
+public class PopulateTreatmentArmTask extends AbstractPopulateTask
 {
     @Override
     protected void populate(Logger logger) throws PipelineJobException
@@ -25,44 +23,39 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
         SQLFragment sql;
         BatchValidationException errors = new BatchValidationException();
 
-        // populate cohorts
-        QuerySchema sourceSchema;
+        QuerySchema studySchema;
         TableInfo sourceTable;
 
         QuerySchema targetSchema;
         TableInfo targetTable;
 
-        logger.info("Starting visit management.");
+        logger.info("Starting populate treatment arms.");
         long start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            sourceSchema = DefaultSchema.get(user, container).getSchema("study");
+            studySchema = DefaultSchema.get(user, container).getSchema("study");
 
-            if (sourceSchema == null)
+            if (studySchema == null)
                 throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
 
-            targetSchema = sourceSchema;
+            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
 
-            sourceTable = sourceSchema.getTable("ds_cohort");
-            targetTable = targetSchema.getTable("cohort");
+            if (targetSchema == null)
+                throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            QueryUpdateService targetService = targetTable.getUpdateService();
+            sourceTable = studySchema.getTable("ds_treatmentarm");
+            targetTable = targetSchema.getTable("treatmentarm");
 
-            if (targetService == null)
-                throw new PipelineJobException("Unable to find update service for study.cohort in folder " + container.getPath());
+            // Delete Treatment Arms
+            sql = new SQLFragment("SELECT arm_id FROM ").append(targetTable).append(" WHERE container = ?");
+            sql.add(container.getEntityId().toString());
 
-            //
-            // Delete Cohorts
-            //
-            sql = new SQLFragment("SELECT rowid FROM ").append(targetTable).append(" WHERE container = ?");
-            sql.add(container.getEntityId());
-
-            Map<String, Object>[] rows = new SqlSelector(targetTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            Map<String, Object>[] allRows = new SqlSelector(targetTable.getSchema(), sql).getMapArray();
+            if (allRows.length > 0)
             {
                 try
                 {
-                    targetService.deleteRows(user, container, Arrays.asList(rows), null, null);
+                    targetTable.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);
                 }
                 catch (Exception e)
                 {
@@ -79,18 +72,16 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
                 return;
             }
 
-            //
-            // Insert Cohorts
-            //
+            // Insert Treatment Arms
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
 
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            Map<String, Object>[] insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (insertRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    targetTable.getUpdateService().insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -107,34 +98,37 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
                 return;
             }
 
-            //
-            // Update Visits
-            //
-            sourceTable = sourceSchema.getTable("ds_visit");
-            targetTable = sourceSchema.getTable("visit");
-            targetService = targetTable.getUpdateService();
-
-            if (targetService == null)
-                throw new PipelineJobException("Unable to find update service for study.visit in folder " + container.getPath());
+            // Insert Treatmen Arm Subject Mappings
+            sourceTable = studySchema.getTable("ds_treatmentarmsubject");
+            targetTable = targetSchema.getTable("treatmentarmsubjectmap");
 
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
 
-            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (insertRows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                    targetTable.getUpdateService().insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
                 }
                 catch (Exception e)
                 {
                     logger.error(e.getMessage(), e);
                 }
+            }
+
+            if (errors.hasErrors())
+            {
+                for (ValidationException error : errors.getRowErrors())
+                {
+                    logger.error(error.getMessage());
+                }
+                return;
             }
         }
         long finish = System.currentTimeMillis();
 
-        logger.info("Visit management took " + DateUtil.formatDuration(finish - start) + ".");
+        logger.info("Populate treatment arms took " + DateUtil.formatDuration(finish - start) + ".");
     }
 }

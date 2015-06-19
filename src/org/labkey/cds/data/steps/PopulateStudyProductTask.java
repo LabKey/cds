@@ -27,8 +27,6 @@ public class PopulateStudyProductTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        Container project = containerUser.getContainer();
-        User user = containerUser.getUser();
         DefaultSchema projectSchema = DefaultSchema.get(user, project);
 
         QuerySchema sourceSchema = projectSchema.getSchema(SOURCE_SCHEMA);

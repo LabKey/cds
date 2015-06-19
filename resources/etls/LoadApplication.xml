@@ -7,6 +7,10 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
             </taskref>
         </transform>
+        <transform id="ClearMappingTables" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ClearMappingTask">
+            </taskref>
+        </transform>
         <transform id="PopulateVisits" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateStudyVisitTask">
             </taskref>
@@ -62,6 +66,10 @@
         </transform>
         <transform id="PopulateStudyProduct" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateStudyProductTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateTreatmentArms" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateTreatmentArmTask">
             </taskref>
         </transform>
         <transform id="PopulateFacts" type="TaskrefTransformStep">

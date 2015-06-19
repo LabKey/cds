@@ -26,9 +26,6 @@ public class PopulateFactsTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        Container project = containerUser.getContainer();
-        User user = containerUser.getUser();
-
         // SOURCE: study.ds_facts
         QueryService queryService = QueryService.get();
         QueryDefinition qd = queryService.getQueryDef(user, project, "study", "ds_facts");
@@ -63,7 +60,6 @@ public class PopulateFactsTask extends AbstractPopulateTask
         {
             try
             {
-                factsQUS.truncateRows(user, project, null, null);
                 factsQUS.insertRows(user, project, Arrays.asList(factsMap), new BatchValidationException(), null, null);
             }
             catch (Exception e)

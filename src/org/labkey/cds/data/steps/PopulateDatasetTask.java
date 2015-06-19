@@ -9,6 +9,7 @@ import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
+import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
@@ -34,8 +35,6 @@ public class PopulateDatasetTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        Container project = containerUser.getContainer();
-        User user = containerUser.getUser();
         DefaultSchema projectSchema = DefaultSchema.get(user, project);
         String datasetName = settings.get(TARGET_DATASET);
 
@@ -66,8 +65,10 @@ public class PopulateDatasetTask extends AbstractPopulateTask
         long finish;
 
         long fullStart = System.currentTimeMillis();
-        int deleteCount = 0;
         int insertCount = 0;
+
+        QuerySchema targetSchema;
+        QueryUpdateService targetService;
 
         // Assumes all child containers are studies
         for (Container container : project.getChildren())
@@ -80,18 +81,26 @@ public class PopulateDatasetTask extends AbstractPopulateTask
             {
                 try
                 {
-                    targetDataset = DefaultSchema.get(user, container).getSchema("study").getTable(datasetName);
+                    targetSchema = DefaultSchema.get(user, container).getSchema("study");
 
-                    sql = new SQLFragment("SELECT * FROM ").append(targetDataset);
-                    Map<String, Object>[] allRows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
-                    if (allRows.length > 0)
+                    if (null == targetSchema)
+                        throw new PipelineJobException("Unable to find study schema for " + container.getPath());
+
+                    targetDataset = targetSchema.getTable(datasetName);
+                    targetService = targetDataset.getUpdateService();
+
+                    if (null == targetService)
+                        throw new PipelineJobException("Unable to find update service for " + targetSchema.getName() + "." + targetDataset.getName() + " in " + container.getPath());
+
+                    sql = new SQLFragment("SELECT * FROM ").append(targetDataset).append(" LIMIT 1");
+                    Map<String, Object>[] rows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
+                    if (rows.length > 0)
                     {
-                        logger.info("Starting delete of " + allRows.length + " rows from " + datasetName + " dataset. (" + container.getName() + ")");
+                        logger.info("Starting truncate of " + datasetName + " dataset. (" + container.getName() + ")");
                         start = System.currentTimeMillis();
-                        targetDataset.getUpdateService().deleteRows(user, container, Arrays.asList(allRows), null, null);
+                        targetService.truncateRows(user, container, null, null);
                         finish = System.currentTimeMillis();
-                        logger.info("Delete took " + DateUtil.formatDuration(finish - start) + ".");
-                        deleteCount += allRows.length;
+                        logger.info("Truncate took " + DateUtil.formatDuration(finish - start) + ".");
                     }
 
                     logger.info("Inserting " + subjects.length + " rows into \"" + targetDataset.getName() + "\" dataset. (" + container.getName() + ")");
@@ -117,6 +126,6 @@ public class PopulateDatasetTask extends AbstractPopulateTask
         }
         long fullFinish = System.currentTimeMillis();
 
-        logger.info("PopulateDatasetTask for Dataset \"" + datasetName + "\" took " + DateUtil.formatDuration(fullFinish - fullStart) + ". Deleted " + deleteCount + " rows. Inserted " + insertCount + " rows.");
+        logger.info("PopulateDatasetTask for Dataset \"" + datasetName + "\" took " + DateUtil.formatDuration(fullFinish - fullStart) + ". Inserted " + insertCount + " rows.");
     }
 }

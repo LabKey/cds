@@ -1,7 +1,10 @@
 -- MAPPING TABLES
+DROP TABLE IF EXISTS cds.TreatmentArmSubjectMap CASCADE;
+DROP TABLE IF EXISTS cds.SubjectProductMap CASCADE;
 DROP TABLE IF EXISTS cds.StudyProductMap CASCADE;
 
 -- CORE TABLES
+DROP TABLE IF EXISTS cds.TreatmentArm CASCADE;
 DROP TABLE IF EXISTS cds.Product CASCADE;
 DROP TABLE IF EXISTS cds.Facts CASCADE;
 DROP TABLE IF EXISTS cds.Study CASCADE;
@@ -58,10 +61,43 @@ CREATE TABLE cds.Product (
   CONSTRAINT PK_Product PRIMARY KEY (product_id)
 );
 
+CREATE TABLE cds.TreatmentArm (
+  arm_id VARCHAR(250) NOT NULL,
+
+  container ENTITYID NOT NULL,
+  arm_part VARCHAR(250),
+  arm_group VARCHAR(250),
+  arm_name VARCHAR(250),
+
+  randomization VARCHAR(100),
+  coded_label VARCHAR(100),
+
+  last_day INTEGER,
+  description TEXT,
+
+  CONSTRAINT PK_TreatmentArm PRIMARY KEY (arm_id)
+);
+
+CREATE TABLE cds.TreatmentArmSubjectMap (
+   participantid VARCHAR(32) NOT NULL,
+   container ENTITYID NOT NULL,
+   arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id),
+
+   CONSTRAINT PK_TreatmentArmSubjectMap PRIMARY KEY (participantid, container, arm_id)
+);
+
 CREATE TABLE cds.StudyProductMap (
   study_name VARCHAR(250) NOT NULL REFERENCES cds.Study (study_name),
   container ENTITYID NOT NULL,
   product_id INTEGER NOT NULL REFERENCES cds.Product (product_id),
 
-  CONSTRAINT  PK_StudyProductMap PRIMARY KEY (study_name, product_id)
+  CONSTRAINT PK_StudyProductMap PRIMARY KEY (study_name, product_id)
+);
+
+CREATE TABLE cds.SubjectProductMap (
+  participantid VARCHAR(32) NOT NULL,
+  container ENTITYID NOT NULL,
+  product_id INTEGER NOT NULL REFERENCES cds.Product (product_id),
+
+  CONSTRAINT PK_SubjectProductMap PRIMARY KEY (participantid, container, product_id)
 );

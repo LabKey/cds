@@ -82,5 +82,36 @@
             </Hierarchy>
 
         </Dimension>
+
+        <Dimension visible="true" highCardinality="false" name="Study Product" foreignKey="participantid">
+
+            <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
+                <Join leftKey="product_id" rightKey="product_id">
+                    <Table name="SubjectProductMap" schema="cds"/>
+                    <Table name="Product" schema="cds"/>
+                </Join>
+                <Level name="Type" visible="true" column="product_type" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+            <Hierarchy name="Developer" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
+                <Join leftKey="product_id" rightKey="product_id">
+                    <Table name="SubjectProductMap" schema="cds"/>
+                    <Table name="Product" schema="cds"/>
+                </Join>
+                <Level name="Developer" visible="true" column="product_developer" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+            <Hierarchy name="Product Class" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
+                <Join leftKey="product_id" rightKey="product_id">
+                    <Table name="SubjectProductMap" schema="cds"/>
+                    <Table name="Product" schema="cds"/>
+                </Join>
+                <Level name="Class" visible="true" column="product_class_label" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+        </Dimension>
     </Cube>
 </Schema>

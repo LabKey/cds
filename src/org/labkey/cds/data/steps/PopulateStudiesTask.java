@@ -38,88 +38,78 @@ public class PopulateStudiesTask extends AbstractPopulateTask
 {
     protected void populate(Logger logger) throws PipelineJobException
     {
-        Container project = containerUser.getContainer();
-        User user = containerUser.getUser();
+        // Delete All Containers
+//        clean(project, user, logger);
 
-        if (project.isProject() && project.getFolderType().equals(FolderTypeManager.get().getFolderType(StudyService.DATASPACE_FOLDERTYPE_NAME)))
+        // Retrieve the set of studies available in the 'import_' schema
+        Set<String> studyNames = getStudyNames(project, user, logger);
+
+        if (null == studyNames)
         {
-            // Delete All Containers
-//            clean(project, user, logger);
+            return;
+        }
 
-            // Retrieve the set of studies available in the 'import_' schema
-            Set<String> studyNames = getStudyNames(project, user, logger);
+        // Ensure containers -- and generate a study for them
+        long start = System.currentTimeMillis();
+        int created = 0;
+        BatchValidationException errors = new BatchValidationException();
+        FolderType studyFolderType = FolderTypeManager.get().getFolderType("Study");
 
-            if (null == studyNames)
+        for (String studyName : studyNames)
+        {
+            Container c = ContainerManager.getChild(project, studyName);
+
+            if (c == null)
             {
-                return;
+                c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
+                c.setFolderType(studyFolderType, user);
+                StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
+                created++;
             }
+            else
+            {
+                logger.info("Container already exists for study (" + studyName + ")");
+            }
+        }
 
-            // Ensure containers -- and generate a study for them
-            long start = System.currentTimeMillis();
-            int created = 0;
-            BatchValidationException errors = new BatchValidationException();
-            FolderType studyFolderType = FolderTypeManager.get().getFolderType("Study");
+        // TODO: Delete studies that no longer have info
 
-            for (String studyName : studyNames)
+        long finish = System.currentTimeMillis();
+        logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
+
+        // Get the collesced metadata for the studies (including container)
+        Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        // Import Study metadata
+        for (String studyName : studies.keySet())
+        {
+            if (studies.containsKey(studyName))
             {
                 Container c = ContainerManager.getChild(project, studyName);
 
-                if (c == null)
+                try
                 {
-                    c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
-                    c.setFolderType(studyFolderType, user);
-                    StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
-                    created++;
+                    rows.clear();
+                    rows.add(studies.get(studyName));
+
+                    TableInfo updatable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
+                    QueryUpdateService qud = updatable.getUpdateService();
+
+                    if (null != qud)
+                        qud.insertRows(user, c, rows, errors, null, null);
+                    else
+                        throw new PipelineJobException("Unable to find update service for " + updatable.getName());
                 }
-                else
+                catch (Exception e)
                 {
-                    logger.info("Container already exists for study (" + studyName + ")");
+                    logger.error(e.getMessage(), e);
                 }
             }
-
-            // TODO: Delete studies that no longer have info
-
-            long finish = System.currentTimeMillis();
-            logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
-
-            // Get the collesced metadata for the studies (including container)
-            Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
-            List<Map<String, Object>> rows = new ArrayList<>();
-
-            // Import Study metadata
-            for (String studyName : studies.keySet())
+            else
             {
-                if (studies.containsKey(studyName))
-                {
-                    Container c = ContainerManager.getChild(project, studyName);
-
-                    try
-                    {
-                        rows.clear();
-                        rows.add(studies.get(studyName));
-
-                        TableInfo updatable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
-                        QueryUpdateService qud = updatable.getUpdateService();
-
-                        if (null != qud)
-                            qud.insertRows(user, c, rows, errors, null, null);
-                        else
-                            throw new PipelineJobException("Unable to find update service for " + updatable.getName());
-                    }
-                    catch (Exception e)
-                    {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-                else
-                {
-                    logger.error("Unable to find metadata for study: " + studyName);
-                }
+                logger.error("Unable to find metadata for study: " + studyName);
             }
-        }
-        else
-        {
-            logger.error(project.getName() + "must be a project and of type \"" + StudyService.DATASPACE_FOLDERTYPE_NAME + "\"");
         }
     }
 

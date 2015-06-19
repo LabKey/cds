@@ -36,6 +36,7 @@ import org.labkey.api.security.User;
 import org.labkey.api.security.permissions.AdminPermission;
 import org.labkey.api.security.permissions.InsertPermission;
 import org.labkey.api.security.permissions.UpdatePermission;
+import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.view.UnauthorizedException;
 import org.labkey.cds.model.Citable;
 import org.labkey.cds.model.CitableAuthor;
@@ -214,13 +215,13 @@ public class CDSManager
                     "VaccineComponents", "Vaccines",
                     "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
                     // New Tables
-                    "StudyProductMap", "Study"
+                    "SubjectProductMap", "StudyProductMap", "TreatmentArmSubjectMap", "TreatmentArm", "Study"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
                 if (null != t)
                 {
-                    new SqlExecutor(dbSchema).execute("DELETE FROM " + t.getSelectName() + " WHERE Container = ?", c);
+                    ContainerUtil.purgeTable(t, c, null);
                 }
             }
             String orphans;
