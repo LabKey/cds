@@ -35,6 +35,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.component.AdvancedOptionBase": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionDimension": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.AdvancedOptionScale": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionTime": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../webapp/Connector/src/component/GridPager.js",
   "Connector.constant.ModuleViewsLookup": "../../webapp/Connector/src/constant/ModuleViewsLookup.js",
@@ -101,6 +102,8 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
   "Connector.store.Summary": "../../webapp/Connector/src/store/Summary.js",
   "Connector.store.VisitTag": "../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.VisitTagMultiUse": "../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.VisitTagSingleUse": "../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.About": "../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../webapp/Connector/src/view/Chart.js",
@@ -217,6 +220,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
   "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
   "Connector.constant.ModuleViewsLookup": [],
@@ -283,6 +287,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.FilterStatus": [],
   "Connector.store.Summary": [],
   "Connector.store.VisitTag": [],
+  "Connector.store.VisitTagMultiUse": [],
+  "Connector.store.VisitTagSingleUse": [],
   "Connector.types.Filter": [],
   "Connector.view.About": [],
   "Connector.view.Chart": [],
@@ -1224,6 +1230,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.component.AdvancedOptionBase": [],
   "Connector.component.AdvancedOptionDimension": [],
   "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [
     "widget.dropdown"
   ],
@@ -1321,8 +1328,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.store.Summary": [
     "store.summary"
   ],
-  "Connector.store.VisitTag": [
-    "store.visittag"
+  "Connector.store.VisitTag": [],
+  "Connector.store.VisitTagMultiUse": [
+    "store.visittagmulti"
+  ],
+  "Connector.store.VisitTagSingleUse": [
+    "store.visittagsingle"
   ],
   "Connector.types.Filter": [],
   "Connector.view.About": [
