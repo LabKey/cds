@@ -72,6 +72,7 @@ Ext.define('Connector.controller.Query', {
                 cacheReady = true;
                 doReady.call(this);
             },
+            endpoint : LABKEY.ActionURL.buildURL("visualization", "getMeasuresStatic"),
             scope: this
         });
 
