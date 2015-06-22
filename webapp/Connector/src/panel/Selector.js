@@ -36,6 +36,7 @@ Ext.define('Connector.panel.Selector', {
 
         if (Ext.isObject(config.activeMeasure)) {
             if (config.activeMeasure.$className !== 'Connector.model.Measure') {
+                config.initOptions = Ext.clone(config.activeMeasure.options);
                 config.activeMeasure = Ext.create('Connector.model.Measure', config.activeMeasure);
             }
         }
@@ -347,6 +348,10 @@ Ext.define('Connector.panel.Selector', {
         return this.advancedPane;
     },
 
+    getAdvancedOptionValues : function() {
+        return this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
+    },
+
     bindDimensions : function(dimensions) {
         Ext.each(dimensions, function(dimension){
             if (!dimension.get('hidden')) {
@@ -363,7 +368,8 @@ Ext.define('Connector.panel.Selector', {
         if (this.activeMeasure.shouldShowScale()) {
             this.getAdvancedPane().add(
                 Ext.create('Connector.component.AdvancedOptionScale', {
-                    measure: this.activeMeasure
+                    measure: this.activeMeasure,
+                    value: this.initOptions ? this.initOptions['scale'] : undefined
                 })
             );
         }
@@ -386,7 +392,8 @@ Ext.define('Connector.panel.Selector', {
                     measure: this.activeMeasure,
                     fieldName: 'alignmentVisitTag',
                     fieldLabel: 'Aligned by',
-                    singleUseOnly: true
+                    singleUseOnly: true,
+                    value: this.initOptions ? this.initOptions['alignmentVisitTag'] : undefined
                 })
             );
         }
@@ -581,8 +588,8 @@ Ext.define('Connector.panel.Selector', {
     makeSelection : function() {
         if (Ext.isDefined(this.activeMeasure)) {
             var selectedMeasure = Ext.clone(this.activeMeasure.data);
-            selectedMeasure.options = {};
-            // this.getAdvancedPane().getValues(false, false, false, true /*useDataValues*/)
+            selectedMeasure.options = this.getAdvancedOptionValues();
+
             this.fireEvent('selectionmade', selectedMeasure);
         }
     },

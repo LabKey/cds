@@ -1405,8 +1405,18 @@ Ext.define('Connector.view.Chart', {
         else if (axis == 'x' && this.axisPanelX) {
             scale = this.axisPanelX.getScale();
         }
+        else if (axis == 'y' && this.activeYSelection) {
+            scale = this.getSelectedOptionScale(this.activeYSelection);
+        }
+        else if (axis == 'x' && this.activeXSelection) {
+            scale = this.getSelectedOptionScale(this.activeXSelection);
+        }
 
-        return scale;
+        return scale.toLowerCase();
+    },
+
+    getSelectedOptionScale : function(selected) {
+        return (selected.options && selected.options.scale) ? selected.options.scale : selected.defaultScale;
     },
 
     setScale : function(scale, axis, properties, studyAxisRange) {

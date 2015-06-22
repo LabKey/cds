@@ -23,7 +23,7 @@ Ext.define('Connector.measure.Configuration', {
                     category: 'Assays'
                 },
                 'study|Demographics': {
-                    category: 'Assays'
+                    queryLabel: 'Subject characteristics'
                 },
                 'study|ICS': {
                     category: 'Assays',

@@ -134,7 +134,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
 
     getRecordFromStore : function(value) {
         if (this.store) {
-            return this.store.findRecord(this.storeValueField, value, 0, false, true, true);
+            return this.store.findRecord(this.storeValueField, value, 0, false /*anyMatch*/, false /*caseSensitive*/, true /*exactMatch*/);
         }
         return null;
     }
@@ -235,6 +235,7 @@ Ext.define('Connector.component.AdvancedOptionTime', {
 
     extend: 'Connector.component.AdvancedOptionBase',
 
+    value: null,
     fieldName: null,
     fieldLabel: null,
     singleUseOnly: true,
@@ -250,20 +251,27 @@ Ext.define('Connector.component.AdvancedOptionTime', {
     },
 
     initComponent : function() {
-        this.value = null;
         this.allowMultiSelect = !this.singleUseOnly;
 
         this.store = Connector.getApplication().getStore(this.singleUseOnly ? 'VisitTagSingleUse' : 'VisitTagMultiUse');
         if (this.store.isLoading()) {
-            this.store.on('load', function() {
-                this.setValue(this.value);
-            }, this);
+            this.store.on('load', this.setInitialValue, this);
         }
         else {
-            this.setValue(this.value);
+            this.setInitialValue();
         }
 
         this.callParent();
+    },
+
+    setInitialValue : function() {
+        // if the passed in initial value doesn't exist in the store, clear it out
+        if (this.value != null && this.getRecordFromStore(this.value) == null) {
+            this.value = null;
+        }
+
+        // TODO: default to align by Day0 if no initial value present
+        this.setValue(this.value);
     },
 
     getLabelDisplayValue : function(value) {
@@ -283,7 +291,7 @@ Ext.define('Connector.component.AdvancedOptionTime', {
             config.additionalItems = [{
                 boxLabel: 'Unaligned',
                 inputValue: null,
-                checked: true
+                checked: this.value == null
             }];
         }
 
