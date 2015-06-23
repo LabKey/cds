@@ -2269,6 +2269,8 @@ Ext.define('Connector.view.Chart', {
                         includeTimpointMeasures: true,
                         includeHidden: this.canShowHidden
                     },
+                    memberCountsFn: this.getSubjectsIn,
+                    memberCountsFnScope: this,
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeXSelection = selected;
@@ -2441,6 +2443,8 @@ Ext.define('Connector.view.Chart', {
                             return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                         }
                     },
+                    memberCountsFn: this.getSubjectsIn,
+                    memberCountsFnScope: this,
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeColorSelection = selected;

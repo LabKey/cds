@@ -612,7 +612,6 @@ Ext.define('Connector.controller.Query', {
 
                 var json = {
                     schema: Connector.studyContext.schemaName,
-                    //colName: undefined,
                     members: Ext.isArray(members) ? members : undefined,
                     sources: []
                 };

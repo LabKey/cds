@@ -272,7 +272,7 @@ Ext.define('Connector.component.AdvancedOptionTime', {
 
     setInitialValue : function() {
         // if the passed in initial value doesn't exist in the store, clear it out
-        if (this.value != null && this.getRecordFromStore(this.value) == null) {
+        if (!Ext.isDefined(this.value) || (this.value != null && this.getRecordFromStore(this.value) == null)) {
             this.value = null;
         }
 

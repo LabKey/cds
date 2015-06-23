@@ -58,7 +58,9 @@ Ext.define('Connector.model.StudyAxisData', {
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
                 seqMax, protocolDay, timepointType, visitTagCaption, shiftVal, i, j, alignmentVisitTag, visitTagName;
 
-        interval = this.getMeasure(0).interval.toLowerCase();
+        if (this.getMeasure(0).interval) {
+            interval = this.getMeasure(0).interval.toLowerCase();
+        }
 
         // first we have to loop through the study axis visit information to find the alignment visit for each container
         alignmentVisitTag = this.getMeasure(0).options ? this.getMeasure(0).options.alignmentVisitTag : null;
