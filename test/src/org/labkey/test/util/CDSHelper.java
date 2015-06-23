@@ -16,6 +16,7 @@
 package org.labkey.test.util;
 
 import com.google.common.base.Function;
+import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
@@ -28,8 +29,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
-
-import static com.sun.jna.Platform.isMac;
 
 public class CDSHelper
 {
@@ -160,7 +159,7 @@ public class CDSHelper
         Keys multiSelectKey;
         if (isShift)
             multiSelectKey = Keys.SHIFT;
-        else if (isMac())
+        else if (SystemUtils.IS_OS_MAC)
             multiSelectKey = Keys.COMMAND;
         else
             multiSelectKey = Keys.CONTROL;

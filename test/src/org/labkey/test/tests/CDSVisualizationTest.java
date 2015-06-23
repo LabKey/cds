@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,7 +26,6 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.sun.jna.Platform.isMac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -775,7 +774,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             Keys multiSelectKey;
             if (isShift)
                 multiSelectKey = Keys.SHIFT;
-            else if (isMac())
+            else if (SystemUtils.IS_OS_MAC)
                 multiSelectKey = Keys.COMMAND;
             else
                 multiSelectKey = Keys.CONTROL;
