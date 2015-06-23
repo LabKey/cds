@@ -1562,36 +1562,52 @@ Ext.define('Connector.view.Chart', {
         return measures;
     },
 
+    clearPlotSelections : function() {
+        if (this.axisPanelY) {
+            this.axisPanelY.clearSelection();
+        }
+        if (this.axisPanelX) {
+            this.axisPanelX.clearSelection();
+        }
+        if (this.colorPanel) {
+            this.colorPanel.clearSelection();
+        }
+
+        if (this.newYAxisSelector) {
+            this.newYAxisSelector.clearSelection();
+        }
+        if (this.newXAxisSelector) {
+            this.newXAxisSelector.clearSelection();
+        }
+        if (this.newColorAxisSelector) {
+            this.newColorAxisSelector.clearSelection();
+        }
+
+        this.activeYSelection = undefined;
+        this.activeXSelection = undefined;
+        this.activeColorSelection = undefined;
+
+        Ext.getCmp('yaxisselector').clearModel();
+        Ext.getCmp('xaxisselector').clearModel();
+        Ext.getCmp('colorselector').clearModel();
+    },
+
     onShowGraph : function() {
 
         if (!this.isHidden()) {
             this.refreshRequired = false;
             this.filterChange = false;
 
-            var activeMeasures = this.getActiveMeasures();
+            if (this.filterClear) {
+                this.clearPlotSelections();
+            }
 
+            var activeMeasures = this.getActiveMeasures();
             this.fireEvent('axisselect', this, 'y', [activeMeasures.y]);
             this.fireEvent('axisselect', this, 'x', [activeMeasures.x]);
             this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
 
-            if (this.filterClear) {
-                if (this.axisPanelY) {
-                    this.axisPanelY.clearSelection();
-                    Ext.getCmp('yaxisselector').clearModel();
-                }
-
-                if (this.axisPanelX) {
-                    this.axisPanelX.clearSelection();
-                    Ext.getCmp('xaxisselector').clearModel();
-                }
-
-                if (this.colorPanel) {
-                    this.colorPanel.clearSelection();
-                    Ext.getCmp('colorselector').clearModel();
-                }
-            }
-
-            if (this.filterClear || activeMeasures.y == null) {
+            if (activeMeasures.y == null) {
                 this.hideMessage();
                 this.requireStudyAxis = false;
                 this.getStudyAxisPanel().setVisible(false);
@@ -2274,9 +2290,18 @@ Ext.define('Connector.view.Chart', {
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeXSelection = selected;
-                            this.initialized = true;
-                            this.showTask.delay(10);
-                            this.xwin.hide(targetEl);
+
+                            if (Ext.isDefined(this.activeYSelection)) {
+                                this.initialized = true;
+                                this.showTask.delay(10);
+                                this.xwin.hide(targetEl);
+                            }
+                            else {
+                                // if we don't yet have a y-axis selection, show that variable selector
+                                this.xwin.hide(targetEl, function() {
+                                    this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
+                                }, this);
+                            }
                         },
                         cancel: function() {
                             this.activeXSelection = undefined;
@@ -2436,6 +2461,7 @@ Ext.define('Connector.view.Chart', {
             if (this.newSelectors) {
                 this.newColorAxisSelector = Ext.create('Connector.panel.Selector', {
                     headerTitle: 'color',
+                    activeMeasure: this.activeColorSelection,
                     sourceMeasureFilter: {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeHidden: this.canShowHidden,

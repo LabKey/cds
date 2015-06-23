@@ -108,6 +108,10 @@ Ext.define('Connector.panel.Selector', {
             this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
         }
 
+        this.updateSelectorPane();
+    },
+
+    updateSelectorPane : function() {
         var source = this.getSourceForMeasure(this.activeMeasure);
         if (source) {
             this.showMeasures(source, this.activeMeasure);
@@ -115,6 +119,15 @@ Ext.define('Connector.panel.Selector', {
         else {
             this.showSources();
         }
+    },
+
+    setActiveMeasure : function(measure) {
+        this.activeMeasure = measure;
+        this.updateSelectorPane();
+    },
+
+    clearSelection : function () {
+        this.setActiveMeasure(null);
     },
 
     getSourceForMeasure : function(measure) {
@@ -190,9 +203,6 @@ Ext.define('Connector.panel.Selector', {
                     }
                 ),
                 listeners: {
-                    afterrender: function() {
-                        //this.sourcePane.getEl().fadeIn();
-                    },
                     select: function(selModel, source) {
                         var view = selModel.view;
                         var me = this;
@@ -200,7 +210,6 @@ Ext.define('Connector.panel.Selector', {
                         view.getEl().slideOut('l', {
                             duration: 250,
                             callback: function() {
-                                view.hide();
                                 me.showMeasures(source);
                                 selModel.clearSelections();
                             }
@@ -217,18 +226,13 @@ Ext.define('Connector.panel.Selector', {
     },
 
     showSources : function() {
-        this.getLoaderPane().hide();
-        this.getSourcePane().show();
+        this.toggleDisplay(false);
 
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
             showCount: true
         });
-
-        this.getButton('cancel-link').hide();
-        this.getButton('cancel-button').show();
-        this.getButton('select-button').hide();
     },
 
     getMeasurePane : function()
@@ -270,11 +274,8 @@ Ext.define('Connector.panel.Selector', {
                     }
                 ),
                 listeners: {
-                    afterrender: function() {
-                        //this.measurePane.getEl().fadeIn();
-                    },
                     select: function(selModel, measure) {
-                        this.setActiveMeasure(measure);
+                        this.selectMeasure(measure);
                     },
                     scope: this
                 }
@@ -297,8 +298,7 @@ Ext.define('Connector.panel.Selector', {
             return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
         });
 
-        this.getLoaderPane().hide();
-        this.getMeasurePane().show();
+        this.toggleDisplay(true);
 
         var me = this;
         this.setHeaderData({
@@ -309,10 +309,10 @@ Ext.define('Connector.panel.Selector', {
                 if (me.advancedPane) {
                     me.advancedPane.hide();
                 }
+
                 me.measurePane.getEl().slideOut('r', {
                     duration: 250,
                     callback: function() {
-                        me.measurePane.hide();
                         me.showSources();
                     }
                 });
@@ -320,15 +320,28 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        this.getButton('cancel-link').show();
-        this.getButton('cancel-button').hide();
-        this.getButton('select-button').show();
-
         if (activeMeasure) {
             Ext.defer(function() {
-                this.getMeasurePane().getSelectionModel().select(activeMeasure, true);
+                this.getMeasurePane().getSelectionModel().select(activeMeasure);
             }, 500, this);
         }
+        else {
+            this.getMeasurePane().getSelectionModel().deselectAll();
+        }
+    },
+
+    toggleDisplay : function(onMeasurePane) {
+        if (this.advancedPane) {
+            this.advancedPane.hide();
+        }
+
+        this.getLoaderPane().hide();
+        this.getMeasurePane().setVisible(onMeasurePane);
+        this.getSourcePane().setVisible(!onMeasurePane);
+
+        this.getButton('cancel-link').setVisible(onMeasurePane);
+        this.getButton('cancel-button').setVisible(!onMeasurePane);
+        this.getButton('select-button').setVisible(onMeasurePane);
     },
 
     getAdvancedPane : function() {
@@ -615,7 +628,7 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
-    setActiveMeasure : function(measure) {
+    selectMeasure : function(measure) {
         this.activeMeasure = measure;
         this.getButton('select-button').enable();
 
