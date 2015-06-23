@@ -51,9 +51,12 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         return this.displayField;
     },
 
-    setValue : function(value) {
+    setValue : function(value, allChecked) {
         this.value = value;
-        this.getHiddenField().setValue(value);
+
+        // if multiselect with all checked, set the value as null so we don't apply an unnecessary filter
+        this.getHiddenField().setValue(this.allowMultiSelect && allChecked ? null : value);
+
         this.getDisplayField().update(this.getLabelDisplayValue(value));
     },
 
@@ -61,8 +64,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         var displayValue = null, subDisplayValue = null, cls = '';
         if (Ext.isArray(value) && value.length > 0)
         {
-            // TODO: better check for all
-            var isAll = this.store.getCount() == value.length && value.length > 1;
+            var isAll = Ext.Array.equals(value, this.store.collect(this.storeValueField, true));
             displayValue = isAll ? 'All' : value.join(' or ');
             subDisplayValue = isAll ? value.join(', ') : null;
         }
@@ -101,8 +103,8 @@ Ext.define('Connector.component.AdvancedOptionBase', {
 
             this.dropdownPanel = Ext.create(dropdownClassName, this.getDropdownPanelConfig());
 
-            this.dropdownPanel.on('selectionchange', function(dropdown, newSelection){
-                this.setValue(newSelection);
+            this.dropdownPanel.on('selectionchange', function(dropdown, newSelection, allChecked){
+                this.setValue(newSelection, allChecked);
             }, this);
 
             this.dropdownPanel.on('show', function(panel) {
@@ -176,18 +178,22 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         // set default value based on the dimension's defaultSelection properties
         var defaultSel = this.dimension.get('defaultSelection');
 
-        if (defaultSel.all) {
-            this.setValue(this.store.collect(this.storeValueField, true));
+        if (Ext.isDefined(this.value) && this.value != null) {
+            // this.value == null, means select all
+            this.setValue(this.value, Ext.Array.equals(this.value, this.store.collect(this.storeValueField, true)));
+        }
+        else if (defaultSel.all) {
+            this.setValue(this.store.collect(this.storeValueField, true), true);
         }
         else if (Ext.isDefined(defaultSel.value) && this.getRecordFromStore(defaultSel.value) != null) {
-            this.setValue([defaultSel.value]);
+            this.setValue([defaultSel.value], false);
         }
         else if (this.store.getCount() > 0) {
-            this.setValue([this.store.first().get(this.storeValueField)]);
+            this.setValue([this.store.first().get(this.storeValueField)], false);
         }
     },
 
-    setValue : function(value) {
+    setValue : function(value, allChecked) {
         if (!Ext.isDefined(value)) {
             value = [];
         }
@@ -195,7 +201,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             value = [value];
         }
 
-        this.callParent([value]);
+        this.callParent([value, allChecked]);
     }
 });
 
@@ -224,7 +230,7 @@ Ext.define('Connector.component.AdvancedOptionScale', {
             ]
         });
 
-        this.setValue(this.value || this.measure.get('defaultScale'));
+        this.setValue(this.value || this.measure.get('defaultScale'), false);
 
         this.callParent();
     }
@@ -271,7 +277,7 @@ Ext.define('Connector.component.AdvancedOptionTime', {
         }
 
         // TODO: default to align by Day0 if no initial value present
-        this.setValue(this.value);
+        this.setValue(this.value, false);
     },
 
     getLabelDisplayValue : function(value) {
@@ -369,7 +375,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                 name: this.name + '-checkall',
                 boxLabel: 'All',
                 inputValue: undefined,
-                checked: this.store.getCount() == this.initSelection.length,
+                checked: this.initSelection && Ext.Array.equals(this.initSelection, this.store.collect(this.valueField, true)),
                 listeners: {
                     scope: this,
                     change: function(cb, newValue) {
@@ -380,7 +386,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                             checkbox.resumeEvents();
                         }, this);
 
-                        this.fireEvent('selectionchange', this, this.getDropdownCheckboxGroup().getValue()[this.name + '-check']);
+                        this.fireEvent('selectionchange', this, this.getDropdownCheckboxGroup().getValue()[this.name + '-check'], newValue);
                     }
                 }
             });
@@ -402,11 +408,11 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                         scope: this,
                         change: function(cb, newValue) {
                             this.getDropdownSelectAllCb().suspendEvents(false);
-                            var checkedCount = this.getDropdownCheckboxGroup().getChecked().length;
-                            this.getDropdownSelectAllCb().setValue(this.store.getCount() == checkedCount);
+                            var checkAll = this.store.getCount() == this.getDropdownCheckboxGroup().getChecked().length;
+                            this.getDropdownSelectAllCb().setValue(checkAll);
                             this.getDropdownSelectAllCb().resumeEvents();
 
-                            this.fireEvent('selectionchange', this, this.getDropdownCheckboxGroup().getValue()[this.name + '-check']);
+                            this.fireEvent('selectionchange', this, this.getDropdownCheckboxGroup().getValue()[this.name + '-check'], checkAll);
                         }
                     }
                 });
@@ -461,7 +467,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 listeners: {
                     scope: this,
                     change: function(radiogroup, newValue) {
-                        this.fireEvent('selectionchange', this, newValue[this.name + '-radio']);
+                        this.fireEvent('selectionchange', this, newValue[this.name + '-radio'], false);
                     }
                 }
             });

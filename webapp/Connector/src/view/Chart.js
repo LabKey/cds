@@ -1953,6 +1953,14 @@ Ext.define('Connector.view.Chart', {
                         this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
                     }
                 }
+
+                // add selection information from the advanced options panel of the variable selector
+                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions)
+                {
+                    Ext.iterate(activeMeasures[axis].options.dimensions, function(key, values) {
+                        this.addValuesToMeasureMap(measuresMap, schema, query, key, values);
+                    }, this);
+                }
             }
         }, this);
 

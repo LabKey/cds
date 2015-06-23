@@ -349,15 +349,37 @@ Ext.define('Connector.panel.Selector', {
     },
 
     getAdvancedOptionValues : function() {
-        return this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
+        var values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
+
+        // move the dimension selections into a separate map to keep them separate
+        values.dimensions = {};
+        Ext.iterate(values, function(key, val) {
+            if (this.boundDimensionNames.indexOf(key) != -1) {
+                // null or undefined mean "select all" so doing apply a filter
+                if (Ext.isDefined(val) && val != null) {
+                    values.dimensions[key] = val;
+                }
+
+                delete values[key];
+            }
+        }, this);
+
+        return values;
     },
 
-    bindDimensions : function(dimensions) {
+    bindDimensions : function() {
+        var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
+        this.boundDimensionNames = [];
+
         Ext.each(dimensions, function(dimension){
-            if (!dimension.get('hidden')) {
+            if (!dimension.get('hidden'))
+            {
+                this.boundDimensionNames.push(dimension.get('name'));
+
                 this.getAdvancedPane().add(
                     Ext.create('Connector.component.AdvancedOptionDimension', {
-                        dimension: dimension
+                        dimension: dimension,
+                        value: this.initOptions ? this.initOptions[dimension.get('name')] : undefined
                     })
                 );
             }
@@ -405,8 +427,7 @@ Ext.define('Connector.panel.Selector', {
         {
             this.getAdvancedPane().removeAll();
 
-            var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
-            this.bindDimensions(dimensions);
+            this.bindDimensions();
             this.bindTimeOptions();
             this.bindScale();
 
