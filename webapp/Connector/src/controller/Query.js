@@ -174,14 +174,15 @@ Ext.define('Connector.controller.Query', {
 
     addMeasure : function(measure) {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
-            // overlay any measure metadata
+            var sourceKey = measure.schemaName + '|' + measure.queryName;
             var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.measures[measure.alias]);
 
+            // overlay any source metadata
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[sourceKey]);
+            // overlay any measure metadata
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.measures[measure.alias]);
             // overlay any dimension metadata (used for Advanced Options panel of Variable Selector)
-            if (measure.isDimension === true) {
-                datas = Ext.apply(datas, Connector.measure.Configuration.context.dimensions[measure.alias]);
-            }
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.dimensions[measure.alias]);
 
             this.MEASURE_STORE.add(datas);
             this.addSource(datas);

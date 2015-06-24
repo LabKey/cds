@@ -28,6 +28,9 @@ Ext.define('Connector.panel.Selector', {
     memberCountsFn: undefined,
     memberCountsFnScope: undefined,
 
+    // track the first time that the selector is initialized so we can use initOptions properly
+    initialized: false,
+
     constructor : function(config) {
 
         if (!Ext.isObject(config.sourceMeasureFilter)) {
@@ -121,8 +124,21 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
+    ensureMeasureModel : function(measure) {
+        if (Ext.isObject(measure) && measure.$className !== 'Connector.model.Measure') {
+            measure = Ext.create('Connector.model.Measure', measure);
+        }
+        return measure;
+    },
+
     setActiveMeasure : function(measure) {
-        this.activeMeasure = measure;
+        // since setting the active measure comes from external callers, grab the initOptions and reset the
+        // initialized bit to treat it like a new selector
+        this.initOptions = Ext.isObject(measure) ? Ext.clone(measure.options) : undefined;
+        this.initialized = false;
+
+        this.activeMeasure = this.ensureMeasureModel(measure);
+
         this.updateSelectorPane();
     },
 
@@ -179,12 +195,12 @@ Ext.define('Connector.panel.Selector', {
                         '</tpl>',
                         '<div class="content-item {subjectCount:this.greyMe}">',
                             '<tpl if="category == \'Assays\'">',
-                                '<span>{queryName:htmlEncode}&nbsp;({queryLabel:htmlEncode})</span>',
+                                '<div class="content-label">{queryName:htmlEncode}&nbsp;({queryLabel:htmlEncode})</div>',
                             '<tpl else>',
-                                '<span>{queryLabel:htmlEncode}</span>',
+                                '<div class="content-label">{queryLabel:htmlEncode}</div>',
                             '</tpl>',
                             '<tpl if="subjectCount != -1">',
-                                '<span style="float: right;">{subjectCount:this.commaFormat}</span>',
+                                '<div class="content-count">{subjectCount:this.commaFormat}</div>',
                             '</tpl>',
                         '</div>',
                     '</tpl>',
@@ -255,23 +271,10 @@ Ext.define('Connector.panel.Selector', {
                         '<tpl if="!isRecommendedVariable && parent[xindex-2] && parent[xindex-2].isRecommendedVariable">',
                             '<div class="content-grouping extrapadding">Additional</div>',
                         '</tpl>',
-                        '<div class="content-item {sourceCount:this.greyMe}">',
-                            '<span>{label:htmlEncode}</span>',
-                            '<tpl if="sourceCount != undefined">',
-                                '<span style="float: right;">{sourceCount:this.commaFormat}</span>',
-                            '</tpl>',
+                        '<div class="content-item">',
+                            '<div class="content-label">{label:htmlEncode}</div>',
                         '</div>',
-                    '</tpl>',
-                    {
-                        commaFormat : function(v) {
-                            return Ext.util.Format.number(v, '0,000');
-                        },
-                        greyMe : function(v) {
-                            if (!Ext.isDefined(v) || v > 0)
-                                return '';
-                            return 'look-disabled';
-                        }
-                    }
+                    '</tpl>'
                 ),
                 listeners: {
                     select: function(selModel, measure) {
@@ -326,7 +329,7 @@ Ext.define('Connector.panel.Selector', {
             }, 500, this);
         }
         else {
-            // default to seleting the first variable for the given source
+            // default to selecting the first variable for the given source
             Ext.defer(function() {
                 this.getMeasurePane().getSelectionModel().select(0);
             }, 100, this);        }
@@ -394,7 +397,7 @@ Ext.define('Connector.panel.Selector', {
                 this.getAdvancedPane().add(
                     Ext.create('Connector.component.AdvancedOptionDimension', {
                         dimension: dimension,
-                        value: this.initOptions ? this.initOptions[dimension.get('name')] : undefined
+                        value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimension.get('name')] : undefined
                     })
                 );
             }
@@ -455,6 +458,8 @@ Ext.define('Connector.panel.Selector', {
             this.bindScale();
 
             this.slideAdvancedOptionsPane(this.getAdvancedPane().items.items.length > 0);
+
+            this.initialized = true;
         }
     },
 
@@ -640,6 +645,12 @@ Ext.define('Connector.panel.Selector', {
 
     selectMeasure : function(measure) {
         this.activeMeasure = measure;
+
+        // clear the initOptions if we have already initialized the selector
+        if (this.initialized) {
+            this.initOptions = undefined;
+        }
+
         this.getButton('select-button').enable();
 
         this.configureAdvancedOptions();

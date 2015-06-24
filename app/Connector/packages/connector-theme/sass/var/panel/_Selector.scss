@@ -44,6 +44,10 @@
       }
 
       .section-title {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
         padding-left: 24px;
         color: $black;
         font-size: 20px;
@@ -86,6 +90,19 @@
       height: 25px;
       padding: 7px 8px 0 8px;
       font-family: $info-font;
+
+      .content-label {
+        display: inline-block;
+        width: 85%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .content-count {
+        display: inline-block;
+        float: right;
+      }
 
       &:hover {
         background-color: $selectongrey-color;

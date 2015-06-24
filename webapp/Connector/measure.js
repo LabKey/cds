@@ -13,11 +13,11 @@ Ext.define('Connector.measure.Configuration', {
             sources: {
                 'study|SubjectVisit': {
                     queryLabel: 'Time points',
-                    variableType: 'TIME'
+                    queryDescription: 'Creates a categorical x axis, unlike the other time axes that are ordinal.'
                 },
                 'study|SubjectGroupMap': {
                     queryLabel: 'User groups',
-                    variableType: 'USER_GROUPS'
+                    queryDescription: 'Creates a categorical x axis of the selected user groups'
                 },
                 'study|Ad5': {
                     category: 'Assays'
@@ -135,8 +135,6 @@ Ext.define('Connector.measure.Configuration', {
                     sortOrder: -4,
                     schemaName: Connector.studyContext.schemaName,
                     queryName: Connector.studyContext.subjectVisit,
-                    queryLabel: 'Time points',
-                    queryDescription: 'Creates a categorical x axis, unlike the other time axes that are ordinal.',
                     inNotNullSet: false,
                     isRecommendedVariable: true,
                     name: Connector.studyContext.protocolDayColumn,
@@ -149,7 +147,6 @@ Ext.define('Connector.measure.Configuration', {
                     sortOrder: -3,
                     schemaName: Connector.studyContext.schemaName,
                     queryName: Connector.studyContext.subjectVisit,
-                    queryLabel: 'Time points',
                     inNotNullSet: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study weeks',
@@ -161,7 +158,6 @@ Ext.define('Connector.measure.Configuration', {
                     sortOrder: -2,
                     schemaName: Connector.studyContext.schemaName,
                     queryName: Connector.studyContext.subjectVisit,
-                    queryLabel: 'Time points',
                     inNotNullSet: false,
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study months',
@@ -173,9 +169,7 @@ Ext.define('Connector.measure.Configuration', {
                     sortOrder: -1,
                     schemaName: Connector.studyContext.schemaName,
                     queryName: 'SubjectGroupMap',
-                    queryLabel: 'User groups',
                     inNotNullSet: false,
-                    queryDescription: 'Creates a categorical x axis of the selected user groups',
                     name: 'GroupId',
                     label: 'My saved groups',
                     description: 'Creates a categorical x axis of the selected saved groups',

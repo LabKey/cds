@@ -2154,8 +2154,10 @@ Ext.define('Connector.view.Chart', {
                             this.variableSelectionMade(this.ywin, targetEl);
                         },
                         cancel: function() {
-                            this.activeYSelection = undefined;
                             this.ywin.hide(targetEl);
+
+                            // reset the selection back to this.activeYSelection
+                            this.newYAxisSelector.setActiveMeasure(this.activeYSelection);
                         },
                         scope: this
                     }
@@ -2285,8 +2287,10 @@ Ext.define('Connector.view.Chart', {
                             this.variableSelectionMade(this.xwin, targetEl);
                         },
                         cancel: function() {
-                            this.activeXSelection = undefined;
                             this.xwin.hide(targetEl);
+
+                            // reset the selection back to this.activeYSelection
+                            this.newXAxisSelector.setActiveMeasure(this.activeXSelection);
                         },
                         scope: this
                     }
@@ -2445,8 +2449,10 @@ Ext.define('Connector.view.Chart', {
                             this.variableSelectionMade(this.colorwin, targetEl);
                         },
                         cancel: function() {
-                            this.activeColorSelection = undefined;
                             this.colorwin.hide(targetEl);
+
+                            // reset the selection back to this.activeYSelection
+                            this.newColorAxisSelector.setActiveMeasure(this.activeColorSelection);
                         },
                         scope: this
                     }
