@@ -178,11 +178,11 @@ Ext.define('Connector.panel.Selector', {
                             '</tpl>',
                         '</tpl>',
                         '<div class="content-item {subjectCount:this.greyMe}">',
-                            '<span>{queryLabel:htmlEncode}',
-                                '<tpl if="this.showLabel(queryLabel, longLabel)">',
-                                    '&nbsp;({longLabel:htmlEncode})',
-                                '</tpl>',
-                            '</span>',
+                            '<tpl if="category == \'Assays\'">',
+                                '<span>{queryName:htmlEncode}&nbsp;({queryLabel:htmlEncode})</span>',
+                            '<tpl else>',
+                                '<span>{queryLabel:htmlEncode}</span>',
+                            '</tpl>',
                             '<tpl if="subjectCount != -1">',
                                 '<span style="float: right;">{subjectCount:this.commaFormat}</span>',
                             '</tpl>',
@@ -289,7 +289,7 @@ Ext.define('Connector.panel.Selector', {
 
     /**
      * @param source
-     * @param [activeMeasure]
+     * @param [activeMeasure] if no activeMeasure passed in, select the first one for the given source
      */
     showMeasures : function(source, activeMeasure) {
 
@@ -326,8 +326,10 @@ Ext.define('Connector.panel.Selector', {
             }, 500, this);
         }
         else {
-            this.getMeasurePane().getSelectionModel().deselectAll();
-        }
+            // default to seleting the first variable for the given source
+            Ext.defer(function() {
+                this.getMeasurePane().getSelectionModel().select(0);
+            }, 100, this);        }
     },
 
     toggleDisplay : function(onMeasurePane) {
@@ -397,6 +399,14 @@ Ext.define('Connector.panel.Selector', {
                 );
             }
         }, this);
+
+        if (this.boundDimensionNames.length > 0) {
+            this.getAdvancedPane().insert(0, {
+                xtype: 'box',
+                cls: 'dimension-header',
+                html: 'Assay Dimensions'
+            });
+        }
     },
 
     bindScale : function() {

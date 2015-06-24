@@ -351,12 +351,16 @@ Ext.define('Connector.view.Chart', {
             this.noPlot();
         }
 
-        if (!this.newSelectors && this.ywin && this.ywin.isVisible()) {
-            this.updateMeasureSelection(this.ywin);
+        if (this.ywin && this.ywin.isVisible()) {
+            this.updateSelectorWindow(this.ywin);
         }
 
-        if (!this.newSelectors && this.xwin && this.xwin.isVisible()) {
-            this.updateMeasureSelection(this.xwin);
+        if (this.xwin && this.xwin.isVisible()) {
+            this.updateSelectorWindow(this.xwin);
+        }
+
+        if (this.colorwin && this.colorwin.isVisible()) {
+            this.updateSelectorWindow(this.colorwin);
         }
 
         if (this.plot) {
@@ -2076,11 +2080,14 @@ Ext.define('Connector.view.Chart', {
         this.showMessage('Failed to Load', true);
     },
 
-    updateMeasureSelection : function(win) {
+    updateSelectorWindow : function(win) {
         if (win) {
             var box = this.getBox();
-            win.setSize(box.width-100, box.height-100);
-            win.show();
+            win.setHeight(box.height-100);
+            if (!this.newSelectors) {
+                win.setWidth(box.width-100);
+            }
+            win.center();
         }
         else {
             console.warn('Failed to updated measure selection');
@@ -2144,9 +2151,7 @@ Ext.define('Connector.view.Chart', {
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeYSelection = selected;
-                            this.initialized = true;
-                            this.showTask.delay(10);
-                            this.ywin.hide(targetEl);
+                            this.variableSelectionMade(this.ywin, targetEl);
                         },
                         cancel: function() {
                             this.activeYSelection = undefined;
@@ -2156,20 +2161,7 @@ Ext.define('Connector.view.Chart', {
                     }
                 });
 
-                this.ywin = Ext.create('Ext.window.Window', {
-                    ui: 'axiswindow',
-                    modal: true,
-                    draggable: false,
-                    header: false,
-                    closeAction: 'hide',
-                    resizable: false,
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    style: 'padding: 0',
-                    items: [this.newYAxisSelector]
-                });
+                this.ywin = this.createSelectorWindow(this.newYAxisSelector);
             }
             else {
                 var sCls = 'yaxissource';
@@ -2261,7 +2253,7 @@ Ext.define('Connector.view.Chart', {
                     scope : this
                 });
 
-                this.updateMeasureSelection(this.ywin);
+                this.updateSelectorWindow(this.ywin);
 
                 if (this.axisPanelY.hasSelection()) {
                     this.activeYSelection = this.axisPanelY.getSelection()[0];
@@ -2290,18 +2282,7 @@ Ext.define('Connector.view.Chart', {
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeXSelection = selected;
-
-                            if (Ext.isDefined(this.activeYSelection)) {
-                                this.initialized = true;
-                                this.showTask.delay(10);
-                                this.xwin.hide(targetEl);
-                            }
-                            else {
-                                // if we don't yet have a y-axis selection, show that variable selector
-                                this.xwin.hide(targetEl, function() {
-                                    this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
-                                }, this);
-                            }
+                            this.variableSelectionMade(this.xwin, targetEl);
                         },
                         cancel: function() {
                             this.activeXSelection = undefined;
@@ -2311,20 +2292,7 @@ Ext.define('Connector.view.Chart', {
                     }
                 });
 
-                this.xwin = Ext.create('Ext.window.Window', {
-                    ui: 'axiswindow',
-                    modal: true,
-                    draggable: false,
-                    header: false,
-                    closeAction: 'hide',
-                    resizable: false,
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    style: 'padding: 0',
-                    items: [this.newXAxisSelector]
-                });
+                this.xwin = this.createSelectorWindow(this.newXAxisSelector);
             }
             else {
                 var sCls = 'xaxissource';
@@ -2440,7 +2408,7 @@ Ext.define('Connector.view.Chart', {
                     scope : this
                 });
 
-                this.updateMeasureSelection(this.xwin);
+                this.updateSelectorWindow(this.xwin);
 
                 if (this.axisPanelX.hasSelection()) {
                     this.activeXSelection = this.axisPanelX.getSelection()[0];
@@ -2474,9 +2442,7 @@ Ext.define('Connector.view.Chart', {
                     listeners: {
                         selectionmade: function(selected) {
                             this.activeColorSelection = selected;
-                            this.initialized = true;
-                            this.showTask.delay(10);
-                            this.colorwin.hide(targetEl);
+                            this.variableSelectionMade(this.colorwin, targetEl);
                         },
                         cancel: function() {
                             this.activeColorSelection = undefined;
@@ -2486,20 +2452,7 @@ Ext.define('Connector.view.Chart', {
                     }
                 });
 
-                this.colorwin = Ext.create('Ext.window.Window', {
-                    ui: 'axiswindow',
-                    modal: true,
-                    draggable: false,
-                    header: false,
-                    closeAction: 'hide',
-                    resizable: false,
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    style: 'padding: 0',
-                    items: [this.newColorAxisSelector]
-                });
+                this.colorwin = this.createSelectorWindow(this.newColorAxisSelector);
             }
             else {
                 var sCls = 'colorsource';
@@ -2601,7 +2554,7 @@ Ext.define('Connector.view.Chart', {
                     scope: this
                 });
 
-                this.updateMeasureSelection(this.colorwin);
+                this.updateSelectorWindow(this.colorwin);
 
                 if (this.colorPanel.hasSelection()) {
                     this.activeColorSelection = this.colorPanel.getSelection()[0];
@@ -2614,6 +2567,41 @@ Ext.define('Connector.view.Chart', {
         }
 
         this.colorwin.show(targetEl);
+    },
+
+    variableSelectionMade : function(win, targetEl) {
+        if (Ext.isDefined(this.activeYSelection)) {
+            this.initialized = true;
+            this.showTask.delay(10);
+            win.hide(targetEl);
+        }
+        else {
+            // if we don't yet have a y-axis selection, show that variable selector
+            win.hide(targetEl, function() {
+                this.showYMeasureSelection(Ext.getCmp('yaxisselector').getEl());
+            }, this);
+        }
+    },
+
+    createSelectorWindow : function(item) {
+        var win = Ext.create('Ext.window.Window', {
+            ui: 'axiswindow',
+            maxHeight: 660,
+            modal: true,
+            draggable: false,
+            header: false,
+            closeAction: 'hide',
+            resizable: false,
+            border: false,
+            layout: {
+                type: 'fit'
+            },
+            style: 'padding: 0',
+            items: [item]
+        });
+
+        this.updateSelectorWindow(win);
+        return win;
     },
 
     removeVariableFromFilter : function(measureIdx) {

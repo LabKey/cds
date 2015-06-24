@@ -112,6 +112,11 @@ Ext.define('Connector.component.AdvancedOptionBase', {
                     panel.hide();
                     this.getDisplayField().removeCls('expanded');
                 }, this);
+
+                panel.getEl().down('.field-display').on('click', function() {
+                    panel.hide();
+                    this.getDisplayField().removeCls('expanded');
+                }, this);
             }, this, {single: true});
         }
 
@@ -426,6 +431,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
             this.dropdownCheckboxGroup = Ext.create('Ext.form.CheckboxGroup', {
                 cls: 'cb-panel',
                 columns: 1,
+                validateOnChange: false,
                 items: checkboxItems
             });
         }
@@ -464,6 +470,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 cls: 'radio-panel',
                 columns: 1,
                 items: radioItems,
+                validateOnChange: false,
                 listeners: {
                     scope: this,
                     change: function(radiogroup, newValue) {
