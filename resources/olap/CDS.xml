@@ -57,27 +57,44 @@
 
         </Dimension>
 
-        <Dimension visible="true" highCardinality="false" name="Study" foreignKey="study">
+        <Dimension visible="true" highCardinality="false" name="Study" foreignKey="participantid">
 
-            <Hierarchy visible="true" hasAll="true" primaryKey="container">
-                <Table name="study" schema="cds"/>
-                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            <Hierarchy visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
+                <Join leftKey="container" rightKey="container">
+                    <Table name="Demographics" schema="study"/>
+                    <Table name="study" schema="cds"/>
+                </Join>
+                <Level name="Name" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
-            <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="container">
-                <Table name="study" schema="cds"/>
-                <Level name="Type" visible="true" column="type" type="String" uniqueMembers="true" />
-                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
+            <!-- TODO: This currently assumes every participant is in a treatment arm -->
+            <Hierarchy name="Treatment" visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="TreatmentArmSubjectMap">
+                <Join leftKey="arm_id" rightKey="arm_id">
+                    <Table name="TreatmentArmSubjectMap" schema="cds"/>
+                    <Join leftKey="container" rightKey="container">
+                        <Table name="treatmentarm" schema="cds"/>
+                        <Table name="study" schema="cds"/>
+                    </Join>
+                </Join>
+                <Level name="Name" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
+                <Level name="Arm" visible="true" column="coded_label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
-            <Hierarchy name="Network" visible="true" hasAll="true" primaryKey="container">
-                <Table name="study" schema="cds"/>
+            <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
+                <Join leftKey="container" rightKey="container">
+                    <Table name="Demographics" schema="study"/>
+                    <Table name="study" schema="cds"/>
+                </Join>
+                <Level name="Type" visible="true" table="study" column="type" type="String" uniqueMembers="true" />
+                <Level name="Name" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+            <Hierarchy name="Network" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
+                <Join leftKey="container" rightKey="container">
+                    <Table name="Demographics" schema="study"/>
+                    <Table name="study" schema="cds"/>
+                </Join>
                 <Level name="Network" visible="true" column="network" type="String" uniqueMembers="true" />
-                <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
-            </Hierarchy>
-
-            <Hierarchy name="Treatment" visible="true" hasAll="true" primaryKey="container">
-                <Table name="study" schema="cds"/>
                 <Level name="Name" visible="true" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
 

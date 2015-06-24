@@ -39,7 +39,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      countSingular   - The count label displayed when there is one match. Default is undefined.
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
-        //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchys value.
+        //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchy's value.
         //
         context: {
             dimensions: [{
@@ -111,6 +111,7 @@ Ext4.define('Connector.cube.Configuration', {
                 hierarchies: [{
                     uniqueName: '[Study]',
                     label: 'Name',
+                    hidden: true,
                     levels: [{
                         uniqueName: '[Study].[(All)]',
                         activeCount: 'highlight',
@@ -125,6 +126,22 @@ Ext4.define('Connector.cube.Configuration', {
                         countPriority: 30,
                         countSingular: 'Study',
                         countPlural: 'Studies'
+                    }]
+                },{
+                    uniqueName: '[Study.Treatment]',
+                    label: 'Treatment Assignment Summary',
+                    levels: [{
+                        uniqueName: '[Study.Treatment].[Name]',
+                        countSingular: 'Treatment Assignment Summary',
+                        countPlural: 'Treatment Assignment Summaries'
+                    }]
+                },{
+                    uniqueName: '[Study.Type]',
+                    label: 'Study Type',
+                    levels: [{
+                        uniqueName: '[Study.Type].[Type]',
+                        countSingular: 'Study Type',
+                        countPlural: 'Study Types'
                     }]
                 }],
 
