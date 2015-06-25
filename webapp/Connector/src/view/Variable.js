@@ -6,8 +6,6 @@
 Ext.define('Connector.view.Variable', {
     extend: 'Ext.container.Container',
 
-    alias: 'widget.variableselector',
-
     cls: 'varselect',
 
     disabledCls: 'vardisable',
@@ -141,8 +139,6 @@ Ext.define('Connector.view.Variable', {
 
 Ext.define('Connector.panel.ColorSelector', {
     extend : 'Connector.view.Variable',
-
-    alias : 'widget.colorselector',
 
     getModelTpl : function() {
         return new Ext.XTemplate(

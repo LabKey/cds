@@ -13,34 +13,34 @@ Ext.define('Connector.controller.Chart', {
 
         var queryService = Connector.getService('Query');
 
-        this.control('#yaxisselector', {
+        this.control('#yvarselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
                     queryService.onQueryReady(function(query) {
-                        plot.showYMeasureSelection(view.getEl());
+                        plot.showYMeasureSelection();
                     });
                 }
             }
         });
 
-        this.control('#xaxisselector', {
+        this.control('#xvarselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
                     queryService.onQueryReady(function(query) {
-                        plot.showXMeasureSelection(view.getEl());
+                        plot.showXMeasureSelection();
                     });
                 }
             }
         });
 
-        this.control('#colorselector', {
+        this.control('#colorvarselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
                     queryService.onQueryReady(function(query) {
-                        plot.showColorSelection(view.getEl());
+                        plot.showColorSelection();
                     });
                 }
             }
@@ -50,7 +50,7 @@ Ext.define('Connector.controller.Chart', {
             click: function(btn) {
                 var plot = btn.up('plot');
                 if (plot) {
-                    plot.showPlotDataGrid(btn.getEl());
+                    plot.showPlotDataGrid();
                 }
             }
         });
@@ -59,13 +59,13 @@ Ext.define('Connector.controller.Chart', {
             axisselect: function(plot, axis, selection) {
                 var type;
                 if (axis === 'y') {
-                    type = 'yaxisselector';
+                    type = 'yvarselector';
                 }
                 else if (axis === 'x') {
-                    type = 'xaxisselector';
+                    type = 'xvarselector';
                 }
                 else if (axis === 'color') {
-                    type = 'colorselector';
+                    type = 'colorvarselector';
                 }
                 if (type) {
                     Ext.getCmp(type).getModel().updateVariable(selection);
