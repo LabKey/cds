@@ -14,7 +14,7 @@ Ext.define('Connector.view.Variable', {
 
     maskOnDisable: false,
 
-    buttonText: 'choose variable',
+    buttonText: 'Choose variable',
 
     btnCls: 'varselectbtn',
 
@@ -45,7 +45,6 @@ Ext.define('Connector.view.Variable', {
             xtype: 'button',
             itemId: 'cvbutton',
             cls: this.btnCls,
-            margin: '10 0 0 0',
             text: this.buttonText,
             handler: this.onBtnClick,
             scope: this
@@ -55,7 +54,6 @@ Ext.define('Connector.view.Variable', {
             hidden: true,
             vector: 29,
             cls: this.btnCls + ' ddbutton',
-            margin: '12 0 0 10',
             handler: this.onBtnClick,
             scope: this
         }];
@@ -67,17 +65,21 @@ Ext.define('Connector.view.Variable', {
 
     getModelTpl : function() {
         return new Ext.XTemplate(
-            '<h1 unselectable="on" style="vertical-align: super;">{typeLabel:htmlEncode}&nbsp;=</h1>',
-            '<ul>',
-                '<li>{schemaLabel:this.elipseEncode}</li>',
-                '<li>{[this.renderLabel(values)]}</li>',
+            '<h1 unselectable="on">{type:htmlEncode}&nbsp;=</h1>',
+            '<ul style="{[this.displayNone(values)]}">',
+                '<li class="source-label">{[this.renderLabel(values)]}</li>',
+                '<li class="variable-label">{variable:this.elipseEncode}</li>',
             '</ul>',
             {
+                displayNone : function(values) {
+                    return Ext.isDefined(values.source) || Ext.isDefined(values.variable) ? '' : 'display:none';
+                },
                 elipseEncode : function(v) {
-                    return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
+                    return Ext.String.ellipsis(Ext.htmlEncode(v), 45, true);
                 },
                 renderLabel : function(values) {
-                    var label = values.queryLabel + (values.subLabel.length > 0 ? " (" + values.subLabel + ")" : "");
+                    var label = Ext.isDefined(values.source) ? values.source : '';
+                    label += (Ext.isDefined(values.options) ? ' (' + values.options + ')' : '');
                     return this.elipseEncode(label);
                 }
             }
@@ -103,15 +105,17 @@ Ext.define('Connector.view.Variable', {
         //
         // Determine what button should be shown based on label
         //
-        var haveLabel = m.data['schemaLabel'] && m.data['schemaLabel'].length > 0;
+        var haveLabel = Ext.isDefined(m.get('source')) || Ext.isDefined(m.get('variable'));
         var cv = this.getComponent('cvbutton');
         var dd = this.getComponent('ddbutton');
         if (haveLabel) {
+            this.addCls('active');
             this.activeButton = dd;
             cv.hide();
             dd.show();
         }
         else {
+            this.removeCls('active');
             this.activeButton = cv;
             cv.show();
             dd.hide();
@@ -140,27 +144,26 @@ Ext.define('Connector.panel.ColorSelector', {
 
     alias : 'widget.colorselector',
 
-    minWidth : 275,
-
     getModelTpl : function() {
         return new Ext.XTemplate(
-            '<h1 unselectable="on" style="vertical-align: super;">{typeLabel:htmlEncode}&nbsp;=</h1>',
-            '<ul>',
+            '<h1 unselectable="on">{type:htmlEncode}&nbsp;=</h1>',
+            '<ul style="{[this.displayNone(values)]}">',
                 '<li>{[this.renderLabel(values)]}</li>',
                 // The legend is always an nbsp on first render because we have to wait till after we get the data to
                 // actually render it.
                 '<li id="color-legend">&nbsp;</li>',
             '</ul>',
             {
+                displayNone : function(values) {
+                    return Ext.isDefined(values.source) || Ext.isDefined(values.variable) ? '' : 'display:none';
+                },
                 elipseEncode : function(v) {
-                    return Ext.String.ellipsis(Ext.htmlEncode(v), 35, true);
+                    return Ext.String.ellipsis(Ext.htmlEncode(v), 45, true);
                 },
                 renderLabel : function(values) {
-                    if (values.schemaLabel !== '' && values.queryLabel !== '') {
-                        return this.elipseEncode(values.schemaLabel) + ': ' + Ext.htmlEncode(values.queryLabel);
-                    }
-
-                    return '';
+                    var label = Ext.isDefined(values.source) ? values.source : '';
+                    label += (Ext.isDefined(values.variable) ? ': ' + values.variable : '');
+                    return this.elipseEncode(label);
                 }
             }
         );
@@ -214,7 +217,7 @@ Ext.define('Connector.panel.ColorSelector', {
 
         // issue 20541
         var iconSize = 18;
-        var svgWidth = Math.min(125, legendData.length * (iconSize+2));
+        var svgWidth = Math.min(250, legendData.length * (iconSize+2));
 
         smallCanvas = d3.select('#color-legend').append('svg')
                 .attr('height', iconSize)

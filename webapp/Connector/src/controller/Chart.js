@@ -67,7 +67,9 @@ Ext.define('Connector.controller.Chart', {
                 else if (axis === 'color') {
                     type = 'colorselector';
                 }
-                if (type) { Ext.getCmp(type).getModel().updateVariable(selection); }
+                if (type) {
+                    Ext.getCmp(type).getModel().updateVariable(selection);
+                }
             }
         });
 

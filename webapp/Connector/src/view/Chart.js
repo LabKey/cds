@@ -161,7 +161,6 @@ Ext.define('Connector.view.Chart', {
         return {
             xtype: 'panel',
             region: 'north',
-            height: 50,
             border: false, frame: false,
             layout: {
                 type: 'hbox'
@@ -169,7 +168,7 @@ Ext.define('Connector.view.Chart', {
             items: [{
                 xtype: 'container',
                 width: '50%',
-                margin: '0 0 0 24',
+                margin: '16 0 0 24',
                 layout: {
                     type: 'hbox',
                     pack: 'start'
@@ -178,9 +177,7 @@ Ext.define('Connector.view.Chart', {
                     id: 'yaxisselector',
                     xtype: 'variableselector',
                     btnCls: 'yaxisbtn',
-                    model: Ext.create('Connector.model.Variable', {
-                        typeLabel: 'y'
-                    }),
+                    model: Ext.create('Connector.model.Variable', {type: 'y'}),
                     listeners: {
                         requestvariable: this.onShowVariableSelection,
                         scope: this
@@ -189,6 +186,7 @@ Ext.define('Connector.view.Chart', {
             },{
                 xtype: 'container',
                 width: '50%',
+                margin: '16 24 0 0',
                 layout: {
                     type: 'hbox',
                     pack: 'end'
@@ -197,9 +195,7 @@ Ext.define('Connector.view.Chart', {
                     id: 'colorselector',
                     xtype: 'colorselector',
                     btnCls: 'colorbtn',
-                    model: Ext.create('Connector.model.Variable', {
-                        typeLabel: 'color'
-                    }),
+                    model: Ext.create('Connector.model.Variable', {type: 'color'}),
                     listeners: {
                         afterrender : function(c) {
                             c.getEl().on('mouseover', function() { this.showWhyBinTask.delay(300); }, this);
@@ -266,9 +262,7 @@ Ext.define('Connector.view.Chart', {
         return {
             xtype: 'panel',
             region: 'south',
-            height: 50,
             border: false, frame: false,
-            bodyStyle: 'background: #ffffff;',
             items: [{
                 xtype: 'container',
                 layout: {
@@ -276,13 +270,12 @@ Ext.define('Connector.view.Chart', {
                     pack: 'center'
                 },
                 width: '100%',
+                padding: '8px 0',
                 items: [{
                     id: 'xaxisselector',
                     xtype: 'variableselector',
                     btnCls: 'xaxisbtn',
-                    model: Ext.create('Connector.model.Variable', {
-                        typeLabel: 'x'
-                    }),
+                    model: Ext.create('Connector.model.Variable', {type: 'x'}),
                     listeners: {
                         requestvariable: this.onShowVariableSelection,
                         scope: this
@@ -1858,7 +1851,7 @@ Ext.define('Connector.view.Chart', {
                 target: Ext.getCmp('colorselector').getActiveButton().getEl().dom,
                 placement: 'bottom',
                 title: 'Heatmap mode',
-                xOffset: -240, // assumes width of 280,
+                xOffset: -305,
                 arrowOffset: 235,
                 content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
                 // If the user explcitly closes the tip, then don't ever show it again.

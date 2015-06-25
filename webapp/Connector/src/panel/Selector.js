@@ -163,7 +163,11 @@ Ext.define('Connector.panel.Selector', {
 
     loadSourceCounts : function() {
 
-        var sources = this.sourcesStore.getRange();
+        // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
+        var sources = this.sourcesStore.queryBy(function(record){
+            return record.get('queryName') != 'SubjectGroupMap';
+        }).items;
+
         this.queryService.getSourceCounts(sources, function(s, counts) {
             Ext.each(sources, function(source) {
                 var count = counts[source.get('queryName')];

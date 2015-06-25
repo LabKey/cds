@@ -7,10 +7,10 @@ Ext.define('Connector.model.Variable', {
     extend: 'Ext.data.Model',
 
     fields: [
-        {name: 'typeLabel'},
-        {name: 'schemaLabel'},
-        {name: 'queryLabel'},
-        {name: 'subLabel'}
+        {name: 'type'},
+        {name: 'source', defaultValue: undefined},
+        {name: 'variable', defaultValue: undefined},
+        {name: 'options', defaultValue: undefined}
     ],
 
     updateVariable : function(selections) {
@@ -23,30 +23,49 @@ Ext.define('Connector.model.Variable', {
             sel = selections;
         }
 
-        var schema = '', query = '', sub = '';
+        var source, variable, options = '', sep = '';
         if (sel) {
             if (sel.$className === 'Measure') {
-                schema = sel.get('queryLabel');
-                query = sel.get('label');
+                source = sel.get('queryLabel');
+                variable = sel.get('label');
             }
             else {
                 // assume an object with measure 'properties'
-                schema = sel['queryLabel'];
-                query = sel['label'];
+                source = sel['queryLabel'];
+                variable = sel['label'];
             }
 
-            if (sel['options'])
+            var selOptions = sel['options'];
+            if (Ext.isObject(selOptions))
             {
-                if (sel['options'].antigen)
-                    sub = sel['options'].antigen.values.join(', ');
-                else if (sel['options'].alignmentVisitTagLabel)
-                    sub = sel['options'].alignmentVisitTagLabel;
+                if (selOptions.antigen) {
+                    options = selOptions.antigen.values.join(', ');
+                    sep = '; ';
+                }
+                if (selOptions.alignmentVisitTag) {
+                    options += sep + (selOptions.alignmentVisitTagLabel || selOptions.alignmentVisitTag);
+                    sep = '; ';
+                }
+                if (Ext.isObject(selOptions.dimensions)) {
+                    Ext.Object.each(selOptions.dimensions, function(key, value){
+                        options += sep + value.join(', ');
+                        sep = '; ';
+                    });
+                }
+                if (selOptions.scale) {
+                    options += sep + selOptions.scale.toLowerCase();
+                    sep = '; ';
+                }
+
+                if (options == '') {
+                    options = undefined;
+                }
             }
         }
 
-        this.set('schemaLabel', schema);
-        this.set('queryLabel', query);
-        this.set('subLabel', sub);
+        this.set('source', source);
+        this.set('variable', variable);
+        this.set('options', options);
         this.fireEvent('updatevariable', this);
     }
 });
