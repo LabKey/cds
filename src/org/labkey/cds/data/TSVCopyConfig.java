@@ -18,11 +18,19 @@ public class TSVCopyConfig extends CDSImportCopyConfig
 {
     String tsvFileName;
 
-    public TSVCopyConfig(String table)
+
+    public TSVCopyConfig(String table, String fileName)
     {
         super("#TSV#", table, "cds", "import_" + table);
-        tsvFileName = table;
+        tsvFileName = fileName;
     }
+
+
+    public TSVCopyConfig(String table)
+    {
+        this(table, table);
+    }
+
 
     @Override
     public DataIteratorBuilder selectFromSource(Container container, User user, DataIteratorContext context, @Nullable File dir, Logger log) throws SQLException, IOException
@@ -44,6 +52,7 @@ public class TSVCopyConfig extends CDSImportCopyConfig
         tabLoader.setInferTypes(false);
         return tabLoader;
     }
+
 
     @Nullable
     private File getByExtension(File dir, String... extensions)
