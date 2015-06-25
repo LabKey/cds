@@ -46,7 +46,7 @@ Ext.define('Connector.panel.Selector', {
 
         this.callParent([config]);
 
-        this.addEvents('cancel', 'selectionmade');
+        this.addEvents('cancel', 'selectionmade', 'beforeSourceCountsLoad', 'afterSourceCountsLoad');
     },
 
     initComponent : function() {
@@ -85,6 +85,21 @@ Ext.define('Connector.panel.Selector', {
         this.queryService.onQueryReady(function() {
             this.loadSourcesAndMeasures();
         }, this);
+
+        //plugin to handle loading mask for the variable selector source counts
+        this.addPlugin({
+            ptype: 'loadingmask',
+            blockingMask: false,
+            itemsMaskCls: 'item-spinner-mask-orange',
+            beginConfig: {
+                component: this,
+                events: ['beforeSourceCountsLoad']
+            },
+            endConfig: {
+                component: this,
+                events: ['afterSourceCountsLoad']
+            }
+        });
     },
 
     getLoaderPane : function() {
@@ -104,8 +119,6 @@ Ext.define('Connector.panel.Selector', {
 
         this.sourcesStore.loadRawData(data.sources);
         this.measureStore.loadRawData(data.measures);
-
-        this.loadSourceCounts();
 
         if (this.activeMeasure) {
             this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
@@ -162,7 +175,9 @@ Ext.define('Connector.panel.Selector', {
     },
 
     loadSourceCounts : function() {
+        this.fireEvent('beforeSourceCountsLoad', this);
 
+        // TODO: cache these source counts to use between selectors and invalidate the cache on filter/selection change
         // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
         var sources = this.sourcesStore.queryBy(function(record){
             return record.get('queryName') != 'SubjectGroupMap';
@@ -175,6 +190,8 @@ Ext.define('Connector.panel.Selector', {
                     source.set('subjectCount', count);
                 }
             });
+
+            this.fireEvent('afterSourceCountsLoad', this);
         }, this, this.memberCountsFn, this.memberCountsFnScope);
     },
 
@@ -204,7 +221,7 @@ Ext.define('Connector.panel.Selector', {
                                 '<div class="content-label">{queryLabel:htmlEncode}</div>',
                             '</tpl>',
                             '<tpl if="subjectCount != -1">',
-                                '<div class="content-count">{subjectCount:this.commaFormat}</div>',
+                                '<div class="content-count maskit">{subjectCount:this.commaFormat}</div>',
                             '</tpl>',
                         '</div>',
                     '</tpl>',

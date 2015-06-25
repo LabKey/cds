@@ -2124,6 +2124,7 @@ Ext.define('Connector.view.Chart', {
             this.ywin = this.createSelectorWindow(this.getYAxisSelector());
         }
 
+        this.getYAxisSelector().loadSourceCounts();
         this.ywin.show(this.getYSelector().getEl());
     },
 
@@ -2164,6 +2165,7 @@ Ext.define('Connector.view.Chart', {
             this.xwin = this.createSelectorWindow(this.getXAxisSelector());
         }
 
+        this.getXAxisSelector().loadSourceCounts();
         this.xwin.show(this.getXSelector().getEl());
     },
 
@@ -2205,6 +2207,7 @@ Ext.define('Connector.view.Chart', {
             this.colorwin = this.createSelectorWindow(this.getColorAxisSelector());
         }
 
+        this.getColorAxisSelector().loadSourceCounts();
         this.colorwin.show(this.getColorSelector().getEl());
     },
 
