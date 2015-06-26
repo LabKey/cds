@@ -208,13 +208,13 @@ public class CDSManager
             deleteFacts(c);
             DbSchema dbSchema = CDSSchema.getInstance().getSchema();
 
-//            for (String s : new String[] {"CitableAuthors", "Citations", "Citable", "Properties", "Study"})
             for (String s : new String[] {"Antigens",
                     "CitableAuthors", "Citations", "Citable",
                     "AssayPublications", "Assays",
                     "VaccineComponents", "Vaccines",
                     "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
                     // New Tables
+                    "VisitTagMap", "StudyGroupVisitMap", "StudyGroup",
                     "SubjectProductMap", "StudyProductMap", "TreatmentArmSubjectMap", "TreatmentArm", "Study"
             })
             {

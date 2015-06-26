@@ -1,6 +1,5 @@
 SELECT
 TA.arm_id,
-TA.container.entityId,
 ITS.subject_id AS participantId,
 ITS.prot,
 FROM cds.treatmentarm AS TA

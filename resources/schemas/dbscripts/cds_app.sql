@@ -1,10 +1,13 @@
 -- MAPPING TABLES
+DROP TABLE IF EXISTS cds.VisitTagMap CASCADE;
 DROP TABLE IF EXISTS cds.TreatmentArmSubjectMap CASCADE;
+DROP TABLE IF EXISTS cds.StudyGroupVisitMap CASCADE;
 DROP TABLE IF EXISTS cds.SubjectProductMap CASCADE;
 DROP TABLE IF EXISTS cds.StudyProductMap CASCADE;
 
 -- CORE TABLES
 DROP TABLE IF EXISTS cds.TreatmentArm CASCADE;
+DROP TABLE IF EXISTS cds.StudyGroup CASCADE;
 DROP TABLE IF EXISTS cds.Product CASCADE;
 DROP TABLE IF EXISTS cds.Facts CASCADE;
 DROP TABLE IF EXISTS cds.Study CASCADE;
@@ -61,6 +64,23 @@ CREATE TABLE cds.Product (
   CONSTRAINT PK_Product PRIMARY KEY (product_id)
 );
 
+CREATE TABLE cds.StudyGroup (
+  row_id SERIAL,
+  group_name VARCHAR(250) NOT NULL,
+  container ENTITYID NOT NULL,
+
+  CONSTRAINT UQ_StudyGroup UNIQUE (group_name, container),
+  CONSTRAINT PK_StudyGroup PRIMARY KEY (row_id)
+);
+
+CREATE TABLE cds.StudyGroupVisitMap (
+  group_id INTEGER NOT NULL REFERENCES cds.StudyGroup (row_id),
+  visit_row_id INTEGER NOT NULL,
+  container ENTITYID NOT NULL,
+
+  CONSTRAINT PK_StudyGroupVisitMap PRIMARY KEY (group_id, container, visit_row_id)
+);
+
 CREATE TABLE cds.TreatmentArm (
   arm_id VARCHAR(250) NOT NULL,
 
@@ -100,4 +120,15 @@ CREATE TABLE cds.SubjectProductMap (
   product_id INTEGER NOT NULL REFERENCES cds.Product (product_id),
 
   CONSTRAINT PK_SubjectProductMap PRIMARY KEY (participantid, container, product_id)
+);
+
+CREATE TABLE cds.VisitTagMap (
+  visit_tag VARCHAR(250) NOT NULL,
+  visit_row_id INTEGER NOT NULL,
+  container ENTITYID NOT NULL,
+  study_group_id INTEGER NOT NULL REFERENCES cds.StudyGroup (row_id),
+  single_use BOOLEAN DEFAULT FALSE,
+  is_vaccination BOOLEAN DEFAULT FALSE,
+
+  CONSTRAINT PK_VisitTagMap PRIMARY KEY (visit_tag, visit_row_id, study_group_id, container)
 );

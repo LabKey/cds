@@ -32,6 +32,9 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
         QuerySchema targetSchema;
         TableInfo targetTable;
 
+        QueryUpdateService targetService;
+        Map<String, Object>[] rows;
+
         logger.info("Starting visit management.");
         long start = System.currentTimeMillis();
         for (Container container : project.getChildren())
@@ -41,33 +44,29 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             if (sourceSchema == null)
                 throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
 
-            targetSchema = sourceSchema;
+            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
 
-            sourceTable = sourceSchema.getTable("ds_cohort");
-            targetTable = targetSchema.getTable("cohort");
+            if (targetSchema == null)
+                throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            QueryUpdateService targetService = targetTable.getUpdateService();
+            sourceTable = sourceSchema.getTable("ds_studygroup");
+            targetTable = targetSchema.getTable("studygroup");
+
+            targetService = targetTable.getUpdateService();
 
             if (targetService == null)
                 throw new PipelineJobException("Unable to find update service for study.cohort in folder " + container.getPath());
 
             //
-            // Delete Cohorts
+            // Delete Study Groups
             //
-            sql = new SQLFragment("SELECT rowid FROM ").append(targetTable).append(" WHERE container = ?");
-            sql.add(container.getEntityId());
-
-            Map<String, Object>[] rows = new SqlSelector(targetTable.getSchema(), sql).getMapArray();
-            if (rows.length > 0)
+            try
             {
-                try
-                {
-                    targetService.deleteRows(user, container, Arrays.asList(rows), null, null);
-                }
-                catch (Exception e)
-                {
-                    logger.error(e.getMessage(), e);
-                }
+                targetService.truncateRows(user, container, null, null);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
             }
 
             if (errors.hasErrors())
@@ -80,7 +79,7 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             }
 
             //
-            // Insert Cohorts
+            // Insert Study Groups
             //
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
@@ -132,7 +131,122 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
                     logger.error(e.getMessage(), e);
                 }
             }
+
+            //
+            // Populate Study Group Visit Map (Schedule)
+            //
+            sourceTable = sourceSchema.getTable("ds_studygroupvisit");
+            targetTable = targetSchema.getTable("studygroupvisitmap");
+            targetService = targetTable.getUpdateService();
+
+            if (targetService == null)
+                throw new PipelineJobException("Unable to find update service for cds.studygroupvisitmap in folder " + container.getPath());
+
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
+            sql.add(container.getName());
+
+            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (rows.length > 0)
+            {
+                try
+                {
+                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+            }
         }
+
+        //
+        // Populate Visit Tags (Project level only)
+        //
+        sourceSchema = DefaultSchema.get(user, project).getSchema("study");
+
+        if (sourceSchema == null)
+            throw new PipelineJobException("Unable to find study schema for project " + project.getPath());
+
+        sourceTable = sourceSchema.getTable("ds_visittag");
+        targetTable = sourceSchema.getTable("visittag");
+        targetService = targetTable.getUpdateService();
+
+        if (targetService == null)
+            throw new PipelineJobException("Unable to find update service for cds.visittag in project " + project.getPath());
+
+        sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+
+        rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            try
+            {
+                targetService.insertRows(user, project, Arrays.asList(rows), errors, null, null);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        if (errors.hasErrors())
+        {
+            for (ValidationException error : errors.getRowErrors())
+            {
+                logger.error(error.getMessage());
+            }
+            return;
+        }
+
+        //
+        // Populate Visit Tag Map
+        //
+        for (Container container : project.getChildren())
+        {
+            sourceSchema = DefaultSchema.get(user, container).getSchema("study");
+
+            if (sourceSchema == null)
+                throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
+
+            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
+
+            if (targetSchema == null)
+                throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
+
+            sourceTable = sourceSchema.getTable("ds_visittagmap");
+            targetTable = targetSchema.getTable("visittagmap");
+            targetService = targetTable.getUpdateService();
+
+            if (targetService == null)
+                throw new PipelineJobException("Unable to find update service for cds.visittagmap in folder " + container.getPath());
+
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
+            sql.add(container.getName());
+
+            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (rows.length > 0)
+            {
+                try
+                {
+                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+
+            if (errors.hasErrors())
+            {
+                for (ValidationException error : errors.getRowErrors())
+                {
+                    logger.error(error.getMessage());
+                }
+                return;
+            }
+
+        }
+
         long finish = System.currentTimeMillis();
 
         logger.info("Visit management took " + DateUtil.formatDuration(finish - start) + ".");

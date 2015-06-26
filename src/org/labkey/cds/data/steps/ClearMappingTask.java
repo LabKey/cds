@@ -1,25 +1,18 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
-import org.labkey.api.data.SQLFragment;
-import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.pipeline.RecordedActionSet;
-import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryUpdateService;
-import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ClearMappingTask extends TaskRefTaskImpl
 {
@@ -53,10 +46,14 @@ public class ClearMappingTask extends TaskRefTaskImpl
         for (Container container : project.getChildren())
         {
             clearTable("cds", "facts", container, logger);
+            clearTable("cds", "visittagmap", container, logger);
             clearTable("cds", "treatmentarmsubjectmap", container, logger);
+            clearTable("cds", "studygroupvisitmap", container, logger);
             clearTable("cds", "subjectproductmap", container, logger);
             clearTable("cds", "studyproductmap", container, logger);
         }
+
+        clearTable("study", "visittag", project, logger);
 
         long finish = System.currentTimeMillis();
         logger.info("Clearing mapping tables took " + DateUtil.formatDuration(finish - start) + ".");
