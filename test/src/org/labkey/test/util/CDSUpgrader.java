@@ -37,7 +37,7 @@ public class CDSUpgrader
         _test._containerHelper.createProject(_project, "Dataspace");
         _test._containerHelper.enableModule(_project, "CDS");
 
-        _test.setPipelineRoot(TestFileUtils.getLabKeyRoot() + "/server/customModules/cds/test/sampledata");
+        _test.setPipelineRoot(TestFileUtils.getLabKeyRoot() + "/server/optionalModules/cds/test/sampledata");
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
         _test.goToProjectHome();
