@@ -46,7 +46,7 @@ Ext.define('Connector.panel.Selector', {
 
         this.callParent([config]);
 
-        this.addEvents('cancel', 'selectionmade', 'beforeSourceCountsLoad', 'afterSourceCountsLoad');
+        this.addEvents('remove', 'cancel', 'selectionmade', 'beforeSourceCountsLoad', 'afterSourceCountsLoad');
     },
 
     initComponent : function() {
@@ -356,6 +356,10 @@ Ext.define('Connector.panel.Selector', {
             }, 100, this);        }
     },
 
+    toggleRemoveVariableButton : function(show) {
+        this.getButton('remove-link').setVisible(show);
+    },
+
     toggleDisplay : function(onMeasurePane) {
         if (this.advancedPane) {
             this.advancedPane.hide();
@@ -613,6 +617,16 @@ Ext.define('Connector.panel.Selector', {
                     pack: 'end'
                 },
                 items: [{
+                    itemId: 'remove-link',
+                    xtype: 'button',
+                    ui: 'rounded-inverted-accent-text',
+                    hidden: true,
+                    text: 'Remove variable',
+                    handler: function() {
+                        this.fireEvent('remove');
+                    },
+                    scope: this
+                },{
                     itemId: 'cancel-link',
                     xtype: 'button',
                     ui: 'rounded-inverted-accent-text',

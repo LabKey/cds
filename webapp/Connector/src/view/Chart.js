@@ -1540,17 +1540,27 @@ Ext.define('Connector.view.Chart', {
     },
 
     clearPlotSelections : function() {
-        this.getYAxisSelector().clearSelection();
-        this.getXAxisSelector().clearSelection();
-        this.getColorAxisSelector().clearSelection();
+        this.clearAxisSelection('y');
+        this.clearAxisSelection('x');
+        this.clearAxisSelection('color');
+    },
 
-        this.activeYSelection = undefined;
-        this.activeXSelection = undefined;
-        this.activeColorSelection = undefined;
-
-        this.getYSelector().clearModel();
-        this.getXSelector().clearModel();
-        this.getColorSelector().clearModel();
+    clearAxisSelection : function(axis) {
+        if (axis == 'y') {
+            this.getYAxisSelector().clearSelection();
+            this.activeYSelection = undefined;
+            this.getYSelector().clearModel();
+        }
+        else if (axis == 'x') {
+            this.getXAxisSelector().clearSelection();
+            this.activeXSelection = undefined;
+            this.getXSelector().clearModel();
+        }
+        else if (axis == 'color') {
+            this.getColorAxisSelector().clearSelection();
+            this.activeColorSelection = undefined;
+            this.getColorSelector().clearModel();
+        }
     },
 
     onShowGraph : function() {
@@ -2106,7 +2116,6 @@ Ext.define('Connector.view.Chart', {
                     },
                     cancel: function() {
                         this.ywin.hide(this.getYSelector().getEl());
-
                         // reset the selection back to this.activeYSelection
                         this.yAxisSelector.setActiveMeasure(this.activeYSelection);
                     },
@@ -2145,9 +2154,14 @@ Ext.define('Connector.view.Chart', {
                         this.activeXSelection = selected;
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
                     },
+                    remove: function() {
+                        // Need to remove the x measure (index 0) from the plot filter or we'll pull it down again.
+                        this.removeVariableFromFilter(0);
+                        this.clearAxisSelection('x');
+                        this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
+                    },
                     cancel: function() {
                         this.xwin.hide(this.getXSelector().getEl());
-
                         // reset the selection back to this.activeYSelection
                         this.xAxisSelector.setActiveMeasure(this.activeXSelection);
                     },
@@ -2165,6 +2179,7 @@ Ext.define('Connector.view.Chart', {
             this.xwin = this.createSelectorWindow(this.getXAxisSelector());
         }
 
+        this.getXAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeXSelection));
         this.getXAxisSelector().loadSourceCounts();
         this.xwin.show(this.getXSelector().getEl());
     },
@@ -2188,9 +2203,14 @@ Ext.define('Connector.view.Chart', {
                         this.activeColorSelection = selected;
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
                     },
+                    remove: function() {
+                        // Need to remove the color measure (index 2) from the plot filter or we'll pull it down again.
+                        this.removeVariableFromFilter(2);
+                        this.clearAxisSelection('color');
+                        this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
+                    },
                     cancel: function() {
                         this.colorwin.hide(this.getColorSelector().getEl());
-
                         // reset the selection back to this.activeYSelection
                         this.colorAxisSelector.setActiveMeasure(this.activeColorSelection);
                     },
@@ -2207,6 +2227,7 @@ Ext.define('Connector.view.Chart', {
             this.colorwin = this.createSelectorWindow(this.getColorAxisSelector());
         }
 
+        this.getColorAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeColorSelection));
         this.getColorAxisSelector().loadSourceCounts();
         this.colorwin.show(this.getColorSelector().getEl());
     },
