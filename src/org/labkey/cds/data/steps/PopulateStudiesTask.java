@@ -77,7 +77,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         long finish = System.currentTimeMillis();
         logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
 
-        // Get the collesced metadata for the studies (including container)
+        // Get the coalesced metadata for the studies (including container)
         Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
         List<Map<String, Object>> rows = new ArrayList<>();
 

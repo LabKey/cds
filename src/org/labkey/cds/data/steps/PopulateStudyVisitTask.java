@@ -2,6 +2,8 @@ package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
 import org.labkey.api.data.Container;
+import org.labkey.api.data.ContainerFilter;
+import org.labkey.api.data.ContainerFilterable;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
@@ -11,7 +13,6 @@ import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
-import org.labkey.api.security.User;
 import org.labkey.api.util.DateUtil;
 
 import java.util.Arrays;
@@ -214,6 +215,8 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
             sourceTable = sourceSchema.getTable("ds_visittagmap");
+            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+
             targetTable = targetSchema.getTable("visittagmap");
             targetService = targetTable.getUpdateService();
 

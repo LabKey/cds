@@ -61,7 +61,7 @@
             </taskref>
         </transform>
         <transform id="product" type="org.labkey.di.pipeline.TransformTask">
-            <source schemaName="cds" queryName="import_product" />
+            <source schemaName="study" queryName="ds_product" />
             <destination schemaName="cds" queryName="product" targetOption="truncate" />
         </transform>
         <transform id="PopulateStudyProduct" type="TaskrefTransformStep">

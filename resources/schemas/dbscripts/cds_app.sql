@@ -51,6 +51,7 @@ CREATE TABLE cds.Facts (
 
 CREATE TABLE cds.Product (
   product_id INTEGER NOT NULL,
+  container ENTITYID NOT NULL,
   product_name VARCHAR(250) NOT NULL UNIQUE,
   product_type VARCHAR(250),
   product_class VARCHAR(250),
@@ -61,6 +62,7 @@ CREATE TABLE cds.Product (
 
   product_description TEXT,
 
+  CONSTRAINT UQ_Product UNIQUE (product_id, container),
   CONSTRAINT PK_Product PRIMARY KEY (product_id)
 );
 
@@ -111,7 +113,7 @@ CREATE TABLE cds.StudyProductMap (
   container ENTITYID NOT NULL,
   product_id INTEGER NOT NULL REFERENCES cds.Product (product_id),
 
-  CONSTRAINT PK_StudyProductMap PRIMARY KEY (study_name, product_id)
+  CONSTRAINT PK_StudyProductMap PRIMARY KEY (study_name, container, product_id)
 );
 
 CREATE TABLE cds.SubjectProductMap (
