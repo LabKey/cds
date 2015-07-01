@@ -1293,9 +1293,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],
-  "Connector.panel.ColorSelector": [
-    "widget.colorselector"
-  ],
+  "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [
     "widget.feedback"
   ],
@@ -1434,9 +1432,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.TermsOfUse": [
     "widget.terms"
   ],
-  "Connector.view.Variable": [
-    "widget.variableselector"
-  ],
+  "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [
     "widget.app.module.assayanalytelist"
