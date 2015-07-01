@@ -22,13 +22,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.PostgresOnlyTest;
+import org.labkey.test.util.UIContainerHelper;
 
 import java.util.Arrays;
 
@@ -39,16 +40,18 @@ import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private final CDSHelper _cds = new CDSHelper(this);
+    private static String _projectName;
     private static String _cdsAppURL;
 
     @BeforeClass
-    public static void setUpProject()
+    public static void doSetup() throws Exception
     {
         CDSLoginTest initTest = (CDSLoginTest)getCurrentTest();
+        _projectName = initTest.getProjectName();
 
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
-        _initializer.setDesiredStudies(new String[] {"DemoSubset"});
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+
         initTest._cds.enterApplication();
         _cdsAppURL = initTest.getCurrentRelativeURL();
     }
@@ -59,6 +62,21 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
         signOut();
         beginAt(_cdsAppURL);
         Ext4Helper.setCssPrefix("x-");
+    }
+
+    @Override
+    protected void doCleanup(boolean afterTest) throws TestTimeoutException
+    {
+        // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate difference more.
+        if(afterTest)
+        {
+            // If after the test try deleting via the UI.
+            _containerHelper = new UIContainerHelper(this);
+        }
+
+        // Doing clean up here to give a longer timeout period.
+        _containerHelper.deleteProject(_projectName, afterTest, 240000);
+
     }
 
     @Test

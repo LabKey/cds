@@ -64,8 +64,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private static final String GROUP_LIVE_FILTER = "CDSTest_DGroup";
     private static final String GROUP_STATIC_FILTER = "CDSTest_EGroup";
     private static final String STUDY_GROUP = "Study Group Verify";
-    private static final String[] DESIRED_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144"};
-    private static final String[] ALL_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144", "BH078", "BH302", "DS108", "LBK001", "LBK010"};
 
     private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
 
@@ -100,8 +98,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     public static void doSetup() throws Exception
     {
         CDSTest initTest = (CDSTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
-        _initializer.setDesiredStudies(DESIRED_STUDIES);
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
     }
 
@@ -117,14 +114,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         submit();
         waitForElement(Locator.css("div.uslog").withText("Success!"), defaultWaitForPage);
         Ext4Helper.setCssPrefix("x-");
-    }
-
-    @LogMethod
-    private void verifyFactTable()
-    {
-        clickProject(getProjectName());
-        clickAndWait(Locator.linkWithText("Verify"));
-        waitForText(CDSHelper.CDS_WAIT, "No data to show.");
     }
 
     @Before

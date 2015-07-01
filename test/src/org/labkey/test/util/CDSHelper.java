@@ -36,11 +36,6 @@ public class CDSHelper
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     public static final String[] ASSAYS = {"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
-    public static final String[] EMAILS = {"adam@labkey.com", "alanv@labkey.com", "brittp@labkey.com", "klum@labkey.com",
-            "kristinf@labkey.com", "marki@labkey.com", "matthewb@labkey.com", "nicka@labkey.com", "tchad@labkey.com"};
-    public static final String[] PICTURE_FILE_NAMES = {"team_Adam_Rauch.jpg", "team_Alan_Vezina.jpg",
-            "team_Britt_Piehler.jpg", "team_Karl_Lum.jpg", "team_Kristin_Fitzsimmons.jpg", "team_Mark_Igra.jpg",
-            "team_Matthew_Bellew.jpg", "team_Nick_Arnold.jpg", "team_Trey_Chadick.jpg"};
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
     private final BaseWebDriverTest _test;

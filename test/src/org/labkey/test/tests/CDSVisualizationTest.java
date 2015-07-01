@@ -69,15 +69,13 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     private final String PGROUP2 = "visgroup 2";
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
-    private static final String[] DESIRED_STUDIES = {"DemoSubset", "NotCHAVI001", "NotCHAVI008", "NotRV144", "StudyAxisTest1", "StudyAxisTest11", "StudyAxisTest2", "StudyAxisTestA", "StudyAxisTestB"};
 
     @BeforeClass
     @LogMethod
     public static void doSetup() throws Exception
     {
         CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
-        _initializer.setDesiredStudies(DESIRED_STUDIES);
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
         initTest.createParticipantGroups();
   }
