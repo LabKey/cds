@@ -64,7 +64,8 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                             valueField: 'name',
                             displayField: 'label',
                             comboConfig: {
-                                name: 'sae-hierarchy'
+                                name: 'sae-hierarchy',
+                                width: 225
                             }
                         },
                         {xtype: 'box', autoEl: { tag: 'div' }, flex: 1},

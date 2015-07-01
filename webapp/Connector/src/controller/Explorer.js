@@ -36,7 +36,10 @@ Ext.define('Connector.controller.Explorer', {
             afterrender : function(dropdown) {
                 this.on('dimension', function(dim, hIdx) {
                     dropdown.getStore().removeAll();
-                    var hierarchies = [], selected = undefined;
+
+                    var hierarchies = [],
+                            selected = undefined;
+
                     Ext.each(dim.hierarchies, function(hierarchy, idx) {
                         var model = Ext.create('Connector.model.Hierarchy', hierarchy);
                         if (!model.get('hidden')) {
@@ -49,8 +52,9 @@ Ext.define('Connector.controller.Explorer', {
 
                     dropdown.getStore().add(hierarchies);
                     if (!Ext.isEmpty(hierarchies)) {
-                        if (Ext.isDefined(selected))
+                        if (Ext.isDefined(selected)) {
                             dropdown.select(selected);
+                        }
                         else {
                             console.warn('Did not find a hierarchy to select. Selecting first available...');
                             dropdown.select(hierarchies[0]);
@@ -94,7 +98,7 @@ Ext.define('Connector.controller.Explorer', {
             var s = this.getStore('Explorer');
             s.olapProvider = state; // required by LABKEY.app.store.OlapExplorer. Blargh
 
-            var v = Ext.create('Connector.view.SingleAxisExplorer',{
+            var v = Ext.create('Connector.view.SingleAxisExplorer', {
                 flex : 3,
                 ui : 'custom',
                 store : s,
@@ -147,9 +151,11 @@ Ext.define('Connector.controller.Explorer', {
     parseContext : function(urlContext) {
         urlContext = this.callParent(arguments);
 
+        // make the default the first hierarchy listed
         var context = {
-            dimension: urlContext.length > 0 ? urlContext[0] : 'Study' // make the default the first hierarchy listed
+            dimension: urlContext.length > 0 ? urlContext[0] : 'Study'
         };
+
         if (urlContext && urlContext.length > 1) {
             context.hierarchy = urlContext[1];
         }
@@ -161,12 +167,14 @@ Ext.define('Connector.controller.Explorer', {
             var dim = mdx.getDimension(context.dimension);
             if (dim) {
 
-                var idx = 0;
+                var idx = -1;
                 this.dim = dim;
 
-                /* Find the appropriate hierarchy index -- would be nice if this could just be a lookup */
+                // Find the appropriate hierarchy index -- would be nice if this could just be a lookup
                 if (context.hierarchy) {
-                    var _h = dim.getHierarchies(), h = dim.name.toLowerCase() + '.' + context.hierarchy.toLowerCase();
+                    var _h = dim.getHierarchies(),
+                        h = dim.name.toLowerCase() + '.' + context.hierarchy.toLowerCase();
+
                     for (var i=0; i < _h.length; i++) {
                         if (_h[i].name.toLowerCase() == h) {
                             idx = i;
@@ -174,16 +182,26 @@ Ext.define('Connector.controller.Explorer', {
                         }
                     }
                 }
+
+                if (idx == -1) {
+                    // Use the summaryTargetLevel to determine default hierarchy
+                    var level = mdx.getLevel(dim.summaryTargetLevel);
+                    if (level) {
+                        Ext.each(dim.getHierarchies(), function(hier, i) {
+                            if (hier.uniqueName === level.hierarchy.uniqueName) {
+                                idx = i;
+                                return false;
+                            }
+                        });
+                    }
+                }
+
+                if (idx != -1) {
+                    this.fireEvent('dimension', dim, idx);
+                }
                 else {
-                    this.hierarchy = null;
+                    alert('Failed:' + context.dimension);
                 }
-
-                // TODO: Remove this
-                if (idx == 0 && dim.name.toLowerCase() == 'subject') {
-                    idx = 1;
-                }
-
-                this.fireEvent('dimension', dim, idx);
             }
             else {
                 alert('Failed:' + context.dimension);

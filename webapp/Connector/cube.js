@@ -10,15 +10,15 @@ Ext4.define('Connector.cube.Configuration', {
         // Dimensions are looked up by their 'uniqueName' property.
         //
         // Dimensions:
-        //      singularName    - Declaure a singluar name for this dimension. Defaults to name value.
-        //      pluralName      - Declaure a plural name for this dimension. Defaults to name value.
-        //      friendlyName    - Declaure a friendly, possibly more contextual, name for this dimension. Defaults to name value.
+        //      singularName    - Declare a singular name for this dimension. Defaults to name value.
+        //      pluralName      - Declare a plural name for this dimension. Defaults to name value.
+        //      friendlyName    - Declare a friendly, possibly more contextual, name for this dimension. Defaults to name value.
         //      hidden          - declare whether a dimension is hidden. Defaults to false.
         //      itemDetail      - A specific view configuration for the learn about pages. Defaults to undefined.
         //      itemDetailTabs  - An array of tab names used in learn views. Requires itemDetail. Defaults to undefined.
         //      priority        - relative priority to be shown in displays. Default is 0.
         //      querySchema     - metadata member query schema. Defaults to undefined.
-        //      supportsDetails - multinoun views are supported for this dimension. defaults to false.
+        //      supportsDetails - multi-noun views are supported for this dimension. defaults to false.
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
         //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
@@ -49,7 +49,7 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Subject]',
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
-                summaryTargetLevel: '[Subject].[Subject]',
+                summaryTargetLevel: '[Subject.Race].[Race]',
                 priority: 10,
                 defaultOperator: 'OR',
                 hierarchies: [{
@@ -97,6 +97,13 @@ Ext4.define('Connector.cube.Configuration', {
                         countSingular: 'Species',
                         countPlural: 'Species'
                     }]
+                },{
+                    uniqueName: '[Subject.Age]',
+                    levels: [{
+                        uniqueName: '[Subject.Age].[Age]',
+                        countSingular: 'Decade by Age',
+                        countPlural: 'Decades by Age'
+                    }]
                 }]
             },{
                 uniqueName: '[Study]',
@@ -107,6 +114,7 @@ Ext4.define('Connector.cube.Configuration', {
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
                 defaultOperator: 'OR',
+                summaryTargetLevel: '[Study.Treatment].[Treatment]',
 
                 hierarchies: [{
                     uniqueName: '[Study]',
@@ -131,7 +139,7 @@ Ext4.define('Connector.cube.Configuration', {
                     uniqueName: '[Study.Treatment]',
                     label: 'Treatment Assignment Summary',
                     levels: [{
-                        uniqueName: '[Study.Treatment].[Name]',
+                        uniqueName: '[Study.Treatment].[Treatment]',
                         countSingular: 'Treatment Assignment Summary',
                         countPlural: 'Treatment Assignment Summaries'
                     }]

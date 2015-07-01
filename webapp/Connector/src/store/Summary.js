@@ -43,13 +43,18 @@ Ext.define('Connector.store.Summary', {
 
         if (mdx) {
 
-            var dims = mdx.getDimensions(), requestId = 0;
+            var dims = mdx.getDimensions(),
+                requestId = 0, dim;
+
             for (var d=0; d < dims.length; d++) {
-                if (!dims[d].hidden && dims[d].supportsSummary) {
+
+                dim = dims[d];
+
+                if (!dim.hidden && dim.supportsSummary) {
 
                     requestId++;
 
-                    var targetLevel = dims[d].summaryTargetLevel;
+                    var targetLevel = dim.summaryTargetLevel;
                     if (targetLevel) {
 
                         //
@@ -57,36 +62,39 @@ Ext.define('Connector.store.Summary', {
                         //
                         request.configs.push({
                             requestId: requestId,
-                            dimName: dims[d].name,
+                            dimName: dim.name,
                             useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                            onRows: [ { level: targetLevel } ],
-                            priority: dims[d].priority
+                            onRows: [{
+                                level: targetLevel
+                            }],
+                            priority: dim.priority
                         });
 
                         //
                         // Hierarchy requests
                         //
-                        var hiers = dims[d].getHierarchies();
-                        for (var h=0; h < hiers.length; h++) {
-                            if (!hiers[h].hidden && hiers[h].supportsSummary) {
-
-                                var targetHierLevel = hiers[h].levels[1];
+                        var targetHierLevel;
+                        Ext4.each(dim.getHierarchies(), function(hier, i) {
+                            if (!hier.hidden && hier.supportsSummary) {
+                                targetHierLevel = hier.levels[1];
 
                                 request.configs.push({
                                     requestId: requestId,
-                                    dimName: dims[d].name,
+                                    dimName: dim.name,
                                     useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                                    hierarchyIndex: h,
-                                    targetLevel: targetHierLevel,
+                                    hierarchyIndex: i,
+                                    targetLevel: targetHierLevel.uniqueName,
                                     label: targetHierLevel.countPlural || targetHierLevel.name,
-                                    onRows: [ { level: targetHierLevel.uniqueName } ],
-                                    priority: dims[d].priority
+                                    onRows: [{
+                                        level: targetHierLevel.uniqueName
+                                    }],
+                                    priority: dim.priority
                                 });
                             }
-                        }
+                        });
                     }
                     else {
-                        console.warn('Dimension did not provide summaryTargetLevel:', dims[d].name);
+                        console.warn('Dimension did not provide summaryTargetLevel:', dim.name);
                     }
                 }
             }
@@ -118,7 +126,7 @@ Ext.define('Connector.store.Summary', {
 
         this.state.onMDXReady(function(mdx) {
 
-            var recs = [], dim, ca;
+            var recs = [], dim, ca, targetLevel;
 
             //
             // Process dimensions
@@ -133,10 +141,9 @@ Ext.define('Connector.store.Summary', {
 
                 dim = mdx.getDimension(ca.dimName);
                 if (dim) {
-                    var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name;
-
-                    var hierarchies = dim.getHierarchies();
-                    var targetHierarchy;
+                    var label = Ext.isDefined(dim.pluralName) ? dim.pluralName : dim.name,
+                        hierarchies = dim.getHierarchies(),
+                        targetHierarchy;
 
                     Ext.each(hierarchies, function(hier)
                     {
@@ -152,19 +159,15 @@ Ext.define('Connector.store.Summary', {
 
                     if (Ext.isDefined(targetHierarchy))
                     {
-                        var cellset = qrArray[i];
-
-                        var rec = {
+                        recs.push({
                             dimName: ca.dimName,
-                            total: this._aggregate(cellset),
+                            total: this._aggregate(qrArray[i]),
                             label: label,
                             subject: label.toLowerCase(),
                             hierarchy: targetHierarchy.name,
                             details: [],
                             sort: i
-                        };
-
-                        recs.push(rec);
+                        });
                     }
                     else
                     {
@@ -183,10 +186,11 @@ Ext.define('Connector.store.Summary', {
                 if (Ext.isDefined(configArray[i].hierarchyIndex)) {
 
                     ca = configArray[i];
-
                     dim = mdx.getDimension(ca.dimName);
+
                     if (dim) {
-                        // var hierarchy = dim.getHierarchies()[ca.hierarchyIndex];
+
+                        targetLevel = mdx.getLevel(ca.targetLevel);
 
                         //
                         // Iterate over processed dimensions adding on hierarchy based information
@@ -202,7 +206,7 @@ Ext.define('Connector.store.Summary', {
                                 recs[r].details.push({
                                     counter: this._aggregate(agg.aggregate),
                                     text: agg.name.toLowerCase(),
-                                    nav: 'explorer/singleaxis/' + dim.name + '/' + ca.targetLevel.name
+                                    nav: 'explorer/singleaxis/' + dim.name + '/' + targetLevel.name
                                 });
                             }
                         }
@@ -252,26 +256,27 @@ Ext.define('Connector.store.Summary', {
 
     _aggregateByGroup : function(cellset, skipConcat) {
 
-        var cells = cellset.cells,
-                types = {}, type, depth, sep = '', x,
-                details = (skipConcat ? [] : ''), total = 0;
+        var cells = cellset.cells, cell_x,
+            types = {}, type, depth, x,
+            details = (skipConcat ? [] : ''), total = 0;
 
         for (x=0; x < cells.length; x++) {
-            depth = cells[x][0].positions[1][0].level.depth;
-            type  = cells[x][0].positions[1][0].name;
+            cell_x = cells[x][0];
+            depth = cell_x.positions[1][0].level.depth;
+            type  = cell_x.positions[1][0].name;
 
-            if (depth == 0) {
+            if (depth === 0) {
                 continue;
             }
-            if (depth == 1 && cells[x][0].value >= 0) {
-                types[type] = cells[x][0].value;
+            if (depth === 1 && cell_x.value >= 0) {
+                types[type] = cell_x.value;
             }
-            else if (depth == 1) {
+            else if (depth === 1) {
                 types[type] = 0;
             }
-            else if (depth == 2) {
+            else if (depth === 2) {
                 if (types[type] === undefined) {
-                    types[type] = cells[x][0].value;
+                    types[type] = cell_x.value;
                 }
                 else {
                     types[type]++;
@@ -279,15 +284,13 @@ Ext.define('Connector.store.Summary', {
             }
         }
 
-        for (x in types) {
-            if (types.hasOwnProperty(x)) {
-                details.push({
-                    counter: types[x],
-                    text: x
-                });
-                total++;
-            }
-        }
+        Ext.iterate(types, function(text, counter) {
+            details.push({
+                counter: counter,
+                text: text
+            });
+            total++;
+        });
 
         return {
             details : details,

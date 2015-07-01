@@ -16,7 +16,7 @@
         <Table schema="cds" name="facts">
         </Table>
 
-        <Dimension visible="true" highCardinality="false" name="Subject" foreignKey="participantid">
+        <Dimension name="Subject" visible="true" highCardinality="false" foreignKey="participantid">
 
             <Hierarchy visible="true" hasAll="true" primaryKey="subjectid">
                 <Level name="Container" visible="true" column="Study"/>
@@ -36,8 +36,8 @@
             </Hierarchy>
             <Hierarchy name="Age" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="AgeDecadeBucket" visible="true" column="agegroup_enrollment" type="Integer" uniqueMembers="true"/>
-                <Level name="Age" visible="true" column="age_enrollment" type="Integer" uniqueMembers="true"/>
+                <Level name="Age" visible="true" column="agegroup_enrollment" type="Integer" uniqueMembers="true"/>
+                <Level name="Year" visible="true" column="age_enrollment" type="Integer" uniqueMembers="true"/>
             </Hierarchy>
             <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
@@ -57,7 +57,7 @@
 
         </Dimension>
 
-        <Dimension visible="true" highCardinality="false" name="Study" foreignKey="participantid">
+        <Dimension name="Study" visible="true" highCardinality="false" foreignKey="participantid">
 
             <Hierarchy visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
                 <Join leftKey="container" rightKey="container">
@@ -76,7 +76,7 @@
                         <Table name="study" schema="cds"/>
                     </Join>
                 </Join>
-                <Level name="Name" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
+                <Level name="Treatment" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
                 <Level name="Arm" visible="true" column="coded_label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
@@ -100,7 +100,7 @@
 
         </Dimension>
 
-        <Dimension visible="true" highCardinality="false" name="Study Product" foreignKey="participantid">
+        <Dimension  name="Study Product" visible="true" highCardinality="false" foreignKey="participantid">
 
             <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
                 <Join leftKey="product_id" rightKey="product_id">
