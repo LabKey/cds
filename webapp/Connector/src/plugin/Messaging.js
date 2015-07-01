@@ -24,7 +24,8 @@ Ext.define('Connector.plugin.Messaging', {
             hideMessage: this.hideMessage,
             showMessage: this.showMessage,
             sessionMessage: this.sessionMessage,
-            deferMessageTask: this.deferMessageTask
+            deferMessageTask: this.deferMessageTask,
+            resizeMessage: this.resizeMessage
         });
     },
 
@@ -75,6 +76,24 @@ Ext.define('Connector.plugin.Messaging', {
         }
     },
 
+    resizeMessage : function() {
+        if (this.msg && this.msg.isVisible()) {
+            var box = this.getBox();
+            this.msg.setPosition(
+                this.calculateX(this, box, this.msg.msg),
+                this.calculateY(this, box, this.msg.msg)
+            );
+        }
+    },
+
+    /**
+     * Displays a standard system message
+     * @param {string} msg The text to be displayed.
+     * @param {boolean} [force=false] Whether or not to force the message displaying.
+     * @param {boolean} keep [keep=false] False allows the message to fade after 8 seconds.
+     * @param {boolean} modal [modal=false] True if the message is a modal window, it will grey out the rest of the page.
+     * @returns {boolean} Returns true if the message was displayed, false otherwise.
+     */
     showMessage : function(msg, force, keep, modal) {
         var shown = false;
         if (this.showmsg || force) {
