@@ -46,7 +46,8 @@ public class CDSInitializer
     {
         if(_debugTest){
             // If debugging test do not run setup and make sure cleanup does not happen as well.
-            System.setProperty("clean", "true");
+            _test.log("Bypassing CDSImport and loadApplication etls. Cleanup will be skipped as well.");
+            System.setProperty("clean", "false");
         }
         else{
             setupProject();
