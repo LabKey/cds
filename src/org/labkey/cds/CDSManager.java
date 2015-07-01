@@ -215,7 +215,8 @@ public class CDSManager
                     "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
                     // New Tables
                     "VisitTagMap", "StudyGroupVisitMap", "StudyGroup",
-                    "SubjectProductMap", "StudyProductMap", "TreatmentArmSubjectMap", "TreatmentArm", "Study"
+                    "SubjectProductMap", "StudyProductMap", "TreatmentArmSubjectMap", "TreatmentArm",
+                    "Product", "Study"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
