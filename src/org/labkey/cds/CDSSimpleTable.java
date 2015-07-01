@@ -32,7 +32,7 @@ public class CDSSimpleTable extends SimpleUserSchema.SimpleTable<SimpleUserSchem
     {
         super(schema, table);
 
-        setContainerFilter(new DataspaceContainerFilter(schema.getUser()));
+        setContainerFilter(new DataspaceContainerFilter(schema.getUser(), schema.getContainer().getProject()));
     }
 
     @Override
