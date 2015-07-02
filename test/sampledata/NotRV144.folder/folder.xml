@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--Exported from LabKey Server at http://localhost:8080/labkey/project/Dataspace%20Test%20-%206-17-2014/Not%20Rv144/begin.view by kristinf on Tue Jun 17 17:23:01 PDT 2014-->
-<folder archiveVersion="14.1" label="Not Rv144" type="normal" title="Not Rv144" xmlns="http://labkey.org/folder/xml">
-  <missingValueIndicators>
-    <ns:missingValueIndicator indicator="Q" label="Data currently under quality control review." xmlns:ns="http://labkey.org/study/xml"/>
-    <ns:missingValueIndicator indicator="N" label="Required field marked by site as 'data not available'." xmlns:ns="http://labkey.org/study/xml"/>
-  </missingValueIndicators>
-  <study dir="study"/>
-</folder>

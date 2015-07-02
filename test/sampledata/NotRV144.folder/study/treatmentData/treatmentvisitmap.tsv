@@ -1,7 +1,0 @@
-CohortId	TreatmentId	VisitId	cohortId.label	visitId.sequenceNumMin
-250	8	33883	Vaccine Boost	5.0
-248	4	33883	Placebo	5.0
-249	5	33883	Vaccine	5.0
-250	8	33929	Vaccine Boost	108.0
-248	4	33929	Placebo	108.0
-249	7	33929	Vaccine	108.0
