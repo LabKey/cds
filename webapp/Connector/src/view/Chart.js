@@ -23,12 +23,7 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
-    plugins : [{
-        ptype: 'messaging',
-        calculateY : function(cmp, box, msg) {
-            return box.y - 10;
-        }
-    }],
+    newSelectors: false,
 
     constructor : function(config) {
 
@@ -101,7 +96,10 @@ Ext.define('Connector.view.Chart', {
 
         this.showmsg = true;
         this.addPlugin({
-            ptype: 'messaging'
+            ptype: 'messaging',
+            calculateY : function(cmp, box, msg) {
+                return box.y - 10;
+            }
         });
     },
 
@@ -403,6 +401,8 @@ Ext.define('Connector.view.Chart', {
                 el.setStyle('margin-left', 'auto');
             }
         }
+
+        this.resizeMessage();
 
         if (Ext.isFunction(this.highlightSelectedFn)) {
             this.highlightSelectedFn();
@@ -2387,7 +2387,6 @@ Ext.define('Connector.view.Chart', {
 
         }, me);
     },
-
 
     applyFiltersToMeasure : function (measures, ptids) {
 
