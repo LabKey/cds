@@ -195,6 +195,7 @@ Ext.define('Connector.view.Grid', {
                     var size = this.getWidthHeight();
                     this.getGrid().setSize(size.width, size.height);
                     this.showAlignFooter(null, null, true);
+                    this.resizeMessage();
                 }
             }
         }, 50, this);
