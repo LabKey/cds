@@ -50,7 +50,7 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
                 summaryTargetLevel: '[Subject.Race].[Race]',
-                priority: 10,
+                priority: 30,
                 defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Subject]',
@@ -108,7 +108,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
-                priority: 60,
+                priority: 10,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
@@ -219,6 +219,12 @@ Ext4.define('Connector.cube.Configuration', {
                         }
                     }]]
                 }]
+            },{
+                uniqueName: '[Study Product]',
+                priority: 40
+            },{
+                uniqueName: '[Assay]',
+                priority: 20
             }]
         },
 

@@ -140,5 +140,56 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         long finish = System.currentTimeMillis();
 
         logger.info("Populate treatment arms took " + DateUtil.formatDuration(finish - start) + ".");
+
+        start = System.currentTimeMillis();
+        for (Container container : project.getChildren())
+        {
+            studySchema = DefaultSchema.get(user, container).getSchema("study");
+
+            if (studySchema == null)
+                throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
+
+            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
+
+            if (targetSchema == null)
+                throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
+
+            sourceTable = studySchema.getTable("ds_subjectproduct");
+            targetTable = targetSchema.getTable("SubjectProductMap");
+
+            targetService = targetTable.getUpdateService();
+
+            if (targetService == null)
+                throw new PipelineJobException("Unable to find update service for cds.SubjectProductMap in " + container.getPath());
+
+            // Insert Subject Product Mapping
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
+            sql.add(container.getName());
+
+            Map<String, Object>[] insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (insertRows.length > 0)
+            {
+                try
+                {
+                    targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+
+            if (errors.hasErrors())
+            {
+                for (ValidationException error : errors.getRowErrors())
+                {
+                    logger.error(error.getMessage());
+                }
+                return;
+            }
+        }
+        finish = System.currentTimeMillis();
+
+        logger.info("Populate SubjectProductMap took " + DateUtil.formatDuration(finish - start) + ".");
     }
 }

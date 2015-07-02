@@ -121,7 +121,11 @@ CREATE TABLE cds.SubjectProductMap (
   container ENTITYID NOT NULL,
   product_id INTEGER NOT NULL REFERENCES cds.Product (product_id),
 
-  CONSTRAINT PK_SubjectProductMap PRIMARY KEY (participantid, container, product_id)
+  -- These are appended for ease of access in Find Subjects
+  insert_name VARCHAR(250),
+  clade_name VARCHAR(250)
+
+--   CONSTRAINT PK_SubjectProductMap PRIMARY KEY (participantid, container, product_id)
 );
 
 CREATE TABLE cds.VisitTagMap (

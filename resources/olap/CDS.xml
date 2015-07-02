@@ -130,5 +130,17 @@
             </Hierarchy>
 
         </Dimension>
+
+        <Dimension name="Assay" visible="true" highCardinality="false" foreignKey="participantid">
+
+            <Hierarchy visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="ds_subjectassay">
+                <Join leftKey="participantid" rightKey="participantid">
+                    <Table name="ds_subjectassay" schema="cds"/>
+                    <Table name="Demographics" schema="study"/>
+                </Join>
+                <Level name="Type" visible="true" table="ds_subjectassay" column="assay" type="String" uniqueMembers="true" />
+            </Hierarchy>
+
+        </Dimension>
     </Cube>
 </Schema>

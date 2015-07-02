@@ -44,12 +44,11 @@ public class CDSImportTask extends TaskRefTaskImpl
         // Dependent Tables
 //        new TSVCopyConfig("StudyPersonnel"),
 //        new TSVCopyConfig("StudySiteFunction"),
-//        new TSVCopyConfig("ProductInsert"),
         new TSVCopyConfig("StudyPartGroupArm"),
-//        new TSVCopyConfig("StudyPartGroupArmProduct"),
+        new TSVCopyConfig("StudyPartGroupArmProduct"),
         new TSVCopyConfig("StudyPartGroupArmVisit"),
-//        new TSVCopyConfig("StudyPartGroupArmVisitTag"),
-//        new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
+        new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
+        new TSVCopyConfig("ProductInsert", "ProductInsertClade"),
 
         // Mapping Tables
         new TSVCopyConfig("StudyProduct"),
