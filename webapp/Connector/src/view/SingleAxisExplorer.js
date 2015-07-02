@@ -107,7 +107,9 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             var container = Ext.get(id);
             container.setHeight(body.getBox().height);
 
-            this.saview.resizeMessage();
+            if (this.saview) {
+                this.saview.resizeMessage();
+            }
         }, this);
 
         return Ext.create('Ext.Panel', {
