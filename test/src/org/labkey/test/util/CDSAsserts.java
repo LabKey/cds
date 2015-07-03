@@ -188,9 +188,21 @@ public class CDSAsserts
 
     public void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
     {
-        _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
-        _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
-        _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
+        if(subjectCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
+        }
+
+        if(studyCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
+        }
+
+        if(assayCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
+        }
+
     }
 
     @LogMethod

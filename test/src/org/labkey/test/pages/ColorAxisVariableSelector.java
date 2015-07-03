@@ -34,7 +34,8 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-        return Locator.id("plotcolorwin").toCssLocator();
+        return Locator.css(".x-window-axiswindow");
+//        return Locator.id("plotcolorwin").toCssLocator();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("set color variable"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Set color"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
 

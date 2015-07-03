@@ -15,6 +15,7 @@
  */
 package org.labkey.test.pages;
 
+import org.labkey.api.search.SearchService;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
@@ -48,6 +49,17 @@ public abstract class DataspaceVariableSelector
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
     }
 
+    public void openSelectorWindow(String title)
+    {
+        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
+
+        openButton.click();
+
+        _test.waitForElement(Locator.divByInnerText(title));
+        _test.sleep(1000);
+
+    }
+
     public Locator.CssLocator pickerPanel()
     {
         return Locator.css("." + getPickerClass());
@@ -73,7 +85,14 @@ public abstract class DataspaceVariableSelector
 
     public void pickSource(String source)
     {
-        _test.waitAndClick(sourcePanelRow().containing(source));
+        _test.click(window().append(" div.content-label").withText(source));
+        _test.sleep(500);
+//        _test.waitAndClick(sourcePanelRow().containing(source));
+    }
+
+    public void pickVariable(String source){
+        _test.click(window().append(" div.content-label").withText(source));
+        _test.sleep(500);
     }
 
     //Pick measure from one of multiple split panel measure pickers
@@ -131,7 +150,7 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
-        _test.click(window().append(" a.x-btn").withText("cancel"));
+        _test.click(window().append(" a.x-btn").withText("Cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
 

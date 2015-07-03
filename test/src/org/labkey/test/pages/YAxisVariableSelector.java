@@ -34,7 +34,8 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-        return Locator.id("plotymeasurewin").toCssLocator();
+        return Locator.css(".x-window-axiswindow");
+//        return Locator.id("plotymeasurewin").toCssLocator();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("set y axis"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Set y-axis"));
         _test._ext4Helper.waitForMaskToDisappear();
     }
 

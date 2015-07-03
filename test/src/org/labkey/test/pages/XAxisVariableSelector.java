@@ -35,7 +35,8 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-        return Locator.id("plotxmeasurewin").toCssLocator();
+        return Locator.css(".x-window-axiswindow");
+//        return Locator.id("plotxmeasurewin").toCssLocator();
     }
 
     @Override
@@ -53,7 +54,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void confirmSelection()
     {
-        _test.click(CDSHelper.Locators.cdsButtonLocator("set x axis"));
+        _test.click(CDSHelper.Locators.cdsButtonLocator("Set x-axis"));
         if (_test.isElementPresent(Locator.tagWithClass("button", "yaxisbtn").notHidden()))
         {
             _test._ext4Helper.waitForMaskToDisappear();

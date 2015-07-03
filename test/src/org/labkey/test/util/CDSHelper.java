@@ -28,6 +28,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 public class CDSHelper
@@ -38,6 +39,10 @@ public class CDSHelper
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
+    public static final String[] SUBJECT_CHARACTERISTICS = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
+    public final static String[] SOURCES = {"Subject characteristics", "Time points", "User groups"};
+    public static final String[] NEW_ASSAYS = {"BAMA (Binding Ab multiplex assay)", "ELISPOT (Enzyme-Linked ImmunoSpot)", "ICS Intracellular Cytokine Staining)", "NAb (Neutralizing antibody)"};
+    public static final String[] NEW_ASSAY_DIMENSIONS = {"Isotype", "Antigen Name", "Specimen type", "Scale"};
     private final BaseWebDriverTest _test;
 
     public CDSHelper(BaseWebDriverTest test)
@@ -567,7 +572,8 @@ public class CDSHelper
 
         public static Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural, boolean highlight)
         {
-            return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + count + "']");
+            String strCount = NumberFormat.getIntegerInstance().format(count);
+            return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + strCount + "']");
         }
 
         public static Locator.XPathLocator getSelectionStatusLocator(int count, String match)
