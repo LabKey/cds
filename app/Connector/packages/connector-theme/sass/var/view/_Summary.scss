@@ -16,7 +16,7 @@
   &:hover {
     @include transition(background-color 0.2s ease-out);
     @include border-radius(2px);
-    background-color: $selectongrey-color;
+    background-color: $select-hover-color;
     cursor: pointer;
 
     .line {

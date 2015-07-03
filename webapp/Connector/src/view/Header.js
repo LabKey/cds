@@ -10,7 +10,7 @@ Ext.define("Connector.view.Header", {
 
     layout: 'hbox',
 
-    height: 65,
+    height: 48,
 
     cls: 'connectorheader',
 
@@ -32,13 +32,13 @@ Ext.define("Connector.view.Header", {
                 '<h2>HIV VACCINE <span>Collaborative DataSpace</span></h2>'
             ],
             data: {
-                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png' // TODO: Get rid of hard coded context
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
             }
-        }, {
+        },{
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '25 14 0 0',
+            margin: '18 14 0 0',
             width: 50,
             items: [{
                 xtype: 'box',

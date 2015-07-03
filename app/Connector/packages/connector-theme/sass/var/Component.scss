@@ -1,6 +1,6 @@
 /* Site wide coloring scheme */
-$select-color: #14C9CC;            // Bright Blue
-$selectongrey-color: #A0EAEB;      // Light Blue
+$select-color: #14C9CC;         // Bright Blue
+$select-hover-color: #BEEFEF;   // Light Blue
 /* read as 'select on grey' */
 
 $primary-color: #DCD8D8;           // Main Gray
@@ -9,9 +9,12 @@ $legend-color: #BAB4B4;            // 10% darker than $secondary-color
 $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
-$select-on-grey-color: #03ADB0;
-$interactive-color: #9B1497;       // Interactive
+$interactive-color: #9B0D96;       // Interactive
 $info-color: #F5A73A;              // Info
+
+$primary-text-color: #222222;
+$secondary-text-color: #777777;
+$placeholder-text-color: #AFAFAF;
 
 $black: #303030;
 $unselect-black: rgba(0, 0, 0, 0.4);
@@ -61,7 +64,7 @@ $window-body-background-color: $primary-color;
 $window-header-color: $secondary-color;
 
 // Grid
-$grid-row-cell-over-background-color: $selectongrey-color;
+$grid-row-cell-over-background-color: $select-hover-color;
 $grid-row-cell-over-color: $black;
 $grid-row-cell-font-size: 14px/15px;
 
@@ -76,7 +79,7 @@ $grid-row-cell-background-color: $light-color;
 $grid-column-header-font-family: $info-font;
 $grid-column-header-font-size: 12px;
 $grid-header-background-color: transparent;
-$grid-header-over-background-color: $selectongrey-color;
+$grid-header-over-background-color: $select-hover-color;
 
 // Tips
 $tip-background-color: $light-color;
@@ -312,18 +315,19 @@ svg a {
 }
 
 .titlepanel {
-  font-size: 16px!important;
+  font-size: 16px;
   line-height: 16px;
 
   span {
-    @include bodycaps;
+    font-family: $bodycaps-font;
+    font-weight: bold;
+    color: $secondary-text-color;
+    text-transform: none;
   }
 }
 
 .header-container {
-  padding-top: $pageLeftPadding;
-  padding-left: $pageLeftPadding;
-  padding-right: $pageLeftPadding;
+  padding: $pageLeftPadding $pageLeftPadding 0 $pageLeftPadding;
 }
 
 .iScroll {

@@ -26,9 +26,9 @@ Ext.define('Connector.view.Summary', {
             cls: 'educational-titlepanel',
             tpl: new Ext.XTemplate(
                 '<h1>',
-                    'Find subjects based on their characteristics.<br/>',
-                    '<span style="opacity: 0.66;">Combine filters to create complex queries.</span><br/>',
-                    '<span style="opacity: 0.33;">Then go plot their data.</span>',
+                    'Find subjects of interest.<br/>',
+                    '<span style="opacity: 0.66;">Filter multiple attributes.</span><br/>',
+                    '<span style="opacity: 0.33;">Discover relationships.</span>',
                 '</h1>'
             ),
             data: {}

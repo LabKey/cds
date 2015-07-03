@@ -35,7 +35,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                 },
                 items: [{
                     xtype: 'actiontitle',
-                    text: 'Find subjects by...'
+                    text: 'Find subjects'
                 },{
                     xtype: 'explorerheaderdataview',
                     cls: 'dim-selector'
@@ -70,20 +70,21 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                         },
                         {xtype: 'box', autoEl: { tag: 'div' }, flex: 1},
                         {
-                            xtype: 'box',
-                            style: 'padding-top: 15px; padding-right: 15px;',
-                            autoEl: {
-                                tag: 'div',
-                                cls: 'label',
-                                html: 'Showing number of: <span>Subjects</span>'
-                            }
-                        },
-                        {
                             xtype: 'button',
-                            style: 'margin-top: 9px;',
+                            margin: '9px 15px 0 0',
+                            //style: 'margin-top: 9px; padding-right: 300px;',
                             text: (this.showEmpty ? 'hide empty' : 'show empty'),
                             handler: this.onEmptySelection,
                             scope: this
+                        },
+                        {
+                            xtype: 'box',
+                            margin: '15px 30px 0 0',
+                            autoEl: {
+                                tag: 'div',
+                                cls: 'label',
+                                html: 'Number of Subjects'
+                            }
                         }
                     ]
                 }]

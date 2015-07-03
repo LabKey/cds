@@ -10,7 +10,7 @@ div.learnview {
     font-size: 12px;
     font-family: $bodycaps-font;
     font-weight: bold;
-    padding: 8px 0px !important;
+    padding: 8px 0 !important;
     opacity: 0.5;
   }
 
@@ -60,7 +60,7 @@ div.learnview {
 
   .item-row {
     min-height: 19px;
-    padding: 2px 0px;
+    padding: 2px 0;
 
   }
 
@@ -106,20 +106,20 @@ h1.lhdv {
   float: left;
   font-weight: normal;
   padding-right: 28px;
-  color: $unselect-black;
+  color: $select-color;
 
   &:hover {
     cursor: pointer;
   }
 
   &.active {
-    color: $black;
+    color: $secondary-text-color;
   }
 }
 
 .headerlock {
   position: absolute;
-  top: 0px;
+  top: 0;
 }
 
 div.detail-wrapper {
@@ -140,7 +140,7 @@ div.detail-wrapper {
 
   &:hover {
     @include transition(background-color 0.2s ease-out);
-    background-color: $selectongrey-color;
+    background-color: $select-hover-color;
     cursor: pointer;
   }
 }

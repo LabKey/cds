@@ -59,8 +59,8 @@ LABKEY.ext4.MeasuresDataView.SplitPanels
   margin-left: 5px;
 
   .itemrow:hover {
-    border-color: $selectongrey-color;
-    background-color: $selectongrey-color;
+    border-color: $select-hover-color;
+    background-color: $select-hover-color;
     color: $dark-color !important;
   }
 
