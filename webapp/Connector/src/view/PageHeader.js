@@ -31,8 +31,6 @@ Ext.define('Connector.view.PageHeader', {
 
     requires: ['Connector.button.Image'],
 
-//    alias: 'widget.learnitemheaderview',
-
     layout: {
         type : 'vbox',
         align: 'stretch'
@@ -42,22 +40,6 @@ Ext.define('Connector.view.PageHeader', {
 
     defaults: {
         ui: 'custom'
-    },
-
-    //selectorId: 'dimselect',
-    selectTab : function(tabIndex) {
-        Ext.each(this.tabButtons, function(button, i) {
-            if (i == tabIndex) {
-                button.addCls('selected');
-            } else {
-                button.removeCls('selected');
-            }
-        });
-        this.doLayout();
-    },
-
-    onTabClick : function(callback) {
-        this.tabClickCallback = callback;
     },
 
     initComponent : function() {
@@ -100,7 +82,6 @@ Ext.define('Connector.view.PageHeader', {
                         width: 50
                     })
                 }
-//                console.log("BUTTON CONFIG",buttonConfig);
                 var doBind = data.scope && !buttonConfig.handlersBound;
                 buttonConfig.handlersBound = true;
                 var haveVisibleButtons = false;
@@ -167,9 +148,8 @@ Ext.define('Connector.view.PageHeader', {
             })
         }
 
-        if (data.tabs && data.tabs.length) {
+        if (!Ext.isEmpty(data.tabs)) {
             var tabItems = [{ xtype: 'box', flex: 1 }];
-            var self = this;
             Ext.each(data.tabs, function(tab, i) {
                 tabItems.push({
                     xtype: 'box',
@@ -177,12 +157,15 @@ Ext.define('Connector.view.PageHeader', {
                     html: tab + '<svg class="arrow" width="16" height="8" fill="#ffffff"><path stroke="#ccc" d="M0 8 L8 0 L16 8"></path></svg>',
                     listeners: {
                         click: function() {
-                            self.tabClickCallback && self.tabClickCallback(i);
+                            if (Ext.isFunction(this.tabClickCallback)) {
+                                this.tabClickCallback.call(this, i);
+                            }
                         },
-                        element: 'el'
+                        element: 'el',
+                        scope: this
                     }
                 })
-            });
+            }, this);
             tabItems.push({ xtype: 'box', flex: 1 });
 
             this.items.push({
@@ -194,7 +177,8 @@ Ext.define('Connector.view.PageHeader', {
                 height: 32,
                 items: tabItems
             });
-        } else {
+        }
+        else {
             this.items.push({
                 xtype: 'box',
                 height: 32
@@ -204,5 +188,17 @@ Ext.define('Connector.view.PageHeader', {
         this.callParent();
 
         this.tabButtons = this.query("[cls~=tabbutton]");
+    },
+
+    selectTab : function(tabIndex) {
+        var cls = 'selected';
+        Ext.each(this.tabButtons, function(btn, i) {
+            i === tabIndex ? btn.addCls(cls) : btn.removeCls(cls);
+        });
+        this.doLayout();
+    },
+
+    onTabClick : function(callback) {
+        this.tabClickCallback = callback;
     }
 });

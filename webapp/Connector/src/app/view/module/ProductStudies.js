@@ -17,42 +17,44 @@ Ext.define('Connector.view.module.ProductStudies', {
                     '<p><a href="#learn/learn/Study/{[encodeURIComponent(values)]}">{.}</a></p>',
                 '</div>',
             '</tpl>',
-        '</p></tpl>'),
+        '</p></tpl>'
+    ),
 
     initComponent : function() {
-        var data = this.data;
+        var data = this.data,
+            product = data.model;
 
-        var product = data.model;
-
-        var config = {
-            onRows: [{ level: '[Study].[Name]' }],
-            filter: [ {level : '[Subject].[Subject]', membersQuery: {
-                hierarchy: "[Vaccine.Type]",
-                members: ["[Vaccine.Type].["+(product.get('Type') || '#null')+"].[" + product.get('Label') + "]"]
-            }}],
-            success: function(slice) {
-                var cells = slice.cells, row;
-                var set = [], object;
-                for (var c=0; c < cells.length; c++) {
-                    row = cells[c][0];
-                    object = row.positions[row.positions.length-1][0];
-                    if (row.value > 0) {
-                        set.push(object.name);
+        Connector.getState().onMDXReady(function(mdx) {
+            mdx.query({
+                onRows: [{ level: '[Study].[Name]' }],
+                filter: [{
+                    level : '[Subject].[Subject]',
+                    membersQuery: {
+                        hierarchy: '[Vaccine.Type]',
+                        members: ["[Vaccine.Type].["+(product.get('Type') || '#null')+"].[" + product.get('Label') + "]"]
                     }
-                }
-                data.items = set;
-                this.update(data);
-                this.fireEvent('hideLoad', this);
-            },
-            scope: this
-        };
-        this.state.onMDXReady(function(mdx) {
-            mdx.query(config);
+                }],
+                success: function(slice) {
+                    var cells = slice.cells, row;
+                    var _set = [], object;
+                    for (var c=0; c < cells.length; c++) {
+                        row = cells[c][0];
+                        object = row.positions[row.positions.length-1][0];
+                        if (row.value > 0) {
+                            _set.push(object.name);
+                        }
+                    }
+                    data.items = _set;
+                    this.update(data);
+                    this.fireEvent('hideLoad', this);
+                },
+                scope: this
+            });
         });
 
         this.callParent();
 
-        this.on('render', function(){
+        this.on('render', function() {
             if (!data.items) {
                 this.fireEvent('showLoad', this);
             }

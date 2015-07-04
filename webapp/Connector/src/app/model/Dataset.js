@@ -97,7 +97,8 @@ Ext.define('Connector.app.model.Dataset', {
                         }
                     });
                 });       
-            } else {
+            }
+            else {
                 callback(data);
             }
         }
@@ -134,7 +135,8 @@ Ext.define('Connector.app.model.Dataset', {
                             ++measureCount;
                             if (measure.isRecommendedVariable) {
                                 data.variables.recommended.push(measure);
-                            } else {
+                            }
+                            else {
                                 data.variables.other.push(measure);
                             }
                         }
@@ -170,12 +172,14 @@ Ext.define('Connector.app.model.Dataset', {
                             }
                         });
 
-                    } else {
+                    }
+                    else {
                         callback(data);
                     }
                 }
             });
-        } else {
+        }
+        else {
             callback(data);
         }
     }

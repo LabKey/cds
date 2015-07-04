@@ -59,7 +59,8 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                 single: true
             });
             store.load();
-        } else {
+        }
+        else {
             datasetsLoaded.call(this, store, store.data.items);
         }
 

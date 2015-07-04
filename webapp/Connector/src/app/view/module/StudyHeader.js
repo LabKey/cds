@@ -11,23 +11,17 @@ Ext.define('Connector.view.module.StudyHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
-            '<p class="item-row">Network: {[values.model.get("Network")]}</p>',
-            '<p class="item-row">Study Type: {[this.typeString(values.model)]}</p>',
-            '<tpl if="model.get(\'Stage\')">',
-                '<p class="item-row">Stage: {[values.model.get("Stage")]}</p>',
+            '<p class="item-row">Network: {[values.model.get("network")]}</p>',
+            '<p class="item-row">Study Type: {[values.model.get("type")]}</p>',
+            '<tpl if="model.get(\'stage\')">',
+                '<p class="item-row">Stage: {[values.model.get("stage")]}</p>',
             '</tpl>',
-            '<tpl if="model.get(\'StartDate\')">',
-                '<p class="item-row">First participant enrolled: {[Connector.app.view.Study.dateRenderer(values.model.get("StartDate"))]}</p>',
+            '<tpl if="model.get(\'start_date\')">',
+                '<p class="item-row">First participant enrolled: {[Connector.app.view.Study.dateRenderer(values.model.get("start_date"))]}</p>',
             '</tpl>',
-            '<tpl if="model.get(\'EndDate\')">',
-                '<p class="item-row">Follow up complete: {[Connector.app.view.Study.dateRenderer(values.model.get("EndDate"))]}</p>',
+            '<tpl if="model.get(\'followup_complete_date\')">',
+                '<p class="item-row">Follow up complete: {[Connector.app.view.Study.dateRenderer(values.model.get("followup_complete_date"))]}</p>',
             '</tpl>',
-        '</tpl>',
-    {
-        typeString : function(model) {
-            var phase = model.get('Phase');
-            var type = model.get('StudyType');
-            return type || phase;
-        }
-    })
+        '</tpl>'
+    )
 });

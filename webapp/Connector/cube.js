@@ -16,7 +16,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      hidden          - declare whether a dimension is hidden. Defaults to false.
         //      itemDetail      - A specific view configuration for the learn about pages. Defaults to undefined.
         //      itemDetailTabs  - An array of tab names used in learn views. Requires itemDetail. Defaults to undefined.
-        //      priority        - relative priority to be shown in displays. Default is 0.
+        //      priority        - relative priority to be shown in displays. A value of 0 would show on top. Default is 200.
         //      querySchema     - metadata member query schema. Defaults to undefined.
         //      supportsDetails - multi-noun views are supported for this dimension. defaults to false.
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
@@ -50,7 +50,7 @@ Ext4.define('Connector.cube.Configuration', {
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
                 summaryTargetLevel: '[Subject.Race].[Race]',
-                priority: 30,
+                priority: 0,
                 defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Subject]',
@@ -108,7 +108,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
-                priority: 10,
+                priority: 40,
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
@@ -221,10 +221,16 @@ Ext4.define('Connector.cube.Configuration', {
                 }]
             },{
                 uniqueName: '[Study Product]',
-                priority: 40
+                priority: 20,
+                singularName: 'Study Product',
+                pluralName: 'Study Products'
+                //supportsDetails: true
             },{
                 uniqueName: '[Assay]',
-                priority: 20
+                priority: 30,
+                singularName: 'Assay',
+                pluralName: 'Assays'
+                //supportsDetails: true
             }]
         },
 
@@ -234,7 +240,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'prop::name', // defaults to dim.name
                 friendlyName: 'prop::name', // defaults to dim.name
                 hidden: false,
-                priority: 0,
+                priority: 200,
                 querySchema: undefined,
                 supportsDetails: false,
                 supportsSummary: true,

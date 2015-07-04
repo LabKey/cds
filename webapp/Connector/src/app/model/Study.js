@@ -7,33 +7,38 @@ Ext.define('Connector.app.model.Study', {
 
     extend : 'Ext.data.Model',
 
-    idProperty: 'Label',
+    idProperty: 'study_name',
 
     fields: [
+        {name: 'study_name'},
         {name: 'Container'},
-        {name: 'Label'},
-
-        {name: 'Phase'},
-        {name: 'StartDate'},
-        {name: 'EndDate'},
-        {name: 'Treatments'},
-        {name: 'SiteLocations'},
-        {name: 'Network'},
-        {name: 'Type'},
-
-        // TEMP: Test data
-        {name: 'Title'},//, defaultValue: "[PLACEHOLDER Study.Title]"},
-        {name: 'Description'},// defaultValue: "[PLACEHOLDER Study.Description]"},
-        {name: 'Editorial'},// defaultValue: "[PLACEHOLDER Study.Editorial]"},
-        {name: 'Objectives'},// defaultValue: "[PLACEHOLDER Study.Objectives]"},
-        {name: 'StudyPopulation'},// defaultValue: "[PLACEHOLDER Study.Population]"},
-        {name: 'Stage'},// defaultValue: "[PLACEHOLDER Study.Stage]"},
-        
-        {name: 'MainContact'}// defaultValue: {
-//            Name: 'Warren Burger',
-//            Portrait: 'http://doctor.png',
-//            Role: 'Program Manager',
-//            Team: 'HVTN concept development team'
-//        }}
+        {name: 'network'},
+        {name: 'label'},
+        {name: 'short_name'},
+        {name: 'title'},
+        {name: 'type'},
+        {name: 'status'},
+        {name: 'stage'},
+        {name: 'population'},
+        {name: 'species'},
+        {name: 'study_cohort'},
+        {name: 'first_enr_date'},
+        {name: 'followup_complete_date'},
+        {name: 'start_date'},
+        {name: 'public_date'},
+        {name: 'rationale'},
+        {name: 'description'},
+        {name: 'hypothesis'},
+        {name: 'objectives'},
+        {name: 'methods'},
+        {name: 'findings'},
+        {name: 'discussion'},
+        {name: 'context'},
+        {name: 'products', convert : function(value, record) {
+            if (Ext.isArray(value)) {
+                return value;
+            }
+            return [];
+        }}
     ]
 });

@@ -56,16 +56,16 @@ Ext.define('Connector.view.module.StudyAssays', {
             },
             scope: this
         };
-        this.state.onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
             mdx.query(config);
         });
 
         this.callParent();
 
-        this.on('render', function(){
+        this.on('render', function() {
             if (!data.assays) {
                 this.fireEvent('showLoad', this);
             }
-        });
+        }, this);
     }
 });

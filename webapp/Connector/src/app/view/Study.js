@@ -27,7 +27,7 @@ Ext.define('Connector.app.view.Study', {
                 '</div>',
             '</div>'
         ),
-        searchFields : ['Label', 'Phase', 'Description', 'Treatments']
+        searchFields : ['label', 'type', 'description']
     },
 
     tpl: new Ext.XTemplate(
@@ -38,20 +38,30 @@ Ext.define('Connector.app.view.Study', {
             '<div class="detail-wrapper">',
                 '<div class="detail-container study-detail">',
                     '<div class="study-description">',
-                        '<h2 class="name-text">{Label:htmlEncode}</h2>',
-                        '<tpl if="Phase && Phase.length &gt; 0">',
-                            '<span class="phase-text">{Phase:htmlEncode}</span>',
+                        '<h2 class="name-text">{label:htmlEncode}</h2>',
+                        '<tpl if="type && type.length &gt; 0">',
+                            '<span class="phase-text">{type:htmlEncode}</span>',
                         '</tpl>',
-                        '<div class="description-text">{Description}</div>',
+                        '<div class="description-text">{description:htmlEncode}</div>',
                     '</div>',
                     '<div class="study-date">',
-                        '<span class="startdate-text">{StartDate:this.renderDate}</span>',
-                        '<tpl if="EndDate">',
-                            '<span class="enddate-text">to {EndDate:this.renderDate}</span>',
-                            '<span class="date-diff-text">{[this.monthDiff(values.StartDate, values.EndDate)]} months in duration</span>',
+                        '<span class="startdate-text">{start_date:this.renderDate}</span>',
+                        '<tpl if="followup_complete_date">',
+                            '<span class="enddate-text">to {followup_complete_date:this.renderDate}</span>',
+                            '<span class="date-diff-text">{[this.monthDiff(values.start_date, values.followup_complete_date)]} months in duration</span>',
                         '</tpl>',
                     '</div>',
-                    '<div class="study-treatments">{Treatments}</div>',
+                    '<div class="study-treatments">',
+                        '<ul>',
+                            '<tpl if="products.length &gt; 0">',
+                                '<tpl for="products">',
+                                    '<li>{.:htmlEncode}</li>',
+                                '</tpl>',
+                            '<tpl else>',
+                                '<li>No related products</li>',
+                            '</tpl>',
+                        '</ul>',
+                    '</div>',
                 '</div>',
             '</div>',
         '</tpl>',
@@ -71,8 +81,8 @@ Ext.define('Connector.app.view.Study', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-                Connector.app.view.Study.columnHeaderTpl.apply({}),
-                '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
+            Connector.app.view.Study.columnHeaderTpl.apply({}),
+            '<div class="detail-container"><div class="saeempty">None of the selected studies have data for this category.</div></div>'
         ).apply({});
 
         this.callParent();

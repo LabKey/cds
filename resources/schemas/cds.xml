@@ -16,7 +16,7 @@
  * limitations under the License.
 
  -->
-<ns:tables xmlns:ns="http://labkey.org/data/xml">
+<ns:tables xsi:schemaLocation="http://labkey.org/data/xml ..\..\..\..\..\schemas\tableInfo.xsd" xmlns:ns="http://labkey.org/data/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <ns:table tableName="Study" tableDbType="TABLE">
         <ns:columns>
             <ns:column columnName="study_name"/>
@@ -25,18 +25,28 @@
             </ns:column>
             <ns:column columnName="network"/>
             <ns:column columnName="label"/>
-            <ns:column columnName="short_name"/>
+            <ns:column columnName="short_name">
+                <ns:columnTitle>Short Name</ns:columnTitle>
+            </ns:column>
             <ns:column columnName="title"/>
             <ns:column columnName="type"/>
             <ns:column columnName="status"/>
             <ns:column columnName="stage"/>
             <ns:column columnName="population"/>
             <ns:column columnName="species"/>
-            <ns:column columnName="study_cohort"/>
-            <ns:column columnName="first_enr_date"/>
+            <ns:column columnName="study_cohort">
+                <ns:columnTitle>Study Cohort</ns:columnTitle>
+            </ns:column>
+            <ns:column columnName="first_enr_date">
+                <ns:columnTitle>First Enrollment Date</ns:columnTitle>
+            </ns:column>
             <ns:column columnName="followup_complete_date"/>
-            <ns:column columnName="start_date"/>
-            <ns:column columnName="public_date"/>
+            <ns:column columnName="start_date">
+                <ns:columnTitle>Start Date</ns:columnTitle>
+            </ns:column>
+            <ns:column columnName="public_date">
+                <ns:columnTitle>Public Date</ns:columnTitle>
+            </ns:column>
             <ns:column columnName="rationale"/>
             <ns:column columnName="description"/>
             <ns:column columnName="hypothesis"/>

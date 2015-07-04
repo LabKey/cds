@@ -83,11 +83,11 @@ Ext.define('Connector.controller.Learn', {
         //
         this.getStateManager().onMDXReady(function(mdx) {
 
-            var dims = mdx.getDimensions();
+            var dims = mdx.getDimensions(),
+                defer = false;
 
             v.setDimensions(dims);
 
-            var defer = false;
             //
             // Set the active dimension
             //
@@ -110,7 +110,9 @@ Ext.define('Connector.controller.Learn', {
             }
 
             if (defer) {
-                Ext.defer(function(){ v.getHeader().getHeaderView().selectDimension(); }, 200, this);
+                Ext.defer(function() {
+                    v.getHeader().getDataView().selectDimension();
+                }, 200, this);
             }
         }, this);
     },
@@ -135,16 +137,13 @@ Ext.define('Connector.controller.Learn', {
         this.getStateManager().onMDXReady(function(mdx) {
             var v = this.getViewManager().getViewInstance('learn');
             if (v) {
-                var dimensionName = context.dimension;
-                var id = context.id;
-                var dim;
+                var dimensionName = context.dimension,
+                    id = context.id,
+                    dim;
+
                 if (dimensionName) {
                     dim = mdx.getDimension(dimensionName);
                 }
-
-                // TEMP: This is a workaround for the context not being available from
-                // the view manager.
-                this.dimensionName = dimensionName;
 
                 if (dim) {
                     //
@@ -156,7 +155,8 @@ Ext.define('Connector.controller.Learn', {
                     v.selectDimension(dim, id, this.innerTransition);
                     this.innerTransition = false;
                     this.updateLock = false;
-                } else {
+                }
+                else {
                     v.selectDimension(this.dimension, null, this.innerTransition);
                 }
             }

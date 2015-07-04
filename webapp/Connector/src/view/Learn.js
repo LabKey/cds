@@ -91,7 +91,8 @@ Ext.define('Connector.view.Learn', {
                     mdx.query(config);
 
                 }, this);
-            } else {
+            }
+            else {
                 this.dimensionDataLoaded(dimensionName, store);
             }
         }
@@ -99,14 +100,11 @@ Ext.define('Connector.view.Learn', {
 
     setHeader : function(dimension, id) {
         var listHeader = this.getHeader();
-        //var learnDetailHeader = this.getLearnDetailHeader(id);
         if (id) {
             listHeader.setVisible(false);
-//            learnDetailHeader.setDetailType(dimension.singularName);
-//            learnDetailHeader.setVisible(true);
-        } else {
+        }
+        else {
             listHeader.setVisible(true);
-//            learnDetailHeader.setVisible(false);
         }
     },
 
@@ -147,37 +145,15 @@ Ext.define('Connector.view.Learn', {
         if (dimension.singularName) {
             content += dimension.singularName;
             if (model) {
-                content += ": ";
+                content += ': ';
             }
-            content = "<h1 class='lhdv'>" + content + "</h1>"
+            content = '<h1 class="lhdv">' + content + '</h1>';
         }
         if (model) {
-            // TODO: Other models may have other label properties
-            content += "<h1>" + model.get('Label') + "</h1>";
+            content += '<h1>' + model.get('label') + '</h1>';
         }
 
         return content;
-    },
-
-    headerButtonsByDimension : {
-        Study : [{
-            groupLabel: "Select:",
-            buttonLabel: 'all study subjects',
-            handler: function(button, _, dimension, model) {
-                Animation.floatTo(button.el, 'span.x-btn-button', ['.selectionpanel', '.filterpanel'], 'span', 'selected', function() {
-                    var selections = [{
-                        // "[Study]"
-                        hierarchy: "["+dimension.singularName+"]",
-                        // "[Study].[Not Actually CHAVI 001]"
-                        members: [{ uniqueName: '['+dimension.singularName+'].['+model.get('Label')+']' }],
-                        // "[Study].[Name]"
-                        level: "["+dimension.singularName + "].[Name]",
-                        operator: "OR"
-                    }];
-                    this.state.addSelection(selections, false, true, true);
-                }, this);
-            }
-        }]
     },
 
     completeLoad : function(dimension, id, animate) {
@@ -193,23 +169,19 @@ Ext.define('Connector.view.Learn', {
                     var tabViews = [];
                     Ext.each(dimension.itemDetail, function(item) {
                         if (item.view) {
-                            var view = Ext.create(item.view, {
-                                state: self.state,
+                            tabViews.push(Ext.create(item.view, {
                                 model: model,
                                 modules: item.modules
-                            });
-                            tabViews.push(view);
-//                            self.add(view);
+                            }));
                         }
                     });
 
                     var header = Ext.create('Connector.view.PageHeader', {
                         data: {
-                            title : self.headerLabel(dimension,model),
+                            title: self.headerLabel(dimension,model),
                             buttons : {
                                 back: true,
-                                up: dimension.pluralName.toLowerCase(),
-                                group: self.headerButtonsByDimension[dimension.singularName]
+                                up: dimension.pluralName.toLowerCase()
                             },
                             tabs : dimension.itemDetailTabs,
                             scope : self,
@@ -236,30 +208,27 @@ Ext.define('Connector.view.Learn', {
                         single: true
                     });
                     this.loadData(dimension, store);
-                } else {
+                }
+                else {
                     modelLoaded(model);
                 }
             }
             else if (dimension.detailModel && dimension.detailView) {
-                store = StoreCache.getStore(dimension.detailCollection);
-
                 var view = Ext.create(dimension.detailView, {
                     dimension: dimension,
-                    store: store,
+                    store: StoreCache.getStore(dimension.detailCollection),
                     plugins: ['learnheaderlock']
                 });
 
                 this.dataViews = [view];
 
-                this.mon(view, 'itemclick', function(view, model, el, idx) {
+                this.mon(view, 'itemclick', function(view, model) {
                     this.fireEvent('selectitem', model);
                 }, this);
 
                 this.add(view);
                 this.loadData(dimension, view.getStore());
             }
-
-            //this.state.on('searchfilterchange', this.onFilterChange, this);
         }
         else {
             //
@@ -324,64 +293,64 @@ Ext.define('Connector.view.LearnHeader', {
 
     initComponent : function() {
 
-        this.items = [
-            {
-                xtype: 'actiontitle',
-                text: 'Learn about...'
-            },{
-                xtype: 'container',
-                itemId: 'dataviewcontainer',
-                items: [{
-                    xtype: 'learnheaderdataview',
-                    itemId: 'headerdataview',
-                    cls: 'dim-selector',
-                    dimensions: this.dimensions
-                },{
-                    xtype: 'textfield',
-                    itemId: 'searchfield',
-                    emptyText: 'Search',
-                    cls: 'learn-search-input',
-                    checkChangeBuffer: 500,
-                    validator: Ext.bind(function(value) {
-                        this.fireEvent('searchchanged', value);
-                        return true;
-                    }, this)
-                }]
-            }
-        ];
+        this.items = [{
+            xtype: 'actiontitle',
+            text: 'Learn about...'
+        },{
+            xtype: 'container',
+            items: [this.getDataView(), this.getSearchField()]
+        }];
 
         this.callParent();
 
         this.addEvents('selectdimension', 'searchchanged');
+    },
 
-        //
-        // Only classes inherited from Ext.container.AbstractContainer can bubble events
-        // For the header view this view should bubble the following events
-        // itemclick
-        //
-        this.getHeaderView().on('itemclick', function(view, model) {
-            this.fireEvent('selectdimension', model);
-        }, this);
-        this.getHeaderView().on('requestselect', function(model) {
-            this.fireEvent('selectdimension', model, true);
-        }, this);
+    getDataView : function() {
+        if (!this.headerDataView) {
+            this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
+                cls: 'dim-selector',
+                dimensions: this.dimensions
+            });
+            this.headerDataView.on({
+                itemclick: function(view, model) {
+                    this.fireEvent('selectdimension', model);
+                },
+                requestselect : function(model) {
+                    this.fireEvent('selectdimension', model, true);
+                },
+                scope: this
+            });
+        }
+        return this.headerDataView;
+    },
+
+    getSearchField : function() {
+        if (!this.searchField) {
+            this.searchField = Ext.create('Ext.form.field.Text', {
+                emptyText: 'Search',
+                cls: 'learn-search-input',
+                checkChangeBuffer: 500,
+                validator: Ext.bind(function(value) {
+                    this.fireEvent('searchchanged', value);
+                    return true;
+                }, this)
+            });
+        }
+        return this.searchField;
     },
 
     setDimensions : function(dimensions) {
         this.dimensions = dimensions;
-        this.getHeaderView().setDimensions(dimensions);
-    },
-
-    getHeaderView : function() {
-        return this.getComponent('dataviewcontainer').getComponent('headerdataview');
+        this.getDataView().setDimensions(dimensions);
     },
 
     selectDimension : function(dimUniqueName, id, dimension) {
         if (this.dimensions && this.dimensions.length > 0) {
-            this.getHeaderView().selectDimension(dimUniqueName);
+            this.getDataView().selectDimension(dimUniqueName);
         }
-        var search = this.getComponent('dataviewcontainer').getComponent('searchfield')
-        search.emptyText = 'Search '+dimension.pluralName.toLowerCase();
+        var search = this.getSearchField();
+        search.emptyText = 'Search ' + dimension.pluralName.toLowerCase();
         search.setValue('');
     }
 });
@@ -404,9 +373,9 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     selectInitialDimension: false,
 
     tpl: new Ext.XTemplate(
-            '<tpl for=".">',
-            '<h1 class="lhdv">{pluralName}</h1>',
-            '</tpl>'
+        '<tpl for=".">',
+            '<h1 class="lhdv">{pluralName:htmlEncode}</h1>',
+        '</tpl>'
     ),
 
     initComponent : function() {
