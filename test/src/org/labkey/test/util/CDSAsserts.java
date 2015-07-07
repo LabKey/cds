@@ -176,14 +176,26 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(232, 3, 3);
+        assertFilterStatusCounts(8373, 53, -1); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)
     {
-        _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(subjectCount, "Subject"));
-        _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
-        _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(assayCount, "Assays"));
+        if(subjectCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(subjectCount, "Subject"));
+        }
+
+        if(studyCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
+        }
+
+        if(assayCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(assayCount, "Assays"));
+        }
+
     }
 
     public void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)

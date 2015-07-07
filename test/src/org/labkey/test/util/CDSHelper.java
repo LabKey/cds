@@ -33,9 +33,9 @@ import java.util.List;
 
 public class CDSHelper
 {
-    public static final String[] STUDIES = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
+    public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "HVTN 039", "HVTN 040", "HVTN 503", "HVTN 908"}; // TODO Test data dependent.
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
-    public static final String[] ASSAYS = {"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
+    public static final String[] ASSAYS = {"BAMA", "ELISpot", "ICS", "NAb"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
@@ -44,6 +44,7 @@ public class CDSHelper
     public static final String[] NEW_ASSAYS = {"BAMA (Binding Ab multiplex assay)", "ELISPOT (Enzyme-Linked ImmunoSpot)", "ICS Intracellular Cytokine Staining)", "NAb (Neutralizing antibody)"};
     public static final String[] NEW_ASSAY_DIMENSIONS = {"Isotype", "Antigen Name", "Specimen type", "Scale"};
     private final BaseWebDriverTest _test;
+    private static final boolean ValidateCounts = false;
 
     public CDSHelper(BaseWebDriverTest test)
     {
@@ -303,7 +304,7 @@ public class CDSHelper
             public Void apply(Void aVoid)
             {
                 link.click();
-                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
+//                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
                 _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
                 return null;
             }
@@ -491,7 +492,7 @@ public class CDSHelper
     {
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
         LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("Learn about..."))),
-        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects based on their characteristics")),
+        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);
 
@@ -572,13 +573,18 @@ public class CDSHelper
 
         public static Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural, boolean highlight)
         {
-            String strCount = NumberFormat.getIntegerInstance().format(count);
-            return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + strCount + "']");
+            String strCount = NumberFormat.getIntegerInstance().format(count); //Need to format to allow for number greater than 999 (search looks for a number with a ',' in it).
+            String path = "//li//span[text()='" + (count != 1 ? plural : singular) + "']";
+            path = path + ((ValidateCounts) ?  "/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + strCount + "']" : "");
+            return Locator.xpath(path);
         }
 
         public static Locator.XPathLocator getSelectionStatusLocator(int count, String match)
         {
-            return Locator.xpath("//li//span[contains(text(), '" + match + "')]/../span[contains(@class, 'status-subcount') and text()='" + count + "']");
+            String strCount = NumberFormat.getIntegerInstance().format(count);
+            String path = "//li//span[contains(text(), '" + match + "')]";
+            path = path + ((ValidateCounts) ? "/../span[contains(@class, 'status-subcount') and text()='" + strCount + "']" : "");
+            return Locator.xpath(path);
         }
 
         public static Locator.XPathLocator infoPaneSortButtonLocator()

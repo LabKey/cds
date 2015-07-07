@@ -93,8 +93,7 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
         loginPage.logIn();
     }
 
-    //TODO Need to investigate why test fails occasionally.
-//    @Test
+    @Test
     public void testSessionTimeoutIntercept()
     {
         CDSLoginPage loginPage = new CDSLoginPage(this);
