@@ -210,7 +210,7 @@ Ext.define('Connector.controller.FilterStatus', {
             filters: state.getFilters()
         });
 
-        state.on('filtercount', view.onFilterChange, view);
+        state.on('filtercount', view.onFilterCount, view);
         state.on('filterchange', view.onFilterChange, view);
         state.on('filterremove', view.onFilterRemove, view);
         state.on('selectionchange', view.onSelectionChange, view);

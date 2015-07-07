@@ -95,7 +95,7 @@ Ext.define('Connector.controller.State', {
             }
 
             var filter = Ext.create('Connector.model.Filter', {
-                gridFilter: data.gridFilter,
+                gridFilter: sqlFilters,
                 plotMeasures: data.plotMeasures,
                 hierarchy: data.hierarchy,
                 isPlot: data.isPlot,

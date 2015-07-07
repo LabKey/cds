@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 
-@Category({CustomModules.class, CDS.class})
+@Category({CDS.class})
 public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private final CDSHelper _cds = new CDSHelper(this);

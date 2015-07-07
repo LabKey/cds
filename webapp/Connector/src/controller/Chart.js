@@ -103,9 +103,9 @@ Ext.define('Connector.controller.Chart', {
     createView : function(xtype, config, context) {
 
         var state = this.getStateManager();
-        var v;
+        var v, plotType = 'plot';
 
-        if (xtype == 'plot')
+        if (xtype == plotType)
         {
             v = Ext.create('Connector.view.Chart', {
                 visitTagStore : this.getStore('VisitTag')
@@ -115,7 +115,26 @@ Ext.define('Connector.controller.Chart', {
             state.on('filterchange', v.onFilterChange, v);
             state.on('plotselectionremoved', v.onPlotSelectionRemoved, v);
             state.on('selectionchange', v.onSelectionChange, v);
-            this.getViewManager().on('afterchangeview', v.onViewChange, v);
+
+            var vm = this.getViewManager();
+
+            vm.on('beforechangeview', function(controller, view, currentContext) {
+                // If a chart view is being activated, ensure it is not
+                // a view of plotType so to not deactivate the view unintentionally
+                if (controller == 'chart') {
+                    if (Ext4.isDefined(view) && view != plotType) {
+                        v.onDeactivate.call(v);
+                    }
+                }
+                if (currentContext.view == plotType) {
+                    v.onDeactivate.call(v);
+                }
+            });
+            vm.on('afterchangeview', function(c, view) {
+                if (view == plotType) {
+                    v.onActivate.call(v);
+                }
+            });
         }
 
         return v;

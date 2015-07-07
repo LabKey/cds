@@ -21,6 +21,19 @@ Ext.define('Connector.view.FilterStatus', {
         ];
 
         this.callParent();
+
+        this.attachInternalListeners();
+    },
+
+    attachInternalListeners : function() {
+
+        this.resizeTask = new Ext.util.DelayedTask(function() {
+            this.resizeMessage();
+        }, this);
+
+        Ext.EventManager.onWindowResize(function() {
+            this.resizeTask.delay(150);
+        }, this);
     },
 
     getFilterPanel : function() {
@@ -62,8 +75,7 @@ Ext.define('Connector.view.FilterStatus', {
         return this.selectionpanel;
     },
 
-    onFilterChange : function(filters) {
-        this.hideMessage(true);
+    onFilterCount : function(filters) {
         if (this.filterpanel) {
             this.filterpanel.loadFilters(filters);
 
@@ -79,6 +91,12 @@ Ext.define('Connector.view.FilterStatus', {
                 clrBtn.show();
             }
         }
+    },
+
+    //23658 - Don't remove undo message when applying filter removal to plot.
+    onFilterChange : function(filters) {
+        this.hideMessage(true);
+        this.onFilterCount(filters)
     },
 
     onFilterRemove : function() {

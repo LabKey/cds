@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,7 +26,6 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.sun.jna.Platform.isMac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -61,7 +60,7 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 
-@Category({CustomModules.class, CDS.class})
+@Category({CDS.class})
 public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);
@@ -297,7 +296,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("incorrect total number of points after clicking x axis categories",468, getPointCount());
         //apply selection as exlusive filter
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
-        waitForPointCount(128, 10000);
+        waitForPointCount(468 - 128, 10000);
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
     }
 
@@ -660,7 +659,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         switchToMainWindow();
     }
 
-    @Test
+// TODO disabled because of slightly bad usage of getData() api  @Test
     public void verifyAntigenScatterPlot()
     {
         String xVirus = "BaL.01";
@@ -775,7 +774,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             Keys multiSelectKey;
             if (isShift)
                 multiSelectKey = Keys.SHIFT;
-            else if (isMac())
+            else if (SystemUtils.IS_OS_MAC)
                 multiSelectKey = Keys.COMMAND;
             else
                 multiSelectKey = Keys.CONTROL;

@@ -109,7 +109,10 @@ Ext.define('Connector.view.Chart', {
 
         this.showmsg = true;
         this.addPlugin({
-            ptype: 'messaging'
+            ptype: 'messaging',
+            calculateY : function(cmp, box, msg) {
+                return box.y - 10;
+            }
         });
     },
 
@@ -417,7 +420,11 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        this.highlightSelectedFn();
+        this.resizeMessage();
+
+        if (Ext.isFunction(this.highlightSelectedFn)) {
+            this.highlightSelectedFn();
+        }
     },
 
     getNoPlotLayer : function() {
@@ -600,6 +607,14 @@ Ext.define('Connector.view.Chart', {
      * @param {boolean} [noplot=false]
      */
     initPlot : function(chartData, studyAxisInfo, noplot) {
+
+        if (this.isHidden()) {
+            // welp, that was a huge waste..
+            // Consider: This could wrapped up in something like this.continue()
+            // where if we do not continue, we will set refresh
+            this.refreshRequired = true;
+            return;
+        }
 
         // Below vars needed for brush and mouse event handlers.
         var rows, properties, isBrushed = false,
@@ -1158,12 +1173,14 @@ Ext.define('Connector.view.Chart', {
             };
 
             this.clickTask = new Ext.util.DelayedTask(function(node, view, name, target, multi) {
-                if(layerScope.isBrushed)
+                if (layerScope.isBrushed)
                     view.plot.clearBrush();
                 this.runXAxisSelectAnimation(node, view, name, target, multi);
             }, this);
 
-            this.highlightSelectedFn();
+            if (Ext.isFunction(this.highlightSelectedFn)) {
+                this.highlightSelectedFn();
+            }
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
@@ -1304,7 +1321,7 @@ Ext.define('Connector.view.Chart', {
 
     retrieveBinSubjectIds : function (plot, target, subjects) {
         var subjectIds = [];
-        if(subjects) {
+        if (subjects) {
             subjects.forEach(function(s) {
                 subjectIds.push(s);
             });
@@ -1413,7 +1430,7 @@ Ext.define('Connector.view.Chart', {
 
     retrievePointSubjectIds : function(plot, target, subjects) {
         var subjectIds = [];
-        if(subjects) {
+        if (subjects) {
             subjects.forEach(function(s) {
                 subjectIds.push(s);
             });
@@ -1540,7 +1557,7 @@ Ext.define('Connector.view.Chart', {
         var values = this.getCategoricalSelectionValues();
         var found = false;
         values.forEach(function(t) {
-            if(t === target)
+            if (t === target)
                 found = true;
         });
 
@@ -1819,55 +1836,62 @@ Ext.define('Connector.view.Chart', {
     },
 
     onShowGraph : function() {
-        this.refreshRequired = false;
 
-        var activeMeasures = this.getActiveMeasures();
+        if (!this.isHidden()) {
+            this.refreshRequired = false;
+            this.filterChange = false;
 
-        this.fireEvent('axisselect', this, 'y', [ activeMeasures.y ]);
-        this.fireEvent('axisselect', this, 'x', [ activeMeasures.x ]);
-        this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
+            var activeMeasures = this.getActiveMeasures();
 
-        if (this.filterClear) {
-            if (this.axisPanelY) {
-                this.axisPanelY.clearSelection();
-                Ext.getCmp('yaxisselector').clearModel();
+            this.fireEvent('axisselect', this, 'y', [activeMeasures.y]);
+            this.fireEvent('axisselect', this, 'x', [activeMeasures.x]);
+            this.fireEvent('axisselect', this, 'color', [activeMeasures.color]);
+
+            if (this.filterClear) {
+                if (this.axisPanelY) {
+                    this.axisPanelY.clearSelection();
+                    Ext.getCmp('yaxisselector').clearModel();
+                }
+
+                if (this.axisPanelX) {
+                    this.axisPanelX.clearSelection();
+                    Ext.getCmp('xaxisselector').clearModel();
+                }
+
+                if (this.colorPanel) {
+                    this.colorPanel.clearSelection();
+                    Ext.getCmp('colorselector').clearModel();
+                }
             }
 
-            if (this.axisPanelX) {
-                this.axisPanelX.clearSelection();
-                Ext.getCmp('xaxisselector').clearModel();
-            }
-
-            if (this.colorPanel) {
-                this.colorPanel.clearSelection();
-                Ext.getCmp('colorselector').clearModel();
-            }
-        }
-
-        if (this.filterClear || activeMeasures.y == null) {
-            this.hideMessage();
-            this.requireStudyAxis = false;
-            this.getStudyAxisPanel().setVisible(false);
-            Connector.getState().clearSelections(true);
-            this.filterClear = false;
-            this.noPlot();
-        }
-        else {
-            this.measures = [ activeMeasures.x, activeMeasures.y, activeMeasures.color ];
-
-            this.fireEvent('showload', this);
-
-            this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
-
-            // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
-            if (!this.fromFilter && activeMeasures.y !== null) {
-                this.updatePlotBasedFilter(activeMeasures);
+            if (this.filterClear || activeMeasures.y == null) {
+                this.hideMessage();
+                this.requireStudyAxis = false;
+                this.getStudyAxisPanel().setVisible(false);
+                Connector.getState().clearSelections(true);
+                this.filterClear = false;
+                this.noPlot();
             }
             else {
-                this.initialized = true;
-            }
+                this.measures = [activeMeasures.x, activeMeasures.y, activeMeasures.color];
 
-            this.requestChartData(activeMeasures);
+                this.fireEvent('showload', this);
+
+                this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
+
+                // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
+                if (!this.fromFilter && activeMeasures.y !== null) {
+                    this.updatePlotBasedFilter(activeMeasures);
+                }
+                else {
+                    this.initialized = true;
+                }
+
+                this.requestChartData(activeMeasures);
+            }
+        }
+        else {
+            this.refreshRequired = true;
         }
     },
 
@@ -2020,22 +2044,25 @@ Ext.define('Connector.view.Chart', {
     },
 
     onChartDataSuccess : function(selectRowsResponse, getDataResponse) {
-        if (this.isActiveView) {
-            this.dataQWP = {schema: selectRowsResponse.schemaName, query: selectRowsResponse.queryName};
+        this.dataQWP = {
+            schema: selectRowsResponse.schemaName,
+            query: selectRowsResponse.queryName
+        };
 
-            selectRowsResponse.measures = this.measures;
-            selectRowsResponse.measureToColumn = getDataResponse.measureToColumn;
-            selectRowsResponse.columnAliases = getDataResponse.columnAliases;
-            var chartData = Ext.create('Connector.model.ChartData', selectRowsResponse);
+        Ext4.apply(selectRowsResponse, {
+            measures: this.measures,
+            measureToColumn: getDataResponse.measureToColumn,
+            columnAliases: getDataResponse.columnAliases
+        });
+        var chartData = Ext.create('Connector.model.ChartData', selectRowsResponse);
 
-            this.hasStudyAxisData = false;
+        this.hasStudyAxisData = false;
 
-            if (this.requireStudyAxis) {
-                this.requestStudyAxisData(chartData);
-            }
-            else {
-                this.initPlot(chartData);
-            }
+        if (this.requireStudyAxis) {
+            this.requestStudyAxisData(chartData);
+        }
+        else {
+            this.initPlot(chartData);
         }
     },
 
@@ -2923,30 +2950,32 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.isActiveView) {
-            this.showTask.delay(this.initialized ? 100 : 600);
+            this.onReady(function() {
+                this.showTask.delay(10);
+            }, this);
         }
-        else if (this.initialized) {
+        else {
             this.refreshRequired = true;
         }
     },
 
-    onViewChange : function(controller, view) {
-        this.isActiveView = (view === this.xtype);
-
-        if (this.isActiveView) {
-
-            if (this.refreshRequired) {
-                this.showTask.delay(this.initialized ? 100 : 600);
-            }
-
-            if (Ext.isObject(this.visibleWindow)) {
-                this.visibleWindow.show();
-            }
+    onActivate: function() {
+        this.isActiveView = true;
+        if (this.refreshRequired) {
+            this.onReady(function() {
+                this.showTask.delay(10);
+            }, this);
         }
-        else {
-            this.fireEvent('hideload', this);
-            this.hideMessage();
+
+        if (Ext.isObject(this.visibleWindow)) {
+            this.visibleWindow.show();
         }
+    },
+
+    onDeactivate : function() {
+        this.isActiveView = false;
+        this.fireEvent('hideload', this);
+        this.hideMessage();
     },
 
     getSubjectsIn : function(callback, scope) {
@@ -2991,7 +3020,6 @@ Ext.define('Connector.view.Chart', {
 
         }, me);
     },
-
 
     applyFiltersToMeasure : function (measures, ptids) {
 
@@ -3042,7 +3070,10 @@ Ext.define('Connector.view.Chart', {
                 this.plot.clearBrush();
             }
         }
-        this.highlightSelectedFn();
+
+        if (Ext.isFunction(this.highlightSelectedFn)) {
+            this.highlightSelectedFn();
+        }
     },
 
     requestStudyAxisData : function(chartData) {
@@ -3086,17 +3117,15 @@ Ext.define('Connector.view.Chart', {
             containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
             sql: sql,
             success: function(executeSqlResp) {
-                if (this.isActiveView) { // TODO: This is a bit weird we check this here...
-                    executeSqlResp.measures = this.measures;
-                    executeSqlResp.visitMap = chartData.getVisitMap();
-                    executeSqlResp.containerAlignmentDayMap = alignMap;
-                    var studyAxisData = Ext.create('Connector.model.StudyAxisData', executeSqlResp);
+                executeSqlResp.measures = this.measures;
+                executeSqlResp.visitMap = chartData.getVisitMap();
+                executeSqlResp.containerAlignmentDayMap = alignMap;
+                var studyAxisData = Ext.create('Connector.model.StudyAxisData', executeSqlResp);
 
-                    this.hasStudyAxisData = studyAxisData.getData().length > 0;
+                this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
-                    this.initPlot(chartData, studyAxisData);
-                    this.initStudyAxis(studyAxisData);
-                }
+                this.initPlot(chartData, studyAxisData);
+                this.initStudyAxis(studyAxisData);
             },
             failure: function() {console.error('Error retrieving study axis data')},
             scope: this
