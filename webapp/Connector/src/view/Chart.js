@@ -564,41 +564,38 @@ Ext.define('Connector.view.Chart', {
             throwErrors: true,
             clipRect: false,
             legendPos : 'none',
+            bgColor: '#FFFFFF', // $light-color
+            gridColor: '#FFFFFF', // $light-color
+            gridLineColor: '#F0F0F0', // $secondary-color
             gridLineWidth: 1.25,
             borderWidth: 2,
-            bgColor: '#FFFFFF', // $light-color
+            borderColor: '#CCC8C8', // $heat-scale-3
             tickColor: '#FFFFFF', // $light-color
             tickTextColor: this.labelTextColor // $heat-scale-1
         };
     },
 
     getMainPlotConfig : function(margins, size, data, aes, scales) {
-        return Ext.apply(this.getBasePlotConfig(), {
-            margins : margins,
-            width : size.width,
-            height : size.height,
-            data : data,
-            aes : aes,
-            scales : scales,
-            gridColor : '#FFFFFF', // $light-color
-            gridLineColor : '#F0F0F0', // $secondary-color
-            borderColor : '#CCC8C8' // $heat-scale-3
-        });
+        var plotConfig = this.getBasePlotConfig();
+        plotConfig.margins = margins;
+        plotConfig.width = size.width;
+        plotConfig.height = size.height;
+        plotConfig.data = data;
+        plotConfig.aes = aes;
+        plotConfig.scales = scales;
+        return plotConfig;
     },
 
     getGutterPlotConfig : function(margins, height, width, data, aes, scales, labels) {
-        return Ext.apply(this.getBasePlotConfig(), {
-            margins : margins,
-            width : width,
-            height : height,
-            data : data,
-            aes : aes,
-            scales : scales,
-            labels : labels,
-            gridColor : '#F8F8F8',
-            gridLineColor : '#EAEAEA',
-            borderColor : '#FFFFFF'
-        });
+        var plotConfig = this.getBasePlotConfig();
+        plotConfig.margins = margins;
+        plotConfig.width = width;
+        plotConfig.height = height;
+        plotConfig.data = data;
+        plotConfig.aes = aes;
+        plotConfig.scales = scales;
+        plotConfig.labels = labels;
+        return plotConfig;
     },
 
     /**
