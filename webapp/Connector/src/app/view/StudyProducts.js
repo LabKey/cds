@@ -10,15 +10,7 @@ Ext.define('Connector.app.view.StudyProducts', {
     itemSelector: 'div.study-detail',
 
     statics: {
-        dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
-        monthDiff : function(d1, d2) {
-            var months;
-            months = (d2.getFullYear() - d1.getFullYear()) * 12;
-            months -= d1.getMonth() + 1;
-            months += d2.getMonth();
-            return months <= 0 ? 0 : months;
-        },
-        columnHeaderTpl : new Ext.XTemplate(
+        columnHeaderTpl: new Ext.XTemplate(
             '<div class="learncolumnheader">',
                 '<div class="detail-container">',
                     '<div class="study-description detail-header">Product name</div>',
@@ -27,37 +19,29 @@ Ext.define('Connector.app.view.StudyProducts', {
                 '</div>',
             '</div>'
         ),
-        searchFields : ['Label', 'Description', 'Type', 'Class', 'ProductSubclass', 'Developer']
+        searchFields: ['product_name', 'product_description', 'product_type', 'product_class_label', 'product_subclass', 'product_developer']
     },
 
     tpl: new Ext.XTemplate(
-            '<tpl if="values.length &gt; 0">',
-                '{[ Connector.app.view.StudyProducts.columnHeaderTpl.apply(values) ]}',
-            '</tpl>',
-            '<tpl for=".">',
-                '<div class="detail-wrapper">',
-                    '<div class="detail-container study-detail">',
-                        '<div class="study-description">',
-                            '<h2>{Label}</h2>',
-                            '<div class="description-text">{Description}</div>',
-                        '</div>',
-                        '<div class="study-date">',
-                            '<span class="startdate-text">{Type}</span>',
-                            '<span class="enddate-text">Class: <span style="color: black;">{Class}</span></span>',
-                            '<span class="enddate-text">Subclass: <span style="color: black;">{ProductSubclass}</span></span>',
-                        '</div>',
-                        '<div class="study-treatments">{Developer}</div>',
+        '<tpl if="values.length &gt; 0">',
+            '{[ Connector.app.view.StudyProducts.columnHeaderTpl.apply(values) ]}',
+        '</tpl>',
+        '<tpl for=".">',
+            '<div class="detail-wrapper">',
+                '<div class="detail-container study-detail">',
+                    '<div class="study-description">',
+                        '<h2>{product_name:htmlEncode}</h2>',
+                        '<div class="description-text">{product_description:htmlEncode}</div>',
                     '</div>',
+                    '<div class="study-date">',
+                        '<span class="startdate-text">{product_type:htmlEncode}</span>',
+                        '<span class="enddate-text">Class: <span style="color: black;">{product_class_label:htmlEncode}</span></span>',
+                        '<span class="enddate-text">Subclass: <span style="color: black;">{product_subclass:htmlEncode}</span></span>',
+                    '</div>',
+                    '<div class="study-treatments">{product_developer:htmlEncode}</div>',
                 '</div>',
-            '</tpl>',
-            {
-                renderDate : function(date) {
-                    return Connector.app.view.StudyProducts.dateRenderer(date);
-                },
-                monthDiff : function(date1, date2) {
-                    return Connector.app.view.StudyProducts.monthDiff(new Date(date1), new Date(date2));
-                }
-            }
+            '</div>',
+        '</tpl>'
     ),
 
     initComponent : function() {
@@ -66,8 +50,8 @@ Ext.define('Connector.app.view.StudyProducts', {
         // Continue to show the column headers even when no data is present
         //
         this.emptyText = new Ext.XTemplate(
-                Connector.app.view.StudyProducts.columnHeaderTpl.apply({}),
-                '<div class="detail-container"><div class="saeempty">None of the selected study products have data for this category.</div></div>'
+            Connector.app.view.StudyProducts.columnHeaderTpl.apply({}),
+            '<div class="detail-container"><div class="saeempty">None of the selected study products have data for this category.</div></div>'
         ).apply({});
 
         this.callParent();

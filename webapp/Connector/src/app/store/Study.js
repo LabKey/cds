@@ -54,7 +54,12 @@ Ext.define('Connector.app.store.Study', {
                 products = [];
                 for (var p=0; p < this.productData.length; p++) {
                     if (study.study_name === this.productData[p].study_name.value) {
-                        products.push(this.productData[p].product_id.displayValue);
+                        // Consider: These should probably be of type Connector.app.model.StudyProducts
+                        // but it'd be good to then have a common sourcing mechanism for LA models
+                        products.push({
+                            product_id: this.productData[p].product_id.value,
+                            product_name: this.productData[p].product_id.displayValue
+                        });
                     }
                 }
                 study.products = products;
@@ -62,7 +67,6 @@ Ext.define('Connector.app.store.Study', {
             }, this);
 
             this.loadRawData(studies);
-            SS = studies;
         }
     }
 });

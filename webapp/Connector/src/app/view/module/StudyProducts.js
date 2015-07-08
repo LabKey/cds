@@ -9,53 +9,37 @@ Ext.define('Connector.view.module.StudyProducts', {
 
     extend : 'Connector.view.module.BaseModule',
 
-    tpl : new Ext.XTemplate(
-        '<tpl><p>',
-            Connector.constant.Templates.module.title,
-            '<tpl for="items">',
-                '<div class="item-row">',
-                    '<p><a href="#learn/learn/vaccine/{[encodeURIComponent(values)]}">{.}</a></p>',
-                '</div>',
-            '</tpl>',
-        '</p></tpl>'),
-
     initComponent : function() {
-        var data = this.data,
-            study = data.model,
-            studyId = study.get('label');
+        if (!Ext.isObject(this.data)) {
+            this.data = {};
+        }
 
-        Connector.getState().onMDXReady(function(mdx) {
-            mdx.query({
-                onRows: [{ level: '[Vaccine.Type].[Name]' }],
-                filter: [{
-                    hierarchy : 'Study',
-                    members: ["[Study].[" + studyId + "]"]
-                }],
-                success: function(slice) {
-                    var cells = slice.cells, row,
-                        _set = [], object;
-
-                    for (var c=0; c < cells.length; c++) {
-                        row = cells[c][0];
-                        object = row.positions[row.positions.length-1][0];
-                        if (row.value > 0) {
-                            _set.push(object.name);
-                        }
-                    }
-                    data.items = _set;
-                    this.update(data);
-                    this.fireEvent('hideLoad', this);
-                },
-                scope: this
-            });
+        Ext.apply(this.data, {
+            products: this.data.model ? this.data.model.get('products'): []
         });
+
+        this.tpl = new Ext.XTemplate(
+            '<tpl><p>',
+                Connector.constant.Templates.module.title,
+                '<tpl if="products.length &gt; 0">',
+                    '<tpl for="products">',
+                        '<div class="item-row">',
+                            '<p><a href="#learn/learn/Study%20Product/{product_id}">{product_name:htmlEncode}</a></p>',
+                        '</div>',
+                    '</tpl>',
+                '<tpl else>',
+                    '<div class="item-row">',
+                        '<p>No related products</p>',
+                    '</div>',
+                '</tpl>',
+            '</p></tpl>'
+        );
 
         this.callParent();
 
-        this.on('render', function() {
-            if (!data.items) {
-                this.fireEvent('showLoad', this);
-            }
-        }, this);
+        var data = this.data;
+        this.on('afterrender', function(sp) {
+            sp.update(data);
+        });
     }
 });

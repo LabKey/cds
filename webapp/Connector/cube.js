@@ -18,7 +18,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      itemDetailTabs  - An array of tab names used in learn views. Requires itemDetail. Defaults to undefined.
         //      priority        - relative priority to be shown in displays. A value of 0 would show on top. Default is 200.
         //      querySchema     - metadata member query schema. Defaults to undefined.
-        //      supportsDetails - multi-noun views are supported for this dimension. defaults to false.
+        //      supportsDetails - Learn About views are supported for this dimension. If true, additional view configuration is required. Default is false.
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
         //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
@@ -109,10 +109,6 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
                 priority: 40,
-                supportsDetails: true,
-                detailCollection: 'Connector.app.store.Study',
-                detailModel: 'Connector.app.model.Study',
-                detailView: 'Connector.app.view.Study',
                 defaultOperator: 'OR',
                 summaryTargetLevel: '[Study.Treatment].[Treatment]',
 
@@ -153,6 +149,10 @@ Ext4.define('Connector.cube.Configuration', {
                     }]
                 }],
 
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Study',
+                detailModel: 'Connector.app.model.Study',
+                detailView: 'Connector.app.view.Study',
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
@@ -222,9 +222,48 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study Product]',
                 priority: 20,
-                singularName: 'Study Product',
-                pluralName: 'Study Products'
-                //supportsDetails: true
+                singularName: 'Study product',
+                pluralName: 'Study products',
+
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.StudyProducts',
+                detailModel: 'Connector.app.model.StudyProducts',
+                detailView: 'Connector.app.view.StudyProducts',
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'productheader'
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'Description'
+                        }
+                    }]]
+                    //},{
+                    //    type: 'productprovidedby',
+                    //    staticData: {
+                    //        title: 'Product provided by'
+                    //    }
+                    //},{
+                    //    type: 'productmanufacturing',
+                    //    staticData: {
+                    //        title: 'Product manufacturing'
+                    //    }
+                    //}],[{
+                    //    type: 'productotherproducts',
+                    //    staticData: {
+                    //        title: 'Used with other products'
+                    //    }
+                    //},{
+                    //    type: 'productstudies',
+                    //    staticData: {
+                    //        title: 'Studies where used'
+                    //    }
+                    //}]]
+                }]
             },{
                 uniqueName: '[Assay]',
                 priority: 30,

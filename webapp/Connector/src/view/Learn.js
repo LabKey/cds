@@ -57,8 +57,10 @@ Ext.define('Connector.view.Learn', {
 
     dimensionDataLoaded : function(dimension, store) {
         store.clearFilter(this.searchFilter);
-        var fields = this.searchFields || [];
-        var regex = new RegExp(this.searchFilter, 'i');
+
+        var fields = this.searchFields || [],
+            regex = new RegExp(this.searchFilter, 'i');
+
         this.searchFilter && store.filterBy(function(model) {
             var match = false;
             Ext.each(fields, function(field) {
@@ -73,55 +75,56 @@ Ext.define('Connector.view.Learn', {
 
     loadData : function(dimension, store) {
         if (dimension) {
-            var hierarchy = dimension.getHierarchies()[0];
-            var dimensionName = hierarchy.getName();
+            var hierarchy = dimension.getHierarchies()[0],
+                dimensionName = hierarchy.getName();
+
             if (!this.dimensionDataLoaded[dimensionName]) {
-                this.state.onMDXReady(function(mdx) {
-                    var config = {
-                        onRows: [{hierarchy: hierarchy.getName(), member: 'members'}],
-                        //useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                Connector.getState().onMDXReady(function(mdx) {
+                    mdx.query({
+                        onRows: [{
+                            hierarchy: hierarchy.getName(),
+                            member: 'members'
+                        }],
                         success: function(slice) {
-                            if (store)
+                            if (store) {
                                 store.loadSlice(slice);
+                            }
                             this.dimensionDataLoaded[dimensionName] = true;
                             this.dimensionDataLoaded(dimension, store);
                         },
                         scope: this
-                    };
-                    mdx.query(config);
-
+                    });
                 }, this);
             }
             else {
                 this.dimensionDataLoaded(dimensionName, store);
             }
         }
+        else {
+            console.warn(this.className + '.loadData() unable to find dimension:', dimension);
+        }
     },
 
     setHeader : function(dimension, id) {
-        var listHeader = this.getHeader();
-        if (id) {
-            listHeader.setVisible(false);
-        }
-        else {
-            listHeader.setVisible(true);
-        }
+        this.getHeader().setVisible(id ? false : true);
     },
 
     loadDataView : function(dimension, id, animate) {
 
         this.setHeader(dimension, id);
         if (this.dataViews && this.dataViews.length) {
-            var dataViews = this.dataViews;
+            var dataViews = this.dataViews,
+                views = dataViews.length,
+                fadedViews = 0;
+
             delete this.dataViews;
-            var views = dataViews.length;
-            var fadedViews = 0;
+
             Ext.each(dataViews, function(dataView) {
                 var el = dataView.getEl();
                 if (animate && el) {
                     el.fadeOut({
                         callback: function() {
-                            if (++fadedViews == views) {
+                            if (++fadedViews === views) {
                                 this.remove(dataView);
                                 this.completeLoad(dimension, id, animate);
                             }
@@ -150,7 +153,7 @@ Ext.define('Connector.view.Learn', {
             content = '<h1 class="lhdv">' + content + '</h1>';
         }
         if (model) {
-            content += '<h1>' + model.get('label') + '</h1>';
+            content += '<h1>' + model.get(model.labelProperty ? model.labelProperty : 'label') + '</h1>';
         }
 
         return content;
@@ -159,88 +162,91 @@ Ext.define('Connector.view.Learn', {
     completeLoad : function(dimension, id, animate) {
 
         if (Ext.isDefined(dimension)) {
-            var store;
-            if (id && dimension.itemDetail) {
+            var store, _id = id;
+            if (Ext.isDefined(id) && dimension.itemDetail) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
-                var model = store.getById(id);
-                var self = this;
 
-                function modelLoaded(model) {
-                    var tabViews = [];
-                    Ext.each(dimension.itemDetail, function(item) {
-                        if (item.view) {
-                            tabViews.push(Ext.create(item.view, {
-                                model: model,
-                                modules: item.modules
-                            }));
-                        }
-                    });
-
-                    var header = Ext.create('Connector.view.PageHeader', {
-                        data: {
-                            title: self.headerLabel(dimension,model),
-                            buttons : {
-                                back: true,
-                                up: dimension.pluralName.toLowerCase()
-                            },
-                            tabs : dimension.itemDetailTabs,
-                            scope : self,
-                            handlerParams : [dimension, model],
-                            lockPixels : 70
-                        }
-                    });
-
-                    var pageView = Ext.create('Connector.view.Page', {
-                        contentViews: tabViews,
-                        header: header,
-                        initialSelectedTab: 0,
-                        pageID: 'learnDetail'+dimension.singularName
-                    });
-
-                    self.add(pageView);
-                    self.dataViews = [pageView];
+                // coerce the id's type
+                if (Ext.isNumber(parseInt(id))) {
+                    _id = parseInt(id);
                 }
 
-                if (!model) {
-                    store.on('load', function() {
-                        modelLoaded(store.getById(id));
-                    }, this, {
-                        single: true
-                    });
-                    this.loadData(dimension, store);
+                var model = store.getById(_id);
+
+                if (model) {
+                    this.loadModel(model, dimension);
                 }
                 else {
-                    modelLoaded(model);
+                    store.on('load', function(s) {
+                        this.loadModel(s.getById(_id), dimension);
+                    }, this, {single: true});
+                    this.loadData(dimension, store);
                 }
             }
             else if (dimension.detailModel && dimension.detailView) {
                 var view = Ext.create(dimension.detailView, {
                     dimension: dimension,
                     store: StoreCache.getStore(dimension.detailCollection),
-                    plugins: ['learnheaderlock']
+                    plugins: ['learnheaderlock'],
+                    listeners: {
+                        itemclick: function(view, model) {
+                            this.fireEvent('selectitem', model);
+                        },
+                        scope: this
+                    }
                 });
 
                 this.dataViews = [view];
 
-                this.mon(view, 'itemclick', function(view, model) {
-                    this.fireEvent('selectitem', model);
-                }, this);
-
                 this.add(view);
                 this.loadData(dimension, view.getStore());
+            }
+            else {
+                console.warn('Dimension \"' + dimension.getUniqueName() + '\" is marked as \'supportsDetails\'. It must provide itemDetail or detailModel and detailView configurations.');
             }
         }
         else {
             //
             // See which one the header is respecting
             //
-            if (this.headerViews.main) {
-                var dimModel = this.getHeader().getHeaderView().getStore().getAt(0);
-                if (dimModel && dimModel.get('detailModel') && dimModel.get('detailView')) {
-                    this.loadDataView(dimModel.data);
-                }
+            var dimModel = this.getHeader().getHeaderView().getStore().getAt(0);
+            if (dimModel && dimModel.get('detailModel') && dimModel.get('detailView')) {
+                this.loadDataView(dimModel.data);
             }
         }
+    },
+
+    loadModel : function(model, dimension) {
+        var tabViews = [];
+        Ext.each(dimension.itemDetail, function(item) {
+            if (item.view) {
+                tabViews.push(Ext.create(item.view, {
+                    model: model,
+                    modules: item.modules
+                }));
+            }
+        });
+
+        var pageView = Ext.create('Connector.view.Page', {
+            pageID: 'learnDetail' + dimension.singularName,
+            contentViews: tabViews,
+            header: Ext.create('Connector.view.PageHeader', {
+                data: {
+                    title: this.headerLabel(dimension,model),
+                    buttons: {
+                        back: true,
+                        up: dimension.pluralName.toLowerCase()
+                    },
+                    tabs: dimension.itemDetailTabs,
+                    handlerParams: [dimension, model],
+                    lockPixels: 70,
+                    scope: this
+                }
+            })
+        });
+
+        this.add(pageView);
+        this.dataViews = [pageView];
     },
 
     getDimensions : function() {
@@ -267,15 +273,12 @@ Ext.define('Connector.view.Learn', {
             this.loadDataView(dimension, id, animate);
         }
         else {
-            if (this.headerViews.main) {
-                this.headerViews.main.on('selectdimension', this.loadDataView, this, {single: true});
-            }
+            this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
         }
 
         this.getHeader().selectDimension(dimension ? dimension.uniqueName : undefined, id, dimension);
     }
 });
-
 
 
 Ext.define('Connector.view.LearnHeader', {
@@ -310,7 +313,17 @@ Ext.define('Connector.view.LearnHeader', {
         if (!this.headerDataView) {
             this.headerDataView = Ext.create('Connector.view.LearnHeaderDataView', {
                 cls: 'dim-selector',
-                dimensions: this.dimensions
+                dimensions: this.dimensions,
+                store: Ext.create('Ext.data.Store', {
+                    model: 'Connector.model.Dimension',
+                    proxy: {
+                        type: 'memory',
+                        reader: {
+                            type: 'json',
+                            root: 'dimensions'
+                        }
+                    }
+                })
             });
             this.headerDataView.on({
                 itemclick: function(view, model) {
@@ -381,17 +394,6 @@ Ext.define('Connector.view.LearnHeaderDataView', {
     initComponent : function() {
 
         this.addEvents('requestselect');
-
-        this.store = Ext.create('Ext.data.Store', {
-            model: 'Connector.model.Dimension',
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json',
-                    root: 'dimensions'
-                }
-            }
-        });
 
         this.callParent();
 
