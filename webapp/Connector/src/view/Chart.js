@@ -920,6 +920,19 @@ Ext.define('Connector.view.Chart', {
                 var studyAxisRange = studyAxisInfo ? studyAxisInfo.getRange() : {min: null, max: null};
                 this.setScale(plotConfig.scales.x, 'x', properties, studyAxisRange);
                 this.setScale(plotConfig.scales.yLeft, 'y', properties, studyAxisRange);
+            } else {
+                Ext.apply(plotConfig.scales.x, {trans : this.getScale('x')});
+                Ext.apply(plotConfig.scales.yLeft, {trans : this.getScale('y')});
+            }
+
+            if(this.requireYGutter) {
+                Ext.apply(gutterYPlotConfig.scales.x, {trans : this.getScale('x')});
+                Ext.apply(gutterYPlotConfig.scales.yRight, {trans : this.getScale('y')});
+            }
+
+            if(this.requireXGutter) {
+                Ext.apply(gutterXPlotConfig.scales.xTop, {trans : this.getScale('x')});
+                Ext.apply(gutterXPlotConfig.scales.yLeft, {trans : this.getScale('y')});
             }
 
             // add brush handling
