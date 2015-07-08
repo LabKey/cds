@@ -194,6 +194,10 @@
     overflow: hidden;
   }
 
+  .hierarchy-check, .hierarchy-spacer {
+    height: 26px;
+  }
+
   .hierarchy-line {
     border-top: solid $heat-scale-6 1px;
   }
@@ -202,11 +206,7 @@
     font-size: 11px;
     font-weight: bold;
     color: $heat-scale-2;
-    padding: 0 0 16px 17px;
-  }
-
-  .hierarchy-spacer {
-    height: 22px;
+    padding: 0 16px 16px 0;
   }
 }
 

@@ -538,6 +538,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
             data: rows
         });
 
+        // add a column header for each hierarchical measure
         var checkboxItems = [];
         Ext.each(this.hierarchyMeasures, function(measure){
             checkboxItems.push({
@@ -547,27 +548,66 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
             });
         });
 
-        // create checkbox item tree by adding placeholder space in parent columns
+        // add 'All' checkbox for each column
+        for (var i = 0; i < fieldNames.length; i++) {
+            checkboxItems.push({
+                xtype: 'checkboxfield',
+                cls: 'checkbox2 hierarchy-check',
+                name: fieldNames[i] + '-checkall',
+                boxLabel: 'All',
+                inputValue: undefined,
+                fieldName: fieldNames[i],
+                checked: true,
+                listeners: {
+                    scope: this,
+                    change: function(cb, newValue) {
+                        var me = this;
+
+                        // the 'All' checkboxes for any column will result in everything being checked/unchecked
+                        Ext.each(this.query('checkbox'), function(relatedCb) {
+                            me.setCheckboxValue(relatedCb, newValue, true);
+                        });
+                    }
+                }
+            });
+        }
+
+        // create checkbox item tree and add placeholder space in parent columns for layout
         var prevRecord = null;
         Ext.each(uniqueValuesStore.getRange(), function(record){
             for (var i = 0; i < fieldNames.length; i++)
             {
                 if (prevRecord == null || !this.hierarchicalRecordEqual(prevRecord, record, fieldNames, i))
                 {
-                    // add line above checkbox for parent columns or first row in last column for a given group
+                    // add border line above checkbox for parent columns or first row in last column for a given group
                     var addCls = '';
                     if (prevRecord == null || i < fieldNames.length - 1 || !this.hierarchicalRecordEqual(prevRecord, record, fieldNames, i-1)) {
                         addCls = 'hierarchy-line';
                     }
 
-                    checkboxItems.push({
+                    var checkbox = {
                         xtype: 'checkboxfield',
                         cls: 'checkbox2 hierarchy-check ' + addCls,
                         name: fieldNames[i] + '-check',
                         boxLabel: record.get(fieldNames[i]) || '[Blank]',
                         inputValue: record.get(fieldNames[i]),
-                        checked: true
-                    });
+                        fieldName: fieldNames[i],
+                        parentFieldName: i > 0 ? fieldNames[i-1] : null,
+                        checked: true,
+                        listeners: {
+                            scope: this,
+                            change: function(cb, newValue) {
+                                this.checkboxSelectionChange(cb, newValue, fieldNames);
+                            }
+                        }
+                    };
+
+                    // add the parent values to this checkbox for reference for the change listeners (see checkboxSelectionChange)
+                    for (var j = 0; j < i; j++) {
+                        checkbox[fieldNames[j]] = record.get(fieldNames[j]);
+                    }
+
+                    checkboxItems.push(checkbox);
                 }
                 else {
                     checkboxItems.push({
@@ -593,5 +633,58 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
             }
         }
         return true;
+    },
+
+    checkboxSelectionChange : function(cb, newValue, fieldNames, skipChildren) {
+        var me = this, selection, parentSelection, siblingCbs, toCheck, parentParentSelection, parentCb, allCb;
+
+        // update child checkboxes
+        selection = '[' + cb.fieldName + '=' + cb.inputValue + ']';
+        parentSelection = me.getParentSelectorStr(cb, fieldNames);
+        if (!skipChildren) {
+            Ext.each(me.query('checkbox' + selection + parentSelection), function(relatedCb) {
+                me.setCheckboxValue(relatedCb, newValue, false);
+            });
+        }
+
+        // update the related column's 'All' checkbox
+        siblingCbs = me.query('checkbox[fieldName=' + cb.fieldName + '][boxLabel!=All]');
+        toCheck = Ext.Array.min(Ext.Array.pluck(siblingCbs, 'checked')); //array max works like 'are all checked' for boolean array
+        allCb = me.down('checkbox[boxLabel=All][fieldName=' + cb.fieldName + ']');
+        me.setCheckboxValue(allCb, toCheck, true);
+
+        // finally, update parent checkbox
+        if (cb.parentFieldName && parentSelection != '') {
+            siblingCbs = me.query('checkbox[fieldName=' + cb.fieldName + ']' + parentSelection);
+            toCheck = Ext.Array.max(Ext.Array.pluck(siblingCbs, 'checked')); //array max works like 'is any checked' for boolean array
+            parentParentSelection = me.getParentSelectorStr(cb, fieldNames, cb.parentFieldName);
+            parentCb = me.down('checkbox[fieldName=' + cb.parentFieldName + '][inputValue=' + cb[cb.parentFieldName] + ']' + parentParentSelection);
+            if (parentCb) {
+                me.setCheckboxValue(parentCb, toCheck, true);
+                me.checkboxSelectionChange(parentCb, toCheck, fieldNames, true);
+            }
+        }
+    },
+
+    getParentSelectorStr : function(cb, fieldNames, excludingFieldName) {
+        var parentSelection = '';
+        for (var j = 0; j < fieldNames.length; j++) {
+            if (Ext.isDefined(cb[fieldNames[j]]) && excludingFieldName != fieldNames[j]) {
+                parentSelection += '[' + fieldNames[j] + '=' + cb[fieldNames[j]] + ']';
+            }
+        }
+        return parentSelection;
+    },
+
+    setCheckboxValue : function(cb, value, suspendEvents) {
+        if (suspendEvents) {
+            cb.suspendEvents(false);
+        }
+
+        cb.setValue(value);
+
+        if (suspendEvents) {
+            cb.resumeEvents();
+        }
     }
 });
