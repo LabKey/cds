@@ -228,11 +228,16 @@ Ext.define('Connector.controller.Query', {
         return null;
     },
 
-    getMeasureDistinctValues : function(measure, callback, scope) {
-        if (measure)
+    getMeasureSetDistinctValues : function(measureSet, callback, scope) {
+        if (Ext.isDefined(measureSet))
         {
-            // get the distinct values from the cache, by measure alias, or query for the distinct values
-            var cachedValues = this.MEASURE_DISTINCT_VALUES[measure.get('alias')];
+            if (!Ext.isArray(measureSet)) {
+                measureSet = [measureSet];
+            }
+
+            // get the distinct values from the cache, by concatenating the measure set aliases, or query for the distinct values
+            var key = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'alias').join('|');
+            var cachedValues = this.MEASURE_DISTINCT_VALUES[key];
             if (Ext.isDefined(cachedValues))
             {
                 if (Ext.isFunction(callback)) {
@@ -241,18 +246,19 @@ Ext.define('Connector.controller.Query', {
             }
             else
             {
-                LABKEY.Query.selectDistinctRows({
-                    schemaName: measure.get('schemaName'),
-                    queryName: measure.get('queryName'),
-                    column: measure.get('name'),
-                    filterArray: [LABKEY.Filter.create(measure.get('name'), null, LABKEY.Filter.Types.NOT_MISSING)],
+                // TODO: verify that all measures are from the same query/dataset
+                var columnNames = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'name').join(', ');
+
+                LABKEY.Query.executeSql({
+                    schemaName: measureSet[0].get('schemaName'),
+                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName') + ' ORDER BY ' + columnNames,
                     scope: this,
                     success: function(data) {
-                        // cache the distinct values array result by measure alias
-                        this.MEASURE_DISTINCT_VALUES[measure.get('alias')] = data.values;
+                        // cache the distinct values array result
+                        this.MEASURE_DISTINCT_VALUES[key] = data.rows;
 
                         if (Ext.isFunction(callback)) {
-                            callback.call(scope || this, data.values);
+                            callback.call(scope || this, data.rows);
                         }
                     }
                 });

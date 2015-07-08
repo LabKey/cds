@@ -132,9 +132,14 @@ Ext.define('Connector.component.AdvancedOptionBase', {
                 var displayValueEl = displayEl.down('.field-display');
                 var pos = this.getDisplayField().getPosition();
 
-                this.getDropdownPanel().setWidth(displayValueEl.getWidth());
-                this.getDropdownPanel().showAt(pos[0] + displayLabelEl.getWidth(), pos[1]);
-                this.getDisplayField().addCls('expanded');
+                var dropdownPanel = this.getDropdownPanel();
+                if (dropdownPanel != null) {
+                    this.getDropdownPanel().setWidth(displayValueEl.getWidth());
+                    this.getDropdownPanel().showAt(pos[0] + displayLabelEl.getWidth(), pos[1]);
+                    this.getDisplayField().addCls('expanded');
+                }
+
+                this.fireEvent('click', this, this.isHierarchical);
             }
         }, this);
     },
@@ -167,10 +172,15 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         this.isHierarchical = this.dimension.get('hierarchicalSelectionChild') != undefined;
 
         this.callParent();
-        Connector.getService('Query').getMeasureDistinctValues(this.dimension, this.populateStore, this);
+        Connector.getService('Query').getMeasureSetDistinctValues(this.dimension, this.populateStore, this);
     },
 
-    populateStore : function(distinctValues) {
+    populateStore : function(distinctValuesArr) {
+        var distinctValues = Ext.Array.pluck(distinctValuesArr, this.dimension.get('name'));
+        if (distinctValues.indexOf(null) > -1) {
+            distinctValues.splice(distinctValues.indexOf(null), 1);
+        }
+
         this.store = Ext.create('Ext.data.Store', {
             fields : [{name: this.storeValueField, convert: function(value, record) { return record.raw; }}],
             data: distinctValues
@@ -207,6 +217,10 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         }
 
         this.callParent([value, allChecked]);
+    },
+
+    getDropdownPanel : function() {
+        return this.isHierarchical ? null : this.callParent();
     }
 });
 
@@ -376,7 +390,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
     getDropdownSelectAllCb : function() {
         if (!this.dropdownSelectAllCb) {
             this.dropdownSelectAllCb = Ext.create('Ext.form.field.Checkbox', {
-                cls: 'cb-all-panel',
+                cls: 'cb-all-panel checkbox2',
                 name: this.name + '-checkall',
                 boxLabel: 'All',
                 inputValue: undefined,
@@ -406,6 +420,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
             var checkboxItems = Ext.clone(this.additionalItems) || [];
             Ext.each(this.store.getRange(), function(record) {
                 checkboxItems.push({
+                    cls: 'checkbox2',
                     boxLabel: record.get(this.labelField) || record.get(this.valueField),
                     inputValue: record.get(this.valueField),
                     checked: this.initSelection && this.initSelection.indexOf(record.get(this.valueField)) > -1,
@@ -481,5 +496,102 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
         }
 
         return this.dropdownRadioGroup;
+    }
+});
+
+
+Ext.define('Connector.panel.HierarchicalSelectionPanel', {
+
+    extend: 'Ext.form.Panel',
+
+    cls: 'content',
+
+    border: false,
+
+    constructor : function(config) {
+        this.queryService = Connector.getService('Query');
+
+        this.callParent([config]);
+
+        // traverse the dimension hierarchical selection child lookups to get the full tree set
+        this.hierarchyMeasures = [this.dimension];
+        var childAlias = this.dimension.get('hierarchicalSelectionChild');
+        while (childAlias) {
+            var childMeasure = this.queryService.getMeasureRecordByAlias(childAlias);
+            if (childMeasure) {
+                this.hierarchyMeasures.push(childMeasure);
+                childAlias = childMeasure.get('hierarchicalSelectionChild');
+            }
+            else {
+                childAlias = null;
+            }
+        }
+
+        this.queryService.getMeasureSetDistinctValues(this.hierarchyMeasures, this.loadDistinctValuesStore, this);
+    },
+
+    loadDistinctValuesStore : function(rows) {
+
+        var fieldNames = Ext.Array.pluck(Ext.Array.pluck(this.hierarchyMeasures, 'data'), 'name');
+        var uniqueValuesStore = Ext.create('Ext.data.Store', {
+            fields: fieldNames,
+            data: rows
+        });
+
+        var checkboxItems = [];
+        Ext.each(this.hierarchyMeasures, function(measure){
+            checkboxItems.push({
+                xtype: 'component',
+                cls: 'hierarchy-title',
+                html: Ext.String.htmlEncode(measure.get('label'))
+            });
+        });
+
+        // create checkbox item tree by adding placeholder space in parent columns
+        var prevRecord = null;
+        Ext.each(uniqueValuesStore.getRange(), function(record){
+            for (var i = 0; i < fieldNames.length; i++)
+            {
+                if (prevRecord == null || !this.hierarchicalRecordEqual(prevRecord, record, fieldNames, i))
+                {
+                    // add line above checkbox for parent columns or first row in last column for a given group
+                    var addCls = '';
+                    if (prevRecord == null || i < fieldNames.length - 1 || !this.hierarchicalRecordEqual(prevRecord, record, fieldNames, i-1)) {
+                        addCls = 'hierarchy-line';
+                    }
+
+                    checkboxItems.push({
+                        xtype: 'checkboxfield',
+                        cls: 'checkbox2 hierarchy-check ' + addCls,
+                        name: fieldNames[i] + '-check',
+                        boxLabel: record.get(fieldNames[i]) || '[Blank]',
+                        inputValue: record.get(fieldNames[i]),
+                        checked: true
+                    });
+                }
+                else {
+                    checkboxItems.push({
+                        xtype: 'component',
+                        cls: 'hierarchy-spacer'
+                    });
+                }
+            }
+
+            prevRecord = record;
+        }, this);
+
+        this.add(Ext.create('Ext.form.CheckboxGroup', {
+            columns: this.hierarchyMeasures.length,
+            items: checkboxItems
+        }));
+    },
+
+    hierarchicalRecordEqual : function(prev, current, fieldNames, lastFieldIndex) {
+        for (var i = 0; i <= lastFieldIndex; i++) {
+            if (prev.get(fieldNames[i]) != current.get(fieldNames[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 });

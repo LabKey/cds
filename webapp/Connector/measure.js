@@ -40,8 +40,6 @@ Ext.define('Connector.measure.Configuration', {
                     dimensions: [
                         'study_NAb_assay_identifier',
                         'study_NAb_antigen_neutralization_tier',
-                            'study_NAb_antigen_isolate_clade',
-                            'study_NAb_antigen_isolate_name',
                         'study_NAb_specimen_type'
                         //'study_NAb_lab'
                     ]
@@ -84,8 +82,8 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false}
                 },
                 'study_ICS_antigen_panel': {
-                    requiresSelection: true
-                    //hierarchicalSelectionChild: 'study_ICS_antigen_subpanel'
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: 'study_ICS_antigen_subpanel'
                 },
                 // study|NAb
                 'study_NAb_assay_identifier': {
@@ -94,11 +92,11 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false, value: 'TZM-bl'}
                 },
                 'study_NAb_antigen_neutralization_tier': {
-                    requiresSelection: true
-                    //hierarchicalSelectionChild: 'study_NAb_antigen_isolate_clade'
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: 'study_NAb_antigen_isolate_clade'
                 },
                 'study_NAb_antigen_isolate_clade': {
-                    //hierarchicalSelectionChild: 'study_NAb_antigen_isolate_name'
+                    hierarchicalSelectionChild: 'study_NAb_antigen_isolate_name'
                 },
                 // study|BAMA
                 'study_BAMA_analyte': {
@@ -121,8 +119,8 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false}
                 },
                 'study_ELISPOT_antigen': {
-                    requiresSelection: true
-                    //hierarchicalSelectionChild: 'study_ELISPOT_antigen_subpanel'
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: 'study_ELISPOT_antigen_subpanel'
                 }
             },
 

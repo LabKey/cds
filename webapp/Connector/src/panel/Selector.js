@@ -263,7 +263,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     showSources : function() {
-        this.toggleDisplay(false);
+        this.toggleDisplay('source');
 
         this.setHeaderData({
             title: this.headerTitle,
@@ -322,13 +322,13 @@ Ext.define('Connector.panel.Selector', {
             return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
         });
 
-        this.toggleDisplay(true);
+        this.toggleDisplay('measure');
 
         var me = this;
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
-            sectionTitle: source.get('queryLabel') || source.get('queryName'),
+            sectionTitle: this.getSourceTitle(source, false),
             action: function() {
                 if (me.advancedPane) {
                     me.advancedPane.hide();
@@ -344,34 +344,103 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        if (activeMeasure) {
-            Ext.defer(function() {
-                this.getMeasurePane().getSelectionModel().select(activeMeasure);
-            }, 500, this);
+        var selModel = this.getMeasurePane().getSelectionModel();
+        if (selModel.hasSelection() && selModel.getLastSelected() === activeMeasure) {
+            // already have selected measure, just need to show the advanced options pane
+            this.slideAdvancedOptionsPane();
+        }
+        else if (activeMeasure) {
+            Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
         }
         else {
             // default to selecting the first variable for the given source
-            Ext.defer(function() {
-                this.getMeasurePane().getSelectionModel().select(0);
-            }, 100, this);        }
+            Ext.defer(function() { selModel.select(0); }, 100, this);
+        }
+    },
+
+    getHierarchySelectionPane : function() {
+        if (!this.hierarchyPane) {
+            this.hierarchyPane = Ext.create('Ext.panel.Panel', {
+                border: false,
+                hidden: true,
+                flex: 1,
+                autoScroll: true
+            });
+
+            this.insert(this.items.length - 2, this.hierarchyPane);
+        }
+
+        return this.hierarchyPane;
+    },
+
+    showHierarchicalSelection : function(dimension) {
+        var source = this.getSourceForMeasure(this.activeMeasure);
+
+        this.getHierarchySelectionPane().removeAll();
+        this.getHierarchySelectionPane().add(Ext.create('Connector.panel.HierarchicalSelectionPanel', {
+            dimension: dimension
+        }));
+
+        this.toggleDisplay('hierarchy');
+
+        var me = this;
+        this.setHeaderData({
+            title: this.headerTitle,
+            navText: this.getSourceTitle(source, true),
+            sectionTitle: this.activeMeasure.get('label'),
+            action: function() { me.hierarchicalSelectionDone(); },
+            showCount: false
+        });
+    },
+
+    hierarchicalSelectionDone : function() {
+        var me = this;
+        this.getHierarchySelectionPane().getEl().slideOut('r', {
+            duration: 250,
+            callback: function() {
+                me.updateSelectorPane();
+            }
+        });
+    },
+
+    getSourceTitle : function(source, abbr) {
+        var title = source.get('queryLabel');
+
+        if (abbr) {
+            title = source.get('queryName');
+        }
+        else if (source.get('category') == 'Assays') {
+            title = source.get('queryName') + ' (' + title + ')';
+        }
+
+        return title;
     },
 
     toggleRemoveVariableButton : function(show) {
         this.getButton('remove-link').setVisible(show);
     },
 
-    toggleDisplay : function(onMeasurePane) {
+    toggleDisplay : function(type) {
         if (this.advancedPane) {
             this.advancedPane.hide();
         }
 
         this.getLoaderPane().hide();
-        this.getMeasurePane().setVisible(onMeasurePane);
-        this.getSourcePane().setVisible(!onMeasurePane);
 
-        this.getButton('cancel-link').setVisible(onMeasurePane);
-        this.getButton('cancel-button').setVisible(!onMeasurePane);
-        this.getButton('select-button').setVisible(onMeasurePane);
+        // source pane with cancel button
+        this.getSourcePane().setVisible(type == 'source');
+        this.getButton('cancel-button').setVisible(type == 'source');
+
+        // measure pane with select button
+        this.getMeasurePane().setVisible(type == 'measure');
+        this.getButton('select-button').setVisible(type == 'measure');
+
+        // hierarchical selection pane with done button
+        this.getHierarchySelectionPane().setVisible(type == 'hierarchy');
+        this.getButton('done-button').setVisible(type == 'hierarchy');
+
+        // and finally, the cancel link is on both the measure and hierarchical selection pane
+        this.getButton('cancel-link').setVisible(type == 'measure' || type == 'hierarchy');
     },
 
     getAdvancedPane : function() {
@@ -422,7 +491,25 @@ Ext.define('Connector.panel.Selector', {
                 this.getAdvancedPane().add(
                     Ext.create('Connector.component.AdvancedOptionDimension', {
                         dimension: dimension,
-                        value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimension.get('name')] : undefined
+                        value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimension.get('name')] : undefined,
+                        listeners: {
+                            scope: this,
+                            click: function(cmp, isHierarchical) {
+                                if (isHierarchical) {
+                                    var me = this;
+                                    if (me.advancedPane) {
+                                        me.advancedPane.hide();
+                                    }
+
+                                    me.measurePane.getEl().slideOut('l', {
+                                        duration: 250,
+                                        callback: function() {
+                                            me.showHierarchicalSelection(cmp.dimension);
+                                        }
+                                    });
+                                }
+                            }
+                        }
                     })
                 );
             }
@@ -482,16 +569,16 @@ Ext.define('Connector.panel.Selector', {
             this.bindTimeOptions();
             this.bindScale();
 
-            this.slideAdvancedOptionsPane(this.getAdvancedPane().items.items.length > 0);
+            this.slideAdvancedOptionsPane();
 
             this.initialized = true;
         }
     },
 
-    slideAdvancedOptionsPane : function(hasOptions) {
+    slideAdvancedOptionsPane : function() {
         // slide in our out the panel depending on if we have options to show or not
         var pane = this.getAdvancedPane();
-        if (hasOptions)
+        if (pane.items.items.length > 0)
         {
             if (pane.isHidden())
             {
@@ -642,6 +729,14 @@ Ext.define('Connector.panel.Selector', {
                     text: 'Cancel',
                     handler: function() {
                         this.fireEvent('cancel');
+                    },
+                    scope: this
+                },{
+                    itemId: 'done-button',
+                    xtype: 'button',
+                    text: 'Done',
+                    handler: function() {
+                        this.hierarchicalSelectionDone();
                     },
                     scope: this
                 },{
