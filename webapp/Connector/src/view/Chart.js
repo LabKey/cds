@@ -1196,8 +1196,6 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        this.plot = new LABKEY.vis.Plot(plotConfig);
-        layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
         var me = this;
         var measures = this.measures; // hoisted for brushend.
         var requiresPivot = Connector.model.ChartData.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
@@ -1226,6 +1224,15 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
+        // If using color variables sync color and shape with yGutter plot if it exists
+        if (this.measures[2] && this.requireYGutter && this.yGutterPlot) {
+            plotConfig.scales.color = this.yGutterPlot.layers[0].geom.colorScale;
+            plotConfig.scales.shape = this.yGutterPlot.layers[0].geom.shapeScale;
+        }
+
+        this.plot = new LABKEY.vis.Plot(plotConfig);
+        layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
+
         if (this.plot) {
             this.plot.addLayer(layer);
             try {
@@ -1249,6 +1256,11 @@ Ext.define('Connector.view.Chart', {
         }
 
         if(this.requireXGutter && gutterXPlotConfig) {
+            // If using color variables sync color and shape with yGutter plot if it exists
+            if (this.measures[2] && this.plot) {
+                gutterXPlotConfig.scales.color = this.plot.layers[0].geom.colorScale;
+                gutterXPlotConfig.scales.shape = this.plot.layers[0].geom.shapeScale;
+            }
             this.xGutterPlot = new LABKEY.vis.Plot(gutterXPlotConfig);
             layerScope.xGutterPlot = this.xGutterPlot;
             if (this.xGutterPlot) {
