@@ -153,11 +153,16 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.Study',
                 detailModel: 'Connector.app.model.Study',
                 detailView: 'Connector.app.view.Study',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
                         type: 'studyheader'
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Title'
@@ -165,7 +170,7 @@ Ext4.define('Connector.cube.Configuration', {
                         modelData: {
                             text: 'Title'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Description'
@@ -173,7 +178,7 @@ Ext4.define('Connector.cube.Configuration', {
                         modelData: {
                             text: 'Description'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'CDS editorial'
@@ -181,7 +186,7 @@ Ext4.define('Connector.cube.Configuration', {
                         modelData: {
                             text: 'Editorial'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Study objectives'
@@ -189,7 +194,7 @@ Ext4.define('Connector.cube.Configuration', {
                         modelData: {
                             text: 'Objectives'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Population'
@@ -197,22 +202,22 @@ Ext4.define('Connector.cube.Configuration', {
                         modelData: {
                             text: 'StudyPopulation'
                         }
-                    }, {
+                    },{
                         type: 'studysites',
                         staticData: {
                             title: 'Sites'
                         }
-                    }], [{
+                    }],[{
+                        type: 'contactcds',
                         staticData: {
                             title: 'Contact information'
-                        },
-                        type: 'contactcds'
-                    }, {
+                        }
+                    },{
                         type: 'studyproducts',
                         staticData: {
                             title: 'Products'
                         }
-                    }, {
+                    },{
                         type: 'studydatasets',
                         staticData: {
                             title: "Lab & clinical data"
@@ -229,6 +234,14 @@ Ext4.define('Connector.cube.Configuration', {
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
                 detailView: 'Connector.app.view.StudyProducts',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                },{
+                    url: 'variables',
+                    label: 'Study Variables'
+                }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
@@ -263,6 +276,14 @@ Ext4.define('Connector.cube.Configuration', {
                     //        title: 'Studies where used'
                     //    }
                     //}]]
+                },{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'contactcds',
+                        staticData: {
+                            title: 'Contact information'
+                        }
+                    }]]
                 }]
             },{
                 uniqueName: '[Assay]',

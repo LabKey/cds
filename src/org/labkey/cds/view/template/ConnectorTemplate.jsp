@@ -18,7 +18,6 @@
 <%@ page import="org.labkey.api.settings.AppProps" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.api.view.HttpView" %>
-<%@ page import="org.labkey.api.view.template.ClientDependency" %>
 <%@ page import="org.labkey.api.view.template.PrintTemplate" %>
 <%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
@@ -27,7 +26,7 @@
     String contextPath = request.getContextPath();
     String serverHash = PageFlowUtil.getServerSessionHash();
     String devModeParam = getActionURL().getParameter("devMode");
-    Boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
+    boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
 
     String appPath = contextPath + "/Connector";
     String sdkPath = contextPath + "/ext-4.2.1";
@@ -49,7 +48,7 @@
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
-    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
     <script type="text/javascript">
         var Connector = {
             studyContext: {

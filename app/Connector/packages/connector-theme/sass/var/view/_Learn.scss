@@ -92,7 +92,7 @@ div.learncolumnheader {
   padding-bottom: 12px;
   margin-left: $pageLeftPadding;
   margin-right: $pageLeftPadding;
-  border-bottom: 1px solid $heat-scale-4;
+  border-bottom: 2px solid $heat-scale-4;
   overflow: auto;
   background-color: #fff;
 }
@@ -114,12 +114,20 @@ h1.lhdv {
 
   &.active {
     color: $secondary-text-color;
+
+    &:hover {
+      cursor: default;
+    }
   }
 }
 
 .headerlock {
   position: absolute;
   top: 0;
+}
+
+.pageheader {
+  border-bottom: 2px solid $heat-scale-4;
 }
 
 div.detail-wrapper {

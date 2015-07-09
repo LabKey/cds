@@ -25,180 +25,94 @@
 // Study, a single Assay or a single Lab etc.
 Ext.define('Connector.view.PageHeader', {
 
-    extend: 'Ext.container.Container',
+    extend: 'Ext.Component',
 
-    height: 160,
+    alias: 'widget.learnpageheader',
 
-    requires: ['Connector.button.Image'],
+    cls: 'pageheader learnheader header-container-slim',
 
-    layout: {
-        type : 'vbox',
-        align: 'stretch'
-    },
+    title: '&lt;Title&gt;',
 
-    cls: 'pageheader learnheader header-container',
+    dimension: undefined,
 
-    defaults: {
-        ui: 'custom'
+    model: undefined,
+
+    height: 100,
+
+    activeTab: 0,
+
+    activeTabCls: 'active',
+
+    flex: 1,
+
+    constructor : function(config) {
+        this.callParent([config]);
+
+        this.addEvents('upclick', 'tabselect');
     },
 
     initComponent : function() {
 
-        var data = this.data;
-        this.lockPixels = data.lockPixels;
-        var buttonConfig = data.buttons;
+        this.renderTpl = new Ext.XTemplate(
+            '<div>',
+                '<div class="learn-up titlepanel interactive inline">',
+                    '<span class="iarrow">&nbsp;</span>{upText:htmlEncode}',
+                '</div>',
+                '<h2 class="inline">{title:htmlEncode}</h2>',
+                '<div class="dim-selector">',
+                    '<tpl for="tabs">',
+                        '<h1 class="lhdv">{label:htmlEncode}</h1>',
+                    '</tpl>',
+                '</div>',
+            '</div>'
+        );
 
-        if (buttonConfig) {
-            var buttons = [];
+        this.tabs = Ext.isArray(this.dimension.itemDetailTabs) ? this.dimension.itemDetailTabs : undefined;
 
-            if (buttonConfig.back) {
-                buttons.push({
-                    xtype: 'button',
-                    html: '<svg width="12" height="10" fill="#9b0d96">'+
-                        '<path d="M0 6 L5 10 L5 2 Z" />'+
-                    '</svg>back',
-                    cls: '',
-                    itemId: 'back',
-                    style: 'margin: 4px 2px 0 23px;'
-                });
-            }
-            
-            if (buttonConfig.up) {
-                buttons.push({
-                    xtype: 'button',
-                    html: '<svg width="12" height="10" fill="#9b0d96">'+
-                        '<path d="M0 6 L5 10 L5 2 Z" />'+
-                    '</svg>'+buttonConfig.up,
-                    cls: '',
-                    itemId: 'up',
-                    style: 'margin: 4px 2px 0 23px;'
-                });
-            }
-            
-            if (buttonConfig.group && buttonConfig.group.length) {
-                if (buttonConfig.back || buttonConfig.up) {
-                    buttons.push({
-                        xtype: 'tbspacer',
-                        width: 50
-                    })
-                }
-                var doBind = data.scope && !buttonConfig.handlersBound;
-                buttonConfig.handlersBound = true;
-                var haveVisibleButtons = false;
-                Ext.each(buttonConfig.group, function(button) {
-                    if (!button.hidden) {
-                        haveVisibleButtons = true;
-                    }
-                });
+        this.renderData = {
+            title: this.title,
+            upText: this.dimension.pluralName,
+            tabs: this.tabs
+        };
 
-                Ext.each(buttonConfig.group, function(button) {
-                    if (button.groupLabel && haveVisibleButtons) {
-                        buttons.push({
-                            xtype: 'label',
-                            text: button.groupLabel
-                        })
-                    }
-                    if (doBind && button.handler) {
-                        button.handler = Ext.bind(button.handler, data.scope, data.handlerParams, true);
-                    }
-                    buttons.push({
-                        xtype: 'button',
-                        text: button.buttonLabel,
-                        itemId: button.itemId,
-                        handler: button.handler,
-                        hidden: button.hidden || false,
-                        // TODO: Move to button class?
-                        style: 'margin: 4px 2px 0 23px;',
-                        scope: data.scope
-                    })
-                });
-            }
-        }
-
-        this.items = [];
-
-        if (!Ext.isEmpty(data.label)) {
-            this.items.push({
-                xtype: 'actiontitle',
-                html: data.label
-            });
-        }
-
-        if (!Ext.isEmpty(data.title)) {
-            this.items.push({
-                xtype: 'box',
-                autoEl: {
-                    tag: 'h1',
-                    html: data.title
-                }
-            });
-        }
-
-        this.items.push({
-            xtype: 'box',
-            flex: 1
-        });
-
-        if (buttons) {
-            this.items.push({
-                xtype: 'toolbar',
-                height: 38,
-                ui: 'footer',
-                items: buttons
-            })
-        }
-
-        if (!Ext.isEmpty(data.tabs)) {
-            var tabItems = [{ xtype: 'box', flex: 1 }];
-            Ext.each(data.tabs, function(tab, i) {
-                tabItems.push({
-                    xtype: 'box',
-                    cls: 'tabbutton',
-                    html: tab + '<svg class="arrow" width="16" height="8" fill="#ffffff"><path stroke="#ccc" d="M0 8 L8 0 L16 8"></path></svg>',
-                    listeners: {
-                        click: function() {
-                            if (Ext.isFunction(this.tabClickCallback)) {
-                                this.tabClickCallback.call(this, i);
-                            }
-                        },
-                        element: 'el',
-                        scope: this
-                    }
-                })
-            }, this);
-            tabItems.push({ xtype: 'box', flex: 1 });
-
-            this.items.push({
-                xtype: 'container',
-                layout: {
-                    type : 'hbox',
-                    align: 'stretch'
-                },
-                height: 32,
-                items: tabItems
-            });
-        }
-        else {
-            this.items.push({
-                xtype: 'box',
-                height: 32
-            });          
-        }
+        this.renderSelectors = {
+            upEl: 'div.learn-up',
+            tabParentEl: 'div.dim-selector'
+        };
 
         this.callParent();
 
-        this.tabButtons = this.query("[cls~=tabbutton]");
+        this.on('render', function(cmp) {
+
+            var headers = cmp.tabParentEl.query('.lhdv'),
+                tabEls = [], el;
+
+            Ext.each(headers, function(h, i) {
+                el = Ext.get(h);
+                tabEls.push(el);
+                el.on('click', function(evt, el) {
+                    this.fireEvent('tabselect', this.dimension, this.model, this.tabs[i]);
+                }, this);
+
+                if (i === this.activeTab) {
+                    el.addCls(this.activeTabCls);
+                }
+            }, this);
+
+            cmp.tabEls = tabEls;
+
+        }, this);
+
+        this.on('afterrender', function(cmp) {
+            cmp.upEl.on('click', function() {
+                this.fireEvent('upclick', this.dimension);
+            }, this);
+        }, this);
     },
 
     selectTab : function(tabIndex) {
-        var cls = 'selected';
-        Ext.each(this.tabButtons, function(btn, i) {
-            i === tabIndex ? btn.addCls(cls) : btn.removeCls(cls);
-        });
-        this.doLayout();
-    },
-
-    onTabClick : function(callback) {
-        this.tabClickCallback = callback;
+        Ext.each(this.tabEls, function(tab, i) {
+            i === tabIndex ? tab.addCls(this.activeTabCls) : tab.removeCls(this.activeTabCls);
+        }, this);
     }
 });

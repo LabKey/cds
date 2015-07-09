@@ -10,15 +10,28 @@ Ext.define('Connector.component.ActionTitle', {
 
     text: 'Action Title!',
 
+    cls: 'titlepanel',
+
+    colorCls: 'secondary',
+
+    back: false,
+
     initComponent : function() {
-        this.autoEl = {
-            tag: 'div',
-            cls: 'titlepanel',
-            children: [{
-                tag: 'span',
-                html: this.text
-            }]
+
+        var template = '{text:htmlEncode}';
+
+        if (this.back) {
+            template = '<span class="iarrow">&nbsp;</span>' + template;
+            this.colorCls = 'interactive';
+        }
+
+        this.tpl = new Ext.XTemplate(template);
+        this.data = {
+            text: this.text
         };
+
+        this.addCls(this.colorCls);
+
         this.callParent();
     }
 });

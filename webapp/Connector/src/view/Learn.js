@@ -18,6 +18,7 @@ Ext.define('Connector.view.Learn', {
     initComponent : function() {
 
         this.headerViews = {};
+        this.listViews = {};
 
         // Multiple headers are added here but they are initially set to hidden. When the page
         // url changes the headers will be updated and made visible based on the type of view -
@@ -51,8 +52,10 @@ Ext.define('Connector.view.Learn', {
 
     onSearchFilterChange : function(filter) {
         this.searchFilter = filter;
-        var view = this.dataViews[0];
-        this.loadData(view.dimension, view.getStore());
+        if (this.activeListing) {
+            var view = this.activeListing;
+            this.loadData(view.dimension, view.getStore());
+        }
     },
 
     dimensionDataLoaded : function(dimension, store) {
@@ -109,60 +112,26 @@ Ext.define('Connector.view.Learn', {
         this.getHeader().setVisible(id ? false : true);
     },
 
-    loadDataView : function(dimension, id, animate) {
+    loadDataView : function(dimension, id, urlTab) {
 
         this.setHeader(dimension, id);
-        if (this.dataViews && this.dataViews.length) {
-            var dataViews = this.dataViews,
-                views = dataViews.length,
-                fadedViews = 0;
 
-            delete this.dataViews;
-
-            Ext.each(dataViews, function(dataView) {
-                var el = dataView.getEl();
-                if (animate && el) {
-                    el.fadeOut({
-                        callback: function() {
-                            if (++fadedViews === views) {
-                                this.remove(dataView);
-                                this.completeLoad(dimension, id, animate);
-                            }
-                        },
-                        scope: this
-                    });
-                }
-                else {
-                    this.remove(dataView);
-                    this.completeLoad(dimension, id, animate);
-                }            
-            }, this)
-        }
-        else {
-            this.completeLoad(dimension, id, animate);
-        }
-    },
-
-    headerLabel : function(dimension,model) {
-        var content = '';
-        if (dimension.singularName) {
-            content += dimension.singularName;
-            if (model) {
-                content += ': ';
+        // do not hide the header
+        if (this.items.length > 1) {
+            for (var i=1; i < this.items.items.length; i++) {
+                this.items.items[i].hide();
             }
-            content = '<h1 class="lhdv">' + content + '</h1>';
-        }
-        if (model) {
-            content += '<h1>' + model.get(model.labelProperty ? model.labelProperty : 'label') + '</h1>';
         }
 
-        return content;
+        this.completeLoad(dimension, id, urlTab);
     },
 
-    completeLoad : function(dimension, id, animate) {
+    completeLoad : function(dimension, id, urlTab) {
 
         if (Ext.isDefined(dimension)) {
             var store, _id = id;
+
+            // If we have an id we are loading the details for that id
             if (Ext.isDefined(id) && dimension.itemDetail) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
 
@@ -174,32 +143,45 @@ Ext.define('Connector.view.Learn', {
                 var model = store.getById(_id);
 
                 if (model) {
-                    this.loadModel(model, dimension);
+                    this.loadModel(model, dimension, urlTab);
                 }
                 else {
                     store.on('load', function(s) {
-                        this.loadModel(s.getById(_id), dimension);
+                        this.loadModel(s.getById(_id), dimension, urlTab);
                     }, this, {single: true});
                     this.loadData(dimension, store);
                 }
             }
             else if (dimension.detailModel && dimension.detailView) {
-                var view = Ext.create(dimension.detailView, {
-                    dimension: dimension,
-                    store: StoreCache.getStore(dimension.detailCollection),
-                    plugins: ['learnheaderlock'],
-                    listeners: {
-                        itemclick: function(view, model) {
-                            this.fireEvent('selectitem', model);
-                        },
-                        scope: this
-                    }
-                });
+                // otherwise, show the listing
+                var listId = 'learn-list-' + dimension.uniqueName;
 
-                this.dataViews = [view];
+                // listView -- cache hit
+                if (this.listViews[listId]) {
+                    this.getComponent(listId).show();
+                }
+                else {
+                    // listView -- cache miss, create the view
+                    store = StoreCache.getStore(dimension.detailCollection);
 
-                this.add(view);
-                this.loadData(dimension, view.getStore());
+                    this.add(Ext.create(dimension.detailView, {
+                        itemId: listId,
+                        dimension: dimension,
+                        store: store,
+                        //plugins: ['learnheaderlock'],
+                        listeners: {
+                            itemclick: function(view, model) {
+                                this.fireEvent('selectitem', model);
+                            },
+                            scope: this
+                        }
+                    }));
+
+                    this.listViews[listId] = true;
+                    this.loadData(dimension, store);
+                }
+
+                this.activeListing = this.getComponent(listId);
             }
             else {
                 console.warn('Dimension \"' + dimension.getUniqueName() + '\" is marked as \'supportsDetails\'. It must provide itemDetail or detailModel and detailView configurations.');
@@ -216,7 +198,7 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
-    loadModel : function(model, dimension) {
+    loadModel : function(model, dimension, urlTab) {
         var tabViews = [];
         Ext.each(dimension.itemDetail, function(item) {
             if (item.view) {
@@ -227,26 +209,32 @@ Ext.define('Connector.view.Learn', {
             }
         });
 
+        var activeTab = 0;
+        if (!Ext.isEmpty(dimension.itemDetailTabs)) {
+            Ext.each(dimension.itemDetailTabs, function(tab, i) {
+                if (tab.url === urlTab) {
+                    activeTab = i;
+                    return false;
+                }
+                else if (tab.isDefault === true) {
+                    activeTab = i;
+                }
+            });
+        }
+
         var pageView = Ext.create('Connector.view.Page', {
             pageID: 'learnDetail' + dimension.singularName,
             contentViews: tabViews,
+            initialSelectedTab: activeTab,
             header: Ext.create('Connector.view.PageHeader', {
-                data: {
-                    title: this.headerLabel(dimension,model),
-                    buttons: {
-                        back: true,
-                        up: dimension.pluralName.toLowerCase()
-                    },
-                    tabs: dimension.itemDetailTabs,
-                    handlerParams: [dimension, model],
-                    lockPixels: 70,
-                    scope: this
-                }
+                title: model.get(model.labelProperty ? model.labelProperty : 'label'),
+                model: model,
+                dimension: dimension,
+                activeTab: activeTab
             })
         });
 
         this.add(pageView);
-        this.dataViews = [pageView];
     },
 
     getDimensions : function() {
@@ -258,6 +246,7 @@ Ext.define('Connector.view.Learn', {
         this.getHeader().setDimensions(dimensions);
     },
 
+    // TODO: Move this to cube.js or hang the search fields on the model definitions themselves
     viewByDimension : {
         'Assay' : 'Assay',
         'Study' : 'Study',
@@ -265,12 +254,12 @@ Ext.define('Connector.view.Learn', {
         'Study product' : 'StudyProducts'
     },
 
-    selectDimension : function(dimension, id, animate) {
+    selectDimension : function(dimension, id, urlTab) {
         this.searchFilter = null;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
-            this.loadDataView(dimension, id, animate);
+            this.loadDataView(dimension, id, urlTab);
         }
         else {
             this.getHeader().on('selectdimension', this.loadDataView, this, {single: true});
@@ -359,7 +348,7 @@ Ext.define('Connector.view.LearnHeader', {
     },
 
     selectDimension : function(dimUniqueName, id, dimension) {
-        if (this.dimensions && this.dimensions.length > 0) {
+        if (!Ext.isEmpty(this.dimensions)) {
             this.getDataView().selectDimension(dimUniqueName);
         }
         var search = this.getSearchField();

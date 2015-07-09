@@ -1408,7 +1408,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.notfound"
   ],
   "Connector.view.Page": [],
-  "Connector.view.PageHeader": [],
+  "Connector.view.PageHeader": [
+    "widget.learnpageheader"
+  ],
   "Connector.view.PlotPane": [],
   "Connector.view.Popup": [],
   "Connector.view.Selection": [

@@ -23,21 +23,7 @@ Ext.define('Connector.view.Page', {
 
     initialSelectedTab: 0,
 
-	getHeader : function() {
-		return this.getComponent('northRegion');
-	},
-
-    selectTab : function(tab) {
-        this.state.selectedTab = tab;
-        Ext.each(this.contentViews, function(view, i) {
-            view.setVisible(i == tab);
-        }, this);
-        this.header.selectTab(tab);
-    },
-
     initComponent : function() {
-        this.selectTab = Ext.bind(this.selectTab, this);
-
         // Initialize page state
         if (this.pageID) {
             // If a pageID is provided the state will be cached and shared with future instances
@@ -64,15 +50,25 @@ Ext.define('Connector.view.Page', {
 
         this.callParent();
 
-        this.header.onTabClick(this.selectTab);
-
-        this.selectTab(this.state.selectedTab);
+        this.selectTab(this.initialSelectedTab);
 
         if (!Ext.isEmpty(this.contentViews)) {
             this.getComponent('centerRegion').add(this.contentViews);
         }
 
         this.getHeader().add(this.header);
+    },
+
+    getHeader : function() {
+        return this.getComponent('northRegion');
+    },
+
+    selectTab : function(tab) {
+        this.state.selectedTab = tab;
+        Ext.each(this.contentViews, function(view, i) {
+            view.setVisible(i == tab);
+        }, this);
+        this.header.selectTab(tab);
     }
 });
 

@@ -267,6 +267,19 @@ svg a {
   }
 }
 
+.interactive {
+  color: $interactive-color;
+
+  &:hover {
+    opacity: 0.9;
+    cursor: pointer;
+  }
+}
+
+.secondary {
+  color: $secondary-text-color;
+}
+
 .educational-titlepanel {
   padding-bottom: 34px;
   padding-top: 31px;
@@ -289,13 +302,13 @@ svg a {
 .paging-arrow-svg-back {
   height: 8px !important;
   width: 8px !important;
-  margin: 3px 0px 0px 3px;
+  margin: 3px 0 0 3px;
 }
 
 .paging-arrow-svg-next {
   height: 8px !important;
   width: 8px !important;
-  margin: 3px 0px 0px 3px;
+  margin: 3px 0 0 3px;
 }
 
 .paging-back-button {
@@ -307,27 +320,40 @@ svg a {
 }
 
 .page-button-container .x-box-inner {
-  height: 30px !important
+  height: 30px !important;
 }
 
 .x-grid-view {
   padding-bottom: 70px;
 }
 
+.inline {
+  display: inline-block;
+}
+
 .titlepanel {
   font-size: 16px;
   line-height: 16px;
+  font-family: $bodycaps-font;
+  font-weight: bold;
+  text-transform: none;
+  margin-right: 10px;
+}
 
-  span {
-    font-family: $bodycaps-font;
-    font-weight: bold;
-    color: $secondary-text-color;
-    text-transform: none;
-  }
+.iarrow {
+  background-image: url(images/navigatebackward.svg);
+  background-repeat: no-repeat;
+  width: 14px;
+  vertical-align: bottom;
+  display: inline-block;
 }
 
 .header-container {
-  padding: $pageLeftPadding $pageLeftPadding 0 $pageLeftPadding;
+  margin: $pageLeftPadding $pageLeftPadding 0 $pageLeftPadding;
+
+  &-slim {
+    margin: 14px $pageLeftPadding 0 $pageLeftPadding;
+  }
 }
 
 .iScroll {

@@ -37,12 +37,12 @@ Ext.define('Connector.controller.Learn', {
             }
         });
 
-        this.control('#up', {
-            click : function() {
-                if (this.dimension.name) {
-                    this.getViewManager().changeView('learn', 'learn', [this.dimension.name]);
-                }
+        this.control('learnpageheader', {
+            upclick : function(dim) {
+                // TODO: It would nice if we could go 'back' when we know the previous page was 'learn/learn/[dim.name]'
+                this.getViewManager().changeView('learn', 'learn', [dim.name]);
             },
+            tabselect: this.onSelectItemTab,
             scope: this
         });
 
@@ -72,7 +72,8 @@ Ext.define('Connector.controller.Learn', {
     parseContext : function(ctx) {
         this.context = {
             dimension: ctx[0],
-            id: ctx[1]
+            id: ctx[1],
+            tab: ctx[2]
         };
         return this.context;
     },
@@ -139,6 +140,7 @@ Ext.define('Connector.controller.Learn', {
             if (v) {
                 var dimensionName = context.dimension,
                     id = context.id,
+                    tab = context.tab,
                     dim;
 
                 if (dimensionName) {
@@ -152,12 +154,11 @@ Ext.define('Connector.controller.Learn', {
                     //
                     this.dimension = dim;
                     this.updateLock = true;
-                    v.selectDimension(dim, id, this.innerTransition);
-                    this.innerTransition = false;
+                    v.selectDimension(dim, id, tab);
                     this.updateLock = false;
                 }
                 else {
-                    v.selectDimension(this.dimension, null, this.innerTransition);
+                    v.selectDimension(this.dimension);
                 }
             }
             else {
@@ -175,6 +176,10 @@ Ext.define('Connector.controller.Learn', {
             var context = [dimension.get('name')];
             if (this.context.id) {
                 context.push(this.context.id);
+
+                if (this.context.tab) {
+                    context.push(this.context.tab);
+                }
             }
 
             //
@@ -205,5 +210,9 @@ Ext.define('Connector.controller.Learn', {
         } else {
             console.warn('No dimension selected');
         }
+    },
+
+    onSelectItemTab : function(dim, item, itemDetailTab) {
+        this.getViewManager().changeView('learn', 'learn', [dim.name, item.getId(), itemDetailTab.url]);
     }
 });
