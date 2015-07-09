@@ -853,7 +853,7 @@ Ext.define('Connector.view.Chart', {
                 gutterXAes.shape = function(row) {return row.color};
             }
             var gutterXScales = {
-                xTop: {scaleType: 'continuous', domain: chartData.getXDomain()},
+                xTop: {scaleType: 'continuous', domain: chartData.getXDomain(), tickFormat: function() {return '';}},
                 yLeft: {scaleType: 'discrete', tickFormat: function() {return '';}}
             };
 
