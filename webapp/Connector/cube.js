@@ -161,14 +161,17 @@ Ext4.define('Connector.cube.Configuration', {
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
-                        type: 'studyheader'
+                        type: 'studyheader',
+                        staticData: {
+                            title: 'Study information'
+                        }
                     },{
                         type: 'text',
                         staticData: {
                             title: 'Title'
                         },
                         modelData: {
-                            text: 'Title'
+                            text: 'title'
                         }
                     },{
                         type: 'text',
@@ -176,7 +179,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Description'
                         },
                         modelData: {
-                            text: 'Description'
+                            text: 'description'
                         }
                     },{
                         type: 'text',
@@ -184,7 +187,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'CDS editorial'
                         },
                         modelData: {
-                            text: 'Editorial'
+                            text: 'context'
                         }
                     },{
                         type: 'text',
@@ -192,7 +195,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Study objectives'
                         },
                         modelData: {
-                            text: 'Objectives'
+                            text: 'objectives'
                         }
                     },{
                         type: 'text',
@@ -200,7 +203,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Population'
                         },
                         modelData: {
-                            text: 'StudyPopulation'
+                            text: 'population'
                         }
                     },{
                         type: 'studysites',
@@ -238,21 +241,26 @@ Ext4.define('Connector.cube.Configuration', {
                     url: 'overview',
                     isDefault: true,
                     label: 'Overview'
-                },{
-                    url: 'variables',
-                    label: 'Study Variables'
                 }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
-                        type: 'productheader'
+                        type: 'productheader',
+                        staticData: {
+                            title: 'Product information'
+                        }
                     },{
                         type: 'text',
                         staticData: {
                             title: 'Description'
                         },
                         modelData: {
-                            text: 'Description'
+                            text: 'product_description'
+                        }
+                    }],[{
+                        type: 'productstudies',
+                        staticData: {
+                            title: 'Studies using this product'
                         }
                     }]]
                     //},{
@@ -270,20 +278,7 @@ Ext4.define('Connector.cube.Configuration', {
                     //    staticData: {
                     //        title: 'Used with other products'
                     //    }
-                    //},{
-                    //    type: 'productstudies',
-                    //    staticData: {
-                    //        title: 'Studies where used'
-                    //    }
                     //}]]
-                },{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'contactcds',
-                        staticData: {
-                            title: 'Contact information'
-                        }
-                    }]]
                 }]
             },{
                 uniqueName: '[Assay]',

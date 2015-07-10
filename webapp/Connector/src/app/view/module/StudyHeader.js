@@ -11,6 +11,7 @@ Ext.define('Connector.view.module.StudyHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
+            Connector.constant.Templates.module.title,
             '<p class="item-row">Network: {[values.model.get("network")]}</p>',
             '<p class="item-row">Study Type: {[values.model.get("type")]}</p>',
             '<tpl if="model.get(\'stage\')">',

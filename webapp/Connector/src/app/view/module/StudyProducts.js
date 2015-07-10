@@ -40,6 +40,7 @@ Ext.define('Connector.view.module.StudyProducts', {
         var data = this.data;
         this.on('afterrender', function(sp) {
             sp.update(data);
+            sp.fireEvent('hideLoad', sp);
         });
     }
 });

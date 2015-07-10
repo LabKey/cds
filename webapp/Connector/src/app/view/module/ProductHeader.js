@@ -11,6 +11,7 @@ Ext.define('Connector.view.module.ProductHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
+            Connector.constant.Templates.module.title,
             '<tpl if="model.get(\'product_type\')"><p class="item-row">Product Type: {[values.model.get("product_type")]}</p></tpl>',
             //'<tpl if="model.get(\'Immunogen\')"><p class="item-row">Immunogen: {[values.model.get("Immunogen")]}</p></tpl>',
             '<tpl if="model.get(\'product_class_label\')"><p class="item-row">Class: {[values.model.get("product_class_label")]}</p></tpl>',

@@ -17,15 +17,56 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     loadSlice : function(slice) {
+        this.productData = undefined;
+        this.studyData = undefined;
+
         LABKEY.Query.selectRows({
             schemaName: 'cds',
             queryName: 'product',
             success: this.onLoadProducts,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyproductmap',
+            success: this.onLoadStudies,
+            requiredVersion: 13.2,
+            scope: this
+        });
     },
 
     onLoadProducts : function(productData) {
-        this.loadRawData(productData.rows);
+        this.productData = productData.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadStudies : function(studyData) {
+        this.studyData = studyData.rows;
+        this._onLoadComplete();
+    },
+
+    _onLoadComplete : function() {
+        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData)) {
+            var products = [],
+                studies,
+                s;
+
+            // join studies to product
+            Ext.each(this.productData, function(product) {
+                studies = [];
+                for (s=0; s < this.studyData.length; s++) {
+                    if (product.product_id === this.studyData[s].product_id.value) {
+                        studies.push({
+                            study_name: this.studyData[s].study_name.value,
+                            label: this.studyData[s].label.value
+                        });
+                    }
+                }
+                product.studies = studies;
+                products.push(product);
+            }, this);
+
+            this.loadRawData(products);
+        }
     }
 });
