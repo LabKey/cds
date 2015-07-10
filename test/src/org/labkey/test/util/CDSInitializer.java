@@ -23,7 +23,7 @@ import org.labkey.test.etl.ETLHelper;
 public class CDSInitializer
 {
     private final int WAIT_ON_IMPORT = 1 * 60 * 1000;
-    private final int WAIT_ON_LOADAPP = 10 * 60 * 1000;
+    private final int WAIT_ON_LOADAPP = 15 * 60 * 1000;
 
     private final BaseWebDriverTest _test;
     private final CDSHelper _cds;

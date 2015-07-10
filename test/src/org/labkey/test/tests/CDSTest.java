@@ -54,7 +54,8 @@ import static org.junit.Assert.assertEquals;
 @Category({CDS.class})
 public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
-    private static String _projectName;
+    private static final String PROJECT_NAME = "CDSTest Project";
+    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " + CDSHelper.LABS[1]+ " and " + CDSHelper.LABS[2];
@@ -76,16 +77,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-        // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate difference more.
-        if(afterTest)
-        {
-            // If after the test try deleting via the UI.
-            _containerHelper = new UIContainerHelper(this);
-        }
-
-        // Doing clean up here to give a longer timeout period.
-        _containerHelper.deleteProject(_projectName, afterTest, 240000);
-
+        // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
+        _containerHelper = new UIContainerHelper(this);
+        _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
     }
 
     @BeforeClass @LogMethod
@@ -93,7 +87,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
 
         CDSTest initTest = (CDSTest)getCurrentTest();
-        _projectName = initTest.getProjectName();
 
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
@@ -137,7 +130,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public String getProjectName()
     {
-        return "CDSTest Project";
+        return PROJECT_NAME;
     }
 
     @Override
@@ -819,7 +812,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.applySelection(CDSHelper.ASSAYS[3]);
         _asserts.assertSelectionStatusCounts(64, 2, 3);
         //cds.applySelection(CDSHelper.ASSAYS[2]);
-     //   _asserts.assertSelectionStatusCounts(132, 2, 3);
+        //   _asserts.assertSelectionStatusCounts(132, 2, 3);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
