@@ -1,7 +1,6 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.ContainerFilterable;
@@ -16,8 +15,10 @@ import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QueryDefinition;
 import org.labkey.api.query.QueryException;
+import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryUpdateService;
+import org.labkey.api.query.ValidationException;
 import org.labkey.api.security.User;
 import org.labkey.api.study.StudyService;
 import org.labkey.api.study.TimepointType;
@@ -38,48 +39,17 @@ public class PopulateStudiesTask extends AbstractPopulateTask
 {
     protected void populate(Logger logger) throws PipelineJobException
     {
-        // Delete All Containers
-//        clean(project, user, logger);
-
         // Retrieve the set of studies available in the 'import_' schema
-        Set<String> studyNames = getStudyNames(project, user, logger);
+        Set<String> importStudies = readImportStudies(project, user, logger);
 
-        if (null == studyNames)
-        {
-            return;
-        }
-
-        // Ensure containers -- and generate a study for them
-        long start = System.currentTimeMillis();
-        int created = 0;
-        BatchValidationException errors = new BatchValidationException();
-        FolderType studyFolderType = FolderTypeManager.get().getFolderType("Study");
-
-        for (String studyName : studyNames)
-        {
-            Container c = ContainerManager.getChild(project, studyName);
-
-            if (c == null)
-            {
-                c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
-                c.setFolderType(studyFolderType, user);
-                StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
-                created++;
-            }
-            else
-            {
-                logger.info("Container already exists for study (" + studyName + ")");
-            }
-        }
-
-        // TODO: Delete studies that no longer have info
-
-        long finish = System.currentTimeMillis();
-        logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
+        // Clean-up old studies and ensure containers for all importStudies
+        cleanContainers(importStudies, project, user, logger);
+        ensureContainers(importStudies, project, user, logger);
 
         // Get the coalesced metadata for the studies (including container)
         Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
         List<Map<String, Object>> rows = new ArrayList<>();
+        BatchValidationException errors = new BatchValidationException();
 
         // Import Study metadata
         for (String studyName : studies.keySet())
@@ -93,13 +63,23 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                     rows.clear();
                     rows.add(studies.get(studyName));
 
-                    TableInfo updatable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
-                    QueryUpdateService qud = updatable.getUpdateService();
+                    TableInfo studyTable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
+                    QueryUpdateService qud = studyTable.getUpdateService();
 
                     if (null != qud)
+                    {
                         qud.insertRows(user, c, rows, errors, null, null);
+
+                        if (errors.hasErrors())
+                        {
+                            for (ValidationException error : errors.getRowErrors())
+                            {
+                                logger.warn(error.getMessage());
+                            }
+                        }
+                    }
                     else
-                        throw new PipelineJobException("Unable to find update service for " + updatable.getName());
+                        throw new PipelineJobException("Unable to find update service for " + studyTable.getName());
                 }
                 catch (Exception e)
                 {
@@ -114,43 +94,76 @@ public class PopulateStudiesTask extends AbstractPopulateTask
     }
 
 
-    private void clean(Container project, User user, Logger logger)
+    private void cleanContainers(Set<String> importStudies, Container project, User user, Logger logger)
     {
-        int numStudies = project.getChildren().size();
+        int deleted = 0;
+        long start = System.currentTimeMillis();
 
-        if (numStudies > 0)
+        // Iterate the children to remove any studies that are no longer imported
+        for (Container c : project.getChildren())
         {
-            logger.info("Starting cleanup of " + numStudies + " studies in " + project.getPath());
-
-            long start = System.currentTimeMillis();
-
-            for (Container child : project.getChildren())
+            if (!importStudies.contains(c.getName()))
             {
-                ContainerManager.delete(child, user);
+                logger.info("Deleting container for study (" + c.getName() + ") as it is no longer imported");
+                ContainerManager.delete(c, user);
+                deleted++;
             }
-            long finish = System.currentTimeMillis();
+        }
 
-            logger.info("Cleaned up " + numStudies + " studies in " + DateUtil.formatDuration(finish - start) + ".");
-        }
-        else
-        {
-            logger.info("No studies needed to be cleaned up.");
-        }
+        long finish = System.currentTimeMillis();
+        logger.info("Deleted " + deleted + " studies in " + DateUtil.formatDuration(finish - start) + ".");
     }
 
-    @Nullable
-    private Set<String> getStudyNames(Container project, User user, Logger logger)
+
+    private void ensureContainers(Set<String> importStudies, Container project, User user, Logger logger)
     {
-        TableInfo tiStudyHasSubjects = DefaultSchema.get(user, project).getSchema("study").getTable("ds_study_has_subjects");
+        long start = System.currentTimeMillis();
+        int created = 0;
+        FolderType studyFolderType = FolderTypeManager.get().getFolderType("Study");
 
-        // Get all the studies
-        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(tiStudyHasSubjects);
-        Map<String, Object>[] importStudies = new SqlSelector(tiStudyHasSubjects.getSchema(), sql).getMapArray();
-
-        Set<String> studies = new HashSet<>();
-        for (Map<String, Object> map : importStudies)
+        // Iterate the studies and create a container for any that do not have one
+        for (String studyName : importStudies)
         {
-            studies.add((String) map.get("prot"));
+            Container c = ContainerManager.getChild(project, studyName);
+
+            if (c == null)
+            {
+                logger.info("Creating container for study (" + studyName + ")");
+                c = ContainerManager.createContainer(project, studyName, null, null, Container.TYPE.normal, user);
+                c.setFolderType(studyFolderType, user);
+                StudyService.get().createStudy(c, user, studyName, TimepointType.VISIT, false);
+                created++;
+            }
+            else
+            {
+                logger.info("Container already exists for study (" + studyName + ")");
+            }
+        }
+
+        long finish = System.currentTimeMillis();
+        logger.info("Created " + created + " studies in " + DateUtil.formatDuration(finish - start) + ".");
+    }
+
+
+    private Set<String> readImportStudies(Container container, User user, Logger logger) throws PipelineJobException
+    {
+        Set<String> studies = new HashSet<>();
+        QuerySchema schema = DefaultSchema.get(user, container).getSchema("cds");
+
+        if (null == schema)
+            throw new PipelineJobException("Unable to find cds schema.");
+
+        TableInfo importStudy = schema.getTable("import_study");
+
+        if (null == importStudy)
+            throw new PipelineJobException("Unable to find cds.import_study table.");
+
+        SQLFragment sql = new SQLFragment("SELECT prot FROM ").append(importStudy);
+        Map<String, Object>[] importStudies = new SqlSelector(importStudy.getSchema(), sql).getMapArray();
+
+        for (Map<String, Object> study : importStudies)
+        {
+            studies.add((String) study.get("prot"));
         }
 
         return studies;

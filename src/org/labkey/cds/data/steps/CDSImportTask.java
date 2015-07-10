@@ -77,7 +77,7 @@ public class CDSImportTask extends TaskRefTaskImpl
             }
             else
             {
-                throw new PipelineJobException(PIPELINE_TOKEN + " was found in the path but the pipeline root has not been establised for folder: " + containerUser.getContainer().getPath());
+                throw new PipelineJobException(PIPELINE_TOKEN + " was found in the path but the pipeline root has not been established for folder: " + containerUser.getContainer().getPath());
             }
         }
 

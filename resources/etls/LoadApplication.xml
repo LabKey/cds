@@ -3,12 +3,12 @@
     <name>Load CDS Application Tables</name>
     <description>Populate tables used to drive the Dataspace application</description>
     <transforms>
-        <transform id="PopulateStudies" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
-            </taskref>
-        </transform>
         <transform id="ClearMappingTables" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.ClearMappingTask">
+            </taskref>
+        </transform>
+        <transform id="PopulateStudies" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateStudiesTask">
             </taskref>
         </transform>
         <transform id="PopulateVisits" type="TaskrefTransformStep">
