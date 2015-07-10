@@ -36,13 +36,12 @@ Ext.define('Connector.controller.Home', {
         }
         else if (xtype == 'about') {
             var header = Ext.create('Connector.view.PageHeader', {
-                data: {
-                    title: "About the HIV Collaborative DataSpace",
-                    buttons : {
-                        back: true
-                    },
-                    scope : this
-                }
+                title: "About the HIV Collaborative DataSpace",
+                upText: 'Home',
+                upLink: {
+                    controller: 'home'
+                },
+                scope : this
             });
 
             v = Ext.create('Connector.view.Page', {

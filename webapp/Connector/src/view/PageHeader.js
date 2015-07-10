@@ -31,9 +31,13 @@ Ext.define('Connector.view.PageHeader', {
 
     cls: 'pageheader learnheader header-container-slim',
 
-    title: '&lt;Title&gt;',
+    title: 'PageHeader!',
 
     dimension: undefined,
+
+    upText: undefined,
+
+    upLink: undefined,
 
     model: undefined,
 
@@ -67,11 +71,26 @@ Ext.define('Connector.view.PageHeader', {
             '</div>'
         );
 
-        this.tabs = Ext.isArray(this.dimension.itemDetailTabs) ? this.dimension.itemDetailTabs : undefined;
+        if (Ext.isDefined(this.dimension)) {
+            if (!Ext.isDefined(this.upLink)) {
+                this.upLink = {
+                    controller: 'learn',
+                    view: 'learn',
+                    context: [this.dimension.name]
+                };
+            }
+        }
+
+        if (Ext.isDefined(this.dimension) && Ext.isArray(this.dimension.itemDetailTabs)) {
+            this.tabs = this.dimension.itemDetailTabs;
+        }
+        else {
+            this.tabs = undefined;
+        }
 
         this.renderData = {
             title: this.title,
-            upText: this.dimension.pluralName,
+            upText: this.upText ? this.upText : (this.dimension ? this.dimension.pluralName : undefined),
             tabs: this.tabs
         };
 
@@ -105,7 +124,7 @@ Ext.define('Connector.view.PageHeader', {
 
         this.on('afterrender', function(cmp) {
             cmp.upEl.on('click', function() {
-                this.fireEvent('upclick', this.dimension);
+                this.fireEvent('upclick', this.upLink);
             }, this);
         }, this);
     },

@@ -38,9 +38,11 @@ Ext.define('Connector.controller.Learn', {
         });
 
         this.control('learnpageheader', {
-            upclick : function(dim) {
+            // NOTE: This is a generic back handler for learnpageheader. Other views use this class so this
+            // just assists in sending the link to changeView().
+            upclick : function(link) {
                 // TODO: It would nice if we could go 'back' when we know the previous page was 'learn/learn/[dim.name]'
-                this.getViewManager().changeView('learn', 'learn', [dim.name]);
+                this.getViewManager().changeView(link.controller, link.view, link.context);
             },
             tabselect: this.onSelectItemTab,
             scope: this
