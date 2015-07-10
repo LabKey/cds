@@ -55,13 +55,11 @@ Ext.define('Connector.controller.Signin', {
                 break;
             case 'terms':
                 var header = Ext.create('Connector.view.PageHeader', {
-                    data: {
-                        title: "Full Terms of Use Agreement: HIV Collaborative DataSpace",
-                        buttons: {
-                            back: true
-                        },
-                        scope: this
-                    }
+                    title: 'Full Terms of Use Agreement: HIV Collaborative DataSpace',
+                    upLink: {
+                        controller: 'home'
+                    },
+                    scope: this
                 });
 
                 v = Ext.create('Connector.view.Page', {
