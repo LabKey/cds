@@ -58,7 +58,6 @@
 <br>
 <%=textLink("Application", CDSController.AppAction.class)%>
 <%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%>
-<%=textLink("Load Archive", CDSController.ImportArchiveAction.class)%>
 <%
     }
     else

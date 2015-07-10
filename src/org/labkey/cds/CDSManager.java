@@ -239,41 +239,4 @@ public class CDSManager
         SQLFragment sql = new SQLFragment("SELECT * FROM cds.Properties WHERE Container = ?", container);
         return new SqlSelector(CDSSchema.getInstance().getSchema(), sql).getObject(CDSController.PropertiesForm.class);
     }
-
-    public CDSController.PropertiesForm ensureProperties(CDSController.PropertiesForm oldModel, CDSController.PropertiesForm newModel, Container container, User user)
-    {
-        SQLFragment mutateSQL;
-
-        if (container.hasPermission(user, AdminPermission.class) || container.hasPermission(user, UpdatePermission.class))
-        {
-            if (oldModel == null || oldModel.getRowId() < 0)
-            {
-                // insert
-                mutateSQL = new SQLFragment("INSERT INTO cds.Properties(container, primarycount, datacount) ");
-                mutateSQL.append("VALUES (?, ?, ?);");
-                mutateSQL.add(container.getEntityId());
-                mutateSQL.add(newModel.getPrimaryCount());
-                mutateSQL.add(newModel.getDataCount());
-            }
-            else
-            {
-                // update
-                mutateSQL = new SQLFragment("UPDATE cds.Properties");
-                mutateSQL.append(" SET rowid=?, container=?, primarycount=?, datacount=?");
-                mutateSQL.append(" WHERE rowid=?");
-                mutateSQL.add(oldModel.getRowId());
-                mutateSQL.add(oldModel.getContainer());
-                mutateSQL.add(newModel.getPrimaryCount());
-                mutateSQL.add(newModel.getDataCount());
-                mutateSQL.add(oldModel.getRowId());
-            }
-
-            new SqlExecutor(CDSSchema.getInstance().getSchema()).execute(mutateSQL);
-        }
-
-        //
-        // Return the model associated with this container whether or not the model was mutated
-        //
-        return getProperties(container);
-    }
 }

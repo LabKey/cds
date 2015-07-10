@@ -357,17 +357,7 @@ public class CDSController extends SpringActionController
         @Override
         public Object execute(PropertiesForm form, BindException errors) throws Exception
         {
-            Container container = getContainer();
-            CDSManager manager = CDSManager.get();
-            PropertiesForm model = manager.getProperties(container);
-
-            //
-            // Check if the user is attempting to update the values via POST
-            //
-            if (isPost())
-            {
-                model = manager.ensureProperties(model, form, container, getUser());
-            }
+            PropertiesForm model = CDSManager.get().getProperties(getContainer());
 
             //
             // If properties have not been set the result could be null, just hand back a
@@ -379,15 +369,9 @@ public class CDSController extends SpringActionController
             }
 
             //
-            // Generate the reponse by querying for this containers result
+            // Generate the response by querying for this containers result
             //
             return model;
-        }
-
-        @Override
-        public ModelAndView handlePost() throws Exception
-        {
-            return super.handlePost();
         }
     }
 
@@ -703,46 +687,6 @@ public class CDSController extends SpringActionController
         public void setPath(String path)
         {
             this.path = path;
-        }
-    }
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class ImportArchiveAction extends FormViewAction<CopyBean>
-    {
-        @Override
-        public void validateCommand(CopyBean target, Errors errors)
-        {
-        }
-
-        @Override
-        public ModelAndView getView(CopyBean copyBean, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView("/org/labkey/cds/view/importArchive.jsp");
-        }
-
-        @Override
-        public boolean handlePost(CopyBean form, BindException errors) throws Exception
-        {
-//            if (null == form.getPath() || !new File(form.getPath()).exists())
-//            {
-//                errors.reject(ERROR_MSG, "Directory not found: " + form.getPath());
-//                return false;
-//            }
-//            PipelineJob j = new CDSImportLoader(getContainer(), getUser(), form.getPath());
-//            PipelineService.get().queueJob(j);
-            return true;
-        }
-
-        @Override
-        public URLHelper getSuccessURL(CopyBean copyBean)
-        {
-            return PageFlowUtil.urlProvider(PipelineUrls.class).urlBegin(getContainer());
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return null;
         }
     }
 }

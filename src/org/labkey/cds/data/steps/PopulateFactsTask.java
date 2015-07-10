@@ -1,23 +1,16 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
-import org.labkey.api.data.Container;
 import org.labkey.api.data.SQLFragment;
-import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
-import org.labkey.api.query.QueryDefinition;
-import org.labkey.api.query.QueryException;
-import org.labkey.api.query.QueryService;
+import org.labkey.api.query.DefaultSchema;
+import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryUpdateService;
-import org.labkey.api.security.User;
-import org.labkey.cds.CDSSchema;
-import org.labkey.cds.CDSSimpleTable;
-import org.labkey.cds.CDSUserSchema;
+import org.labkey.api.query.ValidationException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -26,41 +19,67 @@ public class PopulateFactsTask extends AbstractPopulateTask
     @Override
     protected void populate(Logger logger) throws PipelineJobException
     {
-        // SOURCE: study.ds_facts
-        QueryService queryService = QueryService.get();
-        QueryDefinition qd = queryService.getQueryDef(user, project, "study", "ds_facts");
+        load("study", "ds_facts", "cds", "Facts", logger);
+        load("study", "ds_properties", "cds", "properties", logger);
+    }
 
-        ArrayList<QueryException> qerrors = new ArrayList<>();
-        TableInfo tiImportFacts = qd.getTable(qerrors, true);
 
-        if (!qerrors.isEmpty())
+    private void load(String sourceSchema, String sourceQuery, String targetSchema, String targetQuery, Logger logger) throws PipelineJobException
+    {
+        DefaultSchema projectSchema = DefaultSchema.get(user, project);
+
+        QuerySchema ss = projectSchema.getSchema(sourceSchema);
+
+        if (null == ss)
         {
-            // TODO: Process errors?
-            return;
-        }
-        else if (null == tiImportFacts)
-        {
-            logger.error("Unable to find source query for facts.");
-            return;
+            throw new PipelineJobException("Unable to find source schema: \"" + sourceSchema + "\".");
         }
 
-        // TARGET: cds.Facts
-        TableInfo tiFacts = new CDSSimpleTable(new CDSUserSchema(user, project), CDSSchema.getInstance().getSchema().getTable("Facts"));
-        QueryUpdateService factsQUS = tiFacts.getUpdateService();
+        TableInfo sourceTable = ss.getTable(sourceQuery);
 
-        if (null == factsQUS)
+        if (null == sourceTable)
         {
-            throw new PipelineJobException("Unable to find update service for " + tiFacts.getName());
+            throw new PipelineJobException("Unable to find source table: \"" + sourceQuery + "\".");
         }
 
-        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(tiImportFacts);
-        Map<String, Object>[] factsMap = new SqlSelector(tiImportFacts.getSchema(), sql).getMapArray();
+        QuerySchema ts = projectSchema.getSchema(targetSchema);
 
-        if (factsMap.length > 0)
+        if (null == ts)
+        {
+            throw new PipelineJobException("Unable to find target schema: \"" + targetSchema + "\".");
+        }
+
+        TableInfo targetTable = ts.getTable(targetQuery);
+
+        if (null == targetTable)
+        {
+            throw new PipelineJobException("Unable to find target table: \"" + targetQuery + "\".");
+        }
+
+        QueryUpdateService qus = targetTable.getUpdateService();
+
+        if (null == qus)
+        {
+            throw new PipelineJobException("Unable to find update service for " + ts.getName() + "." + targetTable.getName());
+        }
+
+        SQLFragment sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+        Map<String, Object>[] sourceRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+        BatchValidationException errors = new BatchValidationException();
+
+        if (sourceRows.length > 0)
         {
             try
             {
-                factsQUS.insertRows(user, project, Arrays.asList(factsMap), new BatchValidationException(), null, null);
+                qus.insertRows(user, project, Arrays.asList(sourceRows), errors, null, null);
+
+                if (errors.hasErrors())
+                {
+                    for (ValidationException error : errors.getRowErrors())
+                    {
+                        logger.warn(error.getMessage());
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -69,7 +88,7 @@ public class PopulateFactsTask extends AbstractPopulateTask
         }
         else
         {
-            logger.warn("Did not find any facts to import into fact table.");
+            logger.warn("Did not find any rows to import into " + ts.getName() + "." + targetTable.getName() + ".");
         }
     }
 }
