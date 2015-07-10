@@ -28,6 +28,8 @@ Ext.define('Connector.panel.Selector', {
     memberCountsFn: undefined,
     memberCountsFnScope: undefined,
 
+    testCls: undefined,
+
     // track the first time that the selector is initialized so we can use initOptions properly
     initialized: false,
 
@@ -73,6 +75,10 @@ Ext.define('Connector.panel.Selector', {
                 {property: 'label'}
             ]
         });
+
+        if (!Ext.isEmpty(this.testCls)) {
+            this.addCls(this.testCls);
+        }
 
         this.items = [
             this.getHeader(),

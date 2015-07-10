@@ -2101,6 +2101,7 @@ Ext.define('Connector.view.Chart', {
         if (!this.yAxisSelector) {
             this.yAxisSelector = Ext.create('Connector.panel.Selector', {
                 headerTitle: 'y-axis',
+                testCls: 'y-axis-selector',
                 activeMeasure: this.activeYSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
@@ -2141,6 +2142,7 @@ Ext.define('Connector.view.Chart', {
         if (!this.xAxisSelector) {
             this.xAxisSelector = Ext.create('Connector.panel.Selector', {
                 headerTitle: 'x-axis',
+                testCls: 'x-axis-selector',
                 activeMeasure: this.activeXSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
@@ -2188,6 +2190,7 @@ Ext.define('Connector.view.Chart', {
         if (!this.colorAxisSelector) {
             this.colorAxisSelector = Ext.create('Connector.panel.Selector', {
                 headerTitle: 'color',
+                testCls: 'color-axis-selector',
                 activeMeasure: this.activeColorSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
