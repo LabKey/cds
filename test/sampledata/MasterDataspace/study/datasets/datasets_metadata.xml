@@ -110,72 +110,136 @@
           <importAlias>visit</importAlias>
           <importAlias>visitid</importAlias>
         </importAliases>
-        <formatString>#</formatString>
       </column>
       <column columnName="date">
         <datatype>timestamp</datatype>
         <columnTitle>Date</columnTitle>
         <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
       </column>
-      <column columnName="third_key">
-        <datatype>varchar</datatype>
-        <columnTitle>Third Key</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <isKeyField>true</isKeyField>
-      </column>
       <column columnName="visit_day">
         <datatype>integer</datatype>
         <columnTitle>Protocol Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
+      </column>
+      <column columnName="third_key">
+        <datatype>integer</datatype>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
+        <isKeyField>true</isKeyField>
+        <isAutoInc>true</isAutoInc>
+      </column>
+      <column columnName="assay_identifier">
+        <datatype>varchar</datatype>
+        <columnTitle>Assay identifier</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="summary_level">
+        <datatype>varchar</datatype>
+        <columnTitle>Data summary level</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="cell_type">
         <datatype>varchar</datatype>
-        <columnTitle>Cell Type</columnTitle>
+        <columnTitle>Cell type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigen_panel">
+      <column columnName="cell_name">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen Panel</columnTitle>
+        <columnTitle>Cell name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigen_subpanel">
+      <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen Subpanel</columnTitle>
+        <columnTitle>Antigen</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="protein">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="protein_subpanel">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein subpanel</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="specimen_type">
         <datatype>varchar</datatype>
-        <columnTitle>Specimen Type</columnTitle>
+        <columnTitle>Specimen type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="functional_marker_name">
         <datatype>varchar</datatype>
-        <columnTitle>Functional Marker Name</columnTitle>
+        <columnTitle>Functional marker name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="lab">
-        <datatype>integer</datatype>
-        <columnTitle>Lab</columnTitle>
+      <column columnName="functional_marker_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Functional marker type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
-      <column columnName="magnitude_background">
-        <datatype>double</datatype>
-        <columnTitle>Magnitude Background</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      <column columnName="clade">
+        <datatype>varchar</datatype>
+        <columnTitle>Clade</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
-      <column columnName="magnitude_raw">
-        <datatype>double</datatype>
-        <columnTitle>Magnitude Raw</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      <column columnName="vaccine_matched">
+        <datatype>boolean</datatype>
+        <columnTitle>Vaccine matched</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <dimension>true</dimension>
       </column>
-      <column columnName="magnitude">
+      <column columnName="response_call">
+        <datatype>boolean</datatype>
+        <columnTitle>Response call</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="pctpos">
         <datatype>double</datatype>
         <columnTitle>Magnitude</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="pctpos_adj">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude adjusted</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="pctpos_neg">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude negative</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="lab_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="exp_assayid">
+        <datatype>integer</datatype>
+        <columnTitle>Exp Assayid</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
+      </column>
+      <column columnName="ics_lab_source_key">
+        <datatype>integer</datatype>
+        <columnTitle>Ics Lab Source Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
       </column>
     </columns>
     <tableTitle>Intracellular Cytokine Staining</tableTitle>
@@ -207,7 +271,6 @@
           <importAlias>visit</importAlias>
           <importAlias>visitid</importAlias>
         </importAliases>
-        <formatString>#</formatString>
       </column>
       <column columnName="date">
         <datatype>timestamp</datatype>
@@ -218,18 +281,27 @@
         <datatype>integer</datatype>
         <columnTitle>Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
       </column>
       <column columnName="third_key">
-        <datatype>varchar</datatype>
+        <datatype>integer</datatype>
         <columnTitle>Third Key</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
         <isKeyField>true</isKeyField>
+        <isAutoInc>true</isAutoInc>
       </column>
       <column columnName="assay_identifier">
         <datatype>varchar</datatype>
         <columnTitle>Assay Identifier</columnTitle>
         <description>Name identifying assay</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
+      <column columnName="summary_level">
+        <datatype>varchar</datatype>
+        <columnTitle>Data Summary Level</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
@@ -238,11 +310,41 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="protein">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="protein_panel">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein Panel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="clade">
+        <datatype>varchar</datatype>
+        <columnTitle>Clade</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="cell_type">
         <datatype>varchar</datatype>
         <columnTitle>Cell Type</columnTitle>
         <description>Type of cell or cell subset assessed for antigen-stimulated expression of peptide(s). This cell type is usually CD4+ or CD8+ T-cells, but other cell types can also be assessed.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="cell_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Cell Name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="vaccine_method">
+        <datatype>boolean</datatype>
+        <columnTitle>Vaccine Method</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="specimen_type">
@@ -259,6 +361,12 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="functional_marker_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Functional Marker Type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>
         <columnTitle>Response call</columnTitle>
@@ -266,23 +374,38 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="magnitude">
+      <column columnName="mean_sfc">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
+        <columnTitle>Magnitude (% cells)</columnTitle>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation, adjusted for number of spot forming cells without antigen stimulation.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
-      <column columnName="magnitude_raw">
-        <datatype>double</datatype>
-        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
-        <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      <column columnName="mean_sfc_neg">
+        <datatype>integer</datatype>
+        <columnTitle>Magnitude (% cells) - Negative</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
-      <column columnName="magnitude_background">
-        <datatype>double</datatype>
-        <columnTitle>Magnitude (% cells) - Background</columnTitle>
-        <description>Mean Number of Spot-forming Cells (SFC) in the absence of antigen stimulation.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      <column columnName="mean_sfc_raw">
+        <datatype>integer</datatype>
+        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="els_ifng_lab_source_key">
+        <datatype>integer</datatype>
+        <columnTitle>Els Ifng Lab Source Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
+      </column>
+      <column columnName="lab_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
+      <column columnName="exp_assayid">
+        <datatype>integer</datatype>
+        <columnTitle>Exp Assayid</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
       </column>
     </columns>
     <tableTitle>Enzyme-Linked ImmunoSpot</tableTitle>
@@ -314,23 +437,25 @@
           <importAlias>visit</importAlias>
           <importAlias>visitid</importAlias>
         </importAliases>
-        <formatString>#</formatString>
       </column>
       <column columnName="date">
         <datatype>timestamp</datatype>
         <columnTitle>Date</columnTitle>
         <propertyURI>http://cpas.labkey.com/Study#VisitDate</propertyURI>
       </column>
-      <column columnName="third_key">
-        <datatype>varchar</datatype>
-        <columnTitle>Third Key</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <isKeyField>true</isKeyField>
-      </column>
       <column columnName="visit_day">
         <datatype>integer</datatype>
         <columnTitle>Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
+      </column>
+      <column columnName="third_key">
+        <datatype>integer</datatype>
+        <columnTitle>Third Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
+        <isKeyField>true</isKeyField>
+        <isAutoInc>true</isAutoInc>
       </column>
       <column columnName="assay_identifier">
         <datatype>varchar</datatype>
@@ -339,11 +464,11 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="lab">
-        <datatype>integer</datatype>
-        <columnTitle>Lab</columnTitle>
-        <description>Details regarding the provenance of the assay results.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      <column columnName="summary_level">
+        <datatype>varchar</datatype>
+        <columnTitle>Data summary level</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="specimen_type">
         <datatype>varchar</datatype>
@@ -352,31 +477,49 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigen_isolate_clade">
+      <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen Clade</columnTitle>
+        <columnTitle>Antigen</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="clade">
+        <datatype>varchar</datatype>
+        <columnTitle>Clade</columnTitle>
         <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigen_neutralization_tier">
+      <column columnName="neutralization_tier">
         <datatype>varchar</datatype>
-        <columnTitle>Envelope Neutralization Tier</columnTitle>
+        <columnTitle>Envelope neutralization tier</columnTitle>
         <description>A classification specfic to HIV NAb assay design, in which an antigen is assessed for its ease of neutralization (1=most easily neutralized, 3=least easily neutralized)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigen_isolate_name">
+      <column columnName="target_cell">
         <datatype>varchar</datatype>
-        <columnTitle>Envelope Isolate Name</columnTitle>
+        <columnTitle>Target cell</columnTitle>
         <description>The name of the ENV isolate used in the construction of the NAb antigen.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="nab_magnitude">
+      <column columnName="initial_dilution">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude</columnTitle>
+        <columnTitle>Initial dilution</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <dimension>true</dimension>
+        <measure>false</measure>
+      </column>
+      <column columnName="titer_ic50">
+        <datatype>integer</datatype>
+        <columnTitle>Titer IC50</columnTitle>
         <description>Titer calculated at the specified inhibitory concentration.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+      </column>
+      <column columnName="titer_ic80">
+        <datatype>integer</datatype>
+        <columnTitle>Titer IC80</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
       <column columnName="response_call">
@@ -385,6 +528,24 @@
         <description>Indicates if neutralization is detected.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
+      </column>
+      <column columnName="nab_lab_source_key">
+        <datatype>integer</datatype>
+        <columnTitle>Nab Lab Source Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
+      </column>
+      <column columnName="lab_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="exp_assayid">
+        <datatype>integer</datatype>
+        <columnTitle>Exp Assayid</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
       </column>
     </columns>
     <tableTitle>Neutralizing antibody</tableTitle>
@@ -416,7 +577,6 @@
           <importAlias>visit</importAlias>
           <importAlias>visitid</importAlias>
         </importAliases>
-        <formatString>#</formatString>
       </column>
       <column columnName="date">
         <datatype>timestamp</datatype>
@@ -427,12 +587,15 @@
         <datatype>integer</datatype>
         <columnTitle>Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
       </column>
       <column columnName="third_key">
-        <datatype>varchar</datatype>
+        <datatype>integer</datatype>
         <columnTitle>Third Key</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
         <isKeyField>true</isKeyField>
+        <isAutoInc>true</isAutoInc>
       </column>
       <column columnName="specimen_type">
         <datatype>varchar</datatype>
@@ -448,40 +611,118 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="summary_level">
+        <datatype>varchar</datatype>
+        <columnTitle>Data Summary Level</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen Name</columnTitle>
+        <columnTitle>Antigen Analyte</columnTitle>
         <description>The name of the antigen</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="analyte">
+      <column columnName="protein">
         <datatype>varchar</datatype>
-        <columnTitle>Isotype</columnTitle>
+        <columnTitle>Protein</columnTitle>
         <description>The binding anitbody isotype that is quantified by the assay</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="magnitude_report_method">
+      <column columnName="protein_panel">
         <datatype>varchar</datatype>
-        <columnTitle>Magnitude Report Method</columnTitle>
+        <columnTitle>Protein Panel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigen_isotype">
+        <datatype>varchar</datatype>
+        <columnTitle>Isotype</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
+      <column columnName="clade">
+        <datatype>varchar</datatype>
+        <columnTitle>Clade</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="vaccine_matched">
+        <datatype>boolean</datatype>
+        <columnTitle>Vaccine Matched</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+      </column>
+      <column columnName="detection_ligand">
+        <datatype>varchar</datatype>
+        <columnTitle>Detection System</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
+      <column columnName="instrument_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Instrument Code</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
       </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>
-        <columnTitle>Response call</columnTitle>
+        <columnTitle>Response Call (1/0) Calculated per Response Code</columnTitle>
         <description>An antigen-specific and frequently study-specific combination of thresholds and comparisons to baseline and reference</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="lab">
+      <column columnName="dilution">
         <datatype>integer</datatype>
-        <columnTitle>Lab</columnTitle>
+        <columnTitle>Dilution</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <dimension>true</dimension>
+        <measure>false</measure>
       </column>
-      <column columnName="magnitude">
+      <column columnName="mfi_delta">
         <datatype>double</datatype>
-        <columnTitle>Magnitude</columnTitle>
+        <columnTitle>Magnitude (mfi) - Delta</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="mfi_delta_baseline">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude (mfi) – Delta Baseline</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="mfi_raw">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude (mfi) - Raw</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="mfi_raw_baseline">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude (mfi) – Raw Baseline</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="mfi_blank">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude (mfi) - Blank</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="mfi_blank_baseline">
+        <datatype>double</datatype>
+        <columnTitle>Magnitude (mfi) - Blank Baseline</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+      </column>
+      <column columnName="bama_lab_source_key">
+        <datatype>integer</datatype>
+        <columnTitle>Bama Lab Source Key</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
+      </column>
+      <column columnName="lab_code">
+        <datatype>varchar</datatype>
+        <columnTitle>Lab</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+      </column>
+      <column columnName="exp_assayid">
+        <datatype>integer</datatype>
+        <columnTitle>Exp Assayid</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>false</measure>
       </column>
     </columns>
     <tableTitle>Binding Ab multiplex assay</tableTitle>

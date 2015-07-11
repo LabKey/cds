@@ -1,1 +1,1 @@
-SubjectId	SequenceNum	date	QCStateLabel	third_key	visit_day	cell_type	antigen_panel	antigen_subpanel	specimen_type	functional_marker_name	lab	magnitude_background	magnitude_raw	magnitude
+SubjectId	SequenceNum	date	QCStateLabel	visit_day	assay_identifier	summary_level	cell_type	cell_name	antigen	protein	protein_subpanel	specimen_type	functional_marker_name	functional_marker_type	clade	vaccine_matched	response_call	pctpos	pctpos_adj	pctpos_neg	lab_code	exp_assayid	ics_lab_source_key
