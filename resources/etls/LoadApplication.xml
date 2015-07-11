@@ -72,8 +72,13 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateTreatmentArmTask">
             </taskref>
         </transform>
-        <transform id="PopulateFacts" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.PopulateFactsTask" />
+        <transform id="PopulateFacts" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="ds_facts" />
+            <destination schemaName="cds" queryName="Facts" />
+        </transform>
+        <transform id="PopulateProperties" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="ds_properties" />
+            <destination schemaName="cds" queryName="properties" />
         </transform>
     </transforms>
 </etl>
