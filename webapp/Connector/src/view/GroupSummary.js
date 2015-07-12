@@ -37,7 +37,8 @@ Ext.define('Connector.view.GroupSummary', {
                 this.group = this.store.getAt(recIdx);
                 this.requestFilterChange();
             }
-        } else {
+        }
+        else {
             this.store.on('load', this.onStoreLoad, this, {single: true});
         }
 
@@ -61,7 +62,7 @@ Ext.define('Connector.view.GroupSummary', {
         var undo = Ext.get(id);
 
         if (undo) {
-            undo.on('click', function(){
+            undo.on('click', function() {
                 this.fireEvent('requestfilterundo');
                 this.hideMessage(true);
             }, this, {single: true});
@@ -76,12 +77,13 @@ Ext.define('Connector.view.GroupSummary', {
     requestFilterChange: function() {
         if (this.showMessage) {
             this.filterChange();
-        } else {
+        }
+        else {
             this.on('boxready', this.filterChange, this, {single: true});
         }
     },
 
-    getHeader : function(){
+    getHeader : function() {
         if (!this.summaryHeader) {
             this.summaryHeader = Ext.create('Connector.view.GroupSummaryHeader', {
                 group: this.group,
@@ -94,7 +96,7 @@ Ext.define('Connector.view.GroupSummary', {
                     loadgroupfilters: function() {
                         this.requestFilterChange();
                     },
-                    requestback: function(){
+                    requestback: function() {
                         this.fireEvent('requestback');
                     }
                 }
@@ -120,7 +122,7 @@ Ext.define('Connector.view.GroupSummary', {
         }
     },
 
-    getBody : function(){
+    getBody : function() {
         if (!this.summaryBody) {
             this.summaryBody = Ext.create('Connector.view.GroupSummaryBody', {
                 group: this.group,
@@ -135,7 +137,7 @@ Ext.define('Connector.view.GroupSummary', {
         return this.summaryBody;
     },
 
-    updateView : function(id){
+    updateView : function(id) {
         var idx;
 
         if (id !== undefined && id !== null) {
@@ -149,7 +151,8 @@ Ext.define('Connector.view.GroupSummary', {
             this.requestFilterChange();
             this.summaryHeader.updateView(this.group);
             this.summaryBody.updateView(this.group);
-        } else {
+        }
+        else {
             console.log('group not found, throw not found.');
         }
     },
@@ -188,7 +191,8 @@ Ext.define('Connector.view.GroupSummaryHeader', {
     initComponent : function() {
         if (this.group) {
             this.groupLabel = this.group.get('label');
-        } else {
+        }
+        else {
             this.groupLabel = '';
         }
 

@@ -74,7 +74,7 @@ Ext.define('Connector.view.module.AssayVariableList', {
 
         this.callParent();
 
-        this.on('render', function(){
+        this.on('render', function() {
             if (!data.variables) {
                 this.fireEvent('showLoad', this);
             }

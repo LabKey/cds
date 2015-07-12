@@ -209,7 +209,8 @@ Ext.define('Connector.controller.Learn', {
         }
         else if (!id) {
             console.warn('Unable to show item without an id property');
-        } else {
+        }
+        else {
             console.warn('No dimension selected');
         }
     },

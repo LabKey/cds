@@ -103,7 +103,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
 
             this.dropdownPanel = Ext.create(dropdownClassName, this.getDropdownPanelConfig());
 
-            this.dropdownPanel.on('selectionchange', function(dropdown, newSelection, allChecked){
+            this.dropdownPanel.on('selectionchange', function(dropdown, newSelection, allChecked) {
                 this.setValue(newSelection, allChecked);
             }, this);
 
@@ -439,7 +439,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
             }, this);
 
             // set the 'name' property for all items in this checkbox group
-            Ext.each(checkboxItems, function(item){
+            Ext.each(checkboxItems, function(item) {
                 item.name = this.name + '-check';
             }, this);
 
@@ -477,7 +477,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
             }, this);
 
             // set the 'name' property for all items in this radio group
-            Ext.each(radioItems, function(item){
+            Ext.each(radioItems, function(item) {
                 item.name = this.name + '-radio';
             }, this);
 
@@ -540,7 +540,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
 
         // add a column header for each hierarchical measure
         var checkboxItems = [];
-        Ext.each(this.hierarchyMeasures, function(measure){
+        Ext.each(this.hierarchyMeasures, function(measure) {
             checkboxItems.push({
                 xtype: 'component',
                 cls: 'hierarchy-title',
@@ -574,7 +574,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
 
         // create checkbox item tree and add placeholder space in parent columns for layout
         var prevRecord = null;
-        Ext.each(uniqueValuesStore.getRange(), function(record){
+        Ext.each(uniqueValuesStore.getRange(), function(record) {
             for (var i = 0; i < fieldNames.length; i++)
             {
                 if (prevRecord == null || !this.hierarchicalRecordEqual(prevRecord, record, fieldNames, i))

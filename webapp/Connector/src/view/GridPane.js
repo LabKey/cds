@@ -63,8 +63,8 @@ Ext.define('Connector.view.GridPane', {
                         var filterType = gf.getFilterType().getDisplayText();
                         if (filterType == 'Equals One Of') {
                             var values = [];
-                            Ext.each(gf.getValue(), function(value){
-                                Ext.each(value.split(';'), function(v){
+                            Ext.each(gf.getValue(), function(value) {
+                                Ext.each(value.split(';'), function(v) {
                                     if (v)
                                         values.push(Ext.htmlEncode('- ' + v));
                                 });

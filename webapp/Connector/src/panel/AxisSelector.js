@@ -666,7 +666,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
 
             if (this.visitTagStore)
             {
-                Ext.each(this.visitTagStore.getRange(), function(record){
+                Ext.each(this.visitTagStore.getRange(), function(record) {
                     visitTagRadios.push({
                         name : 'alignmentVisitTag',
                         boxLabel: record.get('Caption'),
@@ -750,7 +750,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
     },
 
     addDescriptionHoverListeners : function(grid, labelFieldName, descFieldName) {
-        grid.on('itemmouseenter', function(grid, record, item){
+        grid.on('itemmouseenter', function(grid, record, item) {
             this.previousDefinitionData = this.getDefinitionPanel().data;
 
             this.getDefinitionPanel().update({
@@ -759,7 +759,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
             });
         }, this);
 
-        grid.on('itemmouseleave', function(grid, record, item){
+        grid.on('itemmouseleave', function(grid, record, item) {
             this.getDefinitionPanel().update(this.previousDefinitionData);
             this.previousDefinitionData = null;
         }, this);
@@ -776,8 +776,8 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
                 schemaName: source.get('schemaName'),
                 queryName: source.get('queryName'),
                 scope: this,
-                success: function(data){
-                    Ext.each(data.columns, function(col){
+                success: function(data) {
+                    Ext.each(data.columns, function(col) {
                         if (Ext.isDefined(col.lookup) && col.lookup.schemaName == 'CDS' && col.lookup.queryName == 'Antigens')
                             source.antigenLookup = col;
 
@@ -905,7 +905,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         if (this.hasUserGroupsGrid() && this.getUserGroupsGrid().isVisible())
         {
             var groupsArr = [];
-            Ext.each(this.getUserGroupsGrid().getSelectionModel().getSelection(), function(sel){
+            Ext.each(this.getUserGroupsGrid().getSelectionModel().getSelection(), function(sel) {
                 groupsArr.push(sel.get('id'));
             });
 
@@ -916,7 +916,7 @@ Ext.define('Connector.panel.AxisSelectDisplay', {
         if (this.hasAntigensGrid() && this.getAntigensGrid().isVisible())
         {
             var antigensArr = [];
-            Ext.each(this.getAntigensGrid().getSelectionModel().getSelection(), function(sel){
+            Ext.each(this.getAntigensGrid().getSelectionModel().getSelection(), function(sel) {
                 antigensArr.push(sel.get('Name'));
             });
 

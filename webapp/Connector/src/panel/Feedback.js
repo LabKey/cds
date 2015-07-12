@@ -40,7 +40,7 @@ Ext.define('Connector.panel.Feedback', {
 
         Ext.EventManager.onWindowResize(this.onResize, this);
 
-        this.resizeTask = new Ext.util.DelayedTask(function(){
+        this.resizeTask = new Ext.util.DelayedTask(function() {
             var pos = this.getPosition(true);
             this.setPagePosition(pos.x, pos.y);
         }, this);
@@ -229,7 +229,7 @@ Ext.define('Connector.panel.Feedback', {
         var me = this;
         var textSubmit = function() {
             ellip = '';
-            for (var x=0; x < count; x++){
+            for (var x=0; x < count; x++) {
                 ellip += val;
             }
             for (x=count; x < 3; x++) {

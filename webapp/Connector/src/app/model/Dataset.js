@@ -125,7 +125,7 @@ Ext.define('Connector.app.model.Dataset', {
                     allColumns: true,
                     filters: [LABKEY.Query.Visualization.Filter.create({schemaName: "study", queryName: name})]
                 },
-                success: function(response){
+                success: function(response) {
                     response = LABKEY.Utils.decode(response.response);
                     
                     var measureCount = 0;
@@ -152,8 +152,8 @@ Ext.define('Connector.app.model.Dataset', {
                                     schemaName: measure.schemaName,
                                     queryName: measure.queryName,
                                     scope: this,
-                                    success: function(response){
-                                        Ext.each(response.columns, function(col){
+                                    success: function(response) {
+                                        Ext.each(response.columns, function(col) {
 
                                             if (Ext.isDefined(col.lookup) && col.lookup.schemaName == 'CDS' && col.lookup.queryName == 'Antigens') {
                                                 if (antigenColumns.indexOf(col.name) < 0) {

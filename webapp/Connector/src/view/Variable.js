@@ -182,16 +182,16 @@ Ext.define('Connector.panel.ColorSelector', {
                 var windowGlyphs = windowCanvas.selectAll('.legend-point').data(legendData);
                 windowGlyphs.enter().append('path').attr('class', 'legend-point');
                 windowGlyphs.exit().remove();
-                windowGlyphs.attr('d', function(d){return d.shape();})
-                        .attr('fill', function(d){return d.color;})
-                        .attr('transform', function(d, i){return 'translate(9, ' + (8 + i * 20) + ')';});
+                windowGlyphs.attr('d', function(d) {return d.shape();})
+                        .attr('fill', function(d) {return d.color;})
+                        .attr('transform', function(d, i) {return 'translate(9, ' + (8 + i * 20) + ')';});
 
                 var windowLabels = windowCanvas.selectAll('.legend-text').data(legendData);
                 windowLabels.enter().append('text').attr('class', 'legend-text');
                 windowLabels.exit().remove();
-                windowLabels.text(function(d){return d.text})
+                windowLabels.text(function(d) {return d.text})
                         .attr('x', 25)
-                        .attr('y', function(d, i){return 13 + i * 20});
+                        .attr('y', function(d, i) {return 13 + i * 20});
             }
         });
 
@@ -207,22 +207,26 @@ Ext.define('Connector.panel.ColorSelector', {
     },
 
     setLegend : function(legendData) {
-        var smallCanvas, glyphs, hoverRect, scope = this;
+        var smallCanvas,
+            glyphs,
+            hoverRect,
+            iconSize = 18,
+            svgWidth,
+            scope = this;
 
         Ext.get('color-legend').update(''); // Clear the current legend element.
 
         // issue 20541
-        var iconSize = 18;
-        var svgWidth = Math.min(250, legendData.length * (iconSize+2));
+        svgWidth = Math.min(250, legendData.length * (iconSize+2));
 
         smallCanvas = d3.select('#color-legend').append('svg')
                 .attr('height', iconSize)
                 .attr('width', svgWidth);
         glyphs = smallCanvas.selectAll('.legend-point').data(legendData).enter().append('path');
         glyphs.attr('class', 'legend-point')
-                .attr('d', function(d){return d.shape();})
-                .attr('fill', function(d){return d.color;})
-                .attr('transform', function(d, i){return 'translate(' + (8 + i*20) + ',10)';});
+                .attr('d', function(d) {return d.shape();})
+                .attr('fill', function(d) {return d.color;})
+                .attr('transform', function(d, i) {return 'translate(' + (8 + i*20) + ',10)';});
 
         hoverRect = smallCanvas.selectAll('.legend-rect').data([legendData]).enter().append('rect');
         hoverRect.attr('width', legendData.length * iconSize)
@@ -230,10 +234,10 @@ Ext.define('Connector.panel.ColorSelector', {
                 .attr('fill', '#000')
                 .attr('fill-opacity', 0);
 
-        hoverRect.on('mouseover', function(d){
+        hoverRect.on('mouseover', function(d) {
             scope.showHover.call(scope, legendData);
         });
-        hoverRect.on('mouseout', function(d){
+        hoverRect.on('mouseout', function(d) {
             scope.hideHover.call(scope);
         });
     },

@@ -8,11 +8,11 @@ Ext.define('Connector.model.Group', {
     extend : 'Ext.data.Model',
 
     fields : [
-        {name : 'id'},
-        {name : 'label'},
-        {name : 'description'},
-        {name : 'filters'},
-        {name : 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
+        {name: 'id'},
+        {name: 'label'},
+        {name: 'description'},
+        {name: 'filters'},
+        {name: 'containsPlot', type: 'boolean', defaultValue: false, convert : function(value, partial) {
             var raw = partial.raw.filters;
             var containsPlot = false;
             if (Ext.isString(raw)) {
@@ -27,8 +27,8 @@ Ext.define('Connector.model.Group', {
             }
             return containsPlot;
         }},
-        {name : 'type'},
-        {name : 'participantIds'} // array
+        {name: 'type'},
+        {name: 'participantIds'} // array
     ],
 
     statics: {

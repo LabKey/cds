@@ -115,7 +115,7 @@ Ext.define('Connector.panel.FilterPanel', {
 
     // entry point to load raw OLAP Filters
     loadFilters : function(filters) {
-        Ext.each(filters, function(filter){
+        Ext.each(filters, function(filter) {
             filter.data.isSelection = false;
         });
 

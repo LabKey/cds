@@ -8,8 +8,8 @@ Ext.define('Connector.model.VisitTag', {
     extend : 'Ext.data.Model',
 
     fields : [
-        {name : 'Name'},
-        {name : 'Caption'},
-        {name : 'Created', type : 'date'}
+        {name: 'Name'},
+        {name: 'Caption'},
+        {name: 'Created', type: 'date'}
     ]
 });

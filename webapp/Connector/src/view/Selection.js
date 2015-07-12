@@ -209,7 +209,7 @@ Ext.define('Connector.view.Selection', {
                         domString;
 
                     // split measures into x/y based on column name
-                    Ext.each(filters, function(filter){
+                    Ext.each(filters, function(filter) {
                         if (filter) {
                             if (xMeasure && filter.getColumnName() == xMeasure.measure.alias) {
                                 xFilters.push(filter);

@@ -365,11 +365,11 @@ Ext.define('Connector.controller.Group', {
         this.doGroupDelete({
             id: id,
             scope: this,
-            success: function(){
+            success: function() {
                 Connector.model.Group.getGroupStore().load();
                 this.getViewManager().changeView('home');
             },
-            failure: function(response){
+            failure: function(response) {
                 var json = Ext.decode(response.responseText);
                 Ext.Msg.alert('ERROR', json.exception ? json.exception : 'Delete group failed.');
             }

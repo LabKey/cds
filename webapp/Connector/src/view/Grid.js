@@ -618,7 +618,7 @@ Ext.define('Connector.view.Grid', {
     },
 
     showMeasureSelection : function() {
-        Connector.getService('Query').onQueryReady(function(query){
+        Connector.getService('Query').onQueryReady(function() {
             var measureWindow = this.getMeasureSelectionWindow(),
                     box = this.getBox(),
                     mp = this.getAxisSelector().getMeasurePicker(),
@@ -720,19 +720,25 @@ Ext.define('Connector.view.Grid', {
 
     showAlignFooter : function(comp, caller, resize) {
         if (this.footer && this.grid) {
-            var size = this.getWidthHeight();
-            if (!this.footer.isVisible()) {
-                this.footer.show();
-                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
+            var footer = this.footer,
+                size = this.getWidthHeight(),
+                up = this.up(),
+                position = 'c-tl',
+                offsets = [size.width / 2, (size.height + 11)];
+
+            if (!footer.isVisible()) {
+                footer.show();
+                footer.alignTo(up, position, offsets);
             }
 
-            if(this.footer.realign) {
-                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
-                this.footer.realign = false;
+            if (footer.realign) {
+                footer.alignTo(up, position, offsets);
+                footer.realign = false;
             }
 
-            if(resize)
-                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
+            if (resize) {
+                footer.alignTo(up, position, offsets);
+            }
         }
     }
 });

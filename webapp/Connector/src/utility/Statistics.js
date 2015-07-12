@@ -12,7 +12,8 @@ Ext.define('Statistics', {
         scope = scope || this;
         if (this.statistics) {
             callback.call(scope, this.statistics);
-        } else {
+        }
+        else {
             Ext.Ajax.request({
                 url: LABKEY.ActionURL.buildURL('cds', 'properties'),
                 method: 'GET',

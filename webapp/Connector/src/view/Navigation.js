@@ -68,10 +68,11 @@ Ext.define('Connector.view.NavigationView', {
         var me = this;
         this.tpl.renderContent = function(val) {
             var ret = '';
-            if (me.arrow == 'left'){
+            if (me.arrow == 'left') {
                 ret += '<span class="' + me.arrow +'-arrow"></span>';
                 ret += '<span class="right-label">' + val + '</span>';
-            } else if (me.arrow == 'right'){
+            }
+            else if (me.arrow == 'right') {
                 ret += '<span class="left-label">' + val + '</span>';
                 ret += '<span class="' + me.arrow +'-arrow"></span>';
             }
@@ -99,8 +100,7 @@ Ext.define('Connector.view.NavigationView', {
         var disabledRecs = Ext.DomQuery.select('.dis-label', v.getEl().id);
         var knownIds = ['chartdemography'];
 
-        for (var i=0; i < disabledRecs.length; i++)
-        {
+        for (var i=0; i < disabledRecs.length; i++) {
             if (knownIds.length <= i)
                 break;
 

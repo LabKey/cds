@@ -152,10 +152,14 @@ Ext.define('Connector.model.StudyAxisData', {
         // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
         if (interval == 'days') {
             return d;
-        } else if (interval == 'weeks') {
+        }
+        else if (interval == 'weeks') {
             return Math.floor(d / 7);
-        } else if (interval == 'months') {
+        }
+        else if (interval == 'months') {
             return Math.floor(d / (365.25/12));
         }
+
+        throw 'Invalid interval supplied! Expected "days", "weeks", or "months"';
     }
 });

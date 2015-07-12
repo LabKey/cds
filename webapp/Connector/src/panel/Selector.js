@@ -185,7 +185,7 @@ Ext.define('Connector.panel.Selector', {
 
         // TODO: cache these source counts to use between selectors and invalidate the cache on filter/selection change
         // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
-        var sources = this.sourcesStore.queryBy(function(record){
+        var sources = this.sourcesStore.queryBy(function(record) {
             return record.get('queryName') != 'SubjectGroupMap';
         }).items;
 
@@ -489,9 +489,8 @@ Ext.define('Connector.panel.Selector', {
         var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
         this.boundDimensionNames = [];
 
-        Ext.each(dimensions, function(dimension){
-            if (!dimension.get('hidden'))
-            {
+        Ext.each(dimensions, function(dimension) {
+            if (!dimension.get('hidden')) {
                 this.boundDimensionNames.push(dimension.get('name'));
 
                 this.getAdvancedPane().add(

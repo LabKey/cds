@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Connector.view.StudyAxis = function(){
+Connector.view.StudyAxis = function() {
     var canvas = null, width, height, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             visitMouseover, visitMouseout, visitMouseoverScope, visitMouseoutScope, tagMouseover, tagMouseout,
             tagMouseoverScope, tagMouseoutScope;
@@ -20,7 +20,7 @@ Connector.view.StudyAxis = function(){
                 .attr('d', pathStr);
     };
 
-    var renderVisits = function(selection){
+    var renderVisits = function(selection) {
         var visits, xFn, yFn, widthFn;
 
         xFn = function(d) {
@@ -38,7 +38,7 @@ Connector.view.StudyAxis = function(){
             return xScale(d.sequenceNumMax) - xScale(d.sequenceNumMin);
         };
 
-        visits = selection.selectAll('rect.visit').data(function(d){
+        visits = selection.selectAll('rect.visit').data(function(d) {
             var visits = [];
             for (var i = 0; i < d.visits.length; i++) {
                 var visit = d.visits[i];
@@ -58,20 +58,24 @@ Connector.view.StudyAxis = function(){
                 .attr('fill', '#f5a73a') // $info-color
                 .attr('fill-opacity', 0.30);
 
-        visits.on('mouseover', function(d){
+        visits.on('mouseover', function(d) {
             visitMouseover.call(visitMouseoverScope, d, this);
         });
-        visits.on('mouseout', function(d){
+        visits.on('mouseout', function(d) {
             visitMouseout.call(visitMouseoutScope, d, this);
         });
     };
 
-    var renderVisitTags = function(selection){
+    var renderVisitTags = function(selection) {
         var visitTags, pathFn;
 
         pathFn = function(d) {
-            var x = xScale(d.protocolDay), y = yScale(d.studyLabel), xLeft = x - 4, xRight = x + 4, yTop = y - 6,
-                    yBottom = y + 6;
+            var x = xScale(d.protocolDay),
+                y = yScale(d.studyLabel),
+                xLeft = x - 4,
+                xRight = x + 4,
+                yTop = y - 6,
+                yBottom = y + 6;
 
             return 'M ' + x + ' ' + yTop + ' L ' +
                     xRight + ' ' + y + ' L ' +
@@ -79,7 +83,7 @@ Connector.view.StudyAxis = function(){
                     xLeft + ' ' + y + ' Z';
         };
 
-        visitTags = selection.selectAll('path.visit-tag').data(function (d){
+        visitTags = selection.selectAll('path.visit-tag').data(function (d) {
             var visits = d.visits, visitsWithTags = [];
 
             for (var i = 0; i < visits.length; i++) {
@@ -100,18 +104,18 @@ Connector.view.StudyAxis = function(){
         visitTags.attr('d', pathFn).attr('fill', '#f5a73a');
 
         // TODO: add visit tag mouseover/mouseout functions.
-        visitTags.on('mouseover', function(d){
+        visitTags.on('mouseover', function(d) {
             tagMouseover.call(tagMouseoverScope, d, this);
         });
-        visitTags.on('mouseout', function(d){
+        visitTags.on('mouseout', function(d) {
             tagMouseout.call(tagMouseoutScope, d, this);
         });
     };
 
-    var renderHorizontalSeparators = function(selection){
+    var renderHorizontalSeparators = function(selection) {
         var lines, pathFn;
 
-        pathFn = function(d){
+        pathFn = function(d) {
             var y = Math.floor(yScale(d.label) + 13) + 0.5;
             return 'M 25 ' + y + ' L ' + width + ' ' + y + ' Z';
         };
@@ -141,24 +145,24 @@ Connector.view.StudyAxis = function(){
                 .attr('d', pathFn);
     };
 
-    var renderStudyLabels = function(selection){
-        var labels = selection.selectAll('text.study-label').data(function(d){return [d];});
+    var renderStudyLabels = function(selection) {
+        var labels = selection.selectAll('text.study-label').data(function(d) {return [d];});
         labels.exit().remove();
         labels.enter().append('text').attr('class', 'study-label');
-        labels.text(function(d){
+        labels.text(function(d) {
             if (d.label.length > 25) {
                 return d.label.slice(0, 23) + '...';
             }
 
             return d.label;
         });
-        labels.attr('y', function(d){return Math.floor(yScale(d.label) + 7) + 0.5;})
+        labels.attr('y', function(d) {return Math.floor(yScale(d.label) + 7) + 0.5;})
                 .attr('x', 25)
                 .attr('fill', '#666363')
                 .style('font', '14pt Georgia, serif');
     };
 
-    var studyAxis = function(){
+    var studyAxis = function() {
         var yDomain = [], studies;
 
         height = studyData.length * 32;

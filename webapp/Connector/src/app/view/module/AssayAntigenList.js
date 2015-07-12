@@ -66,7 +66,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
         this.callParent();
 
-        this.on('render', function(){
+        this.on('render', function() {
             if (!data.antigens) {
                 this.fireEvent('showLoad', this);
             }

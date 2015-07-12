@@ -5,19 +5,19 @@
  */
 Ext.define('Connector.model.Antigen', {
 
-    extend : 'Ext.data.Model',
+    extend: 'Ext.data.Model',
 
-    fields : [
-        {name : 'Name'},
-        {name : 'Description'}
+    fields: [
+        {name: 'Name'},
+        {name: 'Description'}
     ],
 
-    statics : {
+    statics: {
         getAntigenAlias : function(measure) {
-            var alias = null;
+            var alias = null, sep = '_';
             if (measure && measure.options && measure.options.antigen) {
-                alias = measure.alias.substring(0, measure.alias.indexOf("_" + measure.name));
-                alias += "_" + measure.options.antigen.name;
+                alias = measure.alias.substring(0, measure.alias.indexOf(sep + measure.name));
+                alias += sep + measure.options.antigen.name;
             }
 
             return alias;
