@@ -30,39 +30,43 @@ Ext.define('Connector.measure.Configuration', {
                     dimensions: [
                         'study_ICS_cell_type',
                         'study_ICS_functional_marker_name',
-                        'study_ICS_antigen_panel',
-                        'study_ICS_specimen_type'
-                        //'study_ICS_lab'
+                        'study_ICS_summary_level',
+                        'study_ICS_antigen',
+                        'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
                     ]
                 },
                 'study|NAb': {
                     category: 'Assays',
                     dimensions: [
-                        'study_NAb_assay_identifier',
-                        'study_NAb_antigen_neutralization_tier',
-                        'study_NAb_specimen_type'
-                        //'study_NAb_lab'
+                        'study_NAb_target_cell',
+                        'study_NAb_summary_level',
+                        'study_NAb_neutralization_tier',
+                        'study_NAb_specimen_type',
+                        'study_NAb_lab_code'
                     ]
                 },
                 'study|BAMA': {
                     category: 'Assays',
                     dimensions: [
-                        'study_BAMA_analyte',
+                        'study_BAMA_antigen_isotype',
+                        'study_BAMA_summary_level',
                         'study_BAMA_antigen',
                         'study_BAMA_dilution',
-                        'study_BAMA_detection_type',
-                        'study_BAMA_instrument_type',
-                        'study_BAMA_specimen_type'
-                        //'study_BAMA_lab'
+                        'study_BAMA_detection_ligand',
+                        'study_BAMA_instrument_code',
+                        'study_BAMA_specimen_type',
+                        'study_BAMA_lab_code'
                     ]
                 },
                 'study|ELISPOT': {
                     category: 'Assays',
                     dimensions: [
                         'study_ELISPOT_functional_marker_name',
-                        'study_ELISPOT_antigen',
-                        'study_ELISPOT_specimen_type'
-                        //'study_ELISPOT_lab'
+                        'study_ELISPOT_summary_level',
+                        'study_ELISPOT_protein_panel',
+                        'study_ELISPOT_specimen_type',
+                        'study_ELISPOT_lab_code'
                     ]
                 }
             },
@@ -74,38 +78,54 @@ Ext.define('Connector.measure.Configuration', {
                 // study|ICS
                 'study_ICS_cell_type': {
                     requiresSelection: true,
-                    defaultSelection: {all: false, value: 'CD4+ T-cell'}
+                    defaultSelection: {all: false, value: 'CD4+'}
                 },
                 'study_ICS_functional_marker_name': {
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
-                'study_ICS_antigen_panel': {
+                'study_ICS_summary_level': {
                     requiresSelection: true,
-                    hierarchicalSelectionChild: 'study_ICS_antigen_subpanel'
+                    allowMultiSelect: false,
+                    defaultSelection: {all: false, value: 'Protein Panel'}
+                },
+                'study_ICS_antigen': {
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: 'study_ICS_protein'
                 },
                 // study|NAb
-                'study_NAb_assay_identifier': {
+                'study_NAb_target_cell': {
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'TZM-bl'}
                 },
-                'study_NAb_antigen_neutralization_tier': {
+                'study_NAb_summary_level': {
                     requiresSelection: true,
-                    hierarchicalSelectionChild: 'study_NAb_antigen_isolate_clade'
+                    allowMultiSelect: false,
+                    defaultSelection: {all: false, value: 'Virus'}
                 },
-                'study_NAb_antigen_isolate_clade': {
-                    hierarchicalSelectionChild: 'study_NAb_antigen_isolate_name'
+                'study_NAb_neutralization_tier': {
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: 'study_NAb_clade'
+                },
+                'study_NAb_clade': {
+                    hierarchicalSelectionChild: 'study_NAb_antigen'
                 },
                 // study|BAMA
-                'study_BAMA_analyte': {
+                'study_BAMA_antigen_isotype': {
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
+                'study_BAMA_summary_level': {
+                    requiresSelection: true,
+                    allowMultiSelect: false,
+                    defaultSelection: {all: false, value: 'Antigen'}
+                },
                 'study_BAMA_antigen': {
-                    requiresSelection: true
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: null
                 },
                 'study_BAMA_dilution': {
                     requiresSelection: true,
@@ -118,9 +138,14 @@ Ext.define('Connector.measure.Configuration', {
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
-                'study_ELISPOT_antigen': {
+                'study_ELISPOT_summary_level': {
                     requiresSelection: true,
-                    hierarchicalSelectionChild: 'study_ELISPOT_antigen_subpanel'
+                    allowMultiSelect: false,
+                    defaultSelection: {all: false, value: 'Protein Panel'}
+                },
+                'study_ELISPOT_protein_panel': {
+                    requiresSelection: true,
+                    hierarchicalSelectionChild: 'study_ELISPOT_protein'
                 }
             },
 
@@ -176,15 +201,14 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'USER_GROUPS'
                 },
 
-                // Example overriding Advanced panel dimensions from the source. To be removed.
-                'study_ELISPOT_specimen_type': {
-                    dimensions: ['study_ELISPOT_cell_type']
-                },
-                'study_ELISPOT_assay_identifier': {
-                    dimensions: []
-                },
-                'study_ELISPOT_antigen': {
+                'study_BAMA_antigen': {
                     label: 'Antigen'
+                },
+                'study_NAb_neutralization_tier': {
+                    label: 'Tier'
+                },
+                'study_NAb_antigen': {
+                    label: 'Isolate'
                 }
             }
         }
