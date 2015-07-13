@@ -303,11 +303,11 @@ Ext.define('Connector.model.Grid', {
             wrapped.push(w);
         });
 
-        // set the wrapped measures
-        this.set('measures', wrapped);
-
-        // set the foreign columns
-        this.set('foreignColumns', foreignColumns);
+        // set the wrapped measures, foreign columns
+        this.set({
+            measures: wrapped,
+            foreignColumns: foreignColumns
+        });
 
         if (silent !== true) {
             this.requestMetaData();
@@ -465,9 +465,11 @@ Ext.define('Connector.model.Grid', {
                 baseFilterArray = [subjectFilter];
             }
 
-            this.set('filterState', filterState);
-            this.set('baseFilterArray', baseFilterArray);
-            this.set('filterArray', filterArray);
+            this.set({
+                filterState: filterState,
+                baseFilterArray: baseFilterArray,
+                filterArray: filterArray
+            });
 
             if (this.isActive()) {
                 this.activeFilter = false;
@@ -754,13 +756,14 @@ Ext.define('Connector.model.Grid', {
     },
 
     updateColumnModel : function() {
-        var columns = Connector.model.Grid.getColumnList(this);
         var metadata = this.get('metadata');
 
         // The new columns will be available on the metadata query/schema
-        this.set('schemaName', metadata.schemaName);
-        this.set('queryName', metadata.queryName);
-        this.set('columnSet', columns);
+        this.set({
+            schemaName: metadata.schemaName,
+            queryName: metadata.queryName,
+            columnSet: Connector.model.Grid.getColumnList(this)
+        });
 
         this.applyFilters(this.get('filterArray'));
 

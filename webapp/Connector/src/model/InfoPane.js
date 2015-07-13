@@ -149,9 +149,11 @@ Ext.define('Connector.model.InfoPane', {
         }
 
         // clear out for initialization
-        this.set('dimension', undefined);
-        this.set('hierarchy', undefined);
-        this.set('level', undefined);
+        this.set({
+            dimension: undefined,
+            hierarchy: undefined,
+            level: undefined
+        });
 
         this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
@@ -160,9 +162,11 @@ Ext.define('Connector.model.InfoPane', {
 
         Connector.getState().onMDXReady(function(mdx) {
 
-            var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName);
-            var dim = dimHier.dim, hier = dimHier.hierarchy, lvl = dimHier.lvl;
-            var hierarchyItems = [];
+            var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName),
+                dim = dimHier.dim,
+                hier = dimHier.hierarchy,
+                lvl = dimHier.lvl,
+                hierarchyItems = [];
 
             Ext.each(dim.hierarchies, function(h) {
                 if (!h.hidden) {
@@ -175,13 +179,15 @@ Ext.define('Connector.model.InfoPane', {
 
             this.suspendEvents();
 
-            this.set('dimension', dim);
-            this.set('hierarchy', hier);
-            this.set('level', lvl);
-            this.set('hierarchyLabel', hier.label);
-            this.set('hierarchyItems', hierarchyItems);
-            this.set('operatorType', hier.defaultOperator);
-            this.set('title', dim.pluralName);
+            this.set({
+                dimension: dim,
+                hierarchy: hier,
+                level: lvl,
+                hierarchyLabel: hier.label,
+                hierarchyItems: hierarchyItems,
+                operatorType: hier.defaultOperator,
+                title: dim.pluralName
+            });
 
             if (this.isFilterBased()) {
                 var filterOperator = this.get('filter').get('operator');
@@ -195,14 +201,16 @@ Ext.define('Connector.model.InfoPane', {
 
             this.fireEvent('change', this);
 
-            var config = {
-                onRows: [{ level: lvl.getUniqueName(), member: 'members' }],
+            mdx.query({
+                onRows: [{
+                    level: lvl.getUniqueName(),
+                    member: 'members'
+                }],
                 useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
                 showEmpty: true,
                 success: this.processMembers,
                 scope: this
-            };
-            mdx.query(config);
+            });
 
         }, this);
     },

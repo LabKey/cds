@@ -144,8 +144,10 @@ Ext.define('Connector.model.StudyAxisData', {
             data.push(study);
         }
 
-        this.set('data', data);
-        this.set('range', range);
+        this.set({
+            data: data,
+            range: range
+        });
     },
 
     convertInterval : function(d, interval) {

@@ -23,8 +23,6 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
-    newSelectors: false,
-
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -131,7 +129,7 @@ Ext.define('Connector.view.Chart', {
                     style: 'color: #7a7a7a;'
                 },{
                     tag: 'h1',
-                    html: 'Use subgroups for further comparision.',
+                    html: 'Use subgroups for further comparison.',
                     style: 'color: #b5b5b5;'
                 }]
             },
@@ -358,7 +356,7 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        var plotbox = this.plotEl.getBox();
+        var plotBox = this.plotEl.getBox();
 
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
@@ -378,7 +376,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.plot) {
-            this.plot.setSize(this.requireStudyAxis ? plotbox.width - 150 : plotbox.width, plotbox.height, true);
+            this.plot.setSize(this.requireStudyAxis ? plotBox.width - 150 : plotBox.width, plotBox.height, true);
         }
 
         if (this.getStudyAxisPanel().isVisible() && this.studyAxis && this.hasStudyAxisData) {
@@ -390,10 +388,10 @@ Ext.define('Connector.view.Chart', {
         var plotMsg = this.noplotmsg;
         if (plotMsg) {
             var b = plotMsg.getBox();
-            var top = (plotbox.height / 2) - 53;
+            var top = (plotBox.height / 2) - 53;
             var el = plotMsg.getEl();
             el.setStyle('margin-top', top + 'px');
-            var estMarginRight = plotbox.width - 100 - 895;
+            var estMarginRight = plotBox.width - 100 - 895;
             if (b.x < 101 && estMarginRight < 101) {
                 el.setStyle('margin-left', '100px');
             }
@@ -413,7 +411,7 @@ Ext.define('Connector.view.Chart', {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Point({}),
             aes: {
-                yLeft: function(row) {return row.y}
+                yLeft: function(row) { return row.y; }
             }
         });
     },
@@ -467,8 +465,9 @@ Ext.define('Connector.view.Chart', {
 
     getLayerAes : function(layerScope, isBoxPlot) {
 
-        var me = this;
-        var layerArgs = [layerScope], slice = Array.prototype.slice;
+        var me = this,
+            layerArgs = [layerScope],
+            slice = Array.prototype.slice;
 
         var mouseOverPointsFn = function() { me.mouseOverPoints.apply(me, slice.call(arguments, 0).concat(layerArgs)); };
 
@@ -1182,21 +1181,22 @@ Ext.define('Connector.view.Chart', {
             });
         }
 
-        if (plot.renderer)
-        {
-            var points = plot.renderer.canvas.selectAll('.point path');
-            var selections = this.getCategoricalSelectionValues();
+        if (plot.renderer) {
+            var points = plot.renderer.canvas.selectAll('.point path'),
+                selections = this.getCategoricalSelectionValues(),
+                subject;
 
-            points.each(function (d)
-            {
+            points.each(function (d) {
+                subject = d.subjectId.value;
+
                 // Check if value matches target or another selection
-                if (d.x === target && subjectIds.indexOf(d.subjectId.value) === -1)
-                {
-                    subjectIds.push(d.subjectId.value);
-                }
-                else if (selections.indexOf(d.x) != -1 && subjectIds.indexOf(d.subjectId.value) === -1)
-                {
-                    subjectIds.push(d.subjectId.value);
+                if (subjectIds.indexOf(subject) === -1) {
+                    if (d.x === target) {
+                        subjectIds.push(subject);
+                    }
+                    else if (selections.indexOf(d.x) != -1) {
+                        subjectIds.push(subject);
+                    }
                 }
             });
         }
@@ -1214,8 +1214,7 @@ Ext.define('Connector.view.Chart', {
             return '#E6E6E6';
         };
 
-        if (plot.renderer)
-        {
+        if (plot.renderer) {
             var points = plot.renderer.canvas.selectAll('.point path');
 
             points.attr('fill', strokeFillFn)
@@ -1223,13 +1222,11 @@ Ext.define('Connector.view.Chart', {
                     .attr('fill-opacity', 1)
                     .attr('stroke-opacity', 1);
 
-            points.each(function (d)
-            {
+            points.each(function (d) {
                 // Re-append the node so it is on top of all the other nodes, this way highlighted points
                 // are always visible.
                 var node = this.parentNode;
-                if (subjectIds.indexOf(d.subjectId.value) != -1)
-                {
+                if (subjectIds.indexOf(d.subjectId.value) != -1) {
                     node.parentNode.appendChild(node);
                 }
             });
@@ -1288,11 +1285,13 @@ Ext.define('Connector.view.Chart', {
     },
 
     isSelection : function (target) {
-        var values = this.getCategoricalSelectionValues();
-        var found = false;
+        var values = this.getCategoricalSelectionValues(),
+            found = false;
+
         values.forEach(function(t) {
-            if (t === target)
+            if (t === target) {
                 found = true;
+            }
         });
 
         return found;
@@ -1318,8 +1317,9 @@ Ext.define('Connector.view.Chart', {
 
         var me = this;
 
-        if (targets.length < 1)
+        if (targets.length < 1) {
             this.clearHighlightLabels(plot);
+        }
 
         targets.forEach(function(target) {
             var tickFillFn = function(t) {
@@ -1328,8 +1328,8 @@ Ext.define('Connector.view.Chart', {
 
                 if (clearOthers && targets.indexOf(t) === -1)
                     return me.labelBkgdColor;
-                else
-                    return this.getAttribute("fill");
+
+                return this.getAttribute('fill');
             };
 
             var labelFillFn = function(t) {
@@ -1338,9 +1338,8 @@ Ext.define('Connector.view.Chart', {
 
                 if (clearOthers && targets.indexOf(t) === -1)
                     return me.labelTextColor;
-                else
-                    return this.getAttribute("fill");
 
+                return this.getAttribute('fill');
             };
 
             if (plot.renderer) {

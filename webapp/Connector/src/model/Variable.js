@@ -58,7 +58,7 @@ Ext.define('Connector.model.Variable', {
     },
 
     updateVariable : function(selections) {
-        var sel = null;
+        var sel = null, source, variable, options;
         if (Ext.isArray(selections)) {
             if (selections.length > 0)
                 sel = selections[0];
@@ -67,7 +67,6 @@ Ext.define('Connector.model.Variable', {
             sel = selections;
         }
 
-        var source, variable, options, isDataset = false;
         if (sel) {
             if (sel.$className === 'Measure') {
                 source = Connector.model.Variable.getSourceDisplayText(sel.data);
@@ -82,9 +81,12 @@ Ext.define('Connector.model.Variable', {
             options = Connector.model.Variable.getOptionsDisplayText(sel, true);
         }
 
-        this.set('source', source);
-        this.set('variable', variable);
-        this.set('options', options);
+        this.set({
+            source: source,
+            variable: variable,
+            options: options
+        });
+
         this.fireEvent('updatevariable', this);
     }
 });
