@@ -1,8 +1,10 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.pipeline.PipelineJob;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.query.DefaultSchema;
@@ -20,12 +22,12 @@ public class ClearMappingTask extends TaskRefTaskImpl
     User user;
 
     @Override
-    public RecordedActionSet run(Logger logger) throws PipelineJobException
+    public RecordedActionSet run(@NotNull PipelineJob job) throws PipelineJobException
     {
         project = containerUser.getContainer();
         user = containerUser.getUser();
 
-        clear(logger);
+        clear(job.getLogger());
 
         return new RecordedActionSet(makeRecordedAction());
     }

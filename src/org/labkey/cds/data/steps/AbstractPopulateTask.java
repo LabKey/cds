@@ -1,8 +1,10 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.labkey.api.data.Container;
 import org.labkey.api.module.FolderTypeManager;
+import org.labkey.api.pipeline.PipelineJob;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.pipeline.RecordedActionSet;
 import org.labkey.api.security.User;
@@ -17,18 +19,18 @@ abstract public class AbstractPopulateTask extends TaskRefTaskImpl
     User user;
 
     @Override
-    public RecordedActionSet run(Logger logger) throws PipelineJobException
+    public RecordedActionSet run(@NotNull PipelineJob job) throws PipelineJobException
     {
         project = containerUser.getContainer();
         user = containerUser.getUser();
 
         if (project.isProject() && project.getFolderType().equals(FolderTypeManager.get().getFolderType(StudyService.DATASPACE_FOLDERTYPE_NAME)))
         {
-            populate(logger);
+            populate(job.getLogger());
         }
         else
         {
-            logger.error(project.getName() + "must be a project and of type \"" + StudyService.DATASPACE_FOLDERTYPE_NAME + "\"");
+            job.getLogger().error(project.getName() + "must be a project and of type \"" + StudyService.DATASPACE_FOLDERTYPE_NAME + "\"");
         }
 
         return new RecordedActionSet(makeRecordedAction());

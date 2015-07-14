@@ -1,6 +1,7 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
@@ -10,6 +11,7 @@ import org.labkey.api.data.SqlExecutor;
 import org.labkey.api.etl.DataIteratorBuilder;
 import org.labkey.api.etl.DataIteratorContext;
 import org.labkey.api.pipeline.PipeRoot;
+import org.labkey.api.pipeline.PipelineJob;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.pipeline.PipelineService;
 import org.labkey.api.pipeline.RecordedActionSet;
@@ -65,7 +67,7 @@ public class CDSImportTask extends TaskRefTaskImpl
     };
 
     @Override
-    public RecordedActionSet run(Logger logger) throws PipelineJobException
+    public RecordedActionSet run(@NotNull PipelineJob job) throws PipelineJobException
     {
         String dir = settings.get(DIRECTORY);
 
@@ -84,11 +86,11 @@ public class CDSImportTask extends TaskRefTaskImpl
 
         try
         {
-            execute(dataspaceTables, new File(dir), logger);
+            execute(dataspaceTables, new File(dir), job.getLogger());
         }
         catch (SQLException | IOException x)
         {
-            logger.error("Unexpected exception", x);
+            job.getLogger().error("Unexpected exception", x);
         }
 
         return new RecordedActionSet(makeRecordedAction());
