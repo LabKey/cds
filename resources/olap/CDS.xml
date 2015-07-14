@@ -76,8 +76,8 @@
                         <Table name="study" schema="cds"/>
                     </Join>
                 </Join>
-                <Level name="Treatment" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
-                <Level name="Arm" visible="true" column="coded_label" type="String" uniqueMembers="true" />
+                <Level name="Treatment" visible="true" table="study" column="label" type="String" uniqueMembers="false" />
+                <Level name="Arm" visible="true" column="coded_label" type="String" uniqueMembers="false" />
             </Hierarchy>
 
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
@@ -141,6 +141,12 @@
                 <Level name="Type" visible="true" table="ds_subjectassay" column="assay" type="String" uniqueMembers="true" />
             </Hierarchy>
 
+            <!--Note on uniqueMembers: If the column value will appear in other levels above it, then set uniquemembers=false-->
+            <Hierarchy name="Study" visible="true" hasAll="true" primaryKey="participantid">
+                <Table name="ds_subjectassay" schema="cds"/>
+                <Level name="Study" visible="true" column="study_name" type="String" uniqueMembers="false" />
+                <Level name="Assay" visible="true" column="assay" type="String" uniqueMembers="false" />
+            </Hierarchy>
         </Dimension>
     </Cube>
 </Schema>

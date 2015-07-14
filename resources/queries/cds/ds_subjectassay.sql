@@ -1,25 +1,36 @@
 SELECT
-DISTINCT participantid,
-'ICS' AS assay
-FROM study.ICS
+participantid,
+assay,
+SS.study_name,
+FROM (
+  SELECT
+  DISTINCT participantid,
+  'ICS' AS assay,
+  container,
+  FROM study.ICS
 
-UNION
+  UNION
 
-SELECT
-DISTINCT participantid,
-'NAb' AS assay
-FROM study.NAb
+  SELECT
+  DISTINCT participantid,
+  'NAb' AS assay,
+  container
+  FROM study.NAb
 
-UNION
+  UNION
 
-SELECT
-DISTINCT participantid,
-'ELISpot' AS assay
-FROM study.ELISpot
+  SELECT
+  DISTINCT participantid,
+  'ELISpot' AS assay,
+  container
+  FROM study.ELISpot
 
-UNION
+  UNION
 
-SELECT
-DISTINCT participantid,
-'BAMA' AS assay
-FROM study.BAMA
+  SELECT
+  DISTINCT participantid,
+  'BAMA' AS assay,
+  container
+  FROM study.BAMA
+) AS DD
+INNER JOIN cds.study AS SS ON SS.container = DD.container
