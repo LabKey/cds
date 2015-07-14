@@ -64,8 +64,8 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         var displayValue = null, subDisplayValue = null, cls = '';
         if (Ext.isArray(value) && value.length > 0) {
             var isAll = Ext.Array.equals(value, this.store.collect(this.storeValueField, true));
-            displayValue = this.allowMultiSelect && isAll ? 'All' : value.join(' or ');
-            subDisplayValue = this.allowMultiSelect && isAll ? value.join(', ') : null;
+            displayValue = this.allowMultiSelect && isAll ? 'All' : this.getRecordsDisplayValue(value, ' or ');
+            subDisplayValue = this.allowMultiSelect && isAll ? this.getRecordsDisplayValue(value, ', ') : null;
         }
         else if (Ext.isString(value) && this.getRecordFromStore(value) != null) {
             displayValue = this.getRecordFromStore(value).get(this.storeLabelField);
@@ -80,6 +80,19 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             subValue: subDisplayValue,
             cls: cls
         };
+    },
+
+    getRecordsDisplayValue : function(valueArr, sepVal) {
+        var displayVal = '', sep = '';
+        Ext.each(valueArr, function(value) {
+            var record = this.getRecordFromStore(value);
+            if (record) {
+                displayVal += sep + this.getRecordFromStore(value).get(this.storeLabelField);
+                sep = sepVal;
+            }
+        }, this);
+
+        return displayVal;
     },
 
     getDropdownPanelConfig : function() {
@@ -169,19 +182,43 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         this.allowMultiSelect = this.dimension.get('allowMultiSelect');
         this.isHierarchical = Ext.isDefined(this.dimension.get('hierarchicalSelectionChild'));
 
+        // for hierarchical dimensions, use the last one as the label
+        this.measureSet = [this.dimension];
+        if (this.isHierarchical) {
+            this.measureSet = this.dimension.getHierarchicalMeasures();
+            this.fieldLabel = this.measureSet[this.measureSet.length - 1].get('label');
+        }
+
         this.callParent();
-        Connector.getService('Query').getMeasureSetDistinctValues(this.dimension, this.populateStore, this);
+
+        Connector.getService('Query').getMeasureSetDistinctValues(this.measureSet, this.populateStore, this);
     },
 
     populateStore : function(distinctValuesArr) {
-        var distinctValues = Ext.Array.pluck(distinctValuesArr, this.dimension.get('name'));
-        if (distinctValues.indexOf(null) > -1) {
-            distinctValues.splice(distinctValues.indexOf(null), 1);
-        }
+
+        // if we have a hierarchical measure set, concatenate all measures for the distinct value store key value and label
+        // otherwise, we just set the given dimension's value as the key and label, excluding null
+        var newDistinctValuesArr = [];
+        Ext.each(distinctValuesArr, function(valuesRec) {
+            var measureVal = valuesRec[this.measureSet[0].get('name')];
+            if (measureVal != null) {
+                valuesRec[this.storeValueField] = measureVal;
+                valuesRec[this.storeLabelField] = measureVal == null ? '' : measureVal;
+
+                // we know we will have a zero index for measureSet, so this adds the others if necessary
+                for (var i = 1; i < this.measureSet.length; i++) {
+                    measureVal = valuesRec[this.measureSet[i].get('name')];
+                    valuesRec[this.storeValueField] += '|' + measureVal;
+                    valuesRec[this.storeLabelField] += ' ' + measureVal;
+                }
+
+                newDistinctValuesArr.push(valuesRec);
+            }
+        }, this);
 
         this.store = Ext.create('Ext.data.Store', {
-            fields : [{name: this.storeValueField, convert: function(value, record) { return record.raw; }}],
-            data: distinctValues
+            fields : [this.storeValueField, this.storeLabelField],
+            data: newDistinctValuesArr
         });
 
         this.setInitialValue();
@@ -505,7 +542,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
 
     extend: 'Ext.form.Panel',
 
-    cls: 'hierarchy-selection content',
+    cls: 'content',
 
     border: false,
 
@@ -513,20 +550,9 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
         this.queryService = Connector.getService('Query');
 
         this.callParent([config]);
+        this.addEvents('selectionchange');
 
-        // traverse the dimension hierarchical selection child lookups to get the full tree set
-        this.hierarchyMeasures = [this.dimension];
-        var childAlias = this.dimension.get('hierarchicalSelectionChild');
-        while (childAlias) {
-            var childMeasure = this.queryService.getMeasureRecordByAlias(childAlias);
-            if (childMeasure) {
-                this.hierarchyMeasures.push(childMeasure);
-                childAlias = childMeasure.get('hierarchicalSelectionChild');
-            }
-            else {
-                childAlias = null;
-            }
-        }
+        this.hierarchyMeasures = this.dimension.getHierarchicalMeasures();
 
         this.queryService.getMeasureSetDistinctValues(this.hierarchyMeasures, this.loadDistinctValuesStore, this);
     },
@@ -556,9 +582,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
                 cls: 'checkbox2 col-check',
                 name: fieldNames[i] + '-checkall',
                 boxLabel: 'All',
-                inputValue: undefined,
                 fieldName: fieldNames[i],
-                checked: true,
                 listeners: {
                     scope: this,
                     change: function(cb, newValue) {
@@ -566,6 +590,8 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
                         Ext.each(this.query('checkbox'), function(relatedCb) {
                             this.setCheckboxValue(relatedCb, newValue, true);
                         }, this);
+
+                        this.fireEvent('selectionchange', this.getSelectedValues());
                     }
                 }
             });
@@ -574,7 +600,11 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
         // create checkbox item tree and add placeholder space in parent columns for layout
         var prevRecord = null;
         Ext.each(uniqueValuesStore.getRange(), function(record) {
+            var concatValue = '', sep = '';
+
             for (var i = 0; i < fieldNames.length; i++) {
+                concatValue += sep + record.get(fieldNames[i]);
+                sep = '|';
 
                 if (prevRecord == null || !this.hierarchicalRecordEqual(prevRecord, record, fieldNames, i)) {
 
@@ -589,15 +619,17 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
                         cls: 'checkbox2 col-check ' + addCls,
                         name: fieldNames[i] + '-check',
                         boxLabel: record.get(fieldNames[i]) || '[Blank]',
-                        inputValue: record.get(fieldNames[i]),
-                        fieldName: fieldNames[i],
                         parentFieldName: i > 0 ? fieldNames[i-1] : null,
-                        checked: true,
+                        fieldName: fieldNames[i],
+                        fieldValue: record.get(fieldNames[i]),
+                        inputValue: concatValue,
+                        checked: this.initSelection && this.initSelection.indexOf(concatValue) > -1, // this will set only the leaf checkboxes as checked
                         width: 440 / this.hierarchyMeasures.length,
                         listeners: {
                             scope: this,
                             change: function(cb, newValue) {
                                 this.checkboxSelectionChange(cb, newValue, fieldNames);
+                                this.fireEvent('selectionchange', this.getSelectedValues());
                             }
                         }
                     };
@@ -620,10 +652,34 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
             prevRecord = record;
         }, this);
 
-        this.add(Ext.create('Ext.form.CheckboxGroup', {
+        var checkboxGroup = Ext.create('Ext.form.CheckboxGroup', {
             columns: this.hierarchyMeasures.length,
             items: checkboxItems
-        }));
+        });
+
+        // before render, update the leaf checkbox parents and all checkbox accordingly
+        checkboxGroup.on('beforerender', function(cbGroup) {
+            Ext.each(this.initSelection, function(selectValue) {
+                var cb = cbGroup.down('checkbox[inputValue=' + selectValue + ']');
+                if (cb) {
+                    this.checkboxSelectionChange(cb, true, fieldNames, true);
+                }
+            }, this);
+        }, this);
+
+        this.add(checkboxGroup);
+    },
+
+    getSelectedValues : function() {
+        // use the last hierarchyMeasure as the inputValues are concatenated from the parent column values
+        var values = this.getValues()[this.hierarchyMeasures[this.hierarchyMeasures.length - 1].get('name') + '-check'];
+        if (!Ext.isDefined(values)) {
+            values = [];
+        }
+        else if (!Ext.isArray(values)) {
+            values = [values];
+        }
+        return values;
     },
 
     hierarchicalRecordEqual : function(prev, current, fieldNames, lastFieldIndex) {
@@ -639,7 +695,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
         var me = this, selection, parentSelection, siblingCbs, toCheck, parentParentSelection, parentCb, allCb;
 
         // update child checkboxes
-        selection = '[' + cb.fieldName + '=' + cb.inputValue + ']';
+        selection = '[' + cb.fieldName + '=' + cb.fieldValue + ']';
         parentSelection = me.getParentSelectorStr(cb, fieldNames);
         if (!skipChildren) {
             Ext.each(me.query('checkbox' + selection + parentSelection), function(relatedCb) {
@@ -658,7 +714,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
             siblingCbs = me.query('checkbox[fieldName=' + cb.fieldName + ']' + parentSelection);
             toCheck = Ext.Array.max(Ext.Array.pluck(siblingCbs, 'checked')); //array max works like 'is any checked' for boolean array
             parentParentSelection = me.getParentSelectorStr(cb, fieldNames, cb.parentFieldName);
-            parentCb = me.down('checkbox[fieldName=' + cb.parentFieldName + '][inputValue=' + cb[cb.parentFieldName] + ']' + parentParentSelection);
+            parentCb = me.down('checkbox[fieldName=' + cb.parentFieldName + '][fieldValue=' + cb[cb.parentFieldName] + ']' + parentParentSelection);
             if (parentCb) {
                 me.setCheckboxValue(parentCb, toCheck, true);
                 me.checkboxSelectionChange(parentCb, toCheck, fieldNames, true);

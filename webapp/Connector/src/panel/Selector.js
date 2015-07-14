@@ -367,10 +367,10 @@ Ext.define('Connector.panel.Selector', {
     getHierarchySelectionPane : function() {
         if (!this.hierarchyPane) {
             this.hierarchyPane = Ext.create('Ext.panel.Panel', {
+                cls: 'hierarchy-pane',
                 border: false,
                 hidden: true,
-                flex: 1,
-                autoScroll: true
+                flex: 1
             });
 
             this.insert(this.items.length - 2, this.hierarchyPane);
@@ -379,13 +379,22 @@ Ext.define('Connector.panel.Selector', {
         return this.hierarchyPane;
     },
 
-    showHierarchicalSelection : function(dimension) {
+    showHierarchicalSelection : function(advancedOptionCmp) {
         var source = this.getSourceForMeasure(this.activeMeasure);
 
         this.getHierarchySelectionPane().removeAll();
-        this.getHierarchySelectionPane().add(Ext.create('Connector.panel.HierarchicalSelectionPanel', {
-            dimension: dimension
-        }));
+
+        var hierSelectionPanel = Ext.create('Connector.panel.HierarchicalSelectionPanel', {
+            dimension: advancedOptionCmp.dimension,
+            initSelection: advancedOptionCmp.value
+        });
+
+        // add listener with buffer for checkbox selection change to update advanced option cmp value
+        hierSelectionPanel.on('selectionchange', function(value) {
+            advancedOptionCmp.setValue(value);
+        }, this, {buffer: 100});
+
+        this.getHierarchySelectionPane().add(hierSelectionPanel);
 
         this.toggleDisplay('hierarchy');
 
@@ -509,7 +518,7 @@ Ext.define('Connector.panel.Selector', {
                                     me.measurePane.getEl().slideOut('l', {
                                         duration: 250,
                                         callback: function() {
-                                            me.showHierarchicalSelection(cmp.dimension);
+                                            me.showHierarchicalSelection(cmp);
                                         }
                                     });
                                 }

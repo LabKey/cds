@@ -59,5 +59,28 @@ Ext.define('Connector.model.Measure', {
 
     shouldShowScale : function() {
         return this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
+    },
+
+    getHierarchicalMeasures : function() {
+        var measures = [], queryService = Connector.getService('Query');
+
+        // traverse the dimension hierarchical selection child lookups to get the full tree set
+        if (Ext.isDefined(this.get('hierarchicalSelectionChild'))) {
+            measures = [this];
+
+            var childAlias = this.get('hierarchicalSelectionChild');
+            while (childAlias) {
+                var childMeasure = queryService.getMeasureRecordByAlias(childAlias);
+                if (childMeasure) {
+                    measures.push(childMeasure);
+                    childAlias = childMeasure.get('hierarchicalSelectionChild');
+                }
+                else {
+                    childAlias = null;
+                }
+            }
+        }
+
+        return measures;
     }
 });

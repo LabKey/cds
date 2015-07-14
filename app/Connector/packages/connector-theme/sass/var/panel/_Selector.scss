@@ -187,36 +187,42 @@
     }
   }
 
-  .hierarchy-selection {
-    .x-form-checkboxgroup-body {
-      padding: 0;
+  .hierarchy-pane {
+    .x-panel-body {
+      overflow-y: auto;
     }
 
-    .col-title, .col-check {
-      width: 100%;
-      white-space: nowrap;
-    }
+    .content {
+      .x-form-checkboxgroup-body {
+        padding: 0;
+      }
 
-    .col-check, .col-spacer {
-      height: 26px;
-    }
+      .col-title, .col-check {
+        width: 100%;
+        white-space: nowrap;
+      }
 
-    .col-line {
-      border-top: solid $heat-scale-6 1px;
-    }
+      .col-check, .col-spacer {
+        height: 26px;
+      }
 
-    .col-title {
-      font-size: 11px;
-      font-weight: bold;
-      color: $heat-scale-2;
-      padding: 0 8px 16px 0;
-    }
+      .col-line {
+        border-top: solid $heat-scale-6 1px;
+      }
 
-    .col-check .x-form-cb-label {
-      width: 80%;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+      .col-title {
+        font-size: 11px;
+        font-weight: bold;
+        color: $heat-scale-2;
+        padding: 0 8px 16px 0;
+      }
+
+      .col-check .x-form-cb-label {
+        width: 80%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
   }
 }
