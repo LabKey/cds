@@ -166,9 +166,15 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="protein_subpanel">
+      <column columnName="protein_panel">
         <datatype>varchar</datatype>
-        <columnTitle>Protein subpanel</columnTitle>
+        <columnTitle>Protein panel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="protein_panel_protein">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein panel + Protein</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -319,6 +325,12 @@
       <column columnName="protein_panel">
         <datatype>varchar</datatype>
         <columnTitle>Protein Panel</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="protein_panel_protein">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein panel + Protein</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -494,6 +506,12 @@
         <datatype>varchar</datatype>
         <columnTitle>Envelope neutralization tier</columnTitle>
         <description>A classification specfic to HIV NAb assay design, in which an antigen is assessed for its ease of neutralization (1=most easily neutralized, 3=least easily neutralized)</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="tier_clade_antigen">
+        <datatype>varchar</datatype>
+        <columnTitle>Envelope neutralization tier + Clade + Antigen</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>

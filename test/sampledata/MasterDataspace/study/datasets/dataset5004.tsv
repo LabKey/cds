@@ -1,1 +1,1 @@
-SubjectId	SequenceNum	date	QCStateLabel	visit_day	assay_identifier	summary_level	specimen_type	antigen	clade	neutralization_tier	target_cell	initial_dilution	titer_ic50	titer_ic80	response_call	nab_lab_source_key	lab_code	exp_assayid
+SubjectId	SequenceNum	date	QCStateLabel	visit_day	assay_identifier	summary_level	specimen_type	antigen	clade	neutralization_tier tier_clade_antigen	target_cell	initial_dilution	titer_ic50	titer_ic80	response_call	nab_lab_source_key	lab_code	exp_assayid
