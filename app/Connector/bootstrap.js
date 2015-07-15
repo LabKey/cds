@@ -1230,7 +1230,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.actiontitle"
   ],
   "Connector.component.AdvancedOptionBase": [],
-  "Connector.component.AdvancedOptionDimension": [],
+  "Connector.component.AdvancedOptionDimension": [
+    "widget.advancedoptiondimension"
+  ],
   "Connector.component.AdvancedOptionScale": [],
   "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [

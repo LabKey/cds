@@ -178,6 +178,14 @@
         background-image: url(images/navigateforward.svg);
       }
 
+      .display-option-only .field-display {
+        cursor: default;
+
+        .icon {
+          background-image: none;
+        }
+      }
+
       .dimension-header {
         color: $heat-scale-1;
         font-size: 11px;

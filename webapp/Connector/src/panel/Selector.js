@@ -390,8 +390,8 @@ Ext.define('Connector.panel.Selector', {
         });
 
         // add listener with buffer for checkbox selection change to update advanced option cmp value
-        hierSelectionPanel.on('selectionchange', function(value) {
-            advancedOptionCmp.setValue(value);
+        hierSelectionPanel.on('selectionchange', function(value, allChecked) {
+            advancedOptionCmp.setValue(value, allChecked);
         }, this, {buffer: 100});
 
         this.getHierarchySelectionPane().add(hierSelectionPanel);
@@ -482,7 +482,7 @@ Ext.define('Connector.panel.Selector', {
         values.dimensions = {};
         Ext.iterate(values, function(key, val) {
             if (this.boundDimensionNames.indexOf(key) != -1) {
-                // null or undefined mean "select all" so doing apply a filter
+                // null or undefined mean "select all" so don't apply a filter
                 if (Ext.isDefined(val) && val != null) {
                     values.dimensions[key] = val;
                 }

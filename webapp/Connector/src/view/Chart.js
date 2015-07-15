@@ -2180,7 +2180,7 @@ Ext.define('Connector.view.Chart', {
             this.xwin = this.createSelectorWindow(this.getXAxisSelector());
         }
 
-        this.getXAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeXSelection));
+        this.getXAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeXSelection) && this.activeXSelection != null);
         this.getXAxisSelector().loadSourceCounts();
         this.xwin.show(this.getXSelector().getEl());
     },
@@ -2229,7 +2229,7 @@ Ext.define('Connector.view.Chart', {
             this.colorwin = this.createSelectorWindow(this.getColorAxisSelector());
         }
 
-        this.getColorAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeColorSelection));
+        this.getColorAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeColorSelection) && this.activeColorSelection != null);
         this.getColorAxisSelector().loadSourceCounts();
         this.colorwin.show(this.getColorSelector().getEl());
     },

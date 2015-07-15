@@ -141,24 +141,39 @@ Ext.define('Connector.component.AdvancedOptionBase', {
     },
 
     addClickHandler : function() {
-        var displayEl = this.getDisplayField().getEl();
-        displayEl.on('click', function(evt, target) {
-            if (target.getAttribute('class') != 'field-label')
-            {
-                var displayLabelEl = displayEl.down('.field-label');
-                var displayValueEl = displayEl.down('.field-display');
-                var pos = this.getDisplayField().getPosition();
+        // only add the click handler if the display field has rendered and the store has been created
+        if (Ext.isDefined(this.store) && this.getDisplayField().rendered) {
 
-                var dropdownPanel = this.getDropdownPanel();
-                if (dropdownPanel != null) {
-                    this.getDropdownPanel().setWidth(displayValueEl.getWidth());
-                    this.getDropdownPanel().showAt(pos[0] + displayLabelEl.getWidth(), pos[1]);
-                    this.getDisplayField().addCls('expanded');
-                }
-
-                this.fireEvent('click', this, this.isHierarchical);
+            // hide the advanced option fields that have no dropdown entries, change those
+            // with just a single entry to display only, or add the click handler for the dropdown
+            var storeCount = this.store.getCount();
+            if (storeCount == 0) {
+                this.hide();
             }
-        }, this);
+            else if (storeCount == 1) {
+                this.getDisplayField().addCls('display-option-only');
+            }
+            else {
+                var displayEl = this.getDisplayField().getEl();
+                displayEl.on('click', function(evt, target) {
+                    if (target.getAttribute('class') != 'field-label')
+                    {
+                        var displayLabelEl = displayEl.down('.field-label');
+                        var displayValueEl = displayEl.down('.field-display');
+                        var pos = this.getDisplayField().getPosition();
+
+                        var dropdownPanel = this.getDropdownPanel();
+                        if (dropdownPanel != null) {
+                            this.getDropdownPanel().setWidth(displayValueEl.getWidth());
+                            this.getDropdownPanel().showAt(pos[0] + displayLabelEl.getWidth(), pos[1]);
+                            this.getDisplayField().addCls('expanded');
+                        }
+
+                        this.fireEvent('click', this, this.isHierarchical);
+                    }
+                }, this);
+            }
+        }
     },
 
     getRecordFromStore : function(value) {
@@ -235,6 +250,8 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             fields : [this.storeValueField, this.storeLabelField],
             data: newDistinctValuesArr
         });
+
+        this.addClickHandler();
 
         this.setInitialValue();
     },
@@ -612,7 +629,8 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
                             this.setCheckboxValue(relatedCb, newValue, true);
                         }, this);
 
-                        this.fireEvent('selectionchange', this.getSelectedValues());
+                        var selectedValues = this.getSelectedValues();
+                        this.fireEvent('selectionchange', selectedValues, uniqueValuesStore.getCount() == selectedValues.length);
                     }
                 }
             });
@@ -650,7 +668,9 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
                             scope: this,
                             change: function(cb, newValue) {
                                 this.checkboxSelectionChange(cb, newValue, fieldNames);
-                                this.fireEvent('selectionchange', this.getSelectedValues());
+
+                                var selectedValues = this.getSelectedValues();
+                                this.fireEvent('selectionchange', selectedValues, uniqueValuesStore.getCount() == selectedValues.length);
                             }
                         }
                     };
