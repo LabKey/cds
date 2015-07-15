@@ -53,8 +53,13 @@ Ext.define('Connector.model.Measure', {
         {name: 'defaultSelection', defaultValue: {all: true, value: undefined}},
 
         // If the selection method for this option involves a hierarchical relationship with other columns,
-        // this property lists the child column's alias.
-        {name: 'hierarchicalSelectionChild', defaultValue: undefined}
+        // this property lists the parent column's alias.
+        {name: 'hierarchicalSelectionParent', defaultValue: undefined},
+
+        // If a filterColumnName and filterColumnValue are provided, they will be used as a WHERE clause for the query to
+        // get the distinct values for the given measure in the Advanced options panel of the Variable Selector.
+        {name: 'filterColumnName', defaultValue: undefined},
+        {name: 'filterColumnValue', defaultValue: undefined}
     ],
 
     shouldShowScale : function() {
@@ -64,19 +69,19 @@ Ext.define('Connector.model.Measure', {
     getHierarchicalMeasures : function() {
         var measures = [], queryService = Connector.getService('Query');
 
-        // traverse the dimension hierarchical selection child lookups to get the full tree set
-        if (Ext.isDefined(this.get('hierarchicalSelectionChild'))) {
+        // traverse the dimension hierarchical selection parent lookups to get the full tree set
+        if (Ext.isDefined(this.get('hierarchicalSelectionParent'))) {
             measures = [this];
 
-            var childAlias = this.get('hierarchicalSelectionChild');
-            while (childAlias) {
-                var childMeasure = queryService.getMeasureRecordByAlias(childAlias);
-                if (childMeasure) {
-                    measures.push(childMeasure);
-                    childAlias = childMeasure.get('hierarchicalSelectionChild');
+            var parentAlias = this.get('hierarchicalSelectionParent');
+            while (parentAlias) {
+                var parentMeasure = queryService.getMeasureRecordByAlias(parentAlias);
+                if (parentMeasure) {
+                    measures.splice(0, 0, parentMeasure);
+                    parentAlias = parentMeasure.get('hierarchicalSelectionParent');
                 }
                 else {
-                    childAlias = null;
+                    parentAlias = null;
                 }
             }
         }

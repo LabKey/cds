@@ -246,12 +246,23 @@ Ext.define('Connector.controller.Query', {
             }
             else
             {
-                // TODO: verify that all measures are from the same query/dataset
-                var columnNames = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'name').join(', ');
+                var columnNames = '', columnSep = '', whereClause = '';
+                Ext.each(measureSet, function(measure) {
+                    columnNames += columnSep + measure.get('name');
+                    columnSep = ', ';
 
+                    // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
+                    // Note: we only want to filter on the last measure in the set, so we keep overriding the where clause
+                    if (measure.get('filterColumnName') && measure.get('filterColumnValue')) {
+                        whereClause = ' WHERE ' + measure.get('filterColumnName') + ' = \'' + measure.get('filterColumnValue') + '\'';
+                    }
+                });
+
+                // TODO: verify that all measures are from the same query/dataset
                 LABKEY.Query.executeSql({
                     schemaName: measureSet[0].get('schemaName'),
-                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName') + ' ORDER BY ' + columnNames,
+                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName')
+                        + whereClause + ' ORDER BY ' + columnNames,
                     scope: this,
                     success: function(data) {
                         // cache the distinct values array result

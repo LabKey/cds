@@ -8,8 +8,13 @@ Ext.define('Connector.component.AdvancedOptionBase', {
     isHierarchical: false,
     storeValueField: 'value',
     storeLabelField: 'label',
+    testCls: undefined,
 
     initComponent : function() {
+        if (!Ext.isEmpty(this.testCls)) {
+            this.addCls(this.testCls);
+        }
+
         this.items = [this.getHiddenField(), this.getDisplayField()];
 
         this.callParent();
@@ -97,6 +102,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
 
     getDropdownPanelConfig : function() {
         return {
+            testCls: this.testCls + '-dropdown',
             name: this.fieldName,
             store: this.store,
             initSelection: this.value,
@@ -168,25 +174,34 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
 
     extend: 'Connector.component.AdvancedOptionBase',
 
+    alias: 'widget.advancedoptiondimension',
+
     constructor : function(config) {
         if (config.dimension == undefined || config.dimension.$className !== 'Connector.model.Measure') {
             console.error('Advanced option dimension field must be defined using a Measure record.');
         }
 
         this.callParent([config]);
+
+        this.addEvents('change');
     },
 
     initComponent : function() {
         this.fieldName = this.dimension.get('name');
         this.fieldLabel = this.dimension.get('label');
         this.allowMultiSelect = this.dimension.get('allowMultiSelect');
-        this.isHierarchical = Ext.isDefined(this.dimension.get('hierarchicalSelectionChild'));
+        this.isHierarchical = Ext.isDefined(this.dimension.get('hierarchicalSelectionParent'));
 
         // for hierarchical dimensions, use the last one as the label
         this.measureSet = [this.dimension];
         if (this.isHierarchical) {
             this.measureSet = this.dimension.getHierarchicalMeasures();
             this.fieldLabel = this.measureSet[this.measureSet.length - 1].get('label');
+        }
+
+        // pull filterColumnName property up out of dimension.data so we can query for components easier (see Selector.js bindDimensions)
+        if (Ext.isDefined(this.dimension.get('filterColumnName'))) {
+            this.dimensionFilterColumnName = this.dimension.get('filterColumnName');
         }
 
         this.callParent();
@@ -255,6 +270,8 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         }
 
         this.callParent([value, allChecked]);
+
+        this.fireEvent('change', this);
     },
 
     getDropdownPanel : function() {
@@ -383,6 +400,10 @@ Ext.define('Connector.panel.AdvancedOptionBaseDropdown', {
     },
 
     initComponent : function() {
+        if (!Ext.isEmpty(this.testCls)) {
+            this.addCls(this.testCls);
+        }
+
         this.items =[
             this.getTransparentBox(),
             Ext.create('Ext.panel.Panel', {
