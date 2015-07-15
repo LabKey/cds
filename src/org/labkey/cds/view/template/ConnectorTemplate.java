@@ -29,12 +29,7 @@ public class ConnectorTemplate extends PrintTemplate
 {
     public ConnectorTemplate(ViewContext context, Container c, ModelAndView body, PageConfig page, NavTree[] navTrail)
     {
-        this("/org/labkey/cds/view/template/ConnectorTemplate.jsp", context, c, body, page, navTrail);
-    }
-
-    protected ConnectorTemplate(String template, ViewContext context, Container c, ModelAndView body, PageConfig page, NavTree[] navTrail)
-    {
-        super(template, page);
+        super("/org/labkey/cds/view/template/ConnectorTemplate.jsp", page);
         setFrame(FrameType.NONE);
         setBody(body);
     }

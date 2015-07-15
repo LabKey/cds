@@ -55,7 +55,7 @@ public class CDSModule extends DefaultModule
     @NotNull
     protected Collection<WebPartFactory> createWebPartFactories()
     {
-        return new ArrayList<WebPartFactory>(Collections.singletonList(
+        return new ArrayList<>(Collections.singletonList(
                 new BaseWebPartFactory("CDS Management")
                 {
                     @Override

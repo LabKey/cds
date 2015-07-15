@@ -28,7 +28,6 @@ import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiResponse;
 import org.labkey.api.action.ApiSimpleResponse;
 import org.labkey.api.action.BaseViewAction;
-import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.HasBindParameters;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
@@ -42,26 +41,15 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
-import org.labkey.api.pipeline.PipelineUrls;
 import org.labkey.api.query.QueryForm;
-import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryView;
-import org.labkey.api.query.UserSchema;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresNoPermission;
-import org.labkey.api.security.RequiresPermissionClass;
-import org.labkey.api.security.User;
-import org.labkey.api.security.permissions.AdminPermission;
+import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.permissions.ReadPermission;
-import org.labkey.api.study.Dataset;
-import org.labkey.api.study.StudyService;
-import org.labkey.api.util.PageFlowUtil;
-import org.labkey.api.util.URLHelper;
-import org.labkey.api.view.ActionURL;
-import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
@@ -106,7 +94,7 @@ public class CDSController extends SpringActionController
         setActionResolver(_actionResolver);
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresPermission(ReadPermission.class)
     public class BeginAction extends SimpleViewAction
     {
         public ModelAndView getView(Object o, BindException errors) throws Exception
@@ -120,7 +108,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresPermission(ReadPermission.class)
     public class NewsAction extends SimpleViewAction
     {
         @Override
@@ -160,138 +148,6 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return root;
-        }
-    }
-
-
-    void resetCube()
-    {
-        QueryService.get().cubeDataChanged(getContainer());
-    }
-
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class ClearFactTableAction extends FormViewAction
-    {
-
-        @Override
-        public void validateCommand(Object target, Errors errors)
-        {
-
-        }
-
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView("/org/labkey/cds/view/clearFacts.jsp");
-        }
-
-        @Override
-        public boolean handlePost(Object o, BindException errors) throws Exception
-        {
-            CDSManager.get().deleteFacts(getContainer());
-            resetCube();
-            return true;
-        }
-
-        @Override
-        public URLHelper getSuccessURL(Object o)
-        {
-            return new ActionURL(BeginAction.class, getContainer());
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Clear Fact Table");
-            return root;
-        }
-    }
-
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class PopulateCubeAction extends FormViewAction
-    {
-        List<FactLoader> _factLoaders = new ArrayList<>();
-
-        @Override
-        public void validateCommand(Object target, Errors errors)
-        {
-            List<String> selectedDatasets = getViewContext().getList("dataset");
-
-            if (null == selectedDatasets || selectedDatasets.size() == 0)
-                errors.reject(ERROR_MSG, "No datasets selected");
-        }
-
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView<>("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, false), errors);
-        }
-
-        @Override
-        public boolean handlePost(Object o, BindException errors) throws Exception
-        {
-            Container c = getContainer();
-            User u = getUser();
-            List<String> selectedDatasets = getViewContext().getList("dataset");
-            UserSchema studySchema = QueryService.get().getUserSchema(u, c, "study");
-            StudyService.Service studyService = StudyService.get();
-
-            //
-            // Populate fact loaders for each dataset
-            //
-            for (String dsName : selectedDatasets)
-            {
-                Dataset dataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, dsName));
-                if (null == dataset)
-                {
-                    errors.reject(ERROR_MSG, "Could not find dataset: '" + dsName + "'. Ensure that this dataset is properly exposed at the project level.");
-                    return false;
-                }
-                _factLoaders.add(new FactLoader(studySchema, dataset, u, c));
-            }
-
-            //
-            // Add any participants with no assay data to the cube...
-            // Should be more robust in finding this dataset
-            //
-            Dataset demographicsDataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, DemographicsFactLoader.TABLE_NAME));
-            if (null == demographicsDataset)
-            {
-                errors.reject(ERROR_MSG, "Could not find dataset: '" + DemographicsFactLoader.TABLE_NAME + "'. It is required.");
-                return false;
-            }
-            _factLoaders.add(new DemographicsFactLoader(studySchema, demographicsDataset, u, c));
-
-            //
-            // We're ready to go, delete old facts and populate the new ones. Then, reset the cube so it picks
-            // up new datas!
-            //
-            CDSManager.get().deleteFacts(c);
-            for (FactLoader loader : _factLoaders)
-                loader.populateCube();
-            resetCube();
-
-            return true;
-        }
-
-        @Override
-        public ModelAndView getSuccessView(Object o)
-        {
-            return new JspView<>("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, false /* isUpdateParticipantGroups */));
-        }
-
-        @Override
-        public URLHelper getSuccessURL(Object o)
-        {
-            return null;
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Populate Fact Table");
         }
     }
 
@@ -350,6 +206,7 @@ public class CDSController extends SpringActionController
         }
     }
 
+
     @RequiresNoPermission
     @Marshal(Marshaller.Jackson)
     public class PropertiesAction extends ApiAction<PropertiesForm>
@@ -375,46 +232,6 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermissionClass(AdminPermission.class)
-    public class ResetAction extends SimpleViewAction
-    {
-        @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
-        {
-            resetCube();
-            return new HtmlView("ok");
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return root;
-        }
-    }
-
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class UpdateParticipantGroupsAction extends PopulateCubeAction
-    {
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView<>("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, true), errors);
-        }
-
-        @Override
-        public ModelAndView getSuccessView(Object o)
-        {
-            return new JspView<>("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, true));
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Update Participant Groups");
-            return root;
-        }
-    }
 
     public static class GetCitationsForm
     {
@@ -432,7 +249,8 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+
+    @RequiresPermission(ReadPermission.class)
     public class GetCitationsAction extends ApiAction<GetCitationsForm>
     {
         public ApiResponse execute(GetCitationsForm form, BindException errors) throws Exception
@@ -531,7 +349,8 @@ public class CDSController extends SpringActionController
     }
 
 
-    @RequiresPermissionClass(ReadPermission.class) @RequiresLogin
+    @RequiresLogin
+    @RequiresPermission(ReadPermission.class)
     public class GetStateAction extends ApiAction<StateForm>
     {
         @Override
@@ -548,7 +367,8 @@ public class CDSController extends SpringActionController
     }
 
 
-    @RequiresPermissionClass(ReadPermission.class) @RequiresLogin
+    @RequiresLogin
+    @RequiresPermission(ReadPermission.class)
     public class SaveStateAction extends MutatingApiAction<StateForm>
     {
         @Override
@@ -569,7 +389,7 @@ public class CDSController extends SpringActionController
 
     /***** experimenting with derby/mondrian ******/
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresPermission(ReadPermission.class)
     @Action(ActionType.Export.class)
     public class ExportRowsXLSXAction extends SimpleViewAction<ExportForm>
     {
@@ -587,6 +407,7 @@ public class CDSController extends SpringActionController
             return null;
         }
     }
+
 
     public class ExcelExportQueryView extends QueryView
     {
@@ -629,10 +450,11 @@ public class CDSController extends SpringActionController
         }
     }
 
+
     public static class ExportForm extends QueryForm
     {
         private String[] _columnNamesOrdered;
-        private Map<String, String> _columnAliases = new HashMap<String, String>();
+        private Map<String, String> _columnAliases = new HashMap<>();
 
         protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
 
@@ -671,22 +493,6 @@ public class CDSController extends SpringActionController
         public Map<String, String> getColumnAliases()
         {
             return _columnAliases;
-        }
-    }
-
-    public static class CopyBean
-    {
-        String path;
-
-        public String getPath()
-        {
-            return path;
-        }
-
-        @SuppressWarnings("UnusedDeclaration")
-        public void setPath(String path)
-        {
-            this.path = path;
         }
     }
 }
