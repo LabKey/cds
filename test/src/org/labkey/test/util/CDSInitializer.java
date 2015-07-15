@@ -30,8 +30,6 @@ public class CDSInitializer
     private final String _project;
     public ETLHelper _etlHelper;
 
-    // Set this to true if you want to skip the import of data and setting up the project.
-    private final boolean _debugTest = false;
 
     public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
@@ -44,7 +42,7 @@ public class CDSInitializer
     @LogMethod
     public void setupDataspace() throws Exception
     {
-        if(_debugTest){
+        if(CDSHelper.debugTest){
             // If debugging test do not run setup and make sure cleanup does not happen as well.
             _test.log("Bypassing CDSImport and loadApplication etls. Cleanup will be skipped as well.");
             System.setProperty("clean", "false");
@@ -89,7 +87,7 @@ public class CDSInitializer
     private void populateNewsFeed()
     {
         // prepare RSS news feed
-        _test.goToSchemaBrowser();
+        _test.clickAdminMenuItem("Go To Module", "Query");
         _test.selectQuery("announcement", "RSSFeeds");
         _test.waitForText("view data");
         _test.clickAndWait(Locator.linkContainingText("view data"));

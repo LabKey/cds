@@ -39,10 +39,130 @@ public class CDSHelper
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
-    public static final String[] SUBJECT_CHARACTERISTICS = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
-    public final static String[] SOURCES = {"Subject characteristics", "Time points", "User groups"};
-    public static final String[] NEW_ASSAYS = {"BAMA (Binding Ab multiplex assay)", "ELISPOT (Enzyme-Linked ImmunoSpot)", "ICS Intracellular Cytokine Staining)", "NAb (Neutralizing antibody)"};
-    public static final String[] NEW_ASSAY_DIMENSIONS = {"Isotype", "Antigen Name", "Specimen type", "Scale"};
+    public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
+
+    public static final String BAMA = "BAMA (Binding Ab multiplex assay)";
+    public static final String BAMA_ANTIGEN = "Antigen";
+    public static final String BAMA_ASSAY = "Assay Identifier";
+    public static final String BAMA_LAB_SRC_KEY = "Bama Lab Source Key";
+    public static final String BAMA_CLADE = "Clade";
+    public static final String BAMA_DETECTION = "Detection System";
+    public static final String BAMA_DILUTION = "Dilution";
+    public static final String BAMA_EXP_ASSAYD = "Exp Assayid";
+    public static final String BAMA_INSTRUMENT_CODE = "Instrument Code";
+    public static final String BAMA_ISOTYPE = "Isotype";
+    public static final String BAMA_LAB = "Lab";
+    public static final String BAMA_MAGNITUDE_BLANK = "Magnitude (mfi) - Blank";
+    public static final String BAMA_MAGNITUDE_BASELINE = "Magnitude (mfi) - Blank Baseline";
+    public static final String BAMA_MAGNITUDE_DELTA = "Magnitude (mfi) - Delta";
+    public static final String BAMA_MAGNITUDE_RAW = "Magnitude (mfi) - Raw";
+    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) – Delta Baseline";
+    public static final String BAMA_MAGNITUDE_RAW_BASELINE = "Magnitude (mfi) – Raw Baseline";
+    public static final String BAMA_PROTEIN = "Protein";
+    public static final String BAMA_PROTEIN_PANEL = "Protein Panel";
+    public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
+    public static final String BAMA_SPECIMEN = "Specimen type";
+    public static final String BAMA_VACCINE = "Vaccine Matched";
+    public static final String BAMA_VISIT = "Visit";
+    public static final String BAMA_VISIT_DAY = "Visit Day";
+
+    public static final String DEMOGRAPHICS = "Subject characteristics";
+    public static final String DEMO_AGEGROUP = "Age Group at Enrollment";
+    public static final String DEMO_AGE = "Age at Enrollment";
+    public static final String DEMO_BMI = "BMI at Enrollment";
+    public static final String DEMO_CIRCUMCISED = "Circumcised at Enrollment";
+    public static final String DEMO_COUNTRY = "Country at Enrollment";
+    public static final String DEMO_HISPANIC = "Hispanic";
+    public static final String DEMO_RACE = "Race";
+    public static final String DEMO_SEX = "Sexatbirth";
+    public static final String DEMO_SPECIES = "Species";
+    public static final String DEMO_SUBSPECIES = "Subspecies";
+    public static final String DEMO_VISIT = "Visit";
+
+    public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
+    public static final String ELISPOT_ANTIGEN = "Antigen Panel";
+    public static final String ELISPOT_ASSAY = "Assay Identifier";
+    public static final String ELISPOT_CELL_NAME = "Cell Name";
+    public static final String ELISPOT_CELL_TYPE = "Cell Type";
+    public static final String ELISPOT_CLADE = "Clade";
+    public static final String ELISPOT_LAB_SRC_KEY = "Els Ifng Lab Source Key";
+    public static final String ELISPOT_EXP_ASSAY = "Exp Assayid";
+    public static final String ELISPOT_MARKER_NAME = "Functional Marker Name";
+    public static final String ELISPOT_MARKER_TYPE = "Functional Marker Type";
+    public static final String ELISPOT_LAB = "Lab";
+    public static final String ELISPOT_MAGNITUDE = "Magnitude (% cells)";
+    public static final String ELISPOT_MAGNITUDE_NEG = "Magnitude (% cells) - Negative";
+    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
+    public static final String ELISPOT_PROTEIN =  "Protein";
+    public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
+    public static final String ELISPOT_RESPONSE =  "Response call";
+    public static final String ELISPOT_SPECIMEN =  "Specimen type";
+    public static final String ELISPOT_VACCINE =  "Vaccine Method";
+    public static final String ELISPOT_VISIT =  "Visit";
+    public static final String ELISPOT_VISIT_DAY =  "Visit Day";
+
+    public static final String ICS = "ICS (Intracellular Cytokine Staining)";
+    public static final String ICS_ANTIGEN = "Antigen";
+    public static final String ICS_ASSAY = "Assay identifier";
+    public static final String ICS_CELL_NAME = "Cell name";
+    public static final String ICS_CELL_TYPE = "Cell type";
+    public static final String ICS_CLADE = "Clade";
+    public static final String ICS_EXP_ASSAY = "Exp Assayid";
+    public static final String ICS_MARKER_NAME = "Functional marker name";
+    public static final String ICS_MARKER_TYPE = "Functional marker type";
+    public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
+    public static final String ICS_LAB = "Lab";
+    public static final String ICS_MAGNITUDE = "Magnitude";
+    public static final String ICS_MAGNITUDE_ADJ = "Magnitude adjusted";
+    public static final String ICS_MAGNITUDE_NEG = "Magnitude negative";
+    public static final String ICS_PROTEIN = "Protein";
+    public static final String ICS_PROTEIN_SUBPANEL = "Protein subpanel";
+    public static final String ICS_VISIT_DAY = "Protocol Visit Day";
+    public static final String ICS_RESPONSE = "Response call";
+    public static final String ICS_SPECIMEN = "Specimen type";
+    public static final String ICS_VACCINE = "Vaccine matched";
+    public static final String ICS_VISIT = "Visit";
+
+    public static final String NAB = "NAb (Neutralizing antibody)";
+    public static final String NAB_ASSAY = "Assay Identifier";
+    public static final String NAB_CLADE = "Clade";
+    public static final String NAB_EXP_ASSAY = "Exp Assayid";
+    public static final String NAB_INIT_DILUTION = "Initial dilution";
+    public static final String NAB_ISOLATE = "Isolate";
+    public static final String NAB_LAB = "Lab";
+    public static final String NAB_LAB_SRC_KEY = "Nab Lab Source Key";
+    public static final String NAB_RESPONSE = "Response call";
+    public static final String NAB_SPECIMEN = "Specimen type";
+    public static final String NAB_TARGET_CELL = "Target cell";
+    public static final String NAB_TIER = "Tier";
+    public static final String NAB_TITERIC50 = "Titer IC50";
+    public static final String NAB_TITERIC80 = "Titer IC80";
+    public static final String NAB_VISIT = "Visit";
+    public static final String NAB_VISIT_DAY = "Visit Day";
+
+//    public static final String[][] Y_AXIS_SOURCES =
+//            {{DEMOGRAPHICS, DEMO_AGEGROUP, DEMO_AGE, DEMO_BMI},
+//            {BAMA, BAMA_MAGNITUDE_BLANK, BAMA_MAGNITUDE_BASELINE, BAMA_MAGNITUDE_RAW, BAMA_MAGNITUDE_RAW, BAMA_MAGNITUDE_DELTA_BASELINE, BAMA_MAGNITUDE_RAW_BASELINE},
+//            {ELISPOT, ELISPOT_MAGNITUDE, ELISPOT_MAGNITUDE_NEG, ELISPOT_MAGNITUDE_RAW},
+//            {ICS, ICS_MAGNITUDE, ICS_MAGNITUDE_ADJ, ICS_MAGNITUDE_NEG},
+//            {NAB, NAB_TITERIC50, NAB_TITERIC80}};
+//    public static final String[][] X_AXIS_SOURCES =
+//            {{DEMOGRAPHICS, DEMO_AGEGROUP, DEMO_AGE, DEMO_BMI, DEMO_CIRCUMCISED, DEMO_COUNTRY, DEMO_HISPANIC, DEMO_RACE, DEMO_SEX, DEMO_SPECIES, DEMO_SUBSPECIES, DEMO_VISIT},
+//            {"Time points", "Study days", "Study weeks", "Study months"},
+//            {BAMA, BAMA_ANTIGEN, BAMA_ASSAY, BAMA_LAB_SRC_KEY, BAMA_CLADE, BAMA_DATA_SUMMARY, BAMA_DETECTION, BAMA_DILUTION, BAMA_EXP_ASSAYD, BAMA_INSTRUMENT_CODE, BAMA_ISOTYPE, BAMA_LAB, BAMA_MAGNITUDE_BLANK, BAMA_MAGNITUDE_BASELINE, BAMA_MAGNITUDE_DELTA, BAMA_MAGNITUDE_RAW, BAMA_MAGNITUDE_DELTA_BASELINE, BAMA_MAGNITUDE_RAW_BASELINE, BAMA_PROTEIN, BAMA_PROTEIN_PANEL, BAMA_RESPONSE_CALL, BAMA_SPECIMEN, BAMA_VACCINE, BAMA_VISIT, BAMA_VISIT_DAY},
+//            {ELISPOT, ELISPOT_ANTIGEN, ELISPOT_ASSAY, ELISPOT_CELL_NAME, ELISPOT_CELL_TYPE, ELISPOT_CLADE, ELISPOT_DATA_SUMMARY, ELISPOT_LAB_SRC_KEY, ELISPOT_EXP_ASSAY, ELISPOT_MARKER_NAME, ELISPOT_MARKER_TYPE, ELISPOT_LAB, ELISPOT_MAGNITUDE, ELISPOT_MAGNITUDE_NEG, ELISPOT_MAGNITUDE_RAW, ELISPOT_PROTEIN, ELISPOT_PROTEIN_PANEL, ELISPOT_RESPONSE, ELISPOT_SPECIMEN, ELISPOT_VACCINE, ELISPOT_VISIT, ELISPOT_VISIT_DAY},
+//            {ICS, ICS_ANTIGEN, ICS_ASSAY, ICS_CELL_NAME, ICS_CELL_TYPE, ICS_CLADE, ICS_DATA_SUMMARY, ICS_EXP_ASSAY, ICS_MARKER_NAME, ICS_MARKER_TYPE, ICS_LAB_SRC_KEY, ICS_LAB, ICS_MAGNITUDE, ICS_MAGNITUDE_ADJ, ICS_MAGNITUDE_NEG, ICS_PROTEIN, ICS_PROTEIN_SUBPANEL, ICS_VISIT_DAY, ICS_RESPONSE, ICS_SPECIMEN, ICS_VACCINE, ICS_VISIT},
+//            {NAB, NAB_ANTIGEN, NAB_ASSAY, NAB_CLADE, NAB_DATA_SUMMARY, NAB_ENVELOPE, NAB_EXP_ASSAY, NAB_INIT_DILUTION, NAB_LAB, NAB_LAB_SRC_KEY, NAB_RESPONSE, NAB_SPECIMEN, NAB_TARGET_CELL, NAB_TITERIC50, NAB_TITERIC80, NAB_VISIT, NAB_VISIT_DAY}};
+//    public static final String[][] COLOR_AXIS_SOURCES =
+//            {{DEMOGRAPHICS, DEMO_CIRCUMCISED, DEMO_COUNTRY, DEMO_HISPANIC, DEMO_RACE, DEMO_SEX, DEMO_SPECIES, DEMO_SUBSPECIES},
+//            {BAMA, BAMA_ANTIGEN, BAMA_ASSAY, BAMA_LAB_SRC_KEY, BAMA_CLADE, BAMA_DATA_SUMMARY, BAMA_DETECTION, BAMA_DILUTION, BAMA_EXP_ASSAYD, BAMA_INSTRUMENT_CODE, BAMA_ISOTYPE, BAMA_LAB, BAMA_PROTEIN, BAMA_PROTEIN_PANEL, BAMA_RESPONSE_CALL, BAMA_SPECIMEN, BAMA_VACCINE},
+//            {ELISPOT, ELISPOT_ANTIGEN, ELISPOT_ASSAY, ELISPOT_CELL_NAME, ELISPOT_CELL_TYPE, ELISPOT_CLADE, ELISPOT_DATA_SUMMARY, ELISPOT_MARKER_NAME, ELISPOT_MARKER_TYPE, ELISPOT_LAB, ELISPOT_PROTEIN, ELISPOT_PROTEIN_PANEL, ELISPOT_RESPONSE, ELISPOT_SPECIMEN, ELISPOT_VACCINE},
+//            {ICS, ICS_ANTIGEN, ICS_ASSAY, ICS_CELL_NAME, ICS_CELL_TYPE, ICS_CLADE, ICS_DATA_SUMMARY, ICS_MARKER_NAME, ICS_MARKER_TYPE, ICS_LAB, ICS_PROTEIN, ICS_PROTEIN_SUBPANEL, ICS_RESPONSE, ICS_SPECIMEN, ICS_VACCINE},
+//            {NAB, NAB_ANTIGEN, NAB_ASSAY, NAB_CLADE, NAB_DATA_SUMMARY, NAB_ENVELOPE, NAB_LAB, NAB_RESPONSE, NAB_SPECIMEN, NAB_TARGET_CELL}};
+//
+    // Set this to true if you want to skip the import of data, setting up the project and cleaning up onld projects.
+    public static final boolean debugTest = true;
+
     private final BaseWebDriverTest _test;
     private static final boolean ValidateCounts = false;
 

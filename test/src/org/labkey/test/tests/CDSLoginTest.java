@@ -39,15 +39,17 @@ import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 @Category({CDS.class})
 public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
+
+    private static final String PROJECT_NAME = "CDSLoginTest Project";
+    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
+
     private final CDSHelper _cds = new CDSHelper(this);
-    private static String _projectName;
     private static String _cdsAppURL;
 
     @BeforeClass
     public static void doSetup() throws Exception
     {
         CDSLoginTest initTest = (CDSLoginTest)getCurrentTest();
-        _projectName = initTest.getProjectName();
 
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
@@ -65,17 +67,14 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Override
-    protected void doCleanup(boolean afterTest) throws TestTimeoutException
+    public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-        // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate difference more.
-        if(afterTest)
-        {
-            // If after the test try deleting via the UI.
-            _containerHelper = new UIContainerHelper(this);
-        }
 
-        // Doing clean up here to give a longer timeout period.
-        _containerHelper.deleteProject(_projectName, afterTest, 240000);
+        if(!CDSHelper.debugTest){
+            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
+            _containerHelper = new UIContainerHelper(this);
+            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+        }
 
     }
 
@@ -110,7 +109,7 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     protected String getProjectName()
     {
-        return "CDSLoginTest Project";
+        return PROJECT_NAME;
     }
 
     @Override

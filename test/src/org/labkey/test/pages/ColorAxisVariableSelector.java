@@ -18,6 +18,8 @@ package org.labkey.test.pages;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class ColorAxisVariableSelector extends DataspaceVariableSelector
 {
@@ -34,7 +36,8 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-        return Locator.css(".x-window-axiswindow");
+//        return Locator.css(".x-window-axiswindow");
+        return Locator.css(".color-axis-selector");
 //        return Locator.id("plotcolorwin").toCssLocator();
     }
 
@@ -55,6 +58,29 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set color"));
         _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    @Override
+    public void openSelectorWindow()
+    {
+//        int tries = 0;
+//        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
+//        while((!openButton.isDisplayed()) && (tries < 3)){
+//            _test.sleep(250);
+//            tries++;
+//        }
+        WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
+        _test.sleep(750); // Don't know why, but more reliable with the wait.
+        openButton.click();
+
+        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("color").toBy()));
+//        _test.waitForElement(Locator.divByInnerText("color"));
+
+    }
+
+    public void backToSource(){
+        _test.click(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//span[contains(@class, 'back-action')]"));
+        _test.sleep(750);
     }
 
     public void setScale(Scale scale)

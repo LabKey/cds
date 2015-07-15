@@ -37,6 +37,7 @@ import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
+import org.labkey.test.util.UIContainerHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
@@ -55,6 +56,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
@@ -63,6 +65,9 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 @Category({CDS.class})
 public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
+    private static final String PROJECT_NAME = "CDSTest Project";
+    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
+
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String PGROUP1 = "visgroup 1";
@@ -75,15 +80,28 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     public static void doSetup() throws Exception
     {
         CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
+
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
-        initTest.createParticipantGroups();
+
+        if(!CDSHelper.debugTest)
+        {
+            initTest.createParticipantGroups();
+        }
+
   }
 
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-        _containerHelper.deleteProject(getProjectName(), afterTest);
+
+        if(!CDSHelper.debugTest)
+        {
+            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
+            _containerHelper = new UIContainerHelper(this);
+            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+        }
+
     }
 
     @Before
@@ -100,14 +118,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    @Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
-        final String CD4_LYMPH = "200\n400\n600\n800\n1000\n1200\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n2000\n2200";
-        final String HEMO_CD4_UNFILTERED = "8\n10\n12\n14\n16\n18\n20\n100\n200\n300\n400\n500\n600\n700\n800\n900\n1000\n1100\n1200\n1300";
-        final String WT_PLSE_LOG = "60\n70\n80\n90\n100\n40\n50\n60\n70\n80\n90\n100";
+
+        final String ELISPOT_VISIT = "10500\n10550\n10600\n10650\n10700\n10750\n10800\n10850\n10900\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000";
+        final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        final String NAB_IC50 = "20\n30\n40\n50\n60\n5\n50\n500\n5000";
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -115,35 +133,50 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Lab Results", "CD4");
+        xaxis.pickSource(CDSHelper.ELISPOT);
+        xaxis.pickVariable(CDSHelper.ELISPOT_VISIT);
         xaxis.confirmSelection();
-        waitForElement(Locator.css(".curseltitle").containing("for the Y Axis"));
-        yaxis.pickMeasure("Lab Results", "Lymphocytes");
+        this.sleep(500);
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        assertSVG(CD4_LYMPH);
+        assertSVG(ELISPOT_VISIT);
 
         yaxis.openSelectorWindow();
-        yaxis.pickMeasure("Lab Results", "CD4");
+        yaxis.backToSource();
+        this.sleep(500);
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
+
+        this.sleep(2000);
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Lab Results", "Hemoglobin");
+        xaxis.backToSource();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE);
         xaxis.confirmSelection();
+
         _ext4Helper.waitForMaskToDisappear();
-        assertSVG(HEMO_CD4_UNFILTERED);
+        assertSVG(ICS_MAGNITUDE);
 
         // Test log scales
         yaxis.openSelectorWindow();
-        yaxis.pickMeasure("Physical Exam", "Weight Kg");
+        yaxis.backToSource();
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
-        waitForText("Points outside the plotting area have no match");
+
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Physical Exam", "Pulse");
+        xaxis.backToSource();
+        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickVariable(CDSHelper.DEMO_AGE);
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
-        assertSVG(WT_PLSE_LOG);
+
+        assertSVG(NAB_IC50);
 
         //comment starts here
 
@@ -222,8 +255,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         //commented out section end
     }
 
-
-    // TODO Removing test attribute until I get a chance to fix it.
+// TODO Removing test attribute until I get a chance to fix it.
 //    @Test
     public void verifyBoxPlots()
     {
@@ -300,7 +332,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
+// TODO Removing test attribute until I get a chance to fix it.
 //    @Test
     public void verifySavedGroupPlot()
     {
@@ -349,85 +381,110 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(plotTick.withText("70"));
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
-    public void verifyXAxisSelector()
+    @Test
+    public void verifyAxisSelectors()
     {
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
 
+        final String[][] Y_AXIS_SOURCES =
+                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE, CDSHelper.ELISPOT_MAGNITUDE_NEG, CDSHelper.ELISPOT_MAGNITUDE_RAW},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE, CDSHelper.ICS_MAGNITUDE_ADJ, CDSHelper.ICS_MAGNITUDE_NEG},
+                        {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}};
+        final String[][] X_AXIS_SOURCES =
+                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES, CDSHelper.DEMO_VISIT},
+                        {"Time points", "Study days", "Study weeks", "Study months"},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_LAB_SRC_KEY, CDSHelper.BAMA_CLADE, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE, CDSHelper.BAMA_VISIT, CDSHelper.BAMA_VISIT_DAY},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_LAB_SRC_KEY, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE, CDSHelper.ELISPOT_MAGNITUDE_NEG, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE, CDSHelper.ELISPOT_VISIT, CDSHelper.ELISPOT_VISIT_DAY},
+                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_CLADE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB_SRC_KEY, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE, CDSHelper.ICS_MAGNITUDE_ADJ, CDSHelper.ICS_MAGNITUDE_NEG, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_SUBPANEL, CDSHelper.ICS_VISIT_DAY, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VACCINE, CDSHelper.ICS_VISIT},
+                        {CDSHelper.NAB, CDSHelper.NAB_ASSAY, CDSHelper.NAB_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_ISOLATE, CDSHelper.NAB_LAB, CDSHelper.NAB_LAB_SRC_KEY, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TIER, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80, CDSHelper.NAB_VISIT, CDSHelper.NAB_VISIT_DAY}};
+        final String[][] COLOR_AXIS_SOURCES =
+                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_CLADE, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
+                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_CLADE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_SUBPANEL, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VACCINE},
+                        {CDSHelper.NAB, CDSHelper.NAB_ASSAY, CDSHelper.NAB_CLADE, CDSHelper.NAB_ISOLATE, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TIER}};
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        this.log("Validating the x-axis selector.");
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         xaxis.openSelectorWindow();
 
-        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+        this.log("Validating the x-axis header text.");
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'main-title')][text()='x-axis']")));
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
 
-        assertElementNotPresent(definitionPanel.notHidden());
+        this.log("Validating the x-axis sources.");
+        for (String[] src : X_AXIS_SOURCES)
+        {
+            assertTrue(this.isElementVisible(xaxis.window().append(" div.content-label").withText(src[0])));
+            this.log("Validating variables for " + src[0]);
+            click(xaxis.window().append(" div.content-label").withText(src[0]));
+            this.waitForElement(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
+            for (int i = 1; i < src.length; i++)
+            {
+                assertTrue(this.isElementVisible(xaxis.window().append(" div.content-label").withText(src[i])));
+            }
+            xaxis.backToSource();
+        }
 
-        xaxis.pickSource("ADCC");
-        waitForElement(definitionPanel.notHidden()
-                .containing("Definition: ADCC")
-                .containing("Contains up to one row of ADCC data for each Participant/visit/TARGET_CELL_PREP_ISOLATE combination."));
+        this.log("Validating the x-axis cancel button.");
+        xaxis.cancelSelection();
 
-        xaxis.pickMeasure("ADCC", "ACTIVITY PCT");
-        waitForElement(definitionPanel.notHidden()
-                .containing("Definition: ACTIVITY PCT")
-                .containing("Percent activity observed"));
-
-        click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
-        waitForElement(Locator.tagWithText("h3", "Lead contributor"));
-        assertElementPresent(Locator.tagWithText("h1", "Fake ADCC data"));
-    }
-
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
-    public void verifyYAxisSelector()
-    {
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+        this.log("Validating the y-axis selector.");
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-
         yaxis.openSelectorWindow();
 
-        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
+        this.log("Validating the y-axis header text.");
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'main-title')][text()='y-axis']")));
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
 
-        assertElementNotPresent(definitionPanel.notHidden());
+        this.log("Validating the y-axis sources.");
+        for (String[] src : Y_AXIS_SOURCES)
+        {
+            assertTrue(this.isElementVisible(yaxis.window().append(" div.content-label").withText(src[0])));
+            this.log("Validating variables for " + src[0]);
+            click(yaxis.window().append(" div.content-label").withText(src[0]));
+            this.waitForElement(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
+            for (int i = 1; i < src.length; i++)
+            {
+                assertTrue(this.isElementVisible(yaxis.window().append(" div.content-label").withText(src[i])));
+            }
+            yaxis.backToSource();
+        }
 
-        yaxis.pickSource("MRNA");
-        waitForElement(definitionPanel.notHidden()
-                .containing("Definition: MRNA")
-                .containing("Contains up to one row of MRNA data for each Participant/visit combination."));
+        this.log("Validating the y-axis cancel button.");
+        yaxis.cancelSelection();
 
-        yaxis.pickMeasure("MRNA", "CCL5");
-        waitForElement(definitionPanel.notHidden()
-                .containing("Definition: CCL5")
-                .containing("Expression levels for CCL5"));
+        this.log("Validating the color-axis selector.");
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+        coloraxis.openSelectorWindow();
 
-        click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
-        waitForElement(Locator.tagWithText("h3", "Lead contributor"));
-        assertElementPresent(Locator.tagWithText("h1", "mRNA assay"));
-    }
+        this.log("Validating the color-axis header text.");
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'main-title')][text()='color']")));
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
+        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
-    public void verifyColorAxisSelector()
-    {
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
+        this.log("Validating the color-axis sources.");
+        for (String[] src : COLOR_AXIS_SOURCES)
+        {
+            assertTrue(this.isElementVisible(coloraxis.window().append(" div.content-label").withText(src[0])));
+            this.log("Validating variables for " + src[0]);
+            click(coloraxis.window().append(" div.content-label").withText(src[0]));
+            this.waitForElement(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
+            for (int i = 1; i < src.length; i++)
+            {
+                assertTrue(this.isElementVisible(coloraxis.window().append(" div.content-label").withText(src[i])));
+            }
+            coloraxis.backToSource();
+        }
 
-        color.openSelectorWindow();
+        this.log("Validating the color-axis cancel button.");
+        coloraxis.cancelSelection();
 
-        Locator.XPathLocator definitionPanel = Locator.tagWithClass("div", "definitionpanel");
-
-        assertElementNotPresent(definitionPanel.notHidden());
-
-        color.pickSource("ADCC");
-        waitForElement(definitionPanel.notHidden()
-                .containing("Definition: ADCC")
-                .containing("Contains up to one row of ADCC data for each Participant/visit/TARGET_CELL_PREP_ISOLATE combination."));
-
-        assertElementNotPresent(color.measuresPanelRow().withText("ACTIVITY PCT")); // Only categorical data can be used for color axis
-
-        click(CDSHelper.Locators.cdsButtonLocator("go to assay page"));
-        waitForElement(Locator.tagWithText("h3", "Lead contributor"));
-        assertElementPresent(Locator.tagWithText("h1", "Fake ADCC data"));
     }
 
     // TODO Removing test attribute until I get a chance to fix it.
@@ -850,10 +907,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     private void createParticipantGroups()
     {
         Ext4Helper.resetCssPrefix();
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "249318596", "249320107");
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "249320127", "249320489");
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "249320897", "249325717");
-        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3_COPY, "Subject", "249320897", "249325717");
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "039-016", "039-014");  // TODO Test data dependent.
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "039-044", "039-042");  // TODO Test data dependent.
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "039-059", "039-060");  // TODO Test data dependent.
+        _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3_COPY, "Subject", "039-059", "039-060");  // TODO Test data dependent.
     }
 
     @Nullable

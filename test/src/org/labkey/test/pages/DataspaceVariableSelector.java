@@ -49,16 +49,16 @@ public abstract class DataspaceVariableSelector
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
     }
 
-    public void openSelectorWindow(String title)
-    {
-        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
-
-        openButton.click();
-
-        _test.waitForElement(Locator.divByInnerText(title));
-        _test.sleep(1000);
-
-    }
+//    public void openSelectorWindow(String title)
+//    {
+//        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
+//
+//        openButton.click();
+//
+//        _test.waitForElement(Locator.divByInnerText(title));
+//        _test.sleep(1000);
+//
+//    }
 
     public Locator.CssLocator pickerPanel()
     {
@@ -87,7 +87,7 @@ public abstract class DataspaceVariableSelector
     {
         _test.click(window().append(" div.content-label").withText(source));
         _test.sleep(500);
-//        _test.waitAndClick(sourcePanelRow().containing(source));
+//        _test.waitAndClick(sourcePanelRow().containing(source)); // This is used in multi-panel select.
     }
 
     public void pickVariable(String source){

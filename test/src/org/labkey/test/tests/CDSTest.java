@@ -77,9 +77,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-        // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
-        _containerHelper = new UIContainerHelper(this);
-        _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+
+        if(!CDSHelper.debugTest){
+            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
+            _containerHelper = new UIContainerHelper(this);
+            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+        }
+
     }
 
     @BeforeClass @LogMethod
@@ -173,8 +177,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Validate counts and about link
         //
-        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "0 studies connected together combining");
-        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "0 data points.");
+        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "57 studies connected together combining");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "48,359 data points.");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
 
@@ -197,29 +201,29 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
         this.sleep(500); // Not sure why I need this but test is more reliable with it.
-        yaxis.openSelectorWindow("y-axis");
-        yaxis.pickSource("BAMA (Binding Ab multiplex assay)");
-        yaxis.pickVariable("Magnitude");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE);
         yaxis.confirmSelection();
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
-        xaxis.openSelectorWindow("x-axis");
-        xaxis.pickSource("BAMA (Binding Ab multiplex assay)");
-        xaxis.pickVariable("Antigen Name");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_ANTIGEN);
         xaxis.confirmSelection();
 
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
-        coloraxis.openSelectorWindow("color");
-        coloraxis.pickSource("Subject characteristics");
-        coloraxis.pickVariable("Race");
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
-        cds.clickBy("Subject characteristics");
-        cds.selectBars(CDSHelper.SUBJECT_CHARACTERISTICS[2]);
+        cds.clickBy(CDSHelper.DEMOGRAPHICS);
+        cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.SUBJECT_CHARACTERISTICS[2]));
-        _asserts.assertFilterStatusCounts(34, 1, -1);
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
+        _asserts.assertFilterStatusCounts(667, 15, -1);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
         final String saveLabel = "Group \"A Plotted...\" saved.";
@@ -236,8 +240,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: Antigen Name, Magnitude, Race"));
-        _asserts.assertFilterStatusCounts(34, 1, -1); // TODO Test data dependent.
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: Antigen, Magnitude, Race"));
+        _asserts.assertFilterStatusCounts(667, 15, -1); // TODO Test data dependent.
 
         // TODO: Enable this once fb_plots is merged
 //        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -595,7 +599,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.useSelectionAsSubjectFilter();
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]), 1);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
-        _asserts.assertFilterStatusCounts(0, 0, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(75, 1, -1); // TODO Test data dependent.
 
         // remove filter
         click(Locator.tagWithClass("div", "closeitem"));
@@ -606,7 +610,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-       _asserts.assertFilterStatusCounts(0, 0, -1); // TODO Test data dependent.
+       _asserts.assertFilterStatusCounts(75, 1, -1); // TODO Test data dependent.
 
         // remove an undo filter
         click(Locator.tagWithClass("div", "closeitem"));
@@ -619,7 +623,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForTextToDisappear("Filter removed.", 5000);
     }
 
-// TODO Still needs work.
+// TODO Need to work around column header issue. Disabling test until that is fixed.
 //    @Test
     public void verifyGrid()
     {
@@ -632,6 +636,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         waitForText("View data grid"); // grid warning
 
+        // TODO this is part of the problem. addGridColumn will validate the column is added.
+        // TODO Unfortunately Neutralizing antibody is shown as NAb in the header. Maybe a product change is needed.
         gridColumnSelector.addGridColumn("Neutralizing antibody", "Assay Identifier", true, true);
         gridColumnSelector.addGridColumn("Neutralizing antibody", "Lab", false, true);
         grid.ensureColumnsPresent("Assay Identifier", "Lab");
@@ -690,7 +696,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.setFacet("Race", "White");
         grid.assertRowCount(702);
         grid.assertPageTotal(29);
-        _asserts.assertFilterStatusCounts(84,3,3);
+        _asserts.assertFilterStatusCounts(84,3,-1);
 
         //
         // More page button tests
@@ -717,14 +723,14 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.ensureColumnsPresent("Point IC50");
         grid.assertRowCount(702);
         grid.assertPageTotal(29);
-        _asserts.assertFilterStatusCounts(84, 3, 3);
+        _asserts.assertFilterStatusCounts(84, 3, -1);
 
         log("Add a lookup column");
         gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
         grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
         grid.assertRowCount(702);
         grid.assertPageTotal(29);
-        _asserts.assertFilterStatusCounts(84, 3, 3);
+        _asserts.assertFilterStatusCounts(84, 3, -1);
 
         log("Filter on a looked-up column");
         grid.setFacet("PI", "Mark Igra");
@@ -732,7 +738,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.assertRowCount(443);
         grid.assertPageTotal(18);
-        _asserts.assertFilterStatusCounts(15, 2, 2);
+        _asserts.assertFilterStatusCounts(15, 2, -1);
 
         log("Filter undo on grid");
         cds.clearFilter();
@@ -745,7 +751,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
         grid.assertRowCount(443);
         grid.assertPageTotal(18);
-        _asserts.assertFilterStatusCounts(15, 2, 2);
+        _asserts.assertFilterStatusCounts(15, 2, -1);
 
         grid.setFilter("Point IC50", "Is Greater Than", "60");
         grid.assertRowCount(2);
@@ -772,7 +778,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // 14902
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
-        _asserts.assertSelectionStatusCounts(32, 1, 2);
+        _asserts.assertSelectionStatusCounts(5, 1, -1);
 
         // Verify multi-select tooltip -- this only shows the first time
         //assertTextPresent(TOOLTIP);
@@ -780,7 +786,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.useSelectionAsSubjectFilter();
         cds.hideEmpty();
         waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
-        _asserts.assertFilterStatusCounts(32, 1, 2);
+        _asserts.assertFilterStatusCounts(5, 1, -1);
         cds.goToSummary();
 
         // Verify multi-select tooltip has dissappeared
@@ -788,7 +794,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
-        _asserts.assertSelectionStatusCounts(32, 1, 2);
+        _asserts.assertSelectionStatusCounts(5, 1, -1);
         sleep(500);
         cds.clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
@@ -798,32 +804,33 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[1]);
-        _asserts.assertSelectionStatusCounts(100, 1, 2);
+        _asserts.assertSelectionStatusCounts(3, 1, -1);
         assertTextNotPresent(TOOLTIP);
         cds.applySelection(CDSHelper.STUDIES[2]);
-        _asserts.assertSelectionStatusCounts(100, 1, 0);
+        _asserts.assertSelectionStatusCounts(110, 1, -1);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.applySelection(CDSHelper.ASSAYS[0]);
-        _asserts.assertSelectionStatusCounts(12, 1, 2);
+        _asserts.assertSelectionStatusCounts(270, 1, -1);
         cds.applySelection(CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(24, 1, 2);
+        _asserts.assertSelectionStatusCounts(969, 8, -1);
         cds.applySelection(CDSHelper.ASSAYS[3]);
-        _asserts.assertSelectionStatusCounts(64, 2, 3);
-        //cds.applySelection(CDSHelper.ASSAYS[2]);
-        //   _asserts.assertSelectionStatusCounts(132, 2, 3);
+        _asserts.assertSelectionStatusCounts(899, 14, -1);
+        cds.applySelection(CDSHelper.ASSAYS[2]);
+        _asserts.assertSelectionStatusCounts(1690, 15, -1);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
         _asserts.assertDefaultFilterStatusCounts();
-        cds.pickSort("Country");
+        cds.pickSort("Country at enrollment");
         cds.applySelection("South Africa");
-        _asserts.assertSelectionStatusCounts(100, 1, 0);
-        cds.applySelection("USA");
-        _asserts.assertSelectionStatusCounts(132, 2, 3);
-       // cds.applySelection("Thailand");
-      //  _asserts.assertSelectionStatusCounts(5, 1, 2);
+        _asserts.assertSelectionStatusCounts(1530, 8, -1);
+        cds.applySelection("United States");
+        _asserts.assertSelectionStatusCounts(5423, 47, -1);
+        cds.applySelection("Thailand");
+        _asserts.assertSelectionStatusCounts(12, 1, -1);
+
     }
 
 // TODO Putting this test on hold. "Find subjects... Assays" is a July feature.
@@ -994,7 +1001,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
     }
 
-// TODO Still needs work.
+// TODO still debugging this test.
 //    @Test
 //    @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
@@ -1043,12 +1050,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private Set<String> setBmisTo(String[] participantsId, String value)
     {
         Ext4Helper.resetCssPrefix();
-        beginAt(WebTestHelper.buildURL("study", getProjectName(), "dataset", Maps.of("datasetId", "5003"))); // Demographics
-        DataRegionTable dataset = new DataRegionTable("Dataset", this);
-        dataset.setSort("SubjectId", SortDirection.ASC);
+        DataRegionTable dataset;
         Set<String> modifiedParticipants = new HashSet<>();
         for (int i = 0; i < participantsId.length; i++)
         {
+            beginAt(WebTestHelper.buildURL("study", getProjectName(), "dataset", Maps.of("datasetId", "5003"))); // Demographics
+            dataset = new DataRegionTable("Dataset", this);
+            dataset.setSort("SubjectId", SortDirection.ASC);
             clickAndWait(Locator.linkWithText(participantsId[i]).index(0));
             clickAndWait(Locator.linkWithText("edit data"));
             setFormElement(Locator.name("quf_bmi_enrollment"), value);
