@@ -249,6 +249,18 @@ svg g {
   .xaxis-tick-text, .highlight, .xaxis-tick-rect {
     cursor: pointer;
   }
+
+  text.yGutter-label {
+    fill: $info-color;
+    font-weight: bolder !important;
+    cursor: default;
+  }
+
+  text.xGutter-label {
+    fill: $info-color;
+    font-weight: bolder !important;
+    cursor: default;
+  }
 }
 
 svg a {
@@ -557,13 +569,9 @@ div.emptytext {
 }
 
 div.hopscotch-bubble {
-  color: $info-color;
   border: 2px solid $info-color;
   border-radius: 2px;
 
-  h3 {
-    color: $info-color;
-  }
 
   // placement: bottom
   .hopscotch-bubble-arrow-container.up {
