@@ -78,7 +78,7 @@
         </transform>
         <transform id="PopulateProperties" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="study" queryName="ds_properties" />
-            <destination schemaName="cds" queryName="properties" />
+            <destination schemaName="cds" queryName="properties" targetOption="truncate" />
         </transform>
     </transforms>
 </etl>
