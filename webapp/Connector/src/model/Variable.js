@@ -29,7 +29,7 @@ Ext.define('Connector.model.Variable', {
             var optionsTxt = '', sep = '';
 
             if (Ext.isObject(variable) && Ext.isObject(variable.options)) {
-                if (variable.options.antigen) {
+                if (variable.options.antigen) {   // TODO: to be removed with migration to MeasureStore
                     optionsTxt = variable.options.antigen.values.join(', ');
                     sep = '; ';
                 }
@@ -39,8 +39,10 @@ Ext.define('Connector.model.Variable', {
                 }
                 if (Ext.isObject(variable.options.dimensions)) {
                     Ext.Object.each(variable.options.dimensions, function(key, value) {
-                        optionsTxt += sep + value.join(', ').replace(/\|/g, ' ');
-                        sep = '; ';
+                        if (Ext.isArray(value) && value.length > 0) {
+                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ');
+                            sep = '; ';
+                        }
                     });
                 }
                 if (includeScale && variable.options.scale) {

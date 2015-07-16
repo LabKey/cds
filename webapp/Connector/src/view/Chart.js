@@ -1498,10 +1498,13 @@ Ext.define('Connector.view.Chart', {
 
             // special case to look for userGroups as a variable option to use as filter values for the x measure
             // and to user antigen filters for categorical x-axis which matches the antigen field
-            if (measures.x.options.userGroups)
+            if (measures.x.options.userGroups) {
                 measures.x.values = measures.x.options.userGroups;
-            else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name)
+            }
+            // TODO: to be removed with migration to MeasureStore
+            else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name) {
                 measures.x.values = measures.x.options.antigen.values;
+            }
 
             this.fromFilter = false;
         }

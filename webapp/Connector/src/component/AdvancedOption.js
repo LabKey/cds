@@ -145,12 +145,13 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         if (Ext.isDefined(this.store) && this.getDisplayField().rendered) {
 
             // hide the advanced option fields that have no dropdown entries, change those
-            // with just a single entry to display only, or add the click handler for the dropdown
+            // with just a single entry to display only (currently only for summary level),
+            // or add the click handler for the dropdown
             var storeCount = this.store.getCount();
             if (storeCount == 0) {
                 this.hide();
             }
-            else if (storeCount == 1) {
+            else if (this.fieldName == 'summary_level' && storeCount == 1) {
                 this.getDisplayField().addCls('display-option-only');
             }
             else {

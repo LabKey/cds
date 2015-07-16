@@ -222,17 +222,8 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_summary_level': {
                     hidden: true
                 },
-                'study_NAb_neutralization_tier': {
-                    label: 'Tier'
-                },
-                'study_NAb_antigen': {
-                    label: 'Isolate'
-                },
                 'study_NAb_summary_level': {
                     hidden: true
-                },
-                'study_BAMA_antigen': {
-                    label: 'Antigen'
                 },
                 'study_BAMA_summary_level': {
                     hidden: true
