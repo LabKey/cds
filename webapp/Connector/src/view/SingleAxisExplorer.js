@@ -95,7 +95,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
     initExplorerView : function() {
 
-        // Allows for scrollable Explorer view without comprimising Ext layout.
+        // Allows for scrollable Explorer view without compromising Ext layout.
         var resizeTask = new Ext.util.DelayedTask(function(p) {
             var id = 'single-axis-explorer';
             if (p) {
@@ -107,12 +107,8 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             var container = Ext.get(id);
             container.setHeight(body.getBox().height);
 
-            if (this.saview && this.saview.msg) {
-                var sa = this.saview;
-                if (sa.msg.isVisible()) {
-                    var viewbox = sa.getBox();
-                    sa.msg.getEl().setLeft(Math.floor(viewbox.width/2 - Math.floor(this.getEl().getTextWidth(sa.msg.msg)/2)));
-                }
+            if (this.saview) {
+                this.saview.resizeMessage();
             }
         }, this);
 
@@ -259,13 +255,6 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
 
     alias : 'widget.singleaxisview',
 
-    plugins : [{
-        ptype: 'messaging',
-        calculateY : function(cmp, box, msg) {
-            return box.y - 10;
-        }
-    }],
-
     emptyText : '<div class="saeempty">None of the selected subjects have data for this category.</div>',
 
     btnclick: false,
@@ -373,6 +362,13 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
             endConfig: {
                 component: this,
                 events: ['hideload']
+            }
+        });
+
+        this.addPlugin({
+            ptype: 'messaging',
+            calculateY : function(cmp, box, msg) {
+                return box.y - 10;
             }
         });
     },
