@@ -725,7 +725,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     }
 
     // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    //@Test
     public void verifyAntigenScatterPlot()
     {
         String xVirus = "BaL.01";
