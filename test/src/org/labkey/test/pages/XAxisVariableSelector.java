@@ -36,9 +36,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-//        return Locator.css(".x-window-axiswindow");
         return Locator.css(".x-axis-selector");
-//        return Locator.id("plotxmeasurewin").toCssLocator();
     }
 
     @Override
@@ -63,8 +61,6 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         }
         else // Opens y-axis dialog automatically
         {
-//            YAxisVariableSelector yaxis = new YAxisVariableSelector(_test);
-//            _test.shortWait().until(ExpectedConditions.elementToBeClickable(yaxis.sourcePanelRow().toBy()));
             _test.waitForElement(Locator.divByInnerText("y-axis")).isDisplayed();
         }
     }
@@ -72,19 +68,10 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void openSelectorWindow()
     {
-//        int tries = 0;
-//        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
-//        while((!openButton.isDisplayed()) && (tries < 3)){
-//            _test.sleep(250);
-//            tries++;
-//        }
         WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
         _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
-
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("x-axis").toBy()));
-//        _test.waitForElement(Locator.divByInnerText("x-axis"));
-
     }
 
     public void backToSource(){

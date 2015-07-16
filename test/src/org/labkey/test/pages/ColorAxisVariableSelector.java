@@ -36,9 +36,7 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-//        return Locator.css(".x-window-axiswindow");
         return Locator.css(".color-axis-selector");
-//        return Locator.id("plotcolorwin").toCssLocator();
     }
 
     @Override
@@ -63,19 +61,10 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void openSelectorWindow()
     {
-//        int tries = 0;
-//        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
-//        while((!openButton.isDisplayed()) && (tries < 3)){
-//            _test.sleep(250);
-//            tries++;
-//        }
         WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
         _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
-
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("color").toBy()));
-//        _test.waitForElement(Locator.divByInnerText("color"));
-
     }
 
     public void backToSource(){

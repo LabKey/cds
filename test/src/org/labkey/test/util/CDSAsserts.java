@@ -171,7 +171,11 @@ public class CDSAsserts
         {
             _test.waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
         }
-        _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
+
+        if(CDSHelper.validateCounts)
+        {
+            _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
+        }
     }
 
     public void assertDefaultFilterStatusCounts()

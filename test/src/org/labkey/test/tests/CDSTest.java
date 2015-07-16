@@ -942,8 +942,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clearFilter();
     }
 
-// TODO Putting this test on hold. "Learn about" is a July feature.
-//    @Test
+    @Test
     public void testLearnAboutStudies()
     {
         cds.viewLearnAboutPage("Studies");
@@ -962,13 +961,12 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.verifyLearnAboutPage(assays);
     }
 
-// TODO Putting this test on hold. "Learn about" is a July feature.
-//    @Test @Ignore
+    @Test
     public void testLearnAboutStudyProducts()
     {
         cds.viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList("AIDSVAX B/E (gp120)", "Placebo", "VRC-HIVDNA016-00-VP");
+        List<String> studyProducts = Arrays.asList(CDSHelper.STUDIES);
         _asserts.verifyLearnAboutPage(studyProducts);
     }
 

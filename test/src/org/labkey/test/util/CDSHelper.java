@@ -33,7 +33,28 @@ import java.util.List;
 
 public class CDSHelper
 {
-    public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "HVTN 039", "HVTN 040", "HVTN 503", "HVTN 908"}; // TODO Test data dependent.
+    public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
+            "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
+            "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
+            "HVTN 065", "HVTN 067", "HVTN 068", "HVTN 069", "HVTN 070", "HVTN 071", "HVTN 072", "HVTN 073",
+            "HVTN 076", "HVTN 077", "HVTN 078", "HVTN 080", "HVTN 083", "HVTN 084", "HVTN 085", "HVTN 086",
+            "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
+            "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
+
+    public static final String[] PRODUCTS = {"3BNC117", "acyclovir", "AIDSVAX B/B", "AIDSVAX B/E", "ALVAC-HIV (vCP1452)",
+            "ALVAC-HIV (vCP1521)", "ALVAC-HIV (vCP2438)", "AS01B", "AS02A", "AVX101", "AVX201", "BufferGel", "Buprenorphine/naloxone",
+            "C1 peptide", "DEC-205-p24", "DNA-C", "DNA-HIV-PT123", "Engerix B", "EP HIV-1090", "EP-1043", "EP-1233",
+            "gag B DNA/PLG/env B DNA/PLG", "GM-CSF", "gp120w61d", "gp140 CN54", "gp140 Sub C", "gp160", "HIV CTL MEP",
+            "HIV MAG pDNA", "HIV-1 gag DNA", "IL-12 DNA", "IL-12 DNA-4532", "IL-15-1696", "LIPO-5", "MF59", "MRK Ad5 HIV-1 gag",
+            "MRKAd5 HIV-1 gag/pol/nef", "MVA-mBN32", "MVA/HIV62", "NefTat", "Nevirapine", "Nick101", "Nick202", "Nick303",
+            "Nick404", "Nick505", "Nick606", "Nick707", "Nick808", "NYVAC-HIV-B", "NYVAC-HIV-C", "NYVAC-HIV-PT1 and NYVAC-HIV-PT4",
+            "NYVAC-KC", "Oral Tenofovir", "PCMVR", "PennVax-GP", "PennVaxB", "pGA2/JS7 DNA", "pIL15EAMN", "Poly ICLC",
+            "polyvinylpyrrolidone (PVP).", "PRO2000/5", "RC529-SE", "rFPV-HIV", "rMVAHIV", "SAAVI DNA-C2", "SAAVI MVA-C",
+            "SPL7013 (VivaGel)", "Subtype C gp120", "Subtype C gp120/MF59", "Tenofovir Gel", "Tetavax", "tgAXH68",
+            "tgAXH95", "TLR7", "TLR9", "Truvada", "VRC-ADJDNA004-IL2-VP", "VRC-HIVADV014-00-VP", "VRC-HIVADV027-00-VP",
+            "VRC-HIVADV038-00-VP", "VRC-HIVADV052-00-VP", "VRC-HIVADV053-00-VP", "VRC-HIVADV054-00-VP", "VRC-HIVDNA-016-00-VP",
+            "VRC-HIVDNA009-00-VP", "VRC-HIVDNA044-00-VP", "VRC01", "VSV HIV envC^2", "VSV HIV gag"};  // TODO Test data dependent.
+
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
     public static final String[] ASSAYS = {"BAMA", "ELISpot", "ICS", "NAb"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
@@ -140,11 +161,12 @@ public class CDSHelper
     public static final String NAB_VISIT = "Visit";
     public static final String NAB_VISIT_DAY = "Visit Day";
 
-    // Set this to true if you want to skip the import of data, setting up the project and cleaning up onld projects.
+    // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
     public static final boolean debugTest = false;
+    // Because the test data changes frequently it can be useful to skip any steps that validate counts.
+    public static final boolean validateCounts = false;
 
     private final BaseWebDriverTest _test;
-    private static final boolean ValidateCounts = false;
 
     public CDSHelper(BaseWebDriverTest test)
     {
@@ -457,15 +479,15 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
-        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-selector");
+        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("dim-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
         Locator.XPathLocator activeHeader = header.withClass("active");
 
         if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
         {
-            WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.click(headerContainer.append(header.withText(learnAxis)));
-            _test.shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
+            WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+            _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
     }
 
@@ -591,7 +613,7 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("Learn about..."))),
+        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);
@@ -675,7 +697,7 @@ public class CDSHelper
         {
             String strCount = NumberFormat.getIntegerInstance().format(count); //Need to format to allow for number greater than 999 (search looks for a number with a ',' in it).
             String path = "//li//span[text()='" + (count != 1 ? plural : singular) + "']";
-            path = path + ((ValidateCounts) ?  "/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + strCount + "']" : "");
+            path = path + ((validateCounts) ?  "/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + strCount + "']" : "");
             return Locator.xpath(path);
         }
 
@@ -683,7 +705,7 @@ public class CDSHelper
         {
             String strCount = NumberFormat.getIntegerInstance().format(count);
             String path = "//li//span[contains(text(), '" + match + "')]";
-            path = path + ((ValidateCounts) ? "/../span[contains(@class, 'status-subcount') and text()='" + strCount + "']" : "");
+            path = path + ((validateCounts) ? "/../span[contains(@class, 'status-subcount') and text()='" + strCount + "']" : "");
             return Locator.xpath(path);
         }
 
