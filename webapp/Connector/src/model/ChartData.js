@@ -21,7 +21,13 @@ Ext.define('Connector.model.ChartData', {
         {name: 'properties', defaultValue: {}},
         {name: 'percentOverlap', defaultValue: 1},
         {name: 'containerAlignmentDayMap', defaultValue: {}},
-        {name: 'visitMap', defaultValue: {}}
+        {name: 'visitMap', defaultValue: {}},
+        {name: 'xNullMap', defaultValue: {}},
+        {name: 'yNullMap', defaultValue: {}},
+        {name: 'xDomain', defaultValue: [0,0]},
+        {name: 'yDomain', defaultValue: [0,0]},
+        {name: 'percentXNulls', defaultValue: 0},
+        {name: 'percentYNulls', defaultValue: 0}
     ],
 
     statics: {
@@ -86,6 +92,30 @@ Ext.define('Connector.model.ChartData', {
 
     getVisitMap : function() {
         return this.get('visitMap');
+    },
+
+    getXNullMap : function() {
+        return this.get('xNullMap');
+    },
+
+    getYNullMap : function() {
+        return this.get('yNullMap');
+    },
+
+    getXDomain : function() {
+        return this.get('xDomain');
+    },
+
+    getYDomain : function() {
+        return this.get('yDomain');
+    },
+
+    getPercentXNulls : function() {
+        return this.get('percentXNulls');
+    },
+
+    getPercentYNulls : function() {
+        return this.get('percentYNulls');
     },
 
     processSelectRows : function() {
@@ -169,12 +199,12 @@ Ext.define('Connector.model.ChartData', {
             }
         }
 
-        var map = [], r,
+        var map = [], xNullMap = [], yNullMap = [], r,
             rows = this.getDataRows(),
             len = rows.length,
             validCount = 0,
-            xVal, yVal,
-            colorVal = null,
+            xDomain = [null,null], yDomain = [null,null],
+            xVal, yVal, colorVal = null,
             xIsNum, yIsNum,
             negX = false, negY = false,
             xAntigen, yAntigen,
@@ -198,12 +228,24 @@ Ext.define('Connector.model.ChartData', {
                 if (!xAntigen && x.options.antigen && _row[mTC[x.options.antigen.name]]) {
                     xAntigen = _row[mTC[x.options.antigen.name]].value;
                 }
+                if(Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
+                    if(xDomain[0] == null || xVal < xDomain[0])
+                        xDomain[0] = xVal;
+                    if(xDomain[1] == null || xVal > xDomain[1])
+                        xDomain[1] = xVal;
+                }
             }
             else {
                 xVal = '';
             }
 
             yVal = this._getValue(y, _yid, _row);
+            if(Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date") {
+                if(yDomain[0] == null || yVal < yDomain[0])
+                    yDomain[0] = yVal;
+                if(yDomain[1] == null || yVal > yDomain[1])
+                    yDomain[1] = yVal;
+            }
             yAntigen = _row[_yid].antigen;
             if (!yAntigen && y.options.antigen && _row[mTC[y.options.antigen.name]]) {
                 yAntigen = _row[mTC[y.options.antigen.name]].value;
@@ -232,16 +274,24 @@ Ext.define('Connector.model.ChartData', {
                 }
             }
 
-            if ((xa && xa.isNumeric) || (!xa.isNumeric && xVal !== undefined && xVal !== null)) {
-                map.push({
-                    x: xVal,
-                    y: yVal,
-                    color: colorVal,
-                    subjectId: _row[subjectCol],
-                    xname: (xa ? xa.label : null) + (xAntigen ? ' (' + xAntigen + ')' : ''),
-                    yname: ya.label + (yAntigen ? ' (' + yAntigen + ')' : ''),
-                    colorname: ca.label
-                });
+            var entry = {
+                x: xVal,
+                y: yVal,
+                color: colorVal,
+                subjectId: _row[subjectCol],
+                xname: (xa ? xa.label : null) + (xAntigen ? ' (' + xAntigen + ')' : ''),
+                yname: ya.label + (yAntigen ? ' (' + yAntigen + ')' : ''),
+                colorname: ca.label
+            };
+
+            if(xVal == null) {
+                xNullMap.push(entry);
+            }
+            else if(yVal == null) {
+                yNullMap.push(entry);
+            }
+            else if ((xa && xa.isNumeric) || (!xa.isNumeric && xVal !== undefined && xVal !== null)) {
+                map.push(entry);
             }
 
             if ((!x || this.isValidValue(x, xVal)) && this.isValidValue(y, yVal)) {
@@ -253,6 +303,12 @@ Ext.define('Connector.model.ChartData', {
             visitMap: visitMap,
             containerAlignmentDayMap: containerAlignmentDayMap,
             percentOverlap: (validCount / len),
+            percentXNulls: Ext.util.Format.round((xNullMap.length / len) * 100, 2),
+            percentYNulls: Ext.util.Format.round((yNullMap.length / len) * 100, 2),
+            xNullMap: xNullMap,
+            yNullMap: yNullMap,
+            xDomain: xDomain,
+            yDomain: yDomain,
             rows: map,
             properties: {
                 subjectColumn: subjectCol, // We need the subject column as it appears in the temp query for the brushend handler
