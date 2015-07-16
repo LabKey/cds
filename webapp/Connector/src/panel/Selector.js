@@ -499,13 +499,19 @@ Ext.define('Connector.panel.Selector', {
         this.boundDimensionNames = [];
 
         Ext.each(dimensions, function(dimension) {
-            this.boundDimensionNames.push(dimension.get('name'));
+            // hierarchical dimensions can have use an alternate column for filtering
+            var dimensionName = dimension.get('name');
+            if (Ext.isDefined(dimension.get('hierarchicalFilterColumnName'))) {
+                dimensionName = dimension.get('hierarchicalFilterColumnName');
+            }
+
+            this.boundDimensionNames.push(dimensionName);
 
             this.getAdvancedPane().add(
                 Ext.create('Connector.component.AdvancedOptionDimension', {
                     testCls: this.testCls + '-option-' + dimension.get('name'),
                     dimension: dimension,
-                    value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimension.get('name')] : undefined,
+                    value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimensionName] : undefined,
                     listeners: {
                         scope: this,
                         click: function(cmp, isHierarchical) {
@@ -524,11 +530,11 @@ Ext.define('Connector.panel.Selector', {
                             }
                         },
                         change: function(cmp) {
-                            // hide/show any conditional components based on their filterColumnName and filterColumnValue
+                            // hide/show any conditional components based on their distinctValueFilterColumnName and distinctValueFilterColumnValue
                             // example: hide/show related advanced option cmps for the data summary level based on the selected level value
-                            var conditionalCmps = this.query('advancedoptiondimension[dimensionFilterColumnName=' + cmp.dimension.get('name') + ']');
+                            var conditionalCmps = this.query('advancedoptiondimension[distinctValueFilterColumnName=' + cmp.dimension.get('name') + ']');
                             Ext.each(conditionalCmps, function(conditionalCmp) {
-                                conditionalCmp.setVisible(conditionalCmp.dimension.get('filterColumnValue') == cmp.value.join(', '));
+                                conditionalCmp.setVisible(conditionalCmp.dimension.get('distinctValueFilterColumnValue') == cmp.value.join(', '));
                             });
                         }
                     }

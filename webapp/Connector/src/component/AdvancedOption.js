@@ -214,14 +214,28 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             this.fieldLabel = this.measureSet[this.measureSet.length - 1].get('label');
         }
 
-        // pull filterColumnName property up out of dimension.data so we can query for components easier (see Selector.js bindDimensions)
-        if (Ext.isDefined(this.dimension.get('filterColumnName'))) {
-            this.dimensionFilterColumnName = this.dimension.get('filterColumnName');
+        // pull distinctValueFilterColumnName property up out of dimension.data so we can query for components easier (see Selector.js bindDimensions)
+        if (Ext.isDefined(this.dimension.get('distinctValueFilterColumnName'))) {
+            this.distinctValueFilterColumnName = this.dimension.get('distinctValueFilterColumnName');
         }
 
         this.callParent();
 
         Connector.getService('Query').getMeasureSetDistinctValues(this.measureSet, this.populateStore, this);
+    },
+
+    getHiddenField : function() {
+        if (!this.hiddenField) {
+            this.hiddenField = Ext.create('Ext.form.field.Hidden', {
+                // hierarchical dimensions can have use an alternate column for filtering
+                name: this.dimension.get('hierarchicalFilterColumnName') || this.fieldName,
+                getValue: function() {
+                    return this.value;
+                }
+            });
+        }
+
+        return this.hiddenField;
     },
 
     populateStore : function(distinctValuesArr) {

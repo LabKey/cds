@@ -31,7 +31,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ICS_cell_type',
                         'study_ICS_functional_marker_name',
                         'study_ICS_summary_level',
-                        'study_ICS_antigen',
+                        'study_ICS_protein_panel',
                         'study_ICS_protein',
                         'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -91,17 +91,18 @@ Ext.define('Connector.measure.Configuration', {
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Protein Panel'}
                 },
-                'study_ICS_antigen': {
+                'study_ICS_protein_panel': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: null,
-                    filterColumnName: 'summary_level',
-                    filterColumnValue: 'Protein Panel'
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Protein Panel'
                 },
                 'study_ICS_protein': {
                     requiresSelection: true,
-                    hierarchicalSelectionParent: 'study_ICS_antigen',
-                    filterColumnName: 'summary_level',
-                    filterColumnValue: 'Protein'
+                    hierarchicalSelectionParent: 'study_ICS_protein_panel',
+                    hierarchicalFilterColumnName: 'protein_panel_protein',
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Protein'
                 },
                 // study|NAb
                 'study_NAb_target_cell': {
@@ -117,8 +118,9 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_antigen': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_NAb_clade',
-                    filterColumnName: 'summary_level',
-                    filterColumnValue: 'Virus'
+                    hierarchicalFilterColumnName: 'tier_clade_antigen',
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Virus'
                 },
                 'study_NAb_clade': {
                     hierarchicalSelectionParent: 'study_NAb_neutralization_tier'
@@ -137,8 +139,8 @@ Ext.define('Connector.measure.Configuration', {
                 'study_BAMA_antigen': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: null,
-                    filterColumnName: 'summary_level',
-                    filterColumnValue: 'Antigen'
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Antigen'
                 },
                 'study_BAMA_dilution': {
                     requiresSelection: true,
@@ -159,8 +161,9 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_protein': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ELISPOT_protein_panel',
-                    filterColumnName: 'summary_level',
-                    filterColumnValue: 'Peptide Pool'
+                    hierarchicalFilterColumnName: 'protein_panel_protein',
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Peptide Pool'
                 }
             },
 

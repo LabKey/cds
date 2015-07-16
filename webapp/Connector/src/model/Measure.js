@@ -56,10 +56,15 @@ Ext.define('Connector.model.Measure', {
         // this property lists the parent column's alias.
         {name: 'hierarchicalSelectionParent', defaultValue: undefined},
 
-        // If a filterColumnName and filterColumnValue are provided, they will be used as a WHERE clause for the query to
-        // get the distinct values for the given measure in the Advanced options panel of the Variable Selector.
-        {name: 'filterColumnName', defaultValue: undefined},
-        {name: 'filterColumnValue', defaultValue: undefined}
+        // If provided, the column name specified will be used for hierarchical selection filtering on the plot's
+        // getData API request from the Advanced options panel of the Variable Selector.
+        {name: 'hierarchicalFilterColumnName', defaultValue: undefined},
+
+        // If a distinctValueFilterColumnName and distinctValueFilterColumnValue are provided, they will be used as
+        // a WHERE clause for the query to get the distinct values for the given measure in the Advanced options
+        // panel of the Variable Selector.
+        {name: 'distinctValueFilterColumnName', defaultValue: undefined},
+        {name: 'distinctValueFilterColumnValue', defaultValue: undefined}
     ],
 
     shouldShowScale : function() {
