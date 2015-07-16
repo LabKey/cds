@@ -51,29 +51,34 @@ Ext.define('Connector.view.Learn', {
     },
 
     onSearchFilterChange : function(filter) {
-        this.searchFilter = filter;
-        if (this.activeListing) {
-            var view = this.activeListing;
-            this.loadData(view.dimension, view.getStore());
+        if (Ext.isString(filter)) {
+            this.searchFilter = filter;
+            if (this.activeListing) {
+                var view = this.activeListing;
+                this.loadData(view.dimension, view.getStore());
+            }
         }
     },
 
     dimensionDataLoaded : function(dimension, store) {
         store.clearFilter(this.searchFilter);
 
-        var fields = this.searchFields || [],
-            regex = new RegExp(this.searchFilter, 'i');
+        if (!Ext.isEmpty(this.searchFilter)) {
 
-        this.searchFilter && store.filterBy(function(model) {
-            var match = false;
-            Ext.each(fields, function(field) {
-                var str = model.get(field);
-                if (regex.test(str)) {
-                    match = true;
-                }
+            var fields = this.searchFields || [],
+                regex = new RegExp(LABKEY.Utils.escapeRe(this.searchFilter), 'i');
+
+            store.filterBy(function(model) {
+                var match = false;
+                Ext.each(fields, function(field) {
+                    var str = model.get(field);
+                    if (regex.test(str)) {
+                        match = true;
+                    }
+                });
+                return match;
             });
-            return match;
-        });
+        }
     },
 
     loadData : function(dimension, store) {
@@ -255,7 +260,7 @@ Ext.define('Connector.view.Learn', {
     },
 
     selectDimension : function(dimension, id, urlTab) {
-        this.searchFilter = null;
+        this.searchFilter = undefined;
         this.searchFields = Connector.app.view[this.viewByDimension[dimension.singularName]].searchFields;
 
         if (dimension) {
