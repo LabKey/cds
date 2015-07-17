@@ -2611,7 +2611,7 @@ Ext.define('Connector.view.Chart', {
     createSelectorWindow : function(item) {
         var win = Ext.create('Ext.window.Window', {
             ui: 'axiswindow',
-            maxHeight: 660,
+            minHeight: 580,
             modal: true,
             draggable: false,
             header: false,

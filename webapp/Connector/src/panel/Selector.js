@@ -542,13 +542,11 @@ Ext.define('Connector.panel.Selector', {
             );
         }, this);
 
-        if (this.boundDimensionNames.length > 0) {
-            this.getAdvancedPane().insert(0, {
-                xtype: 'box',
-                cls: 'dimension-header',
-                html: 'Assay Dimensions'
-            });
-        }
+        this.getAdvancedPane().insert(0, {
+            xtype: 'box',
+            cls: 'dimension-header',
+            html: this.boundDimensionNames.length > 0 ? 'Assay Dimensions' : 'Advanced Options'
+        });
     },
 
     bindScale : function() {
@@ -605,8 +603,9 @@ Ext.define('Connector.panel.Selector', {
 
     slideAdvancedOptionsPane : function() {
         // slide in our out the panel depending on if we have options to show or not
+        // note: items.length is always at least 1 from header text..."Advanced Options"
         var pane = this.getAdvancedPane();
-        if (pane.items.items.length > 0)
+        if (pane.items.items.length > 1)
         {
             if (pane.isHidden())
             {
