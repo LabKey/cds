@@ -1,2 +1,38 @@
-<div id="plotENVGAG"></div>
-<div id="categoricalSingleSource"></div>
+<style>
+    .tab {
+        padding: 5px;
+        border-color: #c0c0c0;
+        border-style: solid;
+        border-width: 0 1px 1px 1px;
+    }
+
+    .tab2 {
+        border: solid #c0c0c0 1px;
+        width: 1002px;
+        height: 505px;
+    }
+
+    .tab-first {
+        border-top: solid #c0c0c0 1px;
+    }
+</style>
+
+<table cellspacing="10">
+    <tr>
+        <td valign="top">
+            <div class="tab tab-first"><a onclick="PLOTS.plotYMeasureXNone();">plotYMeasureXNone</a></div>
+            <div class="tab"><a onclick="PLOTS.plotYMeasureXDemCat();">plotYMeasureXDemCat</a></div>
+            <div class="tab"><a onclick="PLOTS.plotYMeasureXDemNum();">plotYMeasureXDemNum</a></div>
+            <div class="tab"><a onclick="PLOTS.plotYMeasureXSameAssayCat();">plotYMeasureXSameAssayCat</a></div>
+            <div class="tab"><a onclick="PLOTS.plotYMeasureXSameAssayNum();">plotYMeasureXSameAssayNum</a></div>
+            <div class="tab"><a onclick="PLOTS.plotYMeasureXSameDiffFilter();">plotYMeasureXSameDiffFilter</a></div>
+            <!--<div class="tab"><a onclick="PLOTS.plotYMeasureXDiffAssay();">plotYMeasureXDiffAssay</a></div>-->
+            <div class="tab">&nbsp;</div>
+            <div class="tab"><a onclick="PLOTS.scatterMeasureSameSource();">scatterMeasureSameSource</a></div>
+            <div class="tab"><a onclick="PLOTS.categoricalSingleSource();">categoricalSingleSource</a></div>
+        </td>
+        <td>
+            <div id="plot" class="tab2"></div>
+        </td>
+    </tr>
+</table>

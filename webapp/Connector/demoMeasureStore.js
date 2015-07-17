@@ -2,12 +2,445 @@
 
     // Document Ready
     $(function() {
+        // TODO: this is a total hack to expose these to demoMeasureStore.html
+        PLOTS = {};
+        PLOTS.plotYMeasureXNone = plotYMeasureXNone;
+        PLOTS.plotYMeasureXDemCat = plotYMeasureXDemCat;
+        PLOTS.plotYMeasureXDemNum = plotYMeasureXDemNum;
+        PLOTS.plotYMeasureXSameAssayCat = plotYMeasureXSameAssayCat;
+        PLOTS.plotYMeasureXSameAssayNum = plotYMeasureXSameAssayNum;
+        PLOTS.plotYMeasureXSameDiffFilter = plotYMeasureXSameDiffFilter;
+        PLOTS.plotYMeasureXDiffAssay = plotYMeasureXDiffAssay;
 
-        scatterMeasureSameSource();
-        categoricalSingleSource();
+        PLOTS.scatterMeasureSameSource = scatterMeasureSameSource;
+        PLOTS.categoricalSingleSource = categoricalSingleSource;
+
+        function plotYMeasureXNone()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getBoxPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X None'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return '';
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXDemCat()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+            var xMeasure = getDemVisMeasure('Demographics', 'race');
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getBoxPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Demographic Categorical'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
+                        x: {value: 'Demographics Race'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.value : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXDemNum()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+            var xMeasure = getVisMeasure('Demographics', 'age_enrollment', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Demographic Continuous'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
+                        x: {value: 'Demographics Age Enrollment'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.getMean() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXSameAssayCat()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+            var xMeasure = getVisMeasure('ICS', 'protein_panel', false);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getBoxPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Categorical'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
+                        x: {value: 'ICS Protein Panel'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.value : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXSameAssayNum()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+            var xMeasure = getVisMeasure('ICS', 'pctpos_neg', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
+                        x: {value: 'ICS Magnitude Negative (CD4+, Protein Panel)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.getMean() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXSameDiffFilter()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+            var xMeasure = getVisMeasure('ICS', 'pctpos', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+','CD8+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure), {'study_ICS_cell_type': 'CD8+'});
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure), {'study_ICS_cell_type': 'CD4+'});
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
+                        x: {value: 'ICS Magnitude (CD8+, Protein Panel)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.getMean() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXDiffAssay()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ICS', 'pctpos', true);
+            var xMeasure = getVisMeasure('NAb', 'titer_ic50', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: getVisMeasure('NAb', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['A3R5']), time:'date' },
+                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus']), time:'date' },
+                    { measure: getVisMeasure('NAb', 'neutralization_tier'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'clade'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'antigen'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'lab_code'), time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
+                        'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code',
+
+                        'study_NAb_SubjectId', 'study_NAb_SequenceNum',
+                        'study_NAb_target_cell', 'study_NAb_summary_level', 'study_NAb_neutralization_tier',
+                        'study_NAb_clade', 'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'TBD'}, //ICS Magnitude (CD4+, Protein Panel)
+                        x: {value: 'TBD'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return '';//row.x ? row.x.getMean() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
 
         function scatterMeasureSameSource()
         {
+            $('#plot').html('');
+
             var subjectMeasure = new LABKEY.Query.Visualization.Measure({
                 schemaName:'study',
                 queryName: 'Binding Ab multiplex assay',
@@ -125,10 +558,10 @@
                 });
 
                 var scatter = new LABKEY.vis.Plot({
-                    renderTo: 'plotENVGAG',
+                    renderTo: 'plot',
                     rendererType: 'd3',
-                    width: 900,
-                    height: 600,
+                    width: 1000,
+                    height: 500,
                     labels: {
                         main: {value: 'BAMA MFI Delta'},
                         yLeft: {value: 'GAG'},
@@ -166,6 +599,8 @@
 
         function categoricalSingleSource()
         {
+            $('#plot').html('');
+
             var subjectMeasure = new LABKEY.Query.Visualization.Measure({
                 schemaName:'study',
                 queryName: 'Demographics',
@@ -223,11 +658,11 @@
                 });
 
                 var boxPlot = new LABKEY.vis.Plot({
-                    renderTo: 'categoricalSingleSource',
+                    renderTo: 'plot',
                     rendererType: 'd3',
                     clipRect: true,
-                    width: 900,
-                    height: 300,
+                    width: 1000,
+                    height: 500,
                     labels: {
                         main: {value: 'Categorical, Single-Axis'},
                         yLeft: {value: 'Age'},
@@ -263,6 +698,93 @@
         function onError(errorInfo)
         {
             alert(errorInfo.exception);
+        }
+
+        function getScatterPlotBaseConfig(data)
+        {
+            return {
+                renderTo: 'plot',
+                rendererType: 'd3',
+                clipRect: true,
+                width: 1000,
+                height: 500,
+                data: data,
+                layers: [
+                    new LABKEY.vis.Layer({
+                        geom: new LABKEY.vis.Geom.Point({
+                            size: 3,
+                            plotNullPoints: true,
+                            opacity: 0.5
+                        })
+                    })
+                ],
+                scales: {
+                    x: {
+                        scaleType: 'continuous',
+                        trans: 'linear'
+                    },
+                    y: {
+                        scaleType: 'continuous',
+                        trans: 'linear'
+                    }
+                }
+            };
+        }
+
+        function getBoxPlotBaseConfig(data)
+        {
+            return {
+                renderTo: 'plot',
+                rendererType: 'd3',
+                clipRect: true,
+                width: 1000,
+                height: 500,
+                data: data,
+                layers: [
+                    new LABKEY.vis.Layer({
+                        geom: new LABKEY.vis.Geom.DataspaceBoxPlot({
+                            binSize : 3,
+                            binRowLimit : 5000
+                        }),
+                        aes: {
+                            hoverText: function(x, stats) {
+                                return x + ':\nMin: ' + stats.min + '\nMax: ' + stats.max + '\nQ1: ' + stats.Q1 + '\nQ2: ' + stats.Q2 + '\nQ3: ' + stats.Q3;
+                            }
+                        }
+                    })
+                ],
+                scales: {
+                    x: {
+                        scaleType: 'discrete'
+                    },
+                    y: {
+                        scaleType: 'continuous',
+                        trans: 'linear'
+                    }
+                }
+            };
+        }
+
+        function getVisMeasure(queryName, colName, isMeasure, values)
+        {
+            return new LABKEY.Query.Visualization.Measure({
+                schemaName:'study',
+                queryName: queryName,
+                name: colName,
+                isMeasure: isMeasure,
+                isDimension: !isMeasure,
+                values: values
+            });
+        }
+
+        function getDemVisMeasure(queryName, colName)
+        {
+            return new LABKEY.Query.Visualization.Measure({
+                schemaName:'study',
+                queryName: queryName,
+                name: colName,
+                requireLeftJoin: true
+            });
         }
 
         function measureToAlias(measure)
