@@ -27,7 +27,10 @@ Ext.define('Connector.app.view.Study', {
                 '</div>',
             '</div>'
         ),
-        searchFields : ['label', 'type', 'description']
+        searchFields: [
+            'label', 'type', 'description',
+            {field: 'products', value: 'product_name', emptyText: 'No related products'}
+        ]
     },
 
     tpl: new Ext.XTemplate(
@@ -42,7 +45,7 @@ Ext.define('Connector.app.view.Study', {
                         '<tpl if="type && type.length &gt; 0">',
                             '<span class="phase-text">{type:htmlEncode}</span>',
                         '</tpl>',
-                        '<div class="description-text">{description:htmlEncode}</div>',
+                        '<div class="description-text">{description}</div>', // they're allowed to place html here...
                     '</div>',
                     '<div class="study-date">',
                         '<span class="startdate-text">{start_date:this.renderDate}</span>',

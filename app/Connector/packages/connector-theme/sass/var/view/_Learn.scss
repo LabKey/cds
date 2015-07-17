@@ -113,7 +113,7 @@ h1.lhdv {
   }
 
   &.active {
-    color: $secondary-text-color;
+    color: $primary-text-color;
 
     &:hover {
       cursor: default;
@@ -141,7 +141,7 @@ div.detail-wrapper {
       overflow:hidden;
 
       h2 {
-        font-size: 16px!important;
+        font-size: 18px;
       }
     }
   }
@@ -181,13 +181,13 @@ div.study-description {
   font-family: $info-font;
 
   .phase-text {
-    font-size: 11px;
+    font-size: 12px;
     color: $heat-scale-2;
   }
 
   .description-text {
     padding-top: 12px;
-    font-size: 11px;
+    font-size: 12px;
     line-height:15px;
     color: $heat-scale-1;
     margin-right: 5%;
@@ -203,7 +203,7 @@ div.study-date {
   float: left;
   padding-right: 10px;
   font-family: $info-font;
-  font-size: 11px;
+  font-size: 12px;
 
   .startdate-text {
     display: block;
@@ -223,7 +223,7 @@ div.study-treatments {
   width: 20%;
   float: right;
   font-family: $info-font;
-  font-size: 11px;
+  font-size: 12px;
   color: $heat-scale-1;
 }
 

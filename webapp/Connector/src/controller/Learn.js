@@ -11,13 +11,18 @@ Ext.define('Connector.controller.Learn', {
 
     init : function() {
 
-        this.control('learn', {
+        this.control('learnheader', {
             //
             // When a dimension is selected the following event is fired. This is used in coordination
             // with this.updateLock to ensure that an infinite loop does not occur
             //
-            selectdimension: this.onSelectDimension,
-            selectitem: this.onSelectItem
+            selectdimension: this.onSelectDimension
+        });
+
+        this.control('learn > dataview', {
+            // 23756: for some reason, itemclick doesn't always fire. Sadly, this means right click also selects
+            itemmouseup: this.onSelectItem
+            //itemclick: this.onSelectItem
         });
 
         this.control('singleaxisview', {
@@ -29,12 +34,6 @@ Ext.define('Connector.controller.Learn', {
                 }, this);
             },
             scope: this
-        });
-
-        this.control('#back', {
-            click : function() {
-                history.back();
-            }
         });
 
         this.control('learnpageheader', {
@@ -201,7 +200,7 @@ Ext.define('Connector.controller.Learn', {
         }
     },
 
-    onSelectItem : function(item) {
+    onSelectItem : function(view, item) {
         var id = item.getId();
 
         if (id && this.dimension) {

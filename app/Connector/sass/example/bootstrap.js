@@ -1395,7 +1395,9 @@ Ext.ClassManager.addNameAliasMappings({
     "plugin.learnheaderlock"
   ],
   "Connector.view.LearnColumnHeader": [],
-  "Connector.view.LearnHeader": [],
+  "Connector.view.LearnHeader": [
+    "widget.learnheader"
+  ],
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
   ],

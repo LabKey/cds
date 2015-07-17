@@ -13,7 +13,14 @@ Ext.define('Connector.view.Learn', {
 
     cls: 'learnview auto-scroll-y',
 
-    bubbleEvents: ['selectdimension'],
+    /**
+     * Allows for search to do a depth search on properties that are setup. Example
+     * ['label', 'type', 'description', {field: 'products', value: 'product_name'}]
+     * where 'products' is a depth search that iterates across the 'products' and matches
+     * against 'product_name'.
+     * Since this could be an expensive operation it can be turned off with this flag.
+     */
+    allowNestedSearch: true,
 
     initComponent : function() {
 
@@ -32,17 +39,9 @@ Ext.define('Connector.view.Learn', {
         if (!this.headerViews.main) {
             this.headerViews.main = Ext.create('Connector.view.LearnHeader', {
                 dimensions: this.getDimensions(),
-
                 hidden: true,
-
-                // TODO: This should be bubblable but the this.control() in the controller does not seem to respect bubbled events
                 listeners: {
-                    selectdimension: function(model, silent) {
-                        this.fireEvent('selectdimension', model, silent);
-                    },
-                    searchchanged: function(search) {
-                        this.onSearchFilterChange(search);
-                    },
+                    searchchanged: this.onSearchFilterChange,
                     scope: this
                 }
             });
@@ -61,19 +60,42 @@ Ext.define('Connector.view.Learn', {
     },
 
     dimensionDataLoaded : function(dimension, store) {
-        store.clearFilter(this.searchFilter);
+        store.clearFilter();
 
         if (!Ext.isEmpty(this.searchFilter)) {
 
             var fields = this.searchFields || [],
-                regex = new RegExp(LABKEY.Utils.escapeRe(this.searchFilter), 'i');
+                regex = new RegExp(LABKEY.Utils.escapeRe(this.searchFilter), 'i'),
+                allowNestedSearch = this.allowNestedSearch === true;
 
             store.filterBy(function(model) {
-                var match = false;
+                var match = false,
+                    value;
                 Ext.each(fields, function(field) {
-                    var str = model.get(field);
-                    if (regex.test(str)) {
-                        match = true;
+                    if (Ext.isString(field)) {
+                        value = model.get(field);
+
+                        if (regex.test(value)) {
+                            match = true;
+                        }
+                    }
+                    else if (allowNestedSearch && Ext.isObject(field)) {
+                        value = model.get(field.field);
+                        if (Ext.isArray(value)) {
+                            if (Ext.isEmpty(value) && Ext.isString(field.emptyText)) {
+                                if (regex.test(field.emptyText)) {
+                                    match = true;
+                                }
+                            }
+                            else {
+                                for (var i=0; i < value.length; i++) {
+                                    if (regex.test(value[i][field.value])) {
+                                        match = true;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
                     }
                 });
                 return match;
@@ -172,14 +194,8 @@ Ext.define('Connector.view.Learn', {
                     this.add(Ext.create(dimension.detailView, {
                         itemId: listId,
                         dimension: dimension,
-                        store: store,
+                        store: store
                         //plugins: ['learnheaderlock'],
-                        listeners: {
-                            itemclick: function(view, model) {
-                                this.fireEvent('selectitem', model);
-                            },
-                            scope: this
-                        }
                     }));
 
                     this.listViews[listId] = true;
@@ -277,7 +293,9 @@ Ext.define('Connector.view.Learn', {
 
 Ext.define('Connector.view.LearnHeader', {
 
-    extend : 'Ext.container.Container',
+    extend: 'Ext.container.Container',
+
+    alias: 'widget.learnheader',
 
     height: 160,
 
