@@ -60,6 +60,10 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateAssay" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="ds_assay" />
+            <destination schemaName="cds" queryName="assay" targetOption="truncate"/>
+        </transform>
         <transform id="product" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="study" queryName="ds_product" />
             <destination schemaName="cds" queryName="product" targetOption="truncate" />
@@ -79,6 +83,10 @@
         <transform id="PopulateProperties" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="study" queryName="ds_properties" />
             <destination schemaName="cds" queryName="properties" targetOption="truncate" />
+        </transform>
+        <transform id="ClearAndWarmCube" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.ClearAndWarmCube">
+            </taskref>
         </transform>
     </transforms>
 </etl>

@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS cds.StudyProductMap CASCADE;
 DROP TABLE IF EXISTS cds.TreatmentArm CASCADE;
 DROP TABLE IF EXISTS cds.StudyGroup CASCADE;
 DROP TABLE IF EXISTS cds.Product CASCADE;
+DROP TABLE IF EXISTS cds.Assay CASCADE;
 DROP TABLE IF EXISTS cds.Facts CASCADE;
 DROP TABLE IF EXISTS cds.Study CASCADE;
 
@@ -47,6 +48,24 @@ CREATE TABLE cds.Facts (
   participantid VARCHAR(32) NOT NULL,
   container ENTITYID NOT NULL, -- dataspace project
   study ENTITYID
+);
+
+CREATE TABLE cds.Assay (
+  assay_identifier VARCHAR(250) NOT NULL,
+  container ENTITYID NOT NULL,
+  assay_label VARCHAR(250),
+  assay_short_name VARCHAR(250),
+  assay_category VARCHAR(250),
+  assay_detection_platform VARCHAR(250),
+  assay_body_system_type VARCHAR(250),
+  assay_body_system_target VARCHAR(250),
+  assay_general_specimen_type VARCHAR(250),
+  assay_description TEXT,
+  assay_method_description TEXT,
+  assay_endpoint_description TEXT,
+  assay_endpoint_statistical_analysis TEXT,
+
+  CONSTRAINT PK_Assay PRIMARY KEY (assay_identifier)
 );
 
 CREATE TABLE cds.Product (

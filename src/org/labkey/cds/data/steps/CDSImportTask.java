@@ -42,7 +42,7 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("Assay"),
 //        new TSVCopyConfig("Personnel"),
 //        new TSVCopyConfig("Site"),
-//        new TSVCopyConfig("Lab"),
+        new TSVCopyConfig("Lab"),
 
         // Dependent Tables
 //        new TSVCopyConfig("StudyPersonnel"),

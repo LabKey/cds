@@ -133,19 +133,35 @@
 
         <Dimension name="Assay" visible="true" highCardinality="false" foreignKey="participantid">
 
-            <Hierarchy visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="ds_subjectassay">
-                <Join leftKey="participantid" rightKey="participantid">
+            <Hierarchy name="Name" visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="ds_subjectassay">
+                <Join leftKey="assay_identifier" rightKey="assay_identifier">
                     <Table name="ds_subjectassay" schema="cds"/>
-                    <Table name="Demographics" schema="study"/>
+                    <Table name="assay" schema="cds"/>
                 </Join>
-                <Level name="Type" visible="true" table="ds_subjectassay" column="assay" type="String" uniqueMembers="true" />
+                <Level name="Type" visible="true" column="assay_category" type="String" uniqueMembers="true" />
+                <Level name="Assay" visible="true" table="ds_subjectassay" column="assay_identifier" type="String" uniqueMembers="true" />
             </Hierarchy>
 
             <!--Note on uniqueMembers: If the column value will appear in other levels above it, then set uniquemembers=false-->
             <Hierarchy name="Study" visible="true" hasAll="true" primaryKey="participantid">
                 <Table name="ds_subjectassay" schema="cds"/>
+                <Level name="Assay" visible="true" column="assay_identifier" type="String" uniqueMembers="true" />
                 <Level name="Study" visible="true" column="study_name" type="String" uniqueMembers="false" />
-                <Level name="Assay" visible="true" column="assay" type="String" uniqueMembers="false" />
+            </Hierarchy>
+
+            <Hierarchy name="Immunogenicity Type" visible="true" hasAll="true" primaryKeyTable="ds_subjectassay" primaryKey="participantid">
+                <Join leftKey="assay_identifier" rightKey="assay_identifier">
+                    <Table name="ds_subjectassay" schema="cds"/>
+                    <Table name="assay" schema="cds"/>
+                </Join>
+                <Level name="Immunogenicity Type" visible="true" table="assay" column="assay_general_specimen_type" type="String" uniqueMembers="true"/>
+                <Level name="Assay" visible="true" table="ds_subjectassay" column="assay_identifier" type="String" uniqueMembers="true"/>
+            </Hierarchy>
+
+            <Hierarchy name="Lab" visible="true" hasAll="true" primaryKey="participantid">
+                <Table name="ds_subjectassay" schema="cds"/>
+                <Level name="Assay" visible="true" column="assay_identifier" type="String" uniqueMembers="false"/>
+                <Level name="Lab" visible="true" column="lab_code" type="String" uniqueMembers="false"/>
             </Hierarchy>
         </Dimension>
     </Cube>

@@ -284,8 +284,12 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Assay]',
                 priority: 30,
                 singularName: 'Assay',
-                pluralName: 'Assays'
+                pluralName: 'Assays',
                 //supportsDetails: true
+                hierarchies: [{
+                    uniqueName: "[Assay.Name]",
+                    label: "Assay Name"
+                }]
             }]
         },
 
