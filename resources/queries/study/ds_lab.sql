@@ -1,10 +1,5 @@
 SELECT
-  --KEY
   lab_code,
-
-
-  lab_short_name,
-  lab_institution,
-  lab_pi
-
+  lab_name,
+  lab_pi_name
 FROM cds.import_lab;

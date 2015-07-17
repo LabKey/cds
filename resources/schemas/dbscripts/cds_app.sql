@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS cds.TreatmentArm CASCADE;
 DROP TABLE IF EXISTS cds.StudyGroup CASCADE;
 DROP TABLE IF EXISTS cds.Product CASCADE;
 DROP TABLE IF EXISTS cds.Assay CASCADE;
+DROP TABLE IF EXISTS cds.Lab CASCADE;
 DROP TABLE IF EXISTS cds.Facts CASCADE;
 DROP TABLE IF EXISTS cds.Study CASCADE;
 
@@ -48,6 +49,15 @@ CREATE TABLE cds.Facts (
   participantid VARCHAR(32) NOT NULL,
   container ENTITYID NOT NULL, -- dataspace project
   study ENTITYID
+);
+
+CREATE TABLE cds.Lab (
+  lab_code VARCHAR(250) NOT NULL,
+  container ENTITYID NOT NULL,
+  lab_name VARCHAR(250) NOT NULL,
+  lab_pi_name VARCHAR(250),
+
+  CONSTRAINT PK_Lab PRIMARY KEY (lab_code)
 );
 
 CREATE TABLE cds.Assay (

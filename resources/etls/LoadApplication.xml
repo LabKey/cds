@@ -15,6 +15,14 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateStudyVisitTask">
             </taskref>
         </transform>
+        <transform id="PopulateLab" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="ds_lab" />
+            <destination schemaName="cds" queryName="lab" targetOption="truncate"/>
+        </transform>
+        <transform id="PopulateAssay" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="ds_assay" />
+            <destination schemaName="cds" queryName="assay" targetOption="truncate"/>
+        </transform>
         <transform id="PopulateDemographics" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
                 <settings>
@@ -59,10 +67,6 @@
                     <setting name="targetDataset" value="BAMA" />
                 </settings>
             </taskref>
-        </transform>
-        <transform id="PopulateAssay" type="org.labkey.di.pipeline.TransformTask">
-            <source schemaName="study" queryName="ds_assay" />
-            <destination schemaName="cds" queryName="assay" targetOption="truncate"/>
         </transform>
         <transform id="product" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="study" queryName="ds_product" />
