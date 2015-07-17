@@ -159,6 +159,7 @@ CREATE TABLE cds.SubjectProductMap (
 
 CREATE TABLE cds.VisitTagMap (
   visit_tag VARCHAR(250) NOT NULL,
+  visit_tag_label VARCHAR(250),
   visit_row_id INTEGER NOT NULL,
   container ENTITYID NOT NULL,
   study_group_id INTEGER NOT NULL REFERENCES cds.StudyGroup (row_id),
