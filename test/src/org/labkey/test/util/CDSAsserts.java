@@ -178,6 +178,11 @@ public class CDSAsserts
         }
     }
 
+    public void verifyEmptyLearnAboutStudyPage()
+    {
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected studies have data for this category.']"));
+    }
+
     public void assertDefaultFilterStatusCounts()
     {
         assertFilterStatusCounts(8373, 53, -1); // TODO Test data dependent.
