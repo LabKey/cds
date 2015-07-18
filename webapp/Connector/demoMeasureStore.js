@@ -1,5 +1,8 @@
 (function($) {
 
+    // set to undefined to use default getData
+    var ENDPOINT = LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api');
+
     // Document Ready
     $(function() {
         // TODO: this is a total hack to expose these to demoMeasureStore.html
@@ -33,7 +36,7 @@
                     { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
                     { measure: yMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -90,7 +93,7 @@
                     { measure: yMeasure, time:'date' },
                     { measure: xMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -149,7 +152,7 @@
                     { measure: yMeasure, time:'date' },
                     { measure: xMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -208,7 +211,7 @@
                     { measure: yMeasure, time:'date' },
                     { measure: xMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -267,7 +270,7 @@
                     { measure: yMeasure, time:'date' },
                     { measure: xMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -326,7 +329,7 @@
                     { measure: yMeasure, time:'date' },
                     { measure: xMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -394,7 +397,7 @@
                     { measure: getVisMeasure('NAb', 'lab_code'), time:'date' },
                     { measure: xMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: function(measureStore) {
                     console.log(measureStore);
@@ -493,7 +496,7 @@
                     { measure: antigenMeasure, time:'date' },
                     { measure: mifDeltaMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: onSuccessENV,
                 failure: onError
@@ -507,7 +510,7 @@
                     { measure: antigenMeasure, time:'date' },
                     { measure: mifDeltaMeasure, time:'date' }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: onSuccessGAG,
                 failure: onError
@@ -637,7 +640,7 @@
                         time:'date'
                     }
                 ],
-                endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                endpoint: ENDPOINT,
                 containerPath: LABKEY.container.path,
                 success: onData,
                 failure: onError
