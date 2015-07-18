@@ -14,6 +14,8 @@
         PLOTS.plotYMeasureXSameAssayNum = plotYMeasureXSameAssayNum;
         PLOTS.plotYMeasureXSameDiffFilter = plotYMeasureXSameDiffFilter;
         PLOTS.plotYMeasureXDiffAssay = plotYMeasureXDiffAssay;
+        PLOTS.plotYMeasureXDiffAssay2 = plotYMeasureXDiffAssay2;
+        PLOTS.plotYMeasureXDiffAssay3 = plotYMeasureXDiffAssay3;
 
         PLOTS.scatterMeasureSameSource = scatterMeasureSameSource;
         PLOTS.categoricalSingleSource = categoricalSingleSource;
@@ -407,29 +409,151 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        'study_ICS_SubjectId', 'study_ICS_SequenceNum',
-                        'study_ICS_functional_marker_name', 'study_ICS_summary_level',
-                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
-                        'study_ICS_lab_code',
-
-                        'study_NAb_SubjectId', 'study_NAb_SequenceNum',
-                        'study_NAb_target_cell', 'study_NAb_summary_level', 'study_NAb_neutralization_tier',
-                        'study_NAb_clade', 'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
+                        'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum'
                     ]);
                     console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Y From Assay, X Same Assay Different Measure'},
-                        y: {value: 'TBD'}, //ICS Magnitude (CD4+, Protein Panel)
-                        x: {value: 'TBD'}
+                        y: {value: 'ICS Magnitude Mean Value (CD4+, Protein Panel)'},
+                        x: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'}
                     };
                     config.aes = {
                         y: function(row) {
                             return row.y ? row.y.getMean() : null;
                         },
                         x: function(row) {
-                            return '';//row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMean() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXDiffAssay2()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('ELISPOT', 'mean_sfc', true);
+            var xMeasure = getVisMeasure('ICS', 'pctpos', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ELISPOT', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'functional_marker_name', false, ['IFNg+']), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'summary_level', false, ['Peptide Pool']), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ELISPOT', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+', 'CD8+']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: ENDPOINT,
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'ELISPOT Magnitude Mean Value (IFNg+, Peptide Pool)'}, //
+                        x: {value: 'ICS Magnitude Mean Value (CD4+ and CD8+, Protein Panel)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.getMean() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXDiffAssay3()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
+            var xMeasure = getVisMeasure('BAMA', 'mfi_delta', true);
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('NAb', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['TZM-bl']), time:'date' },
+                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus']), time:'date' },
+                    { measure: getVisMeasure('NAb', 'neutralization_tier'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'clade'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'antigen'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('NAb', 'lab_code'), time:'date' },
+                    { measure: yMeasure, time:'date' },
+                    { measure: getVisMeasure('BAMA', 'SubjectId'), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'SequenceNum'), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'summary_level', false, ['Antigen']), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'antigen'), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'dilution', false, [50]), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'detection_ligand'), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'instrument_code'), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'specimen_type'), time:'date' },
+                    { measure: getVisMeasure('BAMA', 'lab_code'), time:'date' },
+                    { measure: xMeasure, time:'date' }
+                ],
+                endpoint: ENDPOINT,
+                containerPath: LABKEY.container.path,
+                success: function(measureStore) {
+                    console.log(measureStore);
+
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum'
+                    ]);
+                    console.log(data.length, data);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'NAb IC50 Titer Mean Value (TZM-bl, Virus)'},
+                        x: {value: 'BAMA MFI Delta Mean Value (50, Antigen)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.getMean() : null;
                         }
                     };
 
