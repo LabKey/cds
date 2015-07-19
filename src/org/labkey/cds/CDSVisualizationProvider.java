@@ -106,14 +106,6 @@ public class CDSVisualizationProvider extends VisualizationProvider<CDSUserSchem
                 URI_ANTIGEN_CLADE,
                 URI_ENVELOPE_NEUTRALIZATION_TIER
         ));
-
-        CDS_QUERY_KEYS.put("Ad5", Arrays.asList(
-                URI_PROT,
-                URI_SUBJECT,
-                URI_VISIT,
-                URI_SPECIMEN_TYPE,
-                URI_LAB
-        ));
     }
 
     public CDSVisualizationProvider(CDSUserSchema schema)

@@ -55,15 +55,16 @@ public class CDSUserSchema extends SimpleUserSchema
             if ("study".equalsIgnoreCase(name))
             {
                 QuerySchema ret = DefaultSchema.get(_user, _container).getSchema(name);
-                ((UserSchema)ret).setRestricted(true);
-                return ret;
+                if (ret != null)
+                {
+                    ((UserSchema)ret).setRestricted(true);
+                    return ret;
+                }
             }
             return null;
         }
-        else
-        {
-            return super.getSchema(name);
-        }
+
+        return super.getSchema(name);
     }
 
 
@@ -72,8 +73,7 @@ public class CDSUserSchema extends SimpleUserSchema
     {
         if (sourceTable.getName().equalsIgnoreCase("Citable"))
             return new CDSCitableTable(getContainer(), this, sourceTable).init();
-        else
-            return new CDSSimpleTable(this, sourceTable).init();
+        return new CDSSimpleTable(this, sourceTable).init();
     }
 
     static public void register(final Module module)

@@ -1,37 +1,45 @@
-<style>
+<style type="text/css">
+
+    .demo-measure-store a {
+        margin: 10px;
+    }
+
     .tab {
         padding: 5px;
-        border-color: #c0c0c0;
-        border-style: solid;
-        border-width: 0 1px 1px 1px;
+        border: 1px solid #c0c0c0;
+        border-top-width: 0;
     }
 
     .tab2 {
-        border: solid #c0c0c0 1px;
+        border: 1px solid #c0c0c0;
         width: 1002px;
         height: 505px;
     }
 
     .tab-first {
-        border-top: solid #c0c0c0 1px;
+        border-top: 1px solid #c0c0c0;
+    }
+
+    .active-tab {
+        background-color: #e0e6ea;
     }
 </style>
 
-<table cellspacing="10">
+<table class="demo-measure-store">
     <tr>
         <td valign="top">
-            <div class="tab tab-first"><a onclick="PLOTS.plotYMeasureXNone();">plotYMeasureXNone</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXDemCat();">plotYMeasureXDemCat</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXDemNum();">plotYMeasureXDemNum</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXSameAssayCat();">plotYMeasureXSameAssayCat</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXSameAssayNum();">plotYMeasureXSameAssayNum</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXSameDiffFilter();">plotYMeasureXSameDiffFilter</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXDiffAssay();">plotYMeasureXDiffAssay</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXDiffAssay2();">plotYMeasureXDiffAssay2</a></div>
-            <div class="tab"><a onclick="PLOTS.plotYMeasureXDiffAssay3();">plotYMeasureXDiffAssay3</a></div>
+            <div class="tab tab-first"><a href="#plotYMeasureXNone">plotYMeasureXNone</a></div>
+            <div class="tab"><a href="#plotYMeasureXDemCat">plotYMeasureXDemCat</a></div>
+            <div class="tab"><a href="#plotYMeasureXDemNum">plotYMeasureXDemNum</a></div>
+            <div class="tab"><a href="#plotYMeasureXSameAssayCat">plotYMeasureXSameAssayCat</a></div>
+            <div class="tab"><a href="#plotYMeasureXSameAssayNum">plotYMeasureXSameAssayNum</a></div>
+            <div class="tab"><a href="#plotYMeasureXSameDiffFilter">plotYMeasureXSameDiffFilter</a></div>
+            <div class="tab"><a href="#plotYMeasureXDiffAssay">plotYMeasureXDiffAssay</a></div>
+            <div class="tab"><a href="#plotYMeasureXDiffAssay2">plotYMeasureXDiffAssay2</a></div>
+            <div class="tab"><a href="#plotYMeasureXDiffAssay3">plotYMeasureXDiffAssay3</a></div>
             <div class="tab">&nbsp;</div>
-            <div class="tab"><a onclick="PLOTS.scatterMeasureSameSource();">scatterMeasureSameSource</a></div>
-            <div class="tab"><a onclick="PLOTS.categoricalSingleSource();">categoricalSingleSource</a></div>
+            <div class="tab"><a href="#scatterMeasureSameSource">scatterMeasureSameSource</a></div>
+            <div class="tab"><a href="#categoricalSingleSource">categoricalSingleSource</a></div>
         </td>
         <td>
             <div id="plot" class="tab2"></div>

@@ -1,24 +1,67 @@
 (function($) {
 
     // set to undefined to use default getData
+    //var ENDPOINT = undefined;
     var ENDPOINT = LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api');
 
     // Document Ready
     $(function() {
-        // TODO: this is a total hack to expose these to demoMeasureStore.html
-        PLOTS = {};
-        PLOTS.plotYMeasureXNone = plotYMeasureXNone;
-        PLOTS.plotYMeasureXDemCat = plotYMeasureXDemCat;
-        PLOTS.plotYMeasureXDemNum = plotYMeasureXDemNum;
-        PLOTS.plotYMeasureXSameAssayCat = plotYMeasureXSameAssayCat;
-        PLOTS.plotYMeasureXSameAssayNum = plotYMeasureXSameAssayNum;
-        PLOTS.plotYMeasureXSameDiffFilter = plotYMeasureXSameDiffFilter;
-        PLOTS.plotYMeasureXDiffAssay = plotYMeasureXDiffAssay;
-        PLOTS.plotYMeasureXDiffAssay2 = plotYMeasureXDiffAssay2;
-        PLOTS.plotYMeasureXDiffAssay3 = plotYMeasureXDiffAssay3;
 
-        PLOTS.scatterMeasureSameSource = scatterMeasureSameSource;
-        PLOTS.categoricalSingleSource = categoricalSingleSource;
+        console.info('Demo Measure Store! Each request will set the measure store to window.MS and data to window.DATA. Happy Plotting!');
+
+        var PLOTS = {
+            plotYMeasureXNone: plotYMeasureXNone,
+            plotYMeasureXDemCat: plotYMeasureXDemCat,
+            plotYMeasureXDemNum: plotYMeasureXDemNum,
+            plotYMeasureXSameAssayCat: plotYMeasureXSameAssayCat,
+            plotYMeasureXSameAssayNum: plotYMeasureXSameAssayNum,
+            plotYMeasureXSameDiffFilter: plotYMeasureXSameDiffFilter,
+            plotYMeasureXDiffAssay: plotYMeasureXDiffAssay,
+            plotYMeasureXDiffAssay2: plotYMeasureXDiffAssay2,
+            plotYMeasureXDiffAssay3: plotYMeasureXDiffAssay3,
+
+            scatterMeasureSameSource: scatterMeasureSameSource,
+            categoricalSingleSource: categoricalSingleSource
+        };
+
+        var tabsSel = '.demo-measure-store .tab',
+            activeCls = 'active-tab';
+
+        $(tabsSel).click(function() {
+            $(tabsSel).removeClass(activeCls);
+            $(this).addClass(activeCls);
+        });
+
+        function onHashChange(initial)
+        {
+            var hash = location.hash;
+            if (initial === true) {
+                if (hash) {
+                    hash = hash.split('#')[1];
+                }
+            }
+            else {
+                hash = hash.split('#')[1];
+            }
+
+            if (hash && PLOTS.hasOwnProperty(hash)) {
+                PLOTS[hash]();
+
+                if (initial === true) {
+                    $(tabsSel + ' a[href="' + '#' + hash + '"]').parent().addClass(activeCls);
+                }
+            }
+        }
+
+        window.addEventListener('hashchange', onHashChange, false);
+        onHashChange(true);
+
+        function logStoreData(store, data) {
+            window.MS = store;
+            window.DATA = data;
+
+            console.log('Rows:', data.length);
+        }
 
         function plotYMeasureXNone()
         {
@@ -27,21 +70,19 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
@@ -52,7 +93,6 @@
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getBoxPlotBaseConfig(data);
                     config.labels = {
@@ -70,6 +110,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -83,22 +125,20 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -110,7 +150,6 @@
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getBoxPlotBaseConfig(data);
                     config.labels = {
@@ -129,6 +168,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -142,22 +183,20 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -169,7 +208,6 @@
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
@@ -188,6 +226,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -201,22 +241,20 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -228,7 +266,6 @@
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getBoxPlotBaseConfig(data);
                     config.labels = {
@@ -247,6 +284,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -260,22 +299,20 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -287,7 +324,6 @@
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
@@ -306,6 +342,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -319,22 +357,20 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+','CD8+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+','CD8+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure), {'study_ICS_cell_type': 'CD8+'});
@@ -346,7 +382,6 @@
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
@@ -365,6 +400,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -378,31 +415,29 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: getVisMeasure('NAb', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'target_cell', false, ['A3R5']), time:'date' },
-                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus']), time:'date' },
-                    { measure: getVisMeasure('NAb', 'neutralization_tier'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'clade'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'antigen'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'lab_code'), time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: getVisMeasure('NAb', 'SubjectId')},
+                    { measure: getVisMeasure('NAb', 'SequenceNum')},
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['A3R5'])},
+                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus'])},
+                    { measure: getVisMeasure('NAb', 'neutralization_tier')},
+                    { measure: getVisMeasure('NAb', 'clade')},
+                    { measure: getVisMeasure('NAb', 'antigen')},
+                    { measure: getVisMeasure('NAb', 'specimen_type')},
+                    { measure: getVisMeasure('NAb', 'lab_code')},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -411,7 +446,6 @@
                     var data = axisMeasureStore.select([
                         'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
@@ -430,6 +464,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -443,30 +479,28 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('ELISPOT', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'functional_marker_name', false, ['IFNg+']), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'summary_level', false, ['Peptide Pool']), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ELISPOT', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: getVisMeasure('ICS', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+', 'CD8+']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel']), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein_panel'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'protein'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('ICS', 'lab_code'), time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('ELISPOT', 'SubjectId')},
+                    { measure: getVisMeasure('ELISPOT', 'SequenceNum')},
+                    { measure: getVisMeasure('ELISPOT', 'functional_marker_name', false, ['IFNg+'])},
+                    { measure: getVisMeasure('ELISPOT', 'summary_level', false, ['Peptide Pool'])},
+                    { measure: getVisMeasure('ELISPOT', 'protein_panel')},
+                    { measure: getVisMeasure('ELISPOT', 'protein')},
+                    { measure: getVisMeasure('ELISPOT', 'specimen_type')},
+                    { measure: getVisMeasure('ELISPOT', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: getVisMeasure('ICS', 'SubjectId')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+', 'CD8+'])},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'])},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'])},
+                    { measure: getVisMeasure('ICS', 'protein_panel')},
+                    { measure: getVisMeasure('ICS', 'protein')},
+                    { measure: getVisMeasure('ICS', 'specimen_type')},
+                    { measure: getVisMeasure('ICS', 'lab_code')},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -475,7 +509,6 @@
                     var data = axisMeasureStore.select([
                         'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
@@ -494,6 +527,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -507,31 +542,29 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: getVisMeasure('NAb', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'target_cell', false, ['TZM-bl']), time:'date' },
-                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus']), time:'date' },
-                    { measure: getVisMeasure('NAb', 'neutralization_tier'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'clade'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'antigen'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('NAb', 'lab_code'), time:'date' },
-                    { measure: yMeasure, time:'date' },
-                    { measure: getVisMeasure('BAMA', 'SubjectId'), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'SequenceNum'), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'summary_level', false, ['Antigen']), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'antigen'), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'dilution', false, [50]), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'detection_ligand'), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'instrument_code'), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'specimen_type'), time:'date' },
-                    { measure: getVisMeasure('BAMA', 'lab_code'), time:'date' },
-                    { measure: xMeasure, time:'date' }
+                    { measure: getVisMeasure('NAb', 'SubjectId')},
+                    { measure: getVisMeasure('NAb', 'SequenceNum')},
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['TZM-bl'])},
+                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus'])},
+                    { measure: getVisMeasure('NAb', 'neutralization_tier')},
+                    { measure: getVisMeasure('NAb', 'clade')},
+                    { measure: getVisMeasure('NAb', 'antigen')},
+                    { measure: getVisMeasure('NAb', 'specimen_type')},
+                    { measure: getVisMeasure('NAb', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: getVisMeasure('BAMA', 'SubjectId')},
+                    { measure: getVisMeasure('BAMA', 'SequenceNum')},
+                    { measure: getVisMeasure('BAMA', 'summary_level', false, ['Antigen'])},
+                    { measure: getVisMeasure('BAMA', 'antigen')},
+                    { measure: getVisMeasure('BAMA', 'dilution', false, [50])},
+                    { measure: getVisMeasure('BAMA', 'detection_ligand')},
+                    { measure: getVisMeasure('BAMA', 'instrument_code')},
+                    { measure: getVisMeasure('BAMA', 'specimen_type')},
+                    { measure: getVisMeasure('BAMA', 'lab_code')},
+                    { measure: xMeasure}
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: function(measureStore) {
-                    console.log(measureStore);
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, measureToAlias(xMeasure));
@@ -540,7 +573,6 @@
                     var data = axisMeasureStore.select([
                         'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum'
                     ]);
-                    console.log(data.length, data);
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
@@ -559,6 +591,8 @@
 
                     var plot = new LABKEY.vis.Plot(config);
                     plot.render();
+
+                    logStoreData(measureStore, data);
                 },
                 failure: onError
             });
@@ -614,28 +648,26 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    { measure: subjectMeasure, time:'date' },
-                    { measure: visitMeasure, time:'date' },
-                    { measure: proteinENVMeasure, time:'date' },
-                    { measure: antigenMeasure, time:'date' },
-                    { measure: mifDeltaMeasure, time:'date' }
+                    { measure: subjectMeasure },
+                    { measure: visitMeasure },
+                    { measure: proteinENVMeasure },
+                    { measure: antigenMeasure },
+                    { measure: mifDeltaMeasure }
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: onSuccessENV,
                 failure: onError
             });
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures : [
-                    { measure: subjectMeasure, time:'date' },
-                    { measure: visitMeasure, time:'date' },
-                    { measure: proteinGAGMeasure, time:'date' },
-                    { measure: antigenMeasure, time:'date' },
-                    { measure: mifDeltaMeasure, time:'date' }
+                    { measure: subjectMeasure },
+                    { measure: visitMeasure },
+                    { measure: proteinGAGMeasure },
+                    { measure: antigenMeasure },
+                    { measure: mifDeltaMeasure }
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: onSuccessGAG,
                 failure: onError
             });
@@ -669,10 +701,10 @@
 
                 var xy = twoAxis.select([subjectColAlias, visitColAlias]);
 
-                var xFn = function(row){
+                var xFn = function(row) {
                     return row.x ? row.x.getMean() : null;
                 };
-                var yFn = function(row){
+                var yFn = function(row) {
                     return row.y ? row.y.getMean() : null;
                 };
 
@@ -705,7 +737,7 @@
                                     + '\n' + row.x.getMean()
                                     + '\n' + row.y.getMean();
                         },
-                        pointClickFn: function(event, data){
+                        pointClickFn: function(event, data) {
                             console.log(data);
                         }
                     },
@@ -721,6 +753,8 @@
                 });
 
                 scatter.render();
+
+                logStoreData(twoAxis, xy);
             }
         }
 
@@ -751,21 +785,11 @@
 
             LABKEY.Query.experimental.MeasureStore.getData({
                 measures: [
-                    {
-                        measure: subjectMeasure,
-                        time: 'date'
-                    },
-                    {
-                        measure: raceMeasure,
-                        time: 'date'
-                    },
-                    {
-                        measure: ageMeasure,
-                        time:'date'
-                    }
+                    { measure: subjectMeasure },
+                    { measure: raceMeasure },
+                    { measure: ageMeasure }
                 ],
                 endpoint: ENDPOINT,
-                containerPath: LABKEY.container.path,
                 success: onData,
                 failure: onError
             });
@@ -784,6 +808,8 @@
                     }
                 });
 
+                var data = measureStore.select([xMeasureAlias, yMeasureAlias]);
+
                 var boxPlot = new LABKEY.vis.Plot({
                     renderTo: 'plot',
                     rendererType: 'd3',
@@ -795,7 +821,7 @@
                         yLeft: {value: 'Age'},
                         x: {value: 'Race'}
                     },
-                    data: measureStore.select([xMeasureAlias, yMeasureAlias]),
+                    data: data,
                     layers: [boxLayer],
                     aes: {
                         yLeft: function(row) {
@@ -819,6 +845,8 @@
                     }
                 });
                 boxPlot.render();
+
+                logStoreData(measureStore, data);
             }
         }
 
