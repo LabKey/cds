@@ -2086,7 +2086,7 @@ Ext.define('Connector.view.Chart', {
         this.hasStudyAxisData = false;
 
         if (this.requireStudyAxis) {
-            this.requestStudyAxisData(chartData);
+            this.getStudyAxisData(chartData);
         }
         else {
             this.initPlot(chartData);
@@ -2805,30 +2805,37 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    requestStudyAxisData : function(chartData) {
+    getStudyAxisData : function(chartData) {
+        var studyVisitTagStore = Connector.getApplication().getStore('StudyVisitTag');
+        if (studyVisitTagStore.loading) {
+            studyVisitTagStore.on('load', function(store) {
+                this.getStudyVisitTagRecords(store, chartData);
+            }, this);
+        }
+        else {
+            this.getStudyVisitTagRecords(studyVisitTagStore, chartData);
+        }
+    },
+
+    getStudyVisitTagRecords : function(store, chartData) {
         var alignMap = chartData.getContainerAlignmentDayMap(),
-            studyContainers = Object.keys(alignMap);
+                studyContainers = Object.keys(alignMap);
 
-        // TODO: move this to an app store and then query for a filtered set here
-        LABKEY.Query.selectRows({
-            schemaName: 'cds',
-            queryName: 'StudyVisitTagInfo',
-            filterArray: [LABKEY.Filter.create('container_id', studyContainers.join(';'), LABKEY.Filter.Types.IN)],
-            sort: 'container_id,protocol_day,group_name,visit_tag_name',
-            success: function(response) {
-                response.measures = this.measures;
-                response.visitMap = chartData.getVisitMap();
-                response.containerAlignmentDayMap = alignMap;
-                var studyAxisData = Ext.create('Connector.model.StudyAxisData', response);
+        // filter the StudyVisitTag store based on the study container id array
+        var containerFilteredRecords = store.queryBy(function(record) {
+            return studyContainers.indexOf(record.get('container_id')) > -1;
+        }).items;
 
-                this.hasStudyAxisData = studyAxisData.getData().length > 0;
-
-                this.initPlot(chartData, studyAxisData);
-                this.initStudyAxis(studyAxisData);
-            },
-            failure: function() {console.error('Error retrieving study axis data')},
-            scope: this
+        var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
+            records: containerFilteredRecords,
+            measure: this.measures[0],
+            containerAlignmentDayMap: alignMap
         });
+
+        this.hasStudyAxisData = studyAxisData.getData().length > 0;
+
+        this.initPlot(chartData, studyAxisData);
+        this.initStudyAxis(studyAxisData);
     },
 
     showVisitTagHover : function(data, rectEl) {

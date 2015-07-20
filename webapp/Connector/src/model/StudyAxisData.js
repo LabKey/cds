@@ -8,17 +8,12 @@ Ext.define('Connector.model.StudyAxisData', {
     extend : 'Ext.data.Model',
 
     fields : [
-        // TODO: verify how these are used and if they are needed anymore
-        {name : 'measures', defaultValue: [null, null, null]}, // Array [x, y, color]
-        {name : 'visitMap', defaultValue: {}},
+        /* values passed in from Chart.js */
+        {name : 'measure', defaultValue: {}}, // x-axis timepoint measure
         {name : 'containerAlignmentDayMap', defaultValue: {}},
+        {name : 'records', defaultValue: []}, // filtered set of StudyVisitTag model records
 
-        /* from the selectRows call to StudyVisitTagInfo */
-        {name : 'schemaName'},
-        {name : 'queryName'},
-        {name : 'rows', defaultValue: []},
-
-        /* generated properties based on the processing of the above rows */
+        /* generated properties based on the processing of the above records */
         {name : 'data', defaultValue: []},
         {name : 'range', defaultValue: {min: null, max: null}}
     ],
@@ -29,20 +24,16 @@ Ext.define('Connector.model.StudyAxisData', {
         this.processStudyAxisData();
     },
 
-    getDataRows : function() {
-        return this.get('rows');
+    getRecords : function() {
+        return this.get('records');
     },
 
     getMeasure : function(index) {
-        return this.get('measures')[index];
+        return this.get('measure');
     },
 
     getContainerAlignmentDayMap : function() {
         return this.get('containerAlignmentDayMap');
-    },
-
-    getVisitMap : function() {
-        return this.get('visitMap');
     },
 
     getData : function() {
@@ -53,55 +44,50 @@ Ext.define('Connector.model.StudyAxisData', {
         return this.get('range');
     },
 
-    processStudyAxisData : function(mappings) {
-        var rows = this.getDataRows(), visitMap = this.getVisitMap(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
+    processStudyAxisData : function() {
+        var records = this.getRecords(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
                 interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
                 seqMax, protocolDay, timepointType, groupName, visitTagCaption, isVaccination,
                 shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
 
-        if (this.getMeasure(0).interval) {
-            interval = this.getMeasure(0).interval.toLowerCase();
+        if (this.getMeasure().interval) {
+            interval = this.getMeasure().interval.toLowerCase();
         }
 
         // first we have to loop through the study axis visit information to find the alignment visit for each container
-        alignmentVisitTag = this.getMeasure(0).options ? this.getMeasure(0).options.alignmentVisitTag : null;
+        alignmentVisitTag = this.getMeasure().options ? this.getMeasure().options.alignmentVisitTag : null;
         if (alignmentVisitTag != null)
         {
-            for (j = 0; j < rows.length; j++)
-            {
-                studyContainer = rows[j].StudyContainer.value;
-                visitTagName = rows[j].VisitTagName.value;
+            Ext.each(records, function(record){
+                studyContainer = record.get('container_id');
+                visitTagName = record.get('visit_tag_name');
                 if (visitTagName == alignmentVisitTag)
-                    containerAlignmentDayMap[studyContainer] = rows[j].ProtocolDay.value;
-            }
+                    containerAlignmentDayMap[studyContainer] = record.get('protocol_day');
+            }, this);
         }
 
-        for (j = 0; j < rows.length; j++) {
-            _row = rows[j];
-
-            studyLabel = _row['study_label'];
-            studyContainer = _row['container_id'];
+        // loop through the StudyVisitTag records to gather data about each visit
+        Ext.each(records, function(record){
+            studyLabel = record.get('study_label');
+            studyContainer = record.get('container_id');
             shiftVal = containerAlignmentDayMap[studyContainer];
-            visitId = _row['visit_row_id'];
-            visitLabel = _row['visit_label'];
-            seqMin = _row['sequence_num_min'];
-            seqMax = _row['sequence_num_max'];
-            protocolDay = this.convertInterval(_row['protocol_day'] - shiftVal, interval);
-            timepointType = _row['timepoint_type'];
-            groupName = _row['group_name'];
-            visitTagCaption = _row['visit_tag_caption'];
-            isVaccination = _row['is_vaccination'];
-
-            if (!visitMap[visitId] && !visitTagCaption) {
-                continue;
-            }
+            visitId = record.get('visit_row_id');
+            visitLabel = record.get('visit_label');
+            seqMin = record.get('sequence_num_min');
+            seqMax = record.get('sequence_num_max');
+            protocolDay = this.convertInterval(record.get('protocol_day') - shiftVal, interval);
+            timepointType = record.get('timepoint_type');
+            groupName = record.get('group_name');
+            visitTagCaption = record.get('visit_tag_caption');
+            isVaccination = record.get('is_vaccination');
 
             if (timepointType !== 'VISIT') {
                 seqMin = this.convertInterval(seqMin - shiftVal, interval);
                 seqMax = this.convertInterval(seqMax - shiftVal, interval);
             }
 
+            // track each unique study by label
             if (!studyMap.hasOwnProperty(studyLabel)) {
                 studyMap[studyLabel] = {
                     label : studyLabel,
@@ -112,6 +98,7 @@ Ext.define('Connector.model.StudyAxisData', {
 
             study = studyMap[studyLabel];
 
+            // track each unique visit in a study by rowId
             if (!study.visits.hasOwnProperty(visitId)) {
                 study.visits[visitId] = {
                     studyLabel: studyLabel,
@@ -119,7 +106,6 @@ Ext.define('Connector.model.StudyAxisData', {
                     sequenceNumMin: seqMin,
                     sequenceNumMax: seqMax,
                     protocolDay: protocolDay,
-                    hasPlotData: visitMap[visitId] != undefined,
                     imgSrc: 'nonvaccination_normal.svg',
                     imgSize: 8,
                     visitTags: []
@@ -128,13 +114,14 @@ Ext.define('Connector.model.StudyAxisData', {
 
             visit = study.visits[visitId];
 
-            // TODO: why is is_vaccination always coming back as false?
-            if (isVaccination || visitTagCaption == 'Vaccination') {
-                visit.imgSrc = 'vaccination_normal.svg';
-                visit.imgSize = 16;
-            }
-
             if (visitTagCaption !== null) {
+                // determine which visit tag/milestone glyph to display
+                // TODO: why is is_vaccination always coming back as false?
+                if (isVaccination || visitTagCaption == 'Vaccination') {
+                    visit.imgSrc = 'vaccination_normal.svg';
+                    visit.imgSize = 16;
+                }
+
                 visit.visitTags.push({group: groupName, tag: visitTagCaption});
             }
 
@@ -142,11 +129,10 @@ Ext.define('Connector.model.StudyAxisData', {
                 range.min = protocolDay;
             if (range.max == null || range.max < protocolDay)
                 range.max = protocolDay;
-        }
+        }, this);
 
         // Convert study map and visit maps into arrays.
         studyKeys = Object.keys(studyMap).sort();
-
         for (i = 0; i < studyKeys.length; i++) {
             study = studyMap[studyKeys[i]];
             visitKeys = Object.keys(study.visits).sort();
