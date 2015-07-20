@@ -158,6 +158,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Antigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/ChartData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyAxisData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyVisitTag.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
@@ -195,6 +196,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
 
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>

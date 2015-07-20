@@ -10,5 +10,8 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="CDSValidate" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.CDSValidateTask"/>
+        </transform>
     </transforms>
 </etl>

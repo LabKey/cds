@@ -2086,7 +2086,7 @@ Ext.define('Connector.view.Chart', {
         this.hasStudyAxisData = false;
 
         if (this.requireStudyAxis) {
-            this.requestStudyAxisData(chartData);
+            this.getStudyAxisData(chartData);
         }
         else {
             this.initPlot(chartData);
@@ -2805,56 +2805,82 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    requestStudyAxisData : function(chartData) {
-        var alignMap = chartData.getContainerAlignmentDayMap(),
-            studyContainers = Object.keys(alignMap);
-
-        // TODO: move this to an app store and then query for a filtered set here
-        LABKEY.Query.selectRows({
-            schemaName: 'cds',
-            queryName: 'StudyVisitTagInfo',
-            filterArray: [LABKEY.Filter.create('container_id', studyContainers.join(';'), LABKEY.Filter.Types.IN)],
-            sort: 'container_id,protocol_day,group_name,visit_tag_name',
-            success: function(response) {
-                response.measures = this.measures;
-                response.visitMap = chartData.getVisitMap();
-                response.containerAlignmentDayMap = alignMap;
-                var studyAxisData = Ext.create('Connector.model.StudyAxisData', response);
-
-                this.hasStudyAxisData = studyAxisData.getData().length > 0;
-
-                this.initPlot(chartData, studyAxisData);
-                this.initStudyAxis(studyAxisData);
-            },
-            failure: function() {console.error('Error retrieving study axis data')},
-            scope: this
-        });
-    },
-
-    showVisitTagHover : function(data, rectEl) {
-        var plotEl = document.querySelector('div.plot svg'),
-                plotBBox = plotEl.getBoundingClientRect(),
-                hoverBBox, html, i;
-
-        this.tagHoverEl = document.createElement('div');
-        this.tagHoverEl.setAttribute('class', 'study-axis-window');
-
-        html = '<p>' + data.studyLabel + ' - ' + data.label + '</p>';
-        for (i = 0; i < data.visitTags.length; i++) {
-            html += '<p>' + data.visitTags[i].group + ' : ' + data.visitTags[i].tag + '</p>';
+    getStudyAxisData : function(chartData) {
+        var studyVisitTagStore = Connector.getApplication().getStore('StudyVisitTag');
+        if (studyVisitTagStore.loading) {
+            studyVisitTagStore.on('load', function(store) {
+                this.getStudyVisitTagRecords(store, chartData);
+            }, this);
         }
-        this.tagHoverEl.innerHTML = html;
-
-        document.querySelector('body').appendChild(this.tagHoverEl);
-        hoverBBox = this.tagHoverEl.getBoundingClientRect();
-        this.tagHoverEl.style.left = rectEl.getBBox().x + 'px';
-        this.tagHoverEl.style.top = (plotBBox.bottom - hoverBBox.height) + 'px';
+        else {
+            this.getStudyVisitTagRecords(studyVisitTagStore, chartData);
+        }
     },
 
-    removeVisitTagHover : function() {
-        if (this.tagHoverEl) {
-            this.tagHoverEl.parentNode.removeChild(this.tagHoverEl);
-            this.tagHoverEl = null;
+    getStudyVisitTagRecords : function(store, chartData) {
+        var alignMap = chartData.getContainerAlignmentDayMap(),
+                studyContainers = Object.keys(alignMap);
+
+        // filter the StudyVisitTag store based on the study container id array
+        var containerFilteredRecords = store.queryBy(function(record) {
+            return studyContainers.indexOf(record.get('container_id')) > -1;
+        }).items;
+
+        var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
+            records: containerFilteredRecords,
+            measure: this.measures[0],
+            containerAlignmentDayMap: alignMap
+        });
+
+        this.hasStudyAxisData = studyAxisData.getData().length > 0;
+
+        this.initPlot(chartData, studyAxisData);
+        this.initStudyAxis(studyAxisData);
+    },
+
+    showVisitTagHover : function(data, visitTagEl) {
+        var calloutMgr = hopscotch.getCalloutManager(),
+                _id = Ext.id(),
+                bubbleWidth = 180,
+                content = '<p><span style="font-weight: bold;">' + data.studyLabel + '</span> - ' + data.label + '</p>';
+
+        // content will display one row for each group/milestone
+        for (var i = 0; i < data.visitTags.length; i++) {
+            content += '<p><span style="font-weight: bold;">' + data.visitTags[i].group + '</span> : ' + data.visitTags[i].tag + '</p>';
+        }
+
+        calloutMgr.createCallout({
+            id: _id,
+            bubbleWidth: bubbleWidth,
+            xOffset: -(bubbleWidth/2),          // the nonvaccination icon is slightly smaller
+            arrowOffset: (bubbleWidth/2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
+            target: visitTagEl,
+            placement: 'top',
+            content: content
+        });
+
+        this.on('hidevisittagmsg', function() {
+            calloutMgr.removeCallout(_id);
+        }, this);
+
+        // hide the 'X' since this tip isn't closeable
+        Ext.get(calloutMgr.getCallout(_id).element).addCls('no-close');
+
+        // show the hover icon for this glyph
+        this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
+    },
+
+    removeVisitTagHover : function(data, visitTagEl) {
+        // change hover icon back to normal glyph state
+        this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
+
+        this.fireEvent('hidevisittagmsg', this);
+    },
+
+    updateVisitTagIcon : function(el, currentSuffix, newSuffix) {
+        var suffix = '_' + currentSuffix + '.svg', iconHref = el.getAttribute('href');
+        if (iconHref.indexOf(suffix, iconHref.length - suffix.length) !== -1) {
+            el.setAttribute('href', iconHref.replace(suffix, '_' + newSuffix + '.svg'));
         }
     },
 
@@ -2876,7 +2902,7 @@ Ext.define('Connector.view.Chart', {
         if (this.requireStudyAxis && this.hasStudyAxisData) {
             this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
-            this.getStudyAxisPanel().setHeight(Math.min(200, 28 * numStudies + 5)); // TODO set min height to half of plot region height
+            this.getStudyAxisPanel().setHeight(Math.min(200, 20 * numStudies + 5)); // TODO set min height to half of plot region height
         }
         else {
             this.plotEl.setStyle('padding', '0');
