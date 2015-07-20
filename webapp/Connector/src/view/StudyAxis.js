@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Connector.view.StudyAxis = function() {
-    var canvas = null, width, height, perStudyHeight = 28, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
+    var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
             tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope;
 
     var renderAlignment = function(selection) {
@@ -21,17 +21,18 @@ Connector.view.StudyAxis = function() {
     };
 
     var renderVisitTags = function(selection) {
-        var visitTags = selection.selectAll('.visit-tag').data(function (d) { return d.visits; });
+        var visitTags, defaultImgSize = 8;
+
+        visitTags = selection.selectAll('.visit-tag').data(function (d) { return d.visits; });
         visitTags.exit().remove();
         visitTags.enter().append("svg:image").attr('class', 'visit-tag')
             .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/' + d.imgSrc; })
-            .attr("x", function(d) { return xScale(d.protocolDay) - (d.imgSize || 14)/2; })
-            .attr("y", function(d) { return yScale(d.studyLabel) + perStudyHeight/2 - (d.imgSize || 14)/2; })
-            .attr("width", function(d) { return d.imgSize || 14; })
-            .attr("height", function(d) { return d.imgSize || 14; });
+            .attr("x", function(d) { return xScale(d.protocolDay) - (d.imgSize || defaultImgSize)/2; })
+            .attr("y", function(d) { return yScale(d.studyLabel) + perStudyHeight/2 - (d.imgSize || defaultImgSize)/2; })
+            .attr("width", function(d) { return d.imgSize || defaultImgSize; })
+            .attr("height", function(d) { return d.imgSize || defaultImgSize; });
 
-
-        // TODO: add visit tag mouseover/mouseout functions.
+        // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
             tagMouseover.call(tagMouseoverScope, d, this);
         });
@@ -82,10 +83,10 @@ Connector.view.StudyAxis = function() {
 
             return d.label;
         });
-        labels.attr('y', function(d) {return yScale(d.label) + perStudyHeight/2 + 6;})
-            .attr('x', 30)
-            .attr('fill', '#666363')
-            .style('font', '12pt Georgia, serif');
+        labels.attr('y', function(d) {return yScale(d.label) + perStudyHeight/2 + 4;})
+            .attr('x', 35)
+            .attr('fill', '#222222')
+            .style('font', '11px Arial, serif');
     };
 
     var studyAxis = function() {

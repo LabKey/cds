@@ -107,7 +107,6 @@ Ext.define('Connector.model.StudyAxisData', {
                     sequenceNumMax: seqMax,
                     protocolDay: protocolDay,
                     imgSrc: 'nonvaccination_normal.svg',
-                    imgSize: 8,
                     visitTags: []
                 };
             }
@@ -119,7 +118,7 @@ Ext.define('Connector.model.StudyAxisData', {
                 // TODO: why is is_vaccination always coming back as false?
                 if (isVaccination || visitTagCaption == 'Vaccination') {
                     visit.imgSrc = 'vaccination_normal.svg';
-                    visit.imgSize = 16;
+                    visit.imgSize = 14;
                 }
 
                 visit.visitTags.push({group: groupName, tag: visitTagCaption});

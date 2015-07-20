@@ -2838,30 +2838,49 @@ Ext.define('Connector.view.Chart', {
         this.initStudyAxis(studyAxisData);
     },
 
-    showVisitTagHover : function(data, rectEl) {
-        var plotEl = document.querySelector('div.plot svg'),
-                plotBBox = plotEl.getBoundingClientRect(),
-                hoverBBox, html, i;
+    showVisitTagHover : function(data, visitTagEl) {
+        var calloutMgr = hopscotch.getCalloutManager(),
+                _id = Ext.id(),
+                bubbleWidth = 180,
+                content = '<p><span style="font-weight: bold;">' + data.studyLabel + '</span> - ' + data.label + '</p>';
 
-        this.tagHoverEl = document.createElement('div');
-        this.tagHoverEl.setAttribute('class', 'study-axis-window');
-
-        html = '<p>' + data.studyLabel + ' - ' + data.label + '</p>';
-        for (i = 0; i < data.visitTags.length; i++) {
-            html += '<p>' + data.visitTags[i].group + ' : ' + data.visitTags[i].tag + '</p>';
+        // content will display one row for each group/milestone
+        for (var i = 0; i < data.visitTags.length; i++) {
+            content += '<p><span style="font-weight: bold;">' + data.visitTags[i].group + '</span> : ' + data.visitTags[i].tag + '</p>';
         }
-        this.tagHoverEl.innerHTML = html;
 
-        document.querySelector('body').appendChild(this.tagHoverEl);
-        hoverBBox = this.tagHoverEl.getBoundingClientRect();
-        this.tagHoverEl.style.left = rectEl.getBBox().x + 'px';
-        this.tagHoverEl.style.top = (plotBBox.bottom - hoverBBox.height) + 'px';
+        calloutMgr.createCallout({
+            id: _id,
+            bubbleWidth: bubbleWidth,
+            xOffset: -(bubbleWidth/2),          // the nonvaccination icon is slightly smaller
+            arrowOffset: (bubbleWidth/2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
+            target: visitTagEl,
+            placement: 'top',
+            content: content
+        });
+
+        this.on('hidevisittagmsg', function() {
+            calloutMgr.removeCallout(_id);
+        }, this);
+
+        // hide the 'X' since this tip isn't closeable
+        Ext.get(calloutMgr.getCallout(_id).element).addCls('no-close');
+
+        // show the hover icon for this glyph
+        this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
     },
 
-    removeVisitTagHover : function() {
-        if (this.tagHoverEl) {
-            this.tagHoverEl.parentNode.removeChild(this.tagHoverEl);
-            this.tagHoverEl = null;
+    removeVisitTagHover : function(data, visitTagEl) {
+        // change hover icon back to normal glyph state
+        this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
+
+        this.fireEvent('hidevisittagmsg', this);
+    },
+
+    updateVisitTagIcon : function(el, currentSuffix, newSuffix) {
+        var suffix = '_' + currentSuffix + '.svg', iconHref = el.getAttribute('href');
+        if (iconHref.indexOf(suffix, iconHref.length - suffix.length) !== -1) {
+            el.setAttribute('href', iconHref.replace(suffix, '_' + newSuffix + '.svg'));
         }
     },
 
@@ -2883,7 +2902,7 @@ Ext.define('Connector.view.Chart', {
         if (this.requireStudyAxis && this.hasStudyAxisData) {
             this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
-            this.getStudyAxisPanel().setHeight(Math.min(200, 28 * numStudies + 5)); // TODO set min height to half of plot region height
+            this.getStudyAxisPanel().setHeight(Math.min(200, 20 * numStudies + 5)); // TODO set min height to half of plot region height
         }
         else {
             this.plotEl.setStyle('padding', '0');

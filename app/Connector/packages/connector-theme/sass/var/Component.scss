@@ -19,6 +19,9 @@ $placeholder-text-color: #AFAFAF;
 $black: #303030;
 $unselect-black: rgba(0, 0, 0, 0.4);
 
+$border-color: #BABABA;
+$box-shadow-color: #CCCCCC;
+
 /* these could be an actual scale using a function -- stick with Artefact colors for now */
 $heat-scale-1: #666363;
 $heat-scale-2: #A09C9C;
@@ -606,59 +609,71 @@ div.emptytext {
 }
 
 div.hopscotch-bubble {
-  border: 2px solid $info-color;
-  border-radius: 2px;
+  border: 1px solid $border-color;
+  box-shadow: 2px 2px 0 $box-shadow-color;
 
+  .hopscotch-content {
+    margin: 0;
+    padding: 0;
+
+    p, span {
+      font-family: $info-font;
+    }
+  }
+
+  .hopscotch-actions {
+    display: none;
+  }
 
   // placement: bottom
   .hopscotch-bubble-arrow-container.up {
-    top: -19px;
+    top: -17px;
 
     .hopscotch-bubble-arrow {
-      top: -14px;
+      top: -16px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-bottom-color: $info-color;
+      border-bottom-color: $border-color;
     }
   }
 
   // placement: top
   .hopscotch-bubble-arrow-container.down {
-    bottom: -35px;
+    bottom: -34px;
 
     .hopscotch-bubble-arrow {
-      top: -21px;
+      top: -18px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-top-color: $info-color;
+      border-top-color: $border-color;
     }
   }
 
   // placement: left
   .hopscotch-bubble-arrow-container.right {
-    right: -35px;
+    right: -34px;
 
     .hopscotch-bubble-arrow {
-      left: -3px;
+      left: -1px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-left-color: $info-color;
+      border-left-color: $border-color;
     }
   }
 
   // placement: right
   .hopscotch-bubble-arrow-container.left {
-    left: -18px;
+    left: -17px;
 
     .hopscotch-bubble-arrow {
-      left: 3px;
+      left: 1px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-right-color: $info-color;
+      border-right-color: $border-color;
     }
   }
 
