@@ -2807,49 +2807,19 @@ Ext.define('Connector.view.Chart', {
 
     requestStudyAxisData : function(chartData) {
         var alignMap = chartData.getContainerAlignmentDayMap(),
-            studyContainers = Object.keys(alignMap),
-            inClause = " ('" + studyContainers.join("','") + "')",
-            sql = 'SELECT\n' +
-                'StudyLabel,\n' +
-                'StudyContainer,\n'+
-                'TimepointType,\n' +
-                'VisitLabel,\n' +
-                'SequenceNumMin,\n' +
-                'SequenceNumMax,\n' +
-                'ProtocolDay,\n' +
-                'VisitDescription,\n' +
-                'VisitRowId,\n' +
-                'VisitTagMap.VisitTag.Name as VisitTagName,\n' +
-                'VisitTagMap.VisitTag.Caption as VisitTagCaption,\n' +
-                'VisitTagMap.VisitTag.Description as VisitTagDescription\n' +
-                'FROM (\n' +
-                'SELECT\n' +
-                'StudyProperties.Label as StudyLabel,\n' +
-                'StudyProperties.TimepointType as TimepointType,\n' +
-                'Visit.Label as VisitLabel,\n' +
-                'Visit.SequenceNumMin,\n' +
-                'Visit.SequenceNumMax,\n' +
-                'Visit.ProtocolDay,\n' +
-                'Visit.Description as VisitDescription,\n' +
-                'Visit.Folder as VisitContainer,\n' +
-                'Visit.RowId as VisitRowId,\n' +
-                'StudyProperties.Container as StudyContainer\n' +
-                'FROM Visit, StudyProperties\n' +
-                'WHERE Visit.Folder = StudyProperties.Container\n' +
-                'AND StudyProperties.Container IN ' + inClause + '\n' +
-                ') as AllVisits\n' +
-                'LEFT OUTER JOIN VisitTagMap ON VisitTagMap.Visit = VisitRowId';
+            studyContainers = Object.keys(alignMap);
 
-        LABKEY.Query.executeSql({
-            schemaName: Connector.studyContext.schemaName,
-            requiredVersion: 9.1,
-            containerFilter: LABKEY.Query.containerFilter.currentAndSubfolders,
-            sql: sql,
-            success: function(executeSqlResp) {
-                executeSqlResp.measures = this.measures;
-                executeSqlResp.visitMap = chartData.getVisitMap();
-                executeSqlResp.containerAlignmentDayMap = alignMap;
-                var studyAxisData = Ext.create('Connector.model.StudyAxisData', executeSqlResp);
+        // TODO: move this to an app store and then query for a filtered set here
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'StudyVisitTagInfo',
+            filterArray: [LABKEY.Filter.create('container_id', studyContainers.join(';'), LABKEY.Filter.Types.IN)],
+            sort: 'container_id,protocol_day,group_name,visit_tag_name',
+            success: function(response) {
+                response.measures = this.measures;
+                response.visitMap = chartData.getVisitMap();
+                response.containerAlignmentDayMap = alignMap;
+                var studyAxisData = Ext.create('Connector.model.StudyAxisData', response);
 
                 this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
@@ -2861,29 +2831,6 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    showVisitHover : function(data, rectEl) {
-        var plotEl = document.querySelector('div.plot svg'),
-            plotBBox = plotEl.getBoundingClientRect(),
-            hoverBBox, html;
-
-        this.visitHoverEl = document.createElement('div');
-        this.visitHoverEl.setAttribute('class', 'study-axis-window');
-        html = '<p>' + data.studyLabel + '</p>' + '<p>' + data.label + '</p>';
-
-        this.visitHoverEl.innerHTML = html;
-        document.querySelector('body').appendChild(this.visitHoverEl);
-        hoverBBox = this.visitHoverEl.getBoundingClientRect();
-        this.visitHoverEl.style.left = rectEl.getAttribute('x') + 'px';
-        this.visitHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
-    },
-
-    removeVisitHover : function() {
-        if (this.visitHoverEl) {
-            this.visitHoverEl.parentNode.removeChild(this.visitHoverEl);
-            this.visitHoverEl = null;
-        }
-    },
-
     showVisitTagHover : function(data, rectEl) {
         var plotEl = document.querySelector('div.plot svg'),
                 plotBBox = plotEl.getBoundingClientRect(),
@@ -2891,17 +2838,17 @@ Ext.define('Connector.view.Chart', {
 
         this.tagHoverEl = document.createElement('div');
         this.tagHoverEl.setAttribute('class', 'study-axis-window');
-        html = '<p>' + data.studyLabel + '</p>';
 
+        html = '<p>' + data.studyLabel + ' - ' + data.label + '</p>';
         for (i = 0; i < data.visitTags.length; i++) {
-            html += '<p>' + data.visitTags[i] + '</p>';
+            html += '<p>' + data.visitTags[i].group + ' : ' + data.visitTags[i].tag + '</p>';
         }
-
         this.tagHoverEl.innerHTML = html;
+
         document.querySelector('body').appendChild(this.tagHoverEl);
         hoverBBox = this.tagHoverEl.getBoundingClientRect();
         this.tagHoverEl.style.left = rectEl.getBBox().x + 'px';
-        this.tagHoverEl.style.top = (plotBBox.bottom - hoverBBox.height - 43) + 'px';
+        this.tagHoverEl.style.top = (plotBBox.bottom - hoverBBox.height) + 'px';
     },
 
     removeVisitTagHover : function() {
@@ -2919,8 +2866,6 @@ Ext.define('Connector.view.Chart', {
         this.studyAxis.studyData(studyAxisInfo.getData())
                 .scale(this.plot.scales.x.scale)
                 .width(this.getStudyAxisPanel().getWidth() - 40)
-                .visitMouseover(this.showVisitHover, this)
-                .visitMouseout(this.removeVisitHover, this)
                 .visitTagMouseover(this.showVisitTagHover, this)
                 .visitTagMouseout(this.removeVisitTagHover, this);
 
@@ -2931,7 +2876,7 @@ Ext.define('Connector.view.Chart', {
         if (this.requireStudyAxis && this.hasStudyAxisData) {
             this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
-            this.getStudyAxisPanel().setHeight(Math.min(100, 27 * numStudies));
+            this.getStudyAxisPanel().setHeight(Math.min(200, 28 * numStudies + 5)); // TODO set min height to half of plot region height
         }
         else {
             this.plotEl.setStyle('padding', '0');
