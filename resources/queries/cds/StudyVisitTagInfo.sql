@@ -1,6 +1,6 @@
 SELECT
 vtm.container.entityid AS container_id,
-sp.Label AS study_label,
+s.label AS study_label,
 sp.TimepointType AS timepoint_type,
 vtm.study_group_id.group_name,
 vtm.visit_row_id,
@@ -14,5 +14,6 @@ vt.singleuse AS single_use,
 vtm.is_vaccination
 FROM visittagmap vtm
 LEFT JOIN study.StudyProperties sp ON sp.container = vtm.container
+LEFT JOIN cds.Study s ON s.study_name = sp.Label
 LEFT JOIN study.Visit v ON v.rowid = vtm.visit_row_id
 LEFT JOIN study.VisitTag vt ON vtm.visit_tag = vt.name
