@@ -89,7 +89,7 @@
       <column columnName="SubjectId">
         <datatype>varchar</datatype>
         <columnTitle>Subject Id</columnTitle>
-        <description>Subject identifier</description>
+        <description>Unique ID assigned to a subject for a given study.</description>
         <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
         <nullable>false</nullable>
         <importAliases>
@@ -120,6 +120,7 @@
         <datatype>integer</datatype>
         <columnTitle>Protocol Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Target study day defined for a study visit. Study days are relative to Day 0, where Day 0 is typically defined as enrollment and/or first injection.</description>
         <measure>false</measure>
       </column>
       <column columnName="third_key">
@@ -134,42 +135,63 @@
         <datatype>varchar</datatype>
         <columnTitle>Assay identifier</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Name identifying assay</description>
         <dimension>true</dimension>
       </column>
       <column columnName="summary_level">
         <datatype>varchar</datatype>
         <columnTitle>Data summary level</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Defines the level at which the magnitude or response has been summarized (i.e. summarized at the protein panel or protein level).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="cell_type">
         <datatype>varchar</datatype>
         <columnTitle>Cell type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Type of cell or cell subset assessed for antigen-stimulated expression of peptide(s). This cell type is usually CD4+ or CD8+ T-cells, but other cell types can also be assessed.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="cell_name">
         <datatype>varchar</datatype>
         <columnTitle>Cell name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Name of cell or cell subset assessed for antigen-stimulated expression of peptide(s). This cell type is usually CD4+ or CD8+ T-cells, but other cell types can also be assessed.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
         <columnTitle>Antigen</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The test article (reagent) that interacts with the specimen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen Type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of test article (reagent) that interacts with the specimen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="peptide_pool">
+        <datatype>varchar</datatype>
+        <columnTitle>Peptide Pool</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the peptide pool for which a magnitude and response call are calculated.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein">
         <datatype>varchar</datatype>
         <columnTitle>Protein</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the gene-based subpanel of antigens (peptide pools) for which a magnitude and response call are calculated. Depending on how the individual peptide pools are constructed, the subpanel magnitude may be the sum of the magnitudes fo the constituent peptide pools (for cases where there is no overlap between pools) or the maximum magnitude of the constituent peptide pools (for cases where the pools overlap).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein_panel">
         <datatype>varchar</datatype>
         <columnTitle>Protein panel</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the panel of antigens (peptide pools) for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for the gene-based sub-panels making up the panel.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein_panel_protein">
@@ -182,69 +204,84 @@
         <datatype>varchar</datatype>
         <columnTitle>Specimen type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of specimen used in the assay. For ICS, this is generally PBMC, but may also be mucosal specimens.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="functional_marker_name">
         <datatype>varchar</datatype>
         <columnTitle>Functional marker name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the marker assessed, such as IL-2 (cytokine) or Granzyme-B (protease).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="functional_marker_type">
         <datatype>varchar</datatype>
         <columnTitle>Functional marker type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of functional marker expressed by the ICS assay. This is usually a cytokine, but it can also include cell-surface markers, expressed proteases, and other molecules.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
-        <columnTitle>Clade</columnTitle>
+        <columnTitle>Protein Clade</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="vaccine_matched">
         <datatype>boolean</datatype>
-        <columnTitle>Vaccine matched</columnTitle>
+        <columnTitle>Antigen Vaccine Match Indicator</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <description>Indicates if the interactive part of the antigen was designed to match the immunogen in the vaccine.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>
         <columnTitle>Response call</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <description>Multiplicity-adjusted Fisher's Exact Test comparing stimulated to unstimulated cells.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="pctpos">
         <datatype>double</datatype>
-        <columnTitle>Magnitude</columnTitle>
+        <columnTitle>Magnitude (% cells) - Background</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Percent of cells expressing the functional marker of interest in the absence of antigen stimulation.</description>
+        <measure>true</measure>
       </column>
       <column columnName="pctpos_adj">
         <datatype>double</datatype>
-        <columnTitle>Magnitude adjusted</columnTitle>
+        <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Percent of cells expressing the functional marker of interest in response to antigen stimulation. Adjusted for background (unstimulated) expression.</description>
+        <measure>true</measure>
       </column>
       <column columnName="pctpos_neg">
         <datatype>double</datatype>
-        <columnTitle>Magnitude negative</columnTitle>
+        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Percent of cells expressing the functional marker of interest in response to antigen stimulation.</description>
+        <measure>true</measure>
       </column>
       <column columnName="lab_code">
         <datatype>varchar</datatype>
         <columnTitle>Lab</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>A code indicating the lab performing the assay.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>
-        <columnTitle>Exp Assayid</columnTitle>
+        <columnTitle>Experimental Assay Design Code</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Unique ID assigned to the experiment design of the assay for tracking purposes.</description>
         <measure>false</measure>
       </column>
       <column columnName="ics_lab_source_key">
         <datatype>integer</datatype>
-        <columnTitle>Ics Lab Source Key</columnTitle>
+        <columnTitle>Data provenance</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Details regarding the provenance of the assay results.</description>
         <measure>false</measure>
       </column>
     </columns>
@@ -256,7 +293,7 @@
       <column columnName="SubjectId">
         <datatype>varchar</datatype>
         <columnTitle>Subject Id</columnTitle>
-        <description>Subject identifier</description>
+        <description>Unique ID assigned to a subject for a given study.</description>
         <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
         <nullable>false</nullable>
         <importAliases>
@@ -287,6 +324,7 @@
         <datatype>integer</datatype>
         <columnTitle>Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Target study day defined for a study visit. Study days are relative to Day 0, where Day 0 is typically defined as enrollment and/or first injection.</description>
         <measure>false</measure>
       </column>
       <column columnName="third_key">
@@ -307,6 +345,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Data Summary Level</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Defines the level at which the magnitude or response has been summarized (i.e. summarized at the panel or sub-panel level).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="antigen">
@@ -316,28 +355,46 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="antigen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen Type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of test article (reagent) that interacts with the specimen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="peptide_pool">
+        <datatype>varchar</datatype>
+        <columnTitle>Peptide Pool</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the peptide pool for which a magnitude and response call are calculated.</description>
+        <dimension>true</dimension>
+      </column>
       <column columnName="protein">
         <datatype>varchar</datatype>
         <columnTitle>Protein</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the gene-based subpanel of antigens (peptide pools) for which a magnitude and response call are calculated.  Depending on how the individual peptide pools are constructed, the subpanel magnitude may be the sum of the magnitudes fo the constituent peptide pools (for cases where there is no overlap between pools) or the maximum magnitude of the constituent peptide pools (for cases where the pools overlap).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein_panel">
         <datatype>varchar</datatype>
         <columnTitle>Protein Panel</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the panel of antigens (peptide pools) for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for thegene-based sub-panels making up the panel.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="protein_panel_protein">
         <datatype>varchar</datatype>
         <columnTitle>Protein panel + Protein</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>A combination of protein panel and panel used for filtering.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
         <columnTitle>Clade</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="cell_type">
@@ -351,12 +408,14 @@
         <datatype>varchar</datatype>
         <columnTitle>Cell Name</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Name of cell or cell subset assessed for antigen-stimulated expression of peptide(s). This cell type is usually CD4+ or CD8+ T-cells, but other cell types can also be assessed.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="vaccine_method">
         <datatype>boolean</datatype>
-        <columnTitle>Vaccine Method</columnTitle>
+        <columnTitle>Vaccine matched indicator</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
+        <description>Indicates if the interactive part of the antigen was designed to match the immunogen in the vaccine.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="specimen_type">
@@ -368,15 +427,16 @@
       </column>
       <column columnName="functional_marker_name">
         <datatype>varchar</datatype>
-        <columnTitle>Functional Marker Name</columnTitle>
+        <columnTitle>Functional marker name</columnTitle>
         <description>The name of the marker assessed, (IFNg, cytokine).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="functional_marker_type">
         <datatype>varchar</datatype>
-        <columnTitle>Functional Marker Type</columnTitle>
+        <columnTitle>Functional marker type</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of functional marker expressed by the assay (i.e. cytokine).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="response_call">
@@ -388,35 +448,44 @@
       </column>
       <column columnName="mean_sfc">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude (% cells)</columnTitle>
+        <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation, adjusted for number of spot forming cells without antigen stimulation.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>true</measure>
       </column>
       <column columnName="mean_sfc_neg">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude (% cells) - Negative</columnTitle>
+        <columnTitle>Magnitude (% cells) - Background</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Mean Number of Spot-forming Cells (SFC) in the absence of antigen stimulation.</description>
+        <measure>true</measure>
       </column>
       <column columnName="mean_sfc_raw">
         <datatype>integer</datatype>
         <columnTitle>Magnitude (% cells) - Raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation.</description>
+        <measure>true</measure>
       </column>
       <column columnName="els_ifng_lab_source_key">
         <datatype>integer</datatype>
-        <columnTitle>Els Ifng Lab Source Key</columnTitle>
+        <columnTitle>Data provenance</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Details regarding the provenance of the assay results.</description>
         <measure>false</measure>
       </column>
       <column columnName="lab_code">
         <datatype>varchar</datatype>
-        <columnTitle>Lab</columnTitle>
+        <columnTitle>Lab ID</columnTitle>
+        <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <measure>false</measure>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>
-        <columnTitle>Exp Assayid</columnTitle>
+        <columnTitle>Experimental Assay Design Code</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Unique ID assigned to the experiment design of the assay for tracking purposes.</description>
         <measure>false</measure>
       </column>
     </columns>
@@ -428,7 +497,7 @@
       <column columnName="SubjectId">
         <datatype>varchar</datatype>
         <columnTitle>Subject Id</columnTitle>
-        <description>Subject identifier</description>
+        <description>Unique ID assigned to a subject for a given study.</description>
         <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
         <nullable>false</nullable>
         <importAliases>
@@ -459,6 +528,7 @@
         <datatype>integer</datatype>
         <columnTitle>Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Target study day defined for a study visit. Study days are relative to Day 0, where Day 0 is typically defined as enrollment and/or first injection.</description>
         <measure>false</measure>
       </column>
       <column columnName="third_key">
@@ -471,7 +541,7 @@
       </column>
       <column columnName="assay_identifier">
         <datatype>varchar</datatype>
-        <columnTitle>Assay Identifier</columnTitle>
+        <columnTitle>Assay identifier</columnTitle>
         <description>Name identifying assay</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
@@ -480,6 +550,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Data summary level</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>Defines the level at which the magnitude or response has been summarized (i.e. summarized at the isolate level).</description>
         <dimension>true</dimension>
       </column>
       <column columnName="specimen_type">
@@ -493,32 +564,62 @@
         <datatype>varchar</datatype>
         <columnTitle>Antigen</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="antigen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of virus used in the construction of the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of virus used in the construction of the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of virus isolate or construct used for the nAb antigen.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="virus_insert_name">
+        <datatype>varchar</datatype>
+        <columnTitle>Virus insert name</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The amino acid sequence inserted in the virus construct.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
-        <columnTitle>Clade</columnTitle>
+        <columnTitle>Antigen clade</columnTitle>
         <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="neutralization_tier">
         <datatype>varchar</datatype>
-        <columnTitle>Envelope neutralization tier</columnTitle>
-        <description>A classification specfic to HIV NAb assay design, in which an antigen is assessed for its ease of neutralization (1=most easily neutralized, 3=least easily neutralized)</description>
+        <columnTitle>Neutralization tier</columnTitle>
+        <description>A classification specific to HIV NAb assay design, in which an antigen is assessed for its ease of neutralization (1=most easily neutralized, 3=least easily neutralized)</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="tier_clade_antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Envelope neutralization tier + Clade + Antigen</columnTitle>
+        <columnTitle>Neutralization tier + Antigen clade + Antigen</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>A combination of neutralization tier, antigen clade, and antigen used for filtering.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="target_cell">
         <datatype>varchar</datatype>
         <columnTitle>Target cell</columnTitle>
-        <description>The name of the ENV isolate used in the construction of the NAb antigen.</description>
+        <description>The cell line used in the assay to determine infection (lack of neutralization).  Generally TZM-bl or A3R5, but can also be other cell lines or non-engineered cells.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -526,18 +627,20 @@
         <datatype>integer</datatype>
         <columnTitle>Initial dilution</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Indicates the initial specimen dilution.</description>
         <dimension>true</dimension>
         <measure>false</measure>
       </column>
       <column columnName="titer_ic50">
         <datatype>integer</datatype>
         <columnTitle>Titer IC50</columnTitle>
-        <description>Titer calculated at the specified inhibitory concentration.</description>
+        <description>The half maximal inhibitory concentration (IC50).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
       <column columnName="titer_ic80">
         <datatype>integer</datatype>
         <columnTitle>Titer IC80</columnTitle>
+        <description>The 80% maximal inhibitory concentration (IC80).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
       </column>
       <column columnName="response_call">
@@ -549,20 +652,23 @@
       </column>
       <column columnName="nab_lab_source_key">
         <datatype>integer</datatype>
-        <columnTitle>Nab Lab Source Key</columnTitle>
+        <columnTitle>Data provenance</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Details regarding the provenance of the assay results.</description>
         <measure>false</measure>
       </column>
       <column columnName="lab_code">
         <datatype>varchar</datatype>
-        <columnTitle>Lab</columnTitle>
+        <columnTitle>Lab ID</columnTitle>
+        <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>
-        <columnTitle>Exp Assayid</columnTitle>
+        <columnTitle>Experimental Assay Design Code</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Unique ID assigned to the experiment design of the assay for tracking purposes.</description>
         <measure>false</measure>
       </column>
     </columns>
@@ -574,7 +680,7 @@
       <column columnName="SubjectId">
         <datatype>varchar</datatype>
         <columnTitle>Subject Id</columnTitle>
-        <description>Subject identifier</description>
+        <description>Unique ID assigned to a subject for a given study.</description>
         <propertyURI>http://cpas.labkey.com/Study#ParticipantId</propertyURI>
         <nullable>false</nullable>
         <importAliases>
@@ -605,6 +711,7 @@
         <datatype>integer</datatype>
         <columnTitle>Visit Day</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Target study day defined for a study visit. Study days are relative to Day 0, where Day 0 is typically defined as enrollment and/or first injection.</description>
         <measure>false</measure>
       </column>
       <column columnName="third_key">
@@ -642,10 +749,17 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="antigen_type">
+        <datatype>varchar</datatype>
+        <columnTitle>Antigen type</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The type of antigen used in the assay.</description>
+        <dimension>true</dimension>
+      </column>
       <column columnName="protein">
         <datatype>varchar</datatype>
         <columnTitle>Protein</columnTitle>
-        <description>The binding anitbody isotype that is quantified by the assay</description>
+        <description>The name of the proteins for which a magnitude and response call are calculated.  Depending on how the individual peptide pools are constructed, the protein magnitude may be the sum of the magnitudes fo the constituent peptide pools (for cases where there is no overlap between pools) or the maximum magnitude of the constituent peptide pools (for cases where the pools overlap).</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
@@ -653,6 +767,7 @@
         <datatype>varchar</datatype>
         <columnTitle>Protein Panel</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The name of the panel of proteins for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for the proteins making up the panel.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="antigen_isotype">
@@ -662,13 +777,14 @@
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>
-        <columnTitle>Clade</columnTitle>
+        <columnTitle>Antigen clade</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The clade (gene subtype) to which the antigen is most closely aligned. The clade may be a circulating type or a laboratory consensus or global clade.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="vaccine_matched">
         <datatype>boolean</datatype>
-        <columnTitle>Vaccine Matched</columnTitle>
+        <columnTitle>Vaccine matched indicator</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#boolean</rangeURI>
       </column>
       <column columnName="detection_ligand">
@@ -680,6 +796,8 @@
         <datatype>varchar</datatype>
         <columnTitle>Instrument Code</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>The instrument on which the assay was performed. This affects the dynamic range of the readout, and the comparability of magnitude across instruments.</description>
+        <dimension>true</dimension>
       </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>
@@ -692,6 +810,7 @@
         <datatype>integer</datatype>
         <columnTitle>Dilution</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Indicates the initial specimen dilution.</description>
         <dimension>true</dimension>
         <measure>false</measure>
       </column>
@@ -699,47 +818,62 @@
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Delta</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads, adjusted for mean Fluorescence Intensity of antibody-binding to non-specific (non-conjugated) beads.</description>
+        <measure>true</measure>
       </column>
       <column columnName="mfi_delta_baseline">
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) – Delta Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads, adjusted for mean Fluorescence Intensity of antibody-binding to non-specific (non-conjugated) beads at baseline.</description>
+        <measure>true</measure>
       </column>
       <column columnName="mfi_raw">
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads.</description>
+        <measure>true</measure>
       </column>
       <column columnName="mfi_raw_baseline">
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) – Raw Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads at baseline.</description>
+        <measure>true</measure>
       </column>
       <column columnName="mfi_blank">
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Blank</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Mean Fluorescence Intensity of antibody-binding to blank beads.</description>
+        <measure>true</measure>
       </column>
       <column columnName="mfi_blank_baseline">
         <datatype>double</datatype>
         <columnTitle>Magnitude (mfi) - Blank Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
+        <description>Mean Fluorescence Intensity of antibody-binding to blank beads at baseline.</description>
+        <measure>true</measure>
       </column>
       <column columnName="bama_lab_source_key">
         <datatype>integer</datatype>
-        <columnTitle>Bama Lab Source Key</columnTitle>
+        <columnTitle>Data provenance</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Details regarding the provenance of the assay results.</description>
         <measure>false</measure>
       </column>
       <column columnName="lab_code">
         <datatype>varchar</datatype>
-        <columnTitle>Lab</columnTitle>
+        <columnTitle>Lab ID</columnTitle>
+        <description>A code indicating the lab performing the assay.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
       </column>
       <column columnName="exp_assayid">
         <datatype>integer</datatype>
-        <columnTitle>Exp Assayid</columnTitle>
+        <columnTitle>Experimental Assay Design Code</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <description>Unique ID assigned to the experiment design of the assay for tracking purposes.</description>
         <measure>false</measure>
       </column>
     </columns>
