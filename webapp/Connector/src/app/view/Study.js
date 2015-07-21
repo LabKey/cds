@@ -9,6 +9,8 @@ Ext.define('Connector.app.view.Study', {
 
     itemSelector: 'div.study-detail',
 
+    cls: 'learnstudies',
+
     statics: {
         dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
         monthDiff : function(d1, d2) {

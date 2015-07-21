@@ -56,7 +56,7 @@ public class CDSHelper
             "VRC-HIVDNA009-00-VP", "VRC-HIVDNA044-00-VP", "VRC01", "VSV HIV envC^2", "VSV HIV gag"};  // TODO Test data dependent.
 
     public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
-    public static final String[] ASSAYS = {"BAMA", "ELISpot", "ICS", "NAb"};
+    public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
@@ -136,6 +136,9 @@ public class CDSHelper
     public static final String ICS_MAGNITUDE = "Magnitude";
     public static final String ICS_MAGNITUDE_ADJ = "Magnitude adjusted";
     public static final String ICS_MAGNITUDE_NEG = "Magnitude negative";
+    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
+    public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_SUBPANEL = "Protein subpanel";
     public static final String ICS_VISIT_DAY = "Protocol Visit Day";

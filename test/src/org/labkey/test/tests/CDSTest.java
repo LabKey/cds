@@ -41,7 +41,11 @@ import org.labkey.test.util.Maps;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.UIContainerHelper;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -203,7 +207,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         this.sleep(500); // Not sure why I need this but test is more reliable with it.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.confirmSelection();
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -240,7 +244,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: Antigen, Magnitude, Race"));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(667, 15, -1); // TODO Test data dependent.
 
         // TODO: Enable this once fb_plots is merged
@@ -745,7 +749,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
     }
 
-// TODO Putting this test on hold. "Find subjects... Assays" is a July feature.
+
+    // TODO Still needs work.
 //    @Test
     public void verifyFilters()
     {
@@ -754,8 +759,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // 14910
         cds.goToSummary();
-        waitAndClick(Locator.linkWithText("types"));
-        waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Assays"));
+//        waitAndClick(Locator.linkWithText("types"));
+        waitForElement(CDSHelper.Locators.dimensionHeaderLocator("Assays"));
         waitForFormElementToEqual(hierarchySelector, "Type");
         click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
         waitForElementToDisappear(CDSHelper.Locators.barLabel.withText(CDSHelper.EMPTY_ASSAY));
@@ -863,14 +868,94 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.verifyLearnAboutPage(studies);
     }
 
-// TODO Putting this test on hold. "Learn about" is a July feature.
-//    @Test @Ignore
-    public void testLearnAboutAssays()
+    @Test
+    public void clickOnLearnAboutStudyItem()
     {
-        cds.viewLearnAboutPage("Assays");
+        List<WebElement> returnedItems;
+        String[] itemParts;
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
-        List<String> assays = Arrays.asList(CDSHelper.ASSAYS);
-        _asserts.verifyLearnAboutPage(assays);
+        cds.viewLearnAboutPage("Studies");
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+
+        int index = returnedItems.size()/2;
+
+        itemParts = returnedItems.get(index).getText().split("\n");
+        returnedItems.get(index).click();
+
+        log("Validating title is " + itemParts[0]);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'pageheader')]//div//h2[text()='" + itemParts[0] + "']").toBy()));
+
+        log("Validating Study Type is: " + itemParts[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+
+        // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
+
+        log("Validating return link works.");
+        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')][text()='Studies']"));
+
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'titlepanel')][text()='Learn about...']").toBy()));
+    }
+
+    @Test
+    public void testLearnAboutStudiesSearch()
+    {
+        String searchString;
+        List<WebElement> returnedItems;
+        String itemText;
+        String[] itemParts;
+        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+
+        cds.viewLearnAboutPage("Studies");
+
+        searchString = "HVTN"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        log("Size: " + returnedItems.size());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "(vCP1452)"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "Phase IIB"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "If this string ever appears something very odd happened.";
+        log("Searching for '" + searchString + "'.");
+        sleep(500);
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        _asserts.verifyEmptyLearnAboutStudyPage();
+
     }
 
     @Test
@@ -882,9 +967,126 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.verifyLearnAboutPage(studyProducts);
     }
 
-// TODO Putting this test on hold. "Learn about" is a July feature.
+    @Test
+    public void clickOnLearnAboutStudyProductsItem()
+    {
+        List<WebElement> returnedItems;
+        String[] itemParts;
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+
+        cds.viewLearnAboutPage("Study products");
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+
+        int index = returnedItems.size()/2;
+
+        itemParts = returnedItems.get(index).getText().split("\n");
+        log("Looking for product: " + itemParts[0] + " in a list of " + returnedItems.size());
+        shortWait().until(ExpectedConditions.visibilityOf(returnedItems.get(index)));
+        returnedItems.get(index).click();
+
+        log("Validating title is " + itemParts[0]);
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'pageheader')]//div//h2[text()='" + itemParts[0] + "']").toBy()));
+
+        log("Validating Product Type is: " + itemParts[1]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
+
+        log("Validating Class is: " + itemParts[2]);
+        assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[2] + "']").findElement(getDriver()).isDisplayed());
+
+        // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
+
+        log("Validating return link works.");
+        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')][text()='Study products']"));
+
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'titlepanel')][text()='Learn about...']").toBy()));
+    }
+
+    @Test
+    public void testLearnAboutStudyProductsSearch()
+    {
+        String searchString;
+        List<WebElement> returnedItems;
+        String itemText;
+        String[] itemParts;
+        final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+
+        cds.viewLearnAboutPage("Study products");
+
+        searchString = "AID"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        log("Size: " + returnedItems.size());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "inhibitor"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "GSK"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "is a"; // TODO Test data dependent.
+        log("Searching for '" + searchString + "'.");
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        sleep(500);
+        returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
+        for(WebElement listItem : returnedItems)
+        {
+            itemText = listItem.getText();
+            itemParts = itemText.split("\n");
+            log("Looking at study " + itemParts[0]);
+            assert(itemText.toLowerCase().contains(searchString.toLowerCase()));
+        }
+
+        searchString = "If this string ever appears something very odd happened.";
+        log("Searching for '" + searchString + "'.");
+        sleep(500);
+        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
+        _asserts.verifyEmptyLearnAboutStudyProductsPage();
+
+    }
+
+    // TODO Putting this test on hold. "Learn about Assays" is a future feature.
+//    @Test @Ignore
+    public void testLearnAboutAssays()
+    {
+        cds.viewLearnAboutPage("Assays");
+
+        List<String> assays = Arrays.asList(CDSHelper.ASSAYS);
+        _asserts.verifyLearnAboutPage(assays);
+    }
+
+    // TODO Putting this test on hold. "Learn about Sites " is a future feature.
 //    @Test
-//    @Ignore("Sites have been disabled until it is no longer dependent on the demographics dataset")
     public void testLearnAboutSites()
     {
         cds.viewLearnAboutPage("Sites");
@@ -892,6 +1094,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         List<String> sites = Collections.emptyList();
         _asserts.verifyLearnAboutPage(sites);
     }
+
+// TODO Need a test for "Learn about Labs " (a future feature).
+//    @Test
+    public void testLearnAboutLabs()
+    {
+    }
+
 
     @Test
     public void testSummaryPageSingleAxisLinks()
@@ -992,6 +1201,20 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
             {
                 cds.deleteGroupFromSummaryPage(d);
             }
+        }
+    }
+
+    private boolean isValidDate(String date)
+    {
+        String DATE_FORMAT = "MMM dd, yyyy";
+
+        try {
+            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
         }
     }
 }

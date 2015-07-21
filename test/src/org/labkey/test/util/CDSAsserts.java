@@ -183,6 +183,11 @@ public class CDSAsserts
         _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected studies have data for this category.']"));
     }
 
+    public void verifyEmptyLearnAboutStudyProductsPage()
+    {
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected study products have data for this category.']"));
+    }
+
     public void assertDefaultFilterStatusCounts()
     {
         assertFilterStatusCounts(8373, 53, -1); // TODO Test data dependent.
@@ -216,7 +221,7 @@ public class CDSAsserts
 
         if(studyCount > -1)
         {
-            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Studies", "Studies", true));
         }
 
         if(assayCount > -1)

@@ -9,6 +9,8 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     itemSelector: 'div.study-detail',
 
+    cls: 'learnstudyproducts',
+
     statics: {
         columnHeaderTpl: new Ext.XTemplate(
             '<div class="learncolumnheader">',
