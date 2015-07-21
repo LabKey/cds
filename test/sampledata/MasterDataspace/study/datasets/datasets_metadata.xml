@@ -200,6 +200,12 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="protein_panel_protein_peptide_pool">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein panel + Protein + Peptide Pool</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="specimen_type">
         <datatype>varchar</datatype>
         <columnTitle>Specimen type</columnTitle>
@@ -387,7 +393,14 @@
         <datatype>varchar</datatype>
         <columnTitle>Protein panel + Protein</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>A combination of protein panel and panel used for filtering.</description>
+        <description>A combination of protein panel and protein used for filtering.</description>
+        <dimension>true</dimension>
+      </column>
+      <column columnName="protein_panel_protein_peptide_pool">
+        <datatype>varchar</datatype>
+        <columnTitle>Protein panel + Protein + Peptide Pool</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <description>A combination of protein panel, protein, and peptide pool used for filtering.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="clade">
@@ -609,11 +622,11 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="tier_clade_antigen">
+      <column columnName="tier_clade_virus">
         <datatype>varchar</datatype>
-        <columnTitle>Neutralization tier + Antigen clade + Antigen</columnTitle>
+        <columnTitle>Neutralization tier + Antigen clade + Virus</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
-        <description>A combination of neutralization tier, antigen clade, and antigen used for filtering.</description>
+        <description>A combination of neutralization tier, antigen clade, and virus used for filtering.</description>
         <dimension>true</dimension>
       </column>
       <column columnName="target_cell">

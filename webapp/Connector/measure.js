@@ -42,7 +42,7 @@ Ext.define('Connector.measure.Configuration', {
                     dimensions: [
                         'study_NAb_target_cell',
                         'study_NAb_summary_level',
-                        'study_NAb_antigen',
+                        'study_NAb_virus',
                         'study_NAb_specimen_type',
                         'study_NAb_lab_code'
                     ]
@@ -65,7 +65,7 @@ Ext.define('Connector.measure.Configuration', {
                     dimensions: [
                         'study_ELISPOT_functional_marker_name',
                         'study_ELISPOT_summary_level',
-                        'study_ELISPOT_protein',
+                        'study_ELISPOT_peptide_pool',
                         'study_ELISPOT_specimen_type',
                         'study_ELISPOT_lab_code'
                     ]
@@ -91,11 +91,12 @@ Ext.define('Connector.measure.Configuration', {
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Protein Panel'}
                 },
-                'study_ICS_protein_panel': {
+                'study_ICS_peptide_pool': {
                     requiresSelection: true,
-                    hierarchicalSelectionParent: null,
+                    hierarchicalSelectionParent: 'study_ICS_protein',
+                    hierarchicalFilterColumnName: 'protein_panel_protein_peptide_pool',
                     distinctValueFilterColumnName: 'summary_level',
-                    distinctValueFilterColumnValue: 'Protein Panel'
+                    distinctValueFilterColumnValue: 'Peptide Pool'
                 },
                 'study_ICS_protein': {
                     requiresSelection: true,
@@ -103,6 +104,12 @@ Ext.define('Connector.measure.Configuration', {
                     hierarchicalFilterColumnName: 'protein_panel_protein',
                     distinctValueFilterColumnName: 'summary_level',
                     distinctValueFilterColumnValue: 'Protein'
+                },
+                'study_ICS_protein_panel': {
+                    requiresSelection: true,
+                    hierarchicalSelectionParent: null,
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Protein Panel'
                 },
                 // study|NAb
                 'study_NAb_target_cell': {
@@ -115,15 +122,18 @@ Ext.define('Connector.measure.Configuration', {
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Virus'}
                 },
-                'study_NAb_antigen': {
+                'study_NAb_virus': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_NAb_clade',
-                    hierarchicalFilterColumnName: 'tier_clade_antigen',
+                    hierarchicalFilterColumnName: 'tier_clade_virus',
                     distinctValueFilterColumnName: 'summary_level',
                     distinctValueFilterColumnValue: 'Virus'
                 },
                 'study_NAb_clade': {
                     hierarchicalSelectionParent: 'study_NAb_neutralization_tier'
+                },
+                'study_NAb_neutralization_tier': {
+                    hierarchicalSelectionParent: null
                 },
                 // study|BAMA
                 'study_BAMA_antigen_isotype': {
@@ -158,12 +168,25 @@ Ext.define('Connector.measure.Configuration', {
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Peptide Pool'}
                 },
+                'study_ELISPOT_peptide_pool': {
+                    requiresSelection: true,
+                    hierarchicalSelectionParent: 'study_ELISPOT_protein',
+                    hierarchicalFilterColumnName: 'protein_panel_protein_peptide_pool',
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Peptide Pool'
+                },
                 'study_ELISPOT_protein': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ELISPOT_protein_panel',
                     hierarchicalFilterColumnName: 'protein_panel_protein',
                     distinctValueFilterColumnName: 'summary_level',
-                    distinctValueFilterColumnValue: 'Peptide Pool'
+                    distinctValueFilterColumnValue: 'Protein'
+                },
+                'study_ELISPOT_protein_panel': {
+                    requiresSelection: true,
+                    hierarchicalSelectionParent: null,
+                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnValue: 'Protein Panel'
                 }
             },
 
@@ -222,13 +245,28 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_summary_level': {
                     hidden: true
                 },
+                'study_ICS_protein_panel_protein_peptide_pool': {
+                    hidden: true
+                },
+                'study_ICS_protein_panel_protein': {
+                    hidden: true
+                },
                 'study_NAb_summary_level': {
+                    hidden: true
+                },
+                'study_NAb_tier_clade_virus': {
                     hidden: true
                 },
                 'study_BAMA_summary_level': {
                     hidden: true
                 },
                 'study_ELISPOT_summary_level': {
+                    hidden: true
+                },
+                'study_ELISPOT_protein_panel_protein_peptide_pool': {
+                    hidden: true
+                },
+                'study_ELISPOT_protein_panel_protein': {
                     hidden: true
                 }
             }

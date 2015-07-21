@@ -12,13 +12,13 @@ antigen,
 antigen_type,
 neutralization_tier,
 clade,
-neutralization_tier || '|' || clade || '|' || antigen AS tier_clade_antigen,
+neutralization_tier || '|' || clade || '|' || virus AS tier_clade_virus,
 vaccine_matched,
 target_cell,
 initial_dilution,
 virus,
 virus_type,
-virus_insert_name
+virus_insert_name,
 
 -- LOOKUPS
 nab_lab_source_key,
