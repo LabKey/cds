@@ -1,4 +1,5 @@
 -- MAPPING TABLES
+DROP TABLE IF EXISTS cds.VisitTagAlignment CASCADE;
 DROP TABLE IF EXISTS cds.VisitTagMap CASCADE;
 DROP TABLE IF EXISTS cds.TreatmentArmSubjectMap CASCADE;
 DROP TABLE IF EXISTS cds.StudyGroupVisitMap CASCADE;
@@ -167,4 +168,16 @@ CREATE TABLE cds.VisitTagMap (
   is_vaccination BOOLEAN DEFAULT FALSE,
 
   CONSTRAINT PK_VisitTagMap PRIMARY KEY (visit_tag, visit_row_id, study_group_id, container)
+);
+
+CREATE TABLE cds.VisitTagAlignment (
+  row_id SERIAL,
+  container ENTITYID NOT NULL,
+  participantid VARCHAR(32) NOT NULL,
+  visitid INTEGER NOT NULL,
+  protocolday INTEGER NOT NULL,
+  visittagname VARCHAR(250) NOT NULL,
+
+  CONSTRAINT UQ_VisitTagAlignment UNIQUE (container, participantid, visittagname),
+  CONSTRAINT PK_VisitTagAlignment PRIMARY KEY (row_id)
 );

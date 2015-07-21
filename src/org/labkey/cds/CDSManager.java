@@ -196,7 +196,7 @@ public class CDSManager
                     "VaccineComponents", "Vaccines",
                     "Labs", "Studies", "Sites", "People", "Feedback", "Properties",
                     // New Tables
-                    "VisitTagMap", "StudyGroupVisitMap", "StudyGroup",
+                    "VisitTagAlignment", "VisitTagMap", "StudyGroupVisitMap", "StudyGroup",
                     "SubjectProductMap", "StudyProductMap", "TreatmentArmSubjectMap", "TreatmentArm",
                     "Product", "Study", "Assay", "Lab"
             })

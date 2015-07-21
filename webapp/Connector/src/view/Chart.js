@@ -1941,16 +1941,17 @@ Ext.define('Connector.view.Chart', {
         var options = measure.options;
         var wrappedMeasure = {measure : measure, time: 'date'};
 
-        var isVisitTagAlignment = options && options.alignmentVisitTag !== undefined;
         var hasAntigens = options && options.antigen !== undefined;
 
-        if (isVisitTagAlignment)
+        // handle visit tag alignment for study axis
+        if (options && options.alignmentVisitTag !== undefined)
         {
             var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
                 interval: interval,
-                zeroDayVisitTag: options.alignmentVisitTag
+                zeroDayVisitTag: options.alignmentVisitTag,
+                altQueryName: 'cds.VisitTagAlignment'
             };
         }
         else if (requiresPivot && hasAntigens)

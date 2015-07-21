@@ -19,6 +19,8 @@
             plotYMeasureXDiffAssay: plotYMeasureXDiffAssay,
             plotYMeasureXDiffAssay2: plotYMeasureXDiffAssay2,
             plotYMeasureXDiffAssay3: plotYMeasureXDiffAssay3,
+            plotYMeasureXWeeksUnaligned: plotYMeasureXWeeksUnaligned,
+            plotYMeasureXMonthsAligned: plotYMeasureXMonthsAligned,
 
             scatterMeasureSameSource: scatterMeasureSameSource,
             categoricalSingleSource: categoricalSingleSource
@@ -598,6 +600,122 @@
             });
         }
 
+        function plotYMeasureXWeeksUnaligned()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
+            var xMeasure = getTimeMeasure();
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('NAb', 'SubjectId')},
+                    { measure: getVisMeasure('NAb', 'SequenceNum')},
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['A3R5'])},
+                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus'])},
+                    { measure: getVisMeasure('NAb', 'neutralization_tier')},
+                    { measure: getVisMeasure('NAb', 'clade')},
+                    { measure: getVisMeasure('NAb', 'antigen')},
+                    { measure: getVisMeasure('NAb', 'specimen_type')},
+                    { measure: getVisMeasure('NAb', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure, dateOptions: {interval: 'Weeks', zeroDayVisitTag: null}}
+                ],
+                endpoint: ENDPOINT,
+                success: function(measureStore) {
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+
+                    axisMeasureStore.setXMeasure(measureStore, 'Weeks');
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_NAb_SubjectId', 'study_NAb_SequenceNum', 'study_NAb_target_cell',
+                        'study_NAb_summary_level', 'study_NAb_neutralization_tier', 'study_NAb_clade',
+                        'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
+                    ]);
+
+                    var config = getScatterPlotBaseConfig(data);
+
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
+                        x: {value: 'Time Points Weeks (Unaligned)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.value : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+
+                    logStoreData(measureStore, data);
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXMonthsAligned()
+        {
+            $('#plot').html('');
+            var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
+            var xMeasure = getTimeMeasure();
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('NAb', 'SubjectId')},
+                    { measure: getVisMeasure('NAb', 'SequenceNum')},
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['A3R5'])},
+                    { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus'])},
+                    { measure: getVisMeasure('NAb', 'neutralization_tier')},
+                    { measure: getVisMeasure('NAb', 'clade')},
+                    { measure: getVisMeasure('NAb', 'antigen')},
+                    { measure: getVisMeasure('NAb', 'specimen_type')},
+                    { measure: getVisMeasure('NAb', 'lab_code')},
+                    { measure: yMeasure},
+                    { measure: xMeasure, dateOptions: {interval: 'Months', zeroDayVisitTag: 'Last Vaccination', altQueryName: 'cds.VisitTagAlignment'}}
+                ],
+                endpoint: ENDPOINT,
+                success: function(measureStore) {
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+
+                    axisMeasureStore.setXMeasure(measureStore, 'Months');
+                    axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
+
+                    var data = axisMeasureStore.select([
+                        'study_NAb_SubjectId', 'study_NAb_SequenceNum', 'study_NAb_target_cell',
+                        'study_NAb_summary_level', 'study_NAb_neutralization_tier', 'study_NAb_clade',
+                        'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
+                    ]);
+
+                    var config = getScatterPlotBaseConfig(data);
+
+                    config.labels = {
+                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
+                        x: {value: 'Time Points Months (Last Vaccination)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMean() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.value : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+
+                    logStoreData(measureStore, data);
+                },
+                failure: onError
+            });
+        }
+
         function scatterMeasureSameSource()
         {
             $('#plot').html('');
@@ -939,6 +1057,17 @@
                 queryName: queryName,
                 name: colName,
                 requireLeftJoin: true
+            });
+        }
+
+        function getTimeMeasure()
+        {
+            return new LABKEY.Query.Visualization.Measure({
+                schemaName:'study',
+                queryName: 'SubjectVisit',
+                name: 'Visit/ProtocolDay',
+                isMeasure: true,
+                allowNullResults: false
             });
         }
 

@@ -136,6 +136,38 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
                 }
                 return;
             }
+
+            // Insert Visit Tag Alignemnt
+            //targetTable = targetSchema.getTable("visittagalignment");
+            //targetService = targetTable.getUpdateService();
+            //if (targetService == null)
+            //    throw new PipelineJobException("Unable to find update service for cds.visittagalignment in " + container.getPath());
+            //
+            //sourceTable = studySchema.getTable("ds_visittagalignment");
+            //((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+            //sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+            //
+            //insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            //if (insertRows.length > 0)
+            //{
+            //    try
+            //    {
+            //        targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        logger.error(e.getMessage(), e);
+            //    }
+            //}
+            //
+            //if (errors.hasErrors())
+            //{
+            //    for (ValidationException error : errors.getRowErrors())
+            //    {
+            //        logger.error(error.getMessage());
+            //    }
+            //    return;
+            //}
         }
         long finish = System.currentTimeMillis();
 
