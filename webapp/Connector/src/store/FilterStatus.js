@@ -29,19 +29,14 @@ Ext.define('Connector.store.FilterStatus', {
     },
 
     _load : function() {
-        if (!this.state) {
-            console.error('Connector.store.FilterStatus requires a state olap provider');
-        }
-        else {
-            this.state.onMDXReady(function(mdx) {
-                this.fireEvent('beforeload', this);
+        Connector.getState().onMDXReady(function(mdx) {
+            this.fireEvent('beforeload', this);
 
-                if (!this.requests) {
-                    this.requests = this.bindRequestConfigs(mdx);
-                }
-                this.loadGroups();
-            }, this);
-        }
+            if (!this.requests) {
+                this.requests = this.bindRequestConfigs(mdx);
+            }
+            this.loadGroups();
+        }, this);
     },
 
     bindRequestConfigs : function(mdx) {
@@ -127,7 +122,7 @@ Ext.define('Connector.store.FilterStatus', {
         var requests = this.requests;
         requests.configs[0].flight = this.flight;
 
-        this.state.onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
             mdx.queryMultiple(requests.configs, requests.success, requests.failure, requests.scope);
         }, this);
     },
@@ -146,7 +141,7 @@ Ext.define('Connector.store.FilterStatus', {
             }
         }
 
-        var hasSelections = this.state.hasSelections(), qr, ca;
+        var hasSelections = Connector.getState().hasSelections(), qr, ca;
         for (i=0; i < qrArray.length; i++) {
 
             qr = qrArray[i];

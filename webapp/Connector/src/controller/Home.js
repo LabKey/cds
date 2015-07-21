@@ -15,7 +15,7 @@ Ext.define('Connector.controller.Home', {
 
     init : function() {
 
-        this.control('home > homeheader', {
+        this.control('home > #statdisplay', {
             boxready: this.resolveStatistics
         });
 
@@ -60,16 +60,12 @@ Ext.define('Connector.controller.Home', {
         return 'home';
     },
 
-    resolveStatistics : function(view) {
-        var statDisplay = view.getComponent('statdisplay');
-        if (statDisplay) {
-
-            Statistics.resolve(function(stats) {
-                statDisplay.update({
-                    nstudy: stats.primaryCount,
-                    ndatapts: stats.dataCount
-                });
-            }, this);
-        }
+    resolveStatistics : function(statDisplay) {
+        Statistics.resolve(function(stats) {
+            statDisplay.update({
+                nstudy: stats.primaryCount,
+                ndatapts: stats.dataCount
+            });
+        }, this);
     }
 });

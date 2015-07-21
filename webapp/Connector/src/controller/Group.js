@@ -72,7 +72,7 @@ Ext.define('Connector.controller.Group', {
 
         if (xtype == 'groupsave') {
 
-            var state = this.getStateManager();
+            var state = Connector.getState();
 
             v = Ext.create('Connector.view.GroupSave', {
                 hideSelectionWarning: state.hasSelections()
@@ -143,7 +143,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     undoFilter : function() {
-        this.getStateManager().requestFilterUndo();
+        Connector.getState().requestFilterUndo();
     },
 
     loadGroupFilters : function() {
@@ -164,7 +164,7 @@ Ext.define('Connector.controller.Group', {
             filters = filters.filters;
         }
 
-        this.getStateManager().setFilters(filters, true);
+        Connector.getState().setFilters(filters, true);
     },
 
     doGroupSave : function() {
@@ -172,7 +172,7 @@ Ext.define('Connector.controller.Group', {
 
         if (view.isValid()) {
             var values = view.getValues();
-            var state = this.getStateManager();
+            var state = Connector.getState();
 
             var isLiveFilter = values['groupselect'] == 'live';
 
@@ -232,7 +232,7 @@ Ext.define('Connector.controller.Group', {
             if (targetGroup) {
 
                 // Ensure that the filter set is up to date
-                var state = this.getStateManager();
+                var state = Connector.getState();
                 state.moveSelectionToFilter();
 
                 // Update the target group
@@ -280,7 +280,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     doGroupUpdateFromSummary : function(group) {
-        var state = this.getStateManager();
+        var state = Connector.getState();
         var me = this;
         state.onMDXReady(function(mdx) {
             //
@@ -338,7 +338,7 @@ Ext.define('Connector.controller.Group', {
 
         var name = grp.label ? grp.label : grp.category.label;
 
-        this.getStateManager().setFilters(filters);
+        Connector.getState().setFilters(filters);
         this.getViewManager().hideView('groupsave');
 
         var fsview = this.getViewManager().getViewInstance('filterstatus');

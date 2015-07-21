@@ -39,11 +39,21 @@ Ext.define("Connector.view.Header", {
             layout: 'hbox',
             itemId: 'search',
             margin: '18 14 0 0',
-            width: 50,
+            width: 100,
             items: [{
                 xtype: 'box',
+                itemId: 'about',
                 margin: '2 15 0 0',
+                autoEl: {
+                    tag: 'a',
+                    cls: 'logout',
+                    html: 'About',
+                    href: '#home/about'
+                }
+            },{
+                xtype: 'box',
                 itemId: 'logout',
+                margin: '2 15 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -52,7 +62,7 @@ Ext.define("Connector.view.Header", {
                 listeners: {
                     click : function() {
                         Ext.Ajax.request({
-                            url : LABKEY.ActionURL.buildURL("login", "logoutAPI.api"),
+                            url : LABKEY.ActionURL.buildURL('login', 'logoutAPI.api'),
                             method: 'POST',
                             success: function(response) {
                                 if (Ext.decode(response.responseText).success) {

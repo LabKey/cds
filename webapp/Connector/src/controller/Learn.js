@@ -28,7 +28,7 @@ Ext.define('Connector.controller.Learn', {
         this.control('singleaxisview', {
             learnclick : function(data) {
                 // Assumes the data has already been validated to supportDetails
-                this.getStateManager().onMDXReady(function(mdx) {
+                Connector.getState().onMDXReady(function(mdx) {
                     var ctx = [mdx.getLevel(data.levelUniqueName).hierarchy.dimension.name, data.label];
                     this.getViewManager().changeView('learn', 'learn', ctx);
                 }, this);
@@ -59,7 +59,7 @@ Ext.define('Connector.controller.Learn', {
 
             Ext.applyIf(c, {
                 ui: 'custom',
-                state: this.getStateManager()
+                state: Connector.getState()
             });
 
             var v = Ext.create(type, c);
@@ -83,7 +83,7 @@ Ext.define('Connector.controller.Learn', {
         //
         // Bind the dimensions to the view
         //
-        this.getStateManager().onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
 
             var dims = mdx.getDimensions(),
                 defer = false;
@@ -136,7 +136,7 @@ Ext.define('Connector.controller.Learn', {
     },
 
     updateLearnView : function(context) {
-        this.getStateManager().onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
             var v = this.getViewManager().getViewInstance('learn');
             if (v) {
                 var dimensionName = context.dimension,

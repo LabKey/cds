@@ -104,7 +104,7 @@ Ext.define('Connector.controller.Chart', {
 
     createView : function(xtype, config, context) {
 
-        var state = this.getStateManager();
+        var state = Connector.getState();
         var v, plotType = 'plot';
 
         if (xtype == plotType)
@@ -144,7 +144,7 @@ Ext.define('Connector.controller.Chart', {
 
     updateView : function(xtype, context) {
         if (xtype === 'plot') {
-            this.getStateManager().clearSelections();
+            Connector.getState().clearSelections();
         }
     },
 

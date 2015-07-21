@@ -39,8 +39,6 @@ Ext.define('Connector.controller.Router', {
     },
 
     userChanged : function() {
-        var body = Ext.getBody();
-
         this.eastview.setVisible(LABKEY.user.isSignedIn);
         this.logoutlink.setVisible(LABKEY.user.isSignedIn);
     }

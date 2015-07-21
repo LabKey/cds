@@ -36,33 +36,33 @@ Ext.define('Connector.controller.FilterStatus', {
 
         this.control('selectionview', {
             operatorchange : function(config) {
-                this.getStateManager().setFilterOperator(config.filterId, config.value);
+                Connector.getState().setFilterOperator(config.filterId, config.value);
             }
         });
 
         this.control('#selection-panel > container > selectionview', {
             removefilter : function(filterId, hName, uniqueName) {
-                this.getStateManager().removeSelection(filterId, hName, uniqueName);
+                Connector.getState().removeSelection(filterId, hName, uniqueName);
             },
 
             removeplotselection : function(filterId, measureIdx) {
-                this.getStateManager().fireEvent('plotselectionremoved', filterId, measureIdx);
+                Connector.getState().fireEvent('plotselectionremoved', filterId, measureIdx);
             }
         });
 
         this.control('#filter-panel > container > selectionview', {
             removefilter : function(filterId, hName, uniqueName) {
-                this.getStateManager().removeFilter(filterId, hName, uniqueName);
+                Connector.getState().removeFilter(filterId, hName, uniqueName);
             },
 
             removeplotselection : function(filterId, measureIdx) {
-                this.getStateManager().removeFilter(filterId);
+                Connector.getState().removeFilter(filterId);
             }
         });
 
         this.control('filterstatus', {
             requestundo : function() {
-                this.getStateManager().requestFilterUndo();
+                Connector.getState().requestFilterUndo();
             }
         });
 
@@ -99,14 +99,8 @@ Ext.define('Connector.controller.FilterStatus', {
         this.callParent();
     },
 
-    getStateStore : function() {
-        var store = this.getStore('FilterStatus');
-        store.state = this.getStateManager();
-        return store;
-    },
-
     createDetail : function() {
-        var store = this.getStateStore();
+        var store = this.getStore('FilterStatus');
         store.load();
 
         var view = Ext.create('Connector.view.DetailStatus', {
@@ -200,8 +194,8 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     createFilterStatus : function() {
-        var store = this.getStateStore();
-        var state = this.getStateManager();
+        var store = this.getStore('FilterStatus');
+        var state = Connector.getState();
         store.load();
 
         var view = Ext.create('Connector.view.FilterStatus', {
@@ -224,12 +218,12 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     runSelectToFilterAnimation : function() {
-        this.getStateManager().moveSelectionToFilter();
+        Connector.getState().moveSelectionToFilter();
     },
 
     runInverseSelectToFilterAnimation : function() {
-        this.getStateManager().inverseSelection();
-        this.getStateManager().moveSelectionToFilter();
+        Connector.getState().inverseSelection();
+        Connector.getState().moveSelectionToFilter();
     },
 
     createView : function(xtype, context) {
@@ -246,7 +240,7 @@ Ext.define('Connector.controller.FilterStatus', {
     updateView : function(xtype, context) { },
 
     onFilterClear : function() {
-        var state = this.getStateManager();
+        var state = Connector.getState();
         if (state.hasFilters()) {
             state.clearFilters();
 
@@ -259,10 +253,10 @@ Ext.define('Connector.controller.FilterStatus', {
     },
 
     onSelectionClick : function() {
-        this.getStateManager().clearSelections();
+        Connector.getState().clearSelections();
     },
 
     onSelectionClear : function() {
-        this.getStateManager().clearSelections();
+        Connector.getState().clearSelections();
     }
 });
