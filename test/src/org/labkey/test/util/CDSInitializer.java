@@ -75,7 +75,7 @@ public class CDSInitializer
         _etlHelper.getDiHelper().runTransformAndWait("{cds}/CDSImport", WAIT_ON_IMPORT);
 
         // populate the app
-//        _etlHelper.getDiHelper().runTransformAndWait("{cds}/loadApplication", WAIT_ON_LOADAPP);
+        _etlHelper.getDiHelper().runTransformAndWait("{cds}/loadApplication", WAIT_ON_LOADAPP);
 
         PortalHelper portalHelper = new PortalHelper(_test);
         portalHelper.addWebPart("CDS Management");
