@@ -18,15 +18,5 @@ Ext.define('Connector.controller.AbstractViewController', {
         }
 
         return this.viewManager;
-    },
-
-    /**
-     * Returns the State Manager for the Application. Connector.controller.State.
-     */
-    getStateManager : function() {
-        if (!this.stateManager)
-            this.stateManager = this.application.getController('State');
-
-        return this.stateManager;
     }
 });

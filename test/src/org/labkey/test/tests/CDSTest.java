@@ -81,24 +81,21 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public void doCleanup(boolean afterTest) throws TestTimeoutException
     {
-
-        if(!CDSHelper.debugTest){
+        if (!CDSHelper.debugTest)
+        {
             // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
             _containerHelper = new UIContainerHelper(this);
             _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
         }
-
     }
 
     @BeforeClass @LogMethod
     public static void doSetup() throws Exception
     {
-
         CDSTest initTest = (CDSTest)getCurrentTest();
 
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
-
     }
 
     @Before
@@ -186,7 +183,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(studyPoints);
         waitForElement(dataPoints);
 
-        click(Locator.tagContainingText("a", "About the Collaborative"));
+        click(Locator.tagWithText("a", "About"));
         waitForText("About the HIV Collaborative DataSpace");
         getDriver().navigate().back();
         waitForElement(dataPoints.notHidden());

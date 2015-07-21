@@ -65,7 +65,7 @@ Ext.define('Connector.controller.Summary', {
 
         var v = Ext.create(type, c);
 
-        this.getStateManager().on('filterchange', v.onFilterChange, v);
+        Connector.getState().on('filterchange', v.onFilterChange, v);
         this.getViewManager().on('afterchangeview', v.onViewChange, v);
 
         return v;
@@ -86,7 +86,7 @@ Ext.define('Connector.controller.Summary', {
     getSummaryStore : function() {
         if (!this.summaryStore) {
             this.summaryStore = this.getStore('Summary');
-            this.summaryStore.state = this.getStateManager();
+            this.summaryStore.state = Connector.getState();
         }
 
         return this.summaryStore;

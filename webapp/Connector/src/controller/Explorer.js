@@ -76,13 +76,13 @@ Ext.define('Connector.controller.Explorer', {
 
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
-                this.getStateManager().addPrivateSelection({
+                Connector.getState().addPrivateSelection({
                     hierarchy: rec.get('hierarchy'),
                     members: [{ uniqueName: rec.get('uniqueName') }]
                 }, 'hoverSelectionFilter');
             }
             else {
-                this.getStateManager().removePrivateSelection('hoverSelectionFilter');
+                Connector.getState().removePrivateSelection('hoverSelectionFilter');
             }
         }, this);
 
@@ -94,7 +94,7 @@ Ext.define('Connector.controller.Explorer', {
     createView : function(xtype, context) {
 
         if (xtype == 'singleaxis') {
-            var state = this.getStateManager();
+            var state = Connector.getState();
             var s = this.getStore('Explorer');
             s.olapProvider = state; // required by LABKEY.app.store.OlapExplorer. Blargh
 
@@ -163,7 +163,7 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     loadExplorerView : function(context) {
-        this.getStateManager().onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
             var dim = mdx.getDimension(context.dimension);
             if (dim) {
 
@@ -218,7 +218,7 @@ Ext.define('Connector.controller.Explorer', {
     onHierarchySelect : function(m, models) {
         if (!Ext.isEmpty(models)) {
             var model = models[0], dimName = this.dim.name;
-            this.getStateManager().onMDXReady(function(mdx) {
+            Connector.getState().onMDXReady(function(mdx) {
                 var hierarchy = mdx.getHierarchy(model.get('uniqueName'));
                 if (Ext.isObject(hierarchy)) {
                     this.goToExplorer(dimName, hierarchy.name.split('.')[1]);
@@ -249,7 +249,7 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     _hoverHelper : function(view, rec, add) {
-        if (this.allowHover && this.getStateManager().getSelections().length == 0) {
+        if (this.allowHover && Connector.getState().getSelections().length == 0) {
             this.hoverTask.delay(200, null, null, [view, rec, add]);
         }
     },
@@ -272,7 +272,7 @@ Ext.define('Connector.controller.Explorer', {
 
     afterSelectionAnimation : function(view, rec, node) {
         var records = view.getSelectionModel().getSelection();
-        var state = this.getStateManager();
+        var state = Connector.getState();
 
         state.onMDXReady(function(mdx) {
 
