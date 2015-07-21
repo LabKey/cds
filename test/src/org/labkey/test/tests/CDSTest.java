@@ -372,6 +372,50 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @Test
+    public void verifyAssaySummary()
+    {
+        log("Verify Assay Summary View");
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.pickSort("Lab");
+        for(String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for(String lab : CDSHelper.LABS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(lab));
+        }
+        cds.pickSort("Immunogenicity Type");
+        for(String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for(String i_type : CDSHelper.I_TYPES)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(i_type));
+        }
+        cds.pickSort("Study");
+        for(String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for(String prot : CDSHelper.PROT_NAMES)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(prot));
+        }
+        cds.pickSort("Assay Name");
+        for(String assay : CDSHelper.ASSAYS)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
+        }
+        for(String h_type : CDSHelper.H_TYPES)
+        {
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(h_type));
+        }
+    }
+
+    @Test
     public void verifyGroups()
     {
         log("Verify Groups");
