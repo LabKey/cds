@@ -143,6 +143,8 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             if (targetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.studygroupvisitmap in folder " + container.getPath());
 
+            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
 
