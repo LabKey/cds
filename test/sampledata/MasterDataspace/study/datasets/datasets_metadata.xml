@@ -757,7 +757,7 @@
       </column>
       <column columnName="antigen">
         <datatype>varchar</datatype>
-        <columnTitle>Antigen Analyte</columnTitle>
+        <columnTitle>Antigen name</columnTitle>
         <description>The name of the antigen</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
