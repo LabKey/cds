@@ -20,6 +20,8 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
     dimViewHeight: 156,
 
+    lowerBufferHeight: 200,
+
     showEmpty: true,
 
     initComponent : function() {
@@ -42,7 +44,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                 },{
                     // This allows for the following items to be bottom aligned
                     xtype: 'box',
-                    flex: 1,
+                    flex: 100,
                     autoEl: {
                         tag: 'div'
                     }
@@ -105,7 +107,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             }
             var body = Ext.get(id + '-body');
             var box = body.up('.x-box-inner');
-            body.setHeight(box.getBox().height - this.dimViewHeight);
+            body.setHeight(box.getBox().height - this.lowerBufferHeight);
             var container = Ext.get(id);
             container.setHeight(body.getBox().height);
 
