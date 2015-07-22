@@ -39,5 +39,24 @@ public class CDSValidateTask extends AbstractPopulateTask
             }
             logger.error(error);
         }
+
+        logger.info("Validating Visit Tag Assignments");
+        validationTable = sourceSchema.getTable("ds_validatVisitTagAssignment");
+        sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
+        rows = new SqlSelector(validationTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            StringBuilder error = new StringBuilder("Validation Failed!");
+            for(Map<String, Object> row : rows)
+            {
+                error.append("\n\tStudy arm ")
+                        .append(row.get("study_group")).append("|").append(row.get("study_arm"))
+                        .append(" in study ").append(row.get("prot"))
+                        .append(" defines the following single-use visit tag for more than one visit: ")
+                        .append(row.get("study_arm_visit_label"))
+                        .append(" (").append(row.get("assignment_count")).append(")");
+            }
+            logger.error(error);
+        }
     }
 }
