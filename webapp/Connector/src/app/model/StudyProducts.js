@@ -12,7 +12,7 @@ Ext.define('Connector.app.model.StudyProducts', {
     labelProperty: 'product_name',
 
     fields: [
-        {name: 'product_id'},
+        {name: 'product_id', type: 'int'},
         {name: 'product_name'},
         {name: 'product_type'},
         {name: 'product_subclass'},

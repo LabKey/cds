@@ -162,7 +162,7 @@ Ext.define('Connector.view.Learn', {
             if (Ext.isDefined(id) && dimension.itemDetail) {
                 store = StoreCache.getStore(dimension.detailItemCollection || dimension.detailCollection);
 
-                // coerce the id's type
+                // coerce the id's type, this 'id' is possibly coming from the URL context
                 if (Ext.isNumber(parseInt(id))) {
                     _id = parseInt(id);
                 }

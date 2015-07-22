@@ -70,11 +70,16 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                                 width: 225
                             }
                         },
-                        {xtype: 'box', autoEl: { tag: 'div' }, flex: 1},
+                        {
+                            xtype: 'box',
+                            autoEl: {
+                                tag: 'div'
+                            },
+                            flex: 1
+                        },
                         {
                             xtype: 'button',
                             margin: '9px 15px 0 0',
-                            //style: 'margin-top: 9px; padding-right: 300px;',
                             text: (this.showEmpty ? 'hide empty' : 'show empty'),
                             handler: this.onEmptySelection,
                             scope: this
