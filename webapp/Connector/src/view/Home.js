@@ -14,27 +14,7 @@ Ext.define('Connector.view.Home', {
 
         this.items = [
             {
-                xtype: 'box',
-                itemId: 'statdisplay',
-                ui: 'custom',
-                height: this.homeHeaderHeight,
-                flex: 1,
-                tpl: new Ext.XTemplate(
-                    '<div class="educational-titlepanel">',
-                        '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
-                        '<h1 style="opacity: 0.66;">{nstudy:htmlEncode} studies connected together combining</h1>',
-                        '<h1 style="opacity: 0.33;">{ndatapts:this.commaFormat} data points.</h1>',
-                    '</div>',
-                    {
-                        commaFormat : function(v) {
-                            return Ext.util.Format.number(v, '0,000');
-                        }
-                    }
-                ),
-                data: {
-                    nstudy: 0,
-                    ndatapts: 0
-                }
+                xtype: 'homeheader'
             },
             this.getBody()
         ];

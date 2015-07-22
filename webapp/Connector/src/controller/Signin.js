@@ -20,7 +20,7 @@ Ext.define('Connector.controller.Signin', {
         this.BAD_AUTH = false;
         var me = this;
 
-        /* If the user recieves an unauthoriazed, return them to login screen */
+        /* If the user recieves an unauthorized, return them to login screen */
         this.application.on('httpunauthorized', function(status, text) {
             me.BAD_AUTH = true;
             Ext.Ajax.abortAll();

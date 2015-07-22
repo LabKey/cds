@@ -210,6 +210,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Home.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/HomeHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
