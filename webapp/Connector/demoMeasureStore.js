@@ -638,7 +638,7 @@
                     config.labels = {
                         main: {value: 'Y From Assay, X Same Assay Different Measure'},
                         y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
-                        x: {value: 'Time Points Weeks (Unaligned)'}
+                        x: {value: 'Time Points Weeks (Aligned by Day 0)'}
                     };
                     config.aes = {
                         y: function(row) {

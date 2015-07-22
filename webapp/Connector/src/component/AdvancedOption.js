@@ -387,7 +387,7 @@ Ext.define('Connector.component.AdvancedOptionTime', {
     },
 
     getLabelDisplayValue : function(value) {
-        var displayValue = 'Unaligned';
+        var displayValue = 'Aligned by Day 0';
         if (value && this.getRecordFromStore(value)) {
             displayValue = this.getRecordFromStore(value).get(this.storeLabelField);
         }
@@ -398,10 +398,10 @@ Ext.define('Connector.component.AdvancedOptionTime', {
     getDropdownPanelConfig : function() {
         var config = this.callParent();
 
-        // for 'Align by' time option, append the 'Unaligned' radio item
+        // for 'Align by' time option, append the 'Aligned by Day 0' radio item
         if (this.singleUseOnly) {
             config.additionalItems = [{
-                boxLabel: 'Unaligned',
+                boxLabel: 'Aligned by Day 0',
                 inputValue: null,
                 checked: this.value == null
             }];

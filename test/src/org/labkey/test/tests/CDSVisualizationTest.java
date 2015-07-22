@@ -623,7 +623,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         xaxis.openSelectorWindow();
         xaxis.pickMeasure("Time points", "Study weeks");
-        xaxis.setVariableRadio("Unaligned");
+        xaxis.setVariableRadio("Aligned by Day 0");
         xaxis.confirmSelection();
         waitForText("Study weeks, CCL5");
 

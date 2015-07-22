@@ -33,8 +33,12 @@ Ext.define('Connector.model.Variable', {
                     optionsTxt = variable.options.antigen.values.join(', ');
                     sep = '; ';
                 }
-                if (variable.options.alignmentVisitTag) {
-                    optionsTxt += sep + (variable.options.alignmentVisitTagLabel || variable.options.alignmentVisitTag);
+                if (Ext.isDefined(variable.options.alignmentVisitTag)) {
+                    var tagLabel = variable.options.alignmentVisitTag;
+                    if (tagLabel == null) {
+                        tagLabel = 'Aligned by Day 0';
+                    }
+                    optionsTxt += sep + tagLabel;
                     sep = '; ';
                 }
                 if (Ext.isObject(variable.options.dimensions)) {

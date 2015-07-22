@@ -67,11 +67,21 @@ Ext.define('Connector.model.StudyAxisData', {
             }, this);
         }
 
+        // track each unique study by container id
+        studyKeys = Object.keys(containerAlignmentDayMap);
+        for (i = 0; i < studyKeys.length; i++) {
+            studyMap[studyKeys[i]] = {
+                alignShiftValue: containerAlignmentDayMap[studyKeys[i]],
+                label: '',
+                visits: {}
+            };
+        }
+
         // loop through the StudyVisitTag records to gather data about each visit
         Ext.each(records, function(record){
             studyLabel = record.get('study_label');
             studyContainer = record.get('container_id');
-            shiftVal = containerAlignmentDayMap[studyContainer];
+            shiftVal = studyMap[studyContainer].alignShiftValue;
             visitId = record.get('visit_row_id');
             visitLabel = record.get('visit_label');
             seqMin = record.get('sequence_num_min');
@@ -88,52 +98,47 @@ Ext.define('Connector.model.StudyAxisData', {
                 seqMax = this.convertInterval(seqMax - shiftVal, interval);
             }
 
-            // track each unique study by label
-            if (!studyMap.hasOwnProperty(studyLabel)) {
-                studyMap[studyLabel] = {
-                    label : studyLabel,
-                    timepointType : timepointType,
-                    visits: {}
-                };
-            }
-
-            study = studyMap[studyLabel];
+            study = studyMap[studyContainer];
+            study.label = studyLabel;
+            study.timepointType = timepointType;
 
             // track each unique visit in a study by rowId
-            if (!study.visits.hasOwnProperty(visitId)) {
-                study.visits[visitId] = {
-                    studyLabel: studyLabel,
-                    label: visitLabel,
-                    sequenceNumMin: seqMin,
-                    sequenceNumMax: seqMax,
-                    protocolDay: protocolDay,
-                    alignedDay: alignedDay,
-                    imgSrc: 'nonvaccination_normal.svg',
-                    visitTags: []
-                };
-            }
-
-            visit = study.visits[visitId];
-
-            if (visitTagCaption !== null) {
-                // determine which visit tag/milestone glyph to display
-                // TODO: why is is_vaccination always coming back as false?
-                if (isVaccination || visitTagCaption == 'Vaccination') {
-                    visit.imgSrc = 'vaccination_normal.svg';
-                    visit.imgSize = 14;
+            if (visitId != null){
+                if (!study.visits.hasOwnProperty(visitId)) {
+                    study.visits[visitId] = {
+                        studyLabel: studyLabel,
+                        label: visitLabel,
+                        sequenceNumMin: seqMin,
+                        sequenceNumMax: seqMax,
+                        protocolDay: protocolDay,
+                        alignedDay: alignedDay,
+                        imgSrc: 'nonvaccination_normal.svg',
+                        visitTags: []
+                    };
                 }
 
-                visit.visitTags.push({group: groupName, tag: visitTagCaption});
-            }
+                visit = study.visits[visitId];
 
-            if (range.min == null || range.min > alignedDay)
-                range.min = alignedDay;
-            if (range.max == null || range.max < alignedDay)
-                range.max = alignedDay;
+                if (visitTagCaption !== null) {
+                    // determine which visit tag/milestone glyph to display
+                    // TODO: why is is_vaccination always coming back as false?
+                    if (isVaccination || visitTagCaption == 'Vaccination') {
+                        visit.imgSrc = 'vaccination_normal.svg';
+                        visit.imgSize = 14;
+                    }
+
+                    visit.visitTags.push({group: groupName, tag: visitTagCaption});
+                }
+
+                if (range.min == null || range.min > alignedDay)
+                    range.min = alignedDay;
+                if (range.max == null || range.max < alignedDay)
+                    range.max = alignedDay;
+            }
         }, this);
 
         // Convert study map and visit maps into arrays.
-        studyKeys = Object.keys(studyMap).sort();
+        studyKeys = Object.keys(studyMap);
         for (i = 0; i < studyKeys.length; i++) {
             study = studyMap[studyKeys[i]];
             visitKeys = Object.keys(study.visits).sort();
@@ -146,6 +151,15 @@ Ext.define('Connector.model.StudyAxisData', {
             study.visits = visits;
             data.push(study);
         }
+
+        // sort by study label
+        data.sort(function(a, b) {
+            if (a.label < b.label)
+                return -1;
+            if (a.label > b.label)
+                return 1;
+            return 0;
+        });
 
         this.set({
             data: data,

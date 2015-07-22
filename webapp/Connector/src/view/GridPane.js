@@ -118,8 +118,8 @@ Ext.define('Connector.view.GridPane', {
         {
             if (measure.options.antigen)
                 sub = " (" + measure.options.antigen.values.join(", ") + ")";
-            else if (measure.options.alignmentVisitTagLabel)
-                sub = " (" + measure.options.alignmentVisitTagLabel + ")";
+            else if (measure.options.alignmentVisitTag)
+                sub = " (" + measure.options.alignmentVisitTag + ")";
         }
         else if (Ext.isString(measure.description))
         {

@@ -2842,12 +2842,29 @@ Ext.define('Connector.view.Chart', {
     showVisitTagHover : function(data, visitTagEl) {
         var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
-                bubbleWidth = 180,
+                bubbleWidth = 160,
+                groupTags = {}, maxGroupTagCount = 0,
                 content = '<p><span style="font-weight: bold;">' + data.studyLabel + '</span> - ' + data.label + '</p>';
 
-        // content will display one row for each group/milestone
+        // content will display one row for each group so we need to gather together the tags for each group separately
         for (var i = 0; i < data.visitTags.length; i++) {
-            content += '<p><span style="font-weight: bold;">' + data.visitTags[i].group + '</span> : ' + data.visitTags[i].tag + '</p>';
+            if (!groupTags[data.visitTags[i].group]) {
+                groupTags[data.visitTags[i].group] = [];
+            }
+
+            groupTags[data.visitTags[i].group].push(data.visitTags[i].tag);
+
+            if (groupTags[data.visitTags[i].group].length > maxGroupTagCount) {
+                maxGroupTagCount = groupTags[data.visitTags[i].group].length;
+            }
+        }
+
+        for (var group in groupTags) {
+            content += '<p><span style="font-weight: bold;">' + group + '</span> : ' + groupTags[group].join(', ') + '</p>';
+        }
+
+        if (maxGroupTagCount > 1) {
+            bubbleWidth = maxGroupTagCount * 90 + 70;
         }
 
         calloutMgr.createCallout({
