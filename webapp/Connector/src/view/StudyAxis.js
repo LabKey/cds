@@ -23,11 +23,11 @@ Connector.view.StudyAxis = function() {
     var renderVisitTags = function(selection) {
         var visitTags, defaultImgSize = 8;
 
-        visitTags = selection.selectAll('.visit-tag').data(function (d) { return d.visits; });
+        visitTags = selection.selectAll('image.visit-tag').data(function (d) { return d.visits; });
         visitTags.exit().remove();
-        visitTags.enter().append("svg:image").attr('class', 'visit-tag')
+        visitTags.enter().append("image").attr('class', 'visit-tag')
             .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/' + d.imgSrc; })
-            .attr("x", function(d) { return xScale(d.protocolDay) - (d.imgSize || defaultImgSize)/2; })
+            .attr("x", function(d) { return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
             .attr("y", function(d) { return yScale(d.studyLabel) + perStudyHeight/2 - (d.imgSize || defaultImgSize)/2; })
             .attr("width", function(d) { return d.imgSize || defaultImgSize; })
             .attr("height", function(d) { return d.imgSize || defaultImgSize; });
@@ -101,9 +101,8 @@ Connector.view.StudyAxis = function() {
         yScale.rangeBands([0, height]);
         yScale.domain(yDomain);
 
-        if (canvas === null) {
-            canvas = d3.select('#' + renderTo).append('svg');
-        }
+        document.getElementById(renderTo).innerHTML = '';
+        canvas = d3.select('#' + renderTo).append('svg');
         canvas.attr('width', width).attr('height', height);
 
         studies = canvas.selectAll('g.study').data(studyData);

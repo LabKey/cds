@@ -1156,7 +1156,7 @@ Ext.define('Connector.view.Chart', {
                         xMin = transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
                         xMax = transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
 
-                        if (xMeasure.name.toLowerCase().indexOf("protocolday") > -1) {
+                        if (xMeasure.name.toLowerCase().indexOf("alignedDay") > -1) {
                             xMin = Math.floor(xMin);
                             xMax = Math.ceil(xMax);
                         }

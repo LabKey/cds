@@ -48,7 +48,7 @@ Ext.define('Connector.model.StudyAxisData', {
         var records = this.getRecords(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
                 interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
-                seqMax, protocolDay, timepointType, groupName, visitTagCaption, isVaccination,
+                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination,
                 shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
 
         if (this.getMeasure().interval) {
@@ -76,7 +76,8 @@ Ext.define('Connector.model.StudyAxisData', {
             visitLabel = record.get('visit_label');
             seqMin = record.get('sequence_num_min');
             seqMax = record.get('sequence_num_max');
-            protocolDay = this.convertInterval(record.get('protocol_day') - shiftVal, interval);
+            protocolDay = record.get('protocol_day');
+            alignedDay = this.convertInterval(record.get('protocol_day') - shiftVal, interval);
             timepointType = record.get('timepoint_type');
             groupName = record.get('group_name');
             visitTagCaption = record.get('visit_tag_caption');
@@ -106,6 +107,7 @@ Ext.define('Connector.model.StudyAxisData', {
                     sequenceNumMin: seqMin,
                     sequenceNumMax: seqMax,
                     protocolDay: protocolDay,
+                    alignedDay: alignedDay,
                     imgSrc: 'nonvaccination_normal.svg',
                     visitTags: []
                 };
@@ -124,10 +126,10 @@ Ext.define('Connector.model.StudyAxisData', {
                 visit.visitTags.push({group: groupName, tag: visitTagCaption});
             }
 
-            if (range.min == null || range.min > protocolDay)
-                range.min = protocolDay;
-            if (range.max == null || range.max < protocolDay)
-                range.max = protocolDay;
+            if (range.min == null || range.min > alignedDay)
+                range.min = alignedDay;
+            if (range.max == null || range.max < alignedDay)
+                range.max = alignedDay;
         }, this);
 
         // Convert study map and visit maps into arrays.
