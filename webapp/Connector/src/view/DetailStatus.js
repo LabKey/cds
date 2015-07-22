@@ -67,12 +67,10 @@ Ext.define('Connector.view.DetailStatus', {
 
         this.callParent();
 
-        if (this.store.state) {
-            var state = this.store.state;
-            state.on('filtercount', this.onFilterChange, this);
-            state.on('filterchange', this.onFilterChange, this);
-            state.on('selectionchange', this.onFilterChange, this);
-        }
+        var state = Connector.getState();
+        state.on('filtercount', this.onFilterChange, this);
+        state.on('filterchange', this.onFilterChange, this);
+        state.on('selectionchange', this.onFilterChange, this);
 
         // plugin to handle loading mask for the info pane
         this.addPlugin({
