@@ -854,7 +854,7 @@ Ext.define('Connector.view.Chart', {
             var gutterXMargins = {top: 1, left: this.requireYGutter ? this.yGutterWidth+yAxisMargin : 68, right: plotConfig.margins.right, bottom: 1};
             var gutterXLabels = {
                 y: {
-                    value: "Undefined Y Value",
+                    value: "Undefined y value",
                     fontSize: 12,
                     position: 10,
                     cls: "xGutter-label",
@@ -897,7 +897,7 @@ Ext.define('Connector.view.Chart', {
             var gutterYMargins = {top: plotConfig.margins.top, left: 43, right: 20, bottom: plotConfig.margins.bottom};
             var gutterYLabels = {
                 x: {
-                    value: "Undefined X Value",
+                    value: "Undefined x value",
                     fontSize: 12,
                     position: 10,
                     cls: "yGutter-label",
@@ -2104,11 +2104,11 @@ Ext.define('Connector.view.Chart', {
 
         calloutMgr.createCallout({
             id: _id,
+            bubbleWidth: 325,
             target: document.querySelector("svg g text.xGutter-label"),
             placement: 'top',
-            title: 'Undefined Y Value Plot',
-            content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, ' +
-            'analysis or other factors.<br><br>Percent with undefined y value: ' + this.percentXGutterUndef + "%",
+            title: 'Percent with undefined y value: ' + this.percentXGutterUndef + '%',
+            content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
             xOffset: -20
         });
 
@@ -2127,11 +2127,11 @@ Ext.define('Connector.view.Chart', {
 
         calloutMgr.createCallout({
             id: _id,
+            bubbleWidth: 325,
             target: document.querySelector("svg g text.yGutter-label"),
             placement: 'top',
-            title: 'Undefined X Value Plot',
-            content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, ' +
-            'analysis or other factors.<br><br>Percent with undefined x value: ' + this.percentYGutterUndef + "%",
+            title: 'Percent with undefined x value: ' + this.percentYGutterUndef + '%',
+            content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
             arrowOffset: 40
         });
 

@@ -263,16 +263,9 @@ svg g {
     cursor: pointer;
   }
 
-  text.yGutter-label {
-    fill: $info-color;
-    font-weight: bolder !important;
-    cursor: default;
-  }
-
-  text.xGutter-label {
-    fill: $info-color;
-    font-weight: bolder !important;
-    cursor: default;
+  text.yGutter-label, text.xGutter-label {
+    fill: $secondary-text-color;
+    cursor: pointer;
   }
 }
 
