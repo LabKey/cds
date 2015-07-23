@@ -285,10 +285,63 @@ Ext4.define('Connector.cube.Configuration', {
                 priority: 30,
                 singularName: 'Assay',
                 pluralName: 'Assays',
-                //supportsDetails: true
                 hierarchies: [{
                     uniqueName: "[Assay.Name]",
                     label: "Assay Name"
+                }],
+
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Assay',
+                detailModel: 'Connector.app.model.Assay',
+                detailView: 'Connector.app.view.Assay',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                },{
+                    url: 'vars',
+                    label: 'Variables'
+                },{
+                    url: 'antigens',
+                    label: 'Antigens'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'assayheader',
+                        staticData: {
+                            title: 'Assay information'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'assay_description'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Method description'
+                        },
+                        modelData: {
+                            text: 'assay_method_description'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Endpoint description'
+                        },
+                        modelData: {
+                            text: 'assay_endpoint_description'
+                        }
+                    }],[{
+                        type: 'contactcds',
+                        staticData: {
+                            title: 'Contact information'
+                        }
+                    }]]
                 }]
             }]
         },

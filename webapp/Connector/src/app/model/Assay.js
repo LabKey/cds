@@ -7,26 +7,21 @@ Ext.define('Connector.app.model.Assay', {
 
     extend : 'Ext.data.Model',
 
-    idProperty: 'Label',
+    idProperty: 'assay_identifier',
     
     fields: [
-        {name: 'Name'},
-        {name: 'Label'},
-        {name: 'LabPI'},
-        {name: 'Description'},
-        {name: 'Editorial'},
-        {name: 'Summary'},
-        {name: 'Category'},
-        {name: 'AlternateName'},
-        {name: 'Contact'},
-        {name: 'LeadContributor'},
-        {name: 'Platform'},
-        {name: 'Type'},
-        {name: 'Target'},
-        {name: 'TargetFunction'},
-        {name: 'FullName'},
-        {name: 'Lab'},
-        {name: 'TargetType'},
-        {name: 'TargetSubtype'}
+        {name: 'assay_identifier'},
+        {name: 'Container'},
+        {name: 'assay_label'},
+        {name: 'assay_short_name'},
+        {name: 'assay_category'},
+        {name: 'assay_detection_platform'},
+        {name: 'assay_body_system_type'},
+        {name: 'assay_body_system_target'},
+        {name: 'assay_general_specimen_type'},
+        {name: 'assay_description'},
+        {name: 'assay_method_description'},
+        {name: 'assay_endpoint_description'},
+        {name: 'assay_endpoint_statistical_analysis'}
     ]
 });

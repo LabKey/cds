@@ -11,13 +11,21 @@ Ext.define('Connector.view.module.AssayHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
-            '<tpl if="model.get(\'AlternateName\')"><p class="item-row">Full Name: {[values.model.get("AlternateName")]}</p></tpl>',
-            '<tpl if="model.get(\'Lab\')"><p class="item-row">Lab: {[values.model.get("Lab")]}</p></tpl>',
-            '<tpl if="model.get(\'Type\')"><p class="item-row">Type: {[values.model.get("Type")]}</p></tpl>',
-            '<tpl if="model.get(\'Category\')"><p class="item-row">Category: {[values.model.get("Category")]}</p></tpl>',
-            '<tpl if="model.get(\'Target\')"><p class="item-row">Target Type: {[values.model.get("TargetType")]}</p></tpl>',
-            '<tpl if="model.get(\'TargetSubType\')"><p class="item-row">Target Type: {[values.model.get("TargetSubType")]}</p></tpl>',
-            '<tpl if="model.get(\'TargetFunction\')"><p class="item-row">Function: {[values.model.get("TargetFunction")]}</p></tpl>',
-            '<tpl if="model.get(\'Platform\')"><p class="item-row">Platform: {[values.model.get("Platform")]}</p></tpl>',
-        '</tpl>')
+            Connector.constant.Templates.module.title,
+            '<table class="learn-study-info">',
+                '<tr>',
+                    '<td class="item-label">Name:</td><td class="item-value">{[values.model.get("assay_short_name")]} ({[values.model.get("assay_label")]})</td>',
+                '</tr>',
+                '<tr>',
+                    '<td class="item-label">Methodology:</td><td class="item-value">{[values.model.get("assay_detection_platform")]}</td>',
+                '</tr>',
+                '<tr>',
+                    '<td class="item-label">Target area:</td><td class="item-value">',
+                        '{[values.model.get("assay_body_system_type")]}:',
+                        '{[values.model.get("assay_body_system_target")]} and {[values.model.get("assay_general_specimen_type")]}',
+                    '</td>',
+                '</tr>',
+            '</table>',
+        '</tpl>'
+    )
 });
