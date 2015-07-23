@@ -49,7 +49,7 @@
         <script path="../../../internal/explodedModule/web/vis/lib/d3-3.3.9.min.js"/>
         <script path="../../../internal/explodedModule/web/vis/lib/hexbin.min.js"/>
         <script path="../../../internal/explodedModule/web/vis/lib/sqbin.min.js"/>
-        <script path="../../../internal/explodedModule/web/vis/lib/raphael-min-2.1.0.js"/>
+        <script path="../../../internal/explodedModule/web/vis/lib/crossfilter-1.3.11.js"/>
 
         <script path="../../../internal/explodedModule/web/vis/lib/patches.js"/>
         <script path="../../../internal/explodedModule/web/vis/src/utils.js"/>
@@ -57,9 +57,9 @@
         <script path="../../../internal/explodedModule/web/vis/src/stat.js"/>
         <script path="../../../internal/explodedModule/web/vis/src/scale.js"/>
         <script path="../../../internal/explodedModule/web/vis/src/layer.js"/>
-        <script path="../../../internal/explodedModule/web/vis/src/internal/RaphaelRenderer.js"/>
         <script path="../../../internal/explodedModule/web/vis/src/internal/D3Renderer.js"/>
         <script path="../../../internal/explodedModule/web/vis/src/plot.js"/>
+        <script path="../../../internal/explodedModule/web/vis/experimental/MeasureStore.js"/>
 
         <!-- Query Module Dependencies -->
         <script path="../../../query/explodedModule/web/query/olap.js"/>

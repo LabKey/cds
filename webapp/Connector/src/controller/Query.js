@@ -375,6 +375,16 @@ Ext.define('Connector.controller.Query', {
 
     },
 
+    getMeasureStore : function(measures, success, failure, scope) {
+        LABKEY.Query.experimental.MeasureStore.getData({
+            measures: measures,
+            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+            success: success,
+            failure: failure,
+            scope: scope
+        });
+    },
+
     /**
      * Get a LABKEY.Query.Visualization.getData configuration back based on the LABKEY.app.model.Filter given.
      * @param filterConfig The object which will be added as a COUNT/WHERE filter.

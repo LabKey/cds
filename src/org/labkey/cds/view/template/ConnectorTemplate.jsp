@@ -120,7 +120,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.3.9.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/hexbin.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/sqbin.min.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/raphael-min-2.1.0.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/crossfilter-1.3.11.js"></script>
 
     <!-- LabKey Visualization Library -->
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/patches.js"></script>
@@ -129,9 +129,9 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/stat.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/scale.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/layer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/RaphaelRenderer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/D3Renderer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/plot.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/experimental/MeasureStore.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>

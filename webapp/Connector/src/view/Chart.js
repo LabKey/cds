@@ -701,6 +701,8 @@ Ext.define('Connector.view.Chart', {
         var lastShowPointsAsBin = this.showPointsAsBin;
         if (LABKEY.devMode) {
             console.log('plotted rows:', rows.length);
+            if (xNullRows && xNullRows.length > 0) console.log('plotted x gutter rows:', xNullRows.length);
+            if (yNullRows && yNullRows.length > 0) console.log('plotted y gutter rows:', yNullRows.length);
         }
         this.showPointsAsBin = (rows.length + (xNullRows?xNullRows.length:0) + (yNullRows?yNullRows.length:0)) > this.binRowLimit;
 
@@ -1824,7 +1826,7 @@ Ext.define('Connector.view.Chart', {
 
         // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
         if (measures.color != null && measures.y != null && measures.x != null) {
-            measures.color.requireLeftJoin =
+            measures.color.requireLeftJoin =    // TODO: do we still need this with the MeasureStore?
                     (measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
                     (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName);
         }
@@ -1867,6 +1869,7 @@ Ext.define('Connector.view.Chart', {
         if (!this.isHidden()) {
             this.refreshRequired = false;
             this.filterChange = false;
+            this.requireStudyAxis = false;
 
             if (this.filterClear) {
                 this.clearPlotSelections();
@@ -1879,7 +1882,6 @@ Ext.define('Connector.view.Chart', {
 
             if (activeMeasures.y == null) {
                 this.hideMessage();
-                this.requireStudyAxis = false;
                 this.getStudyAxisPanel().setVisible(false);
                 Connector.getState().clearSelections(true);
                 this.filterClear = false;
@@ -1925,7 +1927,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         var options = measure.options;
-        var wrappedMeasure = {measure : measure, time: 'date'};
+        var wrappedMeasure = {measure : measure};
 
         // handle visit tag alignment for study axis
         if (options && options.alignmentVisitTag !== undefined)
@@ -1948,13 +1950,8 @@ Ext.define('Connector.view.Chart', {
     },
 
     getMeasureSet : function(activeMeasures, includeFilterMeasures) {
-        var measures = [{
-            measure: this.getDefaultMeasure(),
-            time: 'date'
-        }];
 
         var additionalMeasures = this.getAdditionalMeasures(activeMeasures);
-
         var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
 
         var nonNullMeasures = [];
@@ -1964,19 +1961,18 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        var _measures = measures.concat(nonNullMeasures.concat(additionalMeasures));
+        var measures = additionalMeasures.concat(nonNullMeasures);
 
         // set of measures from data filters
         if (includeFilterMeasures) {
             var filterMeasures = Connector.getService('Query').getWhereFilterMeasures(Connector.getState().getFilters());
-
             if (!Ext.isEmpty(filterMeasures)) {
-                _measures = _measures.concat(filterMeasures);
+                measures = measures.concat(filterMeasures);
             }
         }
 
         return {
-            measures: this.mergeMeasures(_measures),
+            measures: this.mergeMeasures(measures),
             wrapped: wrappedMeasures
         };
     },
@@ -2017,8 +2013,8 @@ Ext.define('Connector.view.Chart', {
     },
 
     /**
-     * This creates a temp query via getData which is then used to query for unique participants, and is also what
-     * we use to back the chart data (via selectRows on the temp query).
+     * This creates a temp query via cdsGetData which is then used to query for unique participants, and is also what
+     * we use to back the chart data (via an AxisMeasureStore).
      * @param activeMeasures
      */
     requestChartData : function(activeMeasures) {
@@ -2027,38 +2023,22 @@ Ext.define('Connector.view.Chart', {
 
             this.applyFiltersToMeasure(measures, ptidList);
 
-            // Request Chart Data
-            Connector.getService('Query').getData(measures, function(json) {
-                this.selectChartData(json);
-            }, this.onFailure, this);
+            // Request Chart MeasureStore Data
+            Connector.getService('Query').getMeasureStore(measures, this.onChartDataSuccess, this.onFailure, this);
         });
     },
 
-    selectChartData : function(getDataResponse) {
-        var config = {
-            schemaName: getDataResponse.schemaName,
-            queryName: getDataResponse.queryName,
-            success: function(response) { this.onChartDataSuccess(response, getDataResponse); },
-            failure: this.onFailure,
-            requiredVersion: '9.1',
-            scope: this
-        };
+    onChartDataSuccess : function(measureStore, measureSet) {
+        var chartData = Ext.create('Connector.model.ChartData', {
+            measureSet: measureSet,
+            plotMeasures: this.measures,
+            measureStore: measureStore
+        });
 
-        LABKEY.Query.selectRows(config);
-    },
-
-    onChartDataSuccess : function(selectRowsResponse, getDataResponse) {
         this.dataQWP = {
-            schema: selectRowsResponse.schemaName,
-            query: selectRowsResponse.queryName
+            schema: chartData.getSchemaName(),
+            query: chartData.getQueryName()
         };
-
-        Ext4.apply(selectRowsResponse, {
-            measures: this.measures,
-            measureToColumn: getDataResponse.measureToColumn,
-            columnAliases: getDataResponse.columnAliases
-        });
-        var chartData = Ext.create('Connector.model.ChartData', selectRowsResponse);
 
         this.hasStudyAxisData = false;
 
@@ -2233,22 +2213,28 @@ Ext.define('Connector.view.Chart', {
         var measuresMap = {}, additionalMeasuresArr = [];
 
         Ext.each(['x', 'y'], function(axis) {
-            var schema, query, name;
+            var schema, query;
             if (activeMeasures[axis])
             {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
-                // A time-based X-measure also requires the Visit column be selected
-                if (activeMeasures[axis].variableType === "TIME") {
-                    name = "Visit";
-                    this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
+                // always add in the Container, SubjectId, and SequenceNum columns for a selected measure on the X or Y axis
+                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', []);
+                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, []);
+                if (!activeMeasures[axis].isDemographic) {
+                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', []);
                 }
 
                 // add selection information from the advanced options panel of the variable selector
                 if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions)
                 {
                     Ext.iterate(activeMeasures[axis].options.dimensions, function(key, values) {
+                        // null or undefined mean "select all" so don't apply a filter
+                        if (!Ext.isDefined(values) || values == null) {
+                            values = [];
+                        }
+
                         this.addValuesToMeasureMap(measuresMap, schema, query, key, values);
                     }, this);
                 }
@@ -2256,15 +2242,16 @@ Ext.define('Connector.view.Chart', {
         }, this);
 
         Ext.iterate(measuresMap, function(k, m) {
-            additionalMeasuresArr.push({
-                measure: {
-                    name: m.name,
-                    queryName: m.queryName,
-                    schemaName: m.schemaName,
-                    values: m.values
-                },
-                time: 'date'
+            var measureRecord = new LABKEY.Query.Visualization.Measure({
+                schemaName: m.schemaName,
+                queryName: m.queryName,
+                name: m.name,
+                isMeasure: false,
+                isDimension: true,
+                values: m.values.length > 0 ? m.values : undefined
             });
+
+            additionalMeasuresArr.push({ measure: measureRecord });
         });
 
         return additionalMeasuresArr;
@@ -2696,7 +2683,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     applyFiltersToMeasure : function (measures, ptids) {
-
+        // TODO: check this after migration to MeasureStore
         var ptidMeasure, defaultMeasure = this.getDefaultMeasure();
         Ext.each(measures, function(measure) {
             if (measure.measure && measure.measure.alias == defaultMeasure.alias) {

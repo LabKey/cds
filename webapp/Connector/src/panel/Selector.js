@@ -482,11 +482,10 @@ Ext.define('Connector.panel.Selector', {
         values.dimensions = {};
         Ext.iterate(values, function(key, val) {
             if (this.boundDimensionNames.indexOf(key) != -1) {
-                // null or undefined mean "select all" so don't apply a filter
-                if (Ext.isDefined(val) && val != null) {
-                    values.dimensions[key] = val;
-                }
+                values.dimensions[key] = val;
 
+                // remove the dimension key/value from the parent object so we just leave
+                // the non-dimension properties (i.e. visit tag alignment and scale info)
                 delete values[key];
             }
         }, this);
