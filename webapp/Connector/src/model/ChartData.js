@@ -34,25 +34,6 @@ Ext.define('Connector.model.ChartData', {
         isContinuousMeasure : function(measure) {
             var type = measure.type;
             return type === 'INTEGER' || type === 'DOUBLE' || type === 'TIMESTAMP' || type === 'FLOAT' || type === 'REAL';
-        },
-
-        /**
-         * handle scenario where we are plotting either the same variable, with different antigen subsets,
-         * from the same source or different variables from the same source and result will be pivoted by
-         * the getData API
-         * @param xMeasure
-         * @param yMeasure
-         * @returns {boolean}
-         */
-        requiresPivot : function(xMeasure, yMeasure) {
-            return xMeasure != null && yMeasure != null
-                    && Connector.model.ChartData.isContinuousMeasure(xMeasure)
-                    && Connector.model.ChartData.isContinuousMeasure(yMeasure)
-                    && xMeasure.options && xMeasure.options.antigen
-                    && yMeasure.options && yMeasure.options.antigen
-                    && xMeasure.schemaName == yMeasure.schemaName
-                    && xMeasure.queryName == yMeasure.queryName
-                    && xMeasure.variableType == null && yMeasure.variableType == null;
         }
     },
 
@@ -135,8 +116,6 @@ Ext.define('Connector.model.ChartData', {
             _cid = mTC[color.alias] || mTC[color.name];
         }
 
-        this.processPivotedData(x, y, subjectCol, _cid);
-
         if (x) {
             _xid = x.interval || mTC['xAxis'] || mTC[x.alias] || mTC[x.name];
             xa = {
@@ -207,7 +186,6 @@ Ext.define('Connector.model.ChartData', {
             xVal, yVal, colorVal = null,
             xIsNum, yIsNum,
             negX = false, negY = false,
-            xAntigen, yAntigen,
             _row;
 
         for (r = 0; r < len; r++) {
@@ -224,10 +202,6 @@ Ext.define('Connector.model.ChartData', {
 
             if (x) {
                 xVal = this._getValue(x, _xid, _row);
-                xAntigen = _row[_xid].antigen;
-                if (!xAntigen && x.options.antigen && _row[mTC[x.options.antigen.name]]) {
-                    xAntigen = _row[mTC[x.options.antigen.name]].value;
-                }
                 if(Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
                     if(xDomain[0] == null || xVal < xDomain[0])
                         xDomain[0] = xVal;
@@ -245,10 +219,6 @@ Ext.define('Connector.model.ChartData', {
                     yDomain[0] = yVal;
                 if(yDomain[1] == null || yVal > yDomain[1])
                     yDomain[1] = yVal;
-            }
-            yAntigen = _row[_yid].antigen;
-            if (!yAntigen && y.options.antigen && _row[mTC[y.options.antigen.name]]) {
-                yAntigen = _row[mTC[y.options.antigen.name]].value;
             }
 
             if (color) {
@@ -279,8 +249,8 @@ Ext.define('Connector.model.ChartData', {
                 y: yVal,
                 color: colorVal,
                 subjectId: _row[subjectCol],
-                xname: (xa ? xa.label : null) + (xAntigen ? ' (' + xAntigen + ')' : ''),
-                yname: ya.label + (yAntigen ? ' (' + yAntigen + ')' : ''),
+                xname: xa.label,
+                yname: ya.label,
                 colorname: ca.label
             };
 
@@ -319,97 +289,6 @@ Ext.define('Connector.model.ChartData', {
                 setYLinear: negY
             }
         });
-    },
-
-    /*
-     * When we are plotting subsets of antigens from the same source against each other, we pivot the data
-     * so we need to unpivot it here for each combination of x-axis antigen by y-axis antigen
-     */
-    processPivotedData : function(x, y, subjectCol, colorCol) {
-
-        if (Connector.model.ChartData.requiresPivot(x, y)) {
-            var mTC = this.getMeasureToColumnMap();
-            var xAntigen = x.options.antigen;
-            var yAntigen = y.options.antigen;
-
-            if (xAntigen != null && yAntigen != null && !Ext.isEmpty(xAntigen.values) && !Ext.isEmpty(yAntigen.values)) {
-
-                var xColAlias = x.alias;
-                var yColAlias = y.alias;
-                var columnAliasMap = {};
-                var antigenColumnAliasPairs = [];
-
-                // get the mapping of the column aliases in the data object in an easier format to reference
-                Ext.each(this.getColumnAliases(), function(col) {
-                    if (col.pivotValue) {
-                        columnAliasMap[col.alias + '::' + col.pivotValue] = col.columnName;
-                    }
-                });
-
-                // create an array of antigen pairs (of the data object column aliases)
-                for (i = 0; i < xAntigen.values.length; i++) {
-                    var xAntigenVal = xAntigen.values[i];
-                    for (var j = 0; j < yAntigen.values.length; j++) {
-                        var yAntigenVal = yAntigen.values[j];
-                        antigenColumnAliasPairs.push({
-                            xAlias: columnAliasMap[xColAlias + '::' + xAntigenVal],
-                            xAntigen: xAntigenVal,
-                            yAlias: columnAliasMap[yColAlias + '::' + yAntigenVal],
-                            yAntigen: yAntigenVal
-                        });
-                    }
-                }
-
-                // special case for having the same measure on both axis
-                if (xColAlias == yColAlias) {
-                    xColAlias += '-x';
-                    yColAlias += '-y';
-
-                    // remap the column names to what we will set them to
-                    mTC['xAxis'] = xColAlias;
-                    mTC['yAxis'] = yColAlias;
-                }
-                else {
-                    // remap the column names to what we will set them to
-                    mTC[xColAlias] = xColAlias;
-                    mTC[yColAlias] = yColAlias;
-                }
-
-                // create the new data.rows array with a row for each ptid/visit/antigenPair
-                var newRowsArr = [];
-                var rows = this.getDataRows(),
-                    row;
-
-                for (var i = 0; i < rows.length; i++) {
-                    row = rows[i];
-
-                    Ext.each(antigenColumnAliasPairs, function(pair) {
-                        var dataRow = {};
-                        dataRow[subjectCol] = row[subjectCol];
-
-                        if (colorCol) {
-                            dataRow[colorCol] = row[colorCol];
-                        }
-
-                        // issue 20589: skip null-null points produced by pivot
-                        // issue 21601: skip null values if x/y has filters
-                        if ((!x.hasFilters || row[pair.xAlias].value != null) &&
-                            (!y.hasFilters || row[pair.yAlias].value != null) &&
-                            (row[pair.xAlias].value != null || row[pair.yAlias].value != null))
-                        {
-                            dataRow[xColAlias] = row[pair.xAlias];
-                            dataRow[xColAlias].antigen = pair.xAntigen;
-                            dataRow[yColAlias] = row[pair.yAlias];
-                            dataRow[yColAlias].antigen = pair.yAntigen;
-
-                            newRowsArr.push(dataRow);
-                        }
-                    });
-                }
-
-                this.set('rows', newRowsArr);
-            }
-        }
     },
 
     _getValue : function(measure, colName, row) {

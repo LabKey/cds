@@ -1179,14 +1179,6 @@ Ext.define('Connector.view.Chart', {
                         sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
                     }
 
-                    // plot brushing filters need to include the antigen selection if this is a pivoted query
-                    if (requiresPivot && xMeasure.options.antigen.name == yMeasure.options.antigen.name)
-                    {
-                        var antigenAlias = Connector.model.Antigen.getAntigenAlias(yMeasure);
-                        var antigens = xMeasure.options.antigen.values.concat(yMeasure.options.antigen.values);
-                        //TODO: sqlFilters.push(LABKEY.Filter.create(antigenAlias, antigens, LABKEY.Filter.Types.IN));
-                    }
-
                     me.createSelectionFilter(sqlFilters);
                 },
                 brushclear : function(event, allData, plot, selections) {
@@ -1219,7 +1211,6 @@ Ext.define('Connector.view.Chart', {
 
         var me = this;
         var measures = this.measures; // hoisted for brushend.
-        var requiresPivot = Connector.model.ChartData.requiresPivot(this.measures[0], this.measures[1]); // hoisted for brushend.
 
         if(this.requireYGutter && gutterYPlotConfig) {
             this.yGutterPlot = new LABKEY.vis.Plot(gutterYPlotConfig);
@@ -1808,13 +1799,8 @@ Ext.define('Connector.view.Chart', {
             measures.x = this.activeXSelection;
 
             // special case to look for userGroups as a variable option to use as filter values for the x measure
-            // and to user antigen filters for categorical x-axis which matches the antigen field
             if (measures.x.options.userGroups) {
                 measures.x.values = measures.x.options.userGroups;
-            }
-            // TODO: to be removed with migration to MeasureStore
-            else if (measures.x.options.antigen && measures.x.options.antigen.name == measures.x.name) {
-                measures.x.values = measures.x.options.antigen.values;
             }
 
             this.fromFilter = false;
@@ -1922,26 +1908,24 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getWrappedMeasures : function(activeMeasures, requiresPivot) {
+    getWrappedMeasures : function(activeMeasures) {
 
         var wrappedMeasures = [
-            this._getAxisWrappedMeasure(activeMeasures.x, requiresPivot),
-            this._getAxisWrappedMeasure(activeMeasures.y, requiresPivot)
+            this._getAxisWrappedMeasure(activeMeasures.x),
+            this._getAxisWrappedMeasure(activeMeasures.y)
         ];
         wrappedMeasures.push(activeMeasures.color ? {measure : activeMeasures.color, time: 'date'} : null);
 
         return wrappedMeasures;
     },
 
-    _getAxisWrappedMeasure : function(measure, requiresPivot) {
+    _getAxisWrappedMeasure : function(measure) {
         if (!measure) {
             return null;
         }
 
         var options = measure.options;
         var wrappedMeasure = {measure : measure, time: 'date'};
-
-        var hasAntigens = options && options.antigen !== undefined;
 
         // handle visit tag alignment for study axis
         if (options && options.alignmentVisitTag !== undefined)
@@ -1953,11 +1937,6 @@ Ext.define('Connector.view.Chart', {
                 zeroDayVisitTag: options.alignmentVisitTag,
                 altQueryName: 'cds.VisitTagAlignment'
             };
-        }
-        else if (requiresPivot && hasAntigens)
-        {
-            wrappedMeasure.measure.aggregate = "MAX";
-            wrappedMeasure.dimension = this.getDimension();
         }
 
         // we still respect the value if it is set explicitly on the measure
@@ -1974,12 +1953,9 @@ Ext.define('Connector.view.Chart', {
             time: 'date'
         }];
 
-        var requiresPivot = Connector.model.ChartData.requiresPivot(activeMeasures.x, activeMeasures.y);
+        var additionalMeasures = this.getAdditionalMeasures(activeMeasures);
 
-        // add "additional" measures (ex. selecting subset of antigens/analytes to plot for an assay result)
-        var additionalMeasures = this.getAdditionalMeasures(activeMeasures, requiresPivot);
-
-        var wrappedMeasures = this.getWrappedMeasures(activeMeasures, requiresPivot);
+        var wrappedMeasures = this.getWrappedMeasures(activeMeasures);
 
         var nonNullMeasures = [];
         for (var i =0; i < wrappedMeasures.length; i++) {
@@ -2252,32 +2228,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getDimension : function() {
-        // NOTE: only used when plotting antigens from the same source against each other
-        // so we can assume that the x and y axis measures are the same schema, query, colName
-        var x = this.measures[0], y = this.measures[1];
-
-        var schema = x.schemaName || y.schemaName;
-        var query = x.queryName || y.queryName;
-
-        var xAntigen = x.options.antigen;
-        var yAntigen = y.options.antigen;
-
-        var colName = xAntigen != undefined ? xAntigen.name : yAntigen.name;
-
-        var values = xAntigen != undefined ? xAntigen.values : [];
-        if (yAntigen != undefined)
-            values = values.concat(yAntigen.values);
-
-        return {
-            schemaName: schema,
-            queryName: query,
-            name: colName,
-            values: values
-        };
-    },
-
-    getAdditionalMeasures : function(activeMeasures, requiresPivot) {
+    getAdditionalMeasures : function(activeMeasures) {
         // map key to schema, query, name, and values
         var measuresMap = {}, additionalMeasuresArr = [];
 
@@ -2288,17 +2239,10 @@ Ext.define('Connector.view.Chart', {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
-                if (!requiresPivot && activeMeasures[axis].options && activeMeasures[axis].options.antigen) {
-                    name = activeMeasures[axis].options.antigen.name;
-                    var values = activeMeasures[axis].options.antigen.values;
-                    this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
-                }
-                else {
-                    // A time-based X-measure also requires the Visit column be selected
-                    if (activeMeasures[axis].variableType === "TIME") {
-                        name = "Visit";
-                        this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
-                    }
+                // A time-based X-measure also requires the Visit column be selected
+                if (activeMeasures[axis].variableType === "TIME") {
+                    name = "Visit";
+                    this.addValuesToMeasureMap(measuresMap, schema, query, name, []);
                 }
 
                 // add selection information from the advanced options panel of the variable selector

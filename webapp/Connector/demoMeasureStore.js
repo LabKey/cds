@@ -98,7 +98,7 @@
 
                     var config = getBoxPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X None'},
+                        main: {value: 'Assay Measure on Y, No Measure on X'},
                         y: {value: 'ICS Magnitude (CD4+, Protein Panel)'}
                     };
                     config.aes = {
@@ -155,7 +155,7 @@
 
                     var config = getBoxPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Demographic Categorical'},
+                        main: {value: 'Assay Measure on Y, Demographic Categorical on X'},
                         y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
                         x: {value: 'Demographics Race'}
                     };
@@ -213,7 +213,7 @@
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Demographic Continuous'},
+                        main: {value: 'Assay Measure on Y, Demographic Continuous on X'},
                         y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
                         x: {value: 'Demographics Age Enrollment'}
                     };
@@ -271,7 +271,7 @@
 
                     var config = getBoxPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Categorical'},
+                        main: {value: 'Assay Measure on Y, Same Assay Categorical on X'},
                         y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
                         x: {value: 'ICS Protein Panel'}
                     };
@@ -329,7 +329,7 @@
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Same Assay Different Measure on X'},
                         y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
                         x: {value: 'ICS Magnitude Negative (CD4+, Protein Panel)'}
                     };
@@ -387,7 +387,7 @@
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Same Measure Different Filter on X'},
                         y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
                         x: {value: 'ICS Magnitude (CD8+, Protein Panel)'}
                     };
@@ -451,7 +451,7 @@
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Different Assay Measure on X'},
                         y: {value: 'ICS Magnitude Mean Value (CD4+, Protein Panel)'},
                         x: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'}
                     };
@@ -514,7 +514,7 @@
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Different Assay Measure on X'},
                         y: {value: 'ELISPOT Magnitude Mean Value (IFNg+, Peptide Pool)'}, //
                         x: {value: 'ICS Magnitude Mean Value (CD4+ and CD8+, Protein Panel)'}
                     };
@@ -578,7 +578,7 @@
 
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Different Assay Measure on X'},
                         y: {value: 'NAb IC50 Titer Mean Value (TZM-bl, Virus)'},
                         x: {value: 'BAMA MFI Delta Mean Value (50, Antigen)'}
                     };
@@ -636,7 +636,7 @@
                     var config = getScatterPlotBaseConfig(data);
 
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Unaligned Time Point on X'},
                         y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
                         x: {value: 'Time Points Weeks (Aligned by Day 0)'}
                     };
@@ -694,7 +694,7 @@
                     var config = getScatterPlotBaseConfig(data);
 
                     config.labels = {
-                        main: {value: 'Y From Assay, X Same Assay Different Measure'},
+                        main: {value: 'Assay Measure on Y, Aligned Time Point on X'},
                         y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
                         x: {value: 'Time Points Months (Last Vaccination)'}
                     };

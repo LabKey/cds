@@ -114,12 +114,8 @@ Ext.define('Connector.view.GridPane', {
 
     getSublabel : function(measure) {
         var sub = '';
-        if (measure.options)
-        {
-            if (measure.options.antigen)
-                sub = " (" + measure.options.antigen.values.join(", ") + ")";
-            else if (measure.options.alignmentVisitTag)
-                sub = " (" + measure.options.alignmentVisitTag + ")";
+        if (measure.options && measure.options.alignmentVisitTag) {
+            sub = " (" + measure.options.alignmentVisitTag + ")";
         }
         else if (Ext.isString(measure.description))
         {

@@ -29,10 +29,6 @@ Ext.define('Connector.model.Variable', {
             var optionsTxt = '', sep = '';
 
             if (Ext.isObject(variable) && Ext.isObject(variable.options)) {
-                if (variable.options.antigen) {   // TODO: to be removed with migration to MeasureStore
-                    optionsTxt = variable.options.antigen.values.join(', ');
-                    sep = '; ';
-                }
                 if (Ext.isDefined(variable.options.alignmentVisitTag)) {
                     var tagLabel = variable.options.alignmentVisitTag;
                     if (tagLabel == null) {
