@@ -61,12 +61,7 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        this._ready = false;
-        Connector.getService('Query').getDefaultMeasure(function(measure) {
-            this.defaultMeasure = measure;
-            this._ready = true;
-            this.fireEvent('onready', this);
-        }, this);
+        this._ready = true;
 
         this.callParent([config]);
 
@@ -112,15 +107,6 @@ Ext.define('Connector.view.Chart', {
                 return box.y - 10;
             }
         });
-    },
-
-    /**
-     * Clone safe getter of the defaultMeasure
-     */
-    getDefaultMeasure : function() {
-        if (Ext.isObject(this.defaultMeasure)) {
-            return Ext.clone(this.defaultMeasure);
-        }
     },
 
     getNoPlotMsg : function() {
@@ -2646,22 +2632,23 @@ Ext.define('Connector.view.Chart', {
         }, me);
     },
 
-    applyFiltersToMeasure : function (measures, ptids) {
-        // TODO: check this after migration to MeasureStore
-        var ptidMeasure, defaultMeasure = this.getDefaultMeasure();
-        Ext.each(measures, function(measure) {
-            if (measure.measure && measure.measure.alias == defaultMeasure.alias) {
-                ptidMeasure = measure;
+    applyFiltersToMeasure : function (measureSet, ptids) {
+        var ptidMeasure;
+
+        // find the subject column in the measure set by matching the subjectColumn name
+        Ext.each(measureSet, function(m) {
+            if (m.measure && m.measure.name == Connector.studyContext.subjectColumn) {
+                ptidMeasure = m.measure;
                 return false;
             }
         }, this);
 
         if (ptidMeasure) {
             if (ptids) {
-                ptidMeasure.measure.values = ptids;
+                ptidMeasure.values = ptids;
             }
-            else if (Ext.isArray(ptidMeasure.measure.values)) {
-                console.error('There is a potentially unknown values array on the applied default measure.');
+            else if (Ext.isArray(ptidMeasure.values)) {
+                console.error('There is a potentially unknown values array on the applied subject measure.');
             }
         }
     },
