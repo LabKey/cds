@@ -228,8 +228,9 @@ Ext.define('Connector.model.ChartData', {
             isContinuous: Connector.model.ChartData.isContinuousMeasure(y)
         };
 
-        xyMeasureSame = Ext.isDefined(_xid) && _xid == _yid;
-        if (xyMeasureSame) {
+        // if we are plotting the same continuous variable on both the x and y axis,
+        // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
+        if (xa.isContinuous && xa.schemaName == ya.schemaName && xa.queryName == ya.queryName) {
             yMeasureFilter = {};
             xMeasureFilter = {};
 
@@ -265,6 +266,9 @@ Ext.define('Connector.model.ChartData', {
 
         // select the data out of AxisMeasureStore based on the dimensions
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
+        if (LABKEY.devMode && this.getMeasureStore()._records.length != dataRows.length) {
+            console.log('Plotting aggregate values using mean', this.getMeasureStore()._records.length, dataRows.length);
+        }
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++) {
