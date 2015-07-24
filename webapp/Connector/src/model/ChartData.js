@@ -102,44 +102,45 @@ Ext.define('Connector.model.ChartData', {
         return (Math.min(yAxisMargin, 6) * 6) + 10;
     },
 
-    getAliasFromMeasure : function(measureName) {
-        var columnAliases = this.getColumnAliases(), alias, name;
+    getAliasFromMeasure : function(measure) {
+        var columnAliases = this.getColumnAliases();
 
-        // if the param comes in as a string, assume it is the measureName
-        if (Ext.isObject(measureName)) {
-            alias = measureName.alias;
-            name = measureName.name;
-        }
-        else if (Ext.isString(measureName)) {
-            alias = null;
-            name = measureName;
+        // if the param comes in as a string, make it an object for consistency
+        if (Ext.isString(measure)) {
+            measure = {alias: null, name: measure};
         }
 
-        for (var i = 0; i < columnAliases.length; i++) {
-            if ((alias && alias == columnAliases[i].columnName) || (name && name == columnAliases[i].measureName)) {
-                return columnAliases[i].columnName;
+        if (!Ext.isDefined(measure.alias) || measure.alias == null) {
+            for (var i = 0; i < columnAliases.length; i++) {
+                if ((measure.alias && measure.alias == columnAliases[i].columnName)
+                        || (measure.name && measure.name == columnAliases[i].measureName))
+                {
+                    // stash the alias in the measure object to make it faster to find next time
+                    measure.alias = columnAliases[i].columnName;
+                    break;
+                }
             }
         }
 
-        return null;
+        return measure.alias;
     },
 
-    getDimensionKeys : function(x, y) {
+    getDimensionKeys : function(x, y, excludeAliases) {
         var measureSet = this.getMeasureSet(),
-            exludeAliases = [], dimensionKeys = [], sharedKeys = [];
+            dimensionKeys = [], sharedKeys = [];
 
         // Note: we don't exclude the color measure from the dimension keys
         // and we only exclude the x measure if it is continuous
-        exludeAliases.push(y.alias);
+        excludeAliases.push(y.alias);
         if (x.isContinuous) {
-            exludeAliases.push(x.alias);
+            excludeAliases.push(x.alias);
         }
 
         // return a list of column aliases for all measureSet objects which are dimensions and not in the exclude list (i.e. plot measures)
         Ext.each(measureSet, function(m) {
             if (m.measure.isDimension) {
                 var alias = this.getAliasFromMeasure(m.measure);
-                if (alias && exludeAliases.indexOf(alias) == -1) {
+                if (alias && excludeAliases.indexOf(alias) == -1) {
                     dimensionKeys.push(alias);
                 }
 
@@ -181,6 +182,7 @@ Ext.define('Connector.model.ChartData', {
             xVal, yVal, colorVal = null,
             xIsNum, yIsNum,
             negX = false, negY = false,
+            yMeasureFilter, xMeasureFilter, excludeAliases = [],
             _row;
 
         ca = this.getBaseMeasureConfig();
@@ -226,18 +228,43 @@ Ext.define('Connector.model.ChartData', {
             isContinuous: Connector.model.ChartData.isContinuousMeasure(y)
         };
 
+        xyMeasureSame = Ext.isDefined(_xid) && _xid == _yid;
+        if (xyMeasureSame) {
+            yMeasureFilter = {};
+            xMeasureFilter = {};
+
+            // keep track of which dimensions have different filter values between the x and y axis
+            Ext.each(Object.keys(y.options.dimensions), function(key) {
+                var yDimValue = y.options.dimensions[key];
+                var xDimValue = x.options.dimensions[key];
+
+                if (!this.arraysEqual(xDimValue, yDimValue)) {
+                    var alias = this.getAliasFromMeasure(key);
+                    excludeAliases.push(alias);
+
+                    // TODO: how do we properly filter a MeasureStore when the value is an array?
+                    if (yDimValue) {
+                        yMeasureFilter[alias] = yDimValue.join(',');
+                    }
+                    if (xDimValue) {
+                        xMeasureFilter[alias] = xDimValue.join(',');
+                    }
+                }
+            }, this);
+        }
+
         // configure AxisMeasureStore based on the x, y, and color measures selections
         // TODO filter for dataset column or ... in Assay1 vs Assay2 plot case for perf improvement
-        axisMeasureStore.setYMeasure(this.getMeasureStore(), _yid);
+        axisMeasureStore.setYMeasure(this.getMeasureStore(), _yid, yMeasureFilter);
         if (_xid) {
-            axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid);
+            axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid, xMeasureFilter);
         }
         if (_cid) {
             axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid);
         }
 
         // select the data out of AxisMeasureStore based on the dimensions
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya));
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++) {
@@ -322,6 +349,34 @@ Ext.define('Connector.model.ChartData', {
                 setYLinear: negY
             }
         });
+    },
+
+    arraysEqual : function( arrA, arrB ) {
+
+        // first check for nulls
+        if (arrA == null && arrB == null) {
+            return true;
+        }
+        else if (arrA == null || arrB == null) {
+            return false;
+        }
+
+        // check if lengths are different
+        if(arrA.length !== arrB.length) {
+            return false;
+        }
+
+        // slice so we do not effect the orginal, sort makes sure they are in order
+        var cA = arrA.slice().sort();
+        var cB = arrB.slice().sort();
+
+        for (var i=0;i<cA.length;i++) {
+            if(cA[i]!==cB[i]) {
+                return false;
+            }
+        }
+
+        return true;
     },
 
     _getYValue : function(measure, alias, row) {
