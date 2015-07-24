@@ -1607,6 +1607,13 @@ Ext.define('Connector.view.Chart', {
         }
 
         targets.forEach(function(target) {
+            var tickFillOpacityFn = function(t) {
+                if (target === t || me.isSelection(t))
+                    return 1;
+                else
+                    return 0;
+            };
+
             var tickFillFn = function(t) {
                 if (target === t)
                     return bkgdColor;
@@ -1630,6 +1637,7 @@ Ext.define('Connector.view.Chart', {
             if (plot.renderer) {
                 var ticks = plot.renderer.canvas.selectAll('.tick-text rect.highlight');
                 ticks.attr('fill', tickFillFn);
+                ticks.attr('fill-opacity', tickFillOpacityFn)
 
                 var label = plot.renderer.canvas.selectAll('.tick-text text');
                 label.attr('fill', labelFillFn);
