@@ -69,7 +69,7 @@ Ext.define('Connector.view.Chart', {
 
         this.labelTextColor = '#666363';
         this.labelTextHltColor = '#FFFFFF';
-        this.labelBkgdColor = 'transparent';
+        this.labelBkgdColor = '#FFFFFF';
         this.labelBkgdHltColor = '#01BFC2';
     },
 
