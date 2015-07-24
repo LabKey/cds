@@ -13,16 +13,11 @@ Ext.define('Connector.model.ChartData', {
         {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
 
         /* generated properties based on the processing of the MeasureStore */
-        {name: 'rows', defaultValue: []}, // results of AxisMeasureStore.select()
-        {name: 'properties', defaultValue: {}},
-        {name: 'percentOverlap', defaultValue: 1},
         {name: 'containerAlignmentDayMap', defaultValue: {}},
-        {name: 'xNullMap', defaultValue: {}},
-        {name: 'yNullMap', defaultValue: {}},
+        {name: 'rows', defaultValue: []}, // results of AxisMeasureStore.select()
         {name: 'xDomain', defaultValue: [0,0]},
         {name: 'yDomain', defaultValue: [0,0]},
-        {name: 'percentXNulls', defaultValue: 0},
-        {name: 'percentYNulls', defaultValue: 0}
+        {name: 'properties', defaultValue: {}}
     ],
 
     statics: {
@@ -70,20 +65,8 @@ Ext.define('Connector.model.ChartData', {
         return this.get('properties');
     },
 
-    getPercentOverlap : function() {
-        return this.get('percentOverlap');
-    },
-
     getContainerAlignmentDayMap : function() {
         return this.get('containerAlignmentDayMap');
-    },
-
-    getXNullMap : function() {
-        return this.get('xNullMap');
-    },
-
-    getYNullMap : function() {
-        return this.get('yNullMap');
     },
 
     getXDomain : function() {
@@ -104,6 +87,19 @@ Ext.define('Connector.model.ChartData', {
 
     getPlotMeasure : function(index) {
         return this.getPlotMeasures()[index];
+    },
+
+    getYAxisMargin : function() {
+        // Margin between main plot and Y gutter plot
+        var yAxisMargin = 5,
+            domainMax = this.getYDomain()[1];
+
+        if(domainMax > 1)
+            yAxisMargin = (domainMax || 0).toString().length;
+        else if(domainMax >= .1)
+            yAxisMargin = 4;
+
+        return (Math.min(yAxisMargin, 6) * 6) + 10;
     },
 
     getAliasFromMeasure : function(measureName) {
@@ -183,7 +179,12 @@ Ext.define('Connector.model.ChartData', {
             subjectNoun = Connector.studyContext.subjectColumn,
             subjectCol = this.getAliasFromMeasure(subjectNoun),
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
-            dataRows;
+            dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [],
+            xDomain = [null,null], yDomain = [null,null],
+            xVal, yVal, colorVal = null,
+            xIsNum, yIsNum,
+            negX = false, negY = false,
+            _row;
 
         ca = this.getBaseMeasureConfig();
         if (color) {
@@ -241,16 +242,8 @@ Ext.define('Connector.model.ChartData', {
         // select the data out of AxisMeasureStore based on the dimensions
         dataRows = axisMeasureStore.select(this.getDimensionKeys());
 
-        var map = [], xNullMap = [], yNullMap = [],
-            len = dataRows.length,
-            validCount = 0,
-            xDomain = [null,null], yDomain = [null,null],
-            xVal, yVal, colorVal = null,
-            xIsNum, yIsNum,
-            negX = false, negY = false,
-            _row;
-
-        for (var r = 0; r < len; r++) {
+        // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
+        for (var r = 0; r < dataRows.length; r++) {
             _row = dataRows[r];
 
             // build study container alignment day map
@@ -262,17 +255,12 @@ Ext.define('Connector.model.ChartData', {
                 colorVal = this._getValue(color, _cid, _row);
             }
 
-            if (x) {
-                xVal = this._getXValue(x, _xid, _row);
-                if(Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
-                    if(xDomain[0] == null || xVal < xDomain[0])
-                        xDomain[0] = xVal;
-                    if(xDomain[1] == null || xVal > xDomain[1])
-                        xDomain[1] = xVal;
-                }
-            }
-            else {
-                xVal = '';
+            xVal = x ? this._getXValue(x, _xid, _row) : '';
+            if(Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
+                if(xDomain[0] == null || xVal < xDomain[0])
+                    xDomain[0] = xVal;
+                if(xDomain[1] == null || xVal > xDomain[1])
+                    xDomain[1] = xVal;
             }
 
             yVal = this._getYValue(y, _yid, _row);
@@ -283,18 +271,13 @@ Ext.define('Connector.model.ChartData', {
                     yDomain[1] = yVal;
             }
 
-            // allow any pair that does not contain a negative value.
-            // NaN, null, and undefined are non-negative values.
-
-            // validate x
+            // allow any pair that does not contain a negative value. NaN, null, and undefined are non-negative values.
             if (xa && xa.isNumeric) {
                 xIsNum = !(Ext.isNumber(x) && x < 1);
                 if (!negX && !xIsNum) {
                     negX = true;
                 }
             }
-
-            // validate y
             if (ya.isNumeric) {
                 yIsNum = !(Ext.isNumber(y) && y < 1);
                 if (!negY && !yIsNum) {
@@ -312,33 +295,29 @@ Ext.define('Connector.model.ChartData', {
                 colorname: ca.label
             };
 
-            if(xVal == null) {
-                xNullMap.push(entry);
+            // split the data entry based on undefined x and y values for gutter plotting
+            if (xVal == null) {
+                undefinedXRows.push(entry);
             }
-            else if(yVal == null) {
-                yNullMap.push(entry);
+            else if (yVal == null) {
+                undefinedYRows.push(entry);
             }
-            else if ((xa && xa.isNumeric) || (!xa.isNumeric && xVal !== undefined && xVal !== null)) {
-                map.push(entry);
-            }
-
-            if ((!x || this.isValidValue(x, xVal)) && this.isValidValue(y, yVal)) {
-                validCount++;  // TODO: shouldn't this be the same as map.length?
+            else {
+                mainPlotRows.push(entry);
             }
         }
 
         this.set({
             containerAlignmentDayMap: containerAlignmentDayMap,
-            percentOverlap: (validCount / len),
-            percentXNulls: Ext.util.Format.round((xNullMap.length / len) * 100, 2),
-            percentYNulls: Ext.util.Format.round((yNullMap.length / len) * 100, 2),
-            xNullMap: xNullMap,
-            yNullMap: yNullMap,
             xDomain: xDomain,
             yDomain: yDomain,
-            rows: map,
+            rows: {
+                main: mainPlotRows,
+                undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
+                undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
+                totalCount: mainPlotRows.length + undefinedXRows.length + undefinedYRows.length
+            },
             properties: {
-                subjectColumn: subjectCol, // We need the subject column as it appears in the temp query for the brushend handler
                 xaxis: xa,
                 yaxis: ya,
                 color: ca,
