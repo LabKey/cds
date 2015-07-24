@@ -1493,7 +1493,7 @@ Ext.define('Connector.view.Chart', {
     highlightPoints : function (target, subjects) {
         var subjectIds = this.retrievePointSubjectIds(this.plot, target, subjects);
 
-        var strokeFillFn = function(d) {
+        var fillColorFn = function(d) {
             if (subjectIds.indexOf(d.subjectId) != -1) {
                 return '#01BFC2';
             }
@@ -1509,8 +1509,8 @@ Ext.define('Connector.view.Chart', {
             if(this.requireYGutter && this.yGutterPlot)
                 points[0] = points[0].concat(this.yGutterPlot.renderer.canvas.selectAll('.point path')[0]);
 
-            points.attr('fill', strokeFillFn)
-                    .attr('stroke', strokeFillFn)
+            points.attr('fill', fillColorFn)
+                    .attr('stroke', fillColorFn)
                     .attr('fill-opacity', 1)
                     .attr('stroke-opacity', 1);
 

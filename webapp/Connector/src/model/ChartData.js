@@ -124,19 +124,15 @@ Ext.define('Connector.model.ChartData', {
         return null;
     },
 
-    getDimensionKeys : function() {
-        var x = this.getPlotMeasure(0),
-            y = this.getPlotMeasure(1),
-            color = this.getPlotMeasure(2),
-            measureSet = this.getMeasureSet(),
+    getDimensionKeys : function(x, y) {
+        var measureSet = this.getMeasureSet(),
             exludeAliases = [], dimensionKeys = [], sharedKeys = [];
 
-        exludeAliases.push(this.getAliasFromMeasure(y));
-        if (Ext.isDefined(x) && x != null) {
-            exludeAliases.push(this.getAliasFromMeasure(x));
-        }
-        if (Ext.isDefined(color) && color != null) {
-            exludeAliases.push(this.getAliasFromMeasure(color));
+        // Note: we don't exclude the color measure from the dimension keys
+        // and we only exclude the x measure if it is continuous
+        exludeAliases.push(y.alias);
+        if (x.isContinuous) {
+            exludeAliases.push(x.alias);
         }
 
         // return a list of column aliases for all measureSet objects which are dimensions and not in the exclude list (i.e. plot measures)
@@ -165,7 +161,8 @@ Ext.define('Connector.model.ChartData', {
             alias   : null,
             colName : null,
             label   : '',
-            isNumeric: false
+            isNumeric: false,
+            isContinuous: false
         };
     },
 
@@ -240,7 +237,7 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // select the data out of AxisMeasureStore based on the dimensions
-        dataRows = axisMeasureStore.select(this.getDimensionKeys());
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya));
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++) {
@@ -252,7 +249,7 @@ Ext.define('Connector.model.ChartData', {
             }
 
             if (color) {
-                colorVal = this._getValue(color, _cid, _row);
+                colorVal = this._getColorValue(color, _cid, _row);
             }
 
             xVal = x ? this._getXValue(x, _xid, _row) : '';
@@ -332,11 +329,11 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getXValue : function(measure, alias, row) {
-        if (row.x) {
-            return row.x.isUnique ? row.x.value : row.x.getMean();
-        }
+        return row.x.isUnique ? row.x.value : row.x.getMean();
+    },
 
-        return this._getValue(measure, alias, row);
+    _getColorValue : function(measure, alias, row) {
+        return row.z ? row.z.value : null;
     },
 
     _getValue : function(measure, colName, row) {
@@ -356,8 +353,7 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // Assume categorical.
-        val = row[colName].displayValue ? row[colName].displayValue : row[colName];
-        return (val !== undefined) ? val : null;
+        return (val !== undefined) ? row[colName] : null;
     },
 
     isValidNumber : function(number) {
