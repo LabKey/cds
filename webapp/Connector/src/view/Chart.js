@@ -123,36 +123,52 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    _initAfterRender : function() {
+    getNoPlotMsg : function() {
+        if (!this.noplotmsg) {
+            this.noplotmsg = Ext.create('Ext.Component', {
+                renderTo: this.body,
+                cls: 'noplotmsg',
+                hidden: true,
+                autoEl: {
+                    tag: 'div',
+                    children: [{
+                        tag: 'h1',
+                        cls: 'line1',
+                        html: 'Choose a "y" variable and up to two more to plot at a time.'
+                    },{
+                        tag: 'h1',
+                        cls: 'line2',
+                        html: 'Make selections on the plot to subgroup and filter.'
+                    },{
+                        tag: 'h1',
+                        cls: 'line3',
+                        html: 'Use subgroups for further comparison.'
+                    }]
+                }
+            });
+        }
 
-        Ext.create('Ext.Component', {
-            id: 'noplotmessage',
-            renderTo: this.body,
-            cls: 'noplotmsg',
-            hidden: true,
-            autoEl: {
-                tag: 'div',
-                style: 'position: relative; width: 895px; margin-right: auto; margin-left: auto;',
-                children: [{
-                    tag: 'h1',
-                    html: 'Choose a "y" variable and up to two more to plot at a time.'
-                },{
-                    tag: 'h1',
-                    html: 'Make selections on the plot to subgroup and filter.',
-                    style: 'color: #7a7a7a;'
-                },{
-                    tag: 'h1',
-                    html: 'Use subgroups for further comparison.',
-                    style: 'color: #b5b5b5;'
-                }]
-            },
-            listeners: {
-                afterrender : function(c) {
-                    this.noplotmsg = c;
-                },
-                scope: this
-            }
-        });
+        return this.noplotmsg;
+    },
+
+    getEmptyPlotMsg : function() {
+        if (!this.emptyplotmsg) {
+            this.emptyplotmsg = Ext.create('Ext.Component', {
+                renderTo: this.body,
+                cls: 'emptyplotmsg',
+                hidden: true,
+                autoEl: {
+                    tag: 'div',
+                    children: [{
+                        tag: 'h1',
+                        cls: 'line1',
+                        html: 'There are no data for the selected variable(s) in the current filters.'
+                    }]
+                }
+            });
+        }
+
+        return this.emptyplotmsg;
     },
 
     onReady : function(callback, scope) {
@@ -330,8 +346,6 @@ Ext.define('Connector.view.Chart', {
 
     attachInternalListeners : function() {
 
-        this.on('afterrender', this._initAfterRender, this, {single: true});
-
         this.showTask = new Ext.util.DelayedTask(function() {
             this.onReady(this.onShowGraph, this);
         }, this);
@@ -392,7 +406,7 @@ Ext.define('Connector.view.Chart', {
 
         if (!this.initialized && !this.showNoPlot) {
             this.showNoPlot = true;
-            this.noPlot();
+            this.noPlot(false);
         }
 
         if (this.ywin && this.ywin.isVisible()) {
@@ -425,25 +439,24 @@ Ext.define('Connector.view.Chart', {
             this.studyAxis();
         }
 
-        var plotMsg = this.noplotmsg;
-        if (plotMsg) {
-            var b = plotMsg.getBox();
-            var top = (plotBox.height / 2) - 53;
-            var el = plotMsg.getEl();
-            el.setStyle('margin-top', top + 'px');
-            var estMarginRight = plotBox.width - 100 - 895;
-            if (b.x < 101 && estMarginRight < 101) {
-                el.setStyle('margin-left', '100px');
-            }
-            else {
-                el.setStyle('margin-left', 'auto');
-            }
-        }
+        this.resizePlotMag(this.getNoPlotMsg(), plotBox);
+        this.resizePlotMag(this.getEmptyPlotMsg(), plotBox);
 
         this.resizeMessage();
 
         if (Ext.isFunction(this.highlightSelectedFn)) {
             this.highlightSelectedFn();
+        }
+    },
+
+    resizePlotMag : function(msgCmp, plotBox) {
+        if (msgCmp) {
+            var el = msgCmp.getEl(),
+                top = (plotBox.height / 2) - 15,
+                left = (plotBox.width / 2) - (msgCmp.getWidth() / 2);
+
+            el.setStyle('margin-top', top + 'px');
+            el.setStyle('margin-left', left + 'px');
         }
     },
 
@@ -669,10 +682,9 @@ Ext.define('Connector.view.Chart', {
         }
 
         if ((!rows || !rows.length) && (!yNullRows || !yNullRows.length) && (!xNullRows || !xNullRows.length)) {
-            this.showMessage('No information available to plot.', true);
             this.fireEvent('hideload', this);
             this.plot = null;
-            this.noPlot();
+            this.noPlot(true);
             return;
         }
 
@@ -1250,7 +1262,7 @@ Ext.define('Connector.view.Chart', {
         if (this.plot) {
             this.plot.addLayer(layer);
             try {
-                this.noplotmsg.hide();
+                this.hidePlotMsg();
                 this.plot.render();
                 if (!noplot && this.measures[2]) {
                     this.getColorSelector().setLegend(this.plot.getLegendData());
@@ -1261,7 +1273,7 @@ Ext.define('Connector.view.Chart', {
                 this.fireEvent('hideload', this);
                 this.plot = null;
                 this.plotEl.update('');
-                this.noPlot();
+                this.noPlot(false);
                 console.error(err);
                 console.error(err.stack);
                 return;
@@ -1885,7 +1897,7 @@ Ext.define('Connector.view.Chart', {
                 this.getStudyAxisPanel().setVisible(false);
                 Connector.getState().clearSelections(true);
                 this.filterClear = false;
-                this.noPlot();
+                this.noPlot(false);
             }
             else {
                 this.measures = [activeMeasures.x, activeMeasures.y, activeMeasures.color];
@@ -2317,7 +2329,7 @@ Ext.define('Connector.view.Chart', {
         state.getApplication().fireEvent('plotmeasures');
     },
 
-    noPlot : function() {
+    noPlot : function(showEmptyMsg) {
 
         var map = [{
             x : null,
@@ -2328,8 +2340,15 @@ Ext.define('Connector.view.Chart', {
         }];
 
         this.initPlot(map, null, true);
-        this.resizeTask.delay(300);
-        this.noplotmsg.show();
+
+        this.resizeTask.delay(0);
+        this.getNoPlotMsg().setVisible(!showEmptyMsg);
+        this.getEmptyPlotMsg().setVisible(showEmptyMsg);
+    },
+
+    hidePlotMsg : function() {
+        this.getNoPlotMsg().hide();
+        this.getEmptyPlotMsg().hide();
     },
 
     onFailure : function(response) {

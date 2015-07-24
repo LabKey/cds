@@ -74,3 +74,25 @@ svg g.study .visit-tag {
   border-top-color: $secondary-color;
   border-right-color: transparent;
 }
+
+div.noplotmsg {
+  width: 675px;
+}
+
+div.emptyplotmsg {
+  width: 550px;
+}
+
+div.noplotmsg, div.emptyplotmsg {
+  position: relative;
+
+  .line1 {
+    color: $primary-text-color;
+  }
+  .line2 {
+    color: $secondary-text-color;
+  }
+  .line3 {
+    color: $placeholder-text-color;
+  }
+}
