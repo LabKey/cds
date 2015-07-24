@@ -72,6 +72,17 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("x-axis").toBy()));
+        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']").toBy()));
+    }
+
+    @Override
+    public void pickSource(String source){
+        // If not currently on the source page, move there.
+        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//span[contains(@class, 'back-action')]")))
+        {
+            backToSource();
+        }
+        super.pickSource(source);
     }
 
     public void backToSource(){

@@ -52,6 +52,7 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("y-axis").toBy()));
+        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']").toBy()));
 
     }
 
@@ -68,6 +69,16 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
+    @Override
+    public void pickSource(String source){
+        // If not currently on the source page, move there.
+        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'back-action')]")))
+        {
+            backToSource();
+        }
+        super.pickSource(source);
+    }
+
     public void backToSource(){
         _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'back-action')]"));
         _test.sleep(750);
@@ -79,5 +90,11 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector-option-scale-dropdown')]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale + "']"));
         // Do the next click to close the drop down.
         _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[text()='Scale:']"));
+
+    }
+
+    public void setCellType()
+    {
+        super.setAssayDimension("y-axis-selector", AssayDimensions.CellType, "");
     }
 }

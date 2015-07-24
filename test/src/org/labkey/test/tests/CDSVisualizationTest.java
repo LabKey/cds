@@ -119,13 +119,97 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String NORMAL_COLOR = "#000000";
 
     @Test
+    public void verifyGutterPlotBasic()
+    {
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Validate that a y-axis gutter plot is generated.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.BAMA);
+        yaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_LAB);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertFalse("For BAMA Magnitude vs NAB Lab x-axis gutter plot was present it should not have been.", hasXGutter());
+        assertTrue("For BAMA Magnitude vs NAB Lab y-axis gutter plot was not present.", hasYGutter());
+
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        log("Validate that a x-axis gutter plot is generated.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC80);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", hasXGutter());
+        assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", hasYGutter());
+
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        log("Validate that a gutter plot is generated for both the x and y axis.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_VISIT_DAY);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertTrue("For ELISPOT Background vs ICS Visit x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For ELISPOT Background vs ICS Visit y-axis gutter plot was not present.", hasYGutter());
+
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        log("Validate that a study axis (gutter plot with syringe glyph) is generated for the x axis.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertTrue("For ELISPOT Background vs Time Visit Days a study axis was not present.", hasStudyAxis());
+        assertFalse("For ELISPOT Background vs Time Visit Days x-axis gutter plot was present, it should not be.", hasXGutter());
+        assertFalse("For ELISPOT Background vs Time Visit Days y-axis gutter plot was present, it should not be.", hasYGutter());
+
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+    }
+
+    @Test
     public void verifyScatterPlot()
     {
         //getText(Locator.css("svg")) on Chrome
 
-        final String ELISPOT_VISIT = "10500\n10550\n10600\n10650\n10700\n10750\n10800\n10850\n10900\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000";
-        final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
-        final String NAB_IC50 = "20\n30\n40\n50\n60\n5\n50\n500\n5000";
+        final String ELISPOT_VISIT = "900\n950\n1000\n1050\n1100\n1150\n1200\n1250\n0e+0\n5e+3\n1e+4\n1.5e+4\n2e+4\n2.5e+4\n3e+4\n3.5e+4\n4e+4\n4.5e+4"; // TODO Test data dependent.
+        final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5"; // TODO Test data dependent.
+        final String NAB_IC50 = "20\n30\n40\n50\n60\n5\n50\n500\n5000"; // TODO Test data dependent.
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -136,47 +220,66 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.pickSource(CDSHelper.ELISPOT);
         xaxis.pickVariable(CDSHelper.ELISPOT_VISIT);
         xaxis.confirmSelection();
-        this.sleep(500);
+        sleep(500);
         yaxis.pickSource(CDSHelper.ELISPOT);
-        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        assertSVG(ELISPOT_VISIT);
+
+        if(CDSHelper.validateCounts)
+        {
+            assertSVG(ELISPOT_VISIT);
+        }
 
         yaxis.openSelectorWindow();
-        yaxis.backToSource();
-        this.sleep(500);
+//        yaxis.backToSource();
+        sleep(500);
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
-        this.sleep(2000);
+        assertTrue("For ELISPOT vs ICS x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For ELISPOT vs ICS y-axis gutter plot was not present.", hasYGutter());
+
         xaxis.openSelectorWindow();
-        xaxis.backToSource();
+//        xaxis.backToSource();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.confirmSelection();
 
         _ext4Helper.waitForMaskToDisappear();
-        assertSVG(ICS_MAGNITUDE);
+
+        if(CDSHelper.validateCounts)
+        {
+            assertSVG(ICS_MAGNITUDE);
+        }
 
         // Test log scales
         yaxis.openSelectorWindow();
-        yaxis.backToSource();
+//        yaxis.backToSource();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
 
+        assertTrue("For NAB vs ICS x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For NAB vs ICS y-axis gutter plot was not present.", hasYGutter());
+
         xaxis.openSelectorWindow();
-        xaxis.backToSource();
+//        xaxis.backToSource();
         xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
         xaxis.pickVariable(CDSHelper.DEMO_AGE);
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
 
-        assertSVG(NAB_IC50);
+        assertTrue("For NAB vs Demographics x-axis gutter plot was not present.", hasXGutter());
+        assertFalse("For NAB vs Demographics y-axis gutter plot was present and it should not be.", hasYGutter());
+
+        if(CDSHelper.validateCounts)
+        {
+            assertSVG(NAB_IC50);
+        }
 
         //comment starts here
 
@@ -255,8 +358,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         //commented out section end
     }
 
-// TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    @Test
     public void verifyBoxPlots()
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -266,70 +368,122 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.
         yaxis.openSelectorWindow();
-        yaxis.pickMeasure("Lab Results", "CD4");
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.confirmSelection();
 
         waitForElement(plotBox);
-        assertElementPresent(plotBox, 1);
-        assertElementPresent(plotPoint, 468);
+
+        if(CDSHelper.validateCounts)
+        {
+            assertElementPresent(plotBox, 1);
+            assertElementPresent(plotPoint, 3713); // TODO Test data dependent.
+        }
 
         // Choose a categorical axis to verify that multiple box plots will appear.
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Demographics", "Sex");
+        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickVariable(CDSHelper.DEMO_SEX);
         xaxis.confirmSelection();
 
-        waitForElement(Locators.plotTick.withText("f"), 20000);
-        assertElementPresent(plotBox, 2);
-        assertElementPresent(plotPoint, 468);
+        waitForElement(Locators.plotTick.withText("Female"), 20000);
+
+        waitForElement(Locators.plotBox);
+
+        if(CDSHelper.validateCounts)
+        {
+            assertElementPresent(plotBox, 2);
+            assertElementPresent(plotPoint, 3713); // TODO Test data dependent.
+        }
 
         // Choose a continuous axis and verify that the chart goes back to being a scatter plot.
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Lab Results", "Hemoglobin");
+        xaxis.backToSource();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         xaxis.confirmSelection();
 
         waitForElementToDisappear(plotBox);
 
         // Verify that we can go back to boxes after being in scatter mode.
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Demographics", "Race");
+        xaxis.backToSource();
+        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickVariable(CDSHelper.DEMO_RACE);
         xaxis.confirmSelection();
 
-        waitForElement(Locators.plotTick.withText("Asian"), 20000);
-        assertElementPresent(plotBox, 8);
-        assertElementPresent(plotPoint, 468);
+        waitForElement(Locators.plotBox);
+        waitForElement(Locators.plotTick.withText("Asian"), 20000); // TODO Test data dependent.
+
+        if(CDSHelper.validateCounts)
+        {
+            assertElementPresent(plotBox, 7); // TODO Test data dependent.
+            assertElementPresent(plotPoint, 3713); // TODO Test data dependent.
+        }
 
         //Verify x axis categories are selectable as filters
-        mouseOver(Locators.plotTick.withText("Asian"));
-        assertEquals("incorrect number of points highlighted after mousing over x axis category",62, getPointCountByColor(MOUSEOVER_FILL));
-        click(Locators.plotTick.withText("Asian"));
+        mouseOver(Locators.plotTick.withText("Asian")); // TODO Test data dependent.
+
+        if(CDSHelper.validateCounts)
+        {
+            assertEquals("incorrect number of points highlighted after mousing over x axis category", 76, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+        }
+
+        click(Locators.plotTick.withText("Asian")); // TODO Test data dependent.
         //ensure filter buttons are present
         waitForElement(Locators.filterDataButton);
         assertElementPresent(Locators.removeButton);
-        //ensure correct number of points are highlighted
-        assertEquals("incorrect number of points highlighted after clicking x axis category",62, getPointCountByColor(MOUSEOVER_FILL));
-        //ensure correct total number of points
-        assertEquals("incorrect total number of points after clicking x axis category",468, getPointCount());
-        //apply category selection as a filter
+
+        if(CDSHelper.validateCounts)
+        {
+            //ensure correct number of points are highlighted
+            assertEquals("incorrect number of points highlighted after clicking x axis category", 76, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+            //ensure correct total number of points
+            assertEquals("incorrect total number of points after clicking x axis category", 3713, getPointCount()); // TODO Test data dependent.
+            //apply category selection as a filter
+        }
+
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("filter data"));
-        waitForPointCount(62, 10000);
-        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        if(CDSHelper.validateCounts)
+        {
+            waitForPointCount(76, 20000); // TODO Test data dependent.
+        }
+
         //clear filter
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
         yaxis.openSelectorWindow();
-        yaxis.pickMeasure("Lab Results", "Hemoglobin");
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW); // Work around for issue 23845.
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.confirmSelection();
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Demographics", "Race");
+        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickVariable(CDSHelper.DEMO_RACE);
         xaxis.confirmSelection();
-        waitForPointCount(468, 10000);
+
+        if(CDSHelper.validateCounts)
+        {
+            waitForPointCount(3713, 20000); // TODO Test data dependent.
+        }
+
         //verify multi-select of categories
-        selectXAxes(false, "Indian", "American Indian/Alaska Native", "Native Hawaiian/Pacific Islander", "Native Hawaiian or Other Pacific Islander");
-        //ensure correct number of points are highlighted
-        assertEquals("incorrect number of points highlighted after clicking x axis categories",128, getPointCountByColor(MOUSEOVER_FILL));
-        assertEquals("incorrect total number of points after clicking x axis categories",468, getPointCount());
-        //apply selection as exlusive filter
-        waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
-        waitForPointCount(468 - 128, 10000);
+        selectXAxes(false, "White", "Other", "Native Hawaiian/Paci", "Native American/Alas"); // TODO Test data dependent.
+        sleep(3000); // Let the animation end.
+
+        if(CDSHelper.validateCounts)
+        {
+            //ensure correct number of points are highlighted
+            assertEquals("incorrect number of points highlighted after clicking x axis categories",2707, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
+            assertEquals("incorrect total number of points after clicking x axis categories",3713, getPointCount()); // TODO Test data dependent.
+            //apply selection as exlusive filter
+            waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
+            waitForPointCount(3713 - 2707, 10000); // TODO Test data dependent.
+        }
+
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
     }
 
 // TODO Removing test attribute until I get a chance to fix it.
@@ -387,23 +541,23 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         final String[][] Y_AXIS_SOURCES =
                 {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
-                        {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
-                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE, CDSHelper.ELISPOT_MAGNITUDE_NEG, CDSHelper.ELISPOT_MAGNITUDE_RAW},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE, CDSHelper.ICS_MAGNITUDE_ADJ, CDSHelper.ICS_MAGNITUDE_NEG},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_RAW},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW},
                         {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}};
         final String[][] X_AXIS_SOURCES =
                 {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES, CDSHelper.DEMO_VISIT},
-                        {"Time points", "Study days", "Study weeks", "Study months"},
-                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_LAB_SRC_KEY, CDSHelper.BAMA_CLADE, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE, CDSHelper.BAMA_VISIT, CDSHelper.BAMA_VISIT_DAY},
-                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_LAB_SRC_KEY, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE, CDSHelper.ELISPOT_MAGNITUDE_NEG, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE, CDSHelper.ELISPOT_VISIT, CDSHelper.ELISPOT_VISIT_DAY},
-                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_CLADE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB_SRC_KEY, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE, CDSHelper.ICS_MAGNITUDE_ADJ, CDSHelper.ICS_MAGNITUDE_NEG, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_SUBPANEL, CDSHelper.ICS_VISIT_DAY, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VACCINE, CDSHelper.ICS_VISIT},
-                        {CDSHelper.NAB, CDSHelper.NAB_ASSAY, CDSHelper.NAB_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_ISOLATE, CDSHelper.NAB_LAB, CDSHelper.NAB_LAB_SRC_KEY, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TIER, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80, CDSHelper.NAB_VISIT, CDSHelper.NAB_VISIT_DAY}};
+                        {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE, CDSHelper.BAMA_VISIT, CDSHelper.BAMA_VISIT_DAY},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE, CDSHelper.ELISPOT_VISIT, CDSHelper.ELISPOT_VISIT_DAY},
+                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_PANEL, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VISIT},
+                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80, CDSHelper.NAB_VISIT, CDSHelper.NAB_VISIT_DAY}};
         final String[][] COLOR_AXIS_SOURCES =
                 {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
-                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_CLADE, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
-                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_CLADE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_SUBPANEL, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VACCINE},
-                        {CDSHelper.NAB, CDSHelper.NAB_ASSAY, CDSHelper.NAB_CLADE, CDSHelper.NAB_ISOLATE, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TIER}};
+                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_PANEL, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN},
+                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}};
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -426,6 +580,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             for (int i = 1; i < src.length; i++)
             {
                 assertTrue(this.isElementVisible(xaxis.window().append(" div.content-label").withText(src[i])));
+                click(xaxis.window().append(" div.content-label").withText(src[i]));
             }
             xaxis.backToSource();
         }
@@ -452,6 +607,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             for (int i = 1; i < src.length; i++)
             {
                 assertTrue(this.isElementVisible(yaxis.window().append(" div.content-label").withText(src[i])));
+                click(yaxis.window().append(" div.content-label").withText(src[i]));
             }
             yaxis.backToSource();
         }
@@ -478,6 +634,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             for (int i = 1; i < src.length; i++)
             {
                 assertTrue(this.isElementVisible(coloraxis.window().append(" div.content-label").withText(src[i])));
+                click(coloraxis.window().append(" div.content-label").withText(src[i]));
             }
             coloraxis.backToSource();
         }
@@ -901,6 +1058,45 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         {
             fail("Timeout waiting for point count [" + secTimeout + "sec]: " + count);
         }
+    }
+
+    private boolean hasYGutter()
+    {
+        return hasGutter("svg g text.yGutter-label");
+    }
+
+    private boolean hasXGutter()
+    {
+        return hasGutter("svg g text.xGutter-label");
+    }
+
+    private boolean hasStudyAxis()
+    {
+        return hasGutter("#study-axis svg");
+    }
+
+    private boolean hasGutter(String cssPath){
+
+        boolean hasElement;
+
+        try
+        {
+            waitForElement(Locator.css(cssPath));
+            if (Locator.css(cssPath).findElement(getDriver()).isDisplayed())
+            {
+                hasElement = true;
+            }
+            else
+            {
+                hasElement = false;
+            }
+        }
+        catch(org.openqa.selenium.NoSuchElementException ex){
+            hasElement = false;
+        }
+
+        return hasElement;
+
     }
 
     @LogMethod

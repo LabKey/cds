@@ -67,16 +67,16 @@ public class CDSHelper
     public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
 
     public static final String BAMA = "BAMA (Binding Ab multiplex assay)";
-    public static final String BAMA_ANTIGEN = "Antigen";
+    public static final String BAMA_ANTIGEN_CLADE = "Antigen clade";
+    public static final String BAMA_ANTIGEN_NAME = "Antigen name";
+    public static final String BAMA_ANTIGEN_TYPE = "Antigen type";
     public static final String BAMA_ASSAY = "Assay Identifier";
-    public static final String BAMA_LAB_SRC_KEY = "Bama Lab Source Key";
-    public static final String BAMA_CLADE = "Clade";
     public static final String BAMA_DETECTION = "Detection System";
     public static final String BAMA_DILUTION = "Dilution";
-    public static final String BAMA_EXP_ASSAYD = "Exp Assayid";
+    public static final String BAMA_EXP_ASSAYD = "Experimental Assay Design Code";
     public static final String BAMA_INSTRUMENT_CODE = "Instrument Code";
     public static final String BAMA_ISOTYPE = "Isotype";
-    public static final String BAMA_LAB = "Lab";
+    public static final String BAMA_LAB = "Lab ID";
     public static final String BAMA_MAGNITUDE_BLANK = "Magnitude (mfi) - Blank";
     public static final String BAMA_MAGNITUDE_BASELINE = "Magnitude (mfi) - Blank Baseline";
     public static final String BAMA_MAGNITUDE_DELTA = "Magnitude (mfi) - Delta";
@@ -87,7 +87,7 @@ public class CDSHelper
     public static final String BAMA_PROTEIN_PANEL = "Protein Panel";
     public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
     public static final String BAMA_SPECIMEN = "Specimen type";
-    public static final String BAMA_VACCINE = "Vaccine Matched";
+    public static final String BAMA_VACCINE = "Vaccine matched indicator";
     public static final String BAMA_VISIT = "Visit";
     public static final String BAMA_VISIT_DAY = "Visit Day";
 
@@ -106,45 +106,50 @@ public class CDSHelper
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
     public static final String ELISPOT_ANTIGEN = "Antigen Panel";
+    public static final String ELISPOT_ANTIGEN_TYPE = "Antigen Type";
     public static final String ELISPOT_ASSAY = "Assay Identifier";
     public static final String ELISPOT_CELL_NAME = "Cell Name";
     public static final String ELISPOT_CELL_TYPE = "Cell Type";
     public static final String ELISPOT_CLADE = "Clade";
+    public static final String ELISPOT_DATA_PROV = "Data provenance";
     public static final String ELISPOT_LAB_SRC_KEY = "Els Ifng Lab Source Key";
-    public static final String ELISPOT_EXP_ASSAY = "Exp Assayid";
-    public static final String ELISPOT_MARKER_NAME = "Functional Marker Name";
-    public static final String ELISPOT_MARKER_TYPE = "Functional Marker Type";
-    public static final String ELISPOT_LAB = "Lab";
-    public static final String ELISPOT_MAGNITUDE = "Magnitude (% cells)";
-    public static final String ELISPOT_MAGNITUDE_NEG = "Magnitude (% cells) - Negative";
+    public static final String ELISPOT_EXP_ASSAY = "Experimental Assay Design Code";
+    public static final String ELISPOT_MARKER_NAME = "Functional marker name";
+    public static final String ELISPOT_MARKER_TYPE = "Functional marker type";
+    public static final String ELISPOT_LAB = "Lab ID";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
     public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
+    public static final String ELISPOT_PEPTIDE_POOL = "Peptide Pool";
     public static final String ELISPOT_PROTEIN =  "Protein";
     public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
     public static final String ELISPOT_RESPONSE =  "Response call";
     public static final String ELISPOT_SPECIMEN =  "Specimen type";
-    public static final String ELISPOT_VACCINE =  "Vaccine Method";
+    public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
     public static final String ELISPOT_VISIT =  "Visit";
     public static final String ELISPOT_VISIT_DAY =  "Visit Day";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
     public static final String ICS_ANTIGEN = "Antigen";
+    public static final String ICS_ANTIGEN_TYPE = "Antigen Type";
+    public static final String ICS_ANTIGEN_VAC_MATCH = "Antigen Vaccine Match Indicator";
     public static final String ICS_ASSAY = "Assay identifier";
     public static final String ICS_CELL_NAME = "Cell name";
     public static final String ICS_CELL_TYPE = "Cell type";
     public static final String ICS_CLADE = "Clade";
-    public static final String ICS_EXP_ASSAY = "Exp Assayid";
+    public static final String ICS_DATA = "Data provenance";
+    public static final String ICS_EXP_ASSAY = "Experimental Assay Design Code";
     public static final String ICS_MARKER_NAME = "Functional marker name";
     public static final String ICS_MARKER_TYPE = "Functional marker type";
     public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
     public static final String ICS_LAB = "Lab";
-    public static final String ICS_MAGNITUDE = "Magnitude";
-    public static final String ICS_MAGNITUDE_ADJ = "Magnitude adjusted";
-    public static final String ICS_MAGNITUDE_NEG = "Magnitude negative";
     public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
     public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
     public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
+    public static final String ICS_PEPTIDE_POOL = "Peptide pool";
     public static final String ICS_PROTEIN = "Protein";
-    public static final String ICS_PROTEIN_SUBPANEL = "Protein subpanel";
+    public static final String ICS_PROTEIN_CLADE = "Protein Clade";
+    public static final String ICS_PROTEIN_PANEL = "Protein panel";
     public static final String ICS_VISIT_DAY = "Protocol Visit Day";
     public static final String ICS_RESPONSE = "Response call";
     public static final String ICS_SPECIMEN = "Specimen type";
@@ -152,13 +157,18 @@ public class CDSHelper
     public static final String ICS_VISIT = "Visit";
 
     public static final String NAB = "NAb (Neutralizing antibody)";
-    public static final String NAB_ASSAY = "Assay Identifier";
+    public static final String NAB_ANTIGEN = "Antigen";
+    public static final String NAB_ANTIGEN_CLADE = "Antigen clade";
+    public static final String NAB_ANTIGEN_TYPE = "Antigen type";
+    public static final String NAB_ASSAY = "Assay identifier";
     public static final String NAB_CLADE = "Clade";
-    public static final String NAB_EXP_ASSAY = "Exp Assayid";
+    public static final String NAB_DATA = "Data provenance";
+    public static final String NAB_EXP_ASSAY = "Experimental Assay Design Code";
     public static final String NAB_INIT_DILUTION = "Initial dilution";
     public static final String NAB_ISOLATE = "Isolate";
-    public static final String NAB_LAB = "Lab";
+    public static final String NAB_LAB = "Lab ID";
     public static final String NAB_LAB_SRC_KEY = "Nab Lab Source Key";
+    public static final String NAB_NEUTRAL = "Neutralization tier";
     public static final String NAB_RESPONSE = "Response call";
     public static final String NAB_SPECIMEN = "Specimen type";
     public static final String NAB_TARGET_CELL = "Target cell";
@@ -167,6 +177,12 @@ public class CDSHelper
     public static final String NAB_TITERIC80 = "Titer IC80";
     public static final String NAB_VISIT = "Visit";
     public static final String NAB_VISIT_DAY = "Visit Day";
+
+    public static final String TIME_POINTS = "Time points";
+    public static final String TIME_POINTS_DAYS = "Study days";
+    public static final String TIME_POINTS_WEEKS = "Study weeks";
+    public static final String TIME_POINTS_MONTHS = "Study months";
+
 
     // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
     public static final boolean debugTest = false;

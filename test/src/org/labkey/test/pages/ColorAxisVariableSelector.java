@@ -65,6 +65,17 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
         _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("color").toBy()));
+        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']").toBy()));
+    }
+
+    @Override
+    public void pickSource(String source){
+        // If not currently on the source page, move there.
+        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//span[contains(@class, 'back-action')]")))
+        {
+            backToSource();
+        }
+        super.pickSource(source);
     }
 
     public void backToSource(){

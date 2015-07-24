@@ -49,17 +49,6 @@ public abstract class DataspaceVariableSelector
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
     }
 
-//    public void openSelectorWindow(String title)
-//    {
-//        WebElement openButton = _test.longWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
-//
-//        openButton.click();
-//
-//        _test.waitForElement(Locator.divByInnerText(title));
-//        _test.sleep(1000);
-//
-//    }
-
     public Locator.CssLocator pickerPanel()
     {
         return Locator.css("." + getPickerClass());
@@ -87,7 +76,11 @@ public abstract class DataspaceVariableSelector
     {
         _test.click(window().append(" div.content-label").withText(source));
         _test.sleep(500);
-//        _test.waitAndClick(sourcePanelRow().containing(source)); // This is used in multi-panel select.
+    }
+
+    public void pickMultiPanelSource(String source)
+    {
+        _test.waitAndClick(sourcePanelRow().containing(source)); // This is used in multi-panel select.
     }
 
     public void pickVariable(String source){
@@ -98,7 +91,7 @@ public abstract class DataspaceVariableSelector
     //Pick measure from one of multiple split panel measure pickers
     public void pickMeasure(String source, String measure, boolean keepSelection)
     {
-        pickSource(source);
+        pickMultiPanelSource(source);
         //select measure
         if (isMeasureMultiSelect())
         {
@@ -152,6 +145,43 @@ public abstract class DataspaceVariableSelector
     {
         _test.click(window().append(" a.x-btn").withText("Cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    // TODO Still working on this as part of the detail selection.
+    protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
+    {
+
+        switch(dimension){
+            case AntigenName:
+                break;
+            case CellType:
+
+                Locator loc = Locator.xpath("//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]");
+
+                if(_test.isElementPresent(loc))
+                {
+                    _test.click(loc);
+                }
+
+                break;
+        }
+    }
+
+    // TODO Still working on this as part of the detail selection.
+    public static enum AssayDimensions
+    {
+        AntigenName,
+        CellType,
+        DataSummaryLevel,
+        DetectionSystem,
+        Dilution,
+        FunctionalMarkerName,
+        InstrumentCode,
+        LabId,
+        PeptidePool,
+        Protein,
+        ProteinPanel,
+        SpecimenType
     }
 
     public static enum Scale
