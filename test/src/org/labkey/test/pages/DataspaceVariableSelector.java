@@ -155,12 +155,26 @@ public abstract class DataspaceVariableSelector
             case AntigenName:
                 break;
             case CellType:
+                String cellTypeField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
+                String cellTypeDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
 
-                Locator loc = Locator.xpath("//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]");
+                Locator loc = Locator.xpath(cellTypeField);
+                Locator allTag = Locator.xpath(cellTypeDropDown + "//label[text()='All']");
 
                 if(_test.isElementPresent(loc))
                 {
                     _test.click(loc);
+
+                    // Clear the current selection.
+                    if(!_test.isChecked(allTag))
+                    {
+                        _test.checkCheckbox(allTag);
+                    }
+                    _test.checkCheckbox(allTag);
+
+                    for(String val : value){
+                        _test.checkCheckbox(Locator.xpath(cellTypeDropDown + "//label[text()='" +val + "']"));
+                    }
                 }
 
                 break;

@@ -165,16 +165,18 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         log("Validate that a gutter plot is generated for both the x and y axis.");
         yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.ELISPOT);
-        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.setCellType("CD4+");
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
+        sleep(500);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_VISIT_DAY);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        xaxis.setCellType("CD8+");
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For ELISPOT Background vs ICS Visit x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For ELISPOT Background vs ICS Visit y-axis gutter plot was not present.", hasYGutter());

@@ -97,4 +97,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         // Do the next click to close the drop down.
         _test.click(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[text()='Scale:']"));
     }
+
+    public void setCellType(String value)
+    {
+        super.setAssayDimension("x-axis-selector", AssayDimensions.CellType, value);
+    }
 }

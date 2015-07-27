@@ -93,8 +93,8 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
 
     }
 
-    public void setCellType()
+    public void setCellType(String value)
     {
-        super.setAssayDimension("y-axis-selector", AssayDimensions.CellType, "");
+        super.setAssayDimension("y-axis-selector", AssayDimensions.CellType, value);
     }
 }
