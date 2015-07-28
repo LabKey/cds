@@ -65,6 +65,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,8 +157,14 @@ public class CDSController extends SpringActionController
     {
         private int _rowId = -1;
         private Container _container;
-        private int _primaryCount = 0;
-        private int _dataCount = 0;
+        private Date _created;
+        private Date _modified;
+
+        private int _studies = 0;
+        private int _subjects = 0;
+        private int _assays = 0;
+        private int _products = 0;
+        private int _datacount = 0;
 
         public int getRowId()
         {
@@ -167,26 +174,6 @@ public class CDSController extends SpringActionController
         public void setRowId(int rowId)
         {
             _rowId = rowId;
-        }
-
-        public int getPrimaryCount()
-        {
-            return _primaryCount;
-        }
-
-        public void setPrimaryCount(int primaryCount)
-        {
-            _primaryCount = primaryCount;
-        }
-
-        public int getDataCount()
-        {
-            return _dataCount;
-        }
-
-        public void setDataCount(int dataCount)
-        {
-            _dataCount = dataCount;
         }
 
         public String getContainerId()
@@ -203,6 +190,76 @@ public class CDSController extends SpringActionController
         public void setContainer(Container container)
         {
             _container = container;
+        }
+
+        public Date getCreated()
+        {
+            return _created;
+        }
+
+        public void setCreated(Date created)
+        {
+            _created = created;
+        }
+
+        public Date getModified()
+        {
+            return _modified;
+        }
+
+        public void setModified(Date modified)
+        {
+            _modified = modified;
+        }
+
+        public int getProducts()
+        {
+            return _products;
+        }
+
+        public void setProducts(int products)
+        {
+            _products = products;
+        }
+
+        public int getAssays()
+        {
+            return _assays;
+        }
+
+        public void setAssays(int assays)
+        {
+            _assays = assays;
+        }
+
+        public int getSubjects()
+        {
+            return _subjects;
+        }
+
+        public void setSubjects(int subjects)
+        {
+            _subjects = subjects;
+        }
+
+        public int getStudies()
+        {
+            return _studies;
+        }
+
+        public void setStudies(int studies)
+        {
+            _studies = studies;
+        }
+
+        public int getDatacount()
+        {
+            return _datacount;
+        }
+
+        public void setDatacount(int datacount)
+        {
+            _datacount = datacount;
         }
     }
 

@@ -497,8 +497,13 @@
             <ns:column columnName="Container">
                 <ns:isKeyField>false</ns:isKeyField>
             </ns:column>
-            <ns:column columnName="PrimaryCount"/>
-            <ns:column columnName="DataCount"/>
+            <ns:column columnName="Created"/>
+            <ns:column columnName="Modified"/>
+            <ns:column columnName="assays"/>
+            <ns:column columnName="products"/>
+            <ns:column columnName="studies"/>
+            <ns:column columnName="subjects"/>
+            <ns:column columnName="datacount"/>
         </ns:columns>
     </ns:table>
 </ns:tables>

@@ -1,3 +1,6 @@
+-- LEAF TABLES
+DROP TABLE IF EXISTS cds.Properties CASCADE;
+
 -- MAPPING TABLES
 DROP TABLE IF EXISTS cds.VisitTagAlignment CASCADE;
 DROP TABLE IF EXISTS cds.VisitTagMap CASCADE;
@@ -180,4 +183,21 @@ CREATE TABLE cds.VisitTagAlignment (
 
   CONSTRAINT UQ_VisitTagAlignment UNIQUE (container, participantid, visittagname),
   CONSTRAINT PK_VisitTagAlignment PRIMARY KEY (row_id)
+);
+
+CREATE TABLE cds.Properties (
+  RowId SERIAL,
+  container ENTITYID NOT NULL,
+  Created TIMESTAMP NOT NULL,
+--   CreatedBy USERID NOT NULL,
+  Modified TIMESTAMP NOT NULL,
+--   ModifiedBy USERID NOT NULL,
+
+  assays INTEGER,
+  products INTEGER,
+  studies INTEGER,
+  subjects INTEGER,
+  datacount INTEGER,
+
+  CONSTRAINT PK_Properties PRIMARY KEY (RowId)
 );

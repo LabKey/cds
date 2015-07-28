@@ -90,8 +90,8 @@ Ext.define('Connector.controller.Signin', {
 
             Statistics.resolve(function(stats) {
                 statDisplay.update({
-                    nstudy: stats.primaryCount,
-                    ndatapts: stats.dataCount
+                    nstudy: stats.studies,
+                    ndatapts: stats.datacount
                 });
             }, this);
         }
