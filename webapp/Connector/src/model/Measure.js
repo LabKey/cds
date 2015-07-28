@@ -17,6 +17,7 @@ Ext.define('Connector.model.Measure', {
         {name: 'schemaName', defaultValue: undefined},
         {name: 'queryName', defaultValue: undefined},
         {name: 'queryLabel', defaultValue: undefined},
+        {name: 'queryDescription', defaultValue: undefined},
         {name: 'lookup', defaultValue: {}},
         {name: 'type', defaultValue: undefined},
 

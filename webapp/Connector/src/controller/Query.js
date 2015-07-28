@@ -197,6 +197,9 @@ Ext.define('Connector.controller.Query', {
             datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[key]);
             datas.key = key;
 
+            // copy the queryDescription from the measure
+            datas.description = measure.queryDescription;
+
             this.SOURCE_STORE.add(datas);
         }
     },

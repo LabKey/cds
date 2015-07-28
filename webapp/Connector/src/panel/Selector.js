@@ -257,6 +257,13 @@ Ext.define('Connector.panel.Selector', {
                                 selModel.clearSelections();
                             }
                         });
+                        this.hideLearnMessage('Source');
+                    },
+                    itemmouseenter: function(view, record, item) {
+                        this.showLearnMessage(view, record, item, 'Source');
+                    },
+                    itemmouseleave: function() {
+                        this.hideLearnMessage('Source');
                     },
                     scope: this
                 }
@@ -306,6 +313,13 @@ Ext.define('Connector.panel.Selector', {
                 listeners: {
                     select: function(selModel, measure) {
                         this.selectMeasure(measure);
+                        this.hideLearnMessage('Measure');
+                    },
+                    itemmouseenter: function(view, record, item) {
+                        this.showLearnMessage(view, record, item, 'Measure');
+                    },
+                    itemmouseleave: function() {
+                        this.hideLearnMessage('Measure');
                     },
                     scope: this
                 }
@@ -315,6 +329,34 @@ Ext.define('Connector.panel.Selector', {
         }
 
         return this.measurePane;
+    },
+
+    showLearnMessage : function(view, record, item, name) {
+        if(record.get('description')) {
+            var calloutMgr = hopscotch.getCalloutManager(),
+                _id = Ext.id(),
+                test = setTimeout(function() {
+                    calloutMgr.createCallout({
+                        id: _id,
+                        bubbleWidth: 160,
+                        yOffset: -15,
+                        xOffset: 50,
+                        showCloseButton: false,
+                        target: item,
+                        placement: 'right',
+                        title: record.get('label') ? record.get('label') : undefined,
+                        content: record.get('description')
+                    });
+                }, 250);
+            this.on('hide' + name + 'LearnMsg', function() {
+                clearTimeout(test);
+                calloutMgr.removeCallout(_id);
+            }, this);
+        }
+    },
+
+    hideLearnMessage: function(name) {
+        this.fireEvent('hide' + name + 'LearnMsg', this);
     },
 
     /**
