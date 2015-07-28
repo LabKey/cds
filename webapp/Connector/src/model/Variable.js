@@ -18,8 +18,8 @@ Ext.define('Connector.model.Variable', {
             var sourceTxt;
 
             if (Ext.isObject(variable)) {
-                var isDataset = variable['queryType'] == 'datasets';
-                sourceTxt = variable[isDataset ? 'queryName': 'queryLabel'];
+                var isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
+                sourceTxt = variable[isAssayDataset ? 'queryName': 'queryLabel'];
             }
 
             return sourceTxt;
