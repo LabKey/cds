@@ -41,7 +41,7 @@ public class CDSValidateTask extends AbstractPopulateTask
         }
 
         logger.info("Validating Visit Tag Assignments");
-        validationTable = sourceSchema.getTable("ds_validatVisitTagAssignment");
+        validationTable = sourceSchema.getTable("ds_validateVisitTagAssignment");
         sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
         rows = new SqlSelector(validationTable.getSchema(), sql).getMapArray();
         if (rows.length > 0)
