@@ -911,24 +911,19 @@ Ext.define('Connector.view.Chart', {
 
         if (!noplot)
         {
-            if (studyAxisInfo)
-            {
-                var studyAxisRange = studyAxisInfo ? studyAxisInfo.getRange() : {min: null, max: null};
-                this.setScale(plotConfig.scales.x, 'x', properties, studyAxisRange);
-                this.setScale(plotConfig.scales.yLeft, 'y', properties, studyAxisRange);
-            } else {
-                Ext.apply(plotConfig.scales.x, {trans : this.getScale('x')});
-                Ext.apply(plotConfig.scales.yLeft, {trans : this.getScale('y')});
+            // set the x axis domain based on the study axis informations min and max
+            if (studyAxisInfo) {
+                this.setScaleDomain(plotConfig.scales.x, 'x', studyAxisInfo.getRange());
             }
 
+            // set the scale type to linear or log, validating that we don't allow log with negative values
+            var xScaleType = this.setScaleType(plotConfig.scales.x, 'x', properties);
+            var yScaleType = this.setScaleType(plotConfig.scales.yLeft, 'y', properties);
             if(this.requireYGutter) {
-                Ext.apply(gutterYPlotConfig.scales.x, {trans : this.getScale('x')});
-                Ext.apply(gutterYPlotConfig.scales.yRight, {trans : this.getScale('y')});
+                Ext.apply(gutterYPlotConfig.scales.yRight, {trans : yScaleType});
             }
-
             if(this.requireXGutter) {
-                Ext.apply(gutterXPlotConfig.scales.xTop, {trans : this.getScale('x')});
-                Ext.apply(gutterXPlotConfig.scales.yLeft, {trans : this.getScale('y')});
+                Ext.apply(gutterXPlotConfig.scales.xTop, {trans : xScaleType});
             }
 
             // add brush handling
@@ -1723,32 +1718,27 @@ Ext.define('Connector.view.Chart', {
         return (selected.options && selected.options.scale) ? selected.options.scale : selected.defaultScale;
     },
 
-    setScale : function(scale, axis, properties, studyAxisRange) {
-        // This function should likely be renamed, and refactored so it has less side-effects.
+    setScaleType : function(scale, axis, properties) {
+        var scaleType = this.getScale(axis), allowLog;
+
         if (scale.scaleType !== 'discrete') {
-            var axisValue = this.getScale(axis), allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear;
-
-            if (!allowLog && axisValue == 'log') {
+            allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear
+            if (!allowLog && scaleType == 'log') {
                 this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.', true);
-                axisValue = 'linear';
+                scaleType = 'linear';
             }
 
-            // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
-            var min = null, max = null;
-            if (axis == 'x' && studyAxisRange.min != null) {
-                min = studyAxisRange.min < 0 ? studyAxisRange.min : 0;
-            }
-            if (axis == 'x' && studyAxisRange.max != null) {
-                max = studyAxisRange.max > 0 ? studyAxisRange.max : 0;
-            }
-
-            Ext.apply(scale, {
-                trans : axisValue,
-                domain: [min, max]
-            });
+            Ext.apply(scale, {trans : scaleType});
         }
 
-        return scale;
+        return scaleType;
+    },
+
+    setScaleDomain : function(scale, axis, studyAxisRange) {
+        // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
+        if (scale.scaleType !== 'discrete' && axis == 'x' && studyAxisRange) {
+            Ext.apply(scale, {domain: [studyAxisRange.min, studyAxisRange.max]});
+        }
     },
 
     getActiveMeasures : function() {

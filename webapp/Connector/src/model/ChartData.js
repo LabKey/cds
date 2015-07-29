@@ -300,17 +300,11 @@ Ext.define('Connector.model.ChartData', {
             }
 
             // allow any pair that does not contain a negative value. NaN, null, and undefined are non-negative values.
-            if (xa && xa.isNumeric) {
-                xIsNum = !(Ext.isNumber(x) && x < 1);
-                if (!negX && !xIsNum) {
-                    negX = true;
-                }
+            if (xa && xa.isNumeric && Ext.isNumber(xVal) && xVal <= 0) {
+                negX = true;
             }
-            if (ya.isNumeric) {
-                yIsNum = !(Ext.isNumber(y) && y < 1);
-                if (!negY && !yIsNum) {
-                    negY = true;
-                }
+            if (ya.isNumeric && Ext.isNumber(yVal) && yVal <= 0) {
+                negY = true;
             }
 
             var entry = {
