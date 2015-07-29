@@ -260,7 +260,8 @@ Ext.define('Connector.panel.Selector', {
                         this.hideLearnMessage('Source');
                     },
                     itemmouseenter: function(view, record, item) {
-                        this.showLearnMessage(view, record, item, 'Source');
+                        var title = record.get('category') == 'Assays' ? record.get('queryName') : record.get('queryLabel');
+                        this.showLearnMessage(item, title, record.get('description'), 'Source');
                     },
                     itemmouseleave: function() {
                         this.hideLearnMessage('Source');
@@ -316,7 +317,7 @@ Ext.define('Connector.panel.Selector', {
                         this.hideLearnMessage('Measure');
                     },
                     itemmouseenter: function(view, record, item) {
-                        this.showLearnMessage(view, record, item, 'Measure');
+                        this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
                     },
                     itemmouseleave: function() {
                         this.hideLearnMessage('Measure');
@@ -331,8 +332,8 @@ Ext.define('Connector.panel.Selector', {
         return this.measurePane;
     },
 
-    showLearnMessage : function(view, record, item, name) {
-        if(record.get('description')) {
+    showLearnMessage : function(item, title, description, name) {
+        if(description) {
             var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
                 test = setTimeout(function() {
@@ -344,8 +345,8 @@ Ext.define('Connector.panel.Selector', {
                         showCloseButton: false,
                         target: item,
                         placement: 'right',
-                        title: record.get('label') ? record.get('label') : undefined,
-                        content: record.get('description')
+                        title: title,
+                        content: description
                     });
                 }, 250);
             this.on('hide' + name + 'LearnMsg', function() {

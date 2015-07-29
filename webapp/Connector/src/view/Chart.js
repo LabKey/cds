@@ -2724,7 +2724,7 @@ Ext.define('Connector.view.Chart', {
                 _id = Ext.id(),
                 bubbleWidth = 160,
                 groupTags = {}, maxGroupTagCount = 0,
-                content = '<p><span style="font-weight: bold;">' + data.studyLabel + '</span> - ' + data.label + '</p>';
+                content = '', timeout;
 
         // content will display one row for each group so we need to gather together the tags for each group separately
         for (var i = 0; i < data.visitTags.length; i++) {
@@ -2747,22 +2747,24 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth = maxGroupTagCount * 90 + 70;
         }
 
-        calloutMgr.createCallout({
-            id: _id,
-            bubbleWidth: bubbleWidth,
-            xOffset: -(bubbleWidth/2),          // the nonvaccination icon is slightly smaller
-            arrowOffset: (bubbleWidth/2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
-            target: visitTagEl,
-            placement: 'top',
-            content: content
-        });
+        timeout = setTimeout(function() {
+            calloutMgr.createCallout({
+                id: _id,
+                bubbleWidth: bubbleWidth,
+                xOffset: -(bubbleWidth / 2),          // the nonvaccination icon is slightly smaller
+                arrowOffset: (bubbleWidth / 2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
+                target: visitTagEl,
+                placement: 'top',
+                showCloseButton: false,
+                title: data.studyLabel + ' - ' + data.label,
+                content: content
+            });
+        }, 250);
 
         this.on('hidevisittagmsg', function() {
+            clearTimeout(timeout);
             calloutMgr.removeCallout(_id);
         }, this);
-
-        // hide the 'X' since this tip isn't closeable
-        Ext.get(calloutMgr.getCallout(_id).element).addCls('no-close');
 
         // show the hover icon for this glyph
         this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');

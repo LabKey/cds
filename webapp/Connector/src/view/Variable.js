@@ -172,6 +172,7 @@ Ext.define('Connector.panel.ColorSelector', {
             id: this.win,
             target: document.querySelector('#color-legend'),
             placement: 'bottom',
+            showCloseButton: false,
             xOffset: -100, // assumes width of 280,
             arrowOffset: 'center',
             content: '<div id="legend-window"></div>',
@@ -194,9 +195,6 @@ Ext.define('Connector.panel.ColorSelector', {
                         .attr('y', function(d, i) {return 13 + i * 20});
             }
         });
-
-        // 22570: hide the 'X' since this tip isn't closeable
-        Ext.get(calloutMgr.getCallout(this.win).element).addCls('no-close');
     },
 
     hideHover : function() {

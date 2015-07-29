@@ -605,13 +605,16 @@ div.hopscotch-bubble {
   border: 1px solid $border-color;
   box-shadow: 2px 2px 0 $box-shadow-color;
 
+  .hopscotch-title {
+    font-size: 13px;
+    padding-bottom: 8px;
+  }
+
   .hopscotch-content {
     margin: 0;
     padding: 0;
-
-    p, span {
-      font-family: $info-font;
-    }
+    font-family: $info-font;
+    color: $secondary-text-color;
   }
 
   .hopscotch-actions {
