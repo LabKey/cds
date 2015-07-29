@@ -364,18 +364,23 @@ Ext.define('Connector.view.Chart', {
     },
 
     getPlotSize : function(box) {
-        var size = {width:box.width,height:box.height};
+        var size = {};
 
-        if(this.requireStudyAxis) {
+        if (this.requireStudyAxis && this.hasStudyAxisData) {
             size.width = box.width - this.studyAxisWidthOffset;
-        }else if(this.requireYGutter) {
+        }
+        else if (this.requireYGutter) {
             size.width = box.width - this.yGutterWidth;
         }
+        else {
+            size.width = box.width;
+        }
 
-        if(this.requireStudyAxis) {
-            size.height = box.height;
-        }else if(this.requireXGutter) {
+        if (this.requireXGutter) {
             size.height = box.height - this.xGutterHeight;
+        }
+        else {
+            size.height = box.height;
         }
 
         return size;
@@ -420,13 +425,13 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.getStudyAxisPanel().isVisible() && this.studyAxis && this.hasStudyAxisData) {
-            this.studyAxis.width(this.getStudyAxisPanel().getWidth()- 40);
+            this.studyAxis.width(Math.max(0, this.getStudyAxisPanel().getWidth()- 40));
             this.studyAxis.scale(this.plot.scales.x.scale);
             this.studyAxis();
         }
 
-        this.resizePlotMag(this.getNoPlotMsg(), plotBox);
-        this.resizePlotMag(this.getEmptyPlotMsg(), plotBox);
+        this.resizePlotMsg(this.getNoPlotMsg(), plotBox);
+        this.resizePlotMsg(this.getEmptyPlotMsg(), plotBox);
 
         this.resizeMessage();
 
@@ -435,7 +440,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    resizePlotMag : function(msgCmp, plotBox) {
+    resizePlotMsg : function(msgCmp, plotBox) {
         if (msgCmp) {
             var el = msgCmp.getEl(),
                 top = (plotBox.height / 2) - 15,
@@ -2802,7 +2807,7 @@ Ext.define('Connector.view.Chart', {
 
         this.studyAxis.studyData(studyAxisInfo.getData())
                 .scale(this.plot.scales.x.scale)
-                .width(this.getStudyAxisPanel().getWidth() - 40)
+                .width(Math.max(0, this.getStudyAxisPanel().getWidth() - 40))
                 .visitTagMouseover(this.showVisitTagHover, this)
                 .visitTagMouseout(this.removeVisitTagHover, this);
 
