@@ -63,7 +63,7 @@ public class DataGrid
         _test.waitForElement(filterIcon);
         _test.scrollIntoView(filterIcon);
         _test.mouseOver(filterIcon);
-        Locator.XPathLocator hoveredColumn = columnHeader.append(Locator.tagWithClass("div", "x-column-header-over"));
+        Locator.XPathLocator hoveredColumn = columnHeader.append("[contains(concat(' ',normalize-space(@class),' '), ' x-column-header-over ')]");
         _test.waitForElement(hoveredColumn);
         _test.click(filterIcon);
         _test._ext4Helper.waitForMask();
@@ -147,8 +147,9 @@ public class DataGrid
     {
         if (count > 25)
         {
+            long expCount = getExportRowCount();
             _test.waitForElements(Locators.dataRow, 25);
-            Assert.assertEquals("Wrong number of rows in export", count, getExportRowCount());
+            Assert.assertEquals("Wrong number of rows in export. Expected " + count + " found " + expCount + ".", count, expCount);
         }
         else
         {
@@ -184,7 +185,7 @@ public class DataGrid
             @Override
             public Void apply(Void aVoid)
             {
-                _test.click(Locators.columnHeaderLocator(columnName).append(Locator.tagWithClass("div", "x-column-header-inner")));
+                _test.click(Locators.columnHeaderLocator(columnName));
                 return null;
             }
         });
@@ -261,7 +262,7 @@ public class DataGrid
 
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {
-            return Locator.tagWithClass("div", "x-column-header").withText(columnHeaderName);
+            return Locator.tagWithClass("div", "x-column-header-inner").withText(columnHeaderName);
         }
 
         public static Locator.XPathLocator cellLocator(String cellContent)

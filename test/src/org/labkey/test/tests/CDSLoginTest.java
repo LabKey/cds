@@ -40,7 +40,7 @@ import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
 
-    private static final String PROJECT_NAME = "CDSLoginTest Project";
+    private static final String PROJECT_NAME = "CDSTest Project";
     private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private final CDSHelper _cds = new CDSHelper(this);
@@ -101,7 +101,16 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         signOutHTTP();
 
-        clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
+        sleep(1000);
+
+//        // It looks like there was a change in the behavior. If the test runs quickly calling signOutHTTP
+//        // will generate a session time out. If the test run slowly (like you are stepping through it) you will
+//        // see the grid navigation link and clicking on it will generate a time out message.
+        if (isElementPresent(CDSHelper.NavigationLink.GRID.getLinkLocator()) && isElementVisible(CDSHelper.NavigationLink.GRID.getLinkLocator()))
+        {
+            clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
+        }
+
         waitForElement(Locator.css("p.errormsg").withText("Your session has timed out. Please login to continue."));
     }
 

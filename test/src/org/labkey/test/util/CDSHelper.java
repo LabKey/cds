@@ -142,7 +142,7 @@ public class CDSHelper
     public static final String ICS_MARKER_NAME = "Functional marker name";
     public static final String ICS_MARKER_TYPE = "Functional marker type";
     public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
-    public static final String ICS_LAB = "Lab";
+    public static final String ICS_LAB = "Lab ID";
     public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
     public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
     public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
@@ -183,9 +183,17 @@ public class CDSHelper
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
 
+    public static final String GRID_TITLE_BAMA = "BAMA";
+    public static final String GRID_TITLE_DEMO = "Demographics";
+    public static final String GRID_TITLE_ELISPOT = "ELISPOT";
+    public static final String GRID_TITLE_ICS = "ICS";
+    public static final String GRID_TITLE_NAB = "NAb";
+    public static final String GRID_COL_SUBJECT_ID = "Subject Id";
+    public static final String GRID_COL_STUDY = "Study";
+    public static final String GRID_COL_VISIT = "Visit";
 
     // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
-    public static final boolean debugTest = false;
+    public static final boolean debugTest = true;
     // Because the test data changes frequently it can be useful to skip any steps that validate counts.
     public static final boolean validateCounts = false;
 

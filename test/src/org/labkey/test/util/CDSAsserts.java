@@ -221,7 +221,7 @@ public class CDSAsserts
 
         if(studyCount > -1)
         {
-            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Studies", "Studies", true));
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
         }
 
         if(assayCount > -1)

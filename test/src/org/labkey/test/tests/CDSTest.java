@@ -556,7 +556,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.useSelectionAsSubjectFilter();
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]), 1);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
-        _asserts.assertFilterStatusCounts(75, 1, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
 
         // remove filter
         click(Locator.tagWithClass("div", "closeitem"));
@@ -580,8 +580,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForTextToDisappear("Filter removed.", 5000);
     }
 
-// TODO Need to work around column header issue. Disabling test until that is fixed.
-//    @Test
+    @Test
     public void verifyGrid()
     {
         log("Verify Grid");
@@ -593,31 +592,47 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         waitForText("View data grid"); // grid warning
 
-        // TODO this is part of the problem. addGridColumn will validate the column is added.
-        // TODO Unfortunately Neutralizing antibody is shown as NAb in the header. Maybe a product change is needed.
-        gridColumnSelector.addGridColumn("Neutralizing antibody", "Assay Identifier", true, true);
-        gridColumnSelector.addGridColumn("Neutralizing antibody", "Lab", false, true);
-        grid.ensureColumnsPresent("Assay Identifier", "Lab");
-        grid.assertRowCount(2969);
-        grid.assertPageTotal(119);
+        // TODO Need to change "Neutralizing antibody" once the selector changes.
+        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(24391); // TODO Test data dependent.
+            grid.assertPageTotal(976); // TODO Test data dependent.
+        }
 
         //
         // Check paging buttons with known dataset. Verify with first and last subject id on page.
         //
         log("Verify grid paging");
-        grid.sort("Subject Id");
+        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
         grid.goToLastPage();
-        grid.assertCurrentPage(119);
-        grid.assertCellContent("9181");
-        grid.assertCellContent("9199");
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertCurrentPage(976); // TODO Test data dependent.
+            grid.assertCellContent("c264-003"); // TODO Test data dependent.
+            grid.assertCellContent("c265-001"); // TODO Test data dependent.
+        }
 
         grid.clickPreviousBtn();
-        grid.assertCurrentPage(118);
-        grid.assertCellContent("9156");
-        grid.assertCellContent("9180");
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertCurrentPage(975); // TODO Test data dependent.
+            grid.assertCellContent("908-015"); // TODO Test data dependent.
+            grid.assertCellContent("908-026"); // TODO Test data dependent.
+        }
+
         grid.goToFirstPage();
-        grid.assertCellContent("193001");
-        grid.assertCellContent("193002");
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("039-001"); // TODO Test data dependent.
+            grid.assertCellContent("039-017"); // TODO Test data dependent.
+        }
 
         //
         // Navigate to Summary to apply a filter
@@ -625,104 +640,102 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.hideEmpty();
-        cds.selectBars(CDSHelper.STUDIES[0]);
+        cds.selectBars(CDSHelper.STUDIES[4]);
         cds.useSelectionAsSubjectFilter();
 
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[4]));
 
         //
         // Check to see if grid is properly filtering based on explorer filter
         //
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
-        grid.assertRowCount(1643);
-        cds.clearFilter();
-        grid.assertRowCount(2969);
-        assertElementPresent(DataGrid.Locators.cellLocator("LabKey Lab"));
 
-        gridColumnSelector.addGridColumn("Demographics", "Sex", true, true);
-        gridColumnSelector.addGridColumn("Demographics", "Race", false, true);
-        grid.ensureColumnsPresent("Point IC50", "Lab", "Sex", "Race");
-        grid.assertRowCount(2969);
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(110); // TODO Test data dependent.
+        }
+
+        cds.clearFilter();
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(24391); // TODO Test data dependent.
+            assertElementPresent(DataGrid.Locators.cellLocator("063-001")); // TODO Test data dependent.
+        }
+
+        gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_SEX, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(24391); // TODO Test data dependent.
+        }
 
         log("Remove a column");
-        gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
-        grid.assertColumnsNotPresent("Point IC50");
-        grid.ensureColumnsPresent("Lab"); // make sure other columns from the same source still exist
-        grid.assertRowCount(2969);
+        // TODO Need to change "Neutralizing antibody" once the selector changes.
+        gridColumnSelector.removeGridColumn("Neutralizing antibody", CDSHelper.NAB_ASSAY, false);
+        grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY);
+        grid.ensureColumnsPresent(CDSHelper.NAB_LAB); // make sure other columns from the same source still exist
 
-        grid.setFacet("Race", "White");
-        grid.assertRowCount(702);
-        grid.assertPageTotal(29);
-        _asserts.assertFilterStatusCounts(84,3,-1);
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(24391); // TODO Test data dependent.
+        }
+
+        grid.setFacet(CDSHelper.DEMO_RACE, "White");
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(16447); // TODO Test data dependent.
+            grid.assertPageTotal(658); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+        }
 
         //
         // More page button tests
         //
         log("Verify grid paging with filtered dataset");
-        grid.sort("Subject Id");
+        grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
         grid.clickNextBtn();
         grid.assertCurrentPage(2);
-        grid.assertCellContent("9149");
-        grid.assertCellContent("9102");
+
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("908-204"); // TODO Test data dependent.
+            grid.assertCellContent("908-203"); // TODO Test data dependent.
+        }
 
         grid.clickPreviousBtn();
         grid.goToPreviousPage();
         grid.assertCurrentPage(3);
-        grid.assertCellContent("249325733");
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("908-202"); // TODO Test data dependent.
+        }
 
         grid.goToNextPage();
         grid.assertCurrentPage(5);
-        grid.assertCellContent("249325732");
-        grid.assertCellContent("249325731");
+
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertCellContent("908-204"); // TODO Test data dependent.
+            grid.assertCellContent("908-203"); // TODO Test data dependent.
+        }
 
         log("Change column set and ensure still filtered");
-        gridColumnSelector.addGridColumn("NAb", "Point IC50", false, true);
-        grid.ensureColumnsPresent("Point IC50");
-        grid.assertRowCount(702);
-        grid.assertPageTotal(29);
-        _asserts.assertFilterStatusCounts(84, 3, -1);
+        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
+        grid.ensureColumnsPresent(CDSHelper.NAB_TITERIC50);
 
-        log("Add a lookup column");
-        gridColumnSelector.addLookupColumn("NAb", "Lab", "PI");
-        grid.ensureColumnsPresent("Point IC50", "Lab", "PI");
-        grid.assertRowCount(702);
-        grid.assertPageTotal(29);
-        _asserts.assertFilterStatusCounts(84, 3, -1);
+        if(CDSHelper.validateCounts)
+        {
+            grid.assertRowCount(702); // TODO Test data dependent.
+            grid.assertPageTotal(29); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(84, 3, -1); // TODO Test data dependent.
+        }
 
-        log("Filter on a looked-up column");
-        grid.setFacet("PI", "Mark Igra");
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.assertRowCount(443);
-        grid.assertPageTotal(18);
-        _asserts.assertFilterStatusCounts(15, 2, -1);
-
-        log("Filter undo on grid");
-        cds.clearFilter();
-        // Checking row counts on large datasets takes too long, just check number of pages.
-        grid.assertPageTotal(119);
-        _asserts.assertDefaultFilterStatusCounts();
-
-        click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Race: = White"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Lab/PI: = Mark Igra"));
-        grid.assertRowCount(443);
-        grid.assertPageTotal(18);
-        _asserts.assertFilterStatusCounts(15, 2, -1);
-
-        grid.setFilter("Point IC50", "Is Greater Than", "60");
-        grid.assertRowCount(2);
-        grid.clearFilters("Race");
-        grid.assertRowCount(13);
-        grid.clearFilters("Point IC50");
-        grid.assertPageTotal(86);
-        grid.clearFilters("PI");
-        grid.assertPageTotal(119);
-        assertElementPresent(Locator.css(".filterpanel").containing("All subjects")); // ensure there are no app filters remaining
-
-        grid.sort("Lab");
-        gridColumnSelector.removeGridColumn("NAb", "Point IC50", false);
-        grid.assertSortPresent("Lab");
     }
 
 // TODO Still needs work. Counts are changing with each new dataset.
@@ -1245,17 +1258,4 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         }
     }
 
-    private boolean isValidDate(String date)
-    {
-        String DATE_FORMAT = "MMM dd, yyyy";
-
-        try {
-            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-            df.setLenient(false);
-            df.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-    }
 }
