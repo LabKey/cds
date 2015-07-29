@@ -496,7 +496,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                             checkbox.resumeEvents();
                         }, this);
 
-                        this.fireEvent('selectionchange', this, this.getDropdownCheckboxGroup().getValue()[this.name + '-check'], newValue);
+                        this.fireEvent('selectionchange', this, this.getDropdownCheckboxGroup().getValue()[this.cbItemId], newValue);
                     }
                 }
             });
@@ -524,15 +524,16 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                             selectAllCb.setValue(checkAll);
                             selectAllCb.resumeEvents();
 
-                            this.fireEvent('selectionchange', this, this.dropdownCheckboxGroup.getValue()[this.name + '-check'], checkAll);
+                            this.fireEvent('selectionchange', this, this.dropdownCheckboxGroup.getValue()[this.cbItemId], checkAll);
                         }
                     }
                 });
             }, this);
 
-            // set the 'name' property for all items in this checkbox group
+            // issue: 23836 set the 'name' property for all items in this checkbox group using a unique value
+            this.cbItemId = Ext.id();
             Ext.each(checkboxItems, function(item) {
-                item.name = this.name + '-check';
+                item.name = this.cbItemId;
             }, this);
 
             this.dropdownCheckboxGroup = Ext.create('Ext.form.CheckboxGroup', {
@@ -567,9 +568,10 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 });
             }, this);
 
-            // set the 'name' property for all items in this radio group
+            // issue: 23836 set the 'name' property for all items in this radio group using a unique value
+            var id = Ext.id();
             Ext.each(radioItems, function(item) {
-                item.name = this.name + '-radio';
+                item.name = id;
             }, this);
 
             this.dropdownRadioGroup = Ext.create('Ext.form.RadioGroup', {
@@ -580,7 +582,7 @@ Ext.define('Connector.panel.AdvancedOptionRadioDropdown', {
                 listeners: {
                     scope: this,
                     change: function(radiogroup, newValue) {
-                        this.fireEvent('selectionchange', this, newValue[this.name + '-radio'], false);
+                        this.fireEvent('selectionchange', this, newValue[id], false);
                     }
                 }
             });
