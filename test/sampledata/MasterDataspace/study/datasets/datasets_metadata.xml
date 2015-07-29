@@ -271,7 +271,7 @@
       </column>
       <column columnName="lab_code">
         <datatype>varchar</datatype>
-        <columnTitle>Lab</columnTitle>
+        <columnTitle>Lab ID</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <description>A code indicating the lab performing the assay.</description>
         <dimension>true</dimension>
