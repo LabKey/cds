@@ -1741,6 +1741,7 @@ Ext.define('Connector.view.Chart', {
     setScaleDomain : function(scale, axis, studyAxisRange) {
         // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
         if (scale.scaleType !== 'discrete' && axis == 'x' && studyAxisRange) {
+            // TODO: we can have data outside of the study axis min/max range right?
             Ext.apply(scale, {domain: [studyAxisRange.min, studyAxisRange.max]});
         }
     },
@@ -2174,10 +2175,12 @@ Ext.define('Connector.view.Chart', {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
-                // always add in the Container, SubjectId, and SequenceNum columns for a selected measure on the X or Y axis
+                // always add in the Container and SubjectId columns for a selected measure on the X or Y axis
                 this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', []);
                 this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, []);
-                if (!activeMeasures[axis].isDemographic) {
+
+                // only add the SequenceNum column for selected measures that are not demographic and no time point
+                if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') {
                     this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', []);
                 }
 

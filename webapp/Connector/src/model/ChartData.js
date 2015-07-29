@@ -255,7 +255,6 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // configure AxisMeasureStore based on the x, y, and color measures selections
-        // TODO filter for dataset column or ... in Assay1 vs Assay2 plot case for perf improvement
         axisMeasureStore.setYMeasure(this.getMeasureStore(), _yid, yMeasureFilter);
         if (_xid) {
             axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid, xMeasureFilter);
@@ -383,7 +382,7 @@ Ext.define('Connector.model.ChartData', {
 
     _getXValue : function(measure, alias, row) {
         if (row.x.hasOwnProperty('isUnique')) {
-            return row.x.value ? row.x.value : 'undefined';
+            return Ext.isDefined(row.x.value) && row.x.value != null ? row.x.value : 'undefined';
         }
         else {
             return row.x.getMean();
