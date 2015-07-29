@@ -151,12 +151,19 @@ Ext.define('Connector.panel.Selector', {
     },
 
     setActiveMeasure : function(measure) {
+        if (!Ext.isDefined(measure)) {
+            measure = null;
+        }
+
         // since setting the active measure comes from external callers, grab the initOptions and reset the
         // initialized bit to treat it like a new selector
         this.initOptions = Ext.isObject(measure) ? Ext.clone(measure.options) : undefined;
         this.initialized = false;
 
         this.activeMeasure = this.ensureMeasureModel(measure);
+
+        // issue 23845: always clear measure selection so that the reselect from 'cancel' initializes as expected
+        this.getMeasurePane().getSelectionModel().deselectAll();
 
         this.updateSelectorPane();
     },
@@ -394,12 +401,14 @@ Ext.define('Connector.panel.Selector', {
         });
 
         var selModel = this.getMeasurePane().getSelectionModel();
-        if (selModel.hasSelection() && selModel.getLastSelected() === activeMeasure) {
-            // already have selected measure, just need to show the advanced options pane
-            this.slideAdvancedOptionsPane();
-        }
-        else if (activeMeasure) {
-            Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
+        if (activeMeasure) {
+            if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
+                // already have selected measure, just need to show the advanced options pane
+                this.slideAdvancedOptionsPane();
+            }
+            else {
+                Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
+            }
         }
         else {
             // default to selecting the first variable for the given source
