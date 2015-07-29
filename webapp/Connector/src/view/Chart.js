@@ -1998,6 +1998,17 @@ Ext.define('Connector.view.Chart', {
      */
     requestChartData : function(activeMeasures) {
         this.getSubjectsIn(function(ptidList) {
+            // issue 23885: we don't need to include the color measure if it isn't from the x or y dataset or demographic
+            if (activeMeasures.color) {
+                var demographicSource = activeMeasures.color.isDemographic,
+                    matchXSource = activeMeasures.x && activeMeasures.x.queryName == activeMeasures.color.queryName,
+                    matchYSource = activeMeasures.y && activeMeasures.y.queryName == activeMeasures.color.queryName;
+
+                if (!demographicSource && !matchXSource && !matchYSource) {
+                    activeMeasures.color = null;
+                }
+            }
+
             var measures = this.getMeasureSet(activeMeasures, true /* Include any measures declared in filters */).measures;
 
             this.applyFiltersToMeasure(measures, ptidList);
@@ -2430,6 +2441,7 @@ Ext.define('Connector.view.Chart', {
             this.colorAxisSelector = Ext.create('Connector.panel.Selector', {
                 headerTitle: 'color',
                 testCls: 'color-axis-selector',
+                disableAdvancedOptions: true,
                 activeMeasure: this.activeColorSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,

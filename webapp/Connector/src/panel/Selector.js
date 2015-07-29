@@ -30,6 +30,8 @@ Ext.define('Connector.panel.Selector', {
 
     testCls: undefined,
 
+    disableAdvancedOptions: false,
+
     // track the first time that the selector is initialized so we can use initOptions properly
     initialized: false,
 
@@ -528,6 +530,10 @@ Ext.define('Connector.panel.Selector', {
     },
 
     getAdvancedOptionValues : function() {
+        if (this.disableAdvancedOptions) {
+            return null;
+        }
+
         var values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
 
         // move the dimension selections into a separate map to keep them separate
@@ -638,7 +644,7 @@ Ext.define('Connector.panel.Selector', {
 
     configureAdvancedOptions : function() {
 
-        if (this.activeMeasure)
+        if (!this.disableAdvancedOptions && this.activeMeasure)
         {
             this.getAdvancedPane().removeAll();
 
