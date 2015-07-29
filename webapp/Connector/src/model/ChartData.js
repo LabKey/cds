@@ -230,7 +230,7 @@ Ext.define('Connector.model.ChartData', {
 
         // if we are plotting the same continuous variable on both the x and y axis,
         // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
-        if (xa.isContinuous && xa.schemaName == ya.schemaName && xa.queryName == ya.queryName) {
+        if (xa.isContinuous && xa.schema == ya.schema && xa.query == ya.query) {
             yMeasureFilter = {};
             xMeasureFilter = {};
 
@@ -321,7 +321,7 @@ Ext.define('Connector.model.ChartData', {
             if (xVal == null) {
                 undefinedXRows.push(entry);
             }
-            else if (yVal == null) {
+            else if (xa.isContinuous && yVal == null) {
                 undefinedYRows.push(entry);
             }
             else {
@@ -382,7 +382,12 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getXValue : function(measure, alias, row) {
-        return row.x.isUnique ? row.x.value : row.x.getMean();
+        if (row.x.hasOwnProperty('isUnique')) {
+            return row.x.value ? row.x.value : 'undefined';
+        }
+        else {
+            return row.x.getMean();
+        }
     },
 
     _getColorValue : function(measure, alias, row) {

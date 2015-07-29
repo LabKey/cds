@@ -487,7 +487,6 @@ Ext.define('Connector.view.Chart', {
     },
 
     pointHoverText : function(row) {
-        // TODO: why is this being called for each point on render?
         var text = 'Subject: ' + row.subjectId, colon = ': ', linebreak = ',\n';
 
         if (row.xname) {
