@@ -273,28 +273,26 @@ Ext.define('Connector.model.InfoPane', {
     processMembers : function(cellset) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
-        var memberDefinitions = cellset.axes[1].positions;
-        var counts = cellset.cells;
-
-        var modelDatas = [], selectedItems = [];
-        var filterBased = this.isFilterBased();
-
-        var dim = this.get('dimension');
-        var hasDetails = this.get('dimension').supportsDetails;
-        var linkPrefix = '#learn/learn/' + encodeURIComponent(dim.name) + '/';
+        var memberDefinitions = cellset.axes[1].positions,
+            counts = cellset.cells,
+            modelDatas = [],
+            selectedItems = [],
+            filterBased = this.isFilterBased(),
+            dim = this.get('dimension'),
+            hasDetails = dim.supportsDetails;
 
         Ext.each(memberDefinitions, function(definition, idx) {
 
-            var def = definition[0];
-            var _count = counts[idx][0].value;
-            var _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
+            var def = definition[0],
+                _count = counts[idx][0].value,
+                _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
 
             modelDatas.push({
                 uniqueName: def.uniqueName,
                 name: _name,
                 count: _count,
                 hasDetails: hasDetails,
-                detailLink: linkPrefix + encodeURIComponent(_name)
+                detailLink: Connector.getService('Learn').getURL(dim, _name, 'label')
             });
 
             if (filterBased) {

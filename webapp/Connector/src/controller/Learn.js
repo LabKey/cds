@@ -9,6 +9,46 @@ Ext.define('Connector.controller.Learn', {
 
     views: ['Learn'],
 
+    URL_DELIMITER: '=',
+
+    isService: true,
+
+
+    //
+    // Service Functions
+    //
+
+    /**
+     * Resolves a URL for learn about resources. If only dimension is provided,
+     * it will resolve to the dimensions learn about listing. If a property is
+     * provided, the value must occur in a single record in order to resolve
+     * successfully.
+     * @param dimension
+     * @param {string} [value] The id/name/value of the resource to be resolved.
+     * @param {string} [prop] The model property to resolve by. If not provided, it defaults to the identifying property.
+     * @returns {string}
+     */
+    getURL : function(dimension, value, prop) {
+        var url = '#learn/learn/' + encodeURIComponent(dimension.name),
+            sep = '/';
+
+        if (!Ext.isEmpty(value)) {
+
+            url += sep;
+
+            if (!Ext.isEmpty(prop)) {
+                url += encodeURIComponent(prop) + this.URL_DELIMITER;
+            }
+
+            url += encodeURIComponent(value);
+        }
+
+        return url;
+    },
+
+    //
+    // View Controller Functions
+    //
     init : function() {
 
         this.control('learnheader', {

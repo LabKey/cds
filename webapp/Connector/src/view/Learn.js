@@ -167,15 +167,26 @@ Ext.define('Connector.view.Learn', {
                     _id = parseInt(id);
                 }
 
-                var model = store.getById(_id);
+                var model = store.getById(_id) || this.resolveModel(store, _id);
 
                 if (model) {
                     this.loadModel(model, dimension, urlTab);
                 }
                 else {
-                    store.on('load', function(s) {
-                        this.loadModel(s.getById(_id), dimension, urlTab);
-                    }, this, {single: true});
+                    if (!store.isLoading() && store.getCount() > 0) {
+                        Connector.getApplication().getController('Connector').showNotFound();
+                    }
+                    else {
+                        store.on('load', function(s) {
+                            var _model = s.getById(_id) || this.resolveModel(s, _id);
+                            if (_model) {
+                                this.loadModel(_model, dimension, urlTab);
+                            }
+                            else {
+                                Connector.getApplication().getController('Connector').showNotFound();
+                            }
+                        }, this, {single: true});
+                    }
                     this.loadData(dimension, store);
                 }
             }
@@ -215,6 +226,27 @@ Ext.define('Connector.view.Learn', {
             var dimModel = this.getHeader().getHeaderView().getStore().getAt(0);
             if (dimModel && dimModel.get('detailModel') && dimModel.get('detailView')) {
                 this.loadDataView(dimModel.data);
+            }
+        }
+    },
+
+    resolveModel : function(store, id) {
+        var delimiter = Connector.getService('Learn').URL_DELIMITER;
+        if (id.indexOf(delimiter) != -1) {
+            var _id = id.split(delimiter),
+                    prop = _id[0],
+                    val = _id[1],
+                    data = store.data.items,
+                    ret = [];
+
+            for(var i = 0; i < data.length; i++) {
+                if(ret.length < 2 && data[i].get(prop) === val) {
+                    ret.push(data[i]);
+                }
+            }
+
+            if(ret.length === 1) {
+                return ret[0];
             }
         }
     },
