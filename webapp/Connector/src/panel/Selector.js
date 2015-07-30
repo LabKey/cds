@@ -349,7 +349,14 @@ Ext.define('Connector.panel.Selector', {
     },
 
     showLearnMessage : function(item, title, description, name) {
-        if(description) {
+        if (description) {
+            //truncate description to roughly 4 rows and ensures that a word isn't being cut off.
+            var charLimit = 95;
+            if (description.length > charLimit) {
+               description = description.substring(0, charLimit + 1);
+               description = description.substring(0, description.lastIndexOf(' ')) + '...';
+            }
+
             var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
                 displayTooltip = setTimeout(function() {
