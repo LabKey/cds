@@ -567,7 +567,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-       _asserts.assertFilterStatusCounts(75, 1, -1); // TODO Test data dependent.
+       _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
 
         // remove an undo filter
         click(Locator.tagWithClass("div", "closeitem"));
