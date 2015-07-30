@@ -264,9 +264,9 @@ Ext.define('Connector.panel.Selector', {
                             callback: function() {
                                 me.showMeasures(source);
                                 selModel.clearSelections();
+                                me.hideLearnMessage('Source');
                             }
                         });
-                        this.hideLearnMessage('Source');
                     },
                     itemmouseenter: function(view, record, item) {
                         var title = record.get('category') == 'Assays' ? record.get('queryName') : record.get('queryLabel');
@@ -345,7 +345,7 @@ Ext.define('Connector.panel.Selector', {
         if(description) {
             var calloutMgr = hopscotch.getCalloutManager(),
                 _id = Ext.id(),
-                test = setTimeout(function() {
+                displayTooltip = setTimeout(function() {
                     calloutMgr.createCallout({
                         id: _id,
                         bubbleWidth: 160,
@@ -359,7 +359,7 @@ Ext.define('Connector.panel.Selector', {
                     });
                 }, 250);
             this.on('hide' + name + 'LearnMsg', function() {
-                clearTimeout(test);
+                clearTimeout(displayTooltip);
                 calloutMgr.removeCallout(_id);
             }, this);
         }
