@@ -35,6 +35,7 @@ Ext.define('Connector.panel.Selector', {
 
     // track the first time that the selector is initialized so we can use initOptions properly
     initialized: false,
+    initOptions: undefined,
 
     constructor : function(config) {
 
@@ -323,6 +324,11 @@ Ext.define('Connector.panel.Selector', {
                 ),
                 listeners: {
                     select: function(selModel, measure) {
+                        // issue 23866: Persisted advanced option selections when changing variables within the same source
+                        if (this.initialized) {
+                            this.initOptions = this.getAdvancedOptionValues();
+                        }
+
                         this.selectMeasure(measure);
                         this.hideLearnMessage('Measure');
                     },
@@ -396,6 +402,11 @@ Ext.define('Connector.panel.Selector', {
                 me.measurePane.getEl().slideOut('r', {
                     duration: 250,
                     callback: function() {
+                        // clear the initOptions and deselect (issue 23845) any measure for the source we are leaving
+                        me.initialized = false;
+                        me.initOptions = undefined;
+                        me.getMeasurePane().getSelectionModel().deselectAll();
+
                         me.showSources();
                     }
                 });
@@ -780,13 +791,6 @@ Ext.define('Connector.panel.Selector', {
             }, this);
             dimensions = newDimensions;
         }
-        else
-        {
-            // TODO: if no dimensions array on measure or source, should we default to 'isDimension' columns in the source?
-            //dimensions = this.queryService.MEASURE_STORE.queryBy(function(m) {
-            //    return m.get('isDimension') === true && m.get('queryName') === this.activeMeasure.get('queryName');
-            //}, this).getRange();
-        }
 
         return dimensions;
     },
@@ -933,11 +937,6 @@ Ext.define('Connector.panel.Selector', {
 
     selectMeasure : function(measure) {
         this.activeMeasure = measure;
-
-        // clear the initOptions if we have already initialized the selector
-        if (this.initialized) {
-            this.initOptions = undefined;
-        }
 
         this.getButton('select-button').enable();
 

@@ -267,10 +267,10 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         var defaultSel = this.dimension.get('defaultSelection');
 
         if (Ext.isDefined(this.value) && this.value != null) {
-            // this.value == null, means select all
             this.setValue(this.value, Ext.Array.equals(this.value, this.store.collect(this.storeValueField, true)));
         }
-        else if (defaultSel.all) {
+        else if (defaultSel.all || (Ext.isDefined(this.value) && this.value == null)) {
+            // this.value == null, means select all
             this.setValue(this.store.collect(this.storeValueField, true), true);
         }
         else if (Ext.isDefined(defaultSel.value) && this.getRecordFromStore(defaultSel.value) != null) {
