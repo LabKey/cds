@@ -55,24 +55,6 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
-        this.control('plot', {
-            axisselect: function(plot, axis, selection) {
-                var type;
-                if (axis === 'y') {
-                    type = 'yvarselector';
-                }
-                else if (axis === 'x') {
-                    type = 'xvarselector';
-                }
-                else if (axis === 'color') {
-                    type = 'colorvarselector';
-                }
-                if (type) {
-                    Ext.getCmp(type).getModel().updateVariable(selection);
-                }
-            }
-        });
-
         this.control('axisselectdisplay > panel > panel > button#gotoassaypage', {
             click: function(btn) {
                 var win = btn.up('window');

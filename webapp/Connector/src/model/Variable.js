@@ -62,8 +62,9 @@ Ext.define('Connector.model.Variable', {
     updateVariable : function(selections) {
         var sel = null, source, variable, options;
         if (Ext.isArray(selections)) {
-            if (selections.length > 0)
+            if (selections.length > 0) {
                 sel = selections[0];
+            }
         }
         else if (Ext.isDefined(selections)) {
             sel = selections;
