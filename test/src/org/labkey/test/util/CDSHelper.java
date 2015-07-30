@@ -193,7 +193,7 @@ public class CDSHelper
     public static final String GRID_COL_VISIT = "Visit";
 
     // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
-    public static final boolean debugTest = true;
+    public static final boolean debugTest = false;
     // Because the test data changes frequently it can be useful to skip any steps that validate counts.
     public static final boolean validateCounts = false;
 
