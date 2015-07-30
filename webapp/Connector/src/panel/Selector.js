@@ -31,6 +31,7 @@ Ext.define('Connector.panel.Selector', {
     testCls: undefined,
 
     disableAdvancedOptions: false,
+    boundDimensionNames: [],
 
     // track the first time that the selector is initialized so we can use initOptions properly
     initialized: false,
@@ -552,57 +553,129 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindDimensions : function() {
-        var dimensions = this.getDimensionsForMeasure(this.activeMeasure);
-        this.boundDimensionNames = [];
+        var advancedOptionCmps = [], combinedMeasureSet = {aliases: [], values: []};
 
-        Ext.each(dimensions, function(dimension) {
-            // hierarchical dimensions can have use an alternate column for filtering
-            var dimensionName = dimension.get('name');
-            if (Ext.isDefined(dimension.get('hierarchicalFilterColumnName'))) {
-                dimensionName = dimension.get('hierarchicalFilterColumnName');
-            }
+        Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
 
+            var dimensionName = dimension.getFilterMeasure().get('name');
             this.boundDimensionNames.push(dimensionName);
 
-            this.getAdvancedPane().add(
-                Ext.create('Connector.component.AdvancedOptionDimension', {
-                    testCls: this.testCls + '-option-' + dimension.get('name'),
-                    dimension: dimension,
-                    value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimensionName] : undefined,
-                    listeners: {
-                        scope: this,
-                        click: function(cmp, isHierarchical) {
-                            if (isHierarchical) {
-                                var me = this;
-                                if (me.advancedPane) {
-                                    me.advancedPane.hide();
-                                }
+            var advancedOptionCmp = this.createAdvancedOptionCmp(dimensionName, dimension);
+            advancedOptionCmps.push(advancedOptionCmp);
 
-                                me.measurePane.getEl().slideOut('l', {
-                                    duration: 250,
-                                    callback: function() {
-                                        me.showHierarchicalSelection(cmp);
-                                    }
-                                });
-                            }
-                        },
-                        change: function(cmp) {
-                            // hide/show any conditional components based on their distinctValueFilterColumnName and distinctValueFilterColumnValue
-                            // example: hide/show related advanced option cmps for the data summary level based on the selected level value
-                            var conditionalCmps = this.query('advancedoptiondimension[distinctValueFilterColumnName=' + cmp.dimension.get('name') + ']');
-                            Ext.each(conditionalCmps, function(conditionalCmp) {
-                                conditionalCmp.setVisible(conditionalCmp.dimension.get('distinctValueFilterColumnValue') == cmp.value.join(', '));
-                            });
-                        }
-                    }
-                })
-            );
+            // keep track of the distinct set of measures used for all advanced options in this source
+            Ext.each(advancedOptionCmp.getMeasureSet(), function(measure) {
+                // hierarchical dimensions can have use an alternate column for filtering
+                var m = measure.getFilterMeasure();
+                if (combinedMeasureSet.aliases.indexOf(m.get('alias')) == -1) {
+                    combinedMeasureSet.aliases.push(m.get('alias'));
+                    combinedMeasureSet.values.push(m);
+                }
+
+                // also add the measure itself
+                if (combinedMeasureSet.aliases.indexOf(measure.get('alias')) == -1) {
+                    combinedMeasureSet.aliases.push(measure.get('alias'));
+                    combinedMeasureSet.values.push(measure);
+                }
+            }, this);
         }, this);
 
+        // query for the distinct set of values across all of the measures involved in the dimension set
+        Connector.getService('Query').getMeasureSetDistinctValues(combinedMeasureSet.values, false, function(data) {
+            this.processMeasureSetDistintValues(advancedOptionCmps, combinedMeasureSet.values, data);
+        }, this);
+    },
+
+    processMeasureSetDistintValues : function(advancedOptionCmps, combinedMeasureSet, data) {
+        var store = this.getCombinedMeasureSetStore(combinedMeasureSet, data);
+
+        this.insertDimensionHeader();
+
+        // populate the store for each dimension option and add it to the panel
+        Ext.each(advancedOptionCmps, function(advancedOption) {
+            var dimension = advancedOption.dimension,
+                name = dimension.getFilterMeasure().get('name');
+
+            // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
+            if (dimension.get('distinctValueFilterColumnName') && dimension.get('distinctValueFilterColumnValue')) {
+                store.filter({
+                    property: dimension.get('distinctValueFilterColumnName'),
+                    value: dimension.get('distinctValueFilterColumnValue'),
+                    exactMatch: true
+                });
+            }
+
+            advancedOption.populateStore(store.collect(name));
+            store.clearFilter(true);
+
+            this.getAdvancedPane().add(advancedOption);
+        }, this);
+
+        this.bindAdditionalOptions();
+    },
+
+    insertDimensionHeader : function() {
         this.getAdvancedPane().insert(0, {
             xtype: 'box',
             cls: 'dimension-header',
             html: this.boundDimensionNames.length > 0 ? 'Assay Dimensions' : 'Advanced Options'
+        });
+    },
+
+    getCombinedMeasureSetStore : function(measureSet, data) {
+        var fieldNames = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'name');
+
+        return Ext.create('Ext.data.Store', {
+            fields: fieldNames,
+            data: data
+        });
+    },
+
+    bindAdditionalOptions : function() {
+        this.bindTimeOptions();
+        this.bindScale();
+
+        this.slideAdvancedOptionsPane();
+    },
+
+    createAdvancedOptionCmp : function(dimensionName, dimension) {
+        return Ext.create('Connector.component.AdvancedOptionDimension', {
+            testCls: this.testCls + '-option-' + dimension.get('name'),
+            dimension: dimension,
+            value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimensionName] : undefined,
+            listeners: {
+                scope: this,
+                click: function(cmp, isHierarchical) {
+                    if (isHierarchical) {
+                        if (this.advancedPane) {
+                            this.advancedPane.hide();
+                        }
+
+                        var me = this;
+                        this.measurePane.getEl().slideOut('l', {
+                            duration: 250,
+                            callback: function() {
+                                me.showHierarchicalSelection(cmp);
+                            }
+                        });
+                    }
+                },
+                change: function(cmp) {
+                    // hide/show any conditional components based on their distinctValueFilterColumnName and distinctValueFilterColumnValue
+                    // example: hide/show related advanced option cmps for the data summary level based on the selected level value
+                    var conditionalCmps = this.query('advancedoptiondimension[distinctValueFilterColumnName=' + cmp.dimension.get('name') + ']');
+                    //console.log(cmp.fieldName, conditionalCmps);
+                    Ext.each(conditionalCmps, function(conditionalCmp) {
+                        var match = conditionalCmp.dimension.get('distinctValueFilterColumnValue') == cmp.value.join(', ');
+                        conditionalCmp.setVisible(match);
+
+                        // issue 23862: clear selected values for the cmp being hidden
+                        if (!match) {
+                            conditionalCmp.clearValue();
+                        }
+                    });
+                }
+            }
         });
     },
 
@@ -647,12 +720,7 @@ Ext.define('Connector.panel.Selector', {
         if (!this.disableAdvancedOptions && this.activeMeasure)
         {
             this.getAdvancedPane().removeAll();
-
             this.bindDimensions();
-            this.bindTimeOptions();
-            this.bindScale();
-
-            this.slideAdvancedOptionsPane();
 
             this.initialized = true;
         }

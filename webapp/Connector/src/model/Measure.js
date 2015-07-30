@@ -93,5 +93,12 @@ Ext.define('Connector.model.Measure', {
         }
 
         return measures;
+    },
+
+    getFilterMeasure : function() {
+        if (Ext.isDefined(this.get('hierarchicalFilterColumnName'))) {
+            return Connector.getService('Query').getMeasureRecordByAlias('study_' + this.get('queryName') + '_' + this.get('hierarchicalFilterColumnName'));
+        }
+        return this;
     }
 });

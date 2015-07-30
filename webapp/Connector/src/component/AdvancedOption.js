@@ -1,4 +1,3 @@
-
 Ext.define('Connector.component.AdvancedOptionBase', {
 
     extend: 'Ext.form.FieldSet',
@@ -9,6 +8,7 @@ Ext.define('Connector.component.AdvancedOptionBase', {
     storeValueField: 'value',
     storeLabelField: 'label',
     testCls: undefined,
+    measureSet: [],
 
     initComponent : function() {
         if (!Ext.isEmpty(this.testCls)) {
@@ -182,6 +182,10 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             return this.store.findRecord(this.storeValueField, value, 0, false /*anyMatch*/, false /*caseSensitive*/, true /*exactMatch*/);
         }
         return null;
+    },
+
+    getMeasureSet : function() {
+        return this.measureSet;
     }
 });
 
@@ -221,8 +225,6 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         }
 
         this.callParent();
-
-        Connector.getService('Query').getMeasureSetDistinctValues(this.measureSet, this.populateStore, this);
     },
 
     getHiddenField : function() {
@@ -240,30 +242,19 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
     },
 
     populateStore : function(distinctValuesArr) {
-
-        // if we have a hierarchical measure set, concatenate all measures for the distinct value store key value and label
-        // otherwise, we just set the given dimension's value as the key and label, excluding null
-        var newDistinctValuesArr = [];
-        Ext.each(distinctValuesArr, function(valuesRec) {
-            var measureVal = valuesRec[this.measureSet[0].get('name')];
-            if (measureVal != null) {
-                valuesRec[this.storeValueField] = measureVal;
-                valuesRec[this.storeLabelField] = measureVal == null ? '' : measureVal;
-
-                // we know we will have a zero index for measureSet, so this adds the others if necessary
-                for (var i = 1; i < this.measureSet.length; i++) {
-                    measureVal = valuesRec[this.measureSet[i].get('name')];
-                    valuesRec[this.storeValueField] += '|' + measureVal;
-                    valuesRec[this.storeLabelField] += ' ' + measureVal;
-                }
-
-                newDistinctValuesArr.push(valuesRec);
+        var data = [];
+        Ext.each(distinctValuesArr, function(value) {
+            if (value != null) {
+                var valueObj = {};
+                valueObj[this.storeValueField] = value;
+                valueObj[this.storeLabelField] = value.replace(/\|/g, ' ');
+                data.push(valueObj);
             }
         }, this);
 
         this.store = Ext.create('Ext.data.Store', {
             fields : [this.storeValueField, this.storeLabelField],
-            data: newDistinctValuesArr
+            data: data
         });
 
         this.addClickHandler();
@@ -304,6 +295,11 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         this.callParent([value, allChecked]);
 
         this.fireEvent('change', this);
+    },
+
+    clearValue : function() {
+        this.value = null;
+        this.setInitialValue();
     },
 
     getDropdownPanel : function() {
@@ -382,7 +378,6 @@ Ext.define('Connector.component.AdvancedOptionTime', {
             this.value = null;
         }
 
-        // TODO: default to align by Day0 if no initial value present
         this.setValue(this.value, false);
     },
 
@@ -602,14 +597,12 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
     border: false,
 
     constructor : function(config) {
-        this.queryService = Connector.getService('Query');
-
         this.callParent([config]);
+
         this.addEvents('selectionchange');
 
         this.hierarchyMeasures = this.dimension.getHierarchicalMeasures();
-
-        this.queryService.getMeasureSetDistinctValues(this.hierarchyMeasures, this.loadDistinctValuesStore, this);
+        Connector.getService('Query').getMeasureSetDistinctValues(this.hierarchyMeasures, true, this.loadDistinctValuesStore, this);
     },
 
     loadDistinctValuesStore : function(rows) {

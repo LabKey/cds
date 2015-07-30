@@ -231,7 +231,7 @@ Ext.define('Connector.controller.Query', {
         return null;
     },
 
-    getMeasureSetDistinctValues : function(measureSet, callback, scope) {
+    getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
         if (Ext.isDefined(measureSet))
         {
             if (!Ext.isArray(measureSet)) {
@@ -256,7 +256,7 @@ Ext.define('Connector.controller.Query', {
 
                     // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
                     // Note: we only want to filter on the last measure in the set, so we keep overriding the where clause
-                    if (measure.get('distinctValueFilterColumnName') && measure.get('distinctValueFilterColumnValue')) {
+                    if (includeFilters && measure.get('distinctValueFilterColumnName') && measure.get('distinctValueFilterColumnValue')) {
                         whereClause = ' WHERE ' + measure.get('distinctValueFilterColumnName') + ' = \''
                                 + measure.get('distinctValueFilterColumnValue') + '\'';
                     }
