@@ -247,7 +247,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             if (value != null) {
                 var valueObj = {};
                 valueObj[this.storeValueField] = value;
-                valueObj[this.storeLabelField] = value.replace(/\|/g, ' ');
+                valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ');
                 data.push(valueObj);
             }
         }, this);

@@ -572,7 +572,7 @@ Ext.define('Connector.panel.Selector', {
                     combinedMeasureSet.values.push(m);
                 }
 
-                // also add the measure itself
+                // also add the measure alias itself
                 if (combinedMeasureSet.aliases.indexOf(measure.get('alias')) == -1) {
                     combinedMeasureSet.aliases.push(measure.get('alias'));
                     combinedMeasureSet.values.push(measure);
@@ -580,10 +580,15 @@ Ext.define('Connector.panel.Selector', {
             }, this);
         }, this);
 
-        // query for the distinct set of values across all of the measures involved in the dimension set
-        Connector.getService('Query').getMeasureSetDistinctValues(combinedMeasureSet.values, false, function(data) {
-            this.processMeasureSetDistintValues(advancedOptionCmps, combinedMeasureSet.values, data);
-        }, this);
+        if (combinedMeasureSet.values.length > 0) {
+            // query for the distinct set of values across all of the measures involved in the dimension set
+            Connector.getService('Query').getMeasureSetDistinctValues(combinedMeasureSet.values, false, function(data) {
+                this.processMeasureSetDistintValues(advancedOptionCmps, combinedMeasureSet.values, data);
+            }, this);
+        }
+        else {
+            this.processMeasureSetDistintValues(advancedOptionCmps, combinedMeasureSet.values, []);
+        }
     },
 
     processMeasureSetDistintValues : function(advancedOptionCmps, combinedMeasureSet, data) {
@@ -592,8 +597,10 @@ Ext.define('Connector.panel.Selector', {
         this.insertDimensionHeader();
 
         // populate the store for each dimension option and add it to the panel
-        Ext.each(advancedOptionCmps, function(advancedOption) {
-            var dimension = advancedOption.dimension,
+        // issue 23861: add them in the reverse order so that parent components can update children appropriately
+        for (var i = advancedOptionCmps.length - 1; i >= 0; i--) {
+            var advancedOption = advancedOptionCmps[i],
+                dimension = advancedOption.dimension,
                 name = dimension.getFilterMeasure().get('name');
 
             // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
@@ -608,8 +615,8 @@ Ext.define('Connector.panel.Selector', {
             advancedOption.populateStore(store.collect(name));
             store.clearFilter(true);
 
-            this.getAdvancedPane().add(advancedOption);
-        }, this);
+            this.getAdvancedPane().insert(1, advancedOption);
+        }
 
         this.bindAdditionalOptions();
     },
@@ -664,7 +671,6 @@ Ext.define('Connector.panel.Selector', {
                     // hide/show any conditional components based on their distinctValueFilterColumnName and distinctValueFilterColumnValue
                     // example: hide/show related advanced option cmps for the data summary level based on the selected level value
                     var conditionalCmps = this.query('advancedoptiondimension[distinctValueFilterColumnName=' + cmp.dimension.get('name') + ']');
-                    //console.log(cmp.fieldName, conditionalCmps);
                     Ext.each(conditionalCmps, function(conditionalCmp) {
                         var match = conditionalCmp.dimension.get('distinctValueFilterColumnValue') == cmp.value.join(', ');
                         conditionalCmp.setVisible(match);
