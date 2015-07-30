@@ -173,7 +173,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
     private Map<String, Map<String, Object>> getStudies(Container project, User user, Logger logger)
     {
         QueryService queryService = QueryService.get();
-        QueryDefinition qd = queryService.getQueryDef(user, project, "study", "ds_study");
+        QueryDefinition qd = queryService.getQueryDef(user, project, "cds", "ds_study");
 
         ArrayList<QueryException> qerrors = new ArrayList<>();
         TableInfo tiImportStudy = qd.getTable(qerrors, true);

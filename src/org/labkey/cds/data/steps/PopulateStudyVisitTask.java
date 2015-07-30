@@ -27,10 +27,10 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
         BatchValidationException errors = new BatchValidationException();
 
         // populate cohorts
-        QuerySchema sourceSchema;
-        TableInfo sourceTable;
+        QuerySchema studySchema;
+        QuerySchema cdsSchema;
 
-        QuerySchema targetSchema;
+        TableInfo sourceTable;
         TableInfo targetTable;
 
         QueryUpdateService targetService;
@@ -40,18 +40,18 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
         long start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            sourceSchema = DefaultSchema.get(user, container).getSchema("study");
+            studySchema = DefaultSchema.get(user, container).getSchema("study");
 
-            if (sourceSchema == null)
+            if (studySchema == null)
                 throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
 
-            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
+            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
-            if (targetSchema == null)
+            if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = sourceSchema.getTable("ds_studygroup");
-            targetTable = targetSchema.getTable("studygroup");
+            sourceTable = cdsSchema.getTable("ds_studygroup");
+            targetTable = cdsSchema.getTable("studygroup");
 
             targetService = targetTable.getUpdateService();
 
@@ -110,8 +110,8 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             //
             // Update Visits
             //
-            sourceTable = sourceSchema.getTable("ds_visit");
-            targetTable = sourceSchema.getTable("visit");
+            sourceTable = cdsSchema.getTable("ds_visit");
+            targetTable = studySchema.getTable("visit");
             targetService = targetTable.getUpdateService();
 
             if (targetService == null)
@@ -136,8 +136,8 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
             //
             // Populate Study Group Visit Map (Schedule)
             //
-            sourceTable = sourceSchema.getTable("ds_studygroupvisit");
-            targetTable = targetSchema.getTable("studygroupvisitmap");
+            sourceTable = cdsSchema.getTable("ds_studygroupvisit");
+            targetTable = cdsSchema.getTable("studygroupvisitmap");
             targetService = targetTable.getUpdateService();
 
             if (targetService == null)
@@ -165,17 +165,22 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
         //
         // Populate Visit Tags (Project level only)
         //
-        sourceSchema = DefaultSchema.get(user, project).getSchema("study");
+        studySchema = DefaultSchema.get(user, project).getSchema("study");
 
-        if (sourceSchema == null)
+        if (studySchema == null)
             throw new PipelineJobException("Unable to find study schema for project " + project.getPath());
 
-        sourceTable = sourceSchema.getTable("ds_visittag");
-        targetTable = sourceSchema.getTable("visittag");
+        cdsSchema = DefaultSchema.get(user, project).getSchema("cds");
+
+        if (cdsSchema == null)
+            throw new PipelineJobException("Unable to find cds schema for project " + project.getPath());
+
+        sourceTable = cdsSchema.getTable("ds_visittag");
+        targetTable = studySchema.getTable("visittag");
         targetService = targetTable.getUpdateService();
 
         if (targetService == null)
-            throw new PipelineJobException("Unable to find update service for cds.visittag in project " + project.getPath());
+            throw new PipelineJobException("Unable to find update service for study.visittag in project " + project.getPath());
 
         sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
 
@@ -206,20 +211,15 @@ public class PopulateStudyVisitTask extends AbstractPopulateTask
         //
         for (Container container : project.getChildren())
         {
-            sourceSchema = DefaultSchema.get(user, container).getSchema("study");
+            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
-            if (sourceSchema == null)
-                throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
-
-            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
-
-            if (targetSchema == null)
+            if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = sourceSchema.getTable("ds_visittagmap");
+            sourceTable = cdsSchema.getTable("ds_visittagmap");
             ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
 
-            targetTable = targetSchema.getTable("visittagmap");
+            targetTable = cdsSchema.getTable("visittagmap");
             targetService = targetTable.getUpdateService();
 
             if (targetService == null)

@@ -12,14 +12,13 @@ import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.ValidationException;
-import org.labkey.api.security.User;
 
 import java.util.Arrays;
 import java.util.Map;
 
 public class PopulateStudyProductTask extends AbstractPopulateTask
 {
-    String SOURCE_SCHEMA = "study";
+    String SOURCE_SCHEMA = "cds";
     String SOURCE_QUERY = "ds_studyproduct";
     String TARGET_SCHEMA = "cds";
     String TARGET_QUERY = "studyproductmap";

@@ -24,7 +24,6 @@ import org.labkey.api.module.Module;
 import org.labkey.api.query.DefaultSchema;
 import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.SimpleUserSchema;
-import org.labkey.api.query.UserSchema;
 import org.labkey.api.security.User;
 import org.labkey.api.visualization.VisualizationProvider;
 
@@ -41,38 +40,12 @@ public class CDSUserSchema extends SimpleUserSchema
     public CDSUserSchema(User user, Container container)
     {
         super(SCHEMA_NAME, "Schema for HIV Collaborative Dataspace. Detail data is stored in datasets of study schema.", user, container, DbSchema.get("cds"));
-        _restricted = true;
-    }
-
-
-    @Override
-    public QuerySchema getSchema(String name)
-    {
-        if (_restricted)
-        {
-            if ("cds".equalsIgnoreCase(name))
-                return this;
-            if ("study".equalsIgnoreCase(name))
-            {
-                QuerySchema ret = DefaultSchema.get(_user, _container).getSchema(name);
-                if (ret != null)
-                {
-                    ((UserSchema)ret).setRestricted(true);
-                    return ret;
-                }
-            }
-            return null;
-        }
-
-        return super.getSchema(name);
     }
 
 
     @Override
     protected TableInfo createWrappedTable(String name, @NotNull TableInfo sourceTable)
     {
-        if (sourceTable.getName().equalsIgnoreCase("Citable"))
-            return new CDSCitableTable(getContainer(), this, sourceTable).init();
         return new CDSSimpleTable(this, sourceTable).init();
     }
 

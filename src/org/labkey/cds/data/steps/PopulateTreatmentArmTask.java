@@ -26,10 +26,9 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         SQLFragment sql;
         BatchValidationException errors = new BatchValidationException();
 
-        QuerySchema studySchema;
-        TableInfo sourceTable;
+        QuerySchema cdsSchema;
 
-        QuerySchema targetSchema;
+        TableInfo sourceTable;
         TableInfo targetTable;
 
         QueryUpdateService targetService;
@@ -38,18 +37,13 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         long start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            studySchema = DefaultSchema.get(user, container).getSchema("study");
+            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
-            if (studySchema == null)
-                throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
-
-            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
-
-            if (targetSchema == null)
+            if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = studySchema.getTable("ds_treatmentarm");
-            targetTable = targetSchema.getTable("treatmentarm");
+            sourceTable = cdsSchema.getTable("ds_treatmentarm");
+            targetTable = cdsSchema.getTable("treatmentarm");
 
             targetService = targetTable.getUpdateService();
 
@@ -102,8 +96,8 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
             }
 
             // Insert Treatment Arm Subject Mappings
-            sourceTable = studySchema.getTable("ds_treatmentarmsubject");
-            targetTable = targetSchema.getTable("treatmentarmsubjectmap");
+            sourceTable = cdsSchema.getTable("ds_treatmentarmsubject");
+            targetTable = cdsSchema.getTable("treatmentarmsubjectmap");
 
             targetService = targetTable.getUpdateService();
 
@@ -137,13 +131,13 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
                 return;
             }
 
-            // Insert Visit Tag Alignemnt
-            targetTable = targetSchema.getTable("visittagalignment");
+            // Insert Visit Tag Alignment
+            targetTable = cdsSchema.getTable("visittagalignment");
             targetService = targetTable.getUpdateService();
             if (targetService == null)
                 throw new PipelineJobException("Unable to find update service for cds.visittagalignment in " + container.getPath());
 
-            sourceTable = studySchema.getTable("ds_visittagalignment");
+            sourceTable = cdsSchema.getTable("ds_visittagalignment");
             ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
 
@@ -176,18 +170,13 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         start = System.currentTimeMillis();
         for (Container container : project.getChildren())
         {
-            studySchema = DefaultSchema.get(user, container).getSchema("study");
+            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
 
-            if (studySchema == null)
-                throw new PipelineJobException("Unable to find study schema for folder " + container.getPath());
-
-            targetSchema = DefaultSchema.get(user, container).getSchema("cds");
-
-            if (targetSchema == null)
+            if (cdsSchema == null)
                 throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
 
-            sourceTable = studySchema.getTable("ds_subjectproduct");
-            targetTable = targetSchema.getTable("SubjectProductMap");
+            sourceTable = cdsSchema.getTable("ds_subjectproduct");
+            targetTable = cdsSchema.getTable("SubjectProductMap");
 
             targetService = targetTable.getUpdateService();
 
