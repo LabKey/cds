@@ -94,9 +94,9 @@ Ext.define('Connector.model.ChartData', {
         var yAxisMargin = 5,
             domainMax = this.getYDomain()[1];
 
-        if(domainMax > 1)
+        if (domainMax > 1)
             yAxisMargin = (domainMax || 0).toString().length;
-        else if(domainMax >= .1)
+        else if (domainMax >= .1)
             yAxisMargin = 4;
 
         return (Math.min(yAxisMargin, 6) * 6) + 10;
@@ -180,7 +180,6 @@ Ext.define('Connector.model.ChartData', {
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [],
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
-            xIsNum, yIsNum,
             negX = false, negY = false,
             yMeasureFilter, xMeasureFilter, excludeAliases = [],
             _row;
@@ -283,18 +282,18 @@ Ext.define('Connector.model.ChartData', {
             }
 
             xVal = x ? this._getXValue(x, _xid, _row) : '';
-            if(Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
-                if(xDomain[0] == null || xVal < xDomain[0])
+            if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
+                if (xDomain[0] == null || xVal < xDomain[0])
                     xDomain[0] = xVal;
-                if(xDomain[1] == null || xVal > xDomain[1])
+                if (xDomain[1] == null || xVal > xDomain[1])
                     xDomain[1] = xVal;
             }
 
             yVal = this._getYValue(y, _yid, _row);
-            if(Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date") {
-                if(yDomain[0] == null || yVal < yDomain[0])
+            if (Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date") {
+                if (yDomain[0] == null || yVal < yDomain[0])
                     yDomain[0] = yVal;
-                if(yDomain[1] == null || yVal > yDomain[1])
+                if (yDomain[1] == null || yVal > yDomain[1])
                     yDomain[1] = yVal;
             }
 
@@ -348,7 +347,7 @@ Ext.define('Connector.model.ChartData', {
         });
     },
 
-    arraysEqual : function( arrA, arrB ) {
+    arraysEqual : function(arrA, arrB) {
 
         // first check for nulls
         if (arrA == null && arrB == null) {
@@ -359,16 +358,16 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // check if lengths are different
-        if(arrA.length !== arrB.length) {
+        if (arrA.length !== arrB.length) {
             return false;
         }
 
-        // slice so we do not effect the orginal, sort makes sure they are in order
+        // slice so we do not effect the original, sort makes sure they are in order
         var cA = arrA.slice().sort();
         var cB = arrB.slice().sort();
 
-        for (var i=0;i<cA.length;i++) {
-            if(cA[i]!==cB[i]) {
+        for (var i=0; i < cA.length; i++) {
+            if (cA[i] !== cB[i]) {
                 return false;
             }
         }
@@ -384,9 +383,8 @@ Ext.define('Connector.model.ChartData', {
         if (row.x.hasOwnProperty('isUnique')) {
             return Ext.isDefined(row.x.value) && row.x.value != null ? row.x.value : 'undefined';
         }
-        else {
-            return row.x.getMean();
-        }
+
+        return row.x.getMean();
     },
 
     _getColorValue : function(measure, alias, row) {

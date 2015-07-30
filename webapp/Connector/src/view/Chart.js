@@ -29,13 +29,6 @@ Ext.define('Connector.view.Chart', {
 
     studyAxisWidthOffset: 150,
 
-    plugins : [{
-        ptype: 'messaging',
-        calculateY : function(cmp, box, msg) {
-            return box.y - 10;
-        }
-    }],
-
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -750,7 +743,7 @@ Ext.define('Connector.view.Chart', {
                 };
 
                 if (properties.xaxis.isNumeric) {
-                    scales.x.tickFormat = ChartUtils.numericTickFormat;
+                    scales.x.tickFormat = ChartUtils.tickFormat.numeric;
                 }
                 else if (properties.xaxis.type === 'TIMESTAMP') {
                     scales.x.tickFormat = ChartUtils.tickFormat.date;
@@ -772,7 +765,7 @@ Ext.define('Connector.view.Chart', {
 
             scales.yLeft = {
                 scaleType: 'continuous',
-                tickFormat: ChartUtils.numericTickFormat,
+                tickFormat: ChartUtils.tickFormat.numeric,
                 tickDigits: 5,
                 domain: chartData.getYDomain()
             };
@@ -1721,6 +1714,7 @@ Ext.define('Connector.view.Chart', {
 
         var additionalMeasures = this.getAdditionalMeasures(activeMeasures),
             wrappedMeasures = this.getWrappedMeasures(activeMeasures),
+            queryService = Connector.getService('Query'),
             nonNullMeasures = [],
             filterMeasures,
             measures, i;
@@ -1735,52 +1729,16 @@ Ext.define('Connector.view.Chart', {
 
         // set of measures from data filters
         if (includeFilterMeasures) {
-            filterMeasures = Connector.getService('Query').getWhereFilterMeasures(Connector.getState().getFilters());
+            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters());
             if (!Ext.isEmpty(filterMeasures)) {
                 measures = measures.concat(filterMeasures);
             }
         }
 
         return {
-            measures: this.mergeMeasures(measures),
+            measures: queryService.mergeMeasures(measures),
             wrapped: wrappedMeasures
         };
-    },
-
-    /**
-     * TODO: Move this to Query Service?
-     * This method takes in a set of measures and groups them according to alias. It will merge the filters and
-     * retain any other properties from the first instance of an alias found.
-     * @param measures
-     * @returns {Array}
-     */
-    mergeMeasures : function(measures) {
-        var merged = [], keyOrder = [], aliases = {}, alias;
-
-        Ext.each(measures, function(measure) {
-            alias = (measure.measure.alias || measure.measure.name).toLowerCase();
-            if (!aliases[alias]) {
-                aliases[alias] = measure;
-                keyOrder.push(alias);
-            }
-            else {
-                if (!Ext.isEmpty(measure.filterArray)) {
-
-                    if (!Ext.isArray(aliases[alias].filterArray)) {
-                        aliases[alias].filterArray = [];
-                    }
-
-                    aliases[alias].filterArray = aliases[alias].filterArray.concat(measure.filterArray);
-                    aliases[alias].measure.hasFilters = true;
-                }
-            }
-        });
-
-        Ext.each(keyOrder, function(key) {
-            merged.push(aliases[key]);
-        });
-
-        return merged;
     },
 
     /**
@@ -1929,7 +1887,7 @@ Ext.define('Connector.view.Chart', {
                 xOffset: -305,
                 arrowOffset: 235,
                 content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
-                // If the user explcitly closes the tip, then don't ever show it again.
+                // If the user explicitly closes the tip, then don't ever show it again.
                 //onClose : function() {
                 //    me.showWhyBin = false;
                 //}

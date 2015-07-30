@@ -702,6 +702,41 @@ Ext.define('Connector.controller.Query', {
                 }
             }, this);
         }
+    },
+
+    /**
+     * Takes in a set of measures and groups them according to alias. It will merge the filters and
+     * retain any other properties from the first instance of an alias found.
+     * @param measures
+     * @returns {Array}
+     */
+    mergeMeasures : function(measures) {
+        var merged = [], keyOrder = [], aliases = {}, alias;
+
+        Ext.each(measures, function(measure) {
+            alias = (measure.measure.alias || measure.measure.name).toLowerCase();
+            if (!aliases[alias]) {
+                aliases[alias] = measure;
+                keyOrder.push(alias);
+            }
+            else {
+                if (!Ext.isEmpty(measure.filterArray)) {
+
+                    if (!Ext.isArray(aliases[alias].filterArray)) {
+                        aliases[alias].filterArray = [];
+                    }
+
+                    aliases[alias].filterArray = aliases[alias].filterArray.concat(measure.filterArray);
+                    aliases[alias].measure.hasFilters = true;
+                }
+            }
+        });
+
+        Ext.each(keyOrder, function(key) {
+            merged.push(aliases[key]);
+        });
+
+        return merged;
     }
 });
 

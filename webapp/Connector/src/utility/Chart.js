@@ -37,29 +37,13 @@ Ext.define('Connector.utility.Chart', {
 
     // modeled after Ext.bind but allows scope to be passed through
     // so access to things like this.getAttribute() work
-    d3Bind : function(fn, args, appendArgs) {
-        if (arguments.length === 2) {
-            return function() {
-                return fn.apply(this, arguments);
-            };
-        }
-
+    d3Bind : function(fn, args) {
         var method = fn,
             slice = Array.prototype.slice;
 
         return function() {
-            var callArgs = args || arguments;
-
-            if (appendArgs === true) {
-                callArgs = slice.call(arguments, 0);
-                callArgs = callArgs.concat(args);
-            }
-            else if (typeof appendArgs == 'number') {
-                callArgs = slice.call(arguments, 0);
-                Ext.Array.insert(callArgs, appendArgs, args);
-            }
-
-            return method.apply(this || Ext.global, callArgs);
+            var callArgs = slice.call(arguments, 0).concat(args);
+            return method.apply(this, callArgs);
         };
     },
 
@@ -189,10 +173,10 @@ Ext.define('Connector.utility.Chart', {
         }
 
         sel.selectAll('.point path')
-                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects], true))
-                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects], true))
+                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
+                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke))
-                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects], true))
+                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
     },
