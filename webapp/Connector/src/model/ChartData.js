@@ -227,6 +227,12 @@ Ext.define('Connector.model.ChartData', {
             isContinuous: Connector.model.ChartData.isContinuousMeasure(y)
         };
 
+        // for continuous axis, always start the plot atleast at the origin (could be negative as well)
+        yDomain[0] = 0;
+        if (xa.isContinuous) {
+            xDomain[0] = 0;
+        }
+
         // if we are plotting the same continuous variable on both the x and y axis,
         // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
         if (xa.isContinuous && xa.schema == ya.schema && xa.query == ya.query) {

@@ -64,10 +64,10 @@ Ext.define('Connector.view.Chart', {
 
         this.addEvents('onready');
 
-        this.labelTextColor = '#666363';
-        this.labelTextHltColor = '#FFFFFF';
-        this.labelBkgdColor = '#FFFFFF';
-        this.labelBkgdHltColor = '#01BFC2';
+        this.labelTextColor = ChartUtils.colors.HEATSCALE1;
+        this.labelTextHltColor = ChartUtils.colors.WHITE;
+        this.labelBkgdColor = ChartUtils.colors.WHITE;
+        this.labelBkgdHltColor = ChartUtils.colors.SELECTED;
     },
 
     initComponent : function() {
@@ -261,7 +261,7 @@ Ext.define('Connector.view.Chart', {
                     border: false,
                     flex: 10,
                     cls: 'plot',
-                    style: {'background-color': '#fff'},
+                    style: {'background-color': '#FFFFFF'},
                     listeners: {
                         afterrender: {
                             fn: function(box) {
@@ -528,7 +528,7 @@ Ext.define('Connector.view.Chart', {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Bin({
                 shape: 'square',
-                colorRange: ["#E6E6E6", "#000000"],
+                colorRange: [ChartUtils.colors.UNSELECTED, ChartUtils.colors.BLACK],
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
             }),
@@ -577,9 +577,9 @@ Ext.define('Connector.view.Chart', {
             legendPos : 'none',
             gridLineWidth: 1.25,
             borderWidth: 2,
-            gridColor : '#FFFFFF', // $light-color
-            bgColor: '#FFFFFF', // $light-color
-            tickColor: '#FFFFFF', // $light-color
+            gridColor : ChartUtils.colors.WHITE,
+            bgColor: ChartUtils.colors.WHITE,
+            tickColor: ChartUtils.colors.WHITE,
             tickTextColor: this.labelTextColor // $heat-scale-1
         };
     },
@@ -592,8 +592,8 @@ Ext.define('Connector.view.Chart', {
             data : data,
             aes : aes,
             scales : scales,
-            gridLineColor : '#F0F0F0', // $secondary-color
-            borderColor : '#CCC8C8' // $heat-scale-3
+            gridLineColor : ChartUtils.colors.SECONDARY,
+            borderColor : ChartUtils.colors.HEATSCALE3
         });
     },
 
@@ -621,9 +621,9 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             labels : labels,
-            gridColor : '#F8F8F8',
-            gridLineColor : '#EAEAEA',
-            borderColor : '#FFFFFF'
+            gridColor : ChartUtils.colors.GRIDBKGD,
+            gridLineColor : ChartUtils.colors.GRIDLINE,
+            borderColor : ChartUtils.colors.WHITE
         });
     },
 
@@ -1177,7 +1177,7 @@ Ext.define('Connector.view.Chart', {
                 // keep original color of the bin (note: uses style instead of fill attribute)
                 d.origStyle = d.origStyle || this.getAttribute('style');
 
-                return isSubjectInMouseBin(d, 'fill: #01BFC2', d.origStyle);
+                return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle);
             };
 
             var opacityFn = function (d)
@@ -1300,7 +1300,7 @@ Ext.define('Connector.view.Chart', {
                 return colorScale(colorAcc.getValue(d));
             }
 
-            return '#000000';
+            return ChartUtils.colors.BLACK;
         };
 
         if (this.plot.renderer) {
@@ -1517,8 +1517,9 @@ Ext.define('Connector.view.Chart', {
     setScaleDomain : function(scale, axis, studyAxisRange) {
         // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
         if (scale.scaleType !== 'discrete' && axis == 'x' && studyAxisRange) {
-            // TODO: we can have data outside of the study axis min/max range right?
-            Ext.apply(scale, {domain: [studyAxisRange.min, studyAxisRange.max]});
+            var min = Math.min(studyAxisRange.min, scale.domain[0]),
+                max = Math.max(studyAxisRange.max, scale.domain[1]);
+            scale.domain = [min, max];
         }
     },
 

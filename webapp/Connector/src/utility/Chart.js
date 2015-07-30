@@ -6,6 +6,14 @@ Ext.define('Connector.utility.Chart', {
     singleton: true,
 
     colors: {
+        WHITE: '#FFFFFF',
+        BLACK: '#000000',
+        SECONDARY: '#F0F0F0',
+        GRIDBKGD: '#F8F8F8',
+        GRIDLINE: '#EAEAEA',
+        HEATSCALE1: '#666363',
+        HEATSCALE2: '#A09C9C',
+        HEATSCALE3: '#CCC8C8',
         SELECTED: '#01BFC2',
         UNSELECTED: '#E6E6E6'
     },
