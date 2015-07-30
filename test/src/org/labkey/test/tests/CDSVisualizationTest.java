@@ -129,14 +129,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         log("Validate that a y-axis gutter plot is generated.");
         yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.BAMA);
-        yaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.NAB);
-        xaxis.pickVariable(CDSHelper.NAB_LAB);
+        xaxis.pickSource(CDSHelper.ELISPOT);
+        xaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_RAW);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
@@ -144,6 +144,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertTrue("For BAMA Magnitude vs NAB Lab y-axis gutter plot was not present.", hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        // Makes the test a little more reliable.
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
 
         log("Validate that a x-axis gutter plot is generated.");
         yaxis.openSelectorWindow();
@@ -162,6 +165,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        // Makes the test a little more reliable.
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
 
         log("Validate that a gutter plot is generated for both the x and y axis.");
         yaxis.openSelectorWindow();
@@ -182,6 +188,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertTrue("For ELISPOT Background vs ICS Visit y-axis gutter plot was not present.", hasYGutter());
 
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        // Makes the test a little more reliable.
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
 
         log("Validate that a study axis (gutter plot with syringe glyph) is generated for the x axis.");
         yaxis.openSelectorWindow();
@@ -234,18 +243,23 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
 
         yaxis.openSelectorWindow();
-//        yaxis.backToSource();
         sleep(500);
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
+        xaxis.openSelectorWindow();
+        sleep(500);
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
         assertTrue("For ELISPOT vs ICS x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For ELISPOT vs ICS y-axis gutter plot was not present.", hasYGutter());
 
         xaxis.openSelectorWindow();
-//        xaxis.backToSource();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.confirmSelection();
@@ -259,7 +273,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // Test log scales
         yaxis.openSelectorWindow();
-//        yaxis.backToSource();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
@@ -269,7 +282,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertTrue("For NAB vs ICS y-axis gutter plot was not present.", hasYGutter());
 
         xaxis.openSelectorWindow();
-//        xaxis.backToSource();
         xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
         xaxis.pickVariable(CDSHelper.DEMO_AGE);
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
@@ -454,6 +466,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         //clear filter
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        // Makes the test a little more reliable.
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
