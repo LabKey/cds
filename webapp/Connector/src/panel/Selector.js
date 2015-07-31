@@ -261,12 +261,15 @@ Ext.define('Connector.panel.Selector', {
                         var view = selModel.view;
                         var me = this;
 
+                        me.hideLearnMessage('Source');
+
                         view.getEl().slideOut('l', {
                             duration: 250,
                             callback: function() {
+                                //hide learn message called twice because of a timing bug with automated tests
+                                me.hideLearnMessage('Source');
                                 me.showMeasures(source);
                                 selModel.clearSelections();
-                                me.hideLearnMessage('Source');
                             }
                         });
                     },
@@ -330,7 +333,6 @@ Ext.define('Connector.panel.Selector', {
                         }
 
                         this.selectMeasure(measure);
-                        this.hideLearnMessage('Measure');
                     },
                     itemmouseenter: function(view, record, item) {
                         this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
@@ -371,7 +373,7 @@ Ext.define('Connector.panel.Selector', {
                         title: title,
                         content: description
                     });
-                }, 250);
+                }, 400);
             this.on('hide' + name + 'LearnMsg', function() {
                 clearTimeout(displayTooltip);
                 calloutMgr.removeCallout(_id);
