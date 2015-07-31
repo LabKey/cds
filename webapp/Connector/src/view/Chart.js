@@ -757,7 +757,7 @@ Ext.define('Connector.view.Chart', {
             if (properties.xaxis.isContinuous) {
                 scales.x = {
                     scaleType: 'continuous',
-                    domain: chartData.getXDomain()
+                    domain: chartData.getXDomain(studyAxisInfo)
                 };
 
                 if (properties.xaxis.isNumeric) {
@@ -823,11 +823,6 @@ Ext.define('Connector.view.Chart', {
             gutterXPlotConfig, gutterYPlotConfig;
 
         if (!noplot) {
-            // set the x axis domain based on the study axis information min and max
-            if (studyAxisInfo) {
-                this.setScaleDomain(plotConfig.scales.x, 'x', studyAxisInfo.getRange());
-            }
-
             // set the scale type to linear or log, validating that we don't allow log with negative values
             var xScaleType = this.setScaleType(plotConfig.scales.x, 'x', properties);
             var yScaleType = this.setScaleType(plotConfig.scales.yLeft, 'y', properties);
@@ -873,6 +868,7 @@ Ext.define('Connector.view.Chart', {
             if (this.requireXGutter) {
                 gutterXPlotConfig = this.generateXGutter(plotConfig, chartData, allDataRows, yAxisMargin);
                 Ext.apply(gutterXPlotConfig.scales.xTop, {trans : xScaleType});
+                Ext.apply(gutterXPlotConfig.scales.xTop, {domain : chartData.getXDomain(studyAxisInfo)});
             }
 
             if (this.requireYGutter) {
@@ -1006,7 +1002,6 @@ Ext.define('Connector.view.Chart', {
         var gutterXScales = {
             xTop: {
                 scaleType: 'continuous',
-                domain: chartData.getXDomain(),
                 tickFormat: ChartUtils.tickFormat.empty
             },
             yLeft: {
@@ -1530,15 +1525,6 @@ Ext.define('Connector.view.Chart', {
         }
 
         return scaleType;
-    },
-
-    setScaleDomain : function(scale, axis, studyAxisRange) {
-        // issue 21300: set x-axis domain min/max based on study axis milestones if they exist
-        if (scale.scaleType !== 'discrete' && axis == 'x' && studyAxisRange) {
-            var min = Math.min(studyAxisRange.min, scale.domain[0]),
-                max = Math.max(studyAxisRange.max, scale.domain[1]);
-            scale.domain = [min, max];
-        }
     },
 
     getActiveMeasures : function() {

@@ -597,8 +597,7 @@ Ext.define('Connector.controller.Query', {
 
         Ext.iterate(measureMap, function (alias, config) {
             var mc = {
-                measure: this.cleanMeasure(config.measure),
-                time: config.time || 'date'
+                measure: this.cleanMeasure(config.measure)
             };
             if (config.dimension) {
                 mc.dimension = config.dimension;
