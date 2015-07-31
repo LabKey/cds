@@ -394,7 +394,13 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getColorValue : function(measure, alias, row) {
-        return row.z ? row.z.value : null;
+        if (row.z && row.z.value != null) {
+            return row.z.value;
+        }
+        else if (Ext.isDefined(row[alias])) {
+            return row[alias];
+        }
+        return null;
     },
 
     _getValue : function(measure, colName, row) {
