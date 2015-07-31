@@ -346,10 +346,6 @@ Ext.define('Connector.view.Chart', {
         }, this);
     },
 
-    getPlotElements : function() {
-        return Ext.DomQuery.select('.axis');
-    },
-
     getPlotElement : function() {
         if (this.plot) {
             var el = Ext.query('#' + this.plot.renderTo);
@@ -549,14 +545,37 @@ Ext.define('Connector.view.Chart', {
     },
 
     getBoxLayer : function(layerScope) {
-        var aes = this.getLayerAes.call(this, layerScope, true);
-        aes.hoverText = function(name, summary) {
-            var text = name + '\n';
-            text += 'Q1: ' + summary.Q1 + '\n';
-            text += 'Q2: ' + summary.Q2 + '\n';
-            text += 'Q3: ' + summary.Q3 + '\n';
+        var aes = this.getLayerAes.call(this, layerScope, true),
+            me = this;
 
-            return text;
+        aes.boxMouseOverFn = function(event, box, data) {
+            var calloutMgr = hopscotch.getCalloutManager(),
+                _id = Ext.id(),
+                content = '';
+
+            Ext.each(['Q1', 'Q2', 'Q3'], function(type) {
+                content += '<p><span style="font-weight: bold;">' + type + '</span> ' + data.summary[type] + '</p>';
+            });
+
+            calloutMgr.createCallout( {
+                id: _id,
+                bubbleWidth: 120,
+                showCloseButton: false,
+                target: box,
+                placement: 'left',
+                yOffset: box.getBBox().height / 2 - 55,
+                arrowOffset: 35,
+                title: data.name,
+                content: content
+            });
+
+            me.on('closeBoxCallout', function() {
+                calloutMgr.removeCallout(_id);
+            });
+        };
+
+        aes.boxMouseOutFn = function(event, box, data) {
+            me.fireEvent('closeBoxCallout');
         };
 
         return new LABKEY.vis.Layer({
@@ -1585,13 +1604,6 @@ Ext.define('Connector.view.Chart', {
             measures.x = x;
         }
 
-        // issue 20526: if color variable from different dataset, do left join so as not to get null x - null y datapoints
-        if (measures.color != null && measures.y != null && measures.x != null) {
-            measures.color.requireLeftJoin =    // TODO: do we still need this with the MeasureStore?
-                    (measures.color.schemaName == measures.y.schemaName && measures.color.queryName == measures.y.queryName) ||
-                    (measures.color.schemaName == measures.x.schemaName && measures.color.queryName == measures.x.queryName);
-        }
-
         if (this.fromFilter) {
             this.activeXSelection = measures.x;
             this.activeYSelection = measures.y;
@@ -1820,24 +1832,34 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    _showWhyXGutter : function(data) {
+    _createGutterCallout : function(config, hideEvent) {
         var calloutMgr = hopscotch.getCalloutManager(),
-            _id = Ext.id(),
-            percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2);
+            _id = Ext.id();
 
-        calloutMgr.createCallout({
+        Ext.apply(config, {
             id: _id,
             bubbleWidth: 325,
-            target: document.querySelector("svg g text.xGutter-label"),
-            placement: 'top',
-            title: 'Percent with undefined y value: ' + percent + '%',
-            content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
-            xOffset: -20
+            showCloseButton: false
         });
 
-        this.on('hidexguttermsg', function() {
+        calloutMgr.createCallout(config);
+
+        this.on(hideEvent, function() {
             calloutMgr.removeCallout(_id);
         }, this);
+    },
+
+    _showWhyXGutter : function(data) {
+        var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2),
+            config = {
+                target: document.querySelector("svg g text.xGutter-label"),
+                placement: 'top',
+                title: 'Percent with undefined y value: ' + percent + '%',
+                content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
+                xOffset: -20
+            };
+
+        this._createGutterCallout(config, 'hidexguttermsg');
     },
 
     _closeWhyXGutter : function() {
@@ -1845,23 +1867,17 @@ Ext.define('Connector.view.Chart', {
     },
 
     _showWhyYGutter : function(data) {
-        var calloutMgr = hopscotch.getCalloutManager(),
-            _id = Ext.id(),
-            percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2);
+        var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2),
+            config = {
+                target: document.querySelector("svg g text.yGutter-label"),
+                placement: 'right',
+                title: 'Percent with undefined x value: ' + percent + '%',
+                content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
+                yOffset: -40,
+                arrowOffset: 30
+            };
 
-        calloutMgr.createCallout({
-            id: _id,
-            bubbleWidth: 325,
-            target: document.querySelector("svg g text.yGutter-label"),
-            placement: 'top',
-            title: 'Percent with undefined x value: ' + percent + '%',
-            content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
-            arrowOffset: 40
-        });
-
-        this.on('hideyguttermsg', function() {
-            calloutMgr.removeCallout(_id);
-        }, this);
+        this._createGutterCallout(config, 'hideyguttermsg');
     },
 
     _closeWhyYGutter : function() {
@@ -2035,9 +2051,11 @@ Ext.define('Connector.view.Chart', {
         // TODO this is crazy. initPlot() calls noPlot() to show msg and then calls back to initPlot() to render empty plot
         this.initPlot(map, null, true);
 
-        this.resizeTask.delay(0);
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
+        this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
+
         this.getEmptyPlotMsg().setVisible(showEmptyMsg);
+        this.resizePlotMsg(this.getEmptyPlotMsg(), this.plotEl.getBox());
     },
 
     hidePlotMsg : function() {
@@ -2060,32 +2078,6 @@ Ext.define('Connector.view.Chart', {
         else {
             console.warn('Failed to updated measure selection');
         }
-    },
-
-    //
-    // The intent of this method is to return the position of the plots contents as the user sees them
-    //
-    getPlotPosition : function() {
-        var pos = {
-            topEdge: 0,
-            leftEdge: 0,
-            width: 0,
-            height: 0
-        };
-
-        var plotEl = this.getPlotElement();
-        if (plotEl && this.plot) {
-            plotEl = Ext.get(plotEl);
-            var box = plotEl.getBox();
-            var grid = this.plot.grid;
-
-            pos.topEdge = box.top + grid.topEdge;
-            pos.leftEdge = box.left + grid.leftEdge;
-            pos.width = grid.rightEdge - grid.leftEdge;
-            pos.height = grid.bottomEdge - grid.topEdge;
-        }
-
-        return pos;
     },
 
     setVisibleWindow : function(win) {
@@ -2557,7 +2549,8 @@ Ext.define('Connector.view.Chart', {
         if (this.requireStudyAxis && this.hasStudyAxisData) {
             this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
-            this.getStudyAxisPanel().setHeight(Math.min(200, 20 * numStudies + 5)); // TODO set min height to half of plot region height
+            // set max height to 1/3 of the center region height
+            this.getStudyAxisPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, 20 * numStudies + 5));
         }
         else {
             this.plotEl.setStyle('padding', '0');

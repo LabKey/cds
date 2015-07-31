@@ -145,7 +145,7 @@ Ext.define('Connector.model.ChartData', {
                 }
 
                 // TODO: remove sharedKeys hack
-                if (alias.startsWith('http://cpas.labkey.com/Study#')) {
+                if (alias.indexOf('http://cpas.labkey.com/Study#') == 0) {
                     sharedKeys.push(alias);
                 }
             }
