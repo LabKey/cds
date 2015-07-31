@@ -272,5 +272,24 @@ Ext.define('Connector.utility.Chart', {
         }
 
         return trans;
+    },
+
+    showCallout : function(config, hideEvent, scope) {
+        var calloutMgr = hopscotch.getCalloutManager(),
+            _id = Ext.id(), timeout;
+
+        Ext.apply(config, {
+            id: _id,
+            showCloseButton: false
+        });
+
+        timeout = setTimeout(function() {
+            calloutMgr.createCallout(config);
+        }, 250);
+
+        scope.on(hideEvent, function() {
+            clearTimeout(timeout);
+            calloutMgr.removeCallout(_id);
+        }, scope);
     }
 });

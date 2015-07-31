@@ -453,17 +453,20 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    mouseOverPoints : function(event, pointData, layerSel, layerScope) {
+    mouseOverPoints : function(event, data, layerSel, point, layerScope) {
         if (!layerScope.isBrushed) {
-            this.highlightPoints(null, [pointData.subjectId]);
+            this.highlightPoints(null, [data.subjectId]);
+            this.pointHoverText(point, data);
         }
     },
 
-    mouseOutPoints : function(event, pointData, layerSel, layerScope) {
+    mouseOutPoints : function(event, data, layerSel, layerScope) {
         if (!layerScope.isBrushed) {
             this.clearHighlightedData();
             this.highlightSelected();
         }
+
+        this.fireEvent('hidepointmsg');
     },
 
     mouseOverBins : function(event, binData, layerSel, layerScope) {
@@ -484,20 +487,28 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    pointHoverText : function(row) {
-        var text = 'Subject: ' + row.subjectId, colon = ': ', linebreak = ',\n';
+    pointHoverText : function(point, data) {
+        var config, content = '', colon = ': ', linebreak = ',<br/>';
 
-        if (row.xname) {
-            text += linebreak + row.xname + colon + row.x;
+        if (data.xname) {
+            content += data.xname + colon + data.x;
+        }
+        content += (content.length > 0 ? linebreak : '') + data.yname + colon + data.y;
+        if (data.colorname) {
+            content += linebreak + data.colorname + colon + data.color;
         }
 
-        text += linebreak + row.yname + colon + row.y;
+        config = {
+            bubbleWidth: 250,
+            target: point,
+            placement: 'top',
+            xOffset: -125,
+            arrowOffset: 110,
+            title: 'Subject: ' + data.subjectId,
+            content: content
+        };
 
-        if (row.colorname) {
-            text += linebreak + row.colorname + colon + row.color;
-        }
-
-        return text;
+        ChartUtils.showCallout(config, 'hidepointmsg', this);
     },
 
     getLayerAes : function(layerScope, isBoxPlot) {
@@ -509,13 +520,6 @@ Ext.define('Connector.view.Chart', {
             mouseOverFn: Ext.bind(mouseOver, this, [layerScope], true),
             mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
         };
-
-        if (isBoxPlot) {
-            aes.pointHoverText = this.pointHoverText;
-        }
-        else {
-            aes.hoverText = this.pointHoverText;
-        }
 
         return aes;
     },
@@ -549,33 +553,27 @@ Ext.define('Connector.view.Chart', {
             me = this;
 
         aes.boxMouseOverFn = function(event, box, data) {
-            var calloutMgr = hopscotch.getCalloutManager(),
-                _id = Ext.id(),
-                content = '';
+            var content = '', config;
 
             Ext.each(['Q1', 'Q2', 'Q3'], function(type) {
                 content += '<p><span style="font-weight: bold;">' + type + '</span> ' + data.summary[type] + '</p>';
             });
 
-            calloutMgr.createCallout( {
-                id: _id,
+            config = {
                 bubbleWidth: 120,
-                showCloseButton: false,
                 target: box,
                 placement: 'left',
                 yOffset: box.getBBox().height / 2 - 55,
                 arrowOffset: 35,
                 title: data.name,
                 content: content
-            });
+            };
 
-            me.on('closeBoxCallout', function() {
-                calloutMgr.removeCallout(_id);
-            });
+            ChartUtils.showCallout(config, 'hideboxplotmsg', me);
         };
 
         aes.boxMouseOutFn = function(event, box, data) {
-            me.fireEvent('closeBoxCallout');
+            me.fireEvent('hideboxplotmsg');
         };
 
         return new LABKEY.vis.Layer({
@@ -993,7 +991,7 @@ Ext.define('Connector.view.Chart', {
                         me._showWhyXGutter(chartData.getDataRows());
                     },
                     mouseout: function() {
-                        me._closeWhyXGutter();
+                        me._closeWhyGutter();
                     }
                 }
             }
@@ -1039,7 +1037,7 @@ Ext.define('Connector.view.Chart', {
                         me._showWhyYGutter(chartData.getDataRows());
                     },
                     mouseout: function() {
-                        me._closeWhyYGutter();
+                        me._closeWhyGutter();
                     }
                 }
             }
@@ -1832,26 +1830,10 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    _createGutterCallout : function(config, hideEvent) {
-        var calloutMgr = hopscotch.getCalloutManager(),
-            _id = Ext.id();
-
-        Ext.apply(config, {
-            id: _id,
-            bubbleWidth: 325,
-            showCloseButton: false
-        });
-
-        calloutMgr.createCallout(config);
-
-        this.on(hideEvent, function() {
-            calloutMgr.removeCallout(_id);
-        }, this);
-    },
-
     _showWhyXGutter : function(data) {
         var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2),
             config = {
+                bubbleWidth: 325,
                 target: document.querySelector("svg g text.xGutter-label"),
                 placement: 'top',
                 title: 'Percent with undefined y value: ' + percent + '%',
@@ -1859,16 +1841,13 @@ Ext.define('Connector.view.Chart', {
                 xOffset: -20
             };
 
-        this._createGutterCallout(config, 'hidexguttermsg');
-    },
-
-    _closeWhyXGutter : function() {
-        this.fireEvent('hidexguttermsg', this);
+        ChartUtils.showCallout(config, 'hideguttermsg', this);
     },
 
     _showWhyYGutter : function(data) {
         var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2),
             config = {
+                bubbleWidth: 325,
                 target: document.querySelector("svg g text.yGutter-label"),
                 placement: 'right',
                 title: 'Percent with undefined x value: ' + percent + '%',
@@ -1877,11 +1856,11 @@ Ext.define('Connector.view.Chart', {
                 arrowOffset: 30
             };
 
-        this._createGutterCallout(config, 'hideyguttermsg');
+        ChartUtils.showCallout(config, 'hideguttermsg', this);
     },
 
-    _closeWhyYGutter : function() {
-        this.fireEvent('hideyguttermsg', this);
+    _closeWhyGutter : function() {
+        this.fireEvent('hideguttermsg', this);
     },
 
     /**
@@ -2467,11 +2446,9 @@ Ext.define('Connector.view.Chart', {
     },
 
     showVisitTagHover : function(data, visitTagEl) {
-        var calloutMgr = hopscotch.getCalloutManager(),
-                _id = Ext.id(),
-                bubbleWidth = 160,
-                groupTags = {}, maxGroupTagCount = 0,
-                content = '', timeout;
+        var bubbleWidth = 160,
+            groupTags = {}, maxGroupTagCount = 0,
+            content = '', config;
 
         // content will display one row for each group so we need to gather together the tags for each group separately
         for (var i = 0; i < data.visitTags.length; i++) {
@@ -2494,24 +2471,17 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth = maxGroupTagCount * 90 + 70;
         }
 
-        timeout = setTimeout(function() {
-            calloutMgr.createCallout({
-                id: _id,
-                bubbleWidth: bubbleWidth,
-                xOffset: -(bubbleWidth / 2),          // the nonvaccination icon is slightly smaller
-                arrowOffset: (bubbleWidth / 2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
-                target: visitTagEl,
-                placement: 'top',
-                showCloseButton: false,
-                title: data.studyLabel + ' - ' + data.label,
-                content: content
-            });
-        }, 250);
+        config = {
+            bubbleWidth: bubbleWidth,
+            xOffset: -(bubbleWidth / 2),          // the nonvaccination icon is slightly smaller
+            arrowOffset: (bubbleWidth / 2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
+            target: visitTagEl,
+            placement: 'top',
+            title: data.studyLabel + ' - ' + data.label,
+            content: content
+        };
 
-        this.on('hidevisittagmsg', function() {
-            clearTimeout(timeout);
-            calloutMgr.removeCallout(_id);
-        }, this);
+        ChartUtils.showCallout(config, 'hidevisittagmsg', this);
 
         // show the hover icon for this glyph
         this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
