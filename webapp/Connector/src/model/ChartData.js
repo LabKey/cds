@@ -105,19 +105,6 @@ Ext.define('Connector.model.ChartData', {
         return this.getPlotMeasures()[index];
     },
 
-    getYAxisMargin : function() {
-        // Margin between main plot and Y gutter plot
-        var yAxisMargin = 5,
-            domainMax = this.getYDomain()[1];
-
-        if (domainMax > 1)
-            yAxisMargin = (domainMax || 0).toString().length;
-        else if (domainMax >= .1)
-            yAxisMargin = 4;
-
-        return (Math.min(yAxisMargin, 6) * 6) + 10;
-    },
-
     getAliasFromMeasure : function(measure) {
         var columnAliases = this.getColumnAliases();
 

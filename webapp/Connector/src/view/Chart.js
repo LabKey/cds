@@ -23,9 +23,9 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
-    xGutterHeight: 160,
+    xGutterHeight: 125,
 
-    yGutterWidth: 210,
+    yGutterWidth: 150,
 
     studyAxisWidthOffset: 150,
 
@@ -639,6 +639,7 @@ Ext.define('Connector.view.Chart', {
             aes : aes,
             scales : scales,
             labels : labels,
+            tickLength : 0,
             gridColor : ChartUtils.colors.GRIDBKGD,
             gridLineColor : ChartUtils.colors.GRIDLINE,
             borderColor : ChartUtils.colors.WHITE
@@ -663,7 +664,7 @@ Ext.define('Connector.view.Chart', {
         var allDataRows,
             layerScope = {plot: null, isBrushed: false},
             layer, properties,
-            yAxisMargin = 46;
+            yAxisMargin = 60;
 
         noplot = Ext.isBoolean(noplot) ? noplot : false;
 
@@ -671,7 +672,6 @@ Ext.define('Connector.view.Chart', {
         if (chartData instanceof Connector.model.ChartData) {
             allDataRows = chartData.getDataRows();
             properties = chartData.getProperties();
-            yAxisMargin = chartData.getYAxisMargin();
         }
         else {
             allDataRows = {
@@ -784,7 +784,7 @@ Ext.define('Connector.view.Chart', {
             scales.yLeft = {
                 scaleType: 'continuous',
                 tickFormat: ChartUtils.tickFormat.numeric,
-                tickDigits: 5,
+                tickDigits: 7,
                 domain: chartData.getYDomain()
             };
 
@@ -814,9 +814,9 @@ Ext.define('Connector.view.Chart', {
 
         var mainMargins = {
             top: 25,
-            left: this.requireYGutter ? yAxisMargin : 68,
+            left: yAxisMargin + (this.requireYGutter ? 0 : 24),
             right: 50,
-            bottom: this.requireStudyAxis ? 43 : 30
+            bottom: 43
         };
 
         var plotConfig = this.getMainPlotConfig(mainMargins, size, allDataRows.main, plotAes, scales),
@@ -971,7 +971,7 @@ Ext.define('Connector.view.Chart', {
     generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin) {
         var gutterXMargins = {
             top: 1,
-            left: this.requireYGutter ? this.yGutterWidth + yAxisMargin : 68,
+            left: this.requireYGutter ? this.yGutterWidth + yAxisMargin : yAxisMargin + 24,
             right: plotConfig.margins.right,
             bottom: 1
         };
@@ -1016,8 +1016,8 @@ Ext.define('Connector.view.Chart', {
     generateYGutter : function(plotConfig, chartData, allDataRows) {
         var gutterYMargins = {
             top: plotConfig.margins.top,
-            left: 43,
-            right: 20,
+            left: 24,
+            right: 15,
             bottom: plotConfig.margins.bottom
         };
 
@@ -1051,7 +1051,8 @@ Ext.define('Connector.view.Chart', {
             },
             yRight: {
                 scaleType: 'continuous',
-                domain: chartData.getYDomain()
+                domain: chartData.getYDomain(),
+                tickFormat: ChartUtils.tickFormat.empty
             }
         };
 

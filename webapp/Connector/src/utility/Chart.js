@@ -34,7 +34,7 @@ Ext.define('Connector.utility.Chart', {
                 s = s.split('.');
                 if (s[s.length-1].length > 2)
                 {
-                    s[s.length-1] = s[s.length-1].substr(0,2);
+                    s[s.length-1] = s[s.length-1].substr(0,4);
                     s = s.join('.');
                     return parseFloat(s, 10);
                 }
