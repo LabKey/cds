@@ -460,7 +460,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    mouseOutPoints : function(event, data, layerSel, layerScope) {
+    mouseOutPoints : function(event, data, layerSel, point, layerScope) {
         if (!layerScope.isBrushed) {
             this.clearHighlightedData();
             this.highlightSelected();
