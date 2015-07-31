@@ -528,6 +528,7 @@ Ext.define('Connector.view.Chart', {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Bin({
                 shape: 'square',
+                colorDomain: [0,50], // issue 23469: Dataspace gutter plot bin shading doesn't match main plot bin shading
                 colorRange: [ChartUtils.colors.UNSELECTED, ChartUtils.colors.BLACK],
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
