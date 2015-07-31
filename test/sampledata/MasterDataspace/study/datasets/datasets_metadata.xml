@@ -836,7 +836,7 @@
       </column>
       <column columnName="mfi_delta_baseline">
         <datatype>double</datatype>
-        <columnTitle>Magnitude (mfi) – Delta Baseline</columnTitle>
+        <columnTitle>Magnitude (mfi) - Delta Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads, adjusted for mean Fluorescence Intensity of antibody-binding to non-specific (non-conjugated) beads at baseline.</description>
         <measure>true</measure>
@@ -850,7 +850,7 @@
       </column>
       <column columnName="mfi_raw_baseline">
         <datatype>double</datatype>
-        <columnTitle>Magnitude (mfi) – Raw Baseline</columnTitle>
+        <columnTitle>Magnitude (mfi) - Raw Baseline</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Fluorescence Intensity of beads indicating antibody binding to antigen-conjugated beads at baseline.</description>
         <measure>true</measure>
