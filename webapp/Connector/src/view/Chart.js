@@ -1996,7 +1996,7 @@ Ext.define('Connector.view.Chart', {
             inPlotFilter.set('gridFilter', sqlFilters);
             inPlotFilter.set('plotMeasures', wrapped);
             inPlotFilter.set('plotScales', [this.getScale('x'), this.getScale('y')]);
-            state.updateFilterMembersComplete(false);
+            state.updateFilterMembersComplete(true);
         }
         else {
             // create
