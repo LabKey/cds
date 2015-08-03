@@ -99,22 +99,13 @@ Ext.define('Connector.controller.Update', {
                 Connector.getService('Query').onQueryReady(function(query) {
                     this.log('State/Query services ready.');
 
-                    var stats = false, grps = false, me = this;
+                    var grps = false, me = this;
                     function success() {
-                        if (stats && grps) {
+                        if (grps) {
                             me.log('Success!');
                             Ext.getCmp('usreload').show();
                         }
                     }
-
-                    this.log('Updating Statistics...');
-                    this.updateStatistics(mdx, function() {
-                        this.log('Statistics complete.');
-                        stats = true;
-                        success();
-                    }, function() {
-                        this.log('Statistics failed.', true);
-                    }, this);
 
                     // Update all Subjects Groups saved by users
                     this.log('Updating Subject Groups...');
@@ -167,8 +158,7 @@ Ext.define('Connector.controller.Update', {
                         successTask.delay(500);
                     }
 
-                    try
-                    {
+                    try {
                         for (var i = 0; i < groups.length; i++) {
                             LABKEY.app.model.Filter.doParticipantUpdate(mdx, groupUpdated, null, groups[i], 'Subject');
                         }
@@ -184,53 +174,6 @@ Ext.define('Connector.controller.Update', {
                 failureTask.delay(0);
             },
             scope: me
-        });
-    },
-
-    updateStatistics : function(mdx, callback, failureFn, scope) {
-
-        var data = {
-            primaryCount: -1,
-            dataCount: -1
-        };
-
-        var me = this;
-        function check() {
-            if (data.primaryCount >= 0 && data.dataCount >= 0) {
-                Statistics.update(data, callback, failureFn, scope);
-            }
-        }
-
-        //
-        // Retrieve Primary Count
-        //
-        var studyCountLvl = '[Study].[Name]';
-        mdx.query({
-            onRows: [{ level: studyCountLvl }],
-            success : function(cellset) { data.primaryCount = cellset.cells.length; check(); },
-            failure : function() {
-                me.log('Statistics failed to update the number of studies. Used \"' + studyCountLvl + '\" level.', true);
-                if (Ext.isFunction(failureFn)) {
-                    failureFn.call(scope);
-                }
-            }
-        });
-
-        //
-        // Retrieve Data Count
-        //
-        LABKEY.Query.selectRows({
-            schemaName: 'study',
-            queryName: 'StudyData',
-            requiredVersion: 9.1,
-            maxRows: 1,
-            success: function(_data) { data.dataCount = _data.rowCount; check(); },
-            failure : function() {
-                me.log('Statistics failed to update the number of data points available. See console errors.', true);
-                if (Ext.isFunction(failureFn)) {
-                    failureFn.call(scope);
-                }
-            }
         });
     }
 });

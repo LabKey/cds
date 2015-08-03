@@ -36,7 +36,10 @@ Ext.define('Connector.controller.Explorer', {
             afterrender : function(dropdown) {
                 this.on('dimension', function(dim, hIdx) {
                     dropdown.getStore().removeAll();
-                    var hierarchies = [], selected = undefined;
+
+                    var hierarchies = [],
+                            selected = undefined;
+
                     Ext.each(dim.hierarchies, function(hierarchy, idx) {
                         var model = Ext.create('Connector.model.Hierarchy', hierarchy);
                         if (!model.get('hidden')) {
@@ -49,8 +52,9 @@ Ext.define('Connector.controller.Explorer', {
 
                     dropdown.getStore().add(hierarchies);
                     if (!Ext.isEmpty(hierarchies)) {
-                        if (Ext.isDefined(selected))
+                        if (Ext.isDefined(selected)) {
                             dropdown.select(selected);
+                        }
                         else {
                             console.warn('Did not find a hierarchy to select. Selecting first available...');
                             dropdown.select(hierarchies[0]);
@@ -72,13 +76,13 @@ Ext.define('Connector.controller.Explorer', {
 
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
-                this.getStateManager().addPrivateSelection({
+                Connector.getState().addPrivateSelection({
                     hierarchy: rec.get('hierarchy'),
                     members: [{ uniqueName: rec.get('uniqueName') }]
                 }, 'hoverSelectionFilter');
             }
             else {
-                this.getStateManager().removePrivateSelection('hoverSelectionFilter');
+                Connector.getState().removePrivateSelection('hoverSelectionFilter');
             }
         }, this);
 
@@ -90,11 +94,11 @@ Ext.define('Connector.controller.Explorer', {
     createView : function(xtype, context) {
 
         if (xtype == 'singleaxis') {
-            var state = this.getStateManager();
+            var state = Connector.getState();
             var s = this.getStore('Explorer');
             s.olapProvider = state; // required by LABKEY.app.store.OlapExplorer. Blargh
 
-            var v = Ext.create('Connector.view.SingleAxisExplorer',{
+            var v = Ext.create('Connector.view.SingleAxisExplorer', {
                 flex : 3,
                 ui : 'custom',
                 store : s,
@@ -147,9 +151,11 @@ Ext.define('Connector.controller.Explorer', {
     parseContext : function(urlContext) {
         urlContext = this.callParent(arguments);
 
+        // make the default the first hierarchy listed
         var context = {
-            dimension: urlContext.length > 0 ? urlContext[0] : 'Study' // make the default the first hierarchy listed
+            dimension: urlContext.length > 0 ? urlContext[0] : 'Study'
         };
+
         if (urlContext && urlContext.length > 1) {
             context.hierarchy = urlContext[1];
         }
@@ -157,16 +163,18 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     loadExplorerView : function(context) {
-        this.getStateManager().onMDXReady(function(mdx) {
+        Connector.getState().onMDXReady(function(mdx) {
             var dim = mdx.getDimension(context.dimension);
             if (dim) {
 
-                var idx = 0;
+                var idx = -1;
                 this.dim = dim;
 
-                /* Find the appropriate hierarchy index -- would be nice if this could just be a lookup */
+                // Find the appropriate hierarchy index -- would be nice if this could just be a lookup
                 if (context.hierarchy) {
-                    var _h = dim.getHierarchies(), h = dim.name.toLowerCase() + '.' + context.hierarchy.toLowerCase();
+                    var _h = dim.getHierarchies(),
+                        h = dim.name.toLowerCase() + '.' + context.hierarchy.toLowerCase();
+
                     for (var i=0; i < _h.length; i++) {
                         if (_h[i].name.toLowerCase() == h) {
                             idx = i;
@@ -174,16 +182,26 @@ Ext.define('Connector.controller.Explorer', {
                         }
                     }
                 }
+
+                if (idx == -1) {
+                    // Use the summaryTargetLevel to determine default hierarchy
+                    var level = mdx.getLevel(dim.summaryTargetLevel);
+                    if (level) {
+                        Ext.each(dim.getHierarchies(), function(hier, i) {
+                            if (hier.uniqueName === level.hierarchy.uniqueName) {
+                                idx = i;
+                                return false;
+                            }
+                        });
+                    }
+                }
+
+                if (idx != -1) {
+                    this.fireEvent('dimension', dim, idx);
+                }
                 else {
-                    this.hierarchy = null;
+                    alert('Failed:' + context.dimension);
                 }
-
-                // TODO: Remove this
-                if (idx == 0 && dim.name.toLowerCase() == 'subject') {
-                    idx = 1;
-                }
-
-                this.fireEvent('dimension', dim, idx);
             }
             else {
                 alert('Failed:' + context.dimension);
@@ -200,7 +218,7 @@ Ext.define('Connector.controller.Explorer', {
     onHierarchySelect : function(m, models) {
         if (!Ext.isEmpty(models)) {
             var model = models[0], dimName = this.dim.name;
-            this.getStateManager().onMDXReady(function(mdx) {
+            Connector.getState().onMDXReady(function(mdx) {
                 var hierarchy = mdx.getHierarchy(model.get('uniqueName'));
                 if (Ext.isObject(hierarchy)) {
                     this.goToExplorer(dimName, hierarchy.name.split('.')[1]);
@@ -231,7 +249,7 @@ Ext.define('Connector.controller.Explorer', {
     },
 
     _hoverHelper : function(view, rec, add) {
-        if (this.allowHover && this.getStateManager().getSelections().length == 0) {
+        if (this.allowHover && Connector.getState().getSelections().length == 0) {
             this.hoverTask.delay(200, null, null, [view, rec, add]);
         }
     },
@@ -254,7 +272,7 @@ Ext.define('Connector.controller.Explorer', {
 
     afterSelectionAnimation : function(view, rec, node) {
         var records = view.getSelectionModel().getSelection();
-        var state = this.getStateManager();
+        var state = Connector.getState();
 
         state.onMDXReady(function(mdx) {
 

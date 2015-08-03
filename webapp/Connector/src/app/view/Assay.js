@@ -21,13 +21,14 @@ Ext.define('Connector.app.view.Assay', {
         columnHeaderTpl : new Ext.XTemplate(
             '<div class="learncolumnheader">',
                 '<div class="detail-container">',
-                    '<div class="study-description detail-header">Name</div>',
-                    '<div class="study-date detail-header">Type</div>',
-                    '<div class="study-treatments detail-header">Platform/Target/Function</div>',
+                    '<div class="study-description detail-header">Description & Methodology</div>',
+                    '<div class="study-date detail-header"># of Studies</div>',
+                    '<div class="study-treatments detail-header">Target Area</div>',
                 '</div>',
             '</div>'
         ),
-        searchFields : ['Label', 'PI', 'FullName', 'Type', 'SystemTarget', 'Platform', 'TargetType', 'TargetFunction']
+        searchFields: ['assay_short_name', 'assay_label', 'assay_detection_platform', 'assay_method_description',
+            'assay_body_system_type', 'assay_body_system_target', 'assay_general_specimen_type']
     },
 
     tpl: new Ext.XTemplate(
@@ -38,18 +39,14 @@ Ext.define('Connector.app.view.Assay', {
             '<div class="detail-wrapper">',
                 '<div class="detail-container study-detail">',
                     '<div class="study-description">',
-                        '<h2>{Label}</h2>',
-                        '<div class="description-text">{PI}</div>',
-                        '<div class="description-text">{FullName}</div>',
+                        '<h2>{assay_short_name:htmlEncode} ({assay_label:htmlEncode}): {assay_detection_platform:htmlEncode}</h2>',
+                        '<div class="description-text">{assay_method_description}</div>',
                     '</div>',
                     '<div class="study-date">',
-                        '<span class="startdate-text">{Type}</span>',
-                        '<span class="enddate-text">{SystemTarget}</span>',
+                        '<span class="startdate-text">0</span>',
                     '</div>',
                     '<div class="study-treatments">',
-                        '<div class="description-text">Platform: {Platform}</div>',
-                        '<div class="description-text">Target: {TargetType}</div>',
-                        '<div class="description-text">Function: {TargetFunction}</div>',
+                        '<div class="description-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',
                     '</div>',
                 '</div>',
             '</div>',

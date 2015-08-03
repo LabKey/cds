@@ -14,6 +14,8 @@ Ext.define('Connector.controller.State', {
 
     supportColumnServices: true,
 
+    useMergeFilters: true,
+
     isService: true,
 
     init : function() {

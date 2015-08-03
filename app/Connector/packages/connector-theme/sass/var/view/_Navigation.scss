@@ -1,7 +1,8 @@
 .navigation-view {
   padding: 16px 0 20px 0;
   font-family: $data-font;
-  color: $light-color;
+  color: $primary-text-color;
+  font-size: 16px;
 }
 
 div.nav-label, div.dis-label {
@@ -9,9 +10,7 @@ div.nav-label, div.dis-label {
 
   span.right-label {
     width: 240px;
-    font-size: 16px;
     float: right;
-    opacity: 0.65;
     @include unselectable;
   }
 
@@ -34,20 +33,19 @@ div.dis-label {
   cursor: default;
 }
 
-div.nav-label-over span.right-label,
-div.nav-label-over span.left-label {
+div.nav-label-over {
   cursor : pointer;
-  color: $secondary-color;
 }
 
 div.emptytext span.left-label {
   padding-left: 23px;
 }
 
-div.grouplist-label-selected, div.nav-label-selected {
+div.grouplist-label-selected,
+div.nav-label-selected {
   span {
     font-weight: normal;
-    opacity: 1.0!important;
+    color: $light-color;
 
     &.left-arrow {
       position: relative;

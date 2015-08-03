@@ -15,6 +15,10 @@ Ext.define('Connector.view.SigninForm', {
 
     width: 450,
 
+	COOKIE_REMEMBER_EMAIL: 'cds_form_remember_email',
+	COOKIE_AGREE_TO_TERMS: 'cds_form_agree_to_terms',
+	COOKIE_EMAIL: 'cds_form_email',
+
     tpl : new Ext.XTemplate(
 	    '<tpl>',
 	    	'<form>',
@@ -76,7 +80,8 @@ Ext.define('Connector.view.SigninForm', {
 	    		}
 	    		return '';
 	    	}
-	    }),
+	    }
+	),
 
     constructor : function(config) {
         this.callParent([config]);
@@ -120,7 +125,8 @@ Ext.define('Connector.view.SigninForm', {
             	if (response && response.user && response.user.isSignedIn) {
 	            	LABKEY.user = response.user || LABKEY.user;
 	            	this.fireEvent('userSignedIn');
-	            } else {
+	            }
+				else {
 	            	this.context.error = "Unexpected response from server";
 	            	this.update(this.context);
 	            	this.viewRendered();
@@ -141,10 +147,6 @@ Ext.define('Connector.view.SigninForm', {
 		}
 	},
 
-	COOKIE_REMEMBER_EMAIL : 'cds_form_remember_email',
-	COOKIE_AGREE_TO_TERMS : 'cds_form_agree_to_terms',
-	COOKIE_EMAIL : 'cds_form_email',
-
 	viewRendered : function() {
     	var el = this.getEl();
 
@@ -162,7 +164,8 @@ Ext.define('Connector.view.SigninForm', {
     		this.context.agreeToTerms = !this.context.agreeToTerms;
     		if (this.context.agreeToTerms) {
 				Ext.util.Cookies.set(this.COOKIE_AGREE_TO_TERMS, 'yes');
-			} else {
+			}
+			else {
 				Ext.util.Cookies.clear(this.COOKIE_AGREE_TO_TERMS);
 			}
     		this.update(this.context);
@@ -175,7 +178,8 @@ Ext.define('Connector.view.SigninForm', {
     		if (this.context.rememberEmail) {
     			Ext.util.Cookies.set(this.COOKIE_REMEMBER_EMAIL, 'yes');
 	    		this.storeEmail();
-    		} else {
+    		}
+			else {
     			Ext.util.Cookies.set(this.COOKIE_REMEMBER_EMAIL, 'no');
     			Ext.util.Cookies.clear(this.COOKIE_EMAIL);
     		}

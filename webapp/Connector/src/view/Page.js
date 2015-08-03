@@ -13,31 +13,55 @@ Ext.define('Connector.view.Page', {
         pageState: {}
     },
 
-	items: [{
-		xtype: 'container',
-		itemId: 'northRegion',
-		height: 10,
-		cls: 'pageheadercontainer',
-		style: {
-            position: 'absolute',
-            top: '0px'
-		}
-	}, {
-		xtype: 'container',
-		itemId: 'centerRegion'
-	}],
-
     cls: 'auto-scroll-y',
     
-	plugins: ['headerlock'],
+	//plugins: ['headerlock'],
 
-	selectedView : 0,
+	selectedView: 0,
 
-	headerHeight : 160,
+	headerHeight: 160,
 
-	getHeader : function() {
-		return this.getComponent('northRegion');
-	},
+    initialSelectedTab: 0,
+
+    initComponent : function() {
+        // Initialize page state
+        if (this.pageID) {
+            // If a pageID is provided the state will be cached and shared with future instances
+            this.state = Connector.view.Page.pageState[this.pageID] || {};
+            Connector.view.Page.pageState[this.pageID] = this.state;
+        }
+        else {
+            this.state = {};
+        }
+
+        if (!Ext.isDefined(this.state.selectedTab)) {
+            this.state.selectedTab = this.initialSelectedTab;
+        }
+
+        this.items = [{
+            xtype: 'container',
+            itemId: 'northRegion',
+            height: this.header.height + 'px',
+            cls: 'pageheadercontainer'
+        },{
+            xtype: 'container',
+            itemId: 'centerRegion'
+        }];
+
+        this.callParent();
+
+        this.selectTab(this.initialSelectedTab);
+
+        if (!Ext.isEmpty(this.contentViews)) {
+            this.getComponent('centerRegion').add(this.contentViews);
+        }
+
+        this.getHeader().add(this.header);
+    },
+
+    getHeader : function() {
+        return this.getComponent('northRegion');
+    },
 
     selectTab : function(tab) {
         this.state.selectedTab = tab;
@@ -45,57 +69,9 @@ Ext.define('Connector.view.Page', {
             view.setVisible(i == tab);
         }, this);
         this.header.selectTab(tab);
-    },
-
-    initComponent : function() {
-
-        var data = this.data;
-
-        this.selectTab = Ext.bind(this.selectTab, this);
-
-        // if (this.scrollContent) {
-        //     this.items[1].layout = {
-        //         type: 'hbox',
-        //         align: 'stretch'
-        //     }
-        // }
-
-        // Initialize page state
-        this.state = {};
-
-        if (this.pageID) {
-            // If a pageID is provided the state will be cached and shared with future
-            // instances
-            this.state = Connector.view.Page.pageState[this.pageID] || {};
-            Connector.view.Page.pageState[this.pageID] = this.state;
-        }
-
-        if (!Ext.isDefined(this.state.selectedTab)) {
-            this.state.selectedTab = this.initialSelectedTab || 0;
-        }
-
-		this.items[0].height = this.header.height;
-        this.items[1].style = this.items[1].style || {};
-        this.items[1].style.marginTop = this.header.height + 'px';
-
-        this.callParent();
-
-        this.doLayout();
-        var center = this.getComponent('centerRegion');
-        var north = this.getHeader();
-
-        this.header.onTabClick(this.selectTab);
-
-        this.selectTab(this.state.selectedTab);
-
-        Ext.each(this.contentViews, function(view, i) {
-            center.add(view);
-        }, this);
-
-        north.add(this.header);
     }
-
 });
+
 
 Ext.define('Connector.plugin.HeaderLock', {
     extend: 'Ext.AbstractPlugin',
@@ -130,13 +106,13 @@ Ext.define('Connector.plugin.HeaderLock', {
     },
 
     onScroll : function(event) {
-    	var cmp = Ext.get(event.target);
-    	var scrollTop = cmp.getScrollTop();
-    	var allowedScroll = this.cmp.header.height - (this.cmp.header.lockPixels || 0);
-        var top = 0;
+    	var cmp = Ext.get(event.target),
+            scrollTop = cmp.getScrollTop(),
+            allowedScroll = this.cmp.header.height - (this.cmp.header.lockPixels || 0),
+            top = 0;
         top -= Math.min(scrollTop, allowedScroll);
-		this.cmp.getHeader().el.setStyle({
-            top: top + "px",
+		this.cmp.getHeader().getEl().setStyle({
+            top: top + 'px',
             position: 'absolute'
         });
     }

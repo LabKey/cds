@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl xmlns="http://labkey.org/etl/xml">
+    <name>Import Dataspace Archive</name>
+    <description>Populate Dataspace import tables from archive</description>
+    <transforms>
+        <transform id="CDSImport" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.CDSImportTask">
+                <settings>
+                    <setting name="directory" value="{pipeline}/cdsimport"/>
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="CDSValidate" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.CDSValidateTask"/>
+        </transform>
+    </transforms>
+</etl>

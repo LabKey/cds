@@ -33,6 +33,11 @@ Ext.define('Connector.controller.Query', {
             this.SOURCE_STORE = Ext.create('Ext.data.Store', {model: 'Connector.model.Source'});
         }
 
+        // map to cache the distinct values array for a measure alias
+        if (!this.MEASURE_DISTINCT_VALUES) {
+            this.MEASURE_DISTINCT_VALUES = {};
+        }
+
         var cacheReady = false;
         var gridMeasuresReady = false;
 
@@ -52,6 +57,7 @@ Ext.define('Connector.controller.Query', {
                 queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
             })],
             success: function(measures) {
+                // add all of the response measures to the cached store
                 Ext.each(measures, function(measure) {
                     this.addMeasure(measure);
                 }, this);
@@ -59,12 +65,14 @@ Ext.define('Connector.controller.Query', {
                 // bootstrap client-defined measures
                 var measureContext = Connector.measure.Configuration.context.measures;
                 Ext.iterate(measureContext, function(alias, measure) {
+                    measure.alias = alias;
                     this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                 }, this);
 
                 cacheReady = true;
                 doReady.call(this);
             },
+            endpoint : LABKEY.ActionURL.buildURL("visualization", "getMeasuresStatic"),
             scope: this
         });
 
@@ -166,15 +174,15 @@ Ext.define('Connector.controller.Query', {
 
     addMeasure : function(measure) {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
+            var sourceKey = measure.schemaName + '|' + measure.queryName;
+            var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
 
-            var datas = Ext.apply(measure, Connector.measure.Configuration.context.measures[measure.alias]);
-
-            if (measure.isDimension === true) {
-                var dimMeta = Connector.measure.Configuration.context.dimensions[measure.alias];
-                if (dimMeta) {
-                    datas = Ext.apply(datas, dimMeta);
-                }
-            }
+            // overlay any source metadata
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[sourceKey]);
+            // overlay any measure metadata
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.measures[measure.alias]);
+            // overlay any dimension metadata (used for Advanced Options panel of Variable Selector)
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.dimensions[measure.alias]);
 
             this.MEASURE_STORE.add(datas);
             this.addSource(datas);
@@ -184,27 +192,98 @@ Ext.define('Connector.controller.Query', {
     addSource : function(measure) {
         var key = measure.schemaName + '|' + measure.queryName;
         if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
-            var datas = Ext.apply(Ext.clone(measure), Connector.measure.Configuration.context.sources[key]);
+            // overlay any source metadata
+            var datas = this.getModelClone(measure, Connector.model.Source.getFields());
+            datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[key]);
             datas.key = key;
+
+            // copy the queryDescription from the measure
+            datas.description = measure.queryDescription;
 
             this.SOURCE_STORE.add(datas);
         }
     },
 
+    getModelClone : function(record, fields) {
+        // TODO: Consider using model.copy() instead
+        return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'))
+    },
+
+    getMeasureRecordByAlias : function(alias) {
+        if (!this._ready) {
+            console.warn('Requested measure before measure caching prepared.');
+        }
+        return this.MEASURE_STORE.getById(alias);
+    },
+
+    /**
+     * Returns the raw measure data for the specified measureAlias. If not found, returns undefined.
+     * @param measureAlias
+     * @returns {*}
+     */
     getMeasure : function(measureAlias) {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
 
-        var copyAlias = Ext.clone(measureAlias);
-
         // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
-        var cleanAlias = copyAlias.split('/')[0];
-        if (Ext.isString(cleanAlias) && Ext.isObject(this.MEASURE_STORE.getById(cleanAlias))) {
-            return Ext.clone(this.MEASURE_STORE.getById(cleanAlias).raw);
+        var cleanAlias = Ext.clone(measureAlias).split('/')[0];
+
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias))) {
+            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias).getData());
         }
-        else {
-            console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
+
+        console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
+        return undefined;
+    },
+
+    getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
+        if (Ext.isDefined(measureSet))
+        {
+            if (!Ext.isArray(measureSet)) {
+                measureSet = [measureSet];
+            }
+
+            // get the distinct values from the cache, by concatenating the measure set aliases, or query for the distinct values
+            var key = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'alias').join('|');
+            var cachedValues = this.MEASURE_DISTINCT_VALUES[key];
+            if (Ext.isDefined(cachedValues))
+            {
+                if (Ext.isFunction(callback)) {
+                    callback.call(scope || this, cachedValues);
+                }
+            }
+            else
+            {
+                var columnNames = '', columnSep = '', whereClause = '';
+                Ext.each(measureSet, function(measure) {
+                    columnNames += columnSep + measure.get('name');
+                    columnSep = ', ';
+
+                    // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
+                    // Note: we only want to filter on the last measure in the set, so we keep overriding the where clause
+                    if (includeFilters && measure.get('distinctValueFilterColumnName') && measure.get('distinctValueFilterColumnValue')) {
+                        whereClause = ' WHERE ' + measure.get('distinctValueFilterColumnName') + ' = \''
+                                + measure.get('distinctValueFilterColumnValue') + '\'';
+                    }
+                });
+
+                // TODO: verify that all measures are from the same query/dataset
+                LABKEY.Query.executeSql({
+                    schemaName: measureSet[0].get('schemaName'),
+                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName')
+                        + whereClause + ' ORDER BY ' + columnNames,
+                    scope: this,
+                    success: function(data) {
+                        // cache the distinct values array result
+                        this.MEASURE_DISTINCT_VALUES[key] = data.rows;
+
+                        if (Ext.isFunction(callback)) {
+                            callback.call(scope || this, data.rows);
+                        }
+                    }
+                });
+            }
         }
     },
 
@@ -231,7 +310,12 @@ Ext.define('Connector.controller.Query', {
             var hiddenMatch = config.includeHidden || !record.get('hidden');
             var notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
 
-            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch) {
+            // The userFilter is a function used to further filter down the available measures.
+            // Needed so the color picker only displays categorical measures.
+            var userFilterMatch = !Ext4.isFunction(config.userFilter) || config.userFilter(record.data);
+
+            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch && userFilterMatch)
+            {
                 measures.push(Ext.clone(record.raw));
 
                 var key = record.get('schemaName') + '|' + record.get('queryName');
@@ -298,6 +382,16 @@ Ext.define('Connector.controller.Query', {
             scope: scope
         });
 
+    },
+
+    getMeasureStore : function(measures, success, failure, scope) {
+        LABKEY.Query.experimental.MeasureStore.getData({
+            measures: measures,
+            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+            success: success,
+            failure: failure,
+            scope: scope
+        });
     },
 
     /**
@@ -390,18 +484,6 @@ Ext.define('Connector.controller.Query', {
                             measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
                         }
                     }
-
-                    // issue 21601: include the measure's antigen selection
-                    if (plotMeasure.measure.options && plotMeasure.measure.options.antigen) {
-                        var antigenMeasure = this.getMeasure(Connector.model.Antigen.getAntigenAlias(plotMeasure.measure));
-                        if (antigenMeasure) {
-                            antigenMeasure.values = plotMeasure.measure.options.antigen.values;
-                            measureMap[antigenMeasure.alias] = {
-                                measure: antigenMeasure,
-                                filterArray: []
-                            };
-                        }
-                    }
                 }
             }, this);
         }
@@ -429,8 +511,8 @@ Ext.define('Connector.controller.Query', {
                         if (filterOnLookup) {
                             // here we fake up a measure. The getData API accepts filters of the form
                             // "study_Nab_Lab/PI" as "Lab.PI"
-                            var schema = measure.getSchemaName(),
-                                query = measure.getQueryName(),
+                            var schema = measure.schemaName,
+                                query = measure.queryName,
                                 alias = columnName.replace(/\//g, '_');
 
                             // This avoids schemas/queries that have '_' in them
@@ -521,8 +603,7 @@ Ext.define('Connector.controller.Query', {
 
         Ext.iterate(measureMap, function (alias, config) {
             var mc = {
-                measure: this.cleanMeasure(config.measure),
-                time: config.time || 'date'
+                measure: this.cleanMeasure(config.measure)
             };
             if (config.dimension) {
                 mc.dimension = config.dimension;
@@ -557,7 +638,6 @@ Ext.define('Connector.controller.Query', {
 
                 var json = {
                     schema: Connector.studyContext.schemaName,
-                    //colName: undefined,
                     members: Ext.isArray(members) ? members : undefined,
                     sources: []
                 };
@@ -627,6 +707,41 @@ Ext.define('Connector.controller.Query', {
                 }
             }, this);
         }
+    },
+
+    /**
+     * Takes in a set of measures and groups them according to alias. It will merge the filters and
+     * retain any other properties from the first instance of an alias found.
+     * @param measures
+     * @returns {Array}
+     */
+    mergeMeasures : function(measures) {
+        var merged = [], keyOrder = [], aliases = {}, alias;
+
+        Ext.each(measures, function(measure) {
+            alias = (measure.measure.alias || measure.measure.name).toLowerCase();
+            if (!aliases[alias]) {
+                aliases[alias] = measure;
+                keyOrder.push(alias);
+            }
+            else {
+                if (!Ext.isEmpty(measure.filterArray)) {
+
+                    if (!Ext.isArray(aliases[alias].filterArray)) {
+                        aliases[alias].filterArray = [];
+                    }
+
+                    aliases[alias].filterArray = aliases[alias].filterArray.concat(measure.filterArray);
+                    aliases[alias].measure.hasFilters = true;
+                }
+            }
+        });
+
+        Ext.each(keyOrder, function(key) {
+            merged.push(aliases[key]);
+        });
+
+        return merged;
     }
 });
 

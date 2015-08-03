@@ -92,12 +92,10 @@ Ext.define('Connector.model.Grid', {
             var colMeasure = {};
             Ext.each(measures, function(measure) {
 
-                if (metadata.measureToColumn[measure.alias])
-                {
+                if (metadata.measureToColumn[measure.alias]) {
                     colMeasure[measure.alias] = measure;
                 }
-                else if (metadata.measureToColumn[measure.name])
-                {
+                else if (metadata.measureToColumn[measure.name]) {
                     if (Ext.isDefined(measure.interval)) {
                         colMeasure[measure.interval] = measure;
                     }
@@ -131,29 +129,22 @@ Ext.define('Connector.model.Grid', {
                 subjects: []
             };
 
-            if (Ext.isFunction(callback))
-            {
-                if (filterState.hasFilters)
-                {
+            if (Ext.isFunction(callback)) {
+                if (filterState.hasFilters) {
                     var filters = state.getFilters(), nonGridFilters = [];
 
-                    Ext.each(filters, function(filter)
-                    {
-                        if (!filter.get('isGrid'))
-                        {
+                    Ext.each(filters, function(filter) {
+                        if (!filter.get('isGrid')) {
                             nonGridFilters.push(filter);
                         }
                     }, this);
 
-                    if (nonGridFilters.length == 0)
-                    {
+                    if (Ext.isEmpty(nonGridFilters)) {
                         filterState.hasFilters = false;
                         callback.call(scope || this, filterState);
                     }
-                    else
-                    {
-                        state.onMDXReady(function(mdx)
-                        {
+                    else {
+                        state.onMDXReady(function(mdx) {
                             state.addPrivateSelection(nonGridFilters, 'gridselection');
 
                             mdx.queryParticipantList({
@@ -175,8 +166,7 @@ Ext.define('Connector.model.Grid', {
                         }, this);
                     }
                 }
-                else
-                {
+                else {
                     callback.call(scope || this, filterState);
                 }
             }
@@ -189,8 +179,7 @@ Ext.define('Connector.model.Grid', {
 
             if (Ext.isDefined(params['maxRows'])) {
                 var num = parseInt(params['maxRows']);
-                if (Ext.isNumber(num))
-                {
+                if (Ext.isNumber(num)) {
                     max = num;
                 }
             }
@@ -314,14 +303,13 @@ Ext.define('Connector.model.Grid', {
             wrapped.push(w);
         });
 
-        // set the wrapped measures
-        this.set('measures', wrapped);
+        // set the wrapped measures, foreign columns
+        this.set({
+            measures: wrapped,
+            foreignColumns: foreignColumns
+        });
 
-        // set the foreign columns
-        this.set('foreignColumns', foreignColumns);
-
-        if (silent !== true)
-        {
+        if (silent !== true) {
             this.requestMetaData();
         }
     },
@@ -412,8 +400,7 @@ Ext.define('Connector.model.Grid', {
                     if (!defaultMeasureSet[gf.getColumnName()])
                     {
                         var measure = queryService.getMeasure(gf.getColumnName());
-                        if (Ext.isObject(measure))
-                        {
+                        if (Ext.isDefined(measure)) {
                             var p = {
                                 measure: Ext.clone(measure),
                                 time: 'date'
@@ -470,17 +457,18 @@ Ext.define('Connector.model.Grid', {
         //
         // calculate the subject filter
         //
-        Connector.model.Grid.getSubjectFilterState(this, function(filterState)
-        {
+        Connector.model.Grid.getSubjectFilterState(this, function(filterState) {
             var subjectFilter = Connector.model.Grid.createSubjectFilter(this, filterState);
             var baseFilterArray = [];
             if (subjectFilter) {
                 baseFilterArray = [subjectFilter];
             }
 
-            this.set('filterState', filterState);
-            this.set('baseFilterArray', baseFilterArray);
-            this.set('filterArray', filterArray);
+            this.set({
+                filterState: filterState,
+                baseFilterArray: baseFilterArray,
+                filterArray: filterArray
+            });
 
             if (this.isActive()) {
                 this.activeFilter = false;
@@ -505,13 +493,10 @@ Ext.define('Connector.model.Grid', {
      * @param appFilters
      */
     onAppFilterChange : function(appFilters) {
-        if (this._ready === true)
-        {
+        if (this._ready === true) {
             var filterArray = this.bindFilters(appFilters);
-            this.applyFilters(filterArray, function ()
-            {
-                if (this.bindApplicationMeasures(appFilters))
-                {
+            this.applyFilters(filterArray, function() {
+                if (this.bindApplicationMeasures(appFilters)) {
                     this.requestMetaData();
                 }
             }, this);
@@ -558,10 +543,12 @@ Ext.define('Connector.model.Grid', {
 
         this.flights++;
         var configs = [],
-                bins = {},
-                keys = [],
-                fa = filterArray,
-                colname, f;
+            bins = {},
+            keys = [],
+            fa = filterArray,
+            schema = this.get('schemaName'),
+            query = this.get('queryName'),
+            colname, f;
 
         for (f=0; f < fa.length; f++) {
             colname = fa[f].getColumnName();
@@ -573,9 +560,6 @@ Ext.define('Connector.model.Grid', {
         }
 
         // This must be done independently for each filter
-        var schema = this.get('schemaName');
-        var query = this.get('queryName');
-
         for (f=0; f < keys.length; f++) {
             configs.push({
                 schemaName: schema,
@@ -771,13 +755,14 @@ Ext.define('Connector.model.Grid', {
     },
 
     updateColumnModel : function() {
-        var columns = Connector.model.Grid.getColumnList(this);
         var metadata = this.get('metadata');
 
         // The new columns will be available on the metadata query/schema
-        this.set('schemaName', metadata.schemaName);
-        this.set('queryName', metadata.queryName);
-        this.set('columnSet', columns);
+        this.set({
+            schemaName: metadata.schemaName,
+            queryName: metadata.queryName,
+            columnSet: Connector.model.Grid.getColumnList(this)
+        });
 
         this.applyFilters(this.get('filterArray'));
 

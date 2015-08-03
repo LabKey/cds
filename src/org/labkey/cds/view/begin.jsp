@@ -15,48 +15,38 @@
  * limitations under the License.
  */
 %>
+<%@ page import="org.labkey.api.app.SinglePageAppUrls"%>
 <%@ page import="org.labkey.api.data.Container"%>
-<%@ page import="org.labkey.api.query.QueryAction"%>
+<%@ page import="org.labkey.api.di.DataIntegrationUrls" %>
+<%@ page import="org.labkey.api.query.QueryUrls" %>
 <%@ page import="org.labkey.api.study.StudyService" %>
-<%@ page import="org.labkey.api.view.ActionURL" %>
+<%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.CDSUserSchema" %>
-<%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="org.labkey.api.app.SinglePageAppUrls" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
-<%!
-    ActionURL tableURL(CDSUserSchema userSchema, String tableName)
-    {
-        return userSchema.urlFor(QueryAction.executeQuery, userSchema.getQueryDefForTable(tableName));
-    }
-%>
+<%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%
     Container c = getContainer();
-    CDSUserSchema userSchema = new CDSUserSchema(getUser(), c);
 
     // 15438
     if (StudyService.get().getStudy(c) != null)
     {
 %>
-<a href="<%=tableURL(userSchema, "antigens")%>">Antigens</a><br>
-<a href="<%=tableURL(userSchema, "assays")%>">Assays</a><br>
-<a href="<%=tableURL(userSchema, "assaypublications")%>">AssayPublications</a><br>
-<a href="<%=tableURL(userSchema, "citableauthors")%>">Authors</a><br>
-<a href="<%=tableURL(userSchema, "citable")%>">Citable</a><br>
-<a href="<%=tableURL(userSchema, "citations")%>">Citations</a><br>
-<a href="<%=tableURL(userSchema, "labs")%>">Labs</a><br>
-<a href="<%=tableURL(userSchema, "people")%>">People</a><br>
-<a href="<%=tableURL(userSchema, "sites")%>">Sites</a><br>
-<a href="<%=tableURL(userSchema, "studies")%>">Studies</a><br>
-<a href="<%=tableURL(userSchema, "vaccinecomponents")%>">VaccineComponents</a><br>
-<a href="<%=tableURL(userSchema, "vaccines")%>">Vaccines</a><br>
-<a href="<%=tableURL(userSchema, "facts")%>">Fact Table</a><br>
-<%=textLink("Populate Fact Table", CDSController.PopulateCubeAction.class)%>
-<%=textLink("Clear Fact Table", CDSController.ClearFactTableAction.class)%>
-<%=textLink("Update Participant Groups", CDSController.UpdateParticipantGroupsAction.class)%>
-<br>
-<%=textLink("Application", CDSController.AppAction.class)%>
-<%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%>
+<style type="text/css">
+    .cds-begin ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+<div class="cds-begin">
+    <ul>
+        <li><%=textLink("Application", CDSController.AppAction.class)%></li>
+        <li><%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%></li>
+        <li><%=textLink("Run ETLs", PageFlowUtil.urlProvider(DataIntegrationUrls.class).getBeginURL(c))%></li>
+        <li><%=textLink("Browse Schema", PageFlowUtil.urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
+    </ul>
+</div>
 <%
     }
     else

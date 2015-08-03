@@ -7,13 +7,13 @@ Ext.define('Connector.store.VisitTag', {
 
     extend : 'Ext.data.Store',
 
-    alias: 'store.visittag',
-
     model : 'Connector.model.VisitTag',
 
     autoLoad: true,
 
     sorters: [{property: 'Created'}],
+
+    singleUseOnly: undefined,
 
     loadVisitTags : function (data) {
         if (data && data.rows)
@@ -39,9 +39,29 @@ Ext.define('Connector.store.VisitTag', {
             schemaName: Connector.studyContext.schemaName,
             queryName: 'VisitTag',
             columns: 'Name,Caption,Created',
-            filterArray: [LABKEY.Filter.create('SingleUse', true)],
+            filterArray: this.singleUseOnly != undefined ? [LABKEY.Filter.create('SingleUse', this.singleUseOnly)] : undefined,
             success: this.loadVisitTags,
             scope : this
         });
     }
+});
+
+
+Ext.define('Connector.store.VisitTagSingleUse', {
+
+    extend : 'Connector.store.VisitTag',
+
+    alias: 'store.visittagsingle',
+
+    singleUseOnly: true
+});
+
+
+Ext.define('Connector.store.VisitTagMultiUse', {
+
+    extend : 'Connector.store.VisitTag',
+
+    alias: 'store.visittagmulti',
+
+    singleUseOnly: false
 });

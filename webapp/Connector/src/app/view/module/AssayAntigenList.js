@@ -59,13 +59,14 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                 single: true
             });
             store.load();
-        } else {
+        }
+        else {
             datasetsLoaded.call(this, store, store.data.items);
         }
 
         this.callParent();
 
-        this.on('render', function(){
+        this.on('render', function() {
             if (!data.antigens) {
                 this.fireEvent('showLoad', this);
             }

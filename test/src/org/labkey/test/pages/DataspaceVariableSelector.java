@@ -15,6 +15,7 @@
  */
 package org.labkey.test.pages;
 
+import org.labkey.api.search.SearchService;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
@@ -73,13 +74,24 @@ public abstract class DataspaceVariableSelector
 
     public void pickSource(String source)
     {
-        _test.waitAndClick(sourcePanelRow().containing(source));
+        _test.click(window().append(" div.content-label").withText(source));
+        _test.sleep(500);
+    }
+
+    public void pickMultiPanelSource(String source)
+    {
+        _test.waitAndClick(sourcePanelRow().containing(source)); // This is used in multi-panel select.
+    }
+
+    public void pickVariable(String source){
+        _test.click(window().append(" div.content-label").withText(source));
+        _test.sleep(500);
     }
 
     //Pick measure from one of multiple split panel measure pickers
     public void pickMeasure(String source, String measure, boolean keepSelection)
     {
-        pickSource(source);
+        pickMultiPanelSource(source);
         //select measure
         if (isMeasureMultiSelect())
         {
@@ -131,8 +143,79 @@ public abstract class DataspaceVariableSelector
 
     public void cancelSelection()
     {
-        _test.click(window().append(" a.x-btn").withText("cancel"));
+        _test.click(window().append(" a.x-btn").withText("Cancel"));
         _test._ext4Helper.waitForMaskToDisappear();
+    }
+
+    // TODO Still working on this as part of the detail selection.
+    protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
+    {
+        String xpathDimField, xpathDimDropDown;
+        Locator locDimField;
+
+        switch(dimension){
+            case AntigenName:
+                break;
+            case CellType:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
+
+                locDimField = Locator.xpath(xpathDimField);
+                Locator allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.click(locDimField);
+
+                    // Clear the current selection.
+                    if(!_test.isChecked(allTag))
+                    {
+                        _test.checkCheckbox(allTag);
+                    }
+                    _test.checkCheckbox(allTag);
+
+                    for(String val : value){
+                        _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                    }
+                }
+
+                break;
+            case TargetCell:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-target_cell')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')]";
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.click(locDimField);
+
+                    // Since it is a radio button shouldn't really iterate.
+                    for(String val : value){
+                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                    }
+                }
+
+                break;
+        }
+    }
+
+    // TODO Still working on this as part of the detail selection.
+    public static enum AssayDimensions
+    {
+        AntigenName,
+        CellType,
+        DataSummaryLevel,
+        DetectionSystem,
+        Dilution,
+        FunctionalMarkerName,
+        InstrumentCode,
+        LabId,
+        PeptidePool,
+        Protein,
+        ProteinPanel,
+        SpecimenType,
+        TargetCell
     }
 
     public static enum Scale

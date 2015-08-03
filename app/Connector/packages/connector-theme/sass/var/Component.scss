@@ -1,6 +1,6 @@
 /* Site wide coloring scheme */
-$select-color: #14C9CC;            // Bright Blue
-$selectongrey-color: #A0EAEB;      // Light Blue
+$select-color: #14C9CC;         // Bright Blue
+$select-hover-color: #BEEFEF;   // Light Blue
 /* read as 'select on grey' */
 
 $primary-color: #DCD8D8;           // Main Gray
@@ -9,23 +9,31 @@ $legend-color: #BAB4B4;            // 10% darker than $secondary-color
 $light-color: #FFFFFF;             // White
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
-$select-on-grey-color: #03ADB0;
-$interactive-color: #9B1497;       // Interactive
+$interactive-color: #9B0D96;       // Interactive
 $info-color: #F5A73A;              // Info
+
+$primary-text-color: #222222;
+$secondary-text-color: #777777;
+$placeholder-text-color: #AFAFAF;
 
 $black: #303030;
 $unselect-black: rgba(0, 0, 0, 0.4);
 
+$border-color: #BABABA;
+$box-shadow-color: #CCCCCC;
+
 /* these could be an actual scale using a function -- stick with Artefact colors for now */
-$heat-scale-1: #666363;            // Heatmap Gray #1
-$heat-scale-2: #A09C9C;            // Heatmap Gray #2
-$heat-scale-3: #CCC8C8;            // Heatmap Gray #3
-$heat-scale-4: #E6E1E1;            // Heatmap Gray #4
+$heat-scale-1: #666363;
+$heat-scale-2: #A09C9C;
+$heat-scale-3: #CCC8C8;
+$heat-scale-4: #E6E1E1;
+$heat-scale-5: #E5E5E5;
+$heat-scale-6: #EEEEEE;
 
 $title: 26px;
 $headline: 16px;
 $pageLeftPadding: 24px;
-$sectionTopPadding: 24px;
+$sectionTopPadding: 48px;
 
 $bodycaps-font : Arial;
 $info-font : Arial, sans-serif;
@@ -59,7 +67,7 @@ $window-body-background-color: $primary-color;
 $window-header-color: $secondary-color;
 
 // Grid
-$grid-row-cell-over-background-color: $selectongrey-color;
+$grid-row-cell-over-background-color: $select-hover-color;
 $grid-row-cell-over-color: $black;
 $grid-row-cell-font-size: 14px/15px;
 
@@ -74,7 +82,7 @@ $grid-row-cell-background-color: $light-color;
 $grid-column-header-font-family: $info-font;
 $grid-column-header-font-size: 12px;
 $grid-header-background-color: transparent;
-$grid-header-over-background-color: $selectongrey-color;
+$grid-header-over-background-color: $select-hover-color;
 
 // Tips
 $tip-background-color: $light-color;
@@ -89,6 +97,11 @@ $tip-body-color: $info-color;
   font-family: $data-font;
   font-weight: normal;
 }
+
+@mixin dialogheader {
+  font-family: $data-font;
+  color: $heat-scale-2;
+};
 
 @mixin bodycaps {
   font-family: $bodycaps-font;
@@ -250,16 +263,9 @@ svg g {
     cursor: pointer;
   }
 
-  text.yGutter-label {
-    fill: $info-color;
-    font-weight: bolder !important;
-    cursor: default;
-  }
-
-  text.xGutter-label {
-    fill: $info-color;
-    font-weight: bolder !important;
-    cursor: default;
+  text.yGutter-label, text.xGutter-label {
+    fill: $secondary-text-color;
+    cursor: pointer;
   }
 }
 
@@ -267,6 +273,19 @@ svg a {
   &:hover, &:active {
     text-decoration: none;
   }
+}
+
+.interactive {
+  color: $interactive-color;
+
+  &:hover {
+    opacity: 0.9;
+    cursor: pointer;
+  }
+}
+
+.secondary {
+  color: $secondary-text-color;
 }
 
 .educational-titlepanel {
@@ -291,13 +310,13 @@ svg a {
 .paging-arrow-svg-back {
   height: 8px !important;
   width: 8px !important;
-  margin: 3px 0px 0px 3px;
+  margin: 3px 0 0 3px;
 }
 
 .paging-arrow-svg-next {
   height: 8px !important;
   width: 8px !important;
-  margin: 3px 0px 0px 3px;
+  margin: 3px 0 0 3px;
 }
 
 .paging-back-button {
@@ -309,26 +328,40 @@ svg a {
 }
 
 .page-button-container .x-box-inner {
-  height: 30px !important
+  height: 30px !important;
 }
 
 .x-grid-view {
   padding-bottom: 70px;
 }
 
-.titlepanel {
-  font-size: 16px!important;
-  line-height: 16px;
+.inline {
+  display: inline-block;
+}
 
-  span {
-    @include bodycaps;
-  }
+.titlepanel {
+  font-size: 16px;
+  line-height: 16px;
+  font-family: $bodycaps-font;
+  font-weight: bold;
+  text-transform: none;
+  margin-right: 10px;
+}
+
+.iarrow {
+  background-image: url(images/navigatebackward.svg);
+  background-repeat: no-repeat;
+  width: 14px;
+  vertical-align: bottom;
+  display: inline-block;
 }
 
 .header-container {
-  padding-top: $pageLeftPadding;
-  padding-left: $pageLeftPadding;
-  padding-right: $pageLeftPadding;
+  margin: $pageLeftPadding $pageLeftPadding 0 $pageLeftPadding;
+
+  &-slim {
+    margin: 14px $pageLeftPadding 0 $pageLeftPadding;
+  }
 }
 
 .iScroll {
@@ -569,59 +602,74 @@ div.emptytext {
 }
 
 div.hopscotch-bubble {
-  border: 2px solid $info-color;
-  border-radius: 2px;
+  border: 1px solid $border-color;
+  box-shadow: 2px 2px 0 $box-shadow-color;
 
+  .hopscotch-title {
+    font-size: 13px;
+    padding-bottom: 8px;
+  }
+
+  .hopscotch-content {
+    margin: 0;
+    padding: 0;
+    font-family: $info-font;
+    color: $secondary-text-color;
+  }
+
+  .hopscotch-actions {
+    display: none;
+  }
 
   // placement: bottom
   .hopscotch-bubble-arrow-container.up {
-    top: -19px;
+    top: -17px;
 
     .hopscotch-bubble-arrow {
-      top: -14px;
+      top: -16px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-bottom-color: $info-color;
+      border-bottom-color: $border-color;
     }
   }
 
   // placement: top
   .hopscotch-bubble-arrow-container.down {
-    bottom: -35px;
+    bottom: -34px;
 
     .hopscotch-bubble-arrow {
-      top: -21px;
+      top: -18px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-top-color: $info-color;
+      border-top-color: $border-color;
     }
   }
 
   // placement: left
   .hopscotch-bubble-arrow-container.right {
-    right: -35px;
+    right: -34px;
 
     .hopscotch-bubble-arrow {
-      left: -3px;
+      left: -1px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-left-color: $info-color;
+      border-left-color: $border-color;
     }
   }
 
   // placement: right
   .hopscotch-bubble-arrow-container.left {
-    left: -18px;
+    left: -17px;
 
     .hopscotch-bubble-arrow {
-      left: 3px;
+      left: 1px;
     }
 
     .hopscotch-bubble-arrow-border {
-      border-right-color: $info-color;
+      border-right-color: $border-color;
     }
   }
 

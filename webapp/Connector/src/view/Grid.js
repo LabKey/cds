@@ -136,6 +136,28 @@ Ext.define('Connector.view.Grid', {
                 scope: this
             }
         });
+
+        this.on('beforehide', this.hideVisibleWindow);
+    },
+
+    setVisibleWindow : function(win) {
+        this.visibleWindow = win;
+    },
+
+    clearVisibleWindow : function() {
+        if (Ext.isObject(this.visibleWindow) && this.visibleWindow.hideLock === true) {
+            this.visibleWindow.hideLock = false;
+        }
+        else {
+            this.visibleWindow = undefined;
+        }
+    },
+
+    // Issue 23585: panel remains even if underlying page changes
+    hideVisibleWindow : function() {
+        if (Ext.isObject(this.visibleWindow)) {
+            this.visibleWindow.hide();
+        }
     },
 
     _showOverlay : function() {
@@ -396,6 +418,8 @@ Ext.define('Connector.view.Grid', {
                     items : ['->',{
                         text: 'select',
                         handler : function() {
+                            this.clearVisibleWindow();
+
                             var axispanel = this.getAxisSelector();
                             var allMeasures = axispanel.getMeasurePicker().measuresStoreData.measures;
                             this.fireEvent('measureselected', axispanel.getSelection(), allMeasures, axispanel.getLookups());
@@ -404,10 +428,19 @@ Ext.define('Connector.view.Grid', {
                         scope: this
                     },{
                         text: 'cancel',
-                        handler : function() { this.measureWindow.hide(); },
+                        handler : function() {
+                            this.clearVisibleWindow();
+                            this.measureWindow.hide();
+                        },
                         scope: this
                     }]
-                }]
+                }],
+                listeners: {
+                    scope: this,
+                    show: function(cmp) {
+                        this.setVisibleWindow(cmp);
+                    }
+                }
             });
         }
 
@@ -618,7 +651,7 @@ Ext.define('Connector.view.Grid', {
     },
 
     showMeasureSelection : function() {
-        Connector.getService('Query').onQueryReady(function(query){
+        Connector.getService('Query').onQueryReady(function() {
             var measureWindow = this.getMeasureSelectionWindow(),
                     box = this.getBox(),
                     mp = this.getAxisSelector().getMeasurePicker(),
@@ -720,19 +753,25 @@ Ext.define('Connector.view.Grid', {
 
     showAlignFooter : function(comp, caller, resize) {
         if (this.footer && this.grid) {
-            var size = this.getWidthHeight();
-            if (!this.footer.isVisible()) {
-                this.footer.show();
-                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
+            var footer = this.footer,
+                size = this.getWidthHeight(),
+                up = this.up(),
+                position = 'c-tl',
+                offsets = [size.width / 2, (size.height + 11)];
+
+            if (!footer.isVisible()) {
+                footer.show();
+                footer.alignTo(up, position, offsets);
             }
 
-            if(this.footer.realign) {
-                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
-                this.footer.realign = false;
+            if (footer.realign) {
+                footer.alignTo(up, position, offsets);
+                footer.realign = false;
             }
 
-            if(resize)
-                this.footer.alignTo(this.up(), 'c-tl', [size.width / 2, (size.height + 11)]);
+            if (resize) {
+                footer.alignTo(up, position, offsets);
+            }
         }
     }
 });

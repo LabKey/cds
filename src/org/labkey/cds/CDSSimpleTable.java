@@ -19,6 +19,7 @@ import org.labkey.api.data.DatabaseTableType;
 import org.labkey.api.data.TableInfo;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.SimpleUserSchema;
+import org.labkey.api.study.DataspaceContainerFilter;
 
 /**
  * User: markigra
@@ -30,6 +31,8 @@ public class CDSSimpleTable extends SimpleUserSchema.SimpleTable<SimpleUserSchem
     public CDSSimpleTable(SimpleUserSchema schema, TableInfo table)
     {
         super(schema, table);
+
+        setContainerFilter(new DataspaceContainerFilter(schema.getUser(), schema.getContainer().getProject()));
     }
 
     @Override

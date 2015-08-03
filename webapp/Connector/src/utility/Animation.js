@@ -9,14 +9,23 @@ Ext.define('Animation', {
 
     // Copy a source object and float it to a destination object
     floatTo: function(node, sourceQuery, targetQueries, animateElementType, animateElementClass, completionCallback, callbackScope, callbackParams) {
-        var target = null;
-        var targetTop = false, found = false, box;
+        var target = null,
+            targetTop = false,
+            found = false,
+            box,
+            child,
+            cbox,
+            dom,
+            xdom,
+            task,
+            el,
+            y, i;
 
         // Determine which animation end point is best
-        for (var i = 0; i < targetQueries.length && !found; ++i) {
+        for (i = 0; i < targetQueries.length && !found; ++i) {
             target = Ext.DomQuery.select(targetQueries[i]);
-            if (Ext.isArray(target) && target.length > 0) {
-                var el = Ext.get(target[0]);
+            if (Ext.isArray(target) && !Ext.isEmpty(target)) {
+                el = Ext.get(target[0]);
                 if (el.isVisible()) {
                     // use the selection panel
                     targetTop = true;
@@ -26,7 +35,7 @@ Ext.define('Animation', {
             }
         }
 
-        // Visibile doesn't necessarily work...
+        // Visible doesn't necessarily work...
         if (found && (box.x == 0 || box.y == 0)) {
             found = false;
         }
@@ -36,25 +45,27 @@ Ext.define('Animation', {
                 // Convert DOM element to Ext element
                 node = Ext.get(node);
             }
-            var child = node.query(sourceQuery);
-            child = Ext.get(child[0]);
-            var cbox = child.getBox();
+
+            child = Ext.get(node.query(sourceQuery)[0]);
+            cbox = child.getBox();
 
             // Create DOM Element replicate
-            var dom = document.createElement(animateElementType);
+            dom = document.createElement(animateElementType);
             //IE and Safari not finding innerHTML
-            if(child.dom.innerHTML)
+            if (child.dom.innerHTML) {
                 dom.innerHTML = child.dom.innerHTML;
-            else
+            }
+            else {
                 dom.innerHTML = child.dom.__data__;
+            }
             dom.setAttribute('class', animateElementClass);
             dom.setAttribute('style', 'position: absolute; width: ' + (child.getTextWidth()+20) + 'px; left: ' + cbox[0] + 'px; top: ' + cbox[1] + 'px;');
 
             // Append to Body
-            var xdom = Ext.get(dom);
+            xdom = Ext.get(dom);
             xdom.appendTo(Ext.getBody());
 
-            var y = box.y + 30;
+            y = box.y + 30;
             if (!targetTop) {
                 y += box.height;
             }
@@ -75,7 +86,7 @@ Ext.define('Animation', {
         }
 
         if (completionCallback) {
-            var task = new Ext.util.DelayedTask(completionCallback, callbackScope, callbackParams);
+            task = new Ext.util.DelayedTask(completionCallback, callbackScope, callbackParams);
             task.delay(found ? 800 : 0);
         }
     }

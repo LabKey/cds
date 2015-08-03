@@ -18,45 +18,41 @@ package org.labkey.test.util;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.etl.ETLHelper;
 
 public class CDSInitializer
 {
+    private final int WAIT_ON_IMPORT = 1 * 60 * 1000;
+    private final int WAIT_ON_LOADAPP = 15 * 60 * 1000;
+
     private final BaseWebDriverTest _test;
     private final CDSHelper _cds;
     private final String _project;
-    private String[] _desiredStudies;
-    private final String[] _emails;
-    private final String[] _pictureFileNames;
+    public ETLHelper _etlHelper;
 
-    public CDSInitializer(BaseWebDriverTest test, String projectName, String[] emails, String[] pictureFileNames)
+
+    public CDSInitializer(BaseWebDriverTest test, String projectName)
     {
         _test = test;
         _cds = new CDSHelper(_test);
         _project = projectName;
-        _emails = emails;
-        _pictureFileNames = pictureFileNames;
-    }
-
-    public void setDesiredStudies(String[] studies) {
-        _desiredStudies = studies;
+        _etlHelper = new ETLHelper(_test, _project);
     }
 
     @LogMethod
-    public void setupDataspace()
+    public void setupDataspace() throws Exception
     {
-        setupProject();
-        importData();
-        populateFactTable();
-        preCacheCube();
-    }
-
-    @LogMethod
-    private void preCacheCube()
-    {
-        _cds.enterApplication();
-        _cds.goToSummary();
-        _test.waitForElement(CDSHelper.Locators.getByLocator("Studies"));
-        _test.goToProjectHome();
+        if (CDSHelper.debugTest)
+        {
+            // If debugging test do not run setup and make sure cleanup does not happen as well.
+            _test.log("Bypassing CDSImport and loadApplication etls. Cleanup will be skipped as well.");
+            System.setProperty("clean", "false");
+        }
+        else
+        {
+            setupProject();
+            importData();
+        }
     }
 
     @LogMethod
@@ -64,42 +60,36 @@ public class CDSInitializer
     {
         _test._containerHelper.createProject(_project, "Dataspace");
         _test._containerHelper.enableModule(_project, "CDS");
-        _test.goToManageStudy();
-        _test.clickAndWait(Locator.linkWithText("Change Study Properties"));
-        _test.waitForElement(Ext4Helper.Locators.radiobutton(_test, "DATE"));
-        _test._ext4Helper.selectRadioButton("DATE");
-        //We need to set the root study name to blank to hide it from mondrian (issue 19996)
-        _test.setFormElement(Locator.name("Label"), "");
-        _test.setFormElement(Locator.name("SubjectColumnName"), "SubjectId");
-        _test.clickButton("Submit");
+        _test._containerHelper.enableModule(_project, "DataIntegration");
+
+        _test.setPipelineRoot(TestFileUtils.getLabKeyRoot() + "/server/optionalModules/cds/test/sampledata");
+        _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
         _test.goToProjectHome();
     }
 
     @LogMethod
-    private void importData()
+    private void importData() throws Exception
     {
-        for (String study : _desiredStudies)
-        {
-            importComponentStudy(study);
-        }
+        // TODO: Catch any RemoteAPI Command Exceptions
 
-        //Can't add web part until we actually have the datasets imported above
-        _test.clickProject(_project);
+        // run initial ETL to populate CDS import tables
+        _etlHelper.getDiHelper().runTransformAndWait("{cds}/CDSImport", WAIT_ON_IMPORT);
+
+        // populate the app
+        _etlHelper.getDiHelper().runTransformAndWait("{cds}/loadApplication", WAIT_ON_LOADAPP);
+
         PortalHelper portalHelper = new PortalHelper(_test);
         portalHelper.addWebPart("CDS Management");
 
-        importCDSData("Antigens", "antigens.tsv");
-        importCDSData("Sites", "sites.tsv");
-        importCDSData("People", "people.tsv");
-        importCDSData("Citable", "citable.tsv");
-        importCDSData("Citations", "citations.tsv");
-        importCDSData("AssayPublications", "assay_publications.tsv");
-        importCDSData("Vaccines", "vaccines.tsv");
-        importCDSData("VaccineComponents", "vaccinecomponents.tsv");
+        populateNewsFeed();
+    }
 
+    @LogMethod
+    private void populateNewsFeed()
+    {
         // prepare RSS news feed
-        _test.goToSchemaBrowser();
+        _test.clickAdminMenuItem("Go To Module", "Query");
         _test.selectQuery("announcement", "RSSFeeds");
         _test.waitForText("view data");
         _test.clickAndWait(Locator.linkContainingText("view data"));
@@ -110,82 +100,5 @@ public class CDSInitializer
         _test.setFormElement(Locator.name("quf_FeedURL"), CDSHelper.TEST_FEED);
         _test.clickButton("Submit");
         _test.assertTextPresent(CDSHelper.TEST_FEED);
-
-        createPeoplePictureList(_emails, _pictureFileNames);
-
-        _test.goToSchemaBrowser();
-        _test.selectQuery("study", "StudyDesignAssays");
-        _test.waitAndClickAndWait(Locator.linkWithText("edit metadata"));
-
-        MetadataEditorHelper editor = new MetadataEditorHelper(_test);
-
-        _test._listHelper.setColumnType(editor.getFieldIndexForName("LabPI"), new ListHelper.LookupInfo(null, "CDS", "People"));
-        _test._listHelper.setColumnType(editor.getFieldIndexForName("Contact"), new ListHelper.LookupInfo(null, "CDS", "People"));
-        _test._listHelper.setColumnType(editor.getFieldIndexForName("LeadContributor"), new ListHelper.LookupInfo(null, "CDS", "People"));
-        editor.save();
-    }
-
-    @LogMethod
-    private void importComponentStudy(String studyName)
-    {
-        _test._containerHelper.createSubfolder(_project, studyName, "Study");
-        StudyImporter importer = new StudyImporter(_test);
-        importer.zipAndImportStudy(TestFileUtils.getSampleData(studyName + ".folder"));
-    }
-
-    @LogMethod
-    private void importCDSData(String query, String dataFilePath)
-    {
-        _test.goToProjectHome();
-        _test.waitForTextWithRefresh(_test.defaultWaitForPage * 4, "Fact Table");  //wait for study to fully load
-        _test.clickAndWait(Locator.linkWithText(query));
-        _test._listHelper.clickImportData();
-
-        _test.setFormElementJS(Locator.id("tsv3"), TestFileUtils.getFileContents(TestFileUtils.getSampleData(dataFilePath)));
-        _test.clickButton("Submit");
-    }
-
-    @LogMethod
-    public void populateFactTable()
-    {
-        _test.goToProjectHome();
-        _test.clickAndWait(Locator.linkWithText("Populate Fact Table"));
-        _test.uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "HIV Test Results"));
-        _test.uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Physical Exam"));
-        _test.uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "Lab Results"));
-        _test.uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", "ParticipantTreatments"));
-        _test.submit();
-
-        _test.assertElementPresent(Locator.linkWithText("NAb"));
-        _test.assertElementPresent(Locator.linkWithText("Luminex"));
-        _test.assertElementPresent(Locator.linkWithText("MRNA"));
-        _test.assertElementPresent(Locator.linkWithText("ADCC"));
-
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Click to Complete"));
-    }
-
-    @LogMethod
-    public void createPeoplePictureList(String[] emails, String[] fileNames)
-    {
-        _test.goToProjectHome();
-        ListHelper listHelper = new ListHelper(_test);
-        ListHelper.ListColumn  personCol = new ListHelper.ListColumn("Person", "Person", ListHelper.ListColumnType.String, "Person Lookup", new ListHelper.LookupInfo(_project, "CDS", "People"));
-        ListHelper.ListColumn  pictureCol = new ListHelper.ListColumn("Picture", "Picture", ListHelper.ListColumnType.Attachment, "Picture");
-
-        listHelper.createList(_project, "PeoplePictures", ListHelper.ListColumnType.AutoInteger, "Key", personCol, pictureCol);
-        _test.goToManageLists();
-        _test.click(Locator.linkWithText("PeoplePictures"));
-
-        for (int i = 0; i < emails.length; i++) {
-            String email = emails[i];
-            String fileName = fileNames[i];
-
-            _test.clickButton("Insert New");
-            _test.selectOptionByText(Locator.name("quf_Person"), email);
-            _test.setFormElement(Locator.name("quf_Picture"), TestFileUtils.getSampleData("/pictures/" + fileName));
-            _test.clickButton("Submit");
-        }
-
-        _test.goToProjectHome();
     }
 }

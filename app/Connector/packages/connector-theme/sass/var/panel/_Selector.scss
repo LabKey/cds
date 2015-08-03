@@ -1,37 +1,281 @@
 /* Connector.view.Selector */
-.selector-advanced {
-  background-color: #E6E1E1;
-}
+.variable-selector {
+  .header {
+    background-color: $heat-scale-6;
+    padding: 18px 48px;
 
-.selector-footer {
-  background-color: #f0f0f0;
-  padding: 16px 72px;
-}
+    .main-title {
+      @include dialogheader;
+      font-size: 16px;
+    }
 
-.source-item {
-  height: 25px;
-  padding: 7px 8px 0 8px;
-  font-family: Arial, sans-serif;
+    .sub-title {
+      margin-top: 3px;
 
-  &:hover {
-    background-color: #A0EAEB;
-    cursor: pointer;
+      .subject-count {
+        position: absolute;
+        right: 48px;
+        bottom: 19px;
+        color: $heat-scale-2;
+        font-weight: bold;
+      }
+
+      .nav-text {
+        color: $black;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: $info-font;
+      }
+
+      .back-action {
+        color: $interactive-color;
+
+        .arrow {
+          background-image: url(images/navigatebackward.svg);
+          width: 16px;
+          position: absolute;
+          left: 32px;
+          bottom: 20px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .section-title {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+        padding-left: 24px;
+        color: $black;
+        font-size: 20px;
+        @include header;
+      }
+    }
+  }
+
+  .footer {
+    background-color: $heat-scale-6;
+    padding: 18px 48px;
+  }
+
+  .content {
+    background-color: $light-color;
+    padding: 10px 40px;
+
+    .look-disabled {
+      color: $heat-scale-3;
+    }
+
+    .content-grouping, .content-category {
+      font-size: 11px;
+      font-weight: bold;
+      color: $heat-scale-2;
+      padding: 8px;
+    }
+
+    .content-grouping.extrapadding {
+      padding-top: 24px;
+    }
+
+    .content-category.content-line {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: solid $heat-scale-6 1px;
+    }
+
+    .content-item {
+      height: 25px;
+      padding: 7px 8px 0 8px;
+      font-family: $info-font;
+
+      .content-label {
+        display: inline-block;
+        width: 85%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .content-count {
+        display: inline-block;
+        float: right;
+      }
+
+      &:hover {
+        background-color: $select-hover-color;
+        cursor: pointer;
+      }
+    }
+
+    .content-selected, .content-selected:hover {
+      background-color: $select-color;
+      color: $light-color;
+    }
+  }
+
+  .advanced {
+    background-color: $heat-scale-5;
+    border-top: solid rgba(0,0,0,0.2) 2px;
+
+    .x-panel-body {
+      background-color: transparent;
+      padding: 18px 48px;
+
+      .x-fieldset {
+        padding: 0;
+      }
+
+      .field-label {
+        display: inline-block;
+        color: $heat-scale-1;
+        width: 35%;
+        vertical-align: middle;
+      }
+
+      .field-display {
+        display: inline-block;
+        background-color: #FFFFFF;
+        width: 65%;
+        padding: 8px 16px 7px 16px;
+        border-radius: 15px;
+        cursor: pointer;
+
+        .main-label {
+          display: inline-block;
+          color: $black;
+          width: 85%;
+          vertical-align: bottom;
+
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+
+          .sub-value {
+            color: $heat-scale-2;
+          }
+        }
+
+        .empty {
+          color: $interactive-color;
+        }
+
+        .icon {
+          width: 12px;
+          float: right;
+          background-image: url(images/dropdown_expand.svg);
+          background-size: 12px;
+          background-repeat: no-repeat;
+        }
+      }
+
+      .expanded .field-display .icon {
+        background-image: url(images/dropdown_collapse.svg);
+      }
+
+      .hierarchical .field-display .icon {
+        background-image: url(images/navigateforward.svg);
+      }
+
+      .display-option-only .field-display {
+        cursor: default;
+
+        .icon {
+          background-image: none;
+        }
+      }
+
+      .dimension-header {
+        color: $heat-scale-1;
+        font-size: 11px;
+        font-weight: bold;
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .hierarchy-pane {
+    .x-panel-body {
+      overflow-y: auto;
+    }
+
+    .content {
+      .x-form-checkboxgroup-body {
+        padding: 0;
+      }
+
+      .col-title, .col-check {
+        width: 100%;
+        white-space: nowrap;
+      }
+
+      .col-check, .col-spacer {
+        height: 26px;
+      }
+
+      .col-line {
+        border-top: solid $heat-scale-6 1px;
+      }
+
+      .col-title {
+        font-size: 11px;
+        font-weight: bold;
+        color: $heat-scale-2;
+        padding: 0 8px 16px 0;
+      }
+
+      .col-check .x-form-cb-label {
+        width: 80%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
   }
 }
 
-.source-selected,
-.source-selected:hover {
-  background-color: #14C9CC;
-  color: #FFFFFF;
-}
+.advanced-dropdown {
+  border-radius: 15px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $heat-scale-3 !important;
 
-.back-action {
-  color: #9B1497;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  font-weight: bold;
+  .x-panel-body {
+    background-color: transparent;
 
-  &:hover {
-    cursor: pointer;
+    .field-display {
+      width: 100%;
+      padding: 8px 16px 7px 16px;
+      border-radius: 15px;
+      cursor: pointer;
+    }
+
+    .body-panel {
+      background-color: $heat-scale-6;
+      padding: 8px 0 8px 16px;
+
+      .cb-all-panel, .cb-panel, .radio-panel {
+        margin-bottom: 0;
+      }
+
+      .cb-all-panel {
+        margin-left: 4px;
+      }
+
+      .cb-all-panel .x-form-cb-label-after, .cb-panel .x-form-cb-label-after {
+        padding-left: 8px;
+      }
+
+      .radio-panel .x-form-cb-label-after {
+        margin-left: 8px;
+      }
+    }
   }
 }
+
+.checkbox2 .x-form-checkbox {
+  background-image: url(images/form/checkbox2.gif);
+}
+

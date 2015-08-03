@@ -22,13 +22,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.TestTimeoutException;
 import org.labkey.test.categories.CDS;
-import org.labkey.test.categories.CustomModules;
 import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.PostgresOnlyTest;
+import org.labkey.test.util.UIContainerHelper;
 
 import java.util.Arrays;
 
@@ -38,17 +39,21 @@ import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 @Category({CDS.class})
 public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 {
+
+    private static final String PROJECT_NAME = "CDSTest Project";
+    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
+
     private final CDSHelper _cds = new CDSHelper(this);
     private static String _cdsAppURL;
 
     @BeforeClass
-    public static void setUpProject()
+    public static void doSetup() throws Exception
     {
         CDSLoginTest initTest = (CDSLoginTest)getCurrentTest();
 
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName(), CDSHelper.EMAILS, CDSHelper.PICTURE_FILE_NAMES);
-        _initializer.setDesiredStudies(new String[] {"DemoSubset"});
+        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+
         initTest._cds.enterApplication();
         _cdsAppURL = initTest.getCurrentRelativeURL();
     }
@@ -59,6 +64,18 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
         signOut();
         beginAt(_cdsAppURL);
         Ext4Helper.setCssPrefix("x-");
+    }
+
+    @Override
+    public void doCleanup(boolean afterTest) throws TestTimeoutException
+    {
+
+        if(!CDSHelper.debugTest){
+            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
+            _containerHelper = new UIContainerHelper(this);
+            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+        }
+
     }
 
     @Test
@@ -84,7 +101,16 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         signOutHTTP();
 
-        clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
+        sleep(1000);
+
+//        // It looks like there was a change in the behavior. If the test runs quickly calling signOutHTTP
+//        // will generate a session time out. If the test run slowly (like you are stepping through it) you will
+//        // see the grid navigation link and clicking on it will generate a time out message.
+        if (isElementPresent(CDSHelper.NavigationLink.GRID.getLinkLocator()) && isElementVisible(CDSHelper.NavigationLink.GRID.getLinkLocator()))
+        {
+            clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
+        }
+
         waitForElement(Locator.css("p.errormsg").withText("Your session has timed out. Please login to continue."));
     }
 
@@ -92,7 +118,7 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     protected String getProjectName()
     {
-        return "CDSLoginTest Project";
+        return PROJECT_NAME;
     }
 
     @Override

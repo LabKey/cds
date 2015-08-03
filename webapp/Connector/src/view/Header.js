@@ -10,7 +10,7 @@ Ext.define("Connector.view.Header", {
 
     layout: 'hbox',
 
-    height: 65,
+    height: 48,
 
     cls: 'connectorheader',
 
@@ -32,18 +32,28 @@ Ext.define("Connector.view.Header", {
                 '<h2>HIV VACCINE <span>Collaborative DataSpace</span></h2>'
             ],
             data: {
-                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png' // TODO: Get rid of hard coded context
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
             }
-        }, {
+        },{
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '25 14 0 0',
-            width: 50,
+            margin: '18 14 0 0',
+            width: 100,
             items: [{
                 xtype: 'box',
+                itemId: 'about',
                 margin: '2 15 0 0',
+                autoEl: {
+                    tag: 'a',
+                    cls: 'logout',
+                    html: 'About',
+                    href: '#home/about'
+                }
+            },{
+                xtype: 'box',
                 itemId: 'logout',
+                margin: '2 15 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -52,7 +62,7 @@ Ext.define("Connector.view.Header", {
                 listeners: {
                     click : function() {
                         Ext.Ajax.request({
-                            url : LABKEY.ActionURL.buildURL("login", "logoutAPI.api"),
+                            url : LABKEY.ActionURL.buildURL('login', 'logoutAPI.api'),
                             method: 'POST',
                             success: function(response) {
                                 if (Ext.decode(response.responseText).success) {

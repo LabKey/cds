@@ -17,42 +17,56 @@ Ext.define('Connector.app.store.Study', {
     },
 
     loadSlice : function(slice) {
+        this.studyData = undefined;
+        this.productData = undefined;
 
-        var cells = slice.cells, row;
-        var studySet = [], study;
-        for (var c=0; c < cells.length; c++) {
-            row = cells[c][0];
-            study = row.positions[row.positions.length-1][0];
-            if (row.value > 0) {
-                studySet.push(study.name);
-            }
-        }
-        study = studySet.join(';');
-
-        if (studySet.length > 0) {
-            var queryConfig = {
-                schemaName: 'Study',
-                queryName: 'StudyProperties',
-                success: this.onLoadQuery,
-                scope: this
-            };
-
-            if (study.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('Label', study, LABKEY.Filter.Types.IN) ]
-            }
-
-            LABKEY.Query.selectRows(queryConfig);
-        }
-        else {
-            this.onLoadQuery({rows: []});
-        }
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'study',
+            success: this.onLoadStudies,
+            scope: this
+        });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'studyproductmap',
+            success: this.onLoadProducts,
+            requiredVersion: 13.2,
+            scope: this
+        });
     },
 
-    onLoadQuery : function(queryResult) {
-        var rows = queryResult.rows;
-        for (var r=0; r < rows.length; r++) {
-            rows[r].internalId = r;
+    onLoadStudies : function(studyData) {
+        this.studyData = studyData.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadProducts : function(productData) {
+        this.productData = productData.rows;
+        this._onLoadComplete();
+    },
+
+    _onLoadComplete : function() {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData)) {
+            var studies = [], products;
+
+            // join products to study
+            Ext.each(this.studyData, function(study) {
+                products = [];
+                for (var p=0; p < this.productData.length; p++) {
+                    if (study.study_name === this.productData[p].study_name.value) {
+                        // Consider: These should probably be of type Connector.app.model.StudyProducts
+                        // but it'd be good to then have a common sourcing mechanism for LA models
+                        products.push({
+                            product_id: this.productData[p].product_id.value,
+                            product_name: this.productData[p].product_id.displayValue
+                        });
+                    }
+                }
+                study.products = products;
+                studies.push(study);
+            }, this);
+
+            this.loadRawData(studies);
         }
-        this.loadRawData(rows);
     }
 });

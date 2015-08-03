@@ -24,7 +24,7 @@ import com.google.common.base.Function;
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
     DataGrid _dataGrid;
-    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("View data grid"));
+    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withText("View data grid");
 
     public DataGridVariableSelector(DataGrid dataGrid)
     {
@@ -57,6 +57,11 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
 
     public void addGridColumn(String source, String measure, boolean keepOpen, boolean keepSelection)
     {
+        addGridColumn(source, source, measure, keepOpen, keepSelection);
+    }
+
+    public void addGridColumn(String source, String sourceColumnTitle, String measure, boolean keepOpen, boolean keepSelection)
+    {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
         // allow for already open measures
@@ -72,7 +77,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         {
             confirmSelection();
             // confirm source header
-            _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(source));
+            _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(sourceColumnTitle));
             // confirm column header
             _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(measure));
         }
@@ -86,7 +91,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         _test.shortWait().until(ExpectedConditions.elementToBeClickable(_variablePanelRow.toBy()));
         _test.click(_variablePanelRow.withText(measure));
 
-        _test.waitForElement(Locator.tagWithClass("div", "curselauth").withText(measure + " details"));
+        _test.waitForElement(Locator.tagWithClass("div", "curselauth").withText("Definition: " + measure));
 
         String lookupClass = "variableoptions .lookupgrid";
         Locator.CssLocator _lookupPanelRow = Locator.css("." + lookupClass + " ." + Ext4Helper.getCssPrefix() + "grid-row");
@@ -112,7 +117,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             _test.waitForElement(Locator.id("gridmeasurewin").notHidden());
         }
 
-        pickSource(source);
+        pickMultiPanelSource(source);
         _test._ext4Helper.uncheckGridRowCheckbox(measure);
 
         if (!keepOpen)

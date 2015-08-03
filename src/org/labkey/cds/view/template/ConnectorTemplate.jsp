@@ -18,7 +18,6 @@
 <%@ page import="org.labkey.api.settings.AppProps" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.api.view.HttpView" %>
-<%@ page import="org.labkey.api.view.template.ClientDependency" %>
 <%@ page import="org.labkey.api.view.template.PrintTemplate" %>
 <%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
@@ -27,7 +26,7 @@
     String contextPath = request.getContextPath();
     String serverHash = PageFlowUtil.getServerSessionHash();
     String devModeParam = getActionURL().getParameter("devMode");
-    Boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
+    boolean devMode = AppProps.getInstance().isDevMode() || (devModeParam != null && devModeParam.equalsIgnoreCase("1"));
 
     String appPath = contextPath + "/Connector";
     String sdkPath = contextPath + "/ext-4.2.1";
@@ -49,7 +48,7 @@
     <link type="text/css" href="<%=text(resourcePath)%>/Connector-all.css<%= text(devMode ? "" : ("?"+serverHash)) %>" rel="stylesheet">
 
     <!-- Include base labkey.js -->
-    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<ClientDependency>())%>
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
     <script type="text/javascript">
         var Connector = {
             studyContext: {
@@ -121,7 +120,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/d3-3.3.9.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/hexbin.min.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/sqbin.min.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/raphael-min-2.1.0.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/crossfilter-1.3.11.js"></script>
 
     <!-- LabKey Visualization Library -->
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/lib/patches.js"></script>
@@ -130,9 +129,9 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/stat.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/scale.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/layer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/RaphaelRenderer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/internal/D3Renderer.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/vis/src/plot.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/vis/experimental/MeasureStore.js"></script>
 
     <script type="text/javascript" src="<%=text(contextPath)%>/query/olap.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
@@ -159,11 +158,13 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/model/Antigen.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/ChartData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyAxisData.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/model/StudyVisitTag.js"></script>
 
     <!-- Application source -->
     <script type="text/javascript" src="<%=text(srcPath)%>/button/Image.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/ActionTitle.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/component/AdvancedOption.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/DropDown.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/GridPager.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>
@@ -195,6 +196,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/Summary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/store/VisitTag.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
 
     <!-- Application Views -->
     <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>
@@ -208,6 +210,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/GroupSummary.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Header.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Home.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/view/HomeHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Learn.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Main.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
@@ -252,6 +255,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Animation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Statistics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>

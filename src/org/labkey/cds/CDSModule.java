@@ -29,7 +29,6 @@ import org.labkey.api.view.WebPartFactory;
 import org.labkey.api.view.WebPartView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -45,7 +44,7 @@ public class CDSModule extends DefaultModule
 
     public double getVersion()
     {
-        return 15.20;
+        return 15.27;
     }
 
     public boolean hasScripts()
@@ -56,7 +55,7 @@ public class CDSModule extends DefaultModule
     @NotNull
     protected Collection<WebPartFactory> createWebPartFactories()
     {
-        return new ArrayList<WebPartFactory>(Collections.singletonList(
+        return new ArrayList<>(Collections.singletonList(
                 new BaseWebPartFactory("CDS Management")
                 {
                     @Override

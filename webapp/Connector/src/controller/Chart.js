@@ -13,34 +13,34 @@ Ext.define('Connector.controller.Chart', {
 
         var queryService = Connector.getService('Query');
 
-        this.control('#yaxisselector', {
+        this.control('#yvarselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
                     queryService.onQueryReady(function(query) {
-                        plot.showYMeasureSelection(view.getEl());
+                        plot.showYMeasureSelection();
                     });
                 }
             }
         });
 
-        this.control('#xaxisselector', {
+        this.control('#xvarselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
                     queryService.onQueryReady(function(query) {
-                        plot.showXMeasureSelection(view.getEl());
+                        plot.showXMeasureSelection();
                     });
                 }
             }
         });
 
-        this.control('#colorselector', {
+        this.control('#colorvarselector', {
             requestvariable: function(view, model) {
                 var plot = view.up('plot');
                 if (plot) {
                     queryService.onQueryReady(function(query) {
-                        plot.showColorSelection(view.getEl());
+                        plot.showColorSelection();
                     });
                 }
             }
@@ -50,24 +50,8 @@ Ext.define('Connector.controller.Chart', {
             click: function(btn) {
                 var plot = btn.up('plot');
                 if (plot) {
-                    plot.showPlotDataGrid(btn.getEl());
+                    plot.showPlotDataGrid();
                 }
-            }
-        });
-
-        this.control('plot', {
-            axisselect: function(plot, axis, selection) {
-                var type;
-                if (axis === 'y') {
-                    type = 'yaxisselector';
-                }
-                else if (axis === 'x') {
-                    type = 'xaxisselector';
-                }
-                else if (axis === 'color') {
-                    type = 'colorselector';
-                }
-                if (type) { Ext.getCmp(type).getModel().updateVariable(selection); }
             }
         });
 
@@ -102,13 +86,13 @@ Ext.define('Connector.controller.Chart', {
 
     createView : function(xtype, config, context) {
 
-        var state = this.getStateManager();
+        var state = Connector.getState();
         var v, plotType = 'plot';
 
         if (xtype == plotType)
         {
             v = Ext.create('Connector.view.Chart', {
-                visitTagStore : this.getStore('VisitTag')
+                visitTagStore : this.getStore('VisitTagSingleUse')
             });
 
             state.clearSelections();
@@ -142,7 +126,7 @@ Ext.define('Connector.controller.Chart', {
 
     updateView : function(xtype, context) {
         if (xtype === 'plot') {
-            this.getStateManager().clearSelections();
+            Connector.getState().clearSelections();
         }
     },
 

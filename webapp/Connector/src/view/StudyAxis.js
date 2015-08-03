@@ -3,194 +3,121 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Connector.view.StudyAxis = function(){
-    var canvas = null, width, height, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
-            visitMouseover, visitMouseout, visitMouseoverScope, visitMouseoutScope, tagMouseover, tagMouseout,
-            tagMouseoverScope, tagMouseoutScope;
+Connector.view.StudyAxis = function() {
+    var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
+            tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope;
 
     var renderAlignment = function(selection) {
-        var alignmentPath, x, pathStr;
-        x = xScale(ALIGNMENT_DAY);
-        pathStr = 'M ' + x + ' 0 L ' + x + ' ' + height + 'Z';
-        alignmentPath = selection.selectAll('path.alignment-line').data([ALIGNMENT_DAY]);
-        alignmentPath.enter().append('path').attr('class', 'alignment-line');
-        alignmentPath.attr('stroke', '#000')
-                .attr('stroke', '#cccccc')
+        var alignmentPath, x = xScale(ALIGNMENT_DAY);
+
+        alignmentPath = selection.selectAll('line.alignment').data(function(d) {return [d];});
+        alignmentPath.exit().remove();
+        alignmentPath.enter().append('line').attr('class', 'alignment');
+        alignmentPath.attr('stroke', '#cccccc')
                 .attr('stroke-width', 2)
-                .attr('d', pathStr);
+                .attr('x1', x).attr('x2', x)
+                .attr('y1', function(d) { return yScale(d.label); })
+                .attr('y2', function(d) { return yScale(d.label) + perStudyHeight; });
     };
 
-    var renderVisits = function(selection){
-        var visits, xFn, yFn, widthFn;
+    var renderVisitTags = function(selection) {
+        var visitTags, defaultImgSize = 8;
 
-        xFn = function(d) {
-            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
-                return xScale(d.protocolDay) - 5;
-            }
-
-            return xScale(d.sequenceNumMin)
-        };
-        yFn = function(d) { return yScale(d.studyLabel) - 9; };
-        widthFn = function(d) {
-            if (d.timepointType === 'VISIT' || d.sequenceNumMax == d.sequenceNumMin) {
-                return 10;
-            }
-            return xScale(d.sequenceNumMax) - xScale(d.sequenceNumMin);
-        };
-
-        visits = selection.selectAll('rect.visit').data(function(d){
-            var visits = [];
-            for (var i = 0; i < d.visits.length; i++) {
-                var visit = d.visits[i];
-                visit.studyLabel = d.label;
-                visit.timepointType = d.timepointType;
-
-                if (visit["hasPlotData"])
-                    visits.push(visit);
-            }
-            return visits;
-        });
-
-        visits.exit().remove();
-        visits.enter().append('rect').attr('class', 'visit');
-        visits.attr('x', xFn).attr('y', yFn)
-                .attr('width', widthFn).attr('height', 18)
-                .attr('fill', '#f5a73a') // $info-color
-                .attr('fill-opacity', 0.30);
-
-        visits.on('mouseover', function(d){
-            visitMouseover.call(visitMouseoverScope, d, this);
-        });
-        visits.on('mouseout', function(d){
-            visitMouseout.call(visitMouseoutScope, d, this);
-        });
-    };
-
-    var renderVisitTags = function(selection){
-        var visitTags, pathFn;
-
-        pathFn = function(d) {
-            var x = xScale(d.protocolDay), y = yScale(d.studyLabel), xLeft = x - 4, xRight = x + 4, yTop = y - 6,
-                    yBottom = y + 6;
-
-            return 'M ' + x + ' ' + yTop + ' L ' +
-                    xRight + ' ' + y + ' L ' +
-                    x + ' ' + yBottom + ' L ' +
-                    xLeft + ' ' + y + ' Z';
-        };
-
-        visitTags = selection.selectAll('path.visit-tag').data(function (d){
-            var visits = d.visits, visitsWithTags = [];
-
-            for (var i = 0; i < visits.length; i++) {
-                if (visits[i].visitTags.length > 0) {
-                    visitsWithTags.push({
-                        studyLabel: d.label,
-                        protocolDay: visits[i].protocolDay,
-                        visitTags: visits[i].visitTags
-                    });
-                }
-            }
-
-            return visitsWithTags;
-        });
-
+        visitTags = selection.selectAll('image.visit-tag').data(function (d) { return d.visits; });
         visitTags.exit().remove();
-        visitTags.enter().append('path').attr('class', 'visit-tag');
-        visitTags.attr('d', pathFn).attr('fill', '#f5a73a');
+        visitTags.enter().append("image").attr('class', 'visit-tag')
+            .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/' + d.imgSrc; })
+            .attr("x", function(d) { return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
+            .attr("y", function(d) { return yScale(d.studyLabel) + perStudyHeight/2 - (d.imgSize || defaultImgSize)/2; })
+            .attr("width", function(d) { return d.imgSize || defaultImgSize; })
+            .attr("height", function(d) { return d.imgSize || defaultImgSize; });
 
-        // TODO: add visit tag mouseover/mouseout functions.
-        visitTags.on('mouseover', function(d){
+        // add visit tag mouseover/mouseout functions.
+        visitTags.on('mouseover', function(d) {
             tagMouseover.call(tagMouseoverScope, d, this);
         });
-        visitTags.on('mouseout', function(d){
+        visitTags.on('mouseout', function(d) {
             tagMouseout.call(tagMouseoutScope, d, this);
         });
     };
 
-    var renderHorizontalSeparators = function(selection){
-        var lines, pathFn;
-
-        pathFn = function(d){
-            var y = Math.floor(yScale(d.label) + 13) + 0.5;
-            return 'M 25 ' + y + ' L ' + width + ' ' + y + ' Z';
-        };
-
-        lines = selection.selectAll('path.separator').data(studyData.slice(0,studyData.length-1));
-        lines.exit().remove();
-        lines.enter().append('path').attr('class', 'separator');
-        lines.attr('d', pathFn)
-                .attr('stroke', '#b3b3b3')
-                .attr('stroke-width', 1)
-                .attr('stroke-dasharray', '5,6');
-    };
-
     var renderVerticalTicks = function(selection) {
-        var tickData = xScale.ticks(7), pathFn, tickEls;
-
-        pathFn = function(d) {
-            var x = xScale(d);
-            return 'M ' + x + ' 0 L ' + x + ' ' + height + ' Z';
-        };
-
-        tickEls = selection.selectAll('path.study-axis-tick').data(tickData);
+        var tickEls = selection.selectAll('line.study-axis-tick').data(function(d) {
+            var tickData = xScale.ticks(7);
+            for (var i = 0; i < tickData.length; i++) {
+                tickData[i] = {x: xScale(tickData[i]), y: yScale(d.label)};
+            }
+            return tickData;
+        });
         tickEls.exit().remove();
-        tickEls.enter().append('path').attr('class', 'study-axis-tick');
-        tickEls.attr('stroke', '#f0f0f0')
+        tickEls.enter().append('line').attr('class', 'study-axis-tick');
+        tickEls.attr('stroke', '#EAEAEA')
                 .attr('stroke-width', 1)
-                .attr('d', pathFn);
+                .attr('x1', function(d) { return d.x; })
+                .attr('x2', function(d) { return d.x; })
+                .attr('y1', function(d) { return d.y; })
+                .attr('y2', function(d) { return d.y + perStudyHeight; });
     };
 
-    var renderStudyLabels = function(selection){
-        var labels = selection.selectAll('text.study-label').data(function(d){return [d];});
+    var renderBackground = function(selection) {
+        var bkgds, count = -1;
+
+        bkgds = selection.selectAll('rect.study-bkgd').data(function(d) { return [d];});
+        bkgds.exit().remove();
+        bkgds.enter().append('rect').attr('class', 'study-bkgd');
+        bkgds.attr('y', function(d) { return yScale(d.label); })
+            .attr('x', 25)
+            .attr('width', width)
+            .attr('height', perStudyHeight)
+            .attr('fill', function(d) { count++; return count % 2 == 0 ? '#F8F8F8' : '#FFFFFF'; });
+    };
+
+    var renderStudyLabels = function(selection) {
+        var labels = selection.selectAll('text.study-label').data(function(d) {return [d];});
         labels.exit().remove();
         labels.enter().append('text').attr('class', 'study-label');
-        labels.text(function(d){
+        labels.text(function(d) {
             if (d.label.length > 25) {
                 return d.label.slice(0, 23) + '...';
             }
 
             return d.label;
         });
-        labels.attr('y', function(d){return Math.floor(yScale(d.label) + 7) + 0.5;})
-                .attr('x', 25)
-                .attr('fill', '#666363')
-                .style('font', '14pt Georgia, serif');
+        labels.attr('y', function(d) {return yScale(d.label) + perStudyHeight/2 + 4;})
+            .attr('x', 35)
+            .attr('fill', '#222222')
+            .style('font', '11px Arial, serif');
     };
 
-    var studyAxis = function(){
+    var studyAxis = function() {
         var yDomain = [], studies;
 
-        height = studyData.length * 32;
+        height = studyData.length * perStudyHeight;
 
         for (var i = 0; i < studyData.length; i++) {
             yDomain.push(studyData[i].label);
         }
 
-        yScale.rangeBands([0, height], 1);
+        yScale.rangeBands([0, height]);
         yScale.domain(yDomain);
 
-        if (canvas === null) {
-            canvas = d3.select('#' + renderTo).append('svg').attr('style', 'background-color: #fff;');
-        }
+        document.getElementById(renderTo).innerHTML = '';
+        canvas = d3.select('#' + renderTo).append('svg');
         canvas.attr('width', width).attr('height', height);
-        canvas.call(renderVerticalTicks);
-        canvas.call(renderAlignment);
-        canvas.call(renderHorizontalSeparators);
 
         studies = canvas.selectAll('g.study').data(studyData);
-        studies.enter().append('g').attr('class', 'study');
         studies.exit().remove();
+        studies.enter().append('g').attr('class', 'study');
+        studies.call(renderBackground);
+        studies.call(renderVerticalTicks);
+        studies.call(renderAlignment);
         studies.call(renderStudyLabels);
-        studies.call(renderVisits);
         studies.call(renderVisitTags);
     };
 
     studyAxis.renderTo = function(id) { renderTo = id; return studyAxis; };
     studyAxis.width = function(w) { width = w; return studyAxis; };
     studyAxis.studyData = function(d) { studyData = d; return studyAxis; };
-    studyAxis.visitMouseover = function(m, s) { visitMouseover = m; visitMouseoverScope = s; return studyAxis; };
-    studyAxis.visitMouseout = function(m, s) { visitMouseout = m; visitMouseoutScope = s; return studyAxis; };
     studyAxis.visitTagMouseover = function(m, s) { tagMouseover = m; tagMouseoverScope = s; return studyAxis; };
     studyAxis.visitTagMouseout = function(m, s) { tagMouseout = m; tagMouseoutScope = s; return studyAxis; };
     studyAxis.scale = function(s) {

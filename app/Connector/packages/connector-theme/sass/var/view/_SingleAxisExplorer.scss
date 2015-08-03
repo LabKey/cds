@@ -14,6 +14,10 @@ span.animator {
   -webkit-animation-name: indexframe;
 }
 
+.dim-selector {
+  margin-top: 19px;
+}
+
 .explorer-box {
   margin-left: $pageLeftPadding;
   margin-right: $pageLeftPadding;
@@ -24,7 +28,6 @@ span.animator {
   width: 90%;
   padding: 2px;
   margin: $pageLeftPadding $pageLeftPadding 2px 0;
-
 }
 
 .bar {
@@ -145,7 +148,7 @@ span.info {
 }
 
 .bar .index-selected.inactive {
-  background-color: $selectongrey-color;
+  background-color: $select-hover-color;
 }
 
 .bar.x-item-selected span.index-selected.inactive {

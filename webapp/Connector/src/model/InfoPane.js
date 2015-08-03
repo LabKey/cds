@@ -30,7 +30,7 @@ Ext.define('Connector.model.InfoPane', {
                     {name: 'uniqueName'},
                     {name: 'name'},
                     {name: 'count', type: 'int'},
-                    {name: 'hasData', type: 'boolean', convert: function(val, rec){ return rec.data.count > 0; }},
+                    {name: 'hasData', type: 'boolean', convert: function(val, rec) { return rec.data.count > 0; }},
                     {name: 'hasDetails', type: 'boolean', defaultValue: false},
                     {name: 'detailLink'}
                 ]
@@ -149,9 +149,11 @@ Ext.define('Connector.model.InfoPane', {
         }
 
         // clear out for initialization
-        this.set('dimension', undefined);
-        this.set('hierarchy', undefined);
-        this.set('level', undefined);
+        this.set({
+            dimension: undefined,
+            hierarchy: undefined,
+            level: undefined
+        });
 
         this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
@@ -160,9 +162,11 @@ Ext.define('Connector.model.InfoPane', {
 
         Connector.getState().onMDXReady(function(mdx) {
 
-            var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName);
-            var dim = dimHier.dim, hier = dimHier.hierarchy, lvl = dimHier.lvl;
-            var hierarchyItems = [];
+            var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName),
+                dim = dimHier.dim,
+                hier = dimHier.hierarchy,
+                lvl = dimHier.lvl,
+                hierarchyItems = [];
 
             Ext.each(dim.hierarchies, function(h) {
                 if (!h.hidden) {
@@ -175,13 +179,15 @@ Ext.define('Connector.model.InfoPane', {
 
             this.suspendEvents();
 
-            this.set('dimension', dim);
-            this.set('hierarchy', hier);
-            this.set('level', lvl);
-            this.set('hierarchyLabel', hier.label);
-            this.set('hierarchyItems', hierarchyItems);
-            this.set('operatorType', hier.defaultOperator);
-            this.set('title', dim.pluralName);
+            this.set({
+                dimension: dim,
+                hierarchy: hier,
+                level: lvl,
+                hierarchyLabel: hier.label,
+                hierarchyItems: hierarchyItems,
+                operatorType: hier.defaultOperator,
+                title: dim.pluralName
+            });
 
             if (this.isFilterBased()) {
                 var filterOperator = this.get('filter').get('operator');
@@ -195,14 +201,16 @@ Ext.define('Connector.model.InfoPane', {
 
             this.fireEvent('change', this);
 
-            var config = {
-                onRows: [{ level: lvl.getUniqueName(), member: 'members' }],
+            mdx.query({
+                onRows: [{
+                    level: lvl.getUniqueName(),
+                    member: 'members'
+                }],
                 useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
                 showEmpty: true,
                 success: this.processMembers,
                 scope: this
-            };
-            mdx.query(config);
+            });
 
         }, this);
     },
@@ -265,28 +273,26 @@ Ext.define('Connector.model.InfoPane', {
     processMembers : function(cellset) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
-        var memberDefinitions = cellset.axes[1].positions;
-        var counts = cellset.cells;
-
-        var modelDatas = [], selectedItems = [];
-        var filterBased = this.isFilterBased();
-
-        var dim = this.get('dimension');
-        var hasDetails = this.get('dimension').supportsDetails;
-        var linkPrefix = '#learn/learn/' + encodeURIComponent(dim.name) + '/';
+        var memberDefinitions = cellset.axes[1].positions,
+            counts = cellset.cells,
+            modelDatas = [],
+            selectedItems = [],
+            filterBased = this.isFilterBased(),
+            dim = this.get('dimension'),
+            hasDetails = dim.supportsDetails;
 
         Ext.each(memberDefinitions, function(definition, idx) {
 
-            var def = definition[0];
-            var _count = counts[idx][0].value;
-            var _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
+            var def = definition[0],
+                _count = counts[idx][0].value,
+                _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
 
             modelDatas.push({
                 uniqueName: def.uniqueName,
                 name: _name,
                 count: _count,
                 hasDetails: hasDetails,
-                detailLink: linkPrefix + encodeURIComponent(_name)
+                detailLink: Connector.getService('Learn').getURL(dim, _name, 'label')
             });
 
             if (filterBased) {

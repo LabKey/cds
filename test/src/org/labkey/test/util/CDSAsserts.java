@@ -43,10 +43,10 @@ public class CDSAsserts
 
     public void assertAllSubjectsPortalPage()
     {
-        assertCDSPortalRow("Subject characteristics", "232 subject characteristics", "2 countries", "2 sexes", "2 hiv infection statuses", "1 species", "8 races & subtypes");
-        assertCDSPortalRow("Study products", "2 study products");
-        assertCDSPortalRow("Assays", "3 assays", "3 types", "3 platforms");
-        assertCDSPortalRow("Studies", "3 studies");
+        assertCDSPortalRow("Subject characteristics", "11 subject characteristics", "1 species", "6 decades by age", "3 ethnicity", "10 countries", "2 sexes", "11 races");
+        assertCDSPortalRow("Study products", "2 study products", "4 class", "3 developer", "2 type");
+        assertCDSPortalRow("Assays", "4 assays");
+        assertCDSPortalRow("Studies", "6 studies", "2 network", "5 study types", "6 treatment assignment summaries");
     }
 
     private void assertCDSPortalRow(String byNoun, String expectedTotal, String... expectedDetails)
@@ -171,26 +171,64 @@ public class CDSAsserts
         {
             _test.waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
         }
-        _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
+
+        if(CDSHelper.validateCounts)
+        {
+            _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
+        }
+    }
+
+    public void verifyEmptyLearnAboutStudyPage()
+    {
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected studies have data for this category.']"));
+    }
+
+    public void verifyEmptyLearnAboutStudyProductsPage()
+    {
+        _test.assertElementPresent(Locator.xpath("//div[contains(@class, 'saeempty')][text() = 'None of the selected study products have data for this category.']"));
     }
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(232, 3, 3);
+        assertFilterStatusCounts(8373, 53, -1); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)
     {
-        _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(subjectCount, "Subject"));
-        _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
-        _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(assayCount, "Assays"));
+        if(subjectCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(subjectCount, "Subject"));
+        }
+
+        if(studyCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(studyCount, "Stud"));
+        }
+
+        if(assayCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getSelectionStatusLocator(assayCount, "Assays"));
+        }
+
     }
 
     public void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
     {
-        _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
-        _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
-        _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
+        if(subjectCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
+        }
+
+        if(studyCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
+        }
+
+        if(assayCount > -1)
+        {
+            _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
+        }
+
     }
 
     @LogMethod

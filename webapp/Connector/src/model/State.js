@@ -5,23 +5,23 @@
  */
 Ext.define('Connector.model.State', {
 
-    extend : 'Ext.data.Model',
+    extend: 'Ext.data.Model',
 
-    requires : [
+    requires: [
         'Connector.types.Filter'
     ],
 
-    fields : [
-        {name : 'activeView'},
-        {name : 'viewState'},
-        {name : 'views'},
-        {name : 'filters'}, //,    type : Ext.data.Types.FILTER},
-        {name : 'selections'},
-        {name : 'detail'}
+    fields: [
+        {name: 'activeView'},
+        {name: 'viewState'},
+        {name: 'views'},
+        {name: 'filters'}, // type: Ext.data.Types.FILTER,
+        {name: 'selections'},
+        {name: 'detail'}
     ],
 
-    proxy : {
-        type : 'sessionstorage',
-        id   : 'connectorStateProxy'
+    proxy: {
+        type: 'sessionstorage',
+        id: 'connectorStateProxy'
     }
 });

@@ -25,10 +25,6 @@ Ext.define('Connector.view.module.StudyDatasets', {
                                 '<tpl if="values.hasDataFromStudy(parent.model.get(\'Label\'))">',
                                     '<div class="item-row">',
                                         '<div class="checkbox">',
-
-                                            // '<pre>',
-                                            //     '{[JSON.stringify(this.values)]}',
-                                            // '</pre>',
                                             '<tpl if="values.hasDataFromStudy(parent.model.get(\'Label\'))">',
                                                 '&#10003',
                                             '</tpl>',
@@ -48,14 +44,11 @@ Ext.define('Connector.view.module.StudyDatasets', {
         '</p></tpl>'),
 
     initComponent : function() {
-        var data = this.data;
-
-        var study = data.model;
-        var studyId = study.get('Label');
-
-        var store = StoreCache.getStore('Connector.app.store.Dataset');
-
-        var me = this;
+        var data = this.data,
+            study = data.model,
+            studyId = study.get('label'),
+            store = StoreCache.getStore('Connector.app.store.Dataset'),
+            me = this;
 
         function datasetsLoaded(store, records) {
             data.datasets = records;
@@ -82,7 +75,7 @@ Ext.define('Connector.view.module.StudyDatasets', {
                             var assay;
                             if (assayName) {
                                 var assayStore = StoreCache.getStore("Connector.app.store.Assay");
-                                this.state.onMDXReady(function(mdx) {
+                                Connector.getState().onMDXReady(function(mdx) {
                                     var config = {
                                         onRows: [{hierarchy: "Assay.Name", member: 'members'}],
                                         //useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
@@ -121,16 +114,17 @@ Ext.define('Connector.view.module.StudyDatasets', {
                 single: true
             });
             store.load();
-        } else {
+        }
+        else {
             datasetsLoaded(store, store.data.items);
         }
 
         this.callParent();
 
-        this.on('render', function(){
+        this.on('render', function() {
             if (!data.categories) {
                 this.fireEvent('showLoad', this);
             }
-        });
+        }, this);
     }
 });

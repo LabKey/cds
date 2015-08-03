@@ -28,21 +28,175 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 public class CDSHelper
 {
-    public static final String[] STUDIES = {"DemoSubset", "Not Actually CHAVI 001", "NotCHAVI008", "NotRV144"};
-    public static final String[] LABS = {"Arnold/Bellew Lab", "LabKey Lab", "Piehler/Eckels Lab"};
-    public static final String[] ASSAYS = {"Fake ADCC data", "Fake Luminex data", "mRNA assay", "Fake NAb data"};
+    public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
+            "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
+            "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
+            "HVTN 065", "HVTN 067", "HVTN 068", "HVTN 069", "HVTN 070", "HVTN 071", "HVTN 072", "HVTN 073",
+            "HVTN 076", "HVTN 077", "HVTN 078", "HVTN 080", "HVTN 083", "HVTN 084", "HVTN 085", "HVTN 086",
+            "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
+            "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
+
+    public static final String[] PROT_NAMES = {"v078", "v044", "v503", "v060", "v204", "v041", "v205", "v049", "v049", "v505"}; //incomplete list, only first and last under each assay in find subjects view.
+
+    public static final String[] PRODUCTS = {"3BNC117", "acyclovir", "AIDSVAX B/B", "AIDSVAX B/E", "ALVAC-HIV (vCP1452)",
+            "ALVAC-HIV (vCP1521)", "ALVAC-HIV (vCP2438)", "AS01B", "AS02A", "AVX101", "AVX201", "BufferGel", "Buprenorphine/naloxone",
+            "C1 peptide", "DEC-205-p24", "DNA-C", "DNA-HIV-PT123", "Engerix B", "EP HIV-1090", "EP-1043", "EP-1233",
+            "gag B DNA/PLG/env B DNA/PLG", "GM-CSF", "gp120w61d", "gp140 CN54", "gp140 Sub C", "gp160", "HIV CTL MEP",
+            "HIV MAG pDNA", "HIV-1 gag DNA", "IL-12 DNA", "IL-12 DNA-4532", "IL-15-1696", "LIPO-5", "MF59", "MRK Ad5 HIV-1 gag",
+            "MRKAd5 HIV-1 gag/pol/nef", "MVA-mBN32", "MVA/HIV62", "NefTat", "Nevirapine", "Nick101", "Nick202", "Nick303",
+            "Nick404", "Nick505", "Nick606", "Nick707", "Nick808", "NYVAC-HIV-B", "NYVAC-HIV-C", "NYVAC-HIV-PT1 and NYVAC-HIV-PT4",
+            "NYVAC-KC", "Oral Tenofovir", "PCMVR", "PennVax-GP", "PennVaxB", "pGA2/JS7 DNA", "pIL15EAMN", "Poly ICLC",
+            "polyvinylpyrrolidone (PVP).", "PRO2000/5", "RC529-SE", "rFPV-HIV", "rMVAHIV", "SAAVI DNA-C2", "SAAVI MVA-C",
+            "SPL7013 (VivaGel)", "Subtype C gp120", "Subtype C gp120/MF59", "Tenofovir Gel", "Tetavax", "tgAXH68",
+            "tgAXH95", "TLR7", "TLR9", "Truvada", "VRC-ADJDNA004-IL2-VP", "VRC-HIVADV014-00-VP", "VRC-HIVADV027-00-VP",
+            "VRC-HIVADV038-00-VP", "VRC-HIVADV052-00-VP", "VRC-HIVADV053-00-VP", "VRC-HIVADV054-00-VP", "VRC-HIVDNA-016-00-VP",
+            "VRC-HIVDNA009-00-VP", "VRC-HIVDNA044-00-VP", "VRC01", "VSV HIV envC^2", "VSV HIV gag"};  // TODO Test data dependent.
+
+    public static final String[] LABS = {"GT", "FH", "DM"};
+    public static final String[] I_TYPES = {"Cellular", "Humoral"};
+    public static final String[] H_TYPES = {"HIV Immunogenicity"};
+    public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
-    public static final String[] EMAILS = {"adam@labkey.com", "alanv@labkey.com", "brittp@labkey.com", "klum@labkey.com",
-            "kristinf@labkey.com", "marki@labkey.com", "matthewb@labkey.com", "nicka@labkey.com", "tchad@labkey.com"};
-    public static final String[] PICTURE_FILE_NAMES = {"team_Adam_Rauch.jpg", "team_Alan_Vezina.jpg",
-            "team_Britt_Piehler.jpg", "team_Karl_Lum.jpg", "team_Kristin_Fitzsimmons.jpg", "team_Mark_Igra.jpg",
-            "team_Matthew_Bellew.jpg", "team_Nick_Arnold.jpg", "team_Trey_Chadick.jpg"};
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
+    public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
+
+    public static final String BAMA = "BAMA (Binding Ab multiplex assay)";
+    public static final String BAMA_ANTIGEN_CLADE = "Antigen clade";
+    public static final String BAMA_ANTIGEN_NAME = "Antigen name";
+    public static final String BAMA_ANTIGEN_TYPE = "Antigen type";
+    public static final String BAMA_ASSAY = "Assay Identifier";
+    public static final String BAMA_DETECTION = "Detection System";
+    public static final String BAMA_DILUTION = "Dilution";
+    public static final String BAMA_EXP_ASSAYD = "Experimental Assay Design Code";
+    public static final String BAMA_INSTRUMENT_CODE = "Instrument Code";
+    public static final String BAMA_ISOTYPE = "Isotype";
+    public static final String BAMA_LAB = "Lab ID";
+    public static final String BAMA_MAGNITUDE_BLANK = "Magnitude (mfi) - Blank";
+    public static final String BAMA_MAGNITUDE_BASELINE = "Magnitude (mfi) - Blank Baseline";
+    public static final String BAMA_MAGNITUDE_DELTA = "Magnitude (mfi) - Delta";
+    public static final String BAMA_MAGNITUDE_RAW = "Magnitude (mfi) - Raw";
+    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) – Delta Baseline";
+    public static final String BAMA_MAGNITUDE_RAW_BASELINE = "Magnitude (mfi) – Raw Baseline";
+    public static final String BAMA_PROTEIN = "Protein";
+    public static final String BAMA_PROTEIN_PANEL = "Protein Panel";
+    public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
+    public static final String BAMA_SPECIMEN = "Specimen type";
+    public static final String BAMA_VACCINE = "Vaccine matched indicator";
+    public static final String BAMA_VISIT = "Visit";
+    public static final String BAMA_VISIT_DAY = "Visit Day";
+
+    public static final String DEMOGRAPHICS = "Subject characteristics";
+    public static final String DEMO_AGEGROUP = "Age Group at Enrollment";
+    public static final String DEMO_AGE = "Age at Enrollment";
+    public static final String DEMO_BMI = "BMI at Enrollment";
+    public static final String DEMO_CIRCUMCISED = "Circumcised at Enrollment";
+    public static final String DEMO_COUNTRY = "Country at Enrollment";
+    public static final String DEMO_HISPANIC = "Hispanic";
+    public static final String DEMO_RACE = "Race";
+    public static final String DEMO_SEX = "Sexatbirth";
+    public static final String DEMO_SPECIES = "Species";
+    public static final String DEMO_SUBSPECIES = "Subspecies";
+    public static final String DEMO_VISIT = "Visit";
+
+    public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
+    public static final String ELISPOT_ANTIGEN = "Antigen Panel";
+    public static final String ELISPOT_ANTIGEN_TYPE = "Antigen Type";
+    public static final String ELISPOT_ASSAY = "Assay Identifier";
+    public static final String ELISPOT_CELL_NAME = "Cell Name";
+    public static final String ELISPOT_CELL_TYPE = "Cell Type";
+    public static final String ELISPOT_CLADE = "Clade";
+    public static final String ELISPOT_DATA_PROV = "Data provenance";
+    public static final String ELISPOT_LAB_SRC_KEY = "Els Ifng Lab Source Key";
+    public static final String ELISPOT_EXP_ASSAY = "Experimental Assay Design Code";
+    public static final String ELISPOT_MARKER_NAME = "Functional marker name";
+    public static final String ELISPOT_MARKER_TYPE = "Functional marker type";
+    public static final String ELISPOT_LAB = "Lab ID";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
+    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
+    public static final String ELISPOT_PEPTIDE_POOL = "Peptide Pool";
+    public static final String ELISPOT_PROTEIN =  "Protein";
+    public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
+    public static final String ELISPOT_RESPONSE =  "Response call";
+    public static final String ELISPOT_SPECIMEN =  "Specimen type";
+    public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
+    public static final String ELISPOT_VISIT =  "Visit";
+    public static final String ELISPOT_VISIT_DAY =  "Visit Day";
+
+    public static final String ICS = "ICS (Intracellular Cytokine Staining)";
+    public static final String ICS_ANTIGEN = "Antigen";
+    public static final String ICS_ANTIGEN_TYPE = "Antigen Type";
+    public static final String ICS_ANTIGEN_VAC_MATCH = "Antigen Vaccine Match Indicator";
+    public static final String ICS_ASSAY = "Assay identifier";
+    public static final String ICS_CELL_NAME = "Cell name";
+    public static final String ICS_CELL_TYPE = "Cell type";
+    public static final String ICS_CLADE = "Clade";
+    public static final String ICS_DATA = "Data provenance";
+    public static final String ICS_EXP_ASSAY = "Experimental Assay Design Code";
+    public static final String ICS_MARKER_NAME = "Functional marker name";
+    public static final String ICS_MARKER_TYPE = "Functional marker type";
+    public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
+    public static final String ICS_LAB = "Lab ID";
+    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
+    public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
+    public static final String ICS_PEPTIDE_POOL = "Peptide pool";
+    public static final String ICS_PROTEIN = "Protein";
+    public static final String ICS_PROTEIN_CLADE = "Protein Clade";
+    public static final String ICS_PROTEIN_PANEL = "Protein panel";
+    public static final String ICS_VISIT_DAY = "Protocol Visit Day";
+    public static final String ICS_RESPONSE = "Response call";
+    public static final String ICS_SPECIMEN = "Specimen type";
+    public static final String ICS_VACCINE = "Vaccine matched";
+    public static final String ICS_VISIT = "Visit";
+
+    public static final String NAB = "NAb (Neutralizing antibody)";
+    public static final String NAB_ANTIGEN = "Antigen";
+    public static final String NAB_ANTIGEN_CLADE = "Antigen clade";
+    public static final String NAB_ANTIGEN_TYPE = "Antigen type";
+    public static final String NAB_ASSAY = "Assay identifier";
+    public static final String NAB_CLADE = "Clade";
+    public static final String NAB_DATA = "Data provenance";
+    public static final String NAB_EXP_ASSAY = "Experimental Assay Design Code";
+    public static final String NAB_INIT_DILUTION = "Initial dilution";
+    public static final String NAB_ISOLATE = "Isolate";
+    public static final String NAB_LAB = "Lab ID";
+    public static final String NAB_LAB_SRC_KEY = "Nab Lab Source Key";
+    public static final String NAB_NEUTRAL = "Neutralization tier";
+    public static final String NAB_RESPONSE = "Response call";
+    public static final String NAB_SPECIMEN = "Specimen type";
+    public static final String NAB_TARGET_CELL = "Target cell";
+    public static final String NAB_TIER = "Tier";
+    public static final String NAB_TITERIC50 = "Titer IC50";
+    public static final String NAB_TITERIC80 = "Titer IC80";
+    public static final String NAB_VISIT = "Visit";
+    public static final String NAB_VISIT_DAY = "Visit Day";
+
+    public static final String TIME_POINTS = "Time points";
+    public static final String TIME_POINTS_DAYS = "Study days";
+    public static final String TIME_POINTS_WEEKS = "Study weeks";
+    public static final String TIME_POINTS_MONTHS = "Study months";
+
+    public static final String GRID_TITLE_BAMA = "BAMA";
+    public static final String GRID_TITLE_DEMO = "Demographics";
+    public static final String GRID_TITLE_ELISPOT = "ELISPOT";
+    public static final String GRID_TITLE_ICS = "ICS";
+    public static final String GRID_TITLE_NAB = "NAb";
+    public static final String GRID_COL_SUBJECT_ID = "Subject Id";
+    public static final String GRID_COL_STUDY = "Study";
+    public static final String GRID_COL_VISIT = "Visit";
+
+    // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
+    public static final boolean debugTest = false;
+    // Because the test data changes frequently it can be useful to skip any steps that validate counts.
+    public static final boolean validateCounts = false;
+
     private final BaseWebDriverTest _test;
 
     public CDSHelper(BaseWebDriverTest test)
@@ -303,7 +457,7 @@ public class CDSHelper
             public Void apply(Void aVoid)
             {
                 link.click();
-                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
+//                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
                 _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
                 return null;
             }
@@ -356,15 +510,15 @@ public class CDSHelper
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
-        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("learn-selector");
+        Locator.XPathLocator headerContainer = Locator.tag("div").withClass("dim-selector");
         Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
         Locator.XPathLocator activeHeader = header.withClass("active");
 
         if (!_test.isElementPresent(headerContainer.append(activeHeader.withText(learnAxis))))
         {
-            WebElement initialLearnAboutPanel = Locator.tag("div").withClass("learncolumnheader").parent().index(0).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.click(headerContainer.append(header.withText(learnAxis)));
-            _test.shortWait().until(ExpectedConditions.stalenessOf(initialLearnAboutPanel));
+            WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+            _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
     }
 
@@ -490,8 +644,8 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withDescendant(Locator.tag("span").withText("Learn about..."))),
-        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects based on their characteristics")),
+        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
+        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);
 
@@ -572,12 +726,18 @@ public class CDSHelper
 
         public static Locator.XPathLocator getFilterStatusLocator(int count, String singular, String plural, boolean highlight)
         {
-            return Locator.xpath("//li//span[text()='" + (count != 1 ? plural : singular) + "']/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + count + "']");
+            String strCount = NumberFormat.getIntegerInstance().format(count); //Need to format to allow for number greater than 999 (search looks for a number with a ',' in it).
+            String path = "//li//span[text()='" + (count != 1 ? plural : singular) + "']";
+            path = path + ((validateCounts) ?  "/../span[contains(@class, '" + (highlight ? "hl-" : "") + "status-count') and text()='" + strCount + "']" : "");
+            return Locator.xpath(path);
         }
 
         public static Locator.XPathLocator getSelectionStatusLocator(int count, String match)
         {
-            return Locator.xpath("//li//span[contains(text(), '" + match + "')]/../span[contains(@class, 'status-subcount') and text()='" + count + "']");
+            String strCount = NumberFormat.getIntegerInstance().format(count);
+            String path = "//li//span[contains(text(), '" + match + "')]";
+            path = path + ((validateCounts) ? "/../span[contains(@class, 'status-subcount') and text()='" + strCount + "']" : "");
+            return Locator.xpath(path);
         }
 
         public static Locator.XPathLocator infoPaneSortButtonLocator()
@@ -595,4 +755,21 @@ public class CDSHelper
             return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "active").withText(dimension));
         }
     }
+
+    public static class TimeAxisData
+    {
+        public String study;
+        public int vaccinationCount;
+        public int nonvaccinationCount;
+        public int challengeCount;
+
+        public TimeAxisData(String study, int vacCount, int nonvacCount, int chalCount)
+        {
+            this.study = study;
+            vaccinationCount = vacCount;
+            nonvaccinationCount = nonvacCount;
+            challengeCount = chalCount;
+        }
+    }
+
 }

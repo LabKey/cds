@@ -7,46 +7,89 @@ Ext.define('Connector.model.Variable', {
     extend: 'Ext.data.Model',
 
     fields: [
-        {name: 'typeLabel'},
-        {name: 'schemaLabel'},
-        {name: 'queryLabel'},
-        {name: 'subLabel'}
+        {name: 'type'},
+        {name: 'source', defaultValue: undefined},
+        {name: 'variable', defaultValue: undefined},
+        {name: 'options', defaultValue: undefined}
     ],
 
+    statics: {
+        getSourceDisplayText : function(variable) {
+            var sourceTxt;
+
+            if (Ext.isObject(variable)) {
+                var isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
+                sourceTxt = variable[isAssayDataset ? 'queryName': 'queryLabel'];
+            }
+
+            return sourceTxt;
+        },
+
+        getOptionsDisplayText : function(variable, includeScale) {
+            var optionsTxt = '', sep = '';
+
+            if (Ext.isObject(variable) && Ext.isObject(variable.options)) {
+                if (Ext.isDefined(variable.options.alignmentVisitTag)) {
+                    var tagLabel = variable.options.alignmentVisitTag;
+                    if (tagLabel == null) {
+                        tagLabel = 'Aligned by Day 0';
+                    }
+                    optionsTxt += sep + tagLabel;
+                    sep = '; ';
+                }
+                if (Ext.isObject(variable.options.dimensions)) {
+                    Ext.Object.each(variable.options.dimensions, function(key, value) {
+                        if (Ext.isArray(value) && value.length > 0) {
+                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ');
+                            sep = '; ';
+                        }
+                    });
+                }
+                if (includeScale && variable.options.scale) {
+                    optionsTxt += sep + variable.options.scale.toLowerCase();
+                    sep = '; ';
+                }
+            }
+
+            if (optionsTxt == '') {
+                optionsTxt = undefined;
+            }
+
+            return optionsTxt;
+        }
+    },
+
     updateVariable : function(selections) {
-        var sel = null;
+        var sel = null, source, variable, options;
         if (Ext.isArray(selections)) {
-            if (selections.length > 0)
+            if (selections.length > 0) {
                 sel = selections[0];
+            }
         }
         else if (Ext.isDefined(selections)) {
             sel = selections;
         }
 
-        var schema = '', query = '', sub = '';
         if (sel) {
             if (sel.$className === 'Measure') {
-                schema = sel.get('queryLabel');
-                query = sel.get('label');
+                source = Connector.model.Variable.getSourceDisplayText(sel.data);
+                variable = sel.get('label');
             }
             else {
                 // assume an object with measure 'properties'
-                schema = sel['queryLabel'];
-                query = sel['label'];
+                source = Connector.model.Variable.getSourceDisplayText(sel);
+                variable = sel['label'];
             }
 
-            if (sel['options'])
-            {
-                if (sel['options'].antigen)
-                    sub = sel['options'].antigen.values.join(', ');
-                else if (sel['options'].alignmentVisitTagLabel)
-                    sub = sel['options'].alignmentVisitTagLabel;
-            }
+            options = Connector.model.Variable.getOptionsDisplayText(sel, true);
         }
 
-        this.set('schemaLabel', schema);
-        this.set('queryLabel', query);
-        this.set('subLabel', sub);
+        this.set({
+            source: source,
+            variable: variable,
+            options: options
+        });
+
         this.fireEvent('updatevariable', this);
     }
 });

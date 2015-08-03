@@ -7,15 +7,23 @@ Ext.define('Connector.model.Source', {
     extend: 'Ext.data.Model',
     idProperty: 'key',
     fields: [
+        // Key property of the form schemaName|queryName.
         {name: 'key'},
-        {name: 'sortOrder'},
-        {name: 'schemaName'},
-        {name: 'queryName'},
-        {name: 'queryLabel'},
-        {name: 'longLabel'},
-        {name: 'description'},
-        {name: 'variableType'},
-        {name: 'category'},
-        { name: 'subjectCount', type: 'int', defaultValue: -1 }
+
+        // Properties from the LabKey schema
+        {name: 'schemaName', defaultValue: undefined},
+        {name: 'queryName', defaultValue: undefined},
+        {name: 'queryLabel', defaultValue: undefined},
+        {name: 'longLabel', defaultValue: undefined},
+        {name: 'description', defaultValue: undefined},
+
+        // Misc properties about the source display in the application
+        {name: 'sortOrder', type: 'int', defaultValue: 0},
+        {name: 'variableType', defaultValue: undefined},
+        {name: 'category', defaultValue: undefined},
+        {name: 'subjectCount', type: 'int', defaultValue: -1},
+
+        // Array of configs for what options to display in the Advanced panel on the Variable Selector.
+        {name: 'dimensions', defaultValue: undefined}
     ]
 });

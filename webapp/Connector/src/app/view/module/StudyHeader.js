@@ -11,23 +11,32 @@ Ext.define('Connector.view.module.StudyHeader', {
 
     tpl : new Ext.XTemplate(
         '<tpl>',
-            '<p class="item-row">Network: {[values.model.get("Network")]}</p>',
-            '<p class="item-row">Study Type: {[this.typeString(values.model)]}</p>',
-            '<tpl if="model.get(\'Stage\')">',
-                '<p class="item-row">Stage: {[values.model.get("Stage")]}</p>',
-            '</tpl>',
-            '<tpl if="model.get(\'StartDate\')">',
-                '<p class="item-row">First participant enrolled: {[Connector.app.view.Study.dateRenderer(values.model.get("StartDate"))]}</p>',
-            '</tpl>',
-            '<tpl if="model.get(\'EndDate\')">',
-                '<p class="item-row">Follow up complete: {[Connector.app.view.Study.dateRenderer(values.model.get("EndDate"))]}</p>',
-            '</tpl>',
-        '</tpl>',
-    {
-        typeString : function(model) {
-            var phase = model.get('Phase');
-            var type = model.get('StudyType');
-            return type || phase;
-        }
-    })
+            Connector.constant.Templates.module.title,
+            '<table class="learn-study-info">',
+                '<tr>',
+                    '<td class="item-label">Network:</td><td class="item-value">{[values.model.get("network")]}</td>',
+                '</tr>',
+                '<tr>',
+                    '<td class="item-label">Study Type:</td><td class="item-value">{[values.model.get("type")]}</td>',
+                '</tr>',
+                '<tpl if="model.get(\'stage\')">',
+                    '<tr>',
+                        '<td class="item-label">Stage:</td><td class="item-value">{[values.model.get("stage")]}</td>',
+                    '</tr>',
+                '</tpl>',
+                '<tpl if="model.get(\'start_date\')">',
+                    '<tr>',
+                        '<td class="item-label">First enrollment:</td>',
+                        '<td class="item-value">{[Connector.app.view.Study.dateRenderer(values.model.get("start_date"))]}</td>',
+                    '</tr>',
+                '</tpl>',
+                '<tpl if="model.get(\'followup_complete_date\')">',
+                    '<tr>',
+                        '<td class="item-label">Follow up complete:</td>',
+                        '<td class="item-value">{[Connector.app.view.Study.dateRenderer(values.model.get("followup_complete_date"))]}</td>',
+                    '</tr>',
+                '</tpl>',
+            '</table>',
+        '</tpl>'
+    )
 });

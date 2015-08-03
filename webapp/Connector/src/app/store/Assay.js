@@ -16,43 +16,26 @@ Ext.define('Connector.app.store.Assay', {
         this.callParent([config]);
     },
 
-    loadSlice : function(slice) {
+    loadSlice : function() {
+        this.assayData = undefined;
 
-        var cells = slice.cells, row;
-        var assaySet = [], assay;
-        for (var c=0; c < cells.length; c++) {
-            row = cells[c][0];
-            assay = row.positions[row.positions.length-1][0];
-            if (row.value > 0) {
-                assaySet.push(assay.name);
-            }
-        }
-        assay = assaySet.join(';');
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'assay',
+            success: this.onLoadAssays,
+            scope: this
+        });
 
-        if (assaySet.length > 0) {
-            var queryConfig = {
-                schemaName: 'Study',
-                queryName: 'StudyDesignAssays',
-                success: this.onLoadQuery,
-                scope: this
-            };
-
-            if (assay.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('Label', assay, LABKEY.Filter.Types.IN) ]
-            }
-
-            LABKEY.Query.selectRows(queryConfig);
-        }
-        else {
-            this.onLoadQuery({rows: []});
-        }
     },
 
-    onLoadQuery : function(queryResult) {
-        var rows = queryResult.rows;
-        for (var r=0; r < rows.length; r++) {
-            rows[r].internalId = r;
+    onLoadAssays: function (assayData) {
+        this.assayData = assayData.rows;
+        this._onLoadComplete();
+    },
+
+    _onLoadComplete : function() {
+        if (Ext.isDefined(this.assayData)) {
+            this.loadRawData(this.assayData);
         }
-        this.loadRawData(rows);
     }
 });

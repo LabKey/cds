@@ -10,14 +10,14 @@ div.learnview {
     font-size: 12px;
     font-family: $bodycaps-font;
     font-weight: bold;
-    padding: 8px 0px !important;
+    padding: 8px 0 !important;
     opacity: 0.5;
   }
 
   h3 {
     padding-bottom: 16px;
     clear: both;
-    font-size: 16px;
+    font-size: 18px;
     color: $black;
   }
 
@@ -60,7 +60,7 @@ div.learnview {
 
   .item-row {
     min-height: 19px;
-    padding: 2px 0px;
+    padding: 2px 0;
 
   }
 
@@ -92,7 +92,7 @@ div.learncolumnheader {
   padding-bottom: 12px;
   margin-left: $pageLeftPadding;
   margin-right: $pageLeftPadding;
-  border-bottom: 1px solid $heat-scale-4;
+  border-bottom: 2px solid $heat-scale-4;
   overflow: auto;
   background-color: #fff;
 }
@@ -106,20 +106,28 @@ h1.lhdv {
   float: left;
   font-weight: normal;
   padding-right: 28px;
-  color: $unselect-black;
+  color: $select-color;
 
   &:hover {
     cursor: pointer;
   }
 
   &.active {
-    color: $black;
+    color: $primary-text-color;
+
+    &:hover {
+      cursor: default;
+    }
   }
 }
 
 .headerlock {
   position: absolute;
-  top: 0px;
+  top: 0;
+}
+
+.pageheader {
+  border-bottom: 2px solid $heat-scale-4;
 }
 
 div.detail-wrapper {
@@ -133,14 +141,14 @@ div.detail-wrapper {
       overflow:hidden;
 
       h2 {
-        font-size: 16px!important;
+        font-size: 18px;
       }
     }
   }
 
   &:hover {
     @include transition(background-color 0.2s ease-out);
-    background-color: $selectongrey-color;
+    background-color: $select-hover-color;
     cursor: pointer;
   }
 }
@@ -173,13 +181,13 @@ div.study-description {
   font-family: $info-font;
 
   .phase-text {
-    font-size: 11px;
+    font-size: 12px;
     color: $heat-scale-2;
   }
 
   .description-text {
     padding-top: 12px;
-    font-size: 11px;
+    font-size: 12px;
     line-height:15px;
     color: $heat-scale-1;
     margin-right: 5%;
@@ -195,7 +203,7 @@ div.study-date {
   float: left;
   padding-right: 10px;
   font-family: $info-font;
-  font-size: 11px;
+  font-size: 12px;
 
   .startdate-text {
     display: block;
@@ -215,7 +223,7 @@ div.study-treatments {
   width: 20%;
   float: right;
   font-family: $info-font;
-  font-size: 11px;
+  font-size: 12px;
   color: $heat-scale-1;
 }
 
@@ -240,6 +248,18 @@ div.study-treatments {
   }
   input.x-form-focus {
     border-color: $heat-scale-2!important;
+  }
+}
+
+.learn-study-info {
+
+  tr > td {
+    padding-bottom: 1em;
+
+    &.item-label {
+      color: #777777;
+      padding-right: 1em;
+    }
   }
 }
 

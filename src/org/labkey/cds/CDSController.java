@@ -20,7 +20,6 @@ package org.labkey.cds;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
@@ -28,7 +27,6 @@ import org.labkey.api.action.ApiAction;
 import org.labkey.api.action.ApiResponse;
 import org.labkey.api.action.ApiSimpleResponse;
 import org.labkey.api.action.BaseViewAction;
-import org.labkey.api.action.FormViewAction;
 import org.labkey.api.action.HasBindParameters;
 import org.labkey.api.action.Marshal;
 import org.labkey.api.action.Marshaller;
@@ -37,36 +35,24 @@ import org.labkey.api.action.NullSafeBindException;
 import org.labkey.api.action.SimpleViewAction;
 import org.labkey.api.action.SpringActionController;
 import org.labkey.api.collections.CaseInsensitiveHashMap;
-import org.labkey.api.data.Container;
 import org.labkey.api.data.ColumnHeaderType;
+import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
 import org.labkey.api.query.QueryForm;
-import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryView;
-import org.labkey.api.query.UserSchema;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.IgnoresTermsOfUse;
 import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresNoPermission;
-import org.labkey.api.security.RequiresPermissionClass;
-import org.labkey.api.security.User;
-import org.labkey.api.security.permissions.AdminPermission;
+import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.permissions.ReadPermission;
-import org.labkey.api.study.Dataset;
-import org.labkey.api.study.StudyService;
-import org.labkey.api.util.URLHelper;
-import org.labkey.api.view.ActionURL;
-import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.template.PageConfig;
-import org.labkey.cds.model.Citable;
-import org.labkey.cds.model.CitableAuthor;
-import org.labkey.cds.model.Citation;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
@@ -75,6 +61,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +91,7 @@ public class CDSController extends SpringActionController
         setActionResolver(_actionResolver);
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresPermission(ReadPermission.class)
     public class BeginAction extends SimpleViewAction
     {
         public ModelAndView getView(Object o, BindException errors) throws Exception
@@ -118,7 +105,7 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresPermission(ReadPermission.class)
     public class NewsAction extends SimpleViewAction
     {
         @Override
@@ -162,144 +149,18 @@ public class CDSController extends SpringActionController
     }
 
 
-    void resetCube()
-    {
-        QueryService.get().cubeDataChanged(getContainer());
-    }
-
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class ClearFactTableAction extends FormViewAction
-    {
-
-        @Override
-        public void validateCommand(Object target, Errors errors)
-        {
-
-        }
-
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView("/org/labkey/cds/view/clearFacts.jsp");
-        }
-
-        @Override
-        public boolean handlePost(Object o, BindException errors) throws Exception
-        {
-            CDSManager.get().deleteFacts(getContainer());
-            resetCube();
-            return true;
-        }
-
-        @Override
-        public URLHelper getSuccessURL(Object o)
-        {
-            return new ActionURL(BeginAction.class, getContainer());
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Clear Fact Table");
-            return root;
-        }
-    }
-
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class PopulateCubeAction extends FormViewAction
-    {
-        List<FactLoader> _factLoaders = new ArrayList<>();
-
-        @Override
-        public void validateCommand(Object target, Errors errors)
-        {
-            List<String> selectedDatasets = getViewContext().getList("dataset");
-
-            if (null == selectedDatasets || selectedDatasets.size() == 0)
-                errors.reject(ERROR_MSG, "No datasets selected");
-        }
-
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, false), errors);
-        }
-
-        @Override
-        public boolean handlePost(Object o, BindException errors) throws Exception
-        {
-            Container c = getContainer();
-            User u = getUser();
-            List<String> selectedDatasets = getViewContext().getList("dataset");
-            UserSchema studySchema = QueryService.get().getUserSchema(u, c, "study");
-            StudyService.Service studyService = StudyService.get();
-
-            //
-            // Populate fact loaders for each dataset
-            //
-            for (String dsName : selectedDatasets)
-            {
-                Dataset dataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, dsName));
-                if (null == dataset)
-                {
-                    errors.reject(ERROR_MSG, "Could not find dataset: '" + dsName + "'. Ensure that this dataset is properly exposed at the project level.");
-                    return false;
-                }
-                _factLoaders.add(new FactLoader(studySchema, dataset, u, c));
-            }
-
-            //
-            // Add any participants with no assay data to the cube...
-            // Should be more robust in finding this dataset
-            //
-            Dataset demographicsDataset = studyService.getDataset(c, studyService.getDatasetIdByName(c, DemographicsFactLoader.TABLE_NAME));
-            if (null == demographicsDataset)
-            {
-                errors.reject(ERROR_MSG, "Could not find dataset: '" + DemographicsFactLoader.TABLE_NAME + "'. It is required.");
-                return false;
-            }
-            _factLoaders.add(new DemographicsFactLoader(studySchema, demographicsDataset, u, c));
-
-            //
-            // We're ready to go, delete old facts and populate the new ones. Then, reset the cube so it picks
-            // up new datas!
-            //
-            CDSManager.get().deleteFacts(c);
-            for (FactLoader loader : _factLoaders)
-                loader.populateCube();
-            resetCube();
-
-            return true;
-        }
-
-        @Override
-        public ModelAndView getSuccessView(Object o)
-        {
-            return new JspView<>("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, false /* isUpdateParticipantGroups */));
-        }
-
-        @Override
-        public URLHelper getSuccessURL(Object o)
-        {
-            return null;
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Populate Fact Table");
-        }
-    }
-
-
     public static class PropertiesForm
     {
         private int _rowId = -1;
         private Container _container;
-        private int _primaryCount = 0;
-        private int _dataCount = 0;
+        private Date _created;
+        private Date _modified;
+
+        private int _studies = 0;
+        private int _subjects = 0;
+        private int _assays = 0;
+        private int _products = 0;
+        private int _datacount = 0;
 
         public int getRowId()
         {
@@ -309,26 +170,6 @@ public class CDSController extends SpringActionController
         public void setRowId(int rowId)
         {
             _rowId = rowId;
-        }
-
-        public int getPrimaryCount()
-        {
-            return _primaryCount;
-        }
-
-        public void setPrimaryCount(int primaryCount)
-        {
-            _primaryCount = primaryCount;
-        }
-
-        public int getDataCount()
-        {
-            return _dataCount;
-        }
-
-        public void setDataCount(int dataCount)
-        {
-            _dataCount = dataCount;
         }
 
         public String getContainerId()
@@ -346,7 +187,78 @@ public class CDSController extends SpringActionController
         {
             _container = container;
         }
+
+        public Date getCreated()
+        {
+            return _created;
+        }
+
+        public void setCreated(Date created)
+        {
+            _created = created;
+        }
+
+        public Date getModified()
+        {
+            return _modified;
+        }
+
+        public void setModified(Date modified)
+        {
+            _modified = modified;
+        }
+
+        public int getProducts()
+        {
+            return _products;
+        }
+
+        public void setProducts(int products)
+        {
+            _products = products;
+        }
+
+        public int getAssays()
+        {
+            return _assays;
+        }
+
+        public void setAssays(int assays)
+        {
+            _assays = assays;
+        }
+
+        public int getSubjects()
+        {
+            return _subjects;
+        }
+
+        public void setSubjects(int subjects)
+        {
+            _subjects = subjects;
+        }
+
+        public int getStudies()
+        {
+            return _studies;
+        }
+
+        public void setStudies(int studies)
+        {
+            _studies = studies;
+        }
+
+        public int getDatacount()
+        {
+            return _datacount;
+        }
+
+        public void setDatacount(int datacount)
+        {
+            _datacount = datacount;
+        }
     }
+
 
     @RequiresNoPermission
     @Marshal(Marshaller.Jackson)
@@ -355,17 +267,7 @@ public class CDSController extends SpringActionController
         @Override
         public Object execute(PropertiesForm form, BindException errors) throws Exception
         {
-            Container container = getContainer();
-            CDSManager manager = CDSManager.get();
-            PropertiesForm model = manager.getProperties(container);
-
-            //
-            // Check if the user is attempting to update the values via POST
-            //
-            if (isPost())
-            {
-                model = manager.ensureProperties(model, form, container, getUser());
-            }
+            PropertiesForm model = CDSManager.get().getProperties(getContainer());
 
             //
             // If properties have not been set the result could be null, just hand back a
@@ -377,58 +279,12 @@ public class CDSController extends SpringActionController
             }
 
             //
-            // Generate the reponse by querying for this containers result
+            // Generate the response by querying for this containers result
             //
             return model;
         }
-
-        @Override
-        public ModelAndView handlePost() throws Exception
-        {
-            return super.handlePost();
-        }
     }
 
-    @RequiresPermissionClass(AdminPermission.class)
-    public class ResetAction extends SimpleViewAction
-    {
-        @Override
-        public ModelAndView getView(Object o, BindException errors) throws Exception
-        {
-            resetCube();
-            return new HtmlView("ok");
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            return root;
-        }
-    }
-
-
-    @RequiresPermissionClass(AdminPermission.class)
-    public class UpdateParticipantGroupsAction extends PopulateCubeAction
-    {
-        @Override
-        public ModelAndView getView(Object o, boolean reshow, BindException errors) throws Exception
-        {
-            return new JspView("/org/labkey/cds/view/populateCube.jsp", new PopulateBehavior(null, true), errors);
-        }
-
-        @Override
-        public ModelAndView getSuccessView(Object o)
-        {
-            return new JspView("/org/labkey/cds/view/populateCubeComplete.jsp", new PopulateBehavior(_factLoaders, true));
-        }
-
-        @Override
-        public NavTree appendNavTrail(NavTree root)
-        {
-            root.addChild("Dataspace Management", new ActionURL(BeginAction.class, getContainer())).addChild("Update Participant Groups");
-            return root;
-        }
-    }
 
     public static class GetCitationsForm
     {
@@ -445,63 +301,6 @@ public class CDSController extends SpringActionController
             _root = root;
         }
     }
-
-    @RequiresPermissionClass(ReadPermission.class)
-    public class GetCitationsAction extends ApiAction<GetCitationsForm>
-    {
-        public ApiResponse execute(GetCitationsForm form, BindException errors) throws Exception
-        {
-            List<Citable> citables = new ArrayList<>();
-            for (String uri : form.getRoot())
-            {
-                Citable citable = CDSManager.get().getCitable(uri, getContainer());
-                if (null != citable)
-                    citables.add(citable);
-            }
-
-            JSONObject root = new JSONObject();
-            root.put("status", "OK");
-            JSONArray jsonCitables = new JSONArray();
-            for (Citable citable : citables)
-                jsonCitables.put(jsonCitable(citable, true));
-
-            root.put("citations", jsonCitables);
-
-            return new ApiSimpleResponse(root);
-        }
-
-        private JSONObject jsonCitable(Citable citable, boolean includeChildren)
-        {
-            JSONObject obj = new JSONObject();
-            obj.put("URI", citable.getURI());
-            obj.put("title", citable.getTitle());
-            obj.put("description", citable.getDescription());
-            obj.put("link", citable.getLink());
-
-            JSONArray authors = new JSONArray();
-            for (CitableAuthor author : citable.getAuthors())
-                authors.put(author.getAuthorId());
-            obj.put("authors", authors);
-
-            if (includeChildren)
-            {
-                JSONArray jsonReferences = new JSONArray();
-                for (Citation reference : citable.getReferences())
-                    jsonReferences.put(jsonCitable(reference.getCited(), false));
-
-                obj.put("references", jsonReferences);
-
-                JSONArray jsonDatasources = new JSONArray();
-                for (Citation datasource : citable.getDataSources())
-                    jsonDatasources.put(jsonCitable(datasource.getCited(), false));
-
-                obj.put("dataSources", jsonDatasources);
-            }
-
-            return obj;
-        }
-    }
-
 
     public static class StateForm implements HasBindParameters
     {
@@ -545,7 +344,8 @@ public class CDSController extends SpringActionController
     }
 
 
-    @RequiresPermissionClass(ReadPermission.class) @RequiresLogin
+    @RequiresLogin
+    @RequiresPermission(ReadPermission.class)
     public class GetStateAction extends ApiAction<StateForm>
     {
         @Override
@@ -562,7 +362,8 @@ public class CDSController extends SpringActionController
     }
 
 
-    @RequiresPermissionClass(ReadPermission.class) @RequiresLogin
+    @RequiresLogin
+    @RequiresPermission(ReadPermission.class)
     public class SaveStateAction extends MutatingApiAction<StateForm>
     {
         @Override
@@ -583,7 +384,7 @@ public class CDSController extends SpringActionController
 
     /***** experimenting with derby/mondrian ******/
 
-    @RequiresPermissionClass(ReadPermission.class)
+    @RequiresPermission(ReadPermission.class)
     @Action(ActionType.Export.class)
     public class ExportRowsXLSXAction extends SimpleViewAction<ExportForm>
     {
@@ -601,6 +402,7 @@ public class CDSController extends SpringActionController
             return null;
         }
     }
+
 
     public class ExcelExportQueryView extends QueryView
     {
@@ -643,10 +445,11 @@ public class CDSController extends SpringActionController
         }
     }
 
+
     public static class ExportForm extends QueryForm
     {
         private String[] _columnNamesOrdered;
-        private Map<String, String> _columnAliases = new HashMap<String, String>();
+        private Map<String, String> _columnAliases = new HashMap<>();
 
         protected ColumnHeaderType _headerType = null; // QueryView will provide a default header type if the user doesn't select one
 

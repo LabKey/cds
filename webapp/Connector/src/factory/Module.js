@@ -6,21 +6,21 @@
 Ext.define('Connector.factory.Module', {
 	singleton: true,
 
-	defineView: function(moduleSpec, model, state) {
-		var data = {};
-		var xtype = Connector.constant.ModuleViewsLookup[moduleSpec.type];
+	defineView: function(moduleSpec, model) {
+		var data = {},
+			xtype = Connector.constant.ModuleViewsLookup[moduleSpec.type];
 
 		if (xtype) {
 			if (model) {
 				data.model = model;
 
 				Ext.iterate(moduleSpec.modelData, function(key, value) {
-					if (key == 'model') {
+					if (key === 'model') {
 						console.error('Invalid module spec. The model property is reserved, don\'t add it as a model spec property');
-					} else {
+					}
+					else {
 						var o = model;
-						var props = value.split('.');
-						Ext.each(props, function(prop, i) {
+						Ext.each(value.split('.'), function(prop, i) {
 							// The first access of a model requires a get query, otherwise, it's a
 							// straight object dereference
 							o = (!i && Ext.isFunction(o.get)) ? o.get(prop) : o[prop];
@@ -28,42 +28,43 @@ Ext.define('Connector.factory.Module', {
 						data[key] = o;
 					}
 				})
-			} else if (moduleSpec.modelData) {
+			}
+			else if (moduleSpec.modelData) {
 				console.error('Invalid module spec. modelData exists but this module didn\'t receive a model instance');
 			}
 
 			Ext.iterate(moduleSpec.staticData, function(key, value) {
-				if (key == 'model') {
+				if (key === 'model') {
 					console.error('Invalid module spec. The model property is reserved, don\'t add it as a model spec property');
-				} else {
+				}
+				else {
 					data[key] = value;
 				}
 			});
 
 			return {
-				data: data,
-				state: state,
-				xtype: xtype
-			}
+				xtype: xtype,
+				data: data
+			};
 		}
 
 		// Unrecognized module spec
 		return null;
 	},
 
-	defineViews: function(moduleSpecs, model, state) {
+	defineViews: function(moduleSpecs, model) {
 		return Ext.Array.map(moduleSpecs, function(spec) {
-			return this.defineView(spec, model, state);
+			return this.defineView(spec, model);
 		}, this);
 	},
 
-	createView: function(moduleSpec, model, state) {
-		return Ext.create(this.defineView(moduleSpec, model, state));
+	createView: function(moduleSpec, model) {
+		return Ext.create(this.defineView(moduleSpec, model));
 	},
 
-	createViews: function(moduleSpecs, model, state) {
+	createViews: function(moduleSpecs, model) {
 		return Ext.Array.map(moduleSpecs, function(spec) {
-			return this.createView(spec, model, state)
+			return this.createView(spec, model)
 		}, this);
 	}
 });

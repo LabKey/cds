@@ -21,13 +21,18 @@ Ext.define('Connector.view.Summary', {
 
         this.refreshRequired = true;
 
-        this.titlePanel = Ext.create('Ext.panel.Panel', {
-            ui  : 'custom',
-            cls : 'educational-titlepanel',
-            html: '<h1>Find subjects based on their characteristics.<br/><span style="opacity: 0.66;">Combine filters to create complex queries.</span><br/><span style="opacity: 0.33;">Then go plot their data.</span></h1>'
-        });
-
-        this.items = [this.titlePanel, this.getSummaryDataView()];
+        this.items = [{
+            xtype: 'box',
+            cls: 'educational-titlepanel',
+            tpl: new Ext.XTemplate(
+                '<h1>',
+                    'Find subjects of interest.<br/>',
+                    '<span style="opacity: 0.66;">Filter multiple attributes.</span><br/>',
+                    '<span style="opacity: 0.33;">Discover relationships.</span>',
+                '</h1>'
+            ),
+            data: {}
+        }, this.getSummaryDataView()];
 
         this.callParent();
 
@@ -109,37 +114,37 @@ Ext.define('Connector.view.SummaryDataView', {
 
     statics : {
         linksTpl: new Ext.XTemplate(
-                '<tpl for="details">',
-                '{[ this.showValue(values, parent) ]}',
-                '</tpl>',
-                '{[ this.clearSep(values) ]}',
-                {
-                    showValue: function(values, parent) {
-                        if (!Ext.isDefined(parent.sep)) {
-                            parent.sep = '';
-                        }
-                        else if (parent.sep.length == 0) {
-                            parent.sep = ', ';
-                        }
-
-                        // TODO: EncodeURI
-                        var nav = (values.nav ? ' class="nav" href="#' + values.nav + '"' : '');
-                        return parent.sep + values.counter + ' <a' + nav + '>' + values.text + '</a>';
-                    },
-                    clearSep: function(p) {
-                        p.sep = undefined;
+            '<tpl for="details">',
+            '{[ this.showValue(values, parent) ]}',
+            '</tpl>',
+            '{[ this.clearSep(values) ]}',
+            {
+                showValue: function(values, parent) {
+                    if (!Ext.isDefined(parent.sep)) {
+                        parent.sep = '';
                     }
-                })
+                    else if (parent.sep.length == 0) {
+                        parent.sep = ', ';
+                    }
+
+                    // TODO: EncodeURI
+                    var nav = (values.nav ? ' class="nav" href="#' + values.nav + '"' : '');
+                    return parent.sep + values.counter + ' <a' + nav + '>' + values.text + '</a>';
+                },
+                clearSep: function(p) {
+                    p.sep = undefined;
+                }
+            })
     },
 
-    tpl : new Ext.XTemplate(
-            '<tpl for=".">',
+    tpl: new Ext.XTemplate(
+        '<tpl for=".">',
             '<div class="row">',
-            '<div class="line"></div>',
-            '<div class="column bycolumn"><span class="pp">by</span><span class="label"> {label}</span></div>',
-            '<div class="column detailcolumn">{[ Connector.view.SummaryDataView.linksTpl.apply(values) ]}</div>',
-            '<div class="column endcolumn totalcolumn">{total} {subject}</div>',
+                '<div class="line"></div>',
+                '<div class="column bycolumn"><span class="pp">by</span><span class="label"> {label}</span></div>',
+                '<div class="column detailcolumn">{[ Connector.view.SummaryDataView.linksTpl.apply(values) ]}</div>',
+                '<div class="column endcolumn totalcolumn">{total} {subject}</div>',
             '</div>',
-            '</tpl>'
+        '</tpl>'
     )
 });

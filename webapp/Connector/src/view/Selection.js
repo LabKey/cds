@@ -162,7 +162,7 @@ Ext.define('Connector.view.Selection', {
                         // the query service can lookup a measure, but only the base of a lookup
                         if (gf.getColumnName().indexOf('/') == -1) {
                             var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                            if (Ext.isObject(measure) && Ext.isString(measure.label)) {
+                            if (Ext.isDefined(measure) && Ext.isString(measure.label)) {
                                 type = measure.label;
                             }
                         }
@@ -209,7 +209,7 @@ Ext.define('Connector.view.Selection', {
                         domString;
 
                     // split measures into x/y based on column name
-                    Ext.each(filters, function(filter){
+                    Ext.each(filters, function(filter) {
                         if (filter) {
                             if (xMeasure && filter.getColumnName() == xMeasure.measure.alias) {
                                 xFilters.push(filter);

@@ -12,9 +12,10 @@ Ext.define('Statistics', {
         scope = scope || this;
         if (this.statistics) {
             callback.call(scope, this.statistics);
-        } else {
+        }
+        else {
             Ext.Ajax.request({
-                url: LABKEY.ActionURL.buildURL('cds', 'properties'),
+                url: LABKEY.ActionURL.buildURL('cds', 'properties.api'),
                 method: 'GET',
                 success: function(response) {
                     var json = Ext.decode(response.responseText);
@@ -26,29 +27,5 @@ Ext.define('Statistics', {
                 scope: this
             });
         }
-    },
-    update : function(properties, callback, failureCallback, scope) {
-        Ext.Ajax.request({
-            url: LABKEY.ActionURL.buildURL('cds', 'properties'),
-            method: 'POST',
-            jsonData: {
-                primaryCount: properties.primaryCount,
-                dataCount: properties.dataCount
-            },
-            success : function(response) {
-                var json = Ext.decode(response.responseText);
-                this.statistics = json;
-
-                if (Ext.isFunction(callback)) {
-                    callback.call(scope, json);
-                }
-            },
-            failure : function() {
-                if (Ext.isFunction(failureCallback)) {
-                    failureCallback.call(scope);
-                }
-            },
-            scope: this
-        });
     }
 });

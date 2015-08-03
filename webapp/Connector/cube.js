@@ -10,15 +10,15 @@ Ext4.define('Connector.cube.Configuration', {
         // Dimensions are looked up by their 'uniqueName' property.
         //
         // Dimensions:
-        //      singularName    - Declaure a singluar name for this dimension. Defaults to name value.
-        //      pluralName      - Declaure a plural name for this dimension. Defaults to name value.
-        //      friendlyName    - Declaure a friendly, possibly more contextual, name for this dimension. Defaults to name value.
+        //      singularName    - Declare a singular name for this dimension. Defaults to name value.
+        //      pluralName      - Declare a plural name for this dimension. Defaults to name value.
+        //      friendlyName    - Declare a friendly, possibly more contextual, name for this dimension. Defaults to name value.
         //      hidden          - declare whether a dimension is hidden. Defaults to false.
         //      itemDetail      - A specific view configuration for the learn about pages. Defaults to undefined.
         //      itemDetailTabs  - An array of tab names used in learn views. Requires itemDetail. Defaults to undefined.
-        //      priority        - relative priority to be shown in displays. Default is 0.
+        //      priority        - relative priority to be shown in displays. A value of 0 would show on top. Default is 200.
         //      querySchema     - metadata member query schema. Defaults to undefined.
-        //      supportsDetails - multinoun views are supported for this dimension. defaults to false.
+        //      supportsDetails - Learn About views are supported for this dimension. If true, additional view configuration is required. Default is false.
         //      supportsSummary - summary views are supported for this dimension. defaults to true but respects hidden.
         //      summaryTargetLevel - summary views will respect this levels count when querying. Defaults to first hierarchy, second level.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to AND.
@@ -39,7 +39,7 @@ Ext4.define('Connector.cube.Configuration', {
         //      countSingular   - The count label displayed when there is one match. Default is undefined.
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
-        //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchys value.
+        //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchy's value.
         //
         context: {
             dimensions: [{
@@ -49,8 +49,8 @@ Ext4.define('Connector.cube.Configuration', {
                 uniqueName: '[Subject]',
                 supportsDetails: false,
                 pluralName: 'Subject characteristics',
-                summaryTargetLevel: '[Subject].[Subject]',
-                priority: 10,
+                summaryTargetLevel: '[Subject.Race].[Race]',
+                priority: 0,
                 defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Subject]',
@@ -69,69 +69,25 @@ Ext4.define('Connector.cube.Configuration', {
                 },{
                     uniqueName: '[Subject.Race]',
                     defaultOperator: 'OR',
-                    label: 'Race & Subtype',
+                    label: 'Race',
                     levels: [{
                         uniqueName: '[Subject.Race].[Race]',
                         activeCount: true,
                         countPriority: 20,
-                        countSingular: 'Race & subtype',
-                        countPlural: 'Races & subtypes'
+                        countSingular: 'Race',
+                        countPlural: 'Races'
                     }]
                 },{
                     uniqueName: '[Subject.Country]',
+                    label: 'Country at enrollment',
                     levels: [{
                         uniqueName: '[Subject.Country].[Country]',
                         countSingular: 'Country',
                         countPlural: 'Countries'
                     }]
                 },{
-                    uniqueName: '[Subject.Randomization]',
-                    label: 'Randomization',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.Randomization].[Randomization]',
-                        countSingular: 'Randomization',
-                        countPlural: 'Randomizations'
-                    }]
-                },{
-                    uniqueName: '[Subject.Ad5grp]',
-                    label: 'Baseline Ad5 titer category',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.Ad5grp].[Ad5grp]',
-                        countSingular: 'Baseline Ad5 titer category',
-                        countPlural: 'Baseline Ad5 titer categories'
-                    }]
-                },{
-                    uniqueName: '[Subject.Circumcised]',
-                    label: 'Circumcision Status',
-                    supportsSummary: false
-                },{
-                    uniqueName: '[Subject.Hivinf]',
-                    label: 'HIV infection status',
-                    levels: [{
-                        uniqueName: '[Subject.Hivinf].[Hivinf]',
-                        countSingular: 'HIV infection status',
-                        countPlural: 'HIV infection statuses'
-                    }]
-                },{
-                    uniqueName: '[Subject.PerProtocol]',
-                    label: 'Protocol completion',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.PerProtocol].[PerProtocol]',
-                        countSingular: 'Protocol completion',
-                        countPlural: 'Protocol completions'
-                    }]
-                },{
-                    uniqueName: '[Subject.BmiGrp]',
-                    label: 'Baseline BMI category',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Subject.BmiGrp].[BmiGrp]',
-                        countSingular: 'Baseline BMI category',
-                        countPlural: 'Baseline BMI categories'
-                    }]
+                    uniqueName: '[Subject.Ethnicity]',
+                    label: 'Hispanic or Latino origin'
                 },{
                     uniqueName: '[Subject.Species]',
                     levels: [{
@@ -141,181 +97,25 @@ Ext4.define('Connector.cube.Configuration', {
                         countSingular: 'Species',
                         countPlural: 'Species'
                     }]
-                }]
-            },{
-                uniqueName: '[Vaccine]',
-                singularName: 'Study product',
-                pluralName: 'Study products',
-                friendlyName: 'Subjects given study product',
-                priority: 20,
-                summaryTargetLevel: '[Vaccine.Type].[Name]',
-                supportsDetails: true,
-                detailCollection: 'Connector.app.store.StudyProducts',
-                detailModel: 'Connector.app.model.StudyProducts',
-                detailView: 'Connector.app.view.StudyProducts',
-
-                itemDetail: [{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'productheader'
-                    }, {
-                        type: 'text',
-                        staticData: {
-                            title: 'Description'
-                        },
-                        modelData: {
-                            text: 'Description'
-                        }
-                    }, {
-                        type: 'productprovidedby',
-                        staticData: {
-                            title: 'Product provided by'
-                        }
-                    }, {
-                        type: 'productmanufacturing',
-                        staticData: {
-                            title: 'Product manufacturing'
-                        }
-                    }], [{
-                        type: 'productotherproducts',
-                        staticData: {
-                            title: 'Used with other products'
-                        }
-                    }, {
-                        type: 'productstudies',
-                        staticData: {
-                            title: 'Studies where used'
-                        }
-                    }]]
-                }],
-    
-                hierarchies: [{
-                    uniqueName: '[Vaccine.Name]',
-                    hidden: true,
-                    levels: [{
-                        uniqueName: '[Vaccine.Name].[Name]',
-                        activeCount: true,
-                        countPriority: 40,
-                        countSingular: 'Study Product',
-                        countPlural: 'Study Products'
-                    }]
-                }]
-            },{
-                uniqueName: '[Vaccine Component]',
-                pluralName: 'Vaccine immunogens',
-                hidden: true
-            },{
-                uniqueName: '[Assay]',
-                pluralName: 'Assays',
-                priority: 40,
-                summaryTargetLevel: '[Assay.Type].[Name]',
-                supportsDetails: true,
-                detailCollection: 'Connector.app.store.Assay',
-                detailModel: 'Connector.app.model.Assay',
-                detailView: 'Connector.app.view.Assay',
-
-                itemDetailTabs: ['Overview', 'Antigens, Analytes, Variables'],
-                itemDetail: [{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'assayheader'
-                    }, {
-                        type: 'text',
-                        staticData: {
-                            title: 'Description'
-                        },
-                        modelData: {
-                            text: 'Summary'
-                        }
-                    }, {
-                        type: 'text',
-                        staticData: {
-                            title: 'Endpoint Description'
-                        },
-                        modelData: {
-                            text: 'Description'
-                        }
-                    }], [{
-                        type: 'person',
-                        staticData: {
-                            title: 'Contact'
-                        },
-                        modelData: {
-                            name: 'Contact'
-                            // picture: 'MainContact.Portrait',
-                            // line1: 'MainContact.Role',
-                            // line2: 'MainContact.Team'
-                        }
-                    }, {
-                        type: 'person',
-                        staticData: {
-                            title: 'Lead contributor'
-                        },
-                        modelData: {
-                            name: 'LeadContributor'
-                            // picture: 'MainContact.Portrait',
-                            // line1: 'MainContact.Role',
-                            // line2: 'MainContact.Team'
-                        }
-                    }]]
                 },{
-                    view: 'Connector.app.view.ModuleContainer',
-                    modules: [[{
-                        type: 'assayantigenlist',
-                        staticData: {
-                            title: 'Antigens'
-                        }
-                    }], [{
-                        type: 'assayanalytelist',
-                        staticData: {
-                            title: 'Analytes'
-                        }
-                    }], [{
-                        type: 'assayvariablelist',
-                        staticData: {
-                            title: 'Variables'
-                        }
-                    }]]
-                }],
-
-                hierarchies: [{
-                    uniqueName: '[Assay.Name]',
-                    supportsSummary: false,
+                    uniqueName: '[Subject.Age]',
                     levels: [{
-                        uniqueName: '[Assay.Name].[Name]',
-                        activeCount: 'highlight',
-                        countPriority: 50,
-                        countSingular: 'Assay',
-                        countPlural: 'Assays'
-                    }]
-                },{
-                    uniqueName: '[Assay.Type]',
-                    levels: [{
-                        uniqueName: '[Assay.Type].[Type]',
-                        countSingular: 'Type',
-                        countPlural: 'Types'
-                    }]
-                },{
-                    uniqueName: '[Assay.Platform]',
-                    levels: [{
-                        uniqueName: '[Assay.Platform].[Platform]',
-                        countSingular: 'Platform',
-                        countPlural: 'Platforms'
+                        uniqueName: '[Subject.Age].[Age]',
+                        countSingular: 'Decade by Age',
+                        countPlural: 'Decades by Age'
                     }]
                 }]
             },{
                 uniqueName: '[Study]',
                 pluralName: 'Studies',
-                priority: 60,
-                supportsDetails: true,
-                detailCollection: 'Connector.app.store.Study',
-                detailModel: 'Connector.app.model.Study',
-                detailView: 'Connector.app.view.Study',
+                priority: 40,
                 defaultOperator: 'OR',
+                summaryTargetLevel: '[Study.Treatment].[Treatment]',
 
                 hierarchies: [{
                     uniqueName: '[Study]',
                     label: 'Name',
+                    hidden: true,
                     levels: [{
                         uniqueName: '[Study].[(All)]',
                         activeCount: 'highlight',
@@ -331,68 +131,96 @@ Ext4.define('Connector.cube.Configuration', {
                         countSingular: 'Study',
                         countPlural: 'Studies'
                     }]
+                },{
+                    uniqueName: '[Study.Treatment]',
+                    label: 'Treatment Assignment Summary',
+                    levels: [{
+                        uniqueName: '[Study.Treatment].[Treatment]',
+                        countSingular: 'Treatment Assignment Summary',
+                        countPlural: 'Treatment Assignment Summaries'
+                    }]
+                },{
+                    uniqueName: '[Study.Type]',
+                    label: 'Study Type',
+                    levels: [{
+                        uniqueName: '[Study.Type].[Type]',
+                        countSingular: 'Study Type',
+                        countPlural: 'Study Types'
+                    }]
                 }],
 
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Study',
+                detailModel: 'Connector.app.model.Study',
+                detailView: 'Connector.app.view.Study',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                }],
                 itemDetail: [{
                     view: 'Connector.app.view.ModuleContainer',
                     modules: [[{
-                        type: 'studyheader'
-                    }, {
+                        type: 'studyheader',
+                        staticData: {
+                            title: 'Study information'
+                        }
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Title'
                         },
                         modelData: {
-                            text: 'Title'
+                            text: 'title'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Description'
                         },
                         modelData: {
-                            text: 'Description'
+                            text: 'description'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'CDS editorial'
                         },
                         modelData: {
-                            text: 'Editorial'
+                            text: 'context'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Study objectives'
                         },
                         modelData: {
-                            text: 'Objectives'
+                            text: 'objectives'
                         }
-                    }, {
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Population'
                         },
                         modelData: {
-                            text: 'StudyPopulation'
+                            text: 'population'
                         }
-                    }, {
+                    },{
                         type: 'studysites',
                         staticData: {
                             title: 'Sites'
                         }
-                    }], [{
+                    }],[{
+                        type: 'contactcds',
                         staticData: {
                             title: 'Contact information'
-                        },
-                        type: 'contactcds'
-                    }, {
+                        }
+                    },{
                         type: 'studyproducts',
                         staticData: {
                             title: 'Products'
                         }
-                    }, {
+                    },{
                         type: 'studydatasets',
                         staticData: {
                             title: "Lab & clinical data"
@@ -400,67 +228,120 @@ Ext4.define('Connector.cube.Configuration', {
                     }]]
                 }]
             },{
-                uniqueName: '[Antigen]',
-                pluralName: 'Assay antigens',
-                priority: 0,
-                supportsDetails: false,
-                supportsSummary: false,
-                summaryTargetLevel: '[Antigen.Name].[Name]',
+                uniqueName: '[Study Product]',
+                priority: 20,
+                singularName: 'Study product',
+                pluralName: 'Study products',
 
-                hierarchies: [{
-                    uniqueName: '[Antigen.Name]',
-                    supportsSummary: false,
-                    levels: [{
-                        uniqueName: '[Antigen.Name].[Name]',
-                        activeCount: true,
-                        dataBasedCount: true,
-                        countPriority: 60,
-                        countSingular: 'Antigen',
-                        countPlural: 'Antigens'
-                    }]
-                },{
-                    uniqueName: '[Antigen.Clade]',
-                    levels: [{
-                        uniqueName: '[Antigen.Clade].[Clade]',
-                        countSingular: 'Clade',
-                        countPlural: 'Clades'
-                    }]
-                },{
-                    uniqueName: '[Antigen.Tier]',
-                    levels: [{
-                        uniqueName: '[Antigen.Tier].[Tier]',
-                        countSingular: 'Tier',
-                        countPlural: 'Tiers'
-                    }]
-                },{
-                    uniqueName: '[Antigen.Sample Type]',
-                    levels: [{
-                        uniqueName: '[Antigen.Sample Type].[Sample Type]',
-                        countSingular: 'Sample Type',
-                        countPlural: 'Sample Types'
-                    }]
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.StudyProducts',
+                detailModel: 'Connector.app.model.StudyProducts',
+                detailView: 'Connector.app.view.StudyProducts',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'productheader',
+                        staticData: {
+                            title: 'Product information'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'product_description'
+                        }
+                    }],[{
+                        type: 'productstudies',
+                        staticData: {
+                            title: 'Studies using this product'
+                        }
+                    }]]
+                    //},{
+                    //    type: 'productprovidedby',
+                    //    staticData: {
+                    //        title: 'Product provided by'
+                    //    }
+                    //},{
+                    //    type: 'productmanufacturing',
+                    //    staticData: {
+                    //        title: 'Product manufacturing'
+                    //    }
+                    //}],[{
+                    //    type: 'productotherproducts',
+                    //    staticData: {
+                    //        title: 'Used with other products'
+                    //    }
+                    //}]]
                 }]
             },{
-                uniqueName: '[Lab]',
-                pluralName: 'Labs',
-                priority: 20,
-                supportsDetails: false,
-                supportsSummary: false,
-                detailCollection: 'Connector.app.store.Labs',
-                detailModel: 'Connector.app.model.Labs',
-                detailView: 'Connector.app.view.Labs',
-
+                uniqueName: '[Assay]',
+                priority: 30,
+                singularName: 'Assay',
+                pluralName: 'Assays',
                 hierarchies: [{
-                    uniqueName: '[Lab]',
-                    label: 'Name',
-                    levels: [{
-                        uniqueName: '[Lab].[Name]',
-                        activeCount: true,
-                        dataBasedCount: true,
-                        countPriority: 70,
-                        countSingular: 'Lab',
-                        countPlural: 'Labs'
-                    }]
+                    uniqueName: "[Assay.Name]",
+                    label: "Assay Name"
+                }],
+
+                supportsDetails: true,
+                detailCollection: 'Connector.app.store.Assay',
+                detailModel: 'Connector.app.model.Assay',
+                detailView: 'Connector.app.view.Assay',
+                itemDetailTabs: [{
+                    url: 'overview',
+                    isDefault: true,
+                    label: 'Overview'
+                },{
+                    url: 'vars',
+                    label: 'Variables'
+                },{
+                    url: 'antigens',
+                    label: 'Antigens'
+                }],
+                itemDetail: [{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'assayheader',
+                        staticData: {
+                            title: 'Assay information'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Description'
+                        },
+                        modelData: {
+                            text: 'assay_description'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Method description'
+                        },
+                        modelData: {
+                            text: 'assay_method_description'
+                        }
+                    },{
+                        type: 'text',
+                        staticData: {
+                            title: 'Endpoint description'
+                        },
+                        modelData: {
+                            text: 'assay_endpoint_description'
+                        }
+                    }],[{
+                        type: 'contactcds',
+                        staticData: {
+                            title: 'Contact information'
+                        }
+                    }]]
                 }]
             }]
         },
@@ -471,7 +352,7 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'prop::name', // defaults to dim.name
                 friendlyName: 'prop::name', // defaults to dim.name
                 hidden: false,
-                priority: 0,
+                priority: 200,
                 querySchema: undefined,
                 supportsDetails: false,
                 supportsSummary: true,

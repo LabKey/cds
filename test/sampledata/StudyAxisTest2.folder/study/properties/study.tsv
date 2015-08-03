@@ -1,5 +1,0 @@
-Label	StartDate	EndDate	TimepointType	SubjectNounSingular	SubjectNounPlural	SubjectColumnName	Grant	Investigator	Species	ParticipantAliasDatasetId	ParticipantAliasProperty	ParticipantAliasSourceProperty	AssayPlan	Description	DescriptionRendererType	DateBased	LSID	Type	Editorial	Network	Phase	SiteLocations	Contact	ContactEmail	SecondaryContact	SecondaryContactEmail	test1	test2	test3	test4	test5
-Study Axis Test 2	2008-01-01 00:00:00.0		DATE	Subject	Subjects	pub_id	THTI	Bellew M	Human				This is the plan, man	"Real CHAVI 001 description: The specimens collected during the course of this study will be used to investigate the following specific aims:
-...
-
-participants (pub_id) in the 4000s, dates in 2009"	TEXT_WITH_LINKS	true	urn:lsid:labkey.com:Study.Folder-1128:1128	Observational	This study is important to the dataspace because it is pretending to be the first CHAVI study.	CHAVI	III	51.508515, -0.125487	Matt Bellew	matthew@labkey.com	Nick Arnold	nicka@labkey.com					

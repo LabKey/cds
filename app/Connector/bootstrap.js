@@ -5,7 +5,6 @@
  * metadata-driven class system features 
  */
 Ext.Loader.addClassPathMappings({
-  "AdvancedPane": "../../webapp/Connector/src/panel/Selector.js",
   "Animation": "../../webapp/Connector/src/utility/Animation.js",
   "Connector.Application": "../../webapp/Connector/src/Application.js",
   "Connector.app.model.Assay": "../../webapp/Connector/src/app/model/Assay.js",
@@ -33,6 +32,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.button.InfoButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.button.RoundedButton": "../../webapp/Connector/src/button/RoundedButton.js",
   "Connector.component.ActionTitle": "../../webapp/Connector/src/component/ActionTitle.js",
+  "Connector.component.AdvancedOptionBase": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionDimension": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionScale": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.component.AdvancedOptionTime": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.component.DropDown": "../../webapp/Connector/src/component/DropDown.js",
   "Connector.component.GridPager": "../../webapp/Connector/src/component/GridPager.js",
   "Connector.constant.ModuleViewsLookup": "../../webapp/Connector/src/constant/ModuleViewsLookup.js",
@@ -76,16 +79,21 @@ Ext.Loader.addClassPathMappings({
   "Connector.model.Source": "../../webapp/Connector/src/model/Source.js",
   "Connector.model.State": "../../webapp/Connector/src/model/State.js",
   "Connector.model.StudyAxisData": "../../webapp/Connector/src/model/StudyAxisData.js",
+  "Connector.model.StudyVisitTag": "../../webapp/Connector/src/model/StudyVisitTag.js",
   "Connector.model.Summary": "../../webapp/Connector/src/model/Summary.js",
   "Connector.model.UpdateLog": "../../webapp/Connector/src/controller/Update.js",
   "Connector.model.Variable": "../../webapp/Connector/src/model/Variable.js",
   "Connector.model.VisitTag": "../../webapp/Connector/src/model/VisitTag.js",
+  "Connector.panel.AdvancedOptionBaseDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AdvancedOptionCheckboxDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AdvancedOptionRadioDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AxisSelectDisplay": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.ColorSelector": "../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../webapp/Connector/src/panel/GroupList.js",
+  "Connector.panel.HierarchicalSelectionPanel": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.Selection": "../../webapp/Connector/src/panel/Selection.js",
   "Connector.panel.Selector": "../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
@@ -94,8 +102,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.AssayDistinctValue": "../../webapp/Connector/src/store/AssayDistinctValue.js",
   "Connector.store.Explorer": "../../webapp/Connector/src/store/Explorer.js",
   "Connector.store.FilterStatus": "../../webapp/Connector/src/store/FilterStatus.js",
+  "Connector.store.StudyVisitTag": "../../webapp/Connector/src/store/StudyVisitTag.js",
   "Connector.store.Summary": "../../webapp/Connector/src/store/Summary.js",
   "Connector.store.VisitTag": "../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.VisitTagMultiUse": "../../webapp/Connector/src/store/VisitTag.js",
+  "Connector.store.VisitTagSingleUse": "../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../webapp/Connector/src/types/Filter.js",
   "Connector.view.About": "../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../webapp/Connector/src/view/Chart.js",
@@ -112,7 +123,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.GroupSummaryHeader": "../../webapp/Connector/src/view/GroupSummary.js",
   "Connector.view.Header": "../../webapp/Connector/src/view/Header.js",
   "Connector.view.Home": "../../webapp/Connector/src/view/Home.js",
-  "Connector.view.HomeHeader": "../../webapp/Connector/src/view/Home.js",
+  "Connector.view.HomeHeader": "../../webapp/Connector/src/view/HomeHeader.js",
   "Connector.view.InfoPane": "../../webapp/Connector/src/view/InfoPane.js",
   "Connector.view.Learn": "../../webapp/Connector/src/view/Learn.js",
   "Connector.view.Learn.plugin.HeaderLock": "../../webapp/Connector/src/view/Learn.js",
@@ -182,7 +193,6 @@ Ext.Loader.addClassPathMappings({
   "StoreCache": "../../webapp/Connector/src/utility/StoreCache.js"
 });
 Ext.ClassManager.addNameAlternateMappings({
-  "AdvancedPane": [],
   "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
@@ -210,6 +220,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.button.InfoButton": [],
   "Connector.button.RoundedButton": [],
   "Connector.component.ActionTitle": [],
+  "Connector.component.AdvancedOptionBase": [],
+  "Connector.component.AdvancedOptionDimension": [],
+  "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [],
   "Connector.component.GridPager": [],
   "Connector.constant.ModuleViewsLookup": [],
@@ -253,16 +267,21 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.model.Source": [],
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
+  "Connector.model.StudyVisitTag": [],
   "Connector.model.Summary": [],
   "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
+  "Connector.panel.AdvancedOptionBaseDropdown": [],
+  "Connector.panel.AdvancedOptionCheckboxDropdown": [],
+  "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
+  "Connector.panel.HierarchicalSelectionPanel": [],
   "Connector.panel.Selection": [],
   "Connector.panel.Selector": [],
   "Connector.plugin.HeaderLock": [],
@@ -271,8 +290,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.AssayDistinctValue": [],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
+  "Connector.store.StudyVisitTag": [],
   "Connector.store.Summary": [],
   "Connector.store.VisitTag": [],
+  "Connector.store.VisitTagMultiUse": [],
+  "Connector.store.VisitTagSingleUse": [],
   "Connector.types.Filter": [],
   "Connector.view.About": [],
   "Connector.view.Chart": [],
@@ -1174,7 +1196,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "StoreCache": []
 });
 Ext.ClassManager.addNameAliasMappings({
-  "AdvancedPane": [],
   "Animation": [],
   "Connector.Application": [],
   "Connector.app.model.Assay": [],
@@ -1212,6 +1233,12 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.component.ActionTitle": [
     "widget.actiontitle"
   ],
+  "Connector.component.AdvancedOptionBase": [],
+  "Connector.component.AdvancedOptionDimension": [
+    "widget.advancedoptiondimension"
+  ],
+  "Connector.component.AdvancedOptionScale": [],
+  "Connector.component.AdvancedOptionTime": [],
   "Connector.component.DropDown": [
     "widget.dropdown"
   ],
@@ -1261,19 +1288,21 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.model.Source": [],
   "Connector.model.State": [],
   "Connector.model.StudyAxisData": [],
+  "Connector.model.StudyVisitTag": [],
   "Connector.model.Summary": [],
   "Connector.model.UpdateLog": [],
   "Connector.model.Variable": [],
   "Connector.model.VisitTag": [],
+  "Connector.panel.AdvancedOptionBaseDropdown": [],
+  "Connector.panel.AdvancedOptionCheckboxDropdown": [],
+  "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AxisSelectDisplay": [
     "widget.axisselectdisplay"
   ],
   "Connector.panel.AxisSelector": [
     "widget.axisselector"
   ],
-  "Connector.panel.ColorSelector": [
-    "widget.colorselector"
-  ],
+  "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [
     "widget.feedback"
   ],
@@ -1283,6 +1312,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.GroupList": [
     "widget.grouplist"
   ],
+  "Connector.panel.HierarchicalSelectionPanel": [],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
   ],
@@ -1303,11 +1333,16 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.store.Explorer": [],
   "Connector.store.FilterStatus": [],
+  "Connector.store.StudyVisitTag": [],
   "Connector.store.Summary": [
     "store.summary"
   ],
-  "Connector.store.VisitTag": [
-    "store.visittag"
+  "Connector.store.VisitTag": [],
+  "Connector.store.VisitTagMultiUse": [
+    "store.visittagmulti"
+  ],
+  "Connector.store.VisitTagSingleUse": [
+    "store.visittagsingle"
   ],
   "Connector.types.Filter": [],
   "Connector.view.About": [
@@ -1366,7 +1401,9 @@ Ext.ClassManager.addNameAliasMappings({
     "plugin.learnheaderlock"
   ],
   "Connector.view.LearnColumnHeader": [],
-  "Connector.view.LearnHeader": [],
+  "Connector.view.LearnHeader": [
+    "widget.learnheader"
+  ],
   "Connector.view.LearnHeaderDataView": [
     "widget.learnheaderdataview"
   ],
@@ -1381,7 +1418,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.notfound"
   ],
   "Connector.view.Page": [],
-  "Connector.view.PageHeader": [],
+  "Connector.view.PageHeader": [
+    "widget.learnpageheader"
+  ],
   "Connector.view.PlotPane": [],
   "Connector.view.Popup": [],
   "Connector.view.Selection": [
@@ -1408,9 +1447,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.TermsOfUse": [
     "widget.terms"
   ],
-  "Connector.view.Variable": [
-    "widget.variableselector"
-  ],
+  "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [
     "widget.app.module.assayanalytelist"

@@ -7,29 +7,21 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     extend : 'Ext.data.Model',
 
-    idProperty: 'Label',
+    idProperty: 'product_id',
+
+    labelProperty: 'product_name',
 
     fields: [
-        {name: 'Label'},
-        {name: 'Role'},
-        {name: 'Type'},
-        {name: 'Developer'},
-        {name: 'Manufacturer'},
-        {name: 'Immunogen'},
-        {name: 'Class'},
-        {name: 'VectorClass'},
-        {name: 'ProductSubclass'},
-        {name: 'Production'},
-        {name: 'Inserts'},
-        {name: 'ToxicityStudies'},
-        {name: 'PreviousTrials'},
-        {name: 'Description'},
-        {name: 'DeveloperContact'},
-        {name: 'Contact', defaultValue: {
-            Name: 'Uknown Person',
-//            Portrait: 'http://doctor.png',
-            Role: 'Program Manager',
-            Team: 'HVTN concept development team'
+        {name: 'product_id', type: 'int'},
+        {name: 'product_name'},
+        {name: 'product_type'},
+        {name: 'product_subclass'},
+        {name: 'product_class_label'},
+        {name: 'product_developer'},
+        {name: 'product_manufacturer'},
+        {name: 'product_description'},
+        {name: 'studies', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
         }}
     ]
 });

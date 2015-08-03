@@ -171,7 +171,7 @@ Ext.define('Connector.component.GridPager', {
             }
         }
 
-        if(this.pagesShowing != pageButtons) {
+        if (this.pagesShowing != pageButtons) {
             this.pagesShowing = pageButtons;
             this.realign = true;
         }
@@ -184,60 +184,50 @@ Ext.define('Connector.component.GridPager', {
             pageButtonCt.setWidth(33);
             this._setShowBtn(buttons.get(0), first);
             this.realign = true;
-        } else
-        {
+        }
+        else {
             // If we are somewhere in the middle, we show the '...' increments outside of the middle
-            if (showIncrements && buttons.length > 0)
-            {
+            if (showIncrements && buttons.length > 0) {
                 this._setShowBtn(buttons.get(0), first);
 
-                if (buttons.length > 1)
-                {
+                if (buttons.length > 1) {
                     this._setShowBtn(buttons.last(), last);
                 }
 
-                if (buttons.length > 2)
-                {
+                if (buttons.length > 2) {
                     var middle,
-                            midIdx = Math.floor(buttons.length / 2),
-                            prevIdx = midIdx - 1,
-                            nextIdx = midIdx + 1,
-                            ellipseLeftIdx = midIdx - 2,
-                            ellipseRightIdx = midIdx + 2;
+                        midIdx = Math.floor(buttons.length / 2),
+                        prevIdx = midIdx - 1,
+                        nextIdx = midIdx + 1,
+                        ellipseLeftIdx = midIdx - 2,
+                        ellipseRightIdx = midIdx + 2;
 
-                    if (current <= first + 3)
-                    {
+                    if (current <= first + 3) {
                         middle = first + 3;
                     }
-                    else if (current >= last - 3)
-                    {
+                    else if (current >= last - 3) {
                         middle = last - 3;
                     }
-                    else
-                    {
+                    else {
                         middle = current
                     }
 
                     this._setShowBtn(buttons.get(midIdx), middle);
 
-                    if (middle <= (first + 3))
-                    {
+                    if (middle <= (first + 3)) {
                         this._setShowBtn(buttons.get(ellipseLeftIdx), first + 1);
                         this._setShowBtn(buttons.get(prevIdx), first + 2);
                     }
-                    else
-                    {
+                    else {
                         this._setShowBtn(buttons.get(ellipseLeftIdx), this.ELLIPSE);
                         this._setShowBtn(buttons.get(prevIdx), middle - 1);
                     }
 
-                    if (middle >= (last - 3))
-                    {
+                    if (middle >= (last - 3)) {
                         this._setShowBtn(buttons.get(nextIdx), last - 2);
                         this._setShowBtn(buttons.get(ellipseRightIdx), last - 1);
                     }
-                    else
-                    {
+                    else {
                         this._setShowBtn(buttons.get(nextIdx), middle + 1);
                         this._setShowBtn(buttons.get(ellipseRightIdx), this.ELLIPSE);
                     }

@@ -36,23 +36,29 @@ Ext.define('Connector.view.PlotPane', {
             {
                 var index = indexOrder[i];
                 var label = null;
-                if (index == 0) label = 'X';
-                else if (index == 1) label = 'Y';
-                else if (index == 2) label = 'Color';
+                if (index == 0) label = 'x-axis';
+                else if (index == 1) label = 'y-axis';
+                else if (index == 2) label = 'color';
 
                 if (measures[index] && measures[index].measure) {
+                    var source = Connector.model.Variable.getSourceDisplayText(measures[index].measure);
+                    var options = Connector.model.Variable.getOptionsDisplayText(measures[index].measure);
+                    var variable = measures[index].measure.label;
+
                     content.push({
                         xtype: 'box',
-                        cls: 'smallstandout soft spacer',
+                        cls: 'plot-type-label spacer',
                         html: label
                     });
                     content.push({
                         xtype: 'box',
-                        html: Ext.htmlEncode(measures[index].measure.queryLabel)
+                        cls: 'plot-source-label',
+                        html: Ext.htmlEncode(source + (options ? ' (' + options + ')' : ''))
                     });
                     content.push({
                         xtype: 'box',
-                        html: Ext.htmlEncode(measures[index].measure.label + this.getSublabel(measures[index].measure))
+                        cls: 'plot-variable-label',
+                        html: Ext.htmlEncode(variable)
                     });
                 }
             }
@@ -85,17 +91,5 @@ Ext.define('Connector.view.PlotPane', {
     onUpdate : function() {
         this.getModel().clearFilter(true);
         this.hide();
-    },
-
-    getSublabel : function(measure) {
-        var sub = '';
-        if (measure.options)
-        {
-            if (measure.options.antigen)
-                sub = " (" + measure.options.antigen.values.join(", ") + ")";
-            else if (measure.options.alignmentVisitTagLabel)
-                sub = " (" + measure.options.alignmentVisitTagLabel + ")";
-        }
-        return sub;
     }
 });

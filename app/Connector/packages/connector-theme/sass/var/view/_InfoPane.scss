@@ -39,6 +39,17 @@
 
     @include smallStandout;
   }
+
+  .plot-type-label {
+    color: $heat-scale-1
+  }
+  .plot-source-label {
+    padding-top: 8px;
+    color: $heat-scale-2;
+  }
+  .plot-variable-label {
+    font-weight: bold;
+  }
 }
 
 .fader {

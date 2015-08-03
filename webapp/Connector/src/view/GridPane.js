@@ -35,7 +35,7 @@ Ext.define('Connector.view.GridPane', {
                 if (gf != null && Ext.isDefined(gf)) {
                     // get this columns measure information
                     var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                    if (Ext.isObject(measure)) {
+                    if (Ext.isDefined(measure)) {
 
                         // only show the measure label/caption for the first filter
                         if (!shown[measure.alias]) {
@@ -63,8 +63,8 @@ Ext.define('Connector.view.GridPane', {
                         var filterType = gf.getFilterType().getDisplayText();
                         if (filterType == 'Equals One Of') {
                             var values = [];
-                            Ext.each(gf.getValue(), function(value){
-                                Ext.each(value.split(';'), function(v){
+                            Ext.each(gf.getValue(), function(value) {
+                                Ext.each(value.split(';'), function(v) {
                                     if (v)
                                         values.push(Ext.htmlEncode('- ' + v));
                                 });
@@ -114,12 +114,8 @@ Ext.define('Connector.view.GridPane', {
 
     getSublabel : function(measure) {
         var sub = '';
-        if (measure.options)
-        {
-            if (measure.options.antigen)
-                sub = " (" + measure.options.antigen.values.join(", ") + ")";
-            else if (measure.options.alignmentVisitTagLabel)
-                sub = " (" + measure.options.alignmentVisitTagLabel + ")";
+        if (measure.options && measure.options.alignmentVisitTag) {
+            sub = " (" + measure.options.alignmentVisitTag + ")";
         }
         else if (Ext.isString(measure.description))
         {

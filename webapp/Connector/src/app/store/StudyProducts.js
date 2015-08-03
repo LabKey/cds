@@ -17,43 +17,56 @@ Ext.define('Connector.app.store.StudyProducts', {
     },
 
     loadSlice : function(slice) {
+        this.productData = undefined;
+        this.studyData = undefined;
 
-        var cells = slice.cells, row;
-        var productSet = [], products;
-        for (var c=0; c < cells.length; c++) {
-            row = cells[c][0];
-            products = row.positions[row.positions.length-1][0];
-            if (row.value > 0) {
-                productSet.push(products.name);
-            }
-        }
-        products = productSet.join(';');
-
-        if (productSet.length > 0) {
-            var queryConfig = {
-                schemaName: Connector.studyContext.schemaName,
-                queryName: 'Product',
-                columns: Ext.Array.pluck(Connector.app.model.StudyProducts.getFields(), "name"),
-                success: this.onLoadQuery,
-                scope: this
-            };
-
-            if (products.length > 0) {
-                queryConfig.filterArray = [ LABKEY.Filter.create('Label', products, LABKEY.Filter.Types.IN) ]
-            }
-
-            LABKEY.Query.selectRows(queryConfig);
-        }
-        else {
-            this.onLoadQuery({rows: []});
-        }
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'product',
+            success: this.onLoadProducts,
+            scope: this
+        });
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: 'SELECT *, study_name.label AS study_label, FROM cds.studyproductmap',
+            success: this.onLoadStudies,
+            requiredVersion: 13.2,
+            scope: this
+        });
     },
 
-    onLoadQuery : function(queryResult) {
-        var rows = queryResult.rows;
-        for (var r=0; r < rows.length; r++) {
-            rows[r].internalId = r;
+    onLoadProducts : function(productData) {
+        this.productData = productData.rows;
+        this._onLoadComplete();
+    },
+
+    onLoadStudies : function(studyData) {
+        this.studyData = studyData.rows;
+        this._onLoadComplete();
+    },
+
+    _onLoadComplete : function() {
+        if (Ext.isDefined(this.productData) && Ext.isDefined(this.studyData)) {
+            var products = [],
+                studies,
+                s;
+
+            // join studies to product
+            Ext.each(this.productData, function(product) {
+                studies = [];
+                for (s=0; s < this.studyData.length; s++) {
+                    if (product.product_id === this.studyData[s].product_id.value) {
+                        studies.push({
+                            study_name: this.studyData[s].study_name.value,
+                            label: this.studyData[s].study_label.value
+                        });
+                    }
+                }
+                product.studies = studies;
+                products.push(product);
+            }, this);
+
+            this.loadRawData(products);
         }
-        this.loadRawData(rows);
     }
 });
