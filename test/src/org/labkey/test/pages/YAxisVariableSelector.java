@@ -23,6 +23,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class YAxisVariableSelector extends DataspaceVariableSelector
 {
+    private final String XPATHID = "y-axis-selector";
+
     public YAxisVariableSelector(BaseWebDriverTest test)
     {
         super(test);
@@ -52,7 +54,7 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("y-axis").toBy()));
-        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']").toBy()));
+        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']").toBy()));
 
     }
 
@@ -72,7 +74,7 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     @Override
     public void pickSource(String source){
         // If not currently on the source page, move there.
-        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'back-action')]")))
+        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]")))
         {
             backToSource();
         }
@@ -80,21 +82,27 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     }
 
     public void backToSource(){
-        _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'back-action')]"));
+        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]"));
         _test.sleep(750);
     }
 
     public void setScale(Scale scale)
     {
-        _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[text()='Scale:']/following-sibling::div"));
-        _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector-option-scale-dropdown')]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale + "']"));
+        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
+        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale + "']"));
         // Do the next click to close the drop down.
-        _test.click(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[text()='Scale:']"));
+        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']"));
 
     }
 
     public void setCellType(String value)
     {
-        super.setAssayDimension("y-axis-selector", AssayDimensions.CellType, value);
+        super.setAssayDimension(XPATHID, AssayDimensions.CellType, value);
     }
+
+    public void setTargetCell(String value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.TargetCell, value);
+    }
+
 }

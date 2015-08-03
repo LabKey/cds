@@ -16,6 +16,7 @@
 package org.labkey.test.tests;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,6 +49,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -806,6 +808,75 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
     }
 
+    @Test
+    public void verifyTimeAxisBasic()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Vaerify NAb Titer IC50, A3R5 and Study Days.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setTargetCell("A3R5");
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertTrue("For NAb Titer 50, A3R5 vs Time Visit Days a study axis was not present.", hasStudyAxis());
+        List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 7);
+        log("Study count was as expected.");
+
+//        List<WebElement> visits;
+        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        expectedCounts.put("HVTN 041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0));
+        expectedCounts.put("HVTN 049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0));
+        expectedCounts.put("HVTN 049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0));
+        expectedCounts.put("HVTN 094", new CDSHelper.TimeAxisData("HVTN 094", 6, 22, 0));
+        expectedCounts.put("HVTN 096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0));
+        expectedCounts.put("HVTN 203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0));
+        expectedCounts.put("HVTN 205", new CDSHelper.TimeAxisData("HVTN 0205", 0, 0, 0));
+
+        validateVisitCounts(studies, expectedCounts);
+        /*
+        for(WebElement study : studies)
+        {
+            log("study.getText(): " + study.getText());
+            visits = study.findElements(Locator.css("image.visit-tag").toBy());
+            log("visits.size(): " + visits.size());
+
+            int nonvacCount = 0, vacCount = 0;
+
+            if(visits.size() > 0)
+            {
+                nonvacCount = study.findElements(Locator.xpath("//image[contains(@href, '/labkey/production/Connector/resources/images/nonvaccination_normal.svg')]").toBy()).size();
+                vacCount = study.findElements(Locator.xpath("//image[contains(@href, '/labkey/production/Connector/resources/images/vaccination_normal.svg')]").toBy()).size();
+            }
+            log("nonvacCount: " + nonvacCount);
+            log("vacCount: " + vacCount);
+
+            for(WebElement visitImg : visits)
+            {
+                log("visitImg.getAttribute(\"href\"): " + visitImg.getAttribute("href"));
+            }
+
+        }
+*/
+        click(CDSHelper.Locators.cdsButtonLocator("clear"));
+
+        // Makes the test a little more reliable.
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+    }
+
     // TODO Removing test attribute until I get a chance to fix it.
 //    @Test
     public void verifyAntigenVariableSelector()
@@ -1114,6 +1185,47 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         return hasElement;
 
+    }
+
+    private void validateVisitCounts(List<WebElement> studies, Map<String, CDSHelper.TimeAxisData> expectedCounts)
+    {
+
+        for(WebElement study : studies)
+        {
+            List<WebElement> visits;
+
+            log("study.getText(): " + study.getText());
+            visits = study.findElements(Locator.css("image.visit-tag").toBy());
+            log("visits.size(): " + visits.size());
+
+            int nonvacCount = 0, vacCount = 0, chalCount = 0;
+
+            for(int i=0; i < visits.size(); i++)
+            {
+                if(visits.get(i).getAttribute("href").contains("/nonvaccination_normal.svg"))
+                {
+                    nonvacCount++;
+                }
+                if(visits.get(i).getAttribute("href").contains("/vaccination_normal.svg"))
+                {
+                    vacCount++;
+                }
+                if(visits.get(i).getAttribute("href").contains("/challenge_normal.svg"))
+                {
+                    chalCount++;
+                }
+            }
+
+            log("nonvacCount: " + nonvacCount);
+            log("vacCount: " + vacCount);
+            log("chalCount: " + chalCount);
+
+            CDSHelper.TimeAxisData tad = expectedCounts.get(study.getText());
+
+            assertTrue("Vaccination count not as expected. Expected: " + tad.vaccinationCount + " found: " + vacCount, tad.vaccinationCount == vacCount);
+            assertTrue("Nonvaccination count not as expected. Expected: " + tad.nonvaccinationCount + " found: " + nonvacCount, tad.nonvaccinationCount == nonvacCount);
+            assertTrue("Challenge count not as expected. Expected: " + tad.challengeCount + " found: " + chalCount, tad.challengeCount == chalCount);
+        }
     }
 
     @LogMethod

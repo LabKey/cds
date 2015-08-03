@@ -755,4 +755,21 @@ public class CDSHelper
             return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "active").withText(dimension));
         }
     }
+
+    public static class TimeAxisData
+    {
+        public String study;
+        public int vaccinationCount;
+        public int nonvaccinationCount;
+        public int challengeCount;
+
+        public TimeAxisData(String study, int vacCount, int nonvacCount, int chalCount)
+        {
+            this.study = study;
+            vaccinationCount = vacCount;
+            nonvaccinationCount = nonvacCount;
+            challengeCount = chalCount;
+        }
+    }
+
 }

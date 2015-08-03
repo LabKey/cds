@@ -150,20 +150,22 @@ public abstract class DataspaceVariableSelector
     // TODO Still working on this as part of the detail selection.
     protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
     {
+        String xpathDimField, xpathDimDropDown;
+        Locator locDimField;
 
         switch(dimension){
             case AntigenName:
                 break;
             case CellType:
-                String cellTypeField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
-                String cellTypeDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
 
-                Locator loc = Locator.xpath(cellTypeField);
-                Locator allTag = Locator.xpath(cellTypeDropDown + "//label[text()='All']");
+                locDimField = Locator.xpath(xpathDimField);
+                Locator allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
 
-                if(_test.isElementPresent(loc))
+                if(_test.isElementPresent(locDimField))
                 {
-                    _test.click(loc);
+                    _test.click(locDimField);
 
                     // Clear the current selection.
                     if(!_test.isChecked(allTag))
@@ -173,7 +175,24 @@ public abstract class DataspaceVariableSelector
                     _test.checkCheckbox(allTag);
 
                     for(String val : value){
-                        _test.checkCheckbox(Locator.xpath(cellTypeDropDown + "//label[text()='" +val + "']"));
+                        _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                    }
+                }
+
+                break;
+            case TargetCell:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-target_cell')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')]";
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.click(locDimField);
+
+                    // Since it is a radio button shouldn't really iterate.
+                    for(String val : value){
+                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
                 }
 
@@ -195,7 +214,8 @@ public abstract class DataspaceVariableSelector
         PeptidePool,
         Protein,
         ProteinPanel,
-        SpecimenType
+        SpecimenType,
+        TargetCell
     }
 
     public static enum Scale
