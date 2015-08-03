@@ -1130,7 +1130,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     @Override
     protected String getProjectName()
     {
-        return "CDSTest Project";
+        return PROJECT_NAME;
     }
 
     @Override
