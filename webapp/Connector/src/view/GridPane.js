@@ -35,7 +35,7 @@ Ext.define('Connector.view.GridPane', {
                 if (gf != null && Ext.isDefined(gf)) {
                     // get this columns measure information
                     var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                    if (Ext.isObject(measure)) {
+                    if (Ext.isDefined(measure)) {
 
                         // only show the measure label/caption for the first filter
                         if (!shown[measure.alias]) {

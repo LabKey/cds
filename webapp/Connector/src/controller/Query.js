@@ -205,6 +205,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     getModelClone : function(record, fields) {
+        // TODO: Consider using model.copy() instead
         return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'))
     },
 
@@ -215,6 +216,11 @@ Ext.define('Connector.controller.Query', {
         return this.MEASURE_STORE.getById(alias);
     },
 
+    /**
+     * Returns the raw measure data for the specified measureAlias. If not found, returns undefined.
+     * @param measureAlias
+     * @returns {*}
+     */
     getMeasure : function(measureAlias) {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
@@ -224,11 +230,11 @@ Ext.define('Connector.controller.Query', {
         var cleanAlias = Ext.clone(measureAlias).split('/')[0];
 
         if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias))) {
-            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias).raw);
+            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias).getData());
         }
 
         console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
-        return null;
+        return undefined;
     },
 
     getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
@@ -505,8 +511,8 @@ Ext.define('Connector.controller.Query', {
                         if (filterOnLookup) {
                             // here we fake up a measure. The getData API accepts filters of the form
                             // "study_Nab_Lab/PI" as "Lab.PI"
-                            var schema = measure.getSchemaName(),
-                                query = measure.getQueryName(),
+                            var schema = measure.schemaName,
+                                query = measure.queryName,
                                 alias = columnName.replace(/\//g, '_');
 
                             // This avoids schemas/queries that have '_' in them

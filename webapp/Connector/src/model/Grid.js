@@ -400,8 +400,7 @@ Ext.define('Connector.model.Grid', {
                     if (!defaultMeasureSet[gf.getColumnName()])
                     {
                         var measure = queryService.getMeasure(gf.getColumnName());
-                        if (Ext.isObject(measure))
-                        {
+                        if (Ext.isDefined(measure)) {
                             var p = {
                                 measure: Ext.clone(measure),
                                 time: 'date'
