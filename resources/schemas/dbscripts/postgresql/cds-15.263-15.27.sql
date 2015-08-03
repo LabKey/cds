@@ -1,3 +1,20 @@
+-- Drop Original Tables
+DROP TABLE IF EXISTS cds.assaypublications CASCADE;
+DROP TABLE IF EXISTS cds.citableauthors CASCADE;
+DROP TABLE IF EXISTS cds.citations CASCADE;
+DROP TABLE IF EXISTS cds.datasources CASCADE;
+DROP TABLE IF EXISTS cds.studies CASCADE;
+DROP TABLE IF EXISTS cds.vaccinecomponents CASCADE;
+
+DROP TABLE IF EXISTS cds.assays CASCADE;
+
+DROP TABLE IF EXISTS cds.people CASCADE;
+
+DROP TABLE IF EXISTS cds.antigens CASCADE;
+DROP TABLE IF EXISTS cds.citable CASCADE;
+DROP TABLE IF EXISTS cds.labs CASCADE;
+DROP TABLE IF EXISTS cds.vaccines CASCADE;
+
 -- Drop Mapping Tables
 DROP TABLE IF EXISTS cds.import_StudyProduct CASCADE;
 DROP TABLE IF EXISTS cds.import_StudySitePersonnel CASCADE;
@@ -420,6 +437,9 @@ CREATE TABLE cds.import_BAMA (
   CONSTRAINT PK_import_BAMA PRIMARY KEY (row_id)
 );
 
+-- LEAF TABLES
+DROP TABLE IF EXISTS cds.Properties CASCADE;
+
 -- MAPPING TABLES
 DROP TABLE IF EXISTS cds.VisitTagAlignment CASCADE;
 DROP TABLE IF EXISTS cds.VisitTagMap CASCADE;
@@ -553,11 +573,11 @@ CREATE TABLE cds.TreatmentArm (
 );
 
 CREATE TABLE cds.TreatmentArmSubjectMap (
-  participantid VARCHAR(32) NOT NULL,
-  container ENTITYID NOT NULL,
-  arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id),
+   participantid VARCHAR(32) NOT NULL,
+   container ENTITYID NOT NULL,
+   arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id),
 
-  CONSTRAINT PK_TreatmentArmSubjectMap PRIMARY KEY (participantid, container, arm_id)
+   CONSTRAINT PK_TreatmentArmSubjectMap PRIMARY KEY (participantid, container, arm_id)
 );
 
 CREATE TABLE cds.StudyProductMap (
@@ -577,7 +597,7 @@ CREATE TABLE cds.SubjectProductMap (
   insert_name VARCHAR(250),
   clade_name VARCHAR(250)
 
-  --   CONSTRAINT PK_SubjectProductMap PRIMARY KEY (participantid, container, product_id)
+--   CONSTRAINT PK_SubjectProductMap PRIMARY KEY (participantid, container, product_id)
 );
 
 CREATE TABLE cds.VisitTagMap (
@@ -602,4 +622,21 @@ CREATE TABLE cds.VisitTagAlignment (
 
   CONSTRAINT UQ_VisitTagAlignment UNIQUE (container, participantid, visittagname),
   CONSTRAINT PK_VisitTagAlignment PRIMARY KEY (row_id)
+);
+
+CREATE TABLE cds.Properties (
+  RowId SERIAL,
+  container ENTITYID NOT NULL,
+  Created TIMESTAMP NOT NULL,
+--   CreatedBy USERID NOT NULL,
+  Modified TIMESTAMP NOT NULL,
+--   ModifiedBy USERID NOT NULL,
+
+  assays INTEGER,
+  products INTEGER,
+  studies INTEGER,
+  subjects INTEGER,
+  datacount INTEGER,
+
+  CONSTRAINT PK_Properties PRIMARY KEY (RowId)
 );

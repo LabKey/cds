@@ -20,7 +20,6 @@ package org.labkey.cds;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.labkey.api.action.Action;
 import org.labkey.api.action.ActionType;
@@ -54,9 +53,6 @@ import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.template.PageConfig;
-import org.labkey.cds.model.Citable;
-import org.labkey.cds.model.CitableAuthor;
-import org.labkey.cds.model.Citation;
 import org.labkey.cds.view.template.ConnectorTemplate;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
@@ -305,64 +301,6 @@ public class CDSController extends SpringActionController
             _root = root;
         }
     }
-
-
-    @RequiresPermission(ReadPermission.class)
-    public class GetCitationsAction extends ApiAction<GetCitationsForm>
-    {
-        public ApiResponse execute(GetCitationsForm form, BindException errors) throws Exception
-        {
-            List<Citable> citables = new ArrayList<>();
-            for (String uri : form.getRoot())
-            {
-                Citable citable = CDSManager.get().getCitable(uri, getContainer());
-                if (null != citable)
-                    citables.add(citable);
-            }
-
-            JSONObject root = new JSONObject();
-            root.put("status", "OK");
-            JSONArray jsonCitables = new JSONArray();
-            for (Citable citable : citables)
-                jsonCitables.put(jsonCitable(citable, true));
-
-            root.put("citations", jsonCitables);
-
-            return new ApiSimpleResponse(root);
-        }
-
-        private JSONObject jsonCitable(Citable citable, boolean includeChildren)
-        {
-            JSONObject obj = new JSONObject();
-            obj.put("URI", citable.getURI());
-            obj.put("title", citable.getTitle());
-            obj.put("description", citable.getDescription());
-            obj.put("link", citable.getLink());
-
-            JSONArray authors = new JSONArray();
-            for (CitableAuthor author : citable.getAuthors())
-                authors.put(author.getAuthorId());
-            obj.put("authors", authors);
-
-            if (includeChildren)
-            {
-                JSONArray jsonReferences = new JSONArray();
-                for (Citation reference : citable.getReferences())
-                    jsonReferences.put(jsonCitable(reference.getCited(), false));
-
-                obj.put("references", jsonReferences);
-
-                JSONArray jsonDatasources = new JSONArray();
-                for (Citation datasource : citable.getDataSources())
-                    jsonDatasources.put(jsonCitable(datasource.getCited(), false));
-
-                obj.put("dataSources", jsonDatasources);
-            }
-
-            return obj;
-        }
-    }
-
 
     public static class StateForm implements HasBindParameters
     {
