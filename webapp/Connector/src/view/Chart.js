@@ -72,8 +72,6 @@ Ext.define('Connector.view.Chart', {
 
     initComponent : function() {
 
-        this.clearVisibleWindow();
-
         this.items = [
             this.getNorth(),
             this.getCenter(),
@@ -104,6 +102,8 @@ Ext.define('Connector.view.Chart', {
                 return box.y - 10;
             }
         });
+
+        this.on('beforehide', this.hideVisibleWindow);
     },
 
     getNoPlotMsg : function() {
@@ -2060,6 +2060,13 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
+    // Issue 23585: panel remains even if underlying page changes
+    hideVisibleWindow : function() {
+        if (Ext.isObject(this.visibleWindow)) {
+            this.visibleWindow.hide();
+        }
+    },
+
     getYAxisSelector : function() {
         if (!this.yAxisSelector) {
             this.yAxisSelector = Ext.create('Connector.panel.Selector', {
@@ -2075,10 +2082,14 @@ Ext.define('Connector.view.Chart', {
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
+                        this.clearVisibleWindow();
+
                         this.activeYSelection = selected;
                         this.variableSelectionMade(this.ywin, this.getYSelector().getEl());
                     },
                     cancel: function() {
+                        this.clearVisibleWindow();
+
                         this.ywin.hide(this.getYSelector().getEl());
                         // reset the selection back to this.activeYSelection
                         this.yAxisSelector.setActiveMeasure(this.activeYSelection);
@@ -2116,16 +2127,22 @@ Ext.define('Connector.view.Chart', {
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
+                        this.clearVisibleWindow();
+
                         this.activeXSelection = selected;
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
                     },
                     remove: function() {
+                        this.clearVisibleWindow();
+
                         // Need to remove the x measure (index 0) from the plot filter or we'll pull it down again.
                         this.removeVariableFromFilter(0);
                         this.clearAxisSelection('x');
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
                     },
                     cancel: function() {
+                        this.clearVisibleWindow();
+
                         this.xwin.hide(this.getXSelector().getEl());
                         // reset the selection back to this.activeYSelection
                         this.xAxisSelector.setActiveMeasure(this.activeXSelection);
@@ -2167,16 +2184,22 @@ Ext.define('Connector.view.Chart', {
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
+                        this.clearVisibleWindow();
+
                         this.activeColorSelection = selected;
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
                     },
                     remove: function() {
+                        this.clearVisibleWindow();
+
                         // Need to remove the color measure (index 2) from the plot filter or we'll pull it down again.
                         this.removeVariableFromFilter(2);
                         this.clearAxisSelection('color');
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
                     },
                     cancel: function() {
+                        this.clearVisibleWindow();
+
                         this.colorwin.hide(this.getColorSelector().getEl());
                         // reset the selection back to this.activeYSelection
                         this.colorAxisSelector.setActiveMeasure(this.activeColorSelection);
@@ -2227,7 +2250,13 @@ Ext.define('Connector.view.Chart', {
                 type: 'fit'
             },
             style: 'padding: 0',
-            items: [item]
+            items: [item],
+            listeners: {
+                scope: this,
+                show: function(cmp) {
+                    this.setVisibleWindow(cmp);
+                }
+            }
         });
 
         this.updateSelectorWindow(win);
@@ -2299,6 +2328,7 @@ Ext.define('Connector.view.Chart', {
         this.isActiveView = false;
         this.fireEvent('hideload', this);
         this.hideMessage();
+        this.hideVisibleWindow();
     },
 
     getSubjectsIn : function(callback, scope) {

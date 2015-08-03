@@ -136,6 +136,28 @@ Ext.define('Connector.view.Grid', {
                 scope: this
             }
         });
+
+        this.on('beforehide', this.hideVisibleWindow);
+    },
+
+    setVisibleWindow : function(win) {
+        this.visibleWindow = win;
+    },
+
+    clearVisibleWindow : function() {
+        if (Ext.isObject(this.visibleWindow) && this.visibleWindow.hideLock === true) {
+            this.visibleWindow.hideLock = false;
+        }
+        else {
+            this.visibleWindow = undefined;
+        }
+    },
+
+    // Issue 23585: panel remains even if underlying page changes
+    hideVisibleWindow : function() {
+        if (Ext.isObject(this.visibleWindow)) {
+            this.visibleWindow.hide();
+        }
     },
 
     _showOverlay : function() {
@@ -396,6 +418,8 @@ Ext.define('Connector.view.Grid', {
                     items : ['->',{
                         text: 'select',
                         handler : function() {
+                            this.clearVisibleWindow();
+
                             var axispanel = this.getAxisSelector();
                             var allMeasures = axispanel.getMeasurePicker().measuresStoreData.measures;
                             this.fireEvent('measureselected', axispanel.getSelection(), allMeasures, axispanel.getLookups());
@@ -404,10 +428,19 @@ Ext.define('Connector.view.Grid', {
                         scope: this
                     },{
                         text: 'cancel',
-                        handler : function() { this.measureWindow.hide(); },
+                        handler : function() {
+                            this.clearVisibleWindow();
+                            this.measureWindow.hide();
+                        },
                         scope: this
                     }]
-                }]
+                }],
+                listeners: {
+                    scope: this,
+                    show: function(cmp) {
+                        this.setVisibleWindow(cmp);
+                    }
+                }
             });
         }
 
