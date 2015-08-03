@@ -602,9 +602,16 @@ Ext.define('Connector.view.Chart', {
         };
     },
 
-    getMainPlotConfig : function(margins, size, data, aes, scales) {
+    getMainPlotConfig : function(data, aes, scales, yAxisMargin) {
+        var size = this.getPlotSize(this.plotEl.getSize());
+
         return Ext.apply(this.getBasePlotConfig(), {
-            margins : margins,
+            margins : {
+                top: 25,
+                left: yAxisMargin + (this.requireYGutter ? 0 : 24),
+                right: 50,
+                bottom: 43
+            },
             width : size.width,
             height : size.height,
             data : data,
@@ -646,99 +653,8 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    /**
-     * @param chartData
-     * @param {object} [studyAxisInfo]
-     * @param {boolean} [noplot=false]
-     */
-    initPlot : function(chartData, studyAxisInfo, noplot) {
-
-        if (this.isHidden()) {
-            // welp, that was a huge waste..
-            // Consider: This could wrapped up in something like this.continue()
-            // where if we do not continue, we will set refresh
-            this.refreshRequired = true;
-            return;
-        }
-
-        var allDataRows,
-            layerScope = {plot: null, isBrushed: false},
-            layer, properties,
-            yAxisMargin = 60;
-
-        noplot = Ext.isBoolean(noplot) ? noplot : false;
-
-        // get the data rows for the chart
-        if (chartData instanceof Connector.model.ChartData) {
-            allDataRows = chartData.getDataRows();
-            properties = chartData.getProperties();
-        }
-        else {
-            allDataRows = {
-                main: chartData,
-                totalCount: chartData.length
-            };
-        }
-
-        // show empty plot message if we have no data in main plot or gutter plots
-        if (allDataRows.totalCount == 0) {
-            this.fireEvent('hideload', this);
-            this.plot = null;
-            this.noPlot(true);
-            return;
-        }
-
-        this.requireXGutter = allDataRows && allDataRows.undefinedY;
-        this.requireYGutter = allDataRows && allDataRows.undefinedX;
-
-        this.plotEl.update('');
-        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
-
-        if (this.plot) {
-            this.plot.clearGrid();
-            this.plot = null;
-        }
-
-        this.logRowCount(allDataRows);
-
-        // only call handlers when state has changed
-        var lastShowPointsAsBin = this.showPointsAsBin;
-        this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
-        if (lastShowPointsAsBin != this.showPointsAsBin) {
-            if (this.showPointsAsBin) {
-                this.onEnableBinning();
-            }
-            else {
-                this.onDisableBinning();
-            }
-        }
-
-        if (noplot) {
-            layer = this.getNoPlotLayer();
-        }
-        else if (properties.xaxis) {
-            if (properties.xaxis.isContinuous) {
-                // Scatter. Binned if over max row limit.
-                layer = this.showPointsAsBin ? this.getBinLayer(layerScope) : this.getPointLayer(layerScope);
-            }
-            else {
-                // Box plot (aka 1D).
-                layer = this.getBoxLayer(layerScope);
-            }
-        }
-
-        var box = this.plotEl.getSize(); // maintain ratio 1:1
+    getScaleConfigs : function(noplot, properties, chartData, studyAxisInfo, layerScope) {
         var scales = {};
-        var me = this;
-
-        this.highlightSelectedFn = function () {
-            if (me.plot && !layerScope.isBrushed) {
-                me.highlightLabels.call(me, me.plot, me.getCategoricalSelectionValues(), me.labelTextHltColor, me.labelBkgdHltColor, true);
-                me.highlightSelected.call(me);
-            }
-        };
-
-        this.selectionInProgress = null;
 
         if (noplot) {
             scales.x = {
@@ -800,27 +716,110 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        var plotAes = {
+        return scales;
+    },
+
+    getAesConfigs : function() {
+        var aes = {
             x: function(row) {return row.x;},
             yLeft: function(row) {return row.y}
         };
 
         if (this.measures[2]) {
-            plotAes.color = function(row) {return row.color};
-            plotAes.shape = function(row) {return row.color};
+            aes.color = function(row) {return row.color};
+            aes.shape = function(row) {return row.color};
         }
 
-        var size = this.getPlotSize(box);
+        return aes;
+    },
 
-        var mainMargins = {
-            top: 25,
-            left: yAxisMargin + (this.requireYGutter ? 0 : 24),
-            right: 50,
-            bottom: 43
+    getPlotLayer : function(noplot, properties, layerScope) {
+        if (!noplot) {
+            if (properties.xaxis && properties.xaxis.isContinuous) {
+                // Scatter. Binned if over max row limit.
+                return this.showPointsAsBin ? this.getBinLayer(layerScope) : this.getPointLayer(layerScope);
+            }
+            else {
+                // Box plot (aka 1D).
+                return this.getBoxLayer(layerScope);
+            }
+        }
+
+        return this.getNoPlotLayer();
+    },
+
+    /**
+     * @param chartData
+     * @param {object} [studyAxisInfo]
+     * @param {boolean} [noplot=false]
+     */
+    initPlot : function(chartData, studyAxisInfo, noplot) {
+
+        if (this.isHidden()) {
+            // welp, that was a huge waste..
+            // Consider: This could wrapped up in something like this.continue()
+            // where if we do not continue, we will set refresh
+            this.refreshRequired = true;
+            return;
+        }
+
+        var allDataRows, properties, yAxisMargin = 60,
+            layerScope = {plot: null, isBrushed: false},
+            scaleConfig = {}, aesConfig = {},
+            plotConfig, gutterXPlotConfig, gutterYPlotConfig;
+
+        noplot = Ext.isBoolean(noplot) ? noplot : false;
+
+        // get the data rows for the chart
+        if (chartData instanceof Connector.model.ChartData) {
+            allDataRows = chartData.getDataRows();
+            properties = chartData.getProperties();
+        }
+        else {
+            allDataRows = {
+                main: chartData,
+                totalCount: chartData.length
+            };
+        }
+
+        this.requireXGutter = allDataRows && allDataRows.undefinedY;
+        this.requireYGutter = allDataRows && allDataRows.undefinedX;
+
+        this.plotEl.update('');
+        this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
+
+        if (this.plot) {
+            this.plot.clearGrid();
+            this.plot = null;
+        }
+
+        this.logRowCount(allDataRows);
+
+        // only call handlers when state has changed
+        var lastShowPointsAsBin = this.showPointsAsBin;
+        this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
+        if (lastShowPointsAsBin != this.showPointsAsBin) {
+            if (this.showPointsAsBin) {
+                this.onEnableBinning();
+            }
+            else {
+                this.onDisableBinning();
+            }
+        }
+
+        var me = this;
+        this.highlightSelectedFn = function () {
+            if (me.plot && !layerScope.isBrushed) {
+                me.highlightLabels.call(me, me.plot, me.getCategoricalSelectionValues(), me.labelTextHltColor, me.labelBkgdHltColor, true);
+                me.highlightSelected.call(me);
+            }
         };
 
-        var plotConfig = this.getMainPlotConfig(mainMargins, size, allDataRows.main, plotAes, scales),
-            gutterXPlotConfig, gutterYPlotConfig;
+        this.selectionInProgress = null;
+
+        scaleConfig = this.getScaleConfigs(noplot, properties, chartData, studyAxisInfo, layerScope);
+        aesConfig = this.getAesConfigs();
+        plotConfig = this.getMainPlotConfig(allDataRows.main, aesConfig, scaleConfig, yAxisMargin);
 
         if (!noplot) {
             // set the scale type to linear or log, validating that we don't allow log with negative values
@@ -892,10 +891,11 @@ Ext.define('Connector.view.Chart', {
         }
 
         this.plot = new LABKEY.vis.Plot(plotConfig);
+
         layerScope.plot = this.plot; // hoisted for mouseover/mouseout event listeners
 
         if (this.plot) {
-            this.plot.addLayer(layer);
+            this.plot.addLayer(this.getPlotLayer(noplot, properties, layerScope));
             try {
                 this.hidePlotMsg();
                 this.plot.render();
@@ -1784,6 +1784,10 @@ Ext.define('Connector.view.Chart', {
         if (this.requireStudyAxis) {
             this.getStudyAxisData(chartData);
         }
+        else if (chartData.getDataRows().totalCount == 0) {
+            // show empty plot message if we have no data in main plot or gutter plots
+            this.noPlot(true);
+        }
         else {
             this.initPlot(chartData);
         }
@@ -2015,7 +2019,6 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        // TODO this is crazy. initPlot() calls noPlot() to show msg and then calls back to initPlot() to render empty plot
         this.initPlot(map, null, true);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
