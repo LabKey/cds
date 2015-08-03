@@ -1528,6 +1528,38 @@ Ext.define('Connector.view.Chart', {
         return scaleType;
     },
 
+    setActiveMeasureSelectionFromFilter : function(filter, activeMeasures) {
+        var plotMeasures = filter.get('plotMeasures'),
+            x = plotMeasures[0], y = plotMeasures[1], color = plotMeasures[2];
+
+        if (x) {
+            activeMeasures.x = x.measure;
+
+            this.activeXSelection = activeMeasures.x;
+            if (this.initialized) {
+                this.getXAxisSelector().setActiveMeasure(this.activeXSelection);
+            }
+        }
+
+        if (y) {
+            activeMeasures.y = y.measure;
+
+            this.activeYSelection = activeMeasures.y;
+            if (this.initialized) {
+                this.getYAxisSelector().setActiveMeasure(this.activeYSelection);
+            }
+        }
+
+        if (color) {
+            activeMeasures.color = color.measure;
+
+            this.activeColorSelection = activeMeasures.color;
+            if (this.initialized) {
+                this.getColorAxisSelector().setActiveMeasure(this.activeColorSelection);
+            }
+        }
+    },
+
     getActiveMeasures : function() {
         this.fromFilter = false;
         var measures = {
@@ -1536,64 +1568,34 @@ Ext.define('Connector.view.Chart', {
             color: null
         };
 
-        // first, check the set of active filters
-        var filters = Connector.getState().getFilters();
+        // set the measures based on the active filter (i.e. "In the plot" filter)
+        if (!Ext.isDefined(this.activeXSelection) && !Ext.isDefined(this.activeYSelection) && !Ext.isDefined(this.activeColorSelection)) {
+            Ext.each(Connector.getState().getFilters(), function(filter) {
+                if (filter.isPlot() && !filter.isGrid()) {
+                    this.setActiveMeasureSelectionFromFilter(filter, measures);
+                    this.fromFilter = true;
 
-        var m, x, y, color;
-        Ext.each(filters, function(filter) {
-            if (filter.isPlot() && !filter.isGrid()) {
-                m = filter.get('plotMeasures'); x = m[0]; y = m[1]; color = m[2];
-
-                if (x) {
-                    measures.x = x.measure;
+                    // return false to break from this Ext.each
+                    return false;
                 }
+            }, this);
+        }
+        // otherwise use the active measure selections
+        else {
+            if (this.activeXSelection) {
+                measures.x = this.activeXSelection;
 
-                if (y) {
-                    measures.y = y.measure;
+                // special case to look for userGroups as a variable option to use as filter values for the x measure
+                if (measures.x.options.userGroups) {
+                    measures.x.values = measures.x.options.userGroups;
                 }
-
-                if (color) {
-                    measures.color = color.measure;
-                }
-
-                this.fromFilter = true;
-
-                return false;
             }
-        }, this);
-
-        // second check the measure selections
-        if (this.activeXSelection) {
-            measures.x = this.activeXSelection;
-
-            // special case to look for userGroups as a variable option to use as filter values for the x measure
-            if (measures.x.options.userGroups) {
-                measures.x.values = measures.x.options.userGroups;
+            if (this.activeYSelection) {
+                measures.y = this.activeYSelection;
             }
-
-            this.fromFilter = false;
-        }
-        if (this.activeYSelection) {
-            measures.y = this.activeYSelection;
-            this.fromFilter = false;
-        }
-        if (this.activeColorSelection) {
-            measures.color = this.activeColorSelection;
-            this.fromFilter = false;
-        }
-
-        // map the y-axis schema and query name for a time point x-axis variable
-        if (measures.x && measures.y && (!measures.x.schemaName && !measures.x.queryName)) {
-            x = Ext.clone(measures.x);
-            x.schemaName = measures.y.schemaName;
-            x.queryName = measures.y.queryName;
-            measures.x = x;
-        }
-
-        if (this.fromFilter) {
-            this.activeXSelection = measures.x;
-            this.activeYSelection = measures.y;
-            this.activeColorSelection = measures.color;
+            if (this.activeColorSelection) {
+                measures.color = this.activeColorSelection;
+            }
         }
 
         return measures;
