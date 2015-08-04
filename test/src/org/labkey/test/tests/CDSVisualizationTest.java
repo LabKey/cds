@@ -816,7 +816,24 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
-        log("Vaerify NAb Titer IC50, A3R5 and Study Days.");
+        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        expectedCounts.put("HVTN 041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0));
+        expectedCounts.put("HVTN 049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0));
+        expectedCounts.put("HVTN 049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0));
+        expectedCounts.put("HVTN 094", new CDSHelper.TimeAxisData("HVTN 094", 6, 22, 0));
+        expectedCounts.put("HVTN 096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0));
+        expectedCounts.put("HVTN 203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0));
+        expectedCounts.put("HVTN 205", new CDSHelper.TimeAxisData("HVTN 0205", 0, 0, 0));
+
+        final String yaxisScale = "\n0\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800"; // TODO Test data dependent.
+        final String studyDaysScales = "0\n100\n200\n300\n400\n500\n600" + yaxisScale; // TODO Test data dependent.
+        final String studyDaysScaleAligedVaccination = "-300\n-200\n-100\n0\n100\n200\n300" + yaxisScale; // TODO Test data dependent.
+        final String studyWeeksScales = "0\n20\n40\n60\n80" + yaxisScale; // TODO Test data dependent.
+        final String studyWeeksScalesAlignedVaccination = "-40\n-20\n0\n20\n40" + yaxisScale; // TODO Test data dependent.
+        final String studyMonthsScales = "0\n5\n10\n15\n20" + yaxisScale; // TODO Test data dependent.
+        final String studyMonthsScalesAlignedVaccination = "-10\n-5\n0\n5\n10" + yaxisScale; // TODO Test data dependent.
+
+        log("Verify NAb Titer IC50, A3R5 and Study Days.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
@@ -832,44 +849,145 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         assertTrue("For NAb Titer 50, A3R5 vs Time Visit Days a study axis was not present.", hasStudyAxis());
         List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found" + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyDaysScales);
+
+        log("Change x-axis to Study weeks, verify visit counts don't change.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
+
+        // Need to get studies again, otherwise get a stale element error.
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyWeeksScales);
+
+        log("Change x-axis to Study months, verify visit counts don't change.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
+
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 7);
         log("Study count was as expected.");
 
-//        List<WebElement> visits;
-        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
-        expectedCounts.put("HVTN 041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0));
-        expectedCounts.put("HVTN 049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0));
-        expectedCounts.put("HVTN 049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0));
-        expectedCounts.put("HVTN 094", new CDSHelper.TimeAxisData("HVTN 094", 6, 22, 0));
-        expectedCounts.put("HVTN 096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0));
-        expectedCounts.put("HVTN 203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0));
-        expectedCounts.put("HVTN 205", new CDSHelper.TimeAxisData("HVTN 0205", 0, 0, 0));
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyMonthsScales);
+
+        log("Change x-axis to Study days, change alignment to Enrollment, verify visit counts are as expected.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.setAlignedBy("Enrollment");
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck. Unfortunately waitForMaskToDisappear is not long enough for the axis to be regenerated.
+
+        // When changing the alignment to anything other than Day 0 study HVTN 205 will not appear because it has no visit information.
+        expectedCounts.remove("HVTN 205");
+
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
 
         validateVisitCounts(studies, expectedCounts);
-        /*
-        for(WebElement study : studies)
-        {
-            log("study.getText(): " + study.getText());
-            visits = study.findElements(Locator.css("image.visit-tag").toBy());
-            log("visits.size(): " + visits.size());
+        assertSVG(studyDaysScales);
 
-            int nonvacCount = 0, vacCount = 0;
+        log("Change x-axis alignment to Last Vaccination, verify visit counts are as expected.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.setAlignedBy("Last Vaccination");
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
 
-            if(visits.size() > 0)
-            {
-                nonvacCount = study.findElements(Locator.xpath("//image[contains(@href, '/labkey/production/Connector/resources/images/nonvaccination_normal.svg')]").toBy()).size();
-                vacCount = study.findElements(Locator.xpath("//image[contains(@href, '/labkey/production/Connector/resources/images/vaccination_normal.svg')]").toBy()).size();
-            }
-            log("nonvacCount: " + nonvacCount);
-            log("vacCount: " + vacCount);
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
 
-            for(WebElement visitImg : visits)
-            {
-                log("visitImg.getAttribute(\"href\"): " + visitImg.getAttribute("href"));
-            }
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyDaysScaleAligedVaccination);
 
-        }
-*/
+        log("Change x-axis to Study weeks, and go back to aligned by Enrollment, verify visit are as expected.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
+        xaxis.setAlignedBy("Enrollment");
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
+
+        // Need to get studies again, otherwise get a stale element error.
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyWeeksScales);
+
+        log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
+        xaxis.setAlignedBy("Last Vaccination");
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
+
+        // Need to get studies again, otherwise get a stale element error.
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyWeeksScalesAlignedVaccination);
+
+        log("Change x-axis to Study months, and go back to aligned by Enrollment, verify visit are as expected.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
+        xaxis.setAlignedBy("Enrollment");
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
+
+        // Need to get studies again, otherwise get a stale element error.
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyMonthsScales);
+
+        log("Change x-axis Aligned by Last Vaccination, verify visit are as expected.");
+        xaxis.openSelectorWindow();
+        // Should go to the variable selector window by default.
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
+        xaxis.setAlignedBy("Last Vaccination");
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+        sleep(500); // yuck.
+
+        // Need to get studies again, otherwise get a stale element error.
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyMonthsScalesAlignedVaccination);
+
         click(CDSHelper.Locators.cdsButtonLocator("clear"));
 
         // Makes the test a little more reliable.
@@ -1200,6 +1318,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
             int nonvacCount = 0, vacCount = 0, chalCount = 0;
 
+            // Had hoped to get a collection directly, but had trouble getting css to see the href value.
+            // So went with this approach for now. May revisit later.
             for(int i=0; i < visits.size(); i++)
             {
                 if(visits.get(i).getAttribute("href").contains("/nonvaccination_normal.svg"))

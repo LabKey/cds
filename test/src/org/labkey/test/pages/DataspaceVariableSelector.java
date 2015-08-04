@@ -154,6 +154,23 @@ public abstract class DataspaceVariableSelector
         Locator locDimField;
 
         switch(dimension){
+            case AlignBy:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//div[contains(@class, 'field-label')][text()='Aligned by:']/./following-sibling::div[contains(@class, 'field-display')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, 'advanced-dropdown')][not(contains(@style, 'display: none'))]";
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.click(locDimField);
+
+                    // Since it is a radio button shouldn't really iterate.
+                    for(String val : value){
+                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                    }
+                }
+
+                break;
             case AntigenName:
                 break;
             case CellType:
@@ -203,6 +220,7 @@ public abstract class DataspaceVariableSelector
     // TODO Still working on this as part of the detail selection.
     public static enum AssayDimensions
     {
+        AlignBy,
         AntigenName,
         CellType,
         DataSummaryLevel,
