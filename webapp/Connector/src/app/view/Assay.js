@@ -43,7 +43,7 @@ Ext.define('Connector.app.view.Assay', {
                         '<div class="description-text">{assay_method_description}</div>',
                     '</div>',
                     '<div class="study-date">',
-                        '<span class="startdate-text">0</span>',
+                        '<span class="startdate-text">{study_count}</span>',
                     '</div>',
                     '<div class="study-treatments">',
                         '<div class="description-text">{assay_body_system_type:htmlEncode}: {assay_body_system_target:htmlEncode} and {assay_general_specimen_type:htmlEncode}</div>',

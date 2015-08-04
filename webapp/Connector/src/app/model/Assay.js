@@ -22,6 +22,7 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'assay_description'},
         {name: 'assay_method_description'},
         {name: 'assay_endpoint_description'},
-        {name: 'assay_endpoint_statistical_analysis'}
+        {name: 'assay_endpoint_statistical_analysis'},
+        {name: 'study_count'} //generated when the assay store is loaded.
     ]
 });
