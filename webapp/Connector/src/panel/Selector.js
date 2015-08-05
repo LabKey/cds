@@ -460,7 +460,7 @@ Ext.define('Connector.panel.Selector', {
 
         this.getHierarchySelectionPane().removeAll();
 
-        var hierSelectionPanel = Ext.create('Connector.panel.HierarchicalSelectionPanel', {
+        var hierSelectionPanel = Ext.create('Connector.panel.AntigenSelection', {
             dimension: advancedOptionCmp.dimension,
             initSelection: advancedOptionCmp.value,
             measureSetStore: this.measureSetStore
