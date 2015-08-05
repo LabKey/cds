@@ -108,7 +108,7 @@ Ext.define('Connector.controller.State', {
                 showInverseFilter: data.showInverseFilter
             });
 
-            this.addSelection([filter], true, false, true);
+            this.addSelection(filter, true, false, true);
         }
     },
 
