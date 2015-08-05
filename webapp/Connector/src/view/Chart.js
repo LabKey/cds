@@ -1586,7 +1586,7 @@ Ext.define('Connector.view.Chart', {
                 measures.x = this.activeXSelection;
 
                 // special case to look for userGroups as a variable option to use as filter values for the x measure
-                if (measures.x.options.userGroups) {
+                if (Ext.isObject(measures.x.options) && measures.x.options.userGroups) {
                     measures.x.values = measures.x.options.userGroups;
                 }
             }

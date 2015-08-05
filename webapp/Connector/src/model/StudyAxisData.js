@@ -45,18 +45,19 @@ Ext.define('Connector.model.StudyAxisData', {
     },
 
     processStudyAxisData : function() {
-        var records = this.getRecords(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
+        var records = this.getRecords(), measure = this.getMeasure(),
+                containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
                 interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
                 seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination,
                 shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
 
-        if (this.getMeasure().interval) {
-            interval = this.getMeasure().interval.toLowerCase();
+        if (Ext.isDefined(measure.interval)) {
+            interval = measure.interval.toLowerCase();
         }
 
         // first we have to loop through the study axis visit information to find the alignment visit for each container
-        alignmentVisitTag = this.getMeasure().options ? this.getMeasure().options.alignmentVisitTag : null;
+        alignmentVisitTag = Ext.isObject(measure.options) ? measure.options.alignmentVisitTag : null;
         if (alignmentVisitTag != null)
         {
             Ext.each(records, function(record){

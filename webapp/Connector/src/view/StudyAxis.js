@@ -13,7 +13,7 @@ Connector.view.StudyAxis = function() {
         alignmentPath = selection.selectAll('line.alignment').data(function(d) {return [d];});
         alignmentPath.exit().remove();
         alignmentPath.enter().append('line').attr('class', 'alignment');
-        alignmentPath.attr('stroke', '#cccccc')
+        alignmentPath.attr('stroke', ChartUtils.colors.BOXSHADOW)
                 .attr('stroke-width', 2)
                 .attr('x1', x).attr('x2', x)
                 .attr('y1', function(d) { return yScale(d.label); })
@@ -51,7 +51,7 @@ Connector.view.StudyAxis = function() {
         });
         tickEls.exit().remove();
         tickEls.enter().append('line').attr('class', 'study-axis-tick');
-        tickEls.attr('stroke', '#EAEAEA')
+        tickEls.attr('stroke', ChartUtils.colors.GRIDLINE)
                 .attr('stroke-width', 1)
                 .attr('x1', function(d) { return d.x; })
                 .attr('x2', function(d) { return d.x; })
@@ -69,7 +69,10 @@ Connector.view.StudyAxis = function() {
             .attr('x', 25)
             .attr('width', width)
             .attr('height', perStudyHeight)
-            .attr('fill', function(d) { count++; return count % 2 == 0 ? '#F8F8F8' : '#FFFFFF'; });
+            .attr('fill', function(d) {
+                count++;
+                return count % 2 == 0 ? ChartUtils.colors.GRIDBKGD : ChartUtils.colors.WHITE;
+            });
     };
 
     var renderStudyLabels = function(selection) {
@@ -85,7 +88,7 @@ Connector.view.StudyAxis = function() {
         });
         labels.attr('y', function(d) {return yScale(d.label) + perStudyHeight/2 + 4;})
             .attr('x', 35)
-            .attr('fill', '#222222')
+            .attr('fill', ChartUtils.colors.PRIMARYTEXT)
             .style('font', '11px Arial, serif');
     };
 

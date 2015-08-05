@@ -15,7 +15,9 @@ Ext.define('Connector.utility.Chart', {
         HEATSCALE2: '#A09C9C',
         HEATSCALE3: '#CCC8C8',
         SELECTED: '#01BFC2',
-        UNSELECTED: '#E6E6E6'
+        UNSELECTED: '#E6E6E6',
+        BOXSHADOW: '#CCCCCC',
+        PRIMARYTEXT: '#222222'
     },
 
     tickFormat: {
