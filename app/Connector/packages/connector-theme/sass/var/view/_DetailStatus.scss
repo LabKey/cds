@@ -78,14 +78,6 @@ div.hl-status-row {
   padding-top: 12px;
 }
 
-.memberitem {
-  @include border-radius(15px);
-  background-color: $light-color;
-  border: 1px solid #DDDCDC;
-  cursor: pointer;
-  font-size: 12px;
-}
-
 div.status-over {
   li {
     @include border-radius(15px);

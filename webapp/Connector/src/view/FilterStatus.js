@@ -12,7 +12,7 @@ Ext.define('Connector.view.FilterStatus', {
 
     ui: 'custom',
 
-    padding: '20 20 0 20',
+    cls: 'filterstatus',
 
     initComponent : function() {
         this.items = [
@@ -43,16 +43,16 @@ Ext.define('Connector.view.FilterStatus', {
         }
 
         //
-        // If filters are present then we show the buttons (== !hidden)
+        // If filters or selections are present then we show the buttons (== !hidden)
         //
-        var hidden = !(this.filters && this.filters.length > 0);
+        var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
 
         this.filterpanel = Ext.create('Connector.panel.FilterPanel', {
             title: 'Active filters',
             id: 'filter-panel',
             headerButtons: [
-                { xtype: 'button', text: 'clear', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filterclear' /* for tests */, itemId: 'clear', hidden: hidden},
-                { xtype: 'button', text: 'save', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden}
+                { xtype: 'button', text: 'clear', ui: 'linked', cls: 'filter-hdr-btn filterclear' /* for tests */, itemId: 'clear', hidden: hidden},
+                { xtype: 'button', text: 'save', ui: 'linked', cls: 'filter-hdr-btn filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden}
             ],
             filters: this.filters
         });
@@ -66,30 +66,17 @@ Ext.define('Connector.view.FilterStatus', {
 
         this.selectionpanel = Ext.create('Connector.panel.Selection', {
             id: 'selection-panel',
-            headerButtons : [
-                { xtype: 'button', text: 'clear', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'selectionclear', itemId: 'sClear'}
-            ],
             filters: this.selections
         });
 
         return this.selectionpanel;
     },
 
+    // This is called when the filter count changes, as well as when the filters change
     onFilterCount : function(filters) {
         if (this.filterpanel) {
             this.filterpanel.loadFilters(filters);
-
-            var saveBtn = this.filterpanel.query('container > #savegroup')[0];
-            var clrBtn = this.filterpanel.query('container > #clear')[0];
-
-            if (filters.length == 0) {
-                saveBtn.hide();
-                clrBtn.hide();
-            }
-            else {
-                saveBtn.show();
-                clrBtn.show();
-            }
+            this.checkButtons();
         }
     },
 
@@ -116,15 +103,36 @@ Ext.define('Connector.view.FilterStatus', {
         }
     },
 
-    onSelectionChange : function(selections, opChange, callback, scope) {
+    onSelectionChange : function(selections, opChange) {
         this.hideMessage(true);
         this.selections = selections;
         if (!opChange && this.selectionpanel) {
             this.selectionpanel.loadFilters(selections);
-        }
 
-        if (Ext.isFunction(callback)) {
-            callback.call(scope || this);
+            // update the filter panel here
+            var filterPanel = this.getFilterPanel();
+            if (filterPanel) {
+                filterPanel.onSelectionChange(selections);
+                this.checkButtons();
+            }
+        }
+    },
+
+    checkButtons : function() {
+
+        var filters = Connector.getState().getFilters();
+        var selections = Connector.getState().getSelections();
+
+        var saveBtn = this.filterpanel.query('container > #savegroup')[0];
+        var clrBtn = this.filterpanel.query('container > #clear')[0];
+
+        if (filters.length == 0 && selections.length == 0) {
+            saveBtn.hide();
+            clrBtn.hide();
+        }
+        else {
+            saveBtn.show();
+            clrBtn.show();
         }
     },
 
@@ -142,8 +150,7 @@ Ext.define('Connector.view.FilterStatus', {
 
     onAfterViewChange : function() {
         this.hideMessage(true);
-        if (this.undoMsg)
-        {
+        if (this.undoMsg) {
             this.showUndoMessage(this.undoMsg);
             delete this.undoMsg;
         }

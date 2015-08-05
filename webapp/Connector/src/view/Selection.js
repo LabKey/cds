@@ -11,6 +11,8 @@ Ext.define('Connector.view.Selection', {
 
     itemSelector: 'div.wrapitem',
 
+    cls: 'activefilter',
+
     loadMask: false,
 
     tpl: new Ext.XTemplate(
@@ -18,14 +20,12 @@ Ext.define('Connector.view.Selection', {
                 '<tpl if="this.isPlotSelection(values) === true">',
                     // Plot Selection Filter
                     '<div class="wrapitem">',
-                        '<div class="circle"></div>',
                         '<div class="selitem sel-listing">{[this.renderPlotSelection(values)]}</div>',
                     '</div>',
                 '</tpl>',
                 '<tpl if="this.isGrid(values) === true">',
                     // Grid Filter
                     '<div class="wrapitem">',
-                        '<div class="circle"></div>',
                         '<div class="selitem status-over memberitem">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderGridFilterLabel(values)]}',
@@ -35,56 +35,46 @@ Ext.define('Connector.view.Selection', {
                 '<tpl if="this.isPlot(values) === true">',
                     // "In the plot" Filter
                     '<div class="wrapitem">',
-                        '<div class="circle"></div>',
                         '<div class="selitem status-over memberitem">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                            '{[this.renderMeasures(values)]}',
+                            '{[this.renderInThePlot(values)]}',
                         '</div>',
                     '</div>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
                     // Normal Filter (and Group Filters)
                     '<div class="wrapitem">',
-                        '<div class="circle"></div>',
                         '<tpl if="members.length &gt; 0">',
                             '<div class="closeitem wholeitem" data-id="{id}"></div>',
                             '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
-                            '<tpl if="members.length &gt; 1 || isSelection === true">',
-                                '<tpl for="members">',
-                                    '{% if (parent.isSelection !== true && xindex > 5) break; %}',
-                                    '<div class="status-over memberitem collapsed-member">',
-                                        '<span>{uniqueName:this.renderUniqueName}</span>',
-                                    '</div>',
-                                '</tpl>',
-                                '<tpl if="members.length &gt; 1">',
-                                    '<select>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
-                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>Subjects related to any (OR)</option>',
-                                    '</select>',
-                                '</tpl>',
-                                '<tpl if="members.length &gt; 5">',
-                                    '<div class="fader"><img class="ellipse"></div>',
-                                '</tpl>',
+                            '<div>{members:this.renderMembers}</div>',
+                            '<tpl if="members.length &gt; 1">',
+                                '<select>',
+                                    '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
+                                    '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>Subjects related to any (OR)</option>',
+                                '</select>',
                             '</tpl>',
                         '</tpl>',
                     '</div>',
                 '</tpl>',
             '</tpl>',
             {
-                isGrid : function(values) {
+                _plotGridCheck: function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
-                    return isGrid && !isPlot;
+                    return { isGrid: isGrid, isPlot: isPlot };
+                },
+                isGrid : function(values) {
+                    var check = this._plotGridCheck(values);
+                    return check.isGrid && !check.isPlot;
                 },
                 isPlot : function(values) {
-                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
-                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
-                    return isPlot && !isGrid;
+                    var check = this._plotGridCheck(values);
+                    return check.isPlot && !check.isGrid;
                 },
                 isPlotSelection : function(values) {
-                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
-                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
-                    return isPlot && isGrid;
+                    var check = this._plotGridCheck(values);
+                    return check.isPlot && check.isGrid;
                 },
                 selectIntersect : function(op) {
                     var markup = op.indexOf('AND') > -1 ? 'selected="selected"' : '';
@@ -119,16 +109,16 @@ Ext.define('Connector.view.Selection', {
                         }
                     });
 
-                    label = '<span class="sel-label">' + Ext.htmlEncode(label) + '</span>';
-                    if (!values.isSelection) {
-
-                        // render filter with a single member on one line
-                        if (values.members.length == 1) {
-                            label += ': ' + Ext.htmlEncode(this.renderUniqueName(values.members[0].uniqueName));
-                        }
+                    return '<span class="sel-label">' + Ext.htmlEncode(label) + '</span>';
+                },
+                renderMembers : function(members) {
+                    var content = '',
+                        sep = '';
+                    for (var i=0; i < members.length && i < 10; i++) {
+                        content += sep + this.renderUniqueName(members[i].uniqueName);
+                        sep = ', ';
                     }
-
-                    return label;
+                    return content;
                 },
                 renderUniqueName : function(uniqueName) {
                     var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
@@ -138,7 +128,7 @@ Ext.define('Connector.view.Selection', {
                     }
                     return Ext.htmlEncode(member);
                 },
-                renderMeasures : function(values) {
+                renderInThePlot : function(values) {
                     var measures = values.plotMeasures, measureLabels = [];
                     for (var i=0; i < measures.length; i++) {
                         if (measures[i]) {

@@ -30,10 +30,6 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('selectionstatus > dataview', {
-            itemclick : this.onSelectionClick
-        });
-
         this.control('selectionview', {
             operatorchange : function(config) {
                 Connector.getState().setFilterOperator(config.filterId, config.value);
@@ -68,10 +64,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
         this.control('filterpanel > container > #clear', {
             click : this.onFilterClear
-        });
-
-        this.control('filterpanel > container > #sClear', {
-            click : this.onSelectionClear
         });
 
         this.control('#overlap', {
@@ -240,22 +232,21 @@ Ext.define('Connector.controller.FilterStatus', {
 
     onFilterClear : function() {
         var state = Connector.getState();
+
+        // if we have both selections and filters, roll-up into one state update
+        var haveSelectionsAndFilters = state.hasSelections() && state.hasFilters();
+
+        if (state.hasSelections()) {
+            state.clearSelections(!haveSelectionsAndFilters);
+        }
         if (state.hasFilters()) {
             state.clearFilters();
 
-            // want to show the message on the view
+            // only show undo if clear filters
             var view = this.getViewManager().getViewInstance('filterstatus');
             if (view) {
                 view.showUndoMessage();
             }
         }
-    },
-
-    onSelectionClick : function() {
-        Connector.getState().clearSelections();
-    },
-
-    onSelectionClear : function() {
-        Connector.getState().clearSelections();
     }
 });

@@ -8,46 +8,27 @@ Ext.define('Connector.panel.Selection', {
 
     alias: 'widget.selectionpanel',
 
-    selectionMode: true,
-
     hideOnEmpty: true,
 
     cls: 'selectionpanel',
 
-    padding: '20 0 0 0',
-
-    title: 'Current Selection',
-
-    showEmptyText: false,
+    title: 'Selection',
 
     tbarButtons : [
+        '->',
         { text: 'Filter', itemId: 'overlap' },   // will switch between 'filter subjects' and 'filter data'
-        { text: 'Remove', itemId: 'inverse'}
+        { text: 'Remove', itemId: 'inverse' }
     ],
 
     initHeader : function() {
 
-        // title
-        var items = [{
+        return {
             xtype: 'box',
             autoEl: {
                 tag: 'div',
                 cls: 'header',
                 html: this.title
-            },
-            flex: 1
-        }];
-
-        for (var i=0; i < this.headerButtons.length; i++) {
-            items.push(this.headerButtons[i]);
-        }
-
-        return {
-            xtype: 'container',
-            layout: {
-                type: 'hbox'
-            },
-            items: items
+            }
         };
     },
 
@@ -61,18 +42,22 @@ Ext.define('Connector.panel.Selection', {
     },
 
     loadFilters : function(filters) {
+        this.filters = filters;
         // the app currently only allows for 0 or 1 selection filter to be applied
         if (filters.length <= 1) {
             var removeBtn = this.down('#inverse'),
                 showRemoveBtn = false;
 
             if (filters.length == 1) {
-                filters[0].data.isSelection = true;
-                showRemoveBtn = filters[0].get('showInverseFilter');
+                showRemoveBtn = filters[0].get('showInverseFilter') === true;
             }
             removeBtn.setVisible(showRemoveBtn);
         }
 
         this.displayFilters(filters);
+    },
+
+    getEmptyTextPanel : function() {
+        return undefined;
     }
 });

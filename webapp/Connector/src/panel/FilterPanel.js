@@ -15,11 +15,7 @@ Ext.define('Connector.panel.FilterPanel', {
 
     cls: 'filterpanel',
 
-    selectionMode: false,
-
     hideOnEmpty: false,
-
-    showEmptyText: true,
 
     constructor: function(config) {
         Ext.applyIf(config, {
@@ -36,17 +32,20 @@ Ext.define('Connector.panel.FilterPanel', {
             this.initContent()
         ];
 
-        if (this.showEmptyText) {
-            this.items.push(this.createEmptyPanel());
+        var emptyText = this.getEmptyTextPanel();
+
+        if (emptyText) {
+            this.items.push(emptyText);
         }
 
-        this.dockedItems = [{
-            xtype: 'toolbar',
-            dock: 'bottom',
-            ui: 'footer',
-            width: 230,
-            items: this.tbarButtons
-        }];
+        if (this.tbarButtons) {
+            this.dockedItems = [{
+                xtype: 'toolbar',
+                dock: 'bottom',
+                ui: 'footer',
+                items: this.tbarButtons
+            }];
+        }
 
         this.callParent();
 
@@ -92,16 +91,18 @@ Ext.define('Connector.panel.FilterPanel', {
         return this.content;
     },
 
-    createEmptyPanel : function() {
-        return Ext.create('Ext.container.Container', {
-            itemId: 'emptypanel',
-            html : '<div class="emptytext">All subjects</div>'
-        });
+    getEmptyTextPanel : function() {
+        if (!this.emptyText) {
+            this.emptyText = Ext.create('Ext.container.Container', {
+                itemId: 'emptypanel',
+                html : '<div class="emptytext">All subjects</div>'
+            });
+        }
+        return this.emptyText;
     },
 
     createHierarchyFilter : function(filterset) {
         return Ext.create('Connector.view.Selection', {
-            cls: 'activefilter',
             store: {
                 model: this.getModelClass(filterset),
                 data: [filterset]
@@ -115,32 +116,20 @@ Ext.define('Connector.panel.FilterPanel', {
 
     // entry point to load raw OLAP Filters
     loadFilters : function(filters) {
-        Ext.each(filters, function(filter) {
-            filter.data.isSelection = false;
-        });
-
+        this.filters = filters;
         this.displayFilters(filters);
     },
 
     displayFilters : function(filters) {
 
+        var emptyTextPane = this.getEmptyTextPanel();
+
         if (filters.length === 0) {
-            if (this.showEmptyText) {
-                this.getComponent('emptypanel').show();
-            }
-
-            if (this.hideOnEmpty) {
-                this.hide();
-            }
-            else {
-                this.show();
-            }
-
-            this.content.removeAll();
+            this.clear();
         }
         else {
-            if (this.showEmptyText) {
-                this.getComponent('emptypanel').hide();
+            if (emptyTextPane) {
+                emptyTextPane.hide();
             }
 
             var length = this.content.items.items.length;
@@ -161,6 +150,38 @@ Ext.define('Connector.panel.FilterPanel', {
             }
 
             this.show();
+        }
+    },
+
+    clear : function() {
+        var emptyTextPane = this.getEmptyTextPanel();
+
+        if (emptyTextPane) {
+            emptyTextPane.show();
+        }
+
+        if (this.hideOnEmpty) {
+            this.hide();
+        }
+        else {
+            this.show();
+        }
+
+        this.content.removeAll();
+    },
+
+    onSelectionChange : function(selections) {
+        var empty = this.filters.length == 0 && selections.length == 0;
+
+        if (empty) {
+            this.clear();
+        }
+        else {
+            var emptyTextPane = this.getEmptyTextPanel();
+
+            if (emptyTextPane) {
+                emptyTextPane.hide();
+            }
         }
     }
 });

@@ -1,3 +1,7 @@
+.filterstatus {
+  padding: 20px 20px 0 20px;
+}
+
 div.selitem {
   padding: 4px 0;
 }
@@ -27,30 +31,30 @@ div.selectionpanel {
   font-family: $info-font;
   font-size: 12px;
   margin: 0;
+  padding: 5px 0;
+  border: 1px solid #BEEFEF;
+  background-color: $light-color;
+  border-radius: 12px;
 
   .header {
-    font-size: 16px!important;
-    color: $select-color!important;
+    font-size: 16px;
+    color: $select-color;
     font-family: $data-font;
-    margin: 0 10px;
+    padding: 0 10px;
 
     span {
       color: $dark-color;
     }
+  }
 
-    .section-title {
-      font-size: 16px!important;
-    }
+  .activefilter {
+    border: none !important;
   }
 
   .x-toolbar-footer {
     padding: 0;
     margin-left: 0;
     margin-bottom: 8px;
-  }
-
-  .x-btn-rounded-inverted-accent-small .x-btn-inner {
-    font-size: 12px;
   }
 }
 
@@ -83,7 +87,7 @@ div.wrapitem {
   cursor: pointer;
 
   select {
-    margin: 0;
+    margin: 8px 0 0 0;
   }
 
   &:hover {
@@ -94,10 +98,6 @@ div.wrapitem {
         opacity: 1;
       }
     }
-  }
-
-  .fader:hover {
-    cursor: pointer;
   }
 }
 
@@ -160,10 +160,6 @@ div.activefilter {
   padding: 3px 9px;
   margin-bottom: 6px;
 
-  .circle {
-    display: none;
-  }
-
   div.collapsed-member {
     padding: 0 10px;
   }
@@ -189,10 +185,6 @@ div.activefilter {
     border-color: transparent;
   }
 
-  .fader {
-    display: block;
-  }
-
   &:hover {
 
     border: 1px solid #dddcdc;
@@ -207,23 +199,14 @@ div.activefilter {
   }
 }
 
-/* Connector.view.Selection */
-
-.circle {
-  width: 15px;
-  height: 15px;
-  @include border-radius(8px);
-  border: 1px solid $black;
-  background-color: $select-color;
-  margin: 3px 4px 0 8px;
-  display: inline-block;
-  float: left;
-}
-/* -- END Connector.view.Selection */
-
 ul.indent li {
   padding-left: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.filter-hdr-btn {
+  margin-top: 6px;
+  width: 40px;
 }
