@@ -80,7 +80,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                         {
                             xtype: 'button',
                             margin: '9px 15px 0 0',
-                            text: (this.showEmpty ? 'hide empty' : 'show empty'),
+                            text: (this.showEmpty ? 'Hide empty' : 'Show empty'),
                             handler: this.onEmptySelection,
                             scope: this
                         },

@@ -26,7 +26,7 @@ Ext.define('Connector.view.Selection', {
                     // Grid Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem memberloc">',
+                        '<div class="selitem status-over memberitem">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderGridFilterLabel(values)]}',
                         '</div>',
@@ -36,7 +36,7 @@ Ext.define('Connector.view.Selection', {
                     // "In the plot" Filter
                     '<div class="wrapitem">',
                         '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem memberloc">',
+                        '<div class="selitem status-over memberitem">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderMeasures(values)]}',
                         '</div>',
@@ -51,16 +51,16 @@ Ext.define('Connector.view.Selection', {
                             '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
                             '<tpl if="members.length &gt; 1 || isSelection === true">',
                                 '<tpl for="members">',
-                                    '<tpl if="xindex == 1 && xcount &gt; 1">',
-                                        '<select>',
-                                            '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
-                                            '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
-                                        '</select>',
-                                    '</tpl>',
                                     '{% if (parent.isSelection !== true && xindex > 5) break; %}',
-                                    '<div class="status-over memberitem memberloc collapsed-member">',
+                                    '<div class="status-over memberitem collapsed-member">',
                                         '<span>{uniqueName:this.renderUniqueName}</span>',
                                     '</div>',
+                                '</tpl>',
+                                '<tpl if="members.length &gt; 1">',
+                                    '<select>',
+                                        '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
+                                        '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>Subjects related to any (OR)</option>',
+                                    '</select>',
                                 '</tpl>',
                                 '<tpl if="members.length &gt; 5">',
                                     '<div class="fader"><img class="ellipse"></div>',
@@ -104,7 +104,7 @@ Ext.define('Connector.view.Selection', {
                         if (level) {
                             label = level.hierarchy.dimension.friendlyName;
 
-                            // friendlyName was not overidden so compose label with lvl info
+                            // friendlyName was not overridden so compose label with lvl info
                             if (label === level.hierarchy.dimension.singularName) {
                                 if (Ext.isDefined(level.countSingular)) {
                                     // escape redundant dim/lvl naming (e.g. Study (Study))
@@ -119,15 +119,12 @@ Ext.define('Connector.view.Selection', {
                         }
                     });
 
-                    label = Ext.htmlEncode(label);
+                    label = '<span class="sel-label">' + Ext.htmlEncode(label) + '</span>';
                     if (!values.isSelection) {
-                        if (!values.isWhereFilter) {
-                            label = "Subjects: " + label;
-                        }
 
                         // render filter with a single member on one line
                         if (values.members.length == 1) {
-                            label += ": <div style=\"display:inline;\" class=\" memberloc\">" + this.renderUniqueName(values.members[0].uniqueName) + "</div>";
+                            label += ': ' + Ext.htmlEncode(this.renderUniqueName(values.members[0].uniqueName));
                         }
                     }
 
@@ -142,14 +139,13 @@ Ext.define('Connector.view.Selection', {
                     return Ext.htmlEncode(member);
                 },
                 renderMeasures : function(values) {
-                    var label = 'In the plot: ';
                     var measures = values.plotMeasures, measureLabels = [];
                     for (var i=0; i < measures.length; i++) {
                         if (measures[i]) {
                             measureLabels.push(measures[i].measure.label);
                         }
                     }
-                    return Ext.htmlEncode(label + measureLabels.join(', '));
+                    return '<span class="sel-label">In the plot:</span> ' + Ext.htmlEncode(measureLabels.join(', '));
                 },
                 renderGridFilterLabel : function(values) {
                     var type = LABKEY.app.model.Filter.getGridHierarchy(values);
@@ -191,7 +187,7 @@ Ext.define('Connector.view.Selection', {
                         });
 
                         domString =
-                                '<div class="status-over memberitem memberloc plot-selection">' +
+                                '<div class="status-over memberitem plot-selection">' +
                                     '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
                                     measure.measure.label + ': ' + filterValString +
                                 '</div>';

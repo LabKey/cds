@@ -51,8 +51,8 @@ Ext.define('Connector.view.FilterStatus', {
             title: 'Active filters',
             id: 'filter-panel',
             headerButtons: [
-                { xtype: 'button', text: 'save', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden},
-                { xtype: 'button', text: 'clear', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filterclear' /* for tests */, itemId: 'clear', hidden: hidden}
+                { xtype: 'button', text: 'clear', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filterclear' /* for tests */, itemId: 'clear', hidden: hidden},
+                { xtype: 'button', text: 'save', width: 40, style: 'margin-top: 6px;', ui: 'linked', cls: 'filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden}
             ],
             filters: this.filters
         });

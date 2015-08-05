@@ -76,7 +76,7 @@ Ext.define('Connector.panel.FilterPanel', {
         return {
             xtype: 'container',
             ui: 'custom',
-            cls: 'bottom-spacer',
+            cls: 'bottom-spacer-lg',
             layout: {
                 type: 'hbox'
             },
@@ -109,7 +109,7 @@ Ext.define('Connector.panel.FilterPanel', {
         });
     },
 
-    getModelClass : function(filterset) {
+    getModelClass : function() {
         return 'Connector.model.Filter';
     },
 

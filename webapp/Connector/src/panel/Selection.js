@@ -21,8 +21,8 @@ Ext.define('Connector.panel.Selection', {
     showEmptyText: false,
 
     tbarButtons : [
-        { text: 'filter', itemId: 'overlap' },   // will switch between 'filter subjects' and 'filter data'
-        { text: 'remove', itemId: 'inverse'},
+        { text: 'Filter', itemId: 'overlap' },   // will switch between 'filter subjects' and 'filter data'
+        { text: 'Remove', itemId: 'inverse'}
     ],
 
     initHeader : function() {
@@ -63,18 +63,13 @@ Ext.define('Connector.panel.Selection', {
     loadFilters : function(filters) {
         // the app currently only allows for 0 or 1 selection filter to be applied
         if (filters.length <= 1) {
-            var filterBtn = this.down('#overlap');
-            var filterBtnText = 'filter';
-            var removeBtn = this.down('#inverse');
-            var showRemoveBtn = false;
+            var removeBtn = this.down('#inverse'),
+                showRemoveBtn = false;
 
             if (filters.length == 1) {
                 filters[0].data.isSelection = true;
-                filterBtnText = filters[0].get("isWhereFilter") ? 'filter data' : 'filter subjects';
-                showRemoveBtn = filters[0].get("showInverseFilter");
+                showRemoveBtn = filters[0].get('showInverseFilter');
             }
-
-            filterBtn.setText(filterBtnText);
             removeBtn.setVisible(showRemoveBtn);
         }
 

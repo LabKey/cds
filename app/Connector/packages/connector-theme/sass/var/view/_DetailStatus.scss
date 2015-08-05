@@ -10,19 +10,19 @@ span.status-label {
   background-color: #ebebeb;
   position: relative;
   padding-right: 4px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 span.status-count {
-  background-color: #f0f0f0;
+  background-color: $secondary-color;
   position: relative;
   padding-left: 4px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 span.hl-status-label {
   float: left;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: normal;
   text-transform: capitalize;
   background-color: #ebebeb;
@@ -31,9 +31,9 @@ span.hl-status-label {
 }
 
 span.hl-status-count {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: normal;
-  background-color: #f0f0f0;
+  background-color: $secondary-color;
   position: relative;
   padding-left: 4px;
 }

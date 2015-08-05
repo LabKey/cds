@@ -137,14 +137,13 @@ Ext.define('Connector.controller.FilterStatus', {
             //
             // configure info pane view
             //
-            var config = {};
+            var config = {
+                dimension: filterOrDetail.get('dimension'),
+                hierarchy: filterOrDetail.get('hierarchy'),
+                level: filterOrDetail.get('level')
+            };
 
-            if (filterOrDetail.$className === "Connector.model.Detail") {
-                config.dimension = filterOrDetail.get('dimension');
-                config.hierarchy = filterOrDetail.get('hierarchy');
-                config.level = filterOrDetail.get('level');
-            }
-            else if (filterOrDetail.$className === "Connector.model.Filter") {
+            if (filterOrDetail.$className === 'Connector.model.Filter') {
 
                 if (filterOrDetail.isGrid()) {
                     clazz = 'Connector.view.GridPane';
