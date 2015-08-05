@@ -61,10 +61,10 @@ Ext.define('Connector.model.Measure', {
         // getData API request from the Advanced options panel of the Variable Selector.
         {name: 'hierarchicalFilterColumnName', defaultValue: undefined},
 
-        // If a distinctValueFilterColumnName and distinctValueFilterColumnValue are provided, they will be used as
+        // If a distinctValueFilterColumnAlias and distinctValueFilterColumnValue are provided, they will be used as
         // a WHERE clause for the query to get the distinct values for the given measure in the Advanced options
         // panel of the Variable Selector.
-        {name: 'distinctValueFilterColumnName', defaultValue: undefined},
+        {name: 'distinctValueFilterColumnAlias', defaultValue: undefined},
         {name: 'distinctValueFilterColumnValue', defaultValue: undefined}
     ],
 

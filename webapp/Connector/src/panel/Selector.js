@@ -32,6 +32,7 @@ Ext.define('Connector.panel.Selector', {
 
     disableAdvancedOptions: false,
     boundDimensionNames: [],
+    measureSetStore: null,
 
     // track the first time that the selector is initialized so we can use initOptions properly
     initialized: false,
@@ -461,7 +462,8 @@ Ext.define('Connector.panel.Selector', {
 
         var hierSelectionPanel = Ext.create('Connector.panel.HierarchicalSelectionPanel', {
             dimension: advancedOptionCmp.dimension,
-            initSelection: advancedOptionCmp.value
+            initSelection: advancedOptionCmp.value,
+            measureSetStore: this.measureSetStore
         });
 
         // add listener with buffer for checkbox selection change to update advanced option cmp value
@@ -573,7 +575,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindDimensions : function() {
-        var advancedOptionCmps = [], combinedMeasureSet = {aliases: [], values: []};
+        var advancedOptionCmps = [], combinedMeasureSet = {aliases: [], measures: []};
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
 
@@ -589,30 +591,60 @@ Ext.define('Connector.panel.Selector', {
                 var m = measure.getFilterMeasure();
                 if (combinedMeasureSet.aliases.indexOf(m.get('alias')) == -1) {
                     combinedMeasureSet.aliases.push(m.get('alias'));
-                    combinedMeasureSet.values.push(m);
+                    combinedMeasureSet.measures.push({measure: m});
                 }
 
                 // also add the measure alias itself
                 if (combinedMeasureSet.aliases.indexOf(measure.get('alias')) == -1) {
                     combinedMeasureSet.aliases.push(measure.get('alias'));
-                    combinedMeasureSet.values.push(measure);
+                    combinedMeasureSet.measures.push({measure: measure});
                 }
             }, this);
         }, this);
 
-        if (combinedMeasureSet.values.length > 0) {
-            // query for the distinct set of values across all of the measures involved in the dimension set
-            Connector.getService('Query').getMeasureSetDistinctValues(combinedMeasureSet.values, false, function(data) {
-                this.processMeasureSetDistintValues(advancedOptionCmps, combinedMeasureSet.values, data);
-            }, this);
-        }
-        else {
-            this.processMeasureSetDistintValues(advancedOptionCmps, combinedMeasureSet.values, []);
-        }
+        // get the cube subjectList so that we can filter the advanced option values accordingly
+        ChartUtils.getSubjectsIn(function(subjectList) {
+            var subjectMeausre;
+            if (subjectList != null) {
+                subjectMeausre = new LABKEY.Query.Visualization.Measure({
+                    schemaName: this.activeMeasure.get('schemaName'),
+                    queryName: this.activeMeasure.get('queryName'),
+                    name: Connector.studyContext.subjectColumn,
+                    values: subjectList
+                });
+            }
+
+            if (combinedMeasureSet.measures.length > 0) {
+                // get the relevent application filters to add to the measure set
+                var filterMeasures = this.queryService.getWhereFilterMeasures(Connector.getState().getFilters());
+                Ext.each(filterMeasures, function(filterMeasure) {
+                    var index = combinedMeasureSet.aliases.indexOf(filterMeasure.measure.alias);
+                    // if we already have this measure in our set, then just tack on the filterArray
+                    if (index > -1) {
+                        combinedMeasureSet.measures[index].filterArray = filterMeasure.filterArray;
+                    }
+                    else {
+                        combinedMeasureSet.aliases.push(filterMeasure.measure.alias);
+                        combinedMeasureSet.measures.push({
+                            filterArray: filterMeasure.filterArray,
+                            measure: this.queryService.getMeasureRecordByAlias(filterMeasure.measure.alias)
+                        });
+                    }
+                }, this);
+
+                // query for the distinct set of values across all of the measures involved in the dimension set
+                this.queryService.getMeasureSetDistinctRows(combinedMeasureSet.measures, subjectMeausre, function(data) {
+                    this.processMeasureSetDistinctRows(advancedOptionCmps, combinedMeasureSet.aliases, data);
+                }, this);
+            }
+            else {
+                this.processMeasureSetDistinctRows(advancedOptionCmps, combinedMeasureSet.aliases, []);
+            }
+        }, this);
     },
 
-    processMeasureSetDistintValues : function(advancedOptionCmps, combinedMeasureSet, data) {
-        var store = this.getCombinedMeasureSetStore(combinedMeasureSet, data);
+    processMeasureSetDistinctRows : function(advancedOptionCmps, measureAliases, data) {
+        var store = this.createCombinedMeasureSetStore(measureAliases, data);
 
         this.insertDimensionHeader();
 
@@ -621,18 +653,18 @@ Ext.define('Connector.panel.Selector', {
         for (var i = advancedOptionCmps.length - 1; i >= 0; i--) {
             var advancedOption = advancedOptionCmps[i],
                 dimension = advancedOption.dimension,
-                name = dimension.getFilterMeasure().get('name');
+                alias = dimension.getFilterMeasure().get('alias');
 
             // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
-            if (dimension.get('distinctValueFilterColumnName') && dimension.get('distinctValueFilterColumnValue')) {
+            if (dimension.get('distinctValueFilterColumnAlias') && dimension.get('distinctValueFilterColumnValue')) {
                 store.filter({
-                    property: dimension.get('distinctValueFilterColumnName'),
+                    property: dimension.get('distinctValueFilterColumnAlias'),
                     value: dimension.get('distinctValueFilterColumnValue'),
                     exactMatch: true
                 });
             }
 
-            advancedOption.populateStore(store.collect(name));
+            advancedOption.populateStore(store.collect(alias));
             store.clearFilter(true);
 
             this.getAdvancedPane().insert(1, advancedOption);
@@ -649,13 +681,22 @@ Ext.define('Connector.panel.Selector', {
         });
     },
 
-    getCombinedMeasureSetStore : function(measureSet, data) {
-        var fieldNames = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'name');
+    createCombinedMeasureSetStore : function(measureAliases, data) {
+        var fields = [], sorters = [];
+        Ext.each(measureAliases, function(alias) {
+            sorters.push({property: alias});
+            fields.push({name: alias, convert: function(val) {
+                return Ext.isObject(val) ? val.value : val;
+            }});
+        });
 
-        return Ext.create('Ext.data.Store', {
-            fields: fieldNames,
+        this.measureSetStore = Ext.create('Ext.data.Store', {
+            fields: fields,
+            sorters: sorters,
             data: data
         });
+
+        return this.measureSetStore;
     },
 
     bindAdditionalOptions : function() {
@@ -688,9 +729,9 @@ Ext.define('Connector.panel.Selector', {
                     }
                 },
                 change: function(cmp) {
-                    // hide/show any conditional components based on their distinctValueFilterColumnName and distinctValueFilterColumnValue
+                    // hide/show any conditional components based on their distinctValueFilterColumnAlias and distinctValueFilterColumnValue
                     // example: hide/show related advanced option cmps for the data summary level based on the selected level value
-                    var conditionalCmps = this.query('advancedoptiondimension[distinctValueFilterColumnName=' + cmp.dimension.get('name') + ']');
+                    var conditionalCmps = this.query('advancedoptiondimension[distinctValueFilterColumnAlias=' + cmp.dimension.get('alias') + ']');
                     Ext.each(conditionalCmps, function(conditionalCmp) {
                         var match = conditionalCmp.dimension.get('distinctValueFilterColumnValue') == cmp.value.join(', ');
                         conditionalCmp.setVisible(match);

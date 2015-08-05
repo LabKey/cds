@@ -34,6 +34,9 @@ Ext.define('Connector.controller.Query', {
         }
 
         // map to cache the distinct values array for a measure alias
+        if (!this.MEASURE_DISTINCT_ROWS) {
+            this.MEASURE_DISTINCT_ROWS = {};
+        }
         if (!this.MEASURE_DISTINCT_VALUES) {
             this.MEASURE_DISTINCT_VALUES = {};
         }
@@ -237,46 +240,50 @@ Ext.define('Connector.controller.Query', {
         return undefined;
     },
 
-    getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
+    clearMeasureSetDistinctRows : function() {
+        this.MEASURE_DISTINCT_ROWS = {};
+    },
+
+    getMeasureSetDistinctRows : function(measureSet, subjectMeasure, callback, scope) {
         if (Ext.isDefined(measureSet))
         {
             if (!Ext.isArray(measureSet)) {
                 measureSet = [measureSet];
             }
 
-            // get the distinct values from the cache, by concatenating the measure set aliases, or query for the distinct values
-            var key = Ext.Array.pluck(Ext.Array.pluck(measureSet, 'data'), 'alias').join('|');
-            var cachedValues = this.MEASURE_DISTINCT_VALUES[key];
-            if (Ext.isDefined(cachedValues))
+            // get the distinct rows from the cache, by concatenating the measure set aliases, or query for the distinct rows using getData
+            var key = Ext.Array.pluck(Ext.Array.pluck(Ext.Array.pluck(measureSet, 'measure'), 'data'), 'alias').join('|');
+            if (Ext.isDefined(subjectMeasure)) {
+                key = subjectMeasure.getName() + '|' + key;
+            }
+
+            var cachedRows = this.MEASURE_DISTINCT_ROWS[key];
+            if (Ext.isDefined(cachedRows))
             {
                 if (Ext.isFunction(callback)) {
-                    callback.call(scope || this, cachedValues);
+                    callback.call(scope || this, cachedRows);
                 }
             }
             else
             {
-                var columnNames = '', columnSep = '', whereClause = '';
-                Ext.each(measureSet, function(measure) {
-                    columnNames += columnSep + measure.get('name');
-                    columnSep = ', ';
-
-                    // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
-                    // Note: we only want to filter on the last measure in the set, so we keep overriding the where clause
-                    if (includeFilters && measure.get('distinctValueFilterColumnName') && measure.get('distinctValueFilterColumnValue')) {
-                        whereClause = ' WHERE ' + measure.get('distinctValueFilterColumnName') + ' = \''
-                                + measure.get('distinctValueFilterColumnValue') + '\'';
+                var wrappedMeasureSet = Ext.isDefined(subjectMeasure) ? [{measure: subjectMeasure}] : [];
+                Ext.each(measureSet, function(m) {
+                    if (m.measure.$className == 'Connector.model.Measure') {
+                        wrappedMeasureSet.push({
+                            filterArray: Ext.clone(m.filterArray),
+                            measure: Ext.clone(m.measure.data)
+                        });
                     }
                 });
 
-                // TODO: verify that all measures are from the same query/dataset
-                LABKEY.Query.executeSql({
-                    schemaName: measureSet[0].get('schemaName'),
-                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName')
-                        + whereClause + ' ORDER BY ' + columnNames,
+                LABKEY.Query.Visualization.getData({
+                    measures: wrappedMeasureSet,
+                    selectDistinct: true,
+                    endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
                     scope: this,
                     success: function(data) {
-                        // cache the distinct values array result
-                        this.MEASURE_DISTINCT_VALUES[key] = data.rows;
+                        // cache the distinct rows array result
+                        this.MEASURE_DISTINCT_ROWS[key] = data.rows;
 
                         if (Ext.isFunction(callback)) {
                             callback.call(scope || this, data.rows);

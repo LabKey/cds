@@ -1748,7 +1748,7 @@ Ext.define('Connector.view.Chart', {
      * @param activeMeasures
      */
     requestChartData : function(activeMeasures) {
-        this.getSubjectsIn(function(subjectList) {
+        ChartUtils.getSubjectsIn(function(subjectList) {
             // issue 23885: Do not include the color measure in request if it's noe from the x, y, or demographic datasets
             if (activeMeasures.color) {
                 var demographicSource = activeMeasures.color.isDemographic,
@@ -1766,7 +1766,7 @@ Ext.define('Connector.view.Chart', {
 
             // Request Chart MeasureStore Data
             Connector.getService('Query').getMeasureStore(measures, this.onChartDataSuccess, this.onFailure, this);
-        });
+        }, this);
     },
 
     onChartDataSuccess : function(measureStore, measureSet) {
@@ -2083,7 +2083,7 @@ Ext.define('Connector.view.Chart', {
                     measuresOnly: true,
                     includeHidden: this.canShowHidden
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
@@ -2128,7 +2128,7 @@ Ext.define('Connector.view.Chart', {
                     includeTimpointMeasures: true,
                     includeHidden: this.canShowHidden
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
@@ -2185,7 +2185,7 @@ Ext.define('Connector.view.Chart', {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
@@ -2314,6 +2314,8 @@ Ext.define('Connector.view.Chart', {
         else {
             this.refreshRequired = true;
         }
+
+        Connector.getService('Query').clearMeasureSetDistinctRows();
     },
 
     onActivate: function() {
@@ -2334,49 +2336,6 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideload', this);
         this.hideMessage();
         this.hideVisibleWindow();
-    },
-
-    getSubjectsIn : function(callback, scope) {
-        var me = this;
-        var state = Connector.getState();
-
-        state.onMDXReady(function(mdx) {
-
-            var filters = state.getFilters();
-
-            var validFilters = [];
-
-            Ext.each(filters, function(filter) {
-                if (!filter.isPlot() && !filter.isGrid()) {
-                    validFilters.push(filter);
-                }
-            });
-
-            if (validFilters.length > 0) {
-
-                var SUBJECT_IN = 'scattercount';
-                state.addPrivateSelection(validFilters, SUBJECT_IN, function() {
-                    mdx.queryParticipantList({
-                        useNamedFilters: [SUBJECT_IN],
-                        success : function(cellset) {
-                            state.removePrivateSelection(SUBJECT_IN);
-                            var ids = [], pos = cellset.axes[1].positions, a=0;
-                            for (; a < pos.length; a++) { ids.push(pos[a][0].name); }
-                            callback.call(scope || me, ids);
-                        },
-                        failure : function() {
-                            state.removePrivateSelection(SUBJECT_IN);
-                        },
-                        scope: this
-                    });
-                }, this);
-            }
-            else {
-                // no filters to apply
-                callback.call(scope || me, null);
-            }
-
-        }, me);
     },
 
     applyFiltersToMeasure : function (measureSet, ptids) {
