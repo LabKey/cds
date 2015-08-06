@@ -24,6 +24,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.sql.Driver;
+
 public abstract class DataspaceVariableSelector
 {
     protected BaseWebDriverTest _test;
@@ -75,7 +77,7 @@ public abstract class DataspaceVariableSelector
     public void pickSource(String source)
     {
         _test.click(window().append(" div.content-label").withText(source));
-        _test.sleep(500);
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
     public void pickMultiPanelSource(String source)
@@ -85,7 +87,7 @@ public abstract class DataspaceVariableSelector
 
     public void pickVariable(String source){
         _test.click(window().append(" div.content-label").withText(source));
-        _test.sleep(500);
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
     //Pick measure from one of multiple split panel measure pickers
@@ -147,11 +149,27 @@ public abstract class DataspaceVariableSelector
         _test._ext4Helper.waitForMaskToDisappear();
     }
 
+    public Locator openAntigenPanel(String selector)
+    {
+        String xpathDimField, xpathPanelSelector;
+        Locator locDimField;
+
+        xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antigen')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+        xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+        locDimField = Locator.xpath(xpathDimField);
+        _test.click(locDimField);
+        _test.waitForElement(Locator.xpath(xpathPanelSelector));
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION); // Yuck!
+
+        return Locator.xpath(xpathPanelSelector);
+
+    }
     // TODO Still working on this as part of the detail selection.
     protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
     {
-        String xpathDimField, xpathDimDropDown;
-        Locator locDimField;
+        String xpathDimField, xpathDimDropDown, xpathPanelSelector;
+        Locator locDimField, allTag;
+        CDSHelper cds = new CDSHelper(_test);
 
         switch(dimension){
             case AlignBy:
@@ -172,20 +190,41 @@ public abstract class DataspaceVariableSelector
 
                 break;
             case AntigenName:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antigen')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                locDimField = Locator.xpath(xpathDimField);
+                _test.click(locDimField);
+                _test.waitForElement(Locator.xpath(xpathPanelSelector));
+
+                allTag = Locator.xpath(xpathPanelSelector + "//label[text()='All']/./preceding-sibling::input");
+
+                // Clear the current selection.
+                if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[text()='All']"))
+                {
+                    _test.checkCheckbox(allTag);
+                }
+                _test.checkCheckbox(allTag);
+
+                for(String val : value){
+                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[text()='" + val + "']"));
+                }
+
+                _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
+
                 break;
             case CellType:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
 
                 locDimField = Locator.xpath(xpathDimField);
-                Locator allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
+                allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
 
                 if(_test.isElementPresent(locDimField))
                 {
                     _test.click(locDimField);
 
                     // Clear the current selection.
-                    if(!_test.isChecked(allTag))
+                    if(!cds.isCheckboxChecked(xpathDimDropDown + "//label[text()='All']"))
                     {
                         _test.checkCheckbox(allTag);
                     }
@@ -195,6 +234,48 @@ public abstract class DataspaceVariableSelector
                         _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
                 }
+
+                break;
+            case DataSummaryLevel:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-summaer_level')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-summary_level-dropdown')]";
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.click(locDimField);
+
+                    for(String val : value){
+                        _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
+                    }
+                }
+
+                break;
+            case Protein:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                locDimField = Locator.xpath(xpathDimField);
+                _test.click(locDimField);
+                _test.waitForElement(Locator.xpath(xpathPanelSelector));
+                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+                // Since a protein has multiple columns the allTag will point to the all tag in the far left column.
+                allTag = Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']");
+
+                // Clear the current selection.
+                if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"))
+                {
+                    _test.checkCheckbox(allTag);
+                }
+                _test.checkCheckbox(allTag);
+
+                for(String val : value){
+                    // The translate function will turn the value for @test-data-value to lowercase. The function lower-case is only available in XPath 2.0
+                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
+                }
+
+                _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
             case TargetCell:
@@ -212,6 +293,31 @@ public abstract class DataspaceVariableSelector
                         _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
                 }
+
+                break;
+            case VirusName:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-virus')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                locDimField = Locator.xpath(xpathDimField);
+                _test.click(locDimField);
+                _test.waitForElement(Locator.xpath(xpathPanelSelector));
+                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+                // Since a virus has multiple columns the allTag will point to the all tag in the far left column.
+                allTag = Locator.xpath(xpathPanelSelector + "//label[@test-data-value='neutralization_tier-all']");
+
+                // Clear the current selection.
+                if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='neutralization_tier-all']"))
+                {
+                    _test.checkCheckbox(allTag);
+                }
+                _test.checkCheckbox(allTag);
+
+                for(String val : value){
+                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val + "']"));
+                }
+
+                _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
 
                 break;
         }
@@ -233,7 +339,8 @@ public abstract class DataspaceVariableSelector
         Protein,
         ProteinPanel,
         SpecimenType,
-        TargetCell
+        TargetCell,
+        VirusName
     }
 
     public static enum Scale

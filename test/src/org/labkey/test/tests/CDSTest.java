@@ -107,7 +107,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // clean up groups
         cds.goToAppHome();
-        sleep(500); // let the group display load
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
         List<String> groups = new ArrayList<>();
         groups.add(GROUP_NAME);
@@ -201,7 +201,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        this.sleep(500); // Not sure why I need this but test is more reliable with it.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // Not sure why I need this but test is more reliable with it.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
@@ -765,7 +765,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
         _asserts.assertSelectionStatusCounts(5, 1, -1);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         cds.clearFilter();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
         cds.clearSelection();
@@ -930,7 +930,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         cds.viewLearnAboutPage("Studies");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
@@ -967,7 +967,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "HVTN"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         log("Size: " + returnedItems.size());
         for(WebElement listItem : returnedItems)
@@ -981,7 +981,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "(vCP1452)"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -994,7 +994,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "Phase IIB"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1006,7 +1006,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         searchString = "If this string ever appears something very odd happened.";
         log("Searching for '" + searchString + "'.");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         _asserts.verifyEmptyLearnAboutStudyPage();
 
@@ -1029,7 +1029,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         cds.viewLearnAboutPage("Study products");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
@@ -1071,7 +1071,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "AID"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         log("Size: " + returnedItems.size());
         for(WebElement listItem : returnedItems)
@@ -1085,7 +1085,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "inhibitor"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1098,7 +1098,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "GSK"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1111,7 +1111,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "is a"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1123,7 +1123,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         searchString = "If this string ever appears something very odd happened.";
         log("Searching for '" + searchString + "'.");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         _asserts.verifyEmptyLearnAboutStudyProductsPage();
 

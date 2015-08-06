@@ -16,7 +16,7 @@
 package org.labkey.test.tests;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.jetbrains.annotations.NotNull;
+import org.bouncycastle.cms.CMSAuthenticatedDataStreamGenerator;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,7 +49,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -175,15 +174,15 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
-        yaxis.setCellType("CD4+");
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
-        xaxis.setCellType("CD8+");
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
         assertTrue("For ELISPOT Background vs ICS Visit x-axis gutter plot was not present.", hasXGutter());
@@ -233,7 +232,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.pickSource(CDSHelper.ELISPOT);
         xaxis.pickVariable(CDSHelper.ELISPOT_VISIT);
         xaxis.confirmSelection();
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
@@ -245,14 +244,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
 
         yaxis.openSelectorWindow();
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         xaxis.confirmSelection();
@@ -505,7 +504,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
     }
 
-// TODO Removing test attribute until I get a chance to fix it.
+// TODO Saved groups broken in CDS, will revisit test after the feature is fixed.
 //    @Test
     public void verifySavedGroupPlot()
     {
@@ -663,10 +662,11 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    @Test
     public void verifyScatterPlotColorAxis()
     {
+        CDSHelper cds = new CDSHelper(this);
+
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
@@ -674,20 +674,32 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Lab Results", "Lymphocytes");
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_DATA);
+        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         // yaxis window opens automatically
-        yaxis.pickMeasure("Lab Results", "Hemoglobin");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         color.openSelectorWindow();
-        color.pickMeasure("Demographics", "Race");
+        color.pickSource(CDSHelper.DEMOGRAPHICS);
+        color.pickVariable(CDSHelper.DEMO_RACE);
         color.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
         waitForElement(colorLegend);
-        assertElementPresent(colorLegendGlyph, 8);
+        assertElementPresent(colorLegendGlyph, 7);
 
+        // TODO Need to revisit this part of the test. Specifically there no longer is a 'Race' attribute to look for.
+/*
         List<WebElement> legendGlyphs = colorLegendGlyph.findElements(getDriver());
         Map<String, Integer> raceCounts = new HashMap<>();
         raceCounts.put("American Indian/Alaska Native", 10); // too tired to fix this
@@ -740,6 +752,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         assertEquals("Wrong number of points on scatter plot", expectedPointCount, Locator.css("a.point").findElements(getDriver()).size());
         waitForElement(colorLegendGlyph);
         assertElementPresent(colorLegendGlyph, 8);
+        */
     }
 
     // TODO Removing test attribute until I get a chance to fix it.
@@ -837,7 +850,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setTargetCell("A3R5");
+        yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
@@ -861,7 +874,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -877,7 +890,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 7);
@@ -890,10 +903,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
-        xaxis.setAlignedBy("Enrollment");
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck. Unfortunately waitForMaskToDisappear is not long enough for the axis to be regenerated.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck. Unfortunately waitForMaskToDisappear is not long enough for the axis to be regenerated.
 
         // When changing the alignment to anything other than Day 0 study HVTN 205 will not appear because it has no visit information.
         expectedCounts.remove("HVTN 205");
@@ -911,7 +924,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.setAlignedBy("Last Vaccination");
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
@@ -924,10 +937,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
-        xaxis.setAlignedBy("Enrollment");
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -941,10 +954,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
-        xaxis.setAlignedBy("Last Vaccination");
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -958,10 +971,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
-        xaxis.setAlignedBy("Enrollment");
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -975,10 +988,10 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
-        xaxis.setAlignedBy("Last Vaccination");
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
-        sleep(500); // yuck.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -995,55 +1008,56 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    @Test
     public void verifyAntigenVariableSelector()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        log("Validate BAMA Antigen panel on yaxis.");
         yaxis.openSelectorWindow();
-        yaxis.pickSource("Luminex");
-        waitForElement(yaxis.variableOptionsRow().withText("gp41"));
-        assertEquals("Wrong number of antigens for Luminex", 1, getElementCount(yaxis.variableOptionsRow()));
-        yaxis.pickSource("NAb");
-        waitForElement(yaxis.variableOptionsRow().withText("BaL.01"));
-        assertEquals("Wrong number of antigens for NAb", 91, getElementCount(yaxis.variableOptionsRow()));
+        yaxis.pickSource(CDSHelper.BAMA);
+        yaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE);
+        yaxis.openAntigenPanel();
+
+        for(int i = 0; i < CDSHelper.ANTIGENS_NAME.length; i++)
+        {
+            assertElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.ANTIGENS_NAME[i] + "']"));
+        }
+
         yaxis.cancelSelection();
 
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        log("Validate BAMA Antigen panel on xaxis.");
         xaxis.openSelectorWindow();
-        xaxis.pickSource("Luminex");
-        waitForElement(xaxis.variableOptionsRow().withText("gp41"));
-        assertEquals("Wrong number of antigens for Luminex", 1, getElementCount(xaxis.variableOptionsRow()));
-        xaxis.pickSource("NAb");
-        waitForElement(xaxis.variableOptionsRow().withText("BaL.01"));
-        assertEquals("Wrong number of antigens for NAb", 91, getElementCount(xaxis.variableOptionsRow()));
-        xaxis.pickSource("ADCC");
-        waitForElement(xaxis.variableOptionsRow().withText("pCenvFs2_Pt1086_B2"));
-        assertEquals("Wrong number of antigens for ADCC", 4, getElementCount(xaxis.variableOptionsRow()));
+        xaxis.pickSource(CDSHelper.BAMA);
+        xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE);
+        xaxis.openAntigenPanel();
+
+        for(int i = 0; i < CDSHelper.ANTIGENS_NAME.length; i++)
+        {
+            assertElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'content')]//label[contains(@class, 'x-form-cb-label')][text()='" + CDSHelper.ANTIGENS_NAME[i] + "']"));
+        }
+
         xaxis.cancelSelection();
 
-        final ColorAxisVariableSelector color = new ColorAxisVariableSelector(this);
-        color.openSelectorWindow();
-        color.pickSource("Luminex");
-        assertFalse("Antigen picker found in color variable selector", waitFor(new Checker()
-        {
-            @Override
-            public boolean check()
-            {
-                return isElementPresent(color.variableOptionsRow());
-            }
-        }, 1000));
-        color.cancelSelection();
+        log("Validate Antigen panel does not show up on the color selector.");
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.BAMA);
+        assertElementNotPresent("Detail seletor present in color selector, it should not be there.", Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'advanced')]//fieldset//div[contains(@class, 'field-label')][text()='Antigen name:']"));
+        coloraxis.cancelSelection();
+
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    @Test
     public void verifyAntigenBoxPlot()
     {
-        String sharedVirus = "AC10.0.29";
-        String uniqueVirus = "BaL.01";
+        CDSHelper cds = new CDSHelper(this);
+        String sharedVirus = CDSHelper.VIRUS_Q23;
+        String uniqueVirus = CDSHelper.VIRUS_BAL26;
+        String uniqueVirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, uniqueVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1051,49 +1065,64 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("NAb", "Lab");
-        xaxis.setVariableOptions(uniqueVirus);
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_LAB);
+        xaxis.setVirusName(uniqueVirusId);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
-        yaxis.pickMeasure("NAb", "AUC");
-        yaxis.setVariableOptions(uniqueVirus);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
+        yaxis.setVirusName(uniqueVirusId);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText(CDSHelper.LABS[1]));
+        waitForElement(plotTick.withText(CDSHelper.LABS[2]));
         assertElementPresent(plotBox, 1);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
+
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
-        assertEquals(12, plotDataTable.getDataRowCount());
-        assertEquals(12, getElementCount(Locator.linkWithText(uniqueVirus)));
-        assertTextNotPresent(sharedVirus, CDSHelper.LABS[2]);
+        assertEquals(100, plotDataTable.getDataRowCount());
+        assertEquals(100, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
+        assertTextNotPresent(sharedVirus, CDSHelper.LABS[1]);
         getDriver().close();
         switchToMainWindow();
 
+        // Current sample data only has viruses that are matched to one lab.
+        // Changing original logic of test to have x-axis look at virus type.
+
         xaxis.openSelectorWindow();
-        xaxis.pickSource("NAb");
-        xaxis.setVariableOptions(uniqueVirus, sharedVirus);
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_VIRUS_TYPE);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
 
-        waitForElement(plotTick.withText(CDSHelper.LABS[2]));
+        waitForElement(plotTick.withText("Pseudovirus"));
         assertElementPresent(plotBox, 2);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         plotDataTable = new DataRegionTable("query", this);
-        assertEquals(24, plotDataTable.getDataRowCount());
-        assertEquals(24, getElementCount(Locator.linkWithText(uniqueVirus)) + getElementCount(Locator.linkWithText(sharedVirus)));
+        assertEquals(100, plotDataTable.getDataRowCount());
+        assertEquals(100, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
         getDriver().close();
         switchToMainWindow();
+
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
-    //@Test
+    @Test
     public void verifyAntigenScatterPlot()
     {
-        String xVirus = "BaL.01";
-        String yVirus = "AC10.0.29";
-        String yVirus2 = "0013095-2.11";
+        CDSHelper cds = new CDSHelper(this);
+        String xVirus = CDSHelper.VIRUS_TV1;
+        String yVirus = CDSHelper.VIRUS_SF162;
+        String xVirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, xVirus);
+        String y1VirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, yVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1101,50 +1130,56 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("NAb", "AUC");
-        xaxis.setVariableOptions(xVirus);
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.setVirusName(xVirusId);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
-        yaxis.pickMeasure("NAb", "AUC");
-        yaxis.setVariableOptions(yVirus);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setVirusName(y1VirusId);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText("0.06"));
-        assertElementPresent(plotPoint, 16);
+        waitForElement(plotTick.withText("5000"));
+        assertElementPresent(plotPoint, 1321);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
-        assertEquals(16, plotDataTable.getDataRowCount());
-        plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
-        waitForElement(Locator.paginationText(12));
+        assertEquals(100, plotDataTable.getDataRowCount());
         getDriver().close();
         switchToMainWindow();
         Ext4Helper.setCssPrefix("x-");
 
         yaxis.openSelectorWindow();
-        yaxis.pickMeasure("NAb", "AUC");
-        yaxis.setVariableOptions(yVirus, yVirus2);
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText("0.14"));
-        assertElementPresent(plotPoint, 40);
+        waitForElement(plotTick.withText("40"));
+        assertElementPresent(plotPoint, 60);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
+        sleep(CDSHelper.CDS_WAIT);
         switchToWindow(1);
         Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
-        assertEquals(28, plotDataTable.getDataRowCount());
-        plotDataTable.setFilter("BaL$P01::study_NAb_AUC_MAX", "Is Not Blank", null);
-        waitForElement(Locator.paginationText(12));
+        assertEquals(60, plotDataTable.getDataRowCount());
         getDriver().close();
         switchToMainWindow();
     }
 
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
+    @Test
     public void verifyBinnedPlot()
     {
+        CDSHelper cds = new CDSHelper(this);
+
         // make choices that put us over the 'maxRows' parameter specified on the URL
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1153,13 +1188,22 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
         // set the x-axis
         xaxis.openSelectorWindow();
-        xaxis.pickMeasure("NAb", "Point IC80");
-        xaxis.setVariableOptions("0013095-2.11", "001428-2.42");
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_DATA);
+        xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
+        xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xaxis.setCellType("All");
         xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         // set the y-axis
-        waitForElement(Locator.css(".curseltitle").containing("for the Y Axis"));
-        yaxis.pickMeasure("NAb", "Curve IC80");
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.setCellType("All");
+        yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
+        yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
         // Verify the binning message
