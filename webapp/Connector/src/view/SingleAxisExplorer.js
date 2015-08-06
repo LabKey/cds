@@ -171,7 +171,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
     },
 
     onEmptySelection : function(btn) {
-        btn.setText(this.showEmpty ? 'show empty' : 'hide empty');
+        btn.setText(this.showEmpty ? 'Show empty' : 'Hide empty');
         this.showEmpty = this.saview ? this.saview.toggleEmpty() : this.showEmpty;
     },
 

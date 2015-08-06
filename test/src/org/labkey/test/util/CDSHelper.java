@@ -223,14 +223,9 @@ public class CDSHelper
     {
         _test.click(Locator.id("sae-hierarchy-dropdown"));
 
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+            return null;
         });
 
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
@@ -238,14 +233,9 @@ public class CDSHelper
 
     public void pickDimension(final String dimension)
     {
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locators.dimensionHeaderLocator(dimension));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.click(Locators.dimensionHeaderLocator(dimension));
+            return null;
         });
 
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
@@ -275,14 +265,9 @@ public class CDSHelper
             _test.click(Ext4Helper.Locators.radiobutton(_test, "Snapshot: Keep this group static"));
         }
 
-        applyAndMaybeWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
-                return null;
-            }
+        applyAndMaybeWaitForBars(aVoid -> {
+            _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
+            return null;
         });
     }
 
@@ -376,14 +361,9 @@ public class CDSHelper
     {
         final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
 
-        applyAndMaybeWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                clearButton.click();
-                return null;
-            }
+        applyAndMaybeWaitForBars(aVoid -> {
+            clearButton.click();
+            return null;
         });
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
@@ -401,14 +381,9 @@ public class CDSHelper
     {
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
 
-        applyAndMaybeWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locator.linkWithText("Undo"));
-                return null;
-            }
+        applyAndMaybeWaitForBars(aVoid -> {
+            _test.click(Locator.linkWithText("Undo"));
+            return null;
         });
 
         _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
@@ -416,19 +391,13 @@ public class CDSHelper
 
     public void useSelectionAsSubjectFilter()
     {
-        _test.click(Locators.cdsButtonLocator("filter subjects"));
-        waitForClearSelection(); // wait for animation
-    }
-
-    public void useSelectionAsDataFilter()
-    {
-        _test.click(Locators.cdsButtonLocator("filter data"));
+        _test.click(Locators.cdsButtonLocator("Filter"));
         waitForClearSelection(); // wait for animation
     }
 
     public void clearSelection()
     {
-        _test.click(Locators.cdsButtonLocator("clear", "selectionclear"));
+        clearFilter();
         waitForClearSelection();
     }
 
@@ -444,56 +413,39 @@ public class CDSHelper
     private void waitForClearSelection()
     {
         _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.selectionpanel")));
-        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("span.status-subcount")));
     }
 
     public void clickBy(final String byNoun)
     {
         final WebElement link = _test.waitForElement(Locators.getByLocator(byNoun));
 
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                link.click();
-//                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
-                _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            link.click();
+            _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
+            return null;
         });
 
     }
 
     public void hideEmpty()
     {
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.click(Locators.cdsButtonLocator("Hide empty"));
+            return null;
         });
 
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
-        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("show empty"));
+        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Show empty"));
     }
 
     public void showEmpty()
     {
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("show empty"));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.click(Locators.cdsButtonLocator("Show empty"));
+            return null;
         });
 
-        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
 
     public void viewInfo(String barLabel)
@@ -561,7 +513,7 @@ public class CDSHelper
         _test.click(Locator.tagWithClass("div", "wrapitem").withDescendant(filterMember));
 
         // 'update' button represents the update of a filter
-        _test.waitForElement(Locators.cdsButtonLocator("update", "filterinfoaction"));
+        _test.waitForElement(Locators.cdsButtonLocator("Update", "filterinfoaction"));
     }
 
     public void changeInfoPaneSort(String fromSort, String toSort)

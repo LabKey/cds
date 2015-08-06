@@ -26,7 +26,7 @@ Ext.define('Connector.view.Selection', {
                 '<tpl if="this.isGrid(values) === true">',
                     // Grid Filter
                     '<div class="wrapitem">',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderGridFilterLabel(values)]}',
                         '</div>',
@@ -35,7 +35,7 @@ Ext.define('Connector.view.Selection', {
                 '<tpl if="this.isPlot(values) === true">',
                     // "In the plot" Filter
                     '<div class="wrapitem">',
-                        '<div class="selitem status-over memberitem">',
+                        '<div class="selitem status-over memberitem memberloc">',
                             '<div class="closeitem" data-id="{id}" member-index="0"></div>',
                             '{[this.renderInThePlot(values)]}',
                         '</div>',
@@ -47,7 +47,7 @@ Ext.define('Connector.view.Selection', {
                         '<tpl if="members.length &gt; 0">',
                             '<div class="closeitem wholeitem" data-id="{id}"></div>',
                             '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
-                            '<div>{members:this.renderMembers}</div>',
+                            '<div class="memberloc">{members:this.renderMembers}</div>',
                             '<tpl if="members.length &gt; 1">',
                                 '<select>',
                                     '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
