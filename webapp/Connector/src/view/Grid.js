@@ -317,6 +317,7 @@ Ext.define('Connector.view.Grid', {
                 this.columnSelectorPanel = Ext.create('Connector.panel.Selector', {
                     headerTitle: 'choose columns',
                     testCls: 'column-axis-selector',
+                    multiSelect: true,
                     sourceMeasureFilter: {
                         queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                         includeTimpointMeasures: true,
@@ -330,10 +331,6 @@ Ext.define('Connector.view.Grid', {
                     listeners: {
                         selectionmade: function(selected) {
                             this.clearVisibleWindow();
-
-                            if (!Ext.isArray(selected)) {
-                                selected = [selected];
-                            }
 
                             this.fireEvent('measureselected', selected);// TODO what about other parameters to be included?
                             this.getMeasureSelectionWindow().hide();

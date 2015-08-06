@@ -256,7 +256,7 @@ Ext.define('Connector.model.Grid', {
             sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
 
         Ext.each(measures, function(measure) {
-            item = Ext.clone(Ext.isDefined(measure.data) ? measure.data : measure);
+            item = Ext.clone(measure.data);
 
             if (!(item.queryName in sourceMeasuresRequired))
                 sourceMeasuresRequired[item.queryName] = true;

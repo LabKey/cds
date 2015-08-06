@@ -28,10 +28,13 @@ Ext.define('Connector.panel.Selector', {
     memberCountsFn: undefined,
     memberCountsFnScope: undefined,
 
+    multiSelect: false,
+    selectedMeasures: undefined,
+
     testCls: undefined,
 
     disableAdvancedOptions: false,
-    boundDimensionNames: [],
+    boundDimensionNames: undefined,
 
     // track the first time that the selector is initialized so we can use initOptions properly
     initialized: false,
@@ -57,6 +60,8 @@ Ext.define('Connector.panel.Selector', {
 
     initComponent : function() {
         this.queryService = Connector.getService('Query');
+        this.boundDimensionNames = [];
+        this.selectedMeasures = [];
 
         this.sourcesStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Source',
@@ -303,51 +308,108 @@ Ext.define('Connector.panel.Selector', {
     getMeasurePane : function()
     {
         if (!this.measurePane) {
-            this.measurePane = Ext.create('Ext.view.View', {
-                border: false,
-                hidden: true,
-                flex: 1,
-                autoScroll: true,
-                cls: 'content',
-                itemSelector: 'div.content-item',
-                selectedItemCls: 'content-selected',
-                store: this.measureStore,
-                tpl: new Ext.XTemplate(
-                    '<tpl for=".">',
-                        '<tpl if="isRecommendedVariable && xindex == 1">',
-                            '<div class="content-grouping">Recommended</div>',
-                        '</tpl>',
-                        '<tpl if="!isRecommendedVariable && parent[xindex-2] && parent[xindex-2].isRecommendedVariable">',
-                            '<div class="content-grouping extrapadding">Additional</div>',
-                        '</tpl>',
-                        '<div class="content-item">',
-                            '<div class="content-label">{label:htmlEncode}</div>',
-                        '</div>',
-                    '</tpl>'
-                ),
-                listeners: {
-                    select: function(selModel, measure) {
-                        // issue 23866: Persisted advanced option selections when changing variables within the same source
-                        if (this.initialized) {
-                            this.initOptions = this.getAdvancedOptionValues();
-                        }
-
-                        this.selectMeasure(measure);
-                    },
-                    itemmouseenter: function(view, record, item) {
-                        this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
-                    },
-                    itemmouseleave: function() {
-                        this.hideLearnMessage('Measure');
-                    },
-                    scope: this
-                }
-            });
+            if (this.multiSelect) {
+                this.measurePane = this.getMeasureSelectionGrid();
+            }
+            else {
+                this.measurePane = this.getMeasureSelectionView();
+            }
 
             this.insert(this.items.length - 2, this.measurePane);
         }
 
         return this.measurePane;
+    },
+
+    getBaseMeasureSelectionConfig : function() {
+        return {
+            border: false,
+            hidden: true,
+            flex: 1,
+            autoScroll: true,
+            store: this.measureStore,
+            listeners: {
+                select: this.selectMeasure,
+                deselect: this.deselectMeasure,
+                itemmouseenter: function(view, record, item) {
+                    this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
+                },
+                itemmouseleave: function() {
+                    this.hideLearnMessage('Measure');
+                },
+                scope: this
+            }
+        };
+    },
+
+    getMeasureSelectionGrid : function() {
+        var config = Ext.apply(this.getBaseMeasureSelectionConfig(), {
+            cls : 'content measuresgrid',
+            enableColumnResize: false,
+            bubbleEvents : ['viewready'],
+            viewConfig : { stripeRows : false },
+            multiSelect: true,
+            selType: 'checkboxmodel',
+            selModel: {
+                checkOnly: true
+                //checkSelector: 'td.x-grid-cell-row-checker'
+            },
+            columns: [{
+                header: 'Select all columns',
+                dataIndex: 'label',
+                flex: 1,
+                sortable: false,
+                menuDisabled: true
+            }]
+            //requires: ['Ext.grid.feature.Grouping'],
+            //features: [{
+            //    ftype: 'grouping',
+            //    id: 'measuresGridGrouping',
+            //    collapsible: false,
+            //    groupHeaderTpl: new Ext4.XTemplate(
+            //        '<div class="groupheader groupheaderline" style="padding: 3px 6px 4px 6px; color: #808080;">',
+            //        '{groupValue:this.renderHeader}',
+            //        '</div>',
+            //        {
+            //            renderHeader : function(value) {
+            //                var hdr = value;
+            //                if (value === '0') {
+            //                    hdr = 'Recommended';
+            //                }
+            //                else if (value === '1') {
+            //                    hdr = 'Additional';
+            //                }
+            //                return hdr;
+            //            }
+            //        }
+            //    )
+            //}]
+        });
+
+        return Ext.create('Ext.grid.Panel', config);
+    },
+
+    getMeasureSelectionView : function() {
+        var config = Ext.apply(this.getBaseMeasureSelectionConfig(), {
+            cls: 'content',
+            itemSelector: 'div.content-item',
+            selectedItemCls: 'content-selected',
+            tpl: new Ext.XTemplate(
+                '<tpl for=".">',
+                    '<tpl if="isRecommendedVariable && xindex == 1">',
+                        '<div class="content-grouping">Recommended</div>',
+                    '</tpl>',
+                    '<tpl if="!isRecommendedVariable && parent[xindex-2] && parent[xindex-2].isRecommendedVariable">',
+                        '<div class="content-grouping extrapadding">Additional</div>',
+                    '</tpl>',
+                    '<div class="content-item">',
+                        '<div class="content-label">{label:htmlEncode}</div>',
+                    '</div>',
+                '</tpl>'
+            )
+        });
+
+        return Ext.create('Ext.view.View', config);
     },
 
     showLearnMessage : function(item, title, description, name) {
@@ -424,18 +486,20 @@ Ext.define('Connector.panel.Selector', {
         });
 
         var selModel = this.getMeasurePane().getSelectionModel();
-        if (activeMeasure) {
-            if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
-                // already have selected measure, just need to show the advanced options pane
-                this.slideAdvancedOptionsPane();
+        if (!this.multiSelect) {
+            if (activeMeasure) {
+                if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
+                    // already have selected measure, just need to show the advanced options pane
+                    this.slideAdvancedOptionsPane();
+                }
+                else {
+                    Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
+                }
             }
             else {
-                Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
+                // default to selecting the first variable for the given source
+                Ext.defer(function() { selModel.select(0); }, 100, this);
             }
-        }
-        else {
-            // default to selecting the first variable for the given source
-            Ext.defer(function() { selModel.select(0); }, 100, this);
         }
     },
 
@@ -936,19 +1000,52 @@ Ext.define('Connector.panel.Selector', {
     },
 
     makeSelection : function() {
-        if (Ext.isDefined(this.activeMeasure)) {
+        if (!this.multiSelect && Ext.isDefined(this.activeMeasure)) {
             var selectedMeasure = Ext.clone(this.activeMeasure.data);
             selectedMeasure.options = this.getAdvancedOptionValues();
 
             this.fireEvent('selectionmade', selectedMeasure);
         }
+        else if (this.multiSelect) {
+            this.fireEvent('selectionmade', this.selectedMeasures);
+        }
     },
 
-    selectMeasure : function(measure) {
-        this.activeMeasure = measure;
+    selectMeasure : function(selectionCmp, measure) {
+        if (!this.multiSelect) {
+            // issue 23866: Persisted advanced option selections when changing variables within the same source
+            if (this.initialized) {
+                this.initOptions = this.getAdvancedOptionValues();
+            }
+
+            this.activeMeasure = measure;
+            this.configureAdvancedOptions();
+        }
+        else {
+            if (this.getSelectedRecordIndex(measure) == -1) {
+                this.selectedMeasures.push(measure);
+            }
+        }
 
         this.getButton('select-button').enable();
+    },
 
-        this.configureAdvancedOptions();
+    deselectMeasure : function(selectionCmp, measure) {
+        if (this.multiSelect) {
+            var index = this.getSelectedRecordIndex(measure);
+            if (index > -1) {
+                this.selectedMeasures.splice(index, 1);
+            }
+        }
+    },
+
+    getSelectedRecordIndex : function(measure) {
+        for (var i = 0; i < this.selectedMeasures.length; i++) {
+            if (this.selectedMeasures[i].get('alias') == measure.get('alias')) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 });
