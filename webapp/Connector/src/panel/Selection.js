@@ -24,10 +24,11 @@ Ext.define('Connector.panel.Selection', {
 
         return {
             xtype: 'box',
-            autoEl: {
-                tag: 'div',
-                cls: 'header',
-                html: this.title
+            tpl: new Ext.XTemplate(
+                '<div class="header">{title:htmlEncode}</div>'
+            ),
+            data: {
+                title: this.title
             }
         };
     },

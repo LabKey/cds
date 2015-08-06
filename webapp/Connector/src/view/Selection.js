@@ -9,7 +9,7 @@ Ext.define('Connector.view.Selection', {
 
     alias: 'widget.selectionview',
 
-    itemSelector: 'div.wrapitem',
+    itemSelector: 'div.filter-item',
 
     cls: 'activefilter',
 
@@ -19,35 +19,41 @@ Ext.define('Connector.view.Selection', {
             '<tpl for=".">',
                 '<tpl if="this.isPlotSelection(values) === true">',
                     // Plot Selection Filter
-                    '<div class="wrapitem">',
-                        '<div class="selitem sel-listing">{[this.renderPlotSelection(values)]}</div>',
+                    '<div class="filter-item">',
+                        '<div class="selitem">{[this.renderPlotSelection(values)]}</div>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}" member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
                 '<tpl if="this.isGrid(values) === true">',
                     // Grid Filter
-                    '<div class="wrapitem">',
-                        '<div class="selitem status-over memberitem memberloc">',
-                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                    '<div class="filter-item">',
+                        '<div class="selitem status-over memberloc">',
                             '{[this.renderGridFilterLabel(values)]}',
                         '</div>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}" member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === true">',
                     // "In the plot" Filter
-                    '<div class="wrapitem">',
-                        '<div class="selitem status-over memberitem memberloc">',
-                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                    '<div class="filter-item">',
+                        '<div class="selitem status-over memberloc">',
                             '{[this.renderInThePlot(values)]}',
                         '</div>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}"  member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
                     // Normal Filter (and Group Filters)
-                    '<div class="wrapitem">',
+                    '<div class="filter-item">',
                         '<tpl if="members.length &gt; 0">',
-                            '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                            '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
-                            '<div class="memberloc">{members:this.renderMembers}</div>',
+                            '<div class="selitem">{[this.renderType(values)]}</div>',
+                            '<div class="sel-list-item memberloc">{members:this.renderMembers}</div>',
                             '<tpl if="members.length &gt; 1">',
                                 '<select>',
                                     '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
@@ -56,6 +62,9 @@ Ext.define('Connector.view.Selection', {
                             '</tpl>',
                         '</tpl>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
             '</tpl>',
             {
@@ -176,11 +185,7 @@ Ext.define('Connector.view.Selection', {
                             sep = ', ';
                         });
 
-                        domString =
-                                '<div class="status-over memberitem plot-selection">' +
-                                    '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
-                                    measure.measure.label + ': ' + filterValString +
-                                '</div>';
+                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true) + ': ' + filterValString + '</div>';
                     }
 
                     return domString;
