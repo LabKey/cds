@@ -310,7 +310,7 @@ Ext.define('Connector.controller.Explorer', {
                 levelUniqueName = rec.get('levelUniqueName');
             });
 
-            var selection = {
+            var data = {
                 hierarchy: hierarchy.uniqueName,
                 members: members,
                 operator: hierarchy.defaultOperator,
@@ -318,7 +318,31 @@ Ext.define('Connector.controller.Explorer', {
             };
 
             if (levelUniqueName) {
-                selection.level = levelUniqueName;
+                data.level = levelUniqueName;
+            }
+
+            var selection = Ext.create(state.getFilterModelName(), data);
+
+            // see if we're merging into a previous filter, this way we can respect other
+            // settings like operator, etc. This is related to merge but cannot use merge strictly
+            // since we allow for shift, ctrl select.
+            if (members.length > 1) {
+                var selections = state.getSelections(), _s;
+
+                if (!Ext.isEmpty(selections)) {
+                    for (var s=0; s < selections.length; s++) {
+                        if (selections[s].canMerge(selection)) {
+                            _s = selections[s];
+                            break;
+                        }
+                    }
+                }
+
+                if (Ext.isDefined(_s)) {
+                    selection.set({
+                        operator: _s.get('operator')
+                    })
+                }
             }
 
             //
