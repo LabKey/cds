@@ -397,7 +397,20 @@ public class CDSHelper
 
     public void clearSelection()
     {
-        clearFilter();
+        Locator.XPathLocator selectionPane = CDSHelper.Locators.selectionPane();
+        Locator.XPathLocator clearButtonLocator = selectionPane.append(Locator.tagWithClass("span", "closeitem"));
+
+        // activate the hover close
+        _test.mouseOver(selectionPane);
+        _test.waitForElement(clearButtonLocator.notHidden());
+
+        final WebElement clearButton = _test.waitForElement(clearButtonLocator);
+
+        applyAndMaybeWaitForBars(aVoid -> {
+            clearButton.click();
+            return null;
+        });
+
         waitForClearSelection();
     }
 
@@ -581,7 +594,10 @@ public class CDSHelper
 
         if (bars.size() > 0)
             _test.shortWait().until(ExpectedConditions.stalenessOf(bars.get(0)));
-        if(!_test.isElementPresent(Locator.tagWithClass("div", "saeempty")))
+
+        _test.waitForElement(Locator.tagWithClass("div", "saeempty"), 500, false);
+
+        if (!_test.isElementPresent(Locator.tagWithClass("div", "saeempty")))
             waitForBarAnimation();
     }
 
@@ -705,6 +721,11 @@ public class CDSHelper
         public static Locator.XPathLocator activeDimensionHeaderLocator(String dimension)
         {
             return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "active").withText(dimension));
+        }
+
+        public static Locator.XPathLocator selectionPane()
+        {
+            return Locator.tagWithClass("div", "selectionpanel");
         }
     }
 

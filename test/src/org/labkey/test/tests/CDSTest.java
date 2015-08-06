@@ -59,7 +59,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private static final String GROUP_NULL = "Group creation cancelled";
-    private static final String GROUP_DESC = "Intersection of " + CDSHelper.LABS[1]+ " and " + CDSHelper.LABS[2];
+    private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     // Known Test Groups
@@ -800,8 +800,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
 
-    // TODO Still needs work.
-//    @Test
+    @Test
     public void verifyFilters()
     {
         log("Verify multi-select");
@@ -809,84 +808,81 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // 14910
         cds.goToSummary();
-//        waitAndClick(Locator.linkWithText("types"));
-        waitForElement(CDSHelper.Locators.dimensionHeaderLocator("Assays"));
-        waitForFormElementToEqual(hierarchySelector, "Type");
-        click(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
-        waitForElementToDisappear(CDSHelper.Locators.barLabel.withText(CDSHelper.EMPTY_ASSAY));
-        cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
-        _asserts.assertSelectionStatusCounts(3, 1, 2);
+        cds.clickBy("Study products");
+        waitForFormElementToEqual(hierarchySelector, "Product Type");
+        cds.shiftSelectBars("Poly ICLC", "DEC-205-p24");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Vaccine"), WAIT_FOR_JAVASCRIPT);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("Poly ICLC, Vaccine, DEC-205-p24"));
+        _asserts.assertSelectionStatusCounts(1, 1, -1);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts();
         // end 14910
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        cds.openStatusInfoPane("Labs");
-        waitForText(CDSHelper.LABS[1]);
-        cds.selectInfoPaneItem(CDSHelper.LABS[1], true);
-        cds.selectInfoPaneItem(CDSHelper.LABS[2], false);
+        cds.openStatusInfoPane("Studies");
+        waitForText(CDSHelper.STUDIES[1]);
+        cds.selectInfoPaneItem(CDSHelper.STUDIES[1], true);
+        cds.selectInfoPaneItem(CDSHelper.STUDIES[4], false);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
         cds.saveLiveGroup(GROUP_NAME, GROUP_DESC);
-        _asserts.assertFilterStatusCounts(14, 1, 2);
+        _asserts.assertFilterStatusCounts(113, 2, -1);
         cds.clearFilter();
         _asserts.assertDefaultFilterStatusCounts();
-        cds.goToSummary();
-        _asserts.assertAllSubjectsPortalPage();
 
         log("Verify operator filtering");
+        cds.goToSummary();
         cds.clickBy("Studies");
-        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
-        _asserts.assertSelectionStatusCounts(132, 2, 3);  // or
-        assertElementPresent(Locator.css("option").withText("OR"));
-        mouseOver(Locator.css("option").withText("OR"));
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[4]);
+        _asserts.assertSelectionStatusCounts(115, 2, -1);  // or
+        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
+        mouseOver(Locator.css("option").withText("Subjects related to any (OR)"));
 
         WebElement selector = Locator.css("select").findElement(getDriver());
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
-        _asserts.assertSelectionStatusCounts(0, 0, 0); // and
+        _asserts.assertSelectionStatusCounts(0, 0, -1); // and
         cds.useSelectionAsSubjectFilter();
-        waitForElementToDisappear(Locator.css("span.barlabel"), CDSHelper.CDS_WAIT);
-        _asserts.assertFilterStatusCounts(0, 0, 0); // and
+        cds.hideEmpty();
+        waitForText("None of the selected");
+        _asserts.assertFilterStatusCounts(0, 0, -1); // and
 
         selector = Locator.css("select").findElement(getDriver());
-        waitForElement(Locator.css("option").withText("AND"));
-        mouseOver(Locator.css("option").withText("AND"));
+        waitForElement(Locator.css("option").withText("Subjects related to all (AND)"));
+        mouseOver(Locator.css("option").withText("Subjects related to all (AND)"));
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
-        _asserts.assertFilterStatusCounts(132, 2, 3);  // or
-        assertElementPresent(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(115, 2, -1);  // or
+        waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
         cds.goToSummary();
-        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[1]);
         cds.clickBy("Assays");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-        assertElementPresent(Locator.css("option").withText("OR"));
-       _asserts.assertFilterStatusCounts(132, 2, 3);  // and
+        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
+       _asserts.assertFilterStatusCounts(115, 2, -1);  // or
         cds.clearFilter();
         waitForText("All subjects");
         _asserts.assertDefaultFilterStatusCounts();
         assertTextPresent("All subjects");
-        cds.goToSummary();
 
         log("Verify selection messaging");
-        cds.clickBy("Assays");
-        cds.pickSort("Name");
-        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(0, 0, 0);
-        cds.pickDimension("Studies");
-        _asserts.assertFilterStatusCounts(0, 0, 0);
-        cds.clearFilter();
-        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[2]);
-        cds.selectBars(CDSHelper.STUDIES[0]);
-        cds.pickDimension("Assays");
         cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
+        _asserts.assertSelectionStatusCounts(75, 1, -1);
+        cds.pickDimension("Studies");
+        waitForText("Selection applied as filter.");
+        _asserts.assertFilterStatusCounts(75, 1, -1);
+        cds.clearFilter();
+        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[32]);
+        cds.selectBars(CDSHelper.STUDIES[32]);
+        cds.pickDimension("Assays");
+        waitForText("Selection applied as filter.");
 
         //test more group saving
+        cds.goToSummary();
         cds.clickBy("Subject characteristics");
-        cds.pickSort("Country");
-        cds.selectBars("USA");
+        cds.pickSort("Country at enrollment");
+        cds.selectBars("Switzerland");
 
         // save the group and request cancel
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -896,12 +892,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "cancelgroupsave"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
-        cds.selectBars("USA");
-
         // save the group and request save
         cds.saveLiveGroup(GROUP_NAME2, null);
-
-        cds.selectBars("USA");
 
         // save a group with an interior group
         cds.saveLiveGroup(GROUP_NAME3, null);
