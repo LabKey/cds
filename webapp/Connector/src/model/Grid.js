@@ -256,7 +256,7 @@ Ext.define('Connector.model.Grid', {
             sourceMeasuresRequired = {};  //Make sure we select the "source" measure for all datasets that have it
 
         Ext.each(measures, function(measure) {
-            item = Ext.clone(measure.data);
+            item = Ext.clone(Ext.isDefined(measure.data) ? measure.data : measure);
 
             if (!(item.queryName in sourceMeasuresRequired))
                 sourceMeasuresRequired[item.queryName] = true;
@@ -306,7 +306,7 @@ Ext.define('Connector.model.Grid', {
         // set the wrapped measures, foreign columns
         this.set({
             measures: wrapped,
-            foreignColumns: foreignColumns
+            foreignColumns: Ext.isDefined(foreignColumns) ? foreignColumns : {}
         });
 
         if (silent !== true) {
