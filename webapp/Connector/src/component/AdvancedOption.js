@@ -628,6 +628,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
             checkboxItems.push({
                 xtype: 'checkboxfield',
                 cls: 'checkbox2 col-check',
+                boxLabelAttrTpl: 'test-data-value=' + fieldNames[i] + '-all',
                 name: fieldNames[i] + '-checkall',
                 boxLabel: 'All',
                 fieldName: fieldNames[i],
@@ -666,6 +667,7 @@ Ext.define('Connector.panel.HierarchicalSelectionPanel', {
                     var checkbox = {
                         xtype: 'checkboxfield',
                         cls: 'checkbox2 col-check ' + addCls,
+                        boxLabelAttrTpl: 'test-data-value=' + fieldNames[i] + '-' + concatValue.replace(/\|/g, '-').replace(/ /g, '_'),
                         name: fieldNames[i] + '-check',
                         boxLabel: record.get(fieldNames[i]) || '[Blank]',
                         parentFieldName: i > 0 ? fieldNames[i-1] : null,
