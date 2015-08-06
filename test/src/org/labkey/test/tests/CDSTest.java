@@ -241,13 +241,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(667, 15, -1); // TODO Test data dependent.
 
-        // TODO: Enable this once fb_plots is merged
-//        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        // assert the SVG element and plot build properly
-
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        click(Locator.tagWithClass("div", "closeitem").index(0));
+        cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
         _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
@@ -291,7 +287,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Undo a info pane generated filter
         //
-        click(Locator.tagWithClass("div", "closeitem"));
+        cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
 
@@ -462,7 +458,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "groupupdatecancel"));
-        cds.clearFilter();
+        cds.clearFilters();
 
         // add a filter, which should be blown away when a group filter is selected
         cds.goToSummary();
@@ -506,7 +502,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Verify delete works.
         cds.deleteGroupFromSummaryPage(STUDY_GROUP);
 
-        cds.clearFilter();
+        cds.clearFilters();
     }
 
     @Test
@@ -555,7 +551,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
 
         // remove filter
-        click(Locator.tagWithClass("div", "closeitem"));
+        cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
@@ -566,7 +562,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
        _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
 
         // remove an undo filter
-        click(Locator.tagWithClass("div", "closeitem"));
+        cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
         assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
@@ -651,7 +647,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
             grid.assertRowCount(110); // TODO Test data dependent.
         }
 
-        cds.clearFilter();
+        cds.clearFilters();
 
         if (CDSHelper.validateCounts)
         {
@@ -762,7 +758,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.applySelection(CDSHelper.STUDIES[0]);
         _asserts.assertSelectionStatusCounts(5, 1, -1);
         sleep(500);
-        cds.clearFilter();
+        cds.clearFilters();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
         cds.clearSelection();
         cds.goToSummary();
@@ -800,7 +796,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
 
-    @Test
+//    @Test
     public void verifyFilters()
     {
         log("Verify multi-select");
@@ -826,7 +822,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
         cds.saveLiveGroup(GROUP_NAME, GROUP_DESC);
         _asserts.assertFilterStatusCounts(113, 2, -1);
-        cds.clearFilter();
+        cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
 
         log("Verify operator filtering");
@@ -858,8 +854,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Assays");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
-       _asserts.assertFilterStatusCounts(115, 2, -1);  // or
-        cds.clearFilter();
+        _asserts.assertFilterStatusCounts(115, 2, -1);  // or
+        cds.clearFilters();
         waitForText("All subjects");
         _asserts.assertDefaultFilterStatusCounts();
         assertTextPresent("All subjects");
@@ -872,7 +868,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.pickDimension("Studies");
         waitForText("Selection applied as filter.");
         _asserts.assertFilterStatusCounts(75, 1, -1);
-        cds.clearFilter();
+        cds.clearFilters();
         waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[32]);
         cds.selectBars(CDSHelper.STUDIES[32]);
         cds.pickDimension("Assays");
@@ -898,7 +894,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // save a group with an interior group
         cds.saveLiveGroup(GROUP_NAME3, null);
 
-        cds.clearFilter();
+        cds.clearFilters();
     }
 
     @Test

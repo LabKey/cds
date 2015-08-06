@@ -357,7 +357,26 @@ public class CDSHelper
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
     }
 
-    public void clearFilter()
+    public void clearFilter(int index)
+    {
+        Locator.XPathLocator filterPane = CDSHelper.Locators.filterPane(index);
+        Locator.XPathLocator clearButtonLocator = filterPane.append(Locator.tagWithClass("span", "closeitem"));
+
+        // activate the hover close
+        _test.mouseOver(filterPane);
+        _test.waitForElement(clearButtonLocator.notHidden());
+
+        final WebElement clearButton = _test.waitForElement(clearButtonLocator);
+
+        applyAndMaybeWaitForBars(aVoid -> {
+            clearButton.click();
+            return null;
+        });
+
+        _test.waitForText("Filter removed.");
+    }
+
+    public void clearFilters()
     {
         final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
 
@@ -373,7 +392,7 @@ public class CDSHelper
         // clear filters
         if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filterclear").notHidden()))
         {
-            clearFilter();
+            clearFilters();
         }
     }
 
@@ -523,7 +542,7 @@ public class CDSHelper
 
     public void openFilterInfoPane(Locator.XPathLocator filterMember)
     {
-        _test.click(Locator.tagWithClass("div", "wrapitem").withDescendant(filterMember));
+        _test.click(Locator.tagWithClass("div", "filter-item").withDescendant(filterMember));
 
         // 'update' button represents the update of a filter
         _test.waitForElement(Locators.cdsButtonLocator("Update", "filterinfoaction"));
@@ -726,6 +745,11 @@ public class CDSHelper
         public static Locator.XPathLocator selectionPane()
         {
             return Locator.tagWithClass("div", "selectionpanel");
+        }
+
+        public static Locator.XPathLocator filterPane(int index)
+        {
+            return Locator.tagWithClass("div", "filterpanel").append(Locator.tagWithClass("div", "activefilter")).index(index);
         }
     }
 
