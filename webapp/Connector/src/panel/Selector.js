@@ -474,9 +474,11 @@ Ext.define('Connector.panel.Selector', {
                     duration: 250,
                     callback: function() {
                         // clear the initOptions and deselect (issue 23845) any measure for the source we are leaving
-                        me.initialized = false;
-                        me.initOptions = undefined;
-                        me.getMeasurePane().getSelectionModel().deselectAll();
+                        if (!me.multiSelect) {
+                            me.initialized = false;
+                            me.initOptions = undefined;
+                            me.getMeasurePane().getSelectionModel().deselectAll();
+                        }
 
                         me.showSources();
                     }
@@ -581,20 +583,21 @@ Ext.define('Connector.panel.Selector', {
 
         this.getLoaderPane().hide();
 
-        // source pane with cancel button
         this.getSourcePane().setVisible(type == 'source');
-        this.getButton('cancel-button').setVisible(type == 'source');
-
-        // measure pane with select button
         this.getMeasurePane().setVisible(type == 'measure');
-        this.getButton('select-button').setVisible(type == 'measure');
-
-        // hierarchical selection pane with done button
         this.getHierarchySelectionPane().setVisible(type == 'hierarchy');
+
+        // cancel button visible on source pane if single select
+        this.getButton('cancel-button').setVisible(type == 'source' && !this.multiSelect);
+
+        // select button visible on measure pane or on source pane if multi select
+        this.getButton('select-button').setVisible(type == 'measure' || (type == 'source' && this.multiSelect));
+
+        // done button only visible on hierarchical selection pane
         this.getButton('done-button').setVisible(type == 'hierarchy');
 
-        // and finally, the cancel link is on both the measure and hierarchical selection pane
-        this.getButton('cancel-link').setVisible(type == 'measure' || type == 'hierarchy');
+        // cancel link is on both the measure and hierarchical selection pane or on source pane if multi select
+        this.getButton('cancel-link').setVisible(type == 'measure' || type == 'hierarchy' || (type == 'source' && this.multiSelect));
     },
 
     getAdvancedPane : function() {
@@ -977,14 +980,16 @@ Ext.define('Connector.panel.Selector', {
                 },{
                     itemId: 'select-button',
                     xtype: 'button',
-                    disabled: true,
+                    disabled: !this.multiSelect,
                     hidden: true,
                     text: 'Set ' + this.headerTitle,
                     handler: this.makeSelection,
                     scope: this,
                     listeners: {
                         show: function(btn) {
-                            btn.setDisabled(!Ext.isDefined(this.activeMeasure));
+                            if (!this.multiSelect) {
+                                btn.setDisabled(!Ext.isDefined(this.activeMeasure));
+                            }
                         },
                         scope: this
                     }
@@ -1020,14 +1025,13 @@ Ext.define('Connector.panel.Selector', {
 
             this.activeMeasure = measure;
             this.configureAdvancedOptions();
+            this.getButton('select-button').enable();
         }
         else {
             if (this.getSelectedRecordIndex(measure) == -1) {
                 this.selectedMeasures.push(measure);
             }
         }
-
-        this.getButton('select-button').enable();
     },
 
     deselectMeasure : function(selectionCmp, measure) {
