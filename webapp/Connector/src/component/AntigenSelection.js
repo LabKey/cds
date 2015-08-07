@@ -101,10 +101,11 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     getFilterValuesMap : function() {
         var optionMap = {}, alias;
+
         if (Ext.isObject(this.filterOptionValues) && Ext.isObject(this.filterOptionValues.dimensions)) {
             Ext.iterate(this.filterOptionValues.dimensions, function(key, val) {
-                if (val != null) {
-                    alias = this.dimension.get('schemaName') + '_' + this.dimension.get('queryName') + '_' + key;
+                alias = this.dimension.get('schemaName') + '_' + this.dimension.get('queryName') + '_' + key;
+                if (alias != this.dimension.getFilterMeasure().get('alias') && val != null) {
                     optionMap[alias] = val;
                 }
             }, this);
