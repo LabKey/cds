@@ -219,9 +219,9 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         //getText(Locator.css("svg")) on Chrome
 
-        final String ELISPOT_VISIT = "900\n950\n1000\n1050\n1100\n1150\n1200\n1250\n0e+0\n5e+3\n1e+4\n1.5e+4\n2e+4\n2.5e+4\n3e+4\n3.5e+4\n4e+4\n4.5e+4"; // TODO Test data dependent.
+        final String ELISPOT_VISIT = "0\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
         final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5"; // TODO Test data dependent.
-        final String NAB_IC50 = "20\n30\n40\n50\n60\n5\n50\n500\n5000"; // TODO Test data dependent.
+        final String NAB_IC50 = "1\n10\n1\n10\n100\n1000"; // TODO Test data dependent.
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 

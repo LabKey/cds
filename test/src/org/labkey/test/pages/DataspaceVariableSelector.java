@@ -314,7 +314,7 @@ public abstract class DataspaceVariableSelector
                 _test.checkCheckbox(allTag);
 
                 for(String val : value){
-                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val + "']"));
+                    _test.checkCheckbox(Locator.xpath(xpathPanelSelector + "//label[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + val.toLowerCase() + "']"));
                 }
 
                 _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
