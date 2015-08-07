@@ -231,15 +231,14 @@ Ext.define('Connector.controller.FilterStatus', {
     updateView : function(xtype, context) { },
 
     onFilterClear : function() {
-        var state = Connector.getState();
-
-        // if we have both selections and filters, roll-up into one state update
-        var haveSelectionsAndFilters = state.hasSelections() && state.hasFilters();
+        var state = Connector.getState(),
+            hasFilters = state.hasFilters();
 
         if (state.hasSelections()) {
-            state.clearSelections(!haveSelectionsAndFilters);
+            // if we have both selections and filters, roll-up into one state update
+            state.clearSelections(hasFilters /* skipState */);
         }
-        if (state.hasFilters()) {
+        if (hasFilters) {
             state.clearFilters();
 
             // only show undo if clear filters
