@@ -17,7 +17,8 @@ Ext.define('Connector.panel.AntigenSelection', {
     },
 
     initCheckboxColumns : function() {
-        var checkboxItems = [], prevRecord, fields = Ext.Array.pluck(Ext.Array.pluck(this.hierarchyMeasures, 'data'), 'alias');
+        var checkboxItems = [], prevRecord, columnValueCounts = {}, hasSubjectCount = false,
+            fields = Ext.Array.pluck(Ext.Array.pluck(this.hierarchyMeasures, 'data'), 'alias');
 
         // add a column header for each hierarchical measure and the subject counts
         Ext.each(this.hierarchyMeasures, function(measure) {
@@ -40,17 +41,17 @@ Ext.define('Connector.panel.AntigenSelection', {
                 concatValue += sep + record.get(fields[i]);
                 sep = '|';
 
+                if (!Ext.isDefined(columnValueCounts[concatValue])) {
+                    columnValueCounts[concatValue] = 0;
+                }
+                columnValueCounts[concatValue] += record.get('subjectCount');
+
                 if (prevRecord == null || !this.hierarchicalRecordEqual(prevRecord, record, fields, i)) {
 
                     // add border line above checkbox for parent columns or first row in last column for a given group
                     addCls = '';
                     if (prevRecord == null || i < fields.length - 1 || !this.hierarchicalRecordEqual(prevRecord, record, fields, i-1)) {
                         addCls = 'col-line';
-                    }
-
-                    // disable look if subject count is zero
-                    if (i == fields.length - 1 && record.get('subjectCount') == 0) {
-                        addCls += ' col-disable';
                     }
 
                     checkboxItems.push(this.createCheckboxCmp(record, fields, i, concatValue, addCls));
@@ -63,6 +64,14 @@ Ext.define('Connector.panel.AntigenSelection', {
             checkboxItems.push(this.createSubjectCountCmp(record, addCls));
 
             prevRecord = record;
+        }, this);
+
+        // mark those checkboxes with no subject count so they look disabled
+        Ext.each(checkboxItems, function(cb) {
+            hasSubjectCount = Ext.isDefined(cb.inputValue) && Ext.isDefined(columnValueCounts[cb.inputValue]);
+            if (hasSubjectCount && columnValueCounts[cb.inputValue] == 0) {
+                cb.addCls('col-disable');
+            }
         }, this);
 
         this.add(this.createCheckboxGroupCmp(checkboxItems, fields));
