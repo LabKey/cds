@@ -504,7 +504,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
 
     }
 
-// TODO Saved groups broken in CDS, will revisit test after the feature is fixed.
+// TODO CDS does not work with groups created in LabKey, the groups need to be created in CDS.
 //    @Test
     public void verifySavedGroupPlot()
     {
@@ -753,72 +753,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         waitForElement(colorLegendGlyph);
         assertElementPresent(colorLegendGlyph, 8);
         */
-    }
-
-    // TODO Removing test attribute until I get a chance to fix it.
-//    @Test
-    public void verifyStudyAxis()
-    {
-        // TODO: Need to test visit tag hovers as well as visit hovers.
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
-        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        Locator studyAxisLoc = Locator.css("#study-axis svg");
-        Locator studyGroups = Locator.css("g.study");
-        Locator studyVisits = Locator.css("rect.visit");
-        Locator visitTags = Locator.css("path.visit-tag");
-        Locator visitHover = Locator.css("div.study-axis-window");
-        List<WebElement> studyVisitEls;
-        Actions builder = new Actions(getDriver());
-
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-
-        xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Time points", "Study days");
-        xaxis.confirmSelection();
-
-        // yaxis window opens automatically
-        yaxis.pickMeasure("MRNA", "CCL5");
-        yaxis.confirmSelection();
-
-        // Check to make sure study axis appears.
-        waitForElement(studyAxisLoc);
-        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
-        assertEquals("Unexpected number of visit tagss on the study axis.", 25, visitTags.findElements(getDriver()).size());
-
-        WebElement studyAxisTest1 = studyGroups.findElements(getDriver()).get(3);
-        studyVisitEls = studyAxisTest1.findElements(studyVisits.toBy());
-
-        // Check that study axis hovers appear when hovered over.
-        builder.moveToElement(studyVisitEls.get(0)).perform();
-        waitForElement(visitHover);
-        assertElementPresent(visitHover.withText("Study Axis Test 11\nMonth 1"));
-
-        // Check that hovers disappear
-        builder.moveToElement(studyVisitEls.get(0)).moveByOffset(0, -500).perform();
-        waitForElementToDisappear(visitHover);
-
-        xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Time points", "Study days");
-        xaxis.setVariableRadio("Day 0 (meaning varies)");
-        xaxis.confirmSelection();
-        waitForTextToDisappear("NotRV144");
-
-        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
-        assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
-
-        WebElement notRV144 = studyGroups.findElements(getDriver()).get(0);
-        WebElement visit = notRV144.findElement(studyVisits.toBy());
-        assertEquals("Visit had an unexpected width.", "10", visit.getAttribute("width"));
-
-        xaxis.openSelectorWindow();
-        xaxis.pickMeasure("Time points", "Study weeks");
-        xaxis.setVariableRadio("Aligned by Day 0");
-        xaxis.confirmSelection();
-        waitForText("Study weeks, CCL5");
-
-        // Assert that we have the same amount of visits even with study weeks.
-        assertEquals("Unexpected number of visits on the study axis.", 37, studyVisits.findElements(getDriver()).size());
-        assertEquals("Unexpected number of visit tags on the study axis.", 25, visitTags.findElements(getDriver()).size());
     }
 
     @Test
