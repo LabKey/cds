@@ -33,6 +33,8 @@ import java.util.List;
 
 public class CDSHelper
 {
+    public static final String CDS_PROJECT_NAME = "CDSTest Project";
+
     public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
             "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
             "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
@@ -328,8 +330,6 @@ public class CDSHelper
         return finalId;
     }
 
-    // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
-    public static final boolean debugTest = false;
     // Because the test data changes frequently it can be useful to skip any steps that validate counts.
     public static final boolean validateCounts = false;
 

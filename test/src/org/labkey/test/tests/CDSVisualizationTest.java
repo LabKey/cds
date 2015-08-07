@@ -16,6 +16,7 @@
 package org.labkey.test.tests;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.http.HttpStatus;
 import org.bouncycastle.cms.CMSAuthenticatedDataStreamGenerator;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
@@ -26,6 +27,7 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestTimeoutException;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
@@ -38,6 +40,7 @@ import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
+import org.labkey.test.util.ReadOnlyTest;
 import org.labkey.test.util.UIContainerHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -48,6 +51,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,10 +68,8 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 
 @Category({CDS.class})
-public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest
+public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
 {
-    private static final String PROJECT_NAME = "CDSTest Project";
-    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
@@ -76,33 +78,44 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
 
-    @BeforeClass
-    @LogMethod
-    public static void doSetup() throws Exception
+    protected static final String MOUSEOVER_FILL = "#01BFC2";
+    protected static final String MOUSEOVER_STROKE = "#00EAFF";
+    protected static final String BRUSHED_FILL = "#14C9CC";
+    protected static final String BRUSHED_STROKE = "#00393A";
+    protected static final String NORMAL_COLOR = "#000000";
+
+    public void doSetup() throws Exception
     {
         CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
-
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+    }
 
-        if(!CDSHelper.debugTest)
-        {
-            initTest.createParticipantGroups();
-        }
-
-  }
-
-    @Override
-    public void doCleanup(boolean afterTest) throws TestTimeoutException
+    @Override @LogMethod
+    public boolean needsSetup()
     {
+        boolean callDoCleanUp = false;
 
-        if(!CDSHelper.debugTest)
+        try
         {
-            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
-            _containerHelper = new UIContainerHelper(this);
-            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
+            {
+                callDoCleanUp = false;
+                doSetup();
+            }
+
+        }
+        catch (IOException fail)
+        {
+            callDoCleanUp =  true;
+        }
+        catch(java.lang.Exception ex)
+        {
+            callDoCleanUp = true;
         }
 
+        // Returning true will cause BaseWebDriver to call it's cleanup method.
+        return callDoCleanUp;
     }
 
     @Before
@@ -113,11 +126,41 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         cds.ensureNoSelection();
     }
 
-    protected static final String MOUSEOVER_FILL = "#01BFC2";
-    protected static final String MOUSEOVER_STROKE = "#00EAFF";
-    protected static final String BRUSHED_FILL = "#14C9CC";
-    protected static final String BRUSHED_STROKE = "#00393A";
-    protected static final String NORMAL_COLOR = "#000000";
+    @BeforeClass
+    public static void initTest() throws Exception
+    {
+        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
+        //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
+//        cvt.createParticipantGroups();
+    }
+
+    @AfterClass
+    public static void afterClassCleanUp()
+    {
+        CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
+        //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
+//        cvt.deleteParticipantGroups();
+        Ext4Helper.resetCssPrefix();
+    }
+
+    @Nullable
+    @Override
+    protected String getProjectName()
+    {
+        return CDSHelper.CDS_PROJECT_NAME;
+    }
+
+    @Override
+    public List<String> getAssociatedModules()
+    {
+        return Arrays.asList("CDS");
+    }
+
+    @Override
+    public BrowserType bestBrowser()
+    {
+        return BrowserType.CHROME;
+    }
 
     @Test
     public void verifyGutterPlotBasic()
@@ -1153,12 +1196,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         cds.ensureNoFilter();
     }
 
-    @AfterClass
-    public static void postTest()
-    {
-        Ext4Helper.resetCssPrefix();
-    }
-
     private String getPointProperty(String property, WebElement point)
     {
         String titleAttribute = point.getAttribute("title");
@@ -1330,29 +1367,21 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     private void createParticipantGroups()
     {
         Ext4Helper.resetCssPrefix();
+        beginAt("project/" + getProjectName() + "/begin.view?");
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP1, "Subject", "039-016", "039-014");  // TODO Test data dependent.
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP2, "Subject", "039-044", "039-042");  // TODO Test data dependent.
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3, "Subject", "039-059", "039-060");  // TODO Test data dependent.
         _studyHelper.createCustomParticipantGroup(getProjectName(), getProjectName(), PGROUP3_COPY, "Subject", "039-059", "039-060");  // TODO Test data dependent.
     }
 
-    @Nullable
-    @Override
-    protected String getProjectName()
+    @LogMethod
+    private void deleteParticipantGroups()
     {
-        return PROJECT_NAME;
-    }
-
-    @Override
-    public List<String> getAssociatedModules()
-    {
-        return Arrays.asList("CDS");
-    }
-
-    @Override
-    public BrowserType bestBrowser()
-    {
-        return BrowserType.CHROME;
+        beginAt("project/" + getProjectName() + "/begin.view?");
+        _studyHelper.deleteCustomParticipantGroup(PGROUP1, "Subject");
+        _studyHelper.deleteCustomParticipantGroup(PGROUP2, "Subject");
+        _studyHelper.deleteCustomParticipantGroup(PGROUP3, "Subject");
+        _studyHelper.deleteCustomParticipantGroup(PGROUP3_COPY, "Subject");
     }
 
     public static class Locators

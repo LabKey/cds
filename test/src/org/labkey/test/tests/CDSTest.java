@@ -15,6 +15,7 @@
  */
 package org.labkey.test.tests;
 
+import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -39,10 +40,12 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
 import org.labkey.test.util.PostgresOnlyTest;
+import org.labkey.test.util.ReadOnlyTest;
 import org.labkey.test.util.UIContainerHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,10 +59,8 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @Category({CDS.class})
-public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
+public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
 {
-    private static final String PROJECT_NAME = "CDSTest Project";
-    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " + CDSHelper.LABS[1]+ " and " + CDSHelper.LABS[2];
@@ -78,24 +79,38 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
-    @Override
-    public void doCleanup(boolean afterTest) throws TestTimeoutException
-    {
-        if (!CDSHelper.debugTest)
-        {
-            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
-            _containerHelper = new UIContainerHelper(this);
-            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
-        }
-    }
-
-    @BeforeClass @LogMethod
-    public static void doSetup() throws Exception
+    public void doSetup() throws Exception
     {
         CDSTest initTest = (CDSTest)getCurrentTest();
-
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+    }
+
+    @Override @LogMethod
+    public boolean needsSetup()
+    {
+        boolean callDoCleanUp = false;
+
+        try
+        {
+            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
+            {
+                callDoCleanUp = false;
+                doSetup();
+            }
+
+        }
+        catch (IOException fail)
+        {
+            callDoCleanUp =  true;
+        }
+        catch(java.lang.Exception ex)
+        {
+            callDoCleanUp = true;
+        }
+
+        // Returning true will cause BaseWebDriver to call it's cleanup method.
+        return callDoCleanUp;
     }
 
     @Before
@@ -135,7 +150,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public String getProjectName()
     {
-        return PROJECT_NAME;
+        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
@@ -159,8 +174,23 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @AfterClass
-    public static void postTest()
+    public static void afterClassCleanUp()
     {
+        CDSTest init = (CDSTest)getCurrentTest();
+
+        List<String> groups = new ArrayList<>();
+        groups.add(GROUP_NAME);
+        groups.add(GROUP_NAME2);
+        groups.add(GROUP_NAME3);
+        groups.add(GROUP_LIVE_FILTER);
+        groups.add(GROUP_STATIC_FILTER);
+        groups.add(STUDY_GROUP);
+        groups.add(HOME_PAGE_GROUP);
+        init.ensureGroupsDeleted(groups);
+
+        init.cds.ensureNoFilter();
+        init.cds.ensureNoSelection();
+
         Ext4Helper.resetCssPrefix();
     }
 
