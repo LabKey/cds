@@ -270,7 +270,7 @@ Ext.define('Connector.controller.Query', {
 
                 LABKEY.Query.executeSql({
                     schemaName: measureSet[0].get('schemaName'),
-                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName'),// + ' ORDER BY ' + columnNames,
+                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName'),
                     scope: this,
                     success: function(data) {
                         // cache the distinct values array result

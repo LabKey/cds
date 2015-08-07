@@ -67,8 +67,11 @@ Ext.define('Connector.component.AdvancedOptionBase', {
 
     getLabelDisplayValue : function(value) {
         var displayValue = null, subDisplayValue = null, cls = '';
+
         if (Ext.isArray(value) && value.length > 0) {
-            var isAll = Ext.Array.equals(value, this.store.collect(this.storeValueField, true));
+            // compare arrays, sorting the distinct value collection from the store
+            var isAll = Ext.Array.equals(value.sort(), this.store.collect(this.storeValueField, true).sort());
+
             displayValue = this.allowMultiSelect && isAll ? 'All' : this.getRecordsDisplayValue(value, ' or ');
             subDisplayValue = this.allowMultiSelect && isAll ? this.getRecordsDisplayValue(value, ', ') : null;
         }
