@@ -13,23 +13,23 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         this.hierarchyMeasures = this.dimension.getHierarchicalMeasures();
 
-        this.init();
+        this.loadSubjectCounts();
     },
 
-    init : function() {
+    initCheckboxColumns : function() {
         var checkboxItems = [], prevRecord, fields = Ext.Array.pluck(Ext.Array.pluck(this.hierarchyMeasures, 'data'), 'alias');
 
-        this.loadDistinctValuesStore(fields);
-
-        // add a column header for each hierarchical measure
+        // add a column header for each hierarchical measure and the subject counts
         Ext.each(this.hierarchyMeasures, function(measure) {
             checkboxItems.push(this.createColumnHeaderCmp(measure));
         }, this);
+        checkboxItems.push(this.createColumnHeaderCmp('Subject count', 'col-count-title'));
 
         // add 'All' checkbox for each hierarchical measure
         Ext.each(this.hierarchyMeasures, function(measure) {
             checkboxItems.push(this.createAllCheckboxCmp(measure));
         }, this);
+        checkboxItems.push(this.createSpacerCmp()); // this will eventually be the "hide empty" button
 
         // create checkbox item tree and add placeholder space in parent columns for layout
         prevRecord = null;
@@ -48,15 +48,19 @@ Ext.define('Connector.panel.AntigenSelection', {
                         addCls = 'col-line';
                     }
 
+                    // disable look if subject count is zero
+                    if (i == fields.length - 1 && record.get('subjectCount') == 0) {
+                        addCls += ' col-disable';
+                    }
+
                     checkboxItems.push(this.createCheckboxCmp(record, fields, i, concatValue, addCls));
                 }
                 else {
-                    checkboxItems.push({
-                        xtype: 'component',
-                        cls: 'col-spacer'
-                    });
+                    checkboxItems.push(this.createSpacerCmp());
                 }
             }
+
+            checkboxItems.push(this.createSubjectCountCmp(record, addCls));
 
             prevRecord = record;
         }, this);
@@ -64,10 +68,56 @@ Ext.define('Connector.panel.AntigenSelection', {
         this.add(this.createCheckboxGroupCmp(checkboxItems, fields));
     },
 
-    loadDistinctValuesStore : function(fields) {
-        var rows = [], sorters = [], filterColumnAlias, filterColumnValue;
+    loadSubjectCounts : function() {
+        var filterValuesMap = this.getFilterValuesMap();
+
+        // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
+        Connector.getService('Query').getMeasureSetGetDataResponse(this.dimension, this.measureSetStore.measureSet, filterValuesMap, function(response) {
+
+            var measure = this.hierarchyMeasures[this.hierarchyMeasures.length - 1],
+                alias = measure.getFilterMeasure().get('alias'), sql;
+
+            // SQL to get the subject count for each value of the filter measure
+            sql = 'SELECT COUNT(DISTINCT study_' + this.dimension.get('queryName') + '_SubjectId) AS SubjectCount, '
+                    + alias + ' FROM ' + response.queryName
+                    + measure.getDistinctValueWhereClause()
+                    + ' GROUP BY ' + alias;
+
+            LABKEY.Query.executeSql({
+                schemaName: response.schemaName,
+                sql: sql,
+                success: function(data) {
+                    var subjectCountMap = {};
+                    Ext.each(data.rows, function(row){
+                        subjectCountMap[row[alias]] = row.SubjectCount;
+                    }, this);
+
+                    this.loadDistinctValuesStore(subjectCountMap);
+                },
+                scope: this
+            })
+        }, this);
+    },
+
+    getFilterValuesMap : function() {
+        var optionMap = {}, alias;
+        if (Ext.isObject(this.filterOptionValues) && Ext.isObject(this.filterOptionValues.dimensions)) {
+            Ext.iterate(this.filterOptionValues.dimensions, function(key, val) {
+                if (val != null) {
+                    alias = this.dimension.get('schemaName') + '_' + this.dimension.get('queryName') + '_' + key;
+                    optionMap[alias] = val;
+                }
+            }, this);
+        }
+
+        return optionMap;
+    },
+
+    loadDistinctValuesStore : function(subjectCountMap) {
+        var rows = [], fields = [], sorters = [], filterColumnAlias, filterColumnValue;
 
         Ext.each(this.hierarchyMeasures, function(measure) {
+            fields.push(measure.get('alias'));
             sorters.push({property: measure.get('alias')});
 
             if (Ext.isDefined(measure.get('distinctValueFilterColumnAlias')) && Ext.isDefined(measure.get('distinctValueFilterColumnValue'))) {
@@ -79,7 +129,7 @@ Ext.define('Connector.panel.AntigenSelection', {
         this.uniqueValuesStore = Ext.create('Ext.data.ArrayStore', {
             model: Ext.define('UniqueValueModel' + Ext.id(), {
                 extend: 'Ext.data.Model',
-                fields: ['key'].concat(fields),
+                fields: ['key', 'subjectCount'].concat(fields),
                 idProperty: 'key'
             }),
             sorters: sorters
@@ -89,10 +139,14 @@ Ext.define('Connector.panel.AntigenSelection', {
         Ext.each(this.measureSetStore.query(filterColumnAlias, filterColumnValue, false, true, true).items, function(record) {
             var data = Ext.clone(record.data);
             data.key = this.getConcatKeyForRecord(record, fields);
+            data.subjectCount = subjectCountMap[data.key] || 0;
+
             rows.push(data);
         }, this);
 
         this.uniqueValuesStore.loadData(rows);
+
+        this.initCheckboxColumns();
     },
 
     getConcatKeyForRecord : function(record, fields) {
@@ -104,10 +158,34 @@ Ext.define('Connector.panel.AntigenSelection', {
         return key;
     },
 
-    createColumnHeaderCmp : function(measure) {
+    createColumnHeaderCmp : function(measure, cls) {
         return Ext.create('Ext.Component', {
-            cls: 'col-title',
-            html: Ext.htmlEncode(measure.get('label'))
+            cls: 'col-title ' + (Ext.isString(cls) ? cls : ''),
+            html: Ext.htmlEncode(Ext.isObject(measure) ? measure.get('label') : measure)
+        });
+    },
+
+    createSpacerCmp : function() {
+        return Ext.create('Ext.Component', {
+            cls: 'col-spacer'
+        });
+    },
+
+    createSubjectCountCmp : function(record, addCls) {
+        var value = record.get('subjectCount'), cls = 'col-count';
+
+        if (value == 0) {
+            value = '0';
+            cls += ' col-disable';
+        }
+
+        if (Ext.isString(addCls)) {
+            cls += ' ' + addCls;
+        }
+
+        return Ext.create('Ext.Component', {
+            cls: cls,
+            html: value
         });
     },
 
@@ -142,7 +220,7 @@ Ext.define('Connector.panel.AntigenSelection', {
             fieldValue: record.get(fields[index]),
             inputValue: value,
             checked: this.initSelection && this.initSelection.indexOf(value) > -1, // this will set only the leaf checkboxes as checked
-            width: 440 / this.hierarchyMeasures.length,
+            width: 358 / this.hierarchyMeasures.length,
             listeners: {
                 scope: this,
                 change: function(cb, newValue) {
@@ -164,7 +242,7 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     createCheckboxGroupCmp : function(items, fields) {
         var checkboxGroup = Ext.create('Ext.form.CheckboxGroup', {
-            columns: this.hierarchyMeasures.length,
+            columns: this.hierarchyMeasures.length + 1,
             items: items
         });
 

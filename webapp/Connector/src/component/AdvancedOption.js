@@ -231,7 +231,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         if (!this.hiddenField) {
             this.hiddenField = Ext.create('Ext.form.field.Hidden', {
                 // hierarchical dimensions can have use an alternate column for filtering
-                name: this.dimension.get('hierarchicalFilterColumnName') || this.fieldName,
+                name: this.dimension.getFilterMeasure().get('name'),
                 getValue: function() {
                     return this.value;
                 }

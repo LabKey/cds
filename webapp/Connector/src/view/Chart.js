@@ -2322,8 +2322,6 @@ Ext.define('Connector.view.Chart', {
         else {
             this.refreshRequired = true;
         }
-
-        Connector.getService('Query').clearMeasureSetDistinctRows();
     },
 
     onActivate: function() {

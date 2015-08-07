@@ -94,14 +94,14 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_peptide_pool': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ICS_protein',
-                    hierarchicalFilterColumnName: 'protein_panel_protein_peptide_pool',
+                    hierarchicalFilterColumnAlias: 'study_ICS_protein_panel_protein_peptide_pool',
                     distinctValueFilterColumnAlias: 'study_ICS_summary_level',
                     distinctValueFilterColumnValue: 'Peptide Pool'
                 },
                 'study_ICS_protein': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ICS_protein_panel',
-                    hierarchicalFilterColumnName: 'protein_panel_protein',
+                    hierarchicalFilterColumnAlias: 'study_ICS_protein_panel_protein',
                     distinctValueFilterColumnAlias: 'study_ICS_summary_level',
                     distinctValueFilterColumnValue: 'Protein'
                 },
@@ -125,7 +125,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_virus': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_NAb_clade',
-                    hierarchicalFilterColumnName: 'tier_clade_virus',
+                    hierarchicalFilterColumnAlias: 'study_NAb_tier_clade_virus',
                     distinctValueFilterColumnAlias: 'study_NAb_summary_level',
                     distinctValueFilterColumnValue: 'Virus'
                 },
@@ -171,14 +171,14 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_peptide_pool': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ELISPOT_protein',
-                    hierarchicalFilterColumnName: 'protein_panel_protein_peptide_pool',
+                    hierarchicalFilterColumnAlias: 'study_ELISPOT_protein_panel_protein_peptide_pool',
                     distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Peptide Pool'
                 },
                 'study_ELISPOT_protein': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ELISPOT_protein_panel',
-                    hierarchicalFilterColumnName: 'protein_panel_protein',
+                    hierarchicalFilterColumnAlias: 'study_ELISPOT_protein_panel_protein',
                     distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein'
                 },
