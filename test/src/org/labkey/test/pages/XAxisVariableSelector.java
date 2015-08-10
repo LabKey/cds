@@ -101,14 +101,44 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
     }
 
-    public void setCellType(String value)
+    public void setCellType(String... value)
     {
         super.setAssayDimension(XPATHID, AssayDimensions.CellType, value);
     }
 
-    public void setTargetCell(String value)
+    public void setAlignedBy(String... value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.AlignBy, value);
+    }
+
+    public void setTargetCell(String... value)
     {
         super.setAssayDimension(XPATHID, AssayDimensions.TargetCell, value);
+    }
+
+    public void setAntigen(String... value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.AntigenName, value);
+    }
+
+    public Locator openAntigenPanel()
+    {
+        return super.openAntigenPanel(XPATHID);
+    }
+
+    public void setVirusName(String... test_data_value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.VirusName, test_data_value);
+    }
+
+    public void setDataSummaryLevel(String summaryLevel)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.DataSummaryLevel, summaryLevel);
+    }
+
+    public void setProtein(String... test_data_value)
+    {
+        super.setAssayDimension(XPATHID, AssayDimensions.Protein, test_data_value);
     }
 
 }
