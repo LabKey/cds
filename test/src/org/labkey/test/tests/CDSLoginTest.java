@@ -15,47 +15,78 @@
  */
 package org.labkey.test.tests;
 
+import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.TestTimeoutException;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.UIContainerHelper;
+import org.labkey.test.util.ReadOnlyTest;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.labkey.test.pages.CDSLoginPage.Locators.*;
 
 @Category({CDS.class})
-public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
+public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
 {
-
-    private static final String PROJECT_NAME = "CDSTest Project";
-    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private final CDSHelper _cds = new CDSHelper(this);
     private static String _cdsAppURL;
 
-    @BeforeClass
-    public static void doSetup() throws Exception
+    public void doSetup() throws Exception
     {
         CDSLoginTest initTest = (CDSLoginTest)getCurrentTest();
-
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+    }
 
-        initTest._cds.enterApplication();
-        _cdsAppURL = initTest.getCurrentRelativeURL();
+    @BeforeClass
+    public static void initTest() throws Exception
+    {
+        CDSLoginTest init = (CDSLoginTest)getCurrentTest();
+        init._cds.enterApplication();
+        _cdsAppURL = init.getCurrentRelativeURL();
+    }
+
+    @Override @LogMethod
+    public boolean needsSetup()
+    {
+        boolean callDoCleanUp = false;
+
+        try
+        {
+            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
+            {
+                callDoCleanUp = false;
+                doSetup();
+            }
+
+        }
+        catch (IOException fail)
+        {
+            callDoCleanUp =  true;
+        }
+        catch(java.lang.Exception ex)
+        {
+            callDoCleanUp = true;
+        }
+
+        // Returning true will cause BaseWebDriver to call it's cleanup method.
+        return callDoCleanUp;
     }
 
     @Before
@@ -66,16 +97,10 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
         Ext4Helper.setCssPrefix("x-");
     }
 
-    @Override
-    public void doCleanup(boolean afterTest) throws TestTimeoutException
+    @AfterClass
+    public static void afterClassCleanUp()
     {
-
-        if(!CDSHelper.debugTest){
-            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
-            _containerHelper = new UIContainerHelper(this);
-            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
-        }
-
+        Ext4Helper.resetCssPrefix();
     }
 
     @Test
@@ -118,7 +143,7 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     protected String getProjectName()
     {
-        return PROJECT_NAME;
+        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
