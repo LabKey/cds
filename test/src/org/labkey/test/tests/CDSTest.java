@@ -337,7 +337,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
-        _asserts.assertFilterStatusCounts(2749, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(22, 12, -1); // TODO Test data dependent.
 
         //
         // update the current filter
@@ -495,7 +495,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        _asserts.assertFilterStatusCounts(969, 8, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(1690, 15, -1); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
@@ -571,31 +571,31 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
         // verify multi-level filtering
         cds.goToSummary();
         cds.clickBy("Assays");
-        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[2]);
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]));
+        cds.selectBars(CDSHelper.ASSAYS[1], CDSHelper.ASSAYS[4]);
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]));
 
         cds.useSelectionAsSubjectFilter();
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]), 1);
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
-        _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]), 1);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]), 1);
+        _asserts.assertFilterStatusCounts(195, 5, -1); // TODO Test data dependent.
 
         // remove filter
         cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
-        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-       _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+       _asserts.assertFilterStatusCounts(195, 5, -1); // TODO Test data dependent.
 
         // remove an undo filter
         cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
-        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
 
         // ensure undo is removed on view navigation
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -636,7 +636,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
         {
             grid.assertCurrentPage(976); // TODO Test data dependent.
             grid.assertCellContent("c264-003"); // TODO Test data dependent.
-            grid.assertCellContent("c265-001"); // TODO Test data dependent.
+            grid.assertCellContent("c256-001"); // TODO Test data dependent.
         }
 
         grid.clickPreviousBtn();
@@ -674,6 +674,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
         if (CDSHelper.validateCounts)
         {
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             grid.assertRowCount(110); // TODO Test data dependent.
         }
 
@@ -682,7 +683,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
         if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(24391); // TODO Test data dependent.
-            assertElementPresent(DataGrid.Locators.cellLocator("063-001")); // TODO Test data dependent.
+            assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
         }
 
         gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_SEX, true, true);
@@ -725,8 +726,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-204"); // TODO Test data dependent.
-            grid.assertCellContent("908-203"); // TODO Test data dependent.
+            grid.assertCellContent("908-024"); // TODO Test data dependent.
+            grid.assertCellContent("908-023"); // TODO Test data dependent.
         }
 
         grid.clickPreviousBtn();
@@ -735,7 +736,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-202"); // TODO Test data dependent.
+            grid.assertCellContent("505-2473"); // TODO Test data dependent.
         }
 
         grid.goToNextPage();
@@ -743,8 +744,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-204"); // TODO Test data dependent.
-            grid.assertCellContent("908-203"); // TODO Test data dependent.
+            grid.assertCellContent("505-2410"); // TODO Test data dependent.
+            grid.assertCellContent("505-2402"); // TODO Test data dependent.
         }
 
         log("Change column set and ensure still filtered");
@@ -753,9 +754,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(702); // TODO Test data dependent.
-            grid.assertPageTotal(29); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(84, 3, -1); // TODO Test data dependent.
+            grid.assertRowCount(16447); // TODO Test data dependent.
+            grid.assertPageTotal(658); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
         }
 
     }
@@ -1255,11 +1256,23 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
     private void ensureGroupsDeleted(List<String> groups)
     {
+        Boolean isVisible;
+
         List<String> deletable = new ArrayList<>();
         for (String group : groups)
         {
             String subName = group.substring(0, 10);
-            if (isTextPresent(subName))
+
+            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
+            try{
+                isVisible = isElementVisible(Locator.xpath("//div[contains(@class, 'grouplist-view')]//div[contains(@class, 'grouprow')]//div[contains(@title, '" + subName + "')]"));
+            }
+            catch(org.openqa.selenium.NoSuchElementException nse)
+            {
+                isVisible = false;
+            }
+
+            if (isTextPresent(subName) && isVisible)
                 deletable.add(subName);
         }
 
