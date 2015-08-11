@@ -1032,7 +1032,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     {
         cds.viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList(CDSHelper.STUDIES);
+        List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(studyProducts);
     }
 

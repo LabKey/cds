@@ -170,12 +170,13 @@ public class CDSAsserts
         for (String item : axisItems)
         {
             _test.waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+
+            if(CDSHelper.validateCounts)
+            {
+                _test.assertElementVisible(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+            }
         }
 
-        if(CDSHelper.validateCounts)
-        {
-            _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
-        }
     }
 
     public void verifyEmptyLearnAboutStudyPage()
