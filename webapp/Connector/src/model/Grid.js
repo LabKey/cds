@@ -33,9 +33,6 @@ Ext.define('Connector.model.Grid', {
         {name: 'queryName', defaultValue: Connector.studyContext.subjectVisit }
     ],
 
-    plotKeys: {},
-    SQLKeys: {},
-
     statics: {
         addLookupColumns : function(gridModel, keyColumn, columns) {
             var foreignColumns = gridModel.get('foreignColumns');
@@ -168,7 +165,6 @@ Ext.define('Connector.model.Grid', {
         this.callParent([config]);
 
         this.filterMap = {}; // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance
-        this.idMap = {}; // inverse of the filterMap
 
         this.stateReady = false;
         this.viewReady = false;
@@ -201,7 +197,10 @@ Ext.define('Connector.model.Grid', {
                         this.bindMeasures([], [], [], true);
                         this.bindApplicationMeasures(state.getFilters());
                     }
-                    this.requestMetaData();
+
+                    if (this.isActive()) {
+                        this.requestMetaData();
+                    }
 
                 }, this);
             }, this);
@@ -289,7 +288,7 @@ Ext.define('Connector.model.Grid', {
     },
 
     /**
-     * The 'raw' measures the grid recieves are wrapped during processing so they can
+     * The 'raw' measures the grid receives are wrapped during processing so they can
      * be consumed by LABKEY.Query.Visualization.getData.
      * @param {String} measureType
      * @returns {Array}
@@ -303,18 +302,12 @@ Ext.define('Connector.model.Grid', {
             });
         }
         else {
-            Ext.each(this.get('defaultMeasures'), function(m) {
-                measures.push(m.measure);
-            });
-            Ext.each(this.get('plotMeasures'), function(m) {
-                measures.push(m.measure);
-            });
-            Ext.each(this.get('SQLMeasures'), function(m) {
-                measures.push(m.measure);
-            });
-            Ext.each(this.get('measures'), function(m) {
-                measures.push(m.measure);
-            });
+            return Ext.Array.push(
+                Ext.Array.pluck(this.get('defaultMeasures'), 'measure'),
+                Ext.Array.pluck(this.get('plotMeasures'), 'measure'),
+                Ext.Array.pluck(this.get('SQLMeasures'), 'measure'),
+                Ext.Array.pluck(this.get('measures'), 'measure')
+            );
         }
         return measures;
     },
@@ -330,16 +323,14 @@ Ext.define('Connector.model.Grid', {
         //
         // Cross-reference application measures
         //
-        var filters = filterSet;
-
-        var oldKeys = this.plotKeys;
-        var newKeys = {};
-        var oldSQLKeys = this.SQLKeys;
-        var newSQLKeys = {};
+        var filters = filterSet,
+            SQLMeasures = [],
+            plotMeasures = [],
+            defaultMeasureSet = {},
+            queryService = Connector.getService('Query');
 
         // map the default set of grid measures so they
         // are not replicated as 'SQLMeasures'
-        var defaultMeasureSet = {};
         Ext.each(this.getMeasures('defaultMeasures'), function(m) {
             var key = m.alias;
             if (Ext.isObject(m.lookup)) {
@@ -348,22 +339,17 @@ Ext.define('Connector.model.Grid', {
             defaultMeasureSet[key] = true;
         });
 
-        var SQLMeasures = [], plotMeasures = [];
-        var queryService = Connector.getService('Query');
         Ext.each(filters, function(filter) {
             // respect plotted measures
             if (filter.isPlot() && !filter.isGrid()) {
                 var plotMeasureSet = filter.get('plotMeasures');
                 Ext.each(plotMeasureSet, function(pm) {
                     if (Ext.isObject(pm)) {
-                        var p = {
+                        plotMeasures.push({
                             dateOptions: Ext.clone(pm.dateOptions),
                             measure: Ext.clone(pm.measure),
                             time: 'date'
-                        };
-
-                        newKeys[p.measure.alias] = true;
-                        plotMeasures.push(p);
+                        });
                     }
                 }, this);
             }
@@ -371,60 +357,31 @@ Ext.define('Connector.model.Grid', {
                 // For each grid filter find the associated measure
                 var gridFilters = filter.get('gridFilter');
                 Ext.each(gridFilters, function(gf) {
-                    if (!defaultMeasureSet[gf.getColumnName()])
-                    {
+
+                    if (!defaultMeasureSet[gf.getColumnName()]) {
                         var measure = queryService.getMeasure(gf.getColumnName());
                         if (Ext.isDefined(measure)) {
-                            var p = {
+                            SQLMeasures.push({
                                 measure: Ext.clone(measure),
-                                time: 'date'
-                            };
-                            newSQLKeys[p.measure.alias] = true;
-                            SQLMeasures.push(p);
+                                time: 'date',
+                                filterArray: gridFilters
+                            });
+                            return false;
                         }
                     }
+
                 }, this);
             }
         }, this);
 
-        var plotChange = this.isChanged(oldKeys, newKeys);
-        var sqlChange = this.isChanged(oldSQLKeys, newSQLKeys);
-        var change = plotChange || sqlChange;
+        this.set({
+            plotMeasures: plotMeasures,
+            SQLMeasures: SQLMeasures
+        });
 
-        if (plotChange) {
-            this.plotKeys = newKeys;
-            this.set('plotMeasures', plotMeasures);
-        }
-
-        if (sqlChange) {
-            this.SQLKeys = newSQLKeys;
-            this.set('SQLMeasures', SQLMeasures);
-        }
-
-        if (change && !this.isActive()) {
+        if (!this.isActive()) {
             this.activeMeasure = true;
         }
-
-        return change;
-    },
-
-    isChanged : function(oldKeys, newKeys) {
-        var change = false;
-        Ext.iterate(oldKeys, function(k,v) {
-            if (!newKeys[k]) {
-                change = true;
-                return false;
-            }
-        });
-        if (!change) {
-            Ext.iterate(newKeys, function(k,v) {
-                if (!oldKeys[k]) {
-                    change = true;
-                    return false;
-                }
-            });
-        }
-        return change;
     },
 
     applyFilters : function(filterArray, callback, scope) {
@@ -470,7 +427,9 @@ Ext.define('Connector.model.Grid', {
         if (this._ready === true) {
             var filterArray = this.bindFilters(appFilters);
             this.applyFilters(filterArray, function() {
-                if (this.bindApplicationMeasures(appFilters)) {
+                this.bindApplicationMeasures(appFilters);
+
+                if (this.isActive()) {
                     this.requestMetaData();
                 }
             }, this);
@@ -496,12 +455,16 @@ Ext.define('Connector.model.Grid', {
         return filterArray;
     },
 
+    getBaseFilters : function() {
+        return this.get('baseFilterArray');
+    },
+
     getFilterArray : function(includeBaseFilters) {
 
         var _array = this.get('filterArray');
 
-        if (includeBaseFilters) {
-            _array = _array.concat(this.get('baseFilterArray'));
+        if (includeBaseFilters === true) {
+            _array = _array.concat(this.getBaseFilters());
         }
 
         return _array;
@@ -547,9 +510,9 @@ Ext.define('Connector.model.Grid', {
 
         if (!Ext.isEmpty(configs)) {
 
-            var state = Connector.getState();
-            var appFilters = state.getFilters();
-            var newFilters = [], matched = false;
+            var state = Connector.getState(),
+                appFilters = state.getFilters(),
+                newFilters = [], matched = false;
 
             // For each config do one of the following:
             // 1. Replacement, find the record id
@@ -572,7 +535,6 @@ Ext.define('Connector.model.Grid', {
                 state.setFilters(state.getFilters().concat(newFilters));
 
                 this.filterMap = {};
-                this.idMap = {};
 
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
@@ -650,14 +612,11 @@ Ext.define('Connector.model.Grid', {
     addToFilters : function(filter, id) {
         var key = this.getFilterId(filter);
         this.filterMap[key] = id;
-        this.idMap[id] = key;
     },
 
     clearFilter : function(urlParam) {
-        if (this.filterMap[urlParam]) {
-            var id = this.filterMap[urlParam];
+        if (urlParam in this.filterMap) {
             delete this.filterMap[urlParam];
-            delete this.idMap[id];
         }
     },
 
@@ -668,28 +627,17 @@ Ext.define('Connector.model.Grid', {
      * @param all
      */
     onGridFilterRemove : function(view, fieldKey, all) {
-        if (all) {
-            this.removeAllGridFilters();
-        }
-        else {
-            var state = Connector.getState();
-            Ext.iterate(this.filterMap, function(urlParam, id) {
-                if (urlParam.indexOf(fieldKey) > -1) {
-                    state.removeFilter(id, 'Subject');
-                    this.clearFilter(urlParam);
-                }
-            }, this);
-        }
-    },
-
-    removeAllGridFilters : function() {
         var state = Connector.getState();
         Ext.iterate(this.filterMap, function(urlParam, id) {
             state.removeFilter(id, 'Subject');
+            if (!all && urlParam.indexOf(fieldKey) > -1) {
+                this.clearFilter(urlParam);
+            }
         }, this);
 
-        this.filterMap = {};
-        this.idMap = {};
+        if (all) {
+            this.filterMap = {};
+        }
     },
 
     /**

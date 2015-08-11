@@ -102,7 +102,7 @@ Ext.define('Connector.view.Grid', {
         this.on('boxready', model.onViewReady, model, {single: true});
 
         // bind view to model
-        model.on('filterchange', this.onFilterChange, this, {buffer: 200});
+        model.on('filterchange', this.onFilterChange, this, {buffer: 500});
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
 
         // bind view to view
@@ -280,9 +280,11 @@ Ext.define('Connector.view.Grid', {
     onFilterChange : function(model) {
         var grid = this.getGrid(),
             store = grid.getStore();
-        store.filterArray = model.getFilterArray(true);
+
+        store.filterArray = model.getBaseFilters();
         store.load();
-        this.getGrid().getStore().loadPage(1);
+        store.loadPage(1);
+
         this.applyFilterColumnState(grid);
     },
 
@@ -321,11 +323,6 @@ Ext.define('Connector.view.Grid', {
 
         if (Ext.isString(columnName)) {
             var fields = this.getModel().get('metadata').metaData.fields;
-
-            // The proxy will have the most complete metadata -- getData API does not return lookup info
-            if (this.grid && this.grid.getStore().proxy) {
-                fields = this.grid.getStore().proxy.reader.getFields();
-            }
 
             if (!Ext.isEmpty(fields)) {
                 Ext.each(fields, function(field) {
@@ -452,14 +449,15 @@ Ext.define('Connector.view.Grid', {
     },
 
     initGridStore : function() {
-        var model = this.getModel();
-        var maxRows = Connector.model.Grid.getMaxRows();
+
+        var model = this.getModel(),
+            maxRows = Connector.model.Grid.getMaxRows();
 
         var config = {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
             columns: model.get('columnSet'),
-            filterArray: model.getFilterArray(true),
+            filterArray: model.getBaseFilters(),
             maxRows: maxRows,
             pageSize: maxRows,
             remoteSort: true
@@ -615,7 +613,13 @@ Ext.define('Connector.view.Grid', {
             var metadata = this.getColumnMetadata(column.dataIndex);
 
             if (Ext.isDefined(metadata)) {
-                var config = {
+
+                var clzz = 'Connector.window.Filter';
+                if (metadata.jsonType === 'string') {
+                    clzz = 'Connector.window.Facet';
+                }
+
+                Ext.create(clzz, {
                     col: column,
                     columnMetadata: metadata,
                     dataView: this,
@@ -632,14 +636,7 @@ Ext.define('Connector.view.Grid', {
                         scope: this
                     },
                     scope: this
-                };
-
-                var clzz = 'Connector.window.Filter';
-                if (metadata.jsonType === 'string') {
-                    clzz = 'Connector.window.Facet';
-                }
-
-                Ext.create(clzz, config);
+                });
             }
         }
         else {
