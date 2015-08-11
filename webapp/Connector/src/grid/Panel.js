@@ -15,6 +15,10 @@ Ext.define('Connector.grid.Panel', {
      */
     sealedColumns: true,
 
+    enableColumnMove: false,
+
+    allowLookups: true,
+
     cls: 'connector-grid',
 
     config: {
@@ -22,24 +26,10 @@ Ext.define('Connector.grid.Panel', {
         editable: false, // If true, must reconcile with remoteSort
         pageSize: Connector.model.Grid.getMaxRows(),
         autoSave: false,
-        multiSelect: true,
-        clicksToEdit: 2,
-        editingPluginId: 'editingplugin'
+        multiSelect: true
     },
 
     model: undefined, // instance of Connector.model.Grid
-
-    // A special group of recognized columns
-    studyColumns: {
-        subjectid: true,
-        study: true,
-        startdate: true,
-        visit: true,
-        visitdate: true,
-        days: true,
-        weeks: true,
-        months: true
-    },
 
     /*
      * The intent of these options is to infer column widths based on the data being shown
@@ -113,7 +103,7 @@ Ext.define('Connector.grid.Panel', {
         var columns = this.getColumnsConfig();
 
         //TODO: make a map of columnNames -> positions like Ext3?
-        this.fireEvent("columnmodelcustomize", this, columns);
+        this.fireEvent('columnmodelcustomize', this, columns);
 
         this.columns = columns;
 
@@ -182,7 +172,7 @@ Ext.define('Connector.grid.Panel', {
             }
 
             // listen for changes to the underlying data in lookup store
-            if (Ext.isObject(meta.lookup) && meta.lookups !== false && meta.lookup.isPublic === true) {
+            if (this.allowLookups === true && Ext.isObject(meta.lookup) && meta.lookups !== false && meta.lookup.isPublic === true) {
                 lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
 
                 // this causes the whole grid to rerender, which is very expensive.  better solution?
@@ -193,12 +183,11 @@ Ext.define('Connector.grid.Panel', {
 
         }, this);
 
+        var defaultColumns = Connector.getService('Query').getDefaultGridAliases();
+
         // Split columns into groups
         Ext.each(columns, function(col) {
-            var dataIndex = col.dataIndex.split('_');
-            var colName = dataIndex[dataIndex.length-1].toLowerCase();
-
-            if (this.studyColumns[colName]) {
+            if (defaultColumns[col.dataIndex]) {
                 studyTime.push(col);
             }
             else if (col.plotted === true) {
@@ -263,13 +252,5 @@ Ext.define('Connector.grid.Panel', {
 
     getColumnById : function(colName) {
         return this.getColumnModel().getColumnById(colName);
-    },
-
-    onCommitException : function(store, message /*, response, operation */) {
-        var msg = message || 'There was an error with the submission';
-
-        if (!this.supressErrorAlert) {
-            Ext.Msg.alert('Error', msg);
-        }
     }
 });

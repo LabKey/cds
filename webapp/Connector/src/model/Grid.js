@@ -54,8 +54,8 @@ Ext.define('Connector.model.Grid', {
             var filter = undefined;
 
             if (filterState.hasFilters) {
-                var subjectColumn = gridModel.get('columnSet')[0];
-                var subjects = filterState.subjects;
+                var subjectColumn = Connector.getService('Query').getSubjectColumnAlias(),
+                    subjects = filterState.subjects;
                 filter = LABKEY.Filter.create(subjectColumn, subjects.join(';'), LABKEY.Filter.Types.IN);
             }
 
@@ -83,38 +83,13 @@ Ext.define('Connector.model.Grid', {
          * @param gridModel
          * @returns {Array}
          */
-        getColumnList : function(gridModel) {
+        generateColumnSet : function(gridModel) {
 
-            // NOTE: default values must come first for getData API call to join correctly
-            var measures = gridModel.getMeasures();
-            var metadata = gridModel.get('metadata');
+            var columns = Connector.getService('Query').getDefaultGridAliases(true /* asArray */),
+                measures = gridModel.getMeasures();
 
-            var colMeasure = {};
             Ext.each(measures, function(measure) {
-
-                if (metadata.measureToColumn[measure.alias]) {
-                    colMeasure[measure.alias] = measure;
-                }
-                else if (metadata.measureToColumn[measure.name]) {
-                    if (Ext.isDefined(measure.interval)) {
-                        colMeasure[measure.interval] = measure;
-                    }
-                    else {
-                        colMeasure[metadata.measureToColumn[measure.name]] = measure;
-                    }
-                }
-            });
-
-            var columns = [];
-            var foreignColumns = gridModel.get('foreignColumns');
-
-            Ext.each(metadata.metaData.fields, function(column) {
-                if (colMeasure[column.name]) {
-                    columns.push(column.fieldKey);
-                }
-                if (foreignColumns[column.fieldKeyPath]) {
-                    Connector.model.Grid.addLookupColumns(gridModel, column, columns);
-                }
+                columns.push(measure.alias);
             });
 
             return columns;
@@ -192,7 +167,6 @@ Ext.define('Connector.model.Grid', {
 
         this.callParent([config]);
 
-        this.flights = 0;
         this.filterMap = {}; // 'key' is column fieldKey, 'value' is Id of Connector.model.Filter instance
         this.idMap = {}; // inverse of the filterMap
 
@@ -541,13 +515,13 @@ Ext.define('Connector.model.Grid', {
      */
     onGridFilterChange : function(view, boundColumn, filterArray) {
 
-        this.flights++;
         var configs = [],
             bins = {},
             keys = [],
             fa = filterArray,
             schema = this.get('schemaName'),
             query = this.get('queryName'),
+            queryService = Connector.getService('Query'),
             colname, f;
 
         for (f=0; f < fa.length; f++) {
@@ -564,9 +538,8 @@ Ext.define('Connector.model.Grid', {
             configs.push({
                 schemaName: schema,
                 queryName: query,
-                flight: this.flights,
                 configId: bins[keys[f]][0].getURLParameterName(),
-                column: this.get('columnSet')[0], // subject column?
+                column: queryService.getSubjectColumnAlias(),
                 filterArray: bins[keys[f]],
                 scope: this
             });
@@ -746,7 +719,6 @@ Ext.define('Connector.model.Grid', {
 
     /**
      * Called whenever the query metadata has been changed.
-     * @param gridModel
      * @param metadata
      */
     onMetaData : function(metadata) {
@@ -761,7 +733,7 @@ Ext.define('Connector.model.Grid', {
         this.set({
             schemaName: metadata.schemaName,
             queryName: metadata.queryName,
-            columnSet: Connector.model.Grid.getColumnList(this)
+            columnSet: Connector.model.Grid.generateColumnSet(this)
         });
 
         this.applyFilters(this.get('filterArray'));

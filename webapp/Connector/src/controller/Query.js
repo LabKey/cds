@@ -98,61 +98,86 @@ Ext.define('Connector.controller.Query', {
         }
     },
 
+    getSubjectColumnAlias : function() {
+        return 'study_GridBase_SubjectId';
+    },
+
+    /**
+     *
+     * @param {boolean} [asArray=false]
+     */
+    getDefaultGridAliases : function(asArray) {
+
+        var keys = [
+            this.getSubjectColumnAlias(),
+            'study_GridBase_Study',
+            'study_GridBase_Treatment Summary',
+            'study_GridBase_SubjectVisit'
+        ];
+
+        var result;
+        if (asArray === true) {
+            result = keys;
+        }
+        else {
+            result = {};
+            for (var i=0; i < keys.length; i++) {
+                result[keys[i]] = i+1; // position 1-based for truthy
+            }
+        }
+
+        return result;
+    },
+
     // This supplies the set of default columns available in the grid
     // to the provided callback as an array of Measure descriptors
     getDefaultGridMeasures : function(callback, scope) {
         if (!Ext.isDefined(this._gridMeasures)) {
 
+            this._gridMeasures = [];
+
+            var schema = 'study',
+                query = 'GridBase',
+                defaultAliases = this.getDefaultGridAliases();
+
             //
             // request the appropriate query details
             //
             LABKEY.Query.getQueryDetails({
-                schemaName: Connector.studyContext.schemaName,
-                queryName: Connector.studyContext.subjectVisit,
-                fields: [
-                    Connector.studyContext.subjectColumn,
-                    Connector.studyContext.subjectColumn + '/Study',
-                    Connector.studyContext.subjectColumn + '/Study/Label',
-                    'Visit',
-                    'Visit/Label'
-                ],
+                schemaName: schema,
+                queryName: query,
                 success : function(queryDetails) {
-                    var columns = queryDetails.columns;
-                    this._gridMeasures = [undefined, undefined, undefined]; // order matters
+                    var columns = queryDetails.defaultView.columns,
+                        me = this;
 
                     function mockUpMeasure(measure) {
                         Ext.apply(measure, {
-                            schemaName: Connector.studyContext.schemaName,
-                            queryName: Connector.studyContext.subjectVisit
+                            schemaName: schema,
+                            queryName: query
                         });
 
                         // Add these into the MEASURE_STORE
-                        measure['alias'] = LABKEY.MeasureUtil.getAlias(measure);
-                        measure['variableType'] = 'GRID_DEFAULT';
-                        this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
+                        measure.alias = LABKEY.MeasureUtil.getAlias(measure);
+                        measure.variableType = 'GRID_DEFAULT';
+
+                        if (measure.alias in defaultAliases) {
+                            var m = new LABKEY.Query.Visualization.Measure(measure);
+                            me.addMeasure(m);
+                            return m;
+                        }
                     }
 
                     Ext.each(columns, function(col) {
-                        if (col.name === Connector.studyContext.subjectColumn) {
-                            this._gridMeasures[0] = col;
-                        }
-                        else if (col.name === Connector.studyContext.subjectColumn + '/Study') {
-                            this._gridMeasures[1] = col;
-                        }
-                        else if (col.name === Connector.studyContext.subjectColumn + '/Study/Label') {
-                            mockUpMeasure.call(this, col);
-                        }
-                        else if (col.name === 'Visit') {
-                            this._gridMeasures[2] = col;
-                        }
-                    }, this);
+                        var visMeasure = mockUpMeasure.call(this, col);
 
-                    Ext.each(this._gridMeasures, function(measure) {
-                        mockUpMeasure.call(this, measure);
+                        if (visMeasure && visMeasure.hidden !== true) {
+                            this._gridMeasures.push(col);
+                        }
+
                     }, this);
 
                     if (Ext.isFunction(callback)) {
-                        callback.call(scope, this._gridMeasures);
+                        callback.call(scope, me._gridMeasures);
                     }
                 },
                 scope: this
@@ -339,18 +364,19 @@ Ext.define('Connector.controller.Query', {
 
     getDataSorts : function() {
         if (!this._dataSorts) {
+            // TODO: Source these differently? This is requiring us to split these out
             this._dataSorts = [{
-                name: 'Container',
-                schemaName: Connector.studyContext.schemaName,
-                queryName: Connector.studyContext.subjectVisit
+                schemaName: 'study',
+                queryName: 'GridBase',
+                name: 'Container'
             },{
-                name: Connector.studyContext.subjectColumn,
-                schemaName: Connector.studyContext.schemaName,
-                queryName: Connector.studyContext.subjectVisit
+                schemaName: 'study',
+                queryName: 'GridBase',
+                name: 'SubjectId'
             },{
-                name: 'Day',
-                schemaName: Connector.studyContext.schemaName,
-                queryName: Connector.studyContext.subjectVisit
+                schemaName: 'study',
+                queryName: 'GridBase',
+                name: 'SubjectVisit'
             }];
         }
 
@@ -373,6 +399,7 @@ Ext.define('Connector.controller.Query', {
     getData : function(measures, success, failure, scope) {
 
         LABKEY.Query.Visualization.getData({
+            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
             sorts: this.getDataSorts(),
             metaDataOnly: true,

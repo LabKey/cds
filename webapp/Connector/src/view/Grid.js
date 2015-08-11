@@ -168,7 +168,7 @@ Ext.define('Connector.view.Grid', {
             //
             var valid = true;
 
-            if (this.getModel().get('columnSet').length > 3) {
+            if (this.getModel().get('columnSet').length > 4) {
                 valid = false;
             }
 
@@ -178,7 +178,7 @@ Ext.define('Connector.view.Grid', {
                     cls: 'nogridmsg',
                     autoEl: {
                         tag: 'div',
-                        style: 'position: absolute; left: 450px; top: 47%;',
+                        style: 'position: absolute; left: 600px; top: 47%;',
                         children: [{
                             tag: 'h1',
                             html: 'Add columns about your filtered subjects.'
