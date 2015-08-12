@@ -17,12 +17,14 @@ abstract public class AbstractPopulateTask extends TaskRefTaskImpl
 {
     Container project;
     User user;
+    PipelineJob job;
 
     @Override
     public RecordedActionSet run(@NotNull PipelineJob job) throws PipelineJobException
     {
         project = containerUser.getContainer();
         user = containerUser.getUser();
+        this.job = job;
 
         if (project.isProject() && project.getFolderType().equals(FolderTypeManager.get().getFolderType(StudyService.DATASPACE_FOLDERTYPE_NAME)))
         {

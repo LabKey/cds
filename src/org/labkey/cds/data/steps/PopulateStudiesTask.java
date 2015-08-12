@@ -8,6 +8,7 @@ import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.etl.ListofMapsDataIterator;
 import org.labkey.api.module.FolderType;
 import org.labkey.api.module.FolderTypeManager;
 import org.labkey.api.pipeline.PipelineJobException;
@@ -54,6 +55,9 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         // Import Study metadata
         for (String studyName : studies.keySet())
         {
+            if (job.checkInterrupted())
+                return;
+
             if (studies.containsKey(studyName))
             {
                 Container c = ContainerManager.getChild(project, studyName);
@@ -66,9 +70,11 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                     TableInfo studyTable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
                     QueryUpdateService qud = studyTable.getUpdateService();
 
-                    if (null != qud)
+                    if (null != qud && !rows.isEmpty())
                     {
-                        qud.insertRows(user, c, rows, errors, null, null);
+                        ListofMapsDataIterator maps = new ListofMapsDataIterator(rows.get(0).keySet(), rows);
+
+                        qud.importRows(user, c, maps, errors, null, null);
 
                         if (errors.hasErrors())
                         {
