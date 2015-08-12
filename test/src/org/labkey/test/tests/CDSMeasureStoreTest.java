@@ -1,22 +1,23 @@
 package org.labkey.test.tests;
 
+import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
-import org.labkey.test.TestTimeoutException;
+import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.DemoMeasureStorePage;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.UIContainerHelper;
+import org.labkey.test.util.ReadOnlyTest;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,16 +26,14 @@ import java.util.List;
  */
 
 @Category({CDS.class})
-public class CDSMeasureStoreTest extends BaseWebDriverTest implements PostgresOnlyTest
+public class CDSMeasureStoreTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
 {
-    private static final String PROJECT_NAME = "CDSTest Project";
-    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     @Nullable
     @Override
     protected String getProjectName()
     {
-        return PROJECT_NAME;
+        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
@@ -49,32 +48,45 @@ public class CDSMeasureStoreTest extends BaseWebDriverTest implements PostgresOn
         return Arrays.asList("CDS");
     }
 
-    @BeforeClass
-    @LogMethod
-    public static void doSetup() throws Exception
+    public void doSetup() throws Exception
     {
         CDSMeasureStoreTest initTest = (CDSMeasureStoreTest)getCurrentTest();
-
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
     }
 
-    @Override
-    public void doCleanup(boolean afterTest) throws TestTimeoutException
+    @Override @LogMethod
+    public boolean needsSetup()
     {
+        boolean callDoCleanUp = false;
 
-        if(!CDSHelper.debugTest)
+        try
         {
-            _containerHelper = new UIContainerHelper(this);
-            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
+            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
+            {
+                callDoCleanUp = false;
+                doSetup();
+            }
+
+        }
+        catch (IOException fail)
+        {
+            callDoCleanUp =  true;
+        }
+        catch(java.lang.Exception ex)
+        {
+            callDoCleanUp = true;
         }
 
+        // Returning true will cause BaseWebDriver to call it's cleanup method.
+        return callDoCleanUp;
     }
+
 
     @Test
     public void testDemoMeasureStore()
     {
-        beginAt("/cds/" + PROJECT_NAME + "/demoMeasureStore.view");
+        beginAt("/cds/" + CDSHelper.CDS_PROJECT_NAME + "/demoMeasureStore.view");
 
         verifyPlot(new Plot(
             "No X-Axis Measure",
