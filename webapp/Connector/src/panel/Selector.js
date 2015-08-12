@@ -80,6 +80,7 @@ Ext.define('Connector.panel.Selector', {
         });
         this.measureStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Measure',
+            groupField: 'recommendedVariableGrouper',
             sorters: [
                 {property: 'queryLabel'},
                 {property: 'isRecommendedVariable', direction: 'DESC'},
@@ -304,11 +305,13 @@ Ext.define('Connector.panel.Selector', {
         return this.sourcePane;
     },
 
+    //runs this function when a source is selected
     onSourceSelect : function(rowModel, sourceRecord) {
 
         var view = rowModel.view;
         var me = this;
         me.hideLearnMessage('Source');
+        //clears any filter before the source is selected
         this.measureStore.clearFilter();
 
         view.getEl().slideOut('l', {
@@ -389,30 +392,31 @@ Ext.define('Connector.panel.Selector', {
                 flex: 1,
                 sortable: false,
                 menuDisabled: true
+            }],
+            //adds the grouping feature onto the panel
+            requires: ['Ext.grid.feature.Grouping'],
+            features: [{
+                ftype: 'grouping',
+                id: 'measuresGridGrouping',
+                collapsible: false,
+                groupHeaderTpl: new Ext.XTemplate(
+                    '<div class="groupheader groupheaderline" style="padding: 3px 6px 4px 6px; color: #808080;">',
+                    '{groupValue:this.renderHeader}',
+                    '</div>',
+                    {
+                        renderHeader : function(value) {
+                            var hdr = value;
+                            if (value === '0') {
+                                hdr = 'Recommended';
+                            }
+                            else if (value === '1') {
+                                hdr = 'Additional';
+                            }
+                            return hdr;
+                        }
+                    }
+                )
             }]
-            //requires: ['Ext.grid.feature.Grouping'],
-            //features: [{
-            //    ftype: 'grouping',
-            //    id: 'measuresGridGrouping',
-            //    collapsible: false,
-            //    groupHeaderTpl: new Ext.XTemplate(
-            //        '<div class="groupheader groupheaderline" style="padding: 3px 6px 4px 6px; color: #808080;">',
-            //        '{groupValue:this.renderHeader}',
-            //        '</div>',
-            //        {
-            //            renderHeader : function(value) {
-            //                var hdr = value;
-            //                if (value === '0') {
-            //                    hdr = 'Recommended';
-            //                }
-            //                else if (value === '1') {
-            //                    hdr = 'Additional';
-            //                }
-            //                return hdr;
-            //            }
-            //        }
-            //    )
-            //}]
         });
 
         return Ext.create('Ext.grid.Panel', config);
@@ -482,15 +486,17 @@ Ext.define('Connector.panel.Selector', {
      */
     showMeasures : function(source, activeMeasure) {
 
+        //gets the variableType of the current source
         var key = source.get('key'),
             variableType = source.get('variableType'),
             filter;
 
+        //checks whether the current selection is the current column
         if (this.supportSelectionGroup === true && variableType === 'SELECTION') {
             var aliases = {};
             Ext.each(this.selectedMeasures, function(measure) {
                 if (Ext.isDefined(measure.get('alias'))) {
-                    aliases[measure.get('alias')] = true;
+                    aliases[measure.get('alias')] = true; //adds the selected measure to the current visible measures
                 }
             });
 
@@ -502,10 +508,6 @@ Ext.define('Connector.panel.Selector', {
                 if (this.measureStore.findExact('alias', measure.get('alias')) > -1)
                     this.getMeasureSelectionGrid().getSelectionModel().select(measure, true, true);
             }, this);
-
-            //this.groupingFeature.enable();
-            //this.measureStore.groupers.first().property = "queryLabel";
-            //this.measureStore.group();
         }
         else {
             filter = function(measure) {
@@ -513,6 +515,7 @@ Ext.define('Connector.panel.Selector', {
             };
         }
 
+        //filters results by the filters applied above
         this.measureStore.filterBy(filter);
 
         this.toggleDisplay('measure');
@@ -544,20 +547,55 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
+        //gets the current model if multiselect isnt active
         var selModel = this.getMeasurePane().getSelectionModel();
-        if (!this.multiSelect) {
-            if (activeMeasure) {
-                if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
+        if (!this.multiSelect)
+        {
+            if (activeMeasure)
+            {
+                if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id)
+                {
                     // already have selected measure, just need to show the advanced options pane
                     this.slideAdvancedOptionsPane();
                 }
-                else {
+                else
+                {
                     Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
                 }
             }
-            else {
+            else
+            {
                 // default to selecting the first variable for the given source
                 Ext.defer(function() { selModel.select(0); }, 100, this);
+            }
+        }
+        //groups the selectoions otherwise
+        else
+        {
+            var variableType = source.get('variableType');
+            if (this.groupingFeature)
+            {
+                if (this.supportSelectionGroup === true && variableType === 'SELECTION')
+                {
+                    this.groupingFeature.enable();
+                    this.measureStore.groupers.first().property = "queryLabel";
+                    this.measureStore.group();
+                }
+                else
+                {
+                    // enable or disable the measure grid grouping feature based on the presence of a recommended variable
+                    if (this.measureStore.find('isRecommendedVariable', true) > -1)
+                    {
+                        this.groupingFeature.enable();
+                        this.measureStore.groupers.first().property = "recommendedVariableGrouper";
+                        this.measureStore.group();
+                        this.measureStore.sort('recommendedVariableGrouper', 'ASC');
+                    }
+                    else
+                    {
+                        this.groupingFeature.disable();
+                    }
+                }
             }
         }
     },
