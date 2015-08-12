@@ -30,6 +30,8 @@ Ext.define('Connector.panel.Selector', {
 
     multiSelect: false,
     selectedMeasures: undefined,
+    supportSelectionGroup: false,
+    supportSessionGroup: false,
 
     testCls: undefined,
 
@@ -72,6 +74,7 @@ Ext.define('Connector.panel.Selector', {
                         return value || ' ';
                     }
                 },
+                {property: 'sortOrder'},
                 {property: 'queryLabel'}
             ]
         });
@@ -131,6 +134,27 @@ Ext.define('Connector.panel.Selector', {
     loadSourcesAndMeasures : function() {
 
         var data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
+        if (this.supportSelectionGroup === true && this.multiSelect) {
+            data.sources.push({
+                sortOrder: -100,
+                schemaName: '_current',
+                name: '',
+                queryName: null,
+                queryLabel: 'Current columns',
+                variableType: 'SELECTION'
+            });
+        }
+
+        if (this.supportSessionGroup === true && this.multiSelect) {
+            data.sources.push({
+                sortOrder: -99,
+                schemaName: '_session',
+                name: '',
+                queryName: null,
+                queryLabel: 'All variables from this session',
+                variableType: 'SESSION'
+            });
+        }
 
         this.sourcesStore.loadRawData(data.sources);
         this.measureStore.loadRawData(data.measures);
@@ -202,7 +226,7 @@ Ext.define('Connector.panel.Selector', {
         // TODO: cache these source counts to use between selectors and invalidate the cache on filter/selection change
         // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
         var sources = this.sourcesStore.queryBy(function(record) {
-            return record.get('queryName') != 'SubjectGroupMap';
+            return record.get('queryName') != null && record.get('queryName') != 'SubjectGroupMap';
         }).items;
 
         this.queryService.getSourceCounts(sources, function(s, counts) {
@@ -262,22 +286,7 @@ Ext.define('Connector.panel.Selector', {
                     }
                 ),
                 listeners: {
-                    select: function(selModel, source) {
-                        var view = selModel.view;
-                        var me = this;
-
-                        me.hideLearnMessage('Source');
-
-                        view.getEl().slideOut('l', {
-                            duration: 250,
-                            callback: function() {
-                                //hide learn message called twice because of a timing bug with automated tests
-                                me.hideLearnMessage('Source');
-                                me.showMeasures(source);
-                                selModel.clearSelections();
-                            }
-                        });
-                    },
+                    select: this.onSourceSelect,
                     itemmouseenter: function(view, record, item) {
                         var title = record.get('category') == 'Assays' ? record.get('queryName') : record.get('queryLabel');
                         this.showLearnMessage(item, title, record.get('description'), 'Source');
@@ -295,6 +304,24 @@ Ext.define('Connector.panel.Selector', {
         return this.sourcePane;
     },
 
+    onSourceSelect : function(rowModel, sourceRecord) {
+
+        var view = rowModel.view;
+        var me = this;
+        me.hideLearnMessage('Source');
+        this.measureStore.clearFilter();
+
+        view.getEl().slideOut('l', {
+            duration: 250,
+            callback: function() {
+                //hide learn message called twice because of a timing bug with automated tests
+                me.hideLearnMessage('Source');
+                me.showMeasures(sourceRecord);
+                rowModel.clearSelections();
+            }
+        });
+    },
+
     showSources : function() {
         this.toggleDisplay('source');
 
@@ -310,6 +337,7 @@ Ext.define('Connector.panel.Selector', {
         if (!this.measurePane) {
             if (this.multiSelect) {
                 this.measurePane = this.getMeasureSelectionGrid();
+                this.groupingFeature = this.getMeasureSelectionGrid().view.getFeature('measuresGridGrouping');
             }
             else {
                 this.measurePane = this.getMeasureSelectionView();
@@ -329,7 +357,7 @@ Ext.define('Connector.panel.Selector', {
             autoScroll: true,
             store: this.measureStore,
             listeners: {
-                select: this.selectMeasure,
+                select: this.onMeasureSelect,
                 deselect: this.deselectMeasure,
                 itemmouseenter: function(view, record, item) {
                     this.showLearnMessage(item, record.get('label'), record.get('description'), 'Measure');
@@ -346,6 +374,7 @@ Ext.define('Connector.panel.Selector', {
         var config = Ext.apply(this.getBaseMeasureSelectionConfig(), {
             cls : 'content measuresgrid',
             enableColumnResize: false,
+            enableColumnHide: false,
             bubbleEvents : ['viewready'],
             viewConfig : { stripeRows : false },
             multiSelect: true,
@@ -366,7 +395,7 @@ Ext.define('Connector.panel.Selector', {
             //    ftype: 'grouping',
             //    id: 'measuresGridGrouping',
             //    collapsible: false,
-            //    groupHeaderTpl: new Ext4.XTemplate(
+            //    groupHeaderTpl: new Ext.XTemplate(
             //        '<div class="groupheader groupheaderline" style="padding: 3px 6px 4px 6px; color: #808080;">',
             //        '{groupValue:this.renderHeader}',
             //        '</div>',
@@ -453,10 +482,38 @@ Ext.define('Connector.panel.Selector', {
      */
     showMeasures : function(source, activeMeasure) {
 
-        var key = source.get('key');
-        this.measureStore.filterBy(function(measure) {
-            return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
-        });
+        var key = source.get('key'),
+            variableType = source.get('variableType'),
+            filter;
+
+        if (this.supportSelectionGroup === true && variableType === 'SELECTION') {
+            var aliases = {};
+            Ext.each(this.selectedMeasures, function(measure) {
+                if (Ext.isDefined(measure.get('alias'))) {
+                    aliases[measure.get('alias')] = true;
+                }
+            });
+
+            filter = function(measure) {
+                return measure.get('alias') in aliases;
+            };
+
+            Ext.each(this.selectedMeasures, function(measure) {
+                if (this.measureStore.findExact('alias', measure.get('alias')) > -1)
+                    this.getMeasureSelectionGrid().getSelectionModel().select(measure, true, true);
+            }, this);
+
+            //this.groupingFeature.enable();
+            //this.measureStore.groupers.first().property = "queryLabel";
+            //this.measureStore.group();
+        }
+        else {
+            filter = function(measure) {
+                return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
+            };
+        }
+
+        this.measureStore.filterBy(filter);
 
         this.toggleDisplay('measure');
 
@@ -1016,7 +1073,7 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
-    selectMeasure : function(selectionCmp, measure) {
+    onMeasureSelect : function(selectionCmp, measure) {
         if (!this.multiSelect) {
             // issue 23866: Persisted advanced option selections when changing variables within the same source
             if (this.initialized) {
@@ -1041,6 +1098,10 @@ Ext.define('Connector.panel.Selector', {
                 this.selectedMeasures.splice(index, 1);
             }
         }
+    },
+
+    getSelectedRecords : function() {
+        return this.selectedMeasures;
     },
 
     getSelectedRecordIndex : function(measure) {
