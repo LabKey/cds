@@ -201,9 +201,10 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     createAllCheckboxCmp : function(measure) {
         return Ext.create('Ext.form.field.Checkbox', {
-            cls: 'checkbox2 col-check',
             name: measure.get('alias') + '-checkall',
             boxLabel: 'All',
+            cls: 'checkbox2 col-check',
+            boxLabelAttrTpl: 'test-data-value=' + measure.get('name') + '-all',
             fieldAlias: measure.get('alias'),
             listeners: {
                 scope: this,
@@ -222,9 +223,10 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     createCheckboxCmp : function(record, fields, index, value, addCls) {
         var checkbox = Ext.create('Ext.form.field.Checkbox', {
-            cls: 'checkbox2 col-check ' + addCls,
             name: fields[index] + '-check',
             boxLabel: record.get(fields[index]) || '[Blank]',
+            cls: 'checkbox2 col-check ' + addCls,
+            boxLabelAttrTpl: 'test-data-value=' + fields[i] + '-' + value.replace(/\|/g, '-').replace(/ /g, '_'),
             parentFieldAlias: index > 0 ? fields[index - 1] : null,
             fieldAlias: fields[index],
             fieldValue: record.get(fields[index]),
