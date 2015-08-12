@@ -237,6 +237,22 @@ Ext.define('Connector.controller.Query', {
         return undefined;
     },
 
+    getVariables : function(schema) {
+
+        var measures = [],
+            _schema = schema.toLowerCase();
+
+        Ext.each(this.MEASURE_STORE.getRange(), function(measure) {
+            var schemaName = measure.get('schemaName');
+            if (Ext.isString(schemaName) && schemaName.toLowerCase() === _schema &&
+                !measure.get('hidden')) {
+                measures.push(measure.copy());
+            }
+        });
+
+        return measures;
+    },
+
     getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
         if (Ext.isDefined(measureSet))
         {

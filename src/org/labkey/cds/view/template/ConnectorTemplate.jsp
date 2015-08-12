@@ -264,6 +264,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Dataset.js"></script>
@@ -272,6 +273,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
@@ -294,6 +296,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/VariableList.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
 

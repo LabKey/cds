@@ -12,6 +12,7 @@ Ext.define('Connector.app.model.Assay', {
     fields: [
         {name: 'assay_identifier'},
         {name: 'Container'},
+        {name: 'assay_type'},
         {name: 'assay_label'},
         {name: 'assay_short_name'},
         {name: 'assay_category'},

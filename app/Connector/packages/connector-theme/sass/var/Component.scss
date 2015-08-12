@@ -33,7 +33,7 @@ $heat-scale-6: #EEEEEE;
 $title: 26px;
 $headline: 16px;
 $pageLeftPadding: 24px;
-$sectionTopPadding: 48px;
+$sectionTopPadding: 24px;
 
 $bodycaps-font : Arial;
 $info-font : Arial, sans-serif;
@@ -129,13 +129,6 @@ $tip-body-color: $info-color;
   span {
     color: $dark-color;
   }
-}
-
-@mixin sectionPaddingTop {
-  padding-top: $sectionTopPadding;
-}
-@mixin pagePaddingLeft {
-  padding-left: $pageLeftPadding;
 }
 
 @mixin unselectable {
@@ -289,11 +282,8 @@ svg a {
 }
 
 .educational-titlepanel {
-  padding-bottom: 34px;
-  padding-top: 31px;
+  padding: 31px 0 34px $pageLeftPadding;
   color: $black;
-
-  @include pagePaddingLeft;
 
   h1 {
     font-size: 26px!important;

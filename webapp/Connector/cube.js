@@ -342,6 +342,19 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Contact information'
                         }
                     }]]
+                },{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'variablelist',
+                        staticData: {
+                            title: 'Assay Variables'
+                        }
+                    }]]
+                },{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'assayantigenlist'
+                    }]]
                 }]
             }]
         },

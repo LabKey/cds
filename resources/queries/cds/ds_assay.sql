@@ -10,5 +10,6 @@ SELECT
   assay_description,
   assay_method_description,
   assay_endpoint_description,
-  assay_endpoint_statistical_analysis
+  assay_endpoint_statistical_analysis,
+  assay_type
  FROM cds.import_assay;

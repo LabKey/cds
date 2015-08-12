@@ -14,12 +14,14 @@ Ext.define('Connector.Application', {
         'Connector.app.model.Site',
         'Connector.app.model.Study',
         'Connector.app.model.StudyProducts',
+        'Connector.app.model.VariableList',
 
         'Connector.app.store.Assay',
         'Connector.app.store.Labs',
         'Connector.app.store.Site',
         'Connector.app.store.Study',
         'Connector.app.store.StudyProducts',
+        'Connector.app.store.VariableList',
 
         'Connector.app.view.Assay',
         'Connector.app.view.Labs',
