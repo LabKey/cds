@@ -76,7 +76,7 @@ Ext.define('Animation', {
                     y: y,
                     opacity: 0.2
                 },
-                duration: 1000, // Issue: 15220
+                duration: 700, // Issue: 15220
                 listeners : {
                     afteranimate : function() {
                         Ext.removeNode(xdom.dom);

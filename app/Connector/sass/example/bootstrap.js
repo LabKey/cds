@@ -108,6 +108,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTagMultiUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.store.VisitTagSingleUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
+  "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
   "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
@@ -296,6 +297,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.VisitTagMultiUse": [],
   "Connector.store.VisitTagSingleUse": [],
   "Connector.types.Filter": [],
+  "Connector.utility.Chart": [
+    "ChartUtils"
+  ],
   "Connector.view.About": [],
   "Connector.view.Chart": [],
   "Connector.view.DetailStatus": [],
@@ -1345,6 +1349,7 @@ Ext.ClassManager.addNameAliasMappings({
     "store.visittagsingle"
   ],
   "Connector.types.Filter": [],
+  "Connector.utility.Chart": [],
   "Connector.view.About": [
     "widget.about"
   ],

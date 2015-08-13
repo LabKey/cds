@@ -39,7 +39,6 @@ Ext.define('Connector.view.InfoPane', {
 
         var btnId = Ext.id();
         var model = this.getModel();
-        var filterBased = model.isFilterBased();
 
         // If the model does not provide a title, use the panes default displayTitle
         if (Ext.isString(model.get('title')) && model.get('title').length == 0) {
@@ -101,7 +100,6 @@ Ext.define('Connector.view.InfoPane', {
                     vector: 21,
                     width: 21,
                     margin: '20 0 0 20',
-                    hidden: filterBased,
                     menu: {
                         xtype: 'menu',
                         autoShow: true,
@@ -245,7 +243,7 @@ Ext.define('Connector.view.InfoPane', {
                         '{name:this.renderHeader}', // 'name' is actually the value of the groupField
                         {
                             renderHeader: function(v) {
-                                return v ? 'Has data in current selection' : 'No data in current selection';
+                                return v ? 'Has data in active filters' : 'No data in active filters';
                             }
                         }
                 )
@@ -288,12 +286,20 @@ Ext.define('Connector.view.InfoPane', {
             items: ['->',
                 {
                     id: 'filtertaskbtn',
-                    text: model.isFilterBased() ? 'update' : 'filter',
+                    text: model.isFilterBased() ? 'Update' : 'Filter',
                     cls: 'filterinfoaction', // tests
                     handler: this.onUpdate,
+                    listeners: {
+                        afterrender: function(btn) {
+                            this.getModel().on('change', function(model) {
+                                btn.setText(model.isFilterBased() ? 'Update' : 'Filter');
+                            }, btn);
+                        },
+                        scope: this
+                    },
                     scope: this
                 },{
-                    text: 'cancel',
+                    text: 'Cancel',
                     cls: 'filterinfocancel', // tests
                     handler: function() { this.hide(); },
                     scope: this
@@ -345,17 +351,17 @@ Ext.define('Connector.view.InfoPane', {
 
     updateSelections : function() {
 
-        var grid = this.getGrid();
-        var sm = grid.getSelectionModel();
+        var grid = this.getGrid(),
+            sm = grid.getSelectionModel(),
+            store = grid.getStore(),
+            storeCount = store.getCount(),
+            selItems = this.getModel().get('selectedItems'),
+            members = [], idx;
+
         if (sm.hasSelection()) {
             sm.deselectAll();
         }
 
-        var store = grid.getStore();
-        var storeCount = store.getCount();
-        var selItems = this.getModel().get('selectedItems');
-
-        var members = [], idx;
         Ext.each(selItems, function(uniqueName) {
             idx = store.findExact('uniqueName', uniqueName);
             if (idx > -1) {
@@ -444,8 +450,8 @@ Ext.define('Connector.view.InfoPane', {
     },
 
     onSortSelect : function(menu, item) {
-        var i = Ext.clone(item);
-        this.getModel().setDimensionHierarchy(null, i.uniqueName);
+        var _item = Ext.clone(item);
+        this.getModel().configure(null, _item.uniqueName);
     },
 
     getGrid : function() {
