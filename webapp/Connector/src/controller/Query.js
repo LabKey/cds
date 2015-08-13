@@ -288,8 +288,8 @@ Ext.define('Connector.controller.Query', {
     /**
      * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels.
-     * @param {String} dimension
-     * @param {String} measureSet
+     * @param {Object} dimension
+     * @param {Array} measureSet
      * @param {Array} filterValuesMap
      * @param {Function} callback
      * @param {Object} [scope]
@@ -355,6 +355,47 @@ Ext.define('Connector.controller.Query', {
                 });
             }, this);
         }
+    },
+
+    /**
+     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     *      for showing which values are relevant in the variable selector Advanced Options panels by returning the subject
+     *      count for each distinct value of a specific column in the temp query.
+     * @param {Object} dimension
+     * @param {Array} measureSet
+     * @param {Array} filterValuesMap
+     * @param {Function} callback
+     * @param {Object} [scope]
+     * @returns {Object}
+     */
+    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, callback, scope) {
+
+        // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
+        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
+            var alias = dimension.getFilterMeasure().get('alias'), sql;
+
+            // SQL to get the subject count for each value of the filter measure
+            sql = 'SELECT COUNT(DISTINCT ' + dimension.get('schemaName') + '_' + dimension.get('queryName') + '_SubjectId) AS SubjectCount, '
+                    + alias + ' FROM ' + response.queryName
+                    + dimension.getDistinctValueWhereClause()
+                    + ' GROUP BY ' + alias;
+
+            LABKEY.Query.executeSql({
+                schemaName: response.schemaName,
+                sql: sql,
+                success: function(data) {
+                    var subjectCountMap = {};
+                    Ext.each(data.rows, function(row){
+                        subjectCountMap[row[alias]] = row['SubjectCount'];
+                    }, this);
+
+                    if (Ext.isFunction(callback)) {
+                        callback.call(scope || this, subjectCountMap);
+                    }
+                },
+                scope: this
+            })
+        }, this);
     },
 
     /**

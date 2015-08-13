@@ -13,7 +13,13 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         this.hierarchyMeasures = this.dimension.getHierarchicalMeasures();
 
-        this.loadSubjectCounts();
+        Connector.getService('Query').getMeasureValueSubjectCount(
+            this.hierarchyMeasures[this.hierarchyMeasures.length - 1],
+            this.measureSetStore.measureSet,
+            this.filterOptionValues,
+            this.loadDistinctValuesStore,
+            this
+        );
     },
 
     initCheckboxColumns : function() {
@@ -75,52 +81,6 @@ Ext.define('Connector.panel.AntigenSelection', {
         }, this);
 
         this.add(this.createCheckboxGroupCmp(checkboxItems, fields));
-    },
-
-    loadSubjectCounts : function() {
-        var filterValuesMap = this.getFilterValuesMap();
-
-        // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
-        Connector.getService('Query').getMeasureSetGetDataResponse(this.dimension, this.measureSetStore.measureSet, filterValuesMap, function(response) {
-
-            var measure = this.hierarchyMeasures[this.hierarchyMeasures.length - 1],
-                alias = measure.getFilterMeasure().get('alias'), sql;
-
-            // SQL to get the subject count for each value of the filter measure
-            sql = 'SELECT COUNT(DISTINCT study_' + this.dimension.get('queryName') + '_SubjectId) AS SubjectCount, '
-                    + alias + ' FROM ' + response.queryName
-                    + measure.getDistinctValueWhereClause()
-                    + ' GROUP BY ' + alias;
-
-            LABKEY.Query.executeSql({
-                schemaName: response.schemaName,
-                sql: sql,
-                success: function(data) {
-                    var subjectCountMap = {};
-                    Ext.each(data.rows, function(row){
-                        subjectCountMap[row[alias]] = row.SubjectCount;
-                    }, this);
-
-                    this.loadDistinctValuesStore(subjectCountMap);
-                },
-                scope: this
-            })
-        }, this);
-    },
-
-    getFilterValuesMap : function() {
-        var optionMap = {}, alias;
-
-        if (Ext.isObject(this.filterOptionValues) && Ext.isObject(this.filterOptionValues.dimensions)) {
-            Ext.iterate(this.filterOptionValues.dimensions, function(key, val) {
-                alias = this.dimension.get('schemaName') + '_' + this.dimension.get('queryName') + '_' + key;
-                if (alias != this.dimension.getFilterMeasure().get('alias') && val != null) {
-                    optionMap[alias] = val;
-                }
-            }, this);
-        }
-
-        return optionMap;
     },
 
     loadDistinctValuesStore : function(subjectCountMap) {
@@ -226,7 +186,7 @@ Ext.define('Connector.panel.AntigenSelection', {
             name: fields[index] + '-check',
             boxLabel: record.get(fields[index]) || '[Blank]',
             cls: 'checkbox2 col-check ' + addCls,
-            boxLabelAttrTpl: 'test-data-value=' + fields[i] + '-' + value.replace(/\|/g, '-').replace(/ /g, '_'),
+            boxLabelAttrTpl: 'test-data-value=' + fields[index] + '-' + value.replace(/\|/g, '-').replace(/ /g, '_'),
             parentFieldAlias: index > 0 ? fields[index - 1] : null,
             fieldAlias: fields[index],
             fieldValue: record.get(fields[index]),

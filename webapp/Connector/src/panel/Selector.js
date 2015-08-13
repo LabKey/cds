@@ -464,7 +464,7 @@ Ext.define('Connector.panel.Selector', {
             dimension: advancedOptionCmp.dimension,
             initSelection: advancedOptionCmp.value,
             measureSetStore: this.measureSetStore,
-            filterOptionValues: this.getAdvancedOptionValues()
+            filterOptionValues: this.getFilterValuesMap(advancedOptionCmp.dimension)
         });
 
         // add listener with buffer for checkbox selection change to update advanced option cmp value
@@ -575,6 +575,21 @@ Ext.define('Connector.panel.Selector', {
         return values;
     },
 
+    getFilterValuesMap : function(selectedDimension) {
+        var optionMap = {}, alias, filterOptionValues = this.getAdvancedOptionValues();
+
+        if (Ext.isObject(filterOptionValues) && Ext.isObject(filterOptionValues.dimensions)) {
+            Ext.iterate(filterOptionValues.dimensions, function(key, val) {
+                alias = selectedDimension.get('schemaName') + '_' + selectedDimension.get('queryName') + '_' + key;
+                if (alias != selectedDimension.getFilterMeasure().get('alias') && val != null) {
+                    optionMap[alias] = val;
+                }
+            }, this);
+        }
+
+        return optionMap;
+    },
+
     bindDimensions : function() {
         var advancedOptionCmps = [], measureSetAliases = [], measureSet = [];
 
@@ -632,7 +647,7 @@ Ext.define('Connector.panel.Selector', {
                 store.filter(storeFilter);
             }
 
-            advancedOption.populateStore(store.collect(alias));
+            advancedOption.populateStore(store.collect(alias), measureSet);
             store.clearFilter(true);
 
             this.getAdvancedPane().insert(1, advancedOption);
@@ -696,6 +711,9 @@ Ext.define('Connector.panel.Selector', {
                                 me.showHierarchicalSelection(cmp);
                             }
                         });
+                    }
+                    else {
+                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension));
                     }
                 },
                 change: function(cmp) {

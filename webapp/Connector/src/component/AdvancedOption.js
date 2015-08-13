@@ -160,22 +160,58 @@ Ext.define('Connector.component.AdvancedOptionBase', {
             else {
                 var displayEl = this.getDisplayField().getEl();
                 displayEl.on('click', function(evt, target) {
-                    if (target.getAttribute('class') != 'field-label')
-                    {
-                        var displayLabelEl = displayEl.down('.field-label');
-                        var displayValueEl = displayEl.down('.field-display');
-                        var pos = this.getDisplayField().getPosition();
-
-                        var dropdownPanel = this.getDropdownPanel();
-                        if (dropdownPanel != null) {
-                            this.getDropdownPanel().setWidth(displayValueEl.getWidth());
-                            this.getDropdownPanel().showAt(pos[0] + displayLabelEl.getWidth(), pos[1]);
-                            this.getDisplayField().addCls('expanded');
-                        }
-
-                        this.fireEvent('click', this, this.isHierarchical);
+                    if (target.getAttribute('class') != 'field-label') {
+                        this.onDisplayFieldClick();
                     }
                 }, this);
+            }
+        }
+    },
+
+    onDisplayFieldClick : function() {
+        this.fireEvent('click', this, this.isHierarchical);
+    },
+
+    showDropdownPanel : function(filterOptionValues) {
+        var dropdownPanel = this.getDropdownPanel(),
+            displayEl = this.getDisplayField().getEl(),
+            displayLabelEl, displayValueEl, pos;
+
+        if (dropdownPanel != null) {
+            if (Ext.isDefined(filterOptionValues)) {
+                Connector.getService('Query').getMeasureValueSubjectCount(this.dimension, this.store.measureSet, filterOptionValues, this.loadValueSubjectCounts, this);
+            }
+
+            displayLabelEl = displayEl.down('.field-label');
+            displayValueEl = displayEl.down('.field-display');
+            pos = this.getDisplayField().getPosition();
+
+            this.getDropdownPanel().setWidth(displayValueEl.getWidth());
+            this.getDropdownPanel().showAt(pos[0] + displayLabelEl.getWidth(), pos[1]);
+            this.getDisplayField().addCls('expanded');
+        }
+    },
+
+    loadValueSubjectCounts : function(subjectCountMap) {
+        Ext.each(this.store.getRange(), function(record) {
+            record.set('subjectCount', subjectCountMap[record.get(this.storeValueField)] || 0);
+
+            // update the display cls of the checkbox/radio
+            this.updateOptionDisplayCls(record.get(this.storeValueField), record.get('subjectCount'));
+        }, this);
+    },
+
+    updateOptionDisplayCls : function(inputValue, subjectCount) {
+        var dropdownPanel = this.getDropdownPanel(), childEl;
+
+        // look for the matching checkbox or radio based on the input value
+        childEl = dropdownPanel.down((this.allowMultiSelect ? 'checkbox' : 'radio') + '[inputValue=' + inputValue + ']');
+        if (childEl) {
+            if (subjectCount == 0) {
+                childEl.addCls('look-disabled');
+            }
+            else {
+                childEl.removeCls('look-disabled');
             }
         }
     },
@@ -244,11 +280,11 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         return this.hiddenField;
     },
 
-    populateStore : function(distinctValuesArr) {
+    populateStore : function(distinctValuesArr, measureSet) {
         var data = [];
         Ext.each(distinctValuesArr, function(value) {
             if (value != null) {
-                var valueObj = {};
+                var valueObj = {subjectCount: -1};
                 valueObj[this.storeValueField] = value;
                 valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ');
                 data.push(valueObj);
@@ -256,7 +292,8 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         }, this);
 
         this.store = Ext.create('Ext.data.Store', {
-            fields : [this.storeValueField, this.storeLabelField],
+            measureSet: measureSet,
+            fields: [this.storeValueField, this.storeLabelField, 'subjectCount'],
             data: data
         });
 
@@ -338,6 +375,10 @@ Ext.define('Connector.component.AdvancedOptionScale', {
         this.setValue(this.value || this.measure.get('defaultScale'), false);
 
         this.callParent();
+    },
+
+    onDisplayFieldClick : function() {
+        this.showDropdownPanel();
     }
 });
 
@@ -373,6 +414,10 @@ Ext.define('Connector.component.AdvancedOptionTime', {
         }
 
         this.callParent();
+    },
+
+    onDisplayFieldClick : function() {
+        this.showDropdownPanel();
     },
 
     setInitialValue : function() {
@@ -483,7 +528,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
                 name: this.name + '-checkall',
                 boxLabel: 'All',
                 inputValue: undefined,
-                checked: this.initSelection && Ext.Array.equals(this.initSelection, this.store.collect(this.valueField, true)),
+                checked: Ext.isArray(this.initSelection) && Ext.Array.equals(this.initSelection.sort(), this.store.collect(this.valueField, true).sort()),
                 listeners: {
                     scope: this,
                     change: function(cb, newValue) {
@@ -508,7 +553,7 @@ Ext.define('Connector.panel.AdvancedOptionCheckboxDropdown', {
             var checkboxItems = Ext.clone(this.additionalItems) || [];
             Ext.each(this.store.getRange(), function(record) {
                 checkboxItems.push({
-                    cls: 'checkbox2',
+                    cls: 'checkbox2 ' + (record.get('subjectCount') == 0 ? 'look-disabled' : ''),
                     boxLabel: record.get(this.labelField) || record.get(this.valueField),
                     inputValue: record.get(this.valueField),
                     checked: this.initSelection && this.initSelection.indexOf(record.get(this.valueField)) > -1,
