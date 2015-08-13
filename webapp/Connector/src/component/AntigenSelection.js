@@ -6,6 +6,9 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     border: false,
 
+    totalColumnWidth: 340,
+    subjectColumnWidth: 83,
+
     constructor : function(config) {
         this.callParent([config]);
 
@@ -28,9 +31,9 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         // add a column header for each hierarchical measure and the subject counts
         Ext.each(this.hierarchyMeasures, function(measure) {
-            checkboxItems.push(this.createColumnHeaderCmp(measure));
+            checkboxItems.push(this.createColumnHeaderCmp(measure, null, Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length)));
         }, this);
-        checkboxItems.push(this.createColumnHeaderCmp('Subject count', 'col-count-title'));
+        checkboxItems.push(this.createColumnHeaderCmp('Subject count', 'col-count-title', this.subjectColumnWidth));
 
         // add 'All' checkbox for each hierarchical measure
         Ext.each(this.hierarchyMeasures, function(measure) {
@@ -128,9 +131,10 @@ Ext.define('Connector.panel.AntigenSelection', {
         return key;
     },
 
-    createColumnHeaderCmp : function(measure, cls) {
+    createColumnHeaderCmp : function(measure, cls, width) {
         return Ext.create('Ext.Component', {
             cls: 'col-title ' + (Ext.isString(cls) ? cls : ''),
+            width: width,
             html: Ext.htmlEncode(Ext.isObject(measure) ? measure.get('label') : measure)
         });
     },
@@ -155,6 +159,7 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         return Ext.create('Ext.Component', {
             cls: cls,
+            width: this.subjectColumnWidth,
             html: value
         });
     },
@@ -192,7 +197,7 @@ Ext.define('Connector.panel.AntigenSelection', {
             fieldValue: record.get(fields[index]),
             inputValue: value,
             checked: this.initSelection && this.initSelection.indexOf(value) > -1, // this will set only the leaf checkboxes as checked
-            width: 358 / this.hierarchyMeasures.length,
+            width: Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length),
             listeners: {
                 scope: this,
                 change: function(cb, newValue) {
