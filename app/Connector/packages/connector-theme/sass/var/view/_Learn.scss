@@ -290,10 +290,12 @@ div.study-treatments {
 
   tr > td {
     padding-bottom: 1em;
+    vertical-align: top;
 
     &.item-label {
       color: #777777;
       padding-right: 1em;
+      width: 90px;
     }
   }
 }

@@ -313,6 +313,11 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Assay information'
                         }
                     },{
+                        type: 'assayanalytelist',
+                        staticData: {
+                            title: 'Assay Analytes'
+                        }
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Description'

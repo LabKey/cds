@@ -237,6 +237,11 @@ Ext.define('Connector.controller.Query', {
         return undefined;
     },
 
+    /**
+     *  Given a schema this returns all the measures of each query in that schema that are not hidden.
+     * @param schema The schema that will be searched.
+     * @returns {Array} An array of copies of measure objects.
+     */
     getVariables : function(schema) {
 
         var measures = [],
@@ -244,13 +249,37 @@ Ext.define('Connector.controller.Query', {
 
         Ext.each(this.MEASURE_STORE.getRange(), function(measure) {
             var schemaName = measure.get('schemaName');
-            if (Ext.isString(schemaName) && schemaName.toLowerCase() === _schema &&
-                !measure.get('hidden')) {
+            if (Ext.isString(schemaName) && schemaName.toLowerCase() === _schema && !measure.get('hidden')) {
                 measures.push(measure.copy());
             }
         });
 
         return measures;
+    },
+
+    /**
+     * This finds all the dimensions for a given schema and query and returns them as an array.
+     * @param schema The name of the schema for the query
+     * @param query The name of the query of the desired dimensions.
+     * @returns {Array} An array of dimension objects
+     */
+    getDimensions : function(schema, query) {
+        var dimensionArray = [],
+            index = this.SOURCE_STORE.findExact('key', schema + '|' + query);
+
+        if (index > -1) {
+            var source = this.SOURCE_STORE.getAt(index),
+                dimensions = source.get('dimensions');
+
+            Ext.each(dimensions, function(dimension) {
+                var d = this.getMeasure(dimension);
+                if (d.isDimension && !d.hidden) {
+                    dimensionArray.push(d);
+                }
+            }, this);
+        }
+
+        return dimensionArray;
     },
 
     getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
