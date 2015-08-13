@@ -13,6 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* cds-14.30-14.31.sql */
-ALTER TABLE cds.import_assay ADD COLUMN assay_type VARCHAR(250);
 ALTER TABLE cds.assay ADD COLUMN assay_type VARCHAR(250);
