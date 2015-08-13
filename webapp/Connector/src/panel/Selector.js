@@ -78,6 +78,7 @@ Ext.define('Connector.panel.Selector', {
                 {property: 'queryLabel'}
             ]
         });
+
         this.measureStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Measure',
             groupField: 'recommendedVariableGrouper',
@@ -307,10 +308,10 @@ Ext.define('Connector.panel.Selector', {
 
     //runs this function when a source is selected
     onSourceSelect : function(rowModel, sourceRecord) {
+        var view = rowModel.view, me = this;
 
-        var view = rowModel.view;
-        var me = this;
-        me.hideLearnMessage('Source');
+        this.hideLearnMessage('Source');
+
         //clears any filter before the source is selected
         this.measureStore.clearFilter();
 
@@ -375,7 +376,7 @@ Ext.define('Connector.panel.Selector', {
 
     getMeasureSelectionGrid : function() {
         var config = Ext.apply(this.getBaseMeasureSelectionConfig(), {
-            cls : 'content measuresgrid',
+            cls : 'content-multiselect',
             enableColumnResize: false,
             enableColumnHide: false,
             bubbleEvents : ['viewready'],
@@ -383,10 +384,10 @@ Ext.define('Connector.panel.Selector', {
             multiSelect: true,
             selType: 'checkboxmodel',
             selModel: {
-                checkOnly: true
-                //checkSelector: 'td.x-grid-cell-row-checker'
+                mode: 'SIMPLE'
             },
             columns: [{
+                cls: 'content-header',
                 header: 'Select all columns',
                 dataIndex: 'label',
                 flex: 1,
@@ -400,9 +401,7 @@ Ext.define('Connector.panel.Selector', {
                 id: 'measuresGridGrouping',
                 collapsible: false,
                 groupHeaderTpl: new Ext.XTemplate(
-                    '<div class="groupheader groupheaderline" style="padding: 3px 6px 4px 6px; color: #808080;">',
-                    '{groupValue:this.renderHeader}',
-                    '</div>',
+                    '<div class="content-grouping">{groupValue:this.renderHeader}</div>',
                     {
                         renderHeader : function(value) {
                             var hdr = value;
@@ -486,28 +485,28 @@ Ext.define('Connector.panel.Selector', {
      */
     showMeasures : function(source, activeMeasure) {
 
-        //gets the variableType of the current source
         var key = source.get('key'),
             variableType = source.get('variableType'),
-            filter;
+            filter, aliases = {}, selModel,
+            me = this;
 
         //checks whether the current selection is the current column
         if (this.supportSelectionGroup === true && variableType === 'SELECTION') {
-            var aliases = {};
-            Ext.each(this.selectedMeasures, function(measure) {
+            Ext.each(this.getSelectedRecords(), function(measure) {
                 if (Ext.isDefined(measure.get('alias'))) {
-                    aliases[measure.get('alias')] = true; //adds the selected measure to the current visible measures
+                    //adds the selected measure to the current visible measures
+                    aliases[measure.get('alias')] = true;
+
+                    if (this.measureStore.findExact('alias', measure.get('alias')) > -1) {
+                        this.getMeasureSelectionGrid().getSelectionModel().select(measure, true, true);
+                    }
+
                 }
-            });
+            }, this);
 
             filter = function(measure) {
                 return measure.get('alias') in aliases;
             };
-
-            Ext.each(this.selectedMeasures, function(measure) {
-                if (this.measureStore.findExact('alias', measure.get('alias')) > -1)
-                    this.getMeasureSelectionGrid().getSelectionModel().select(measure, true, true);
-            }, this);
         }
         else {
             filter = function(measure) {
@@ -520,7 +519,6 @@ Ext.define('Connector.panel.Selector', {
 
         this.toggleDisplay('measure');
 
-        var me = this;
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
@@ -547,55 +545,44 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        //gets the current model if multiselect isnt active
-        var selModel = this.getMeasurePane().getSelectionModel();
-        if (!this.multiSelect)
-        {
-            if (activeMeasure)
-            {
-                if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id)
-                {
+        //gets the current model if multiselect isn't active
+        selModel = this.getMeasurePane().getSelectionModel();
+        if (!this.multiSelect) {
+            if (activeMeasure) {
+                if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
                     // already have selected measure, just need to show the advanced options pane
                     this.slideAdvancedOptionsPane();
                 }
-                else
-                {
+                else {
                     Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
                 }
             }
-            else
-            {
+            else {
                 // default to selecting the first variable for the given source
                 Ext.defer(function() { selModel.select(0); }, 100, this);
             }
         }
-        //groups the selectoions otherwise
-        else
-        {
-            var variableType = source.get('variableType');
-            if (this.groupingFeature)
-            {
-                if (this.supportSelectionGroup === true && variableType === 'SELECTION')
-                {
+        else if (Ext.isDefined(this.groupingFeature)) {
+            // for the 'Current Columns' source, we group the measures by the query source
+            // otherwise, we group measures into the Recommended or Additional groupings
+            if (this.supportSelectionGroup === true && variableType === 'SELECTION') {
+                this.groupingFeature.enable();
+                this.measureStore.groupers.first().property = 'queryLabel';
+                this.measureStore.group();
+                this.measureStore.sort('queryLabel', 'ASC');
+            }
+            else {
+                // enable or disable the measure grid grouping feature based on the presence of a recommended variable
+                if (this.measureStore.find('isRecommendedVariable', true) > -1) {
                     this.groupingFeature.enable();
-                    this.measureStore.groupers.first().property = "queryLabel";
-                    this.measureStore.group();
                 }
-                else
-                {
-                    // enable or disable the measure grid grouping feature based on the presence of a recommended variable
-                    if (this.measureStore.find('isRecommendedVariable', true) > -1)
-                    {
-                        this.groupingFeature.enable();
-                        this.measureStore.groupers.first().property = "recommendedVariableGrouper";
-                        this.measureStore.group();
-                        this.measureStore.sort('recommendedVariableGrouper', 'ASC');
-                    }
-                    else
-                    {
-                        this.groupingFeature.disable();
-                    }
+                else {
+                    this.groupingFeature.disable();
                 }
+
+                this.measureStore.groupers.first().property = 'recommendedVariableGrouper';
+                this.measureStore.group();
+                this.measureStore.sort('recommendedVariableGrouper', 'ASC');
             }
         }
     },
@@ -1107,7 +1094,7 @@ Ext.define('Connector.panel.Selector', {
             this.fireEvent('selectionmade', selectedMeasure);
         }
         else if (this.multiSelect) {
-            this.fireEvent('selectionmade', this.selectedMeasures);
+            this.fireEvent('selectionmade', this.getSelectedRecords());
         }
     },
 
@@ -1143,8 +1130,8 @@ Ext.define('Connector.panel.Selector', {
     },
 
     getSelectedRecordIndex : function(measure) {
-        for (var i = 0; i < this.selectedMeasures.length; i++) {
-            if (this.selectedMeasures[i].get('alias') == measure.get('alias')) {
+        for (var i = 0; i < this.getSelectedRecords().length; i++) {
+            if (this.getSelectedRecords()[i].get('alias') == measure.get('alias')) {
                 return i;
             }
         }

@@ -116,6 +116,59 @@
     }
   }
 
+  .content-multiselect {
+    background-color: $light-color;
+    padding-top: 10px;
+    padding-left: 40px;
+
+    .x-column-header-over {
+      background-color: transparent;
+      background-image: none;
+    }
+
+    .x-grid-body {
+      border-color: transparent;
+    }
+
+    .x-grid-group-hd {
+      border: none;
+      padding: 0;
+    }
+
+    .x-grid-row .x-grid-cell {
+      border-color: transparent !important;
+      font-family: $info-font;
+    }
+
+    .x-grid-view {
+      background-color: $light-color;
+    }
+
+    .content-grouping {
+      font-size: 11px;
+      font-weight: bold;
+      color: $heat-scale-2;
+      padding: 24px 0 8px 30px;
+    }
+
+    .content-header {
+      border-right-color: transparent;
+      border-bottom: solid $heat-scale-6 1px;
+      font: normal 12px $info-font;
+
+      .x-column-header-text {
+        font-size: 12px;
+        text-transform: none;
+        font-weight: normal;
+        color: $primary-text-color;
+      }
+
+      .x-column-header-over {
+        background-color: $select-hover-color;
+      }
+    }
+  }
+
   .advanced {
     background-color: $heat-scale-5;
     border-top: solid rgba(0,0,0,0.2) 2px;
