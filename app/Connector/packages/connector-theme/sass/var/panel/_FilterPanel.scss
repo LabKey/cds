@@ -1,17 +1,35 @@
+.filterstatus {
+  padding: 20px 20px 0 20px;
+}
+
 div.selitem {
   padding: 4px 0;
 }
 
-div.opselect {
-  position: absolute;
-  top: 25px;
+.sel-list-item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.closeitem {
+  display: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  img {
+    height: 18px;
+    width: 18px;
+  }
 }
 
 div.filterpanel {
 
   font-family: $info-font;
   font-size: 12px;
-  margin: 0 10px 0 10px;
+  margin: 0;
 
   .header {
     font-size: $headline;
@@ -22,204 +40,113 @@ div.filterpanel {
   }
 }
 
+div.activefilter {
+  position: relative;
+  background-color: $light-color;
+  border: 1px solid transparent;
+  @include border-radius(8px);
+  display: inline-block;
+  width: 100%;
+  padding: 3px 9px;
+  margin-bottom: 6px;
+
+  div.selitem {
+    padding: 2px 5px 2px 0;
+    width: 95%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .sel-label {
+    font-weight: bold;
+  }
+
+  .closeitem {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+  }
+
+  &:hover {
+    border: 1px solid #dddcdc;
+    cursor: default;
+
+    .closeitem {
+      display: inline-block;
+    }
+  }
+
+  select {
+    margin: 10px 0;
+  }
+}
+
 div.selectionpanel {
 
   font-family: $info-font;
   font-size: 12px;
   margin: 0;
+  padding: 5px 0;
+  border: 1px solid #BEEFEF;
+  background-color: $light-color;
+  @include border-radius(8px);
 
   .header {
-    font-size: 16px!important;
-    color: $select-color!important;
+    font-size: 16px;
+    color: $select-color;
     font-family: $data-font;
-    margin: 0 10px;
+    padding: 0 10px;
+  }
 
-    span {
-      color: $dark-color;
-    }
+  .activefilter {
+    border: none !important;
 
-    .section-title {
-      font-size: 16px!important;
+    .closeitem {
+      top: -20px;
     }
   }
 
   .x-toolbar-footer {
     padding: 0;
-    margin-left: 0;
-    margin-bottom: 8px;
-  }
-
-  .x-btn-rounded-inverted-accent-small .x-btn-inner {
-    font-size: 12px;
-  }
-}
-
-div.selectionfilter {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.closeitem {
-  position: absolute;
-  opacity: 0;
-  right: 10px;
-  margin-top: 4px;
-  width: 10px;
-  height: 10px;
-  z-index: 5;
-  border: 0;
-  background-repeat: no-repeat;
-  background: url(images/close.png);
-  background-size: 10px 10px;
-  cursor: pointer;
-}
-
-div.wrapitem {
-
-  display: inline-block;
-  width: 100%;
-  overflow: hidden;
-  cursor: pointer;
-
-  select {
-    margin: 0;
+    margin: 0 3px 3px 0;
   }
 
   &:hover {
     .closeitem {
-      opacity: 0.5;
-
-      &:hover {
-        opacity: 1;
-      }
+      display: inline-block;
     }
   }
+}
 
-  .fader:hover {
-    cursor: pointer;
+.filter-item {
+
+  .selitem {
+    display: inline-block;
+  }
+
+  &:hover {
+    .closeitem {
+      display: inline-block;
+    }
   }
 }
 
 .memberitem {
-
   float: right;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-
-  &:hover {
-    .closeitem {
-      opacity: 0.5;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
 }
-
-.grouprow {
-  &:hover {
-    .closeitem {
-      opacity: 0.5;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
-}
-
-div.collapsed-member {
-  width: 100%;
-  padding: 4px 8px;
-  font-size: 12px;
-
-  span {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-div.plot-selection {
-  width: 90%;
-  padding: 4px 8px;
-  font-size: 12px;
-}
-
-div.activefilter {
-  position: relative;
-  background-color: $light-color;
-  border: 1px solid #a9a9a9;
-  @include border-radius(12px);
-  display: inline-block;
-  width: 100%;
-  padding: 3px 7px;
-
-  .circle {
-    display: none;
-  }
-
-  div.collapsed-member {
-    padding: 0 10px;
-  }
-
-  div.plot-selection {
-    padding: 0;
-    width: 100%;
-  }
-
-  div.selitem {
-    border: 1px solid transparent;
-    padding: 2px 5px 2px 0;
-    width: 100%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-
-  div.status-over {
-    border-color: transparent;
-  }
-
-  .fader {
-    display: block;
-  }
-
-  &:hover {
-    .wholeitem {
-      opacity: 0.5;
-      &:hover {
-        opacity: 1;
-        cursor: pointer;
-      }
-    }
-  }
-}
-
-/* Connector.view.Selection */
-//.sel-listing {
-//  padding: 5px 1px 5px 30px;
-//}
-
-.circle {
-  width: 15px;
-  height: 15px;
-  @include border-radius(8px);
-  border: 1px solid $black;
-  background-color: $select-color;
-  margin: 3px 4px 0 8px;
-  display: inline-block;
-  float: left;
-}
-/* -- END Connector.view.Selection */
 
 ul.indent li {
   padding-left: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.filter-hdr-btn {
+  margin-top: 6px;
+  width: 40px;
 }
