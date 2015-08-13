@@ -164,7 +164,7 @@ Ext.define('Connector.controller.Group', {
             filters = filters.filters;
         }
 
-        Connector.getState().setFilters(filters, true);
+        Connector.getState().setFilters(filters);
     },
 
     doGroupSave : function() {
