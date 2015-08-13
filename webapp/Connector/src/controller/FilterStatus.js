@@ -30,10 +30,6 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('selectionstatus > dataview', {
-            itemclick : this.onSelectionClick
-        });
-
         this.control('selectionview', {
             operatorchange : function(config) {
                 Connector.getState().setFilterOperator(config.filterId, config.value);
@@ -68,10 +64,6 @@ Ext.define('Connector.controller.FilterStatus', {
 
         this.control('filterpanel > container > #clear', {
             click : this.onFilterClear
-        });
-
-        this.control('filterpanel > container > #sClear', {
-            click : this.onSelectionClear
         });
 
         this.control('#overlap', {
@@ -137,14 +129,13 @@ Ext.define('Connector.controller.FilterStatus', {
             //
             // configure info pane view
             //
-            var config = {};
+            var config = {
+                dimension: filterOrDetail.get('dimension'),
+                hierarchy: filterOrDetail.get('hierarchy'),
+                level: filterOrDetail.get('level')
+            };
 
-            if (filterOrDetail.$className === "Connector.model.Detail") {
-                config.dimension = filterOrDetail.get('dimension');
-                config.hierarchy = filterOrDetail.get('hierarchy');
-                config.level = filterOrDetail.get('level');
-            }
-            else if (filterOrDetail.$className === "Connector.model.Filter") {
+            if (filterOrDetail.$className === 'Connector.model.Filter') {
 
                 if (filterOrDetail.isGrid()) {
                     clazz = 'Connector.view.GridPane';
@@ -240,23 +231,21 @@ Ext.define('Connector.controller.FilterStatus', {
     updateView : function(xtype, context) { },
 
     onFilterClear : function() {
-        var state = Connector.getState();
-        if (state.hasFilters()) {
+        var state = Connector.getState(),
+            hasFilters = state.hasFilters();
+
+        if (state.hasSelections()) {
+            // if we have both selections and filters, roll-up into one state update
+            state.clearSelections(hasFilters /* skipState */);
+        }
+        if (hasFilters) {
             state.clearFilters();
 
-            // want to show the message on the view
+            // only show undo if clear filters
             var view = this.getViewManager().getViewInstance('filterstatus');
             if (view) {
                 view.showUndoMessage();
             }
         }
-    },
-
-    onSelectionClick : function() {
-        Connector.getState().clearSelections();
-    },
-
-    onSelectionClear : function() {
-        Connector.getState().clearSelections();
     }
 });

@@ -9,7 +9,9 @@ Ext.define('Connector.view.Selection', {
 
     alias: 'widget.selectionview',
 
-    itemSelector: 'div.wrapitem',
+    itemSelector: 'div.filter-item',
+
+    cls: 'activefilter',
 
     loadMask: false,
 
@@ -17,74 +19,71 @@ Ext.define('Connector.view.Selection', {
             '<tpl for=".">',
                 '<tpl if="this.isPlotSelection(values) === true">',
                     // Plot Selection Filter
-                    '<div class="wrapitem">',
-                        '<div class="circle"></div>',
-                        '<div class="selitem sel-listing">{[this.renderPlotSelection(values)]}</div>',
+                    '<div class="filter-item">',
+                        '<div class="selitem">{[this.renderPlotSelection(values)]}</div>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}" member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
                 '<tpl if="this.isGrid(values) === true">',
                     // Grid Filter
-                    '<div class="wrapitem">',
-                        '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem memberloc">',
-                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
+                    '<div class="filter-item">',
+                        '<div class="selitem status-over memberloc">',
                             '{[this.renderGridFilterLabel(values)]}',
                         '</div>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}" member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === true">',
                     // "In the plot" Filter
-                    '<div class="wrapitem">',
-                        '<div class="circle"></div>',
-                        '<div class="selitem status-over memberitem memberloc">',
-                            '<div class="closeitem" data-id="{id}" member-index="0"></div>',
-                            '{[this.renderMeasures(values)]}',
+                    '<div class="filter-item">',
+                        '<div class="selitem status-over memberloc">',
+                            '{[this.renderInThePlot(values)]}',
                         '</div>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}"  member-index="0">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
                 '<tpl if="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
                     // Normal Filter (and Group Filters)
-                    '<div class="wrapitem">',
-                        '<div class="circle"></div>',
+                    '<div class="filter-item">',
                         '<tpl if="members.length &gt; 0">',
-                            '<div class="closeitem wholeitem" data-id="{id}"></div>',
-                            '<div class="selitem sel-listing">{[this.renderType(values)]}</div>',
-                            '<tpl if="members.length &gt; 1 || isSelection === true">',
-                                '<tpl for="members">',
-                                    '<tpl if="xindex == 1 && xcount &gt; 1">',
-                                        '<select>',
-                                            '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {parent.operator:this.selectIntersect}>AND</option>',
-                                            '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {parent.operator:this.selectUnion}>OR</option>',
-                                        '</select>',
-                                    '</tpl>',
-                                    '{% if (parent.isSelection !== true && xindex > 5) break; %}',
-                                    '<div class="status-over memberitem memberloc collapsed-member">',
-                                        '<span>{uniqueName:this.renderUniqueName}</span>',
-                                    '</div>',
-                                '</tpl>',
-                                '<tpl if="members.length &gt; 5">',
-                                    '<div class="fader"><img class="ellipse"></div>',
-                                '</tpl>',
+                            '<div class="selitem">{[this.renderType(values)]}</div>',
+                            '<div class="sel-list-item memberloc">{members:this.renderMembers}</div>',
+                            '<tpl if="members.length &gt; 1">',
+                                '<select>',
+                                    '<option value="' + LABKEY.app.model.Filter.Operators.INTERSECT + '" {operator:this.selectIntersect}>Subjects related to all (AND)</option>',
+                                    '<option value="' + LABKEY.app.model.Filter.Operators.UNION + '" {operator:this.selectUnion}>Subjects related to any (OR)</option>',
+                                '</select>',
                             '</tpl>',
                         '</tpl>',
                     '</div>',
+                    '<span class="closeitem" data-id="{id}">',
+                        '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
+                    '</span>',
                 '</tpl>',
             '</tpl>',
             {
-                isGrid : function(values) {
+                _plotGridCheck: function(values) {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
-                    return isGrid && !isPlot;
+                    return { isGrid: isGrid, isPlot: isPlot };
+                },
+                isGrid : function(values) {
+                    var check = this._plotGridCheck(values);
+                    return check.isGrid && !check.isPlot;
                 },
                 isPlot : function(values) {
-                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
-                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
-                    return isPlot && !isGrid;
+                    var check = this._plotGridCheck(values);
+                    return check.isPlot && !check.isGrid;
                 },
                 isPlotSelection : function(values) {
-                    var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
-                    var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
-                    return isPlot && isGrid;
+                    var check = this._plotGridCheck(values);
+                    return check.isPlot && check.isGrid;
                 },
                 selectIntersect : function(op) {
                     var markup = op.indexOf('AND') > -1 ? 'selected="selected"' : '';
@@ -104,7 +103,7 @@ Ext.define('Connector.view.Selection', {
                         if (level) {
                             label = level.hierarchy.dimension.friendlyName;
 
-                            // friendlyName was not overidden so compose label with lvl info
+                            // friendlyName was not overridden so compose label with lvl info
                             if (label === level.hierarchy.dimension.singularName) {
                                 if (Ext.isDefined(level.countSingular)) {
                                     // escape redundant dim/lvl naming (e.g. Study (Study))
@@ -119,19 +118,16 @@ Ext.define('Connector.view.Selection', {
                         }
                     });
 
-                    label = Ext.htmlEncode(label);
-                    if (!values.isSelection) {
-                        if (!values.isWhereFilter) {
-                            label = "Subjects: " + label;
-                        }
-
-                        // render filter with a single member on one line
-                        if (values.members.length == 1) {
-                            label += ": <div style=\"display:inline;\" class=\" memberloc\">" + this.renderUniqueName(values.members[0].uniqueName) + "</div>";
-                        }
+                    return '<span class="sel-label">' + Ext.htmlEncode(label) + '</span>';
+                },
+                renderMembers : function(members) {
+                    var content = '',
+                        sep = '';
+                    for (var i=0; i < members.length && i < 10; i++) {
+                        content += sep + this.renderUniqueName(members[i].uniqueName);
+                        sep = ', ';
                     }
-
-                    return label;
+                    return content;
                 },
                 renderUniqueName : function(uniqueName) {
                     var arrayName = LABKEY.app.view.Selection.uniqueNameAsArray(uniqueName);
@@ -141,15 +137,14 @@ Ext.define('Connector.view.Selection', {
                     }
                     return Ext.htmlEncode(member);
                 },
-                renderMeasures : function(values) {
-                    var label = 'In the plot: ';
+                renderInThePlot : function(values) {
                     var measures = values.plotMeasures, measureLabels = [];
                     for (var i=0; i < measures.length; i++) {
                         if (measures[i]) {
                             measureLabels.push(measures[i].measure.label);
                         }
                     }
-                    return Ext.htmlEncode(label + measureLabels.join(', '));
+                    return '<span class="sel-label">In the plot:</span> ' + Ext.htmlEncode(measureLabels.join(', '));
                 },
                 renderGridFilterLabel : function(values) {
                     var type = LABKEY.app.model.Filter.getGridHierarchy(values);
@@ -190,11 +185,7 @@ Ext.define('Connector.view.Selection', {
                             sep = ', ';
                         });
 
-                        domString =
-                                '<div class="status-over memberitem memberloc plot-selection">' +
-                                    '<div class="closeitem measure" data-id="' + id + '" member-index="' + idx + '"></div>' +
-                                    measure.measure.label + ': ' + filterValString +
-                                '</div>';
+                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true) + ': ' + filterValString + '</div>';
                     }
 
                     return domString;

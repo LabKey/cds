@@ -256,7 +256,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         //getText(Locator.css("svg")) on Chrome
 
-        final String ELISPOT_VISIT = "0\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
+        final String ELISPOT_VISIT = "0\n1000\n2000\n3000\n4000\n5000\n6000\n7000\n8000\n9000\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
         final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5"; // TODO Test data dependent.
         final String NAB_IC50 = "1\n10\n1\n10\n100\n1000"; // TODO Test data dependent.
 
@@ -495,7 +495,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             //apply category selection as a filter
         }
 
-        waitAndClick(CDSHelper.Locators.cdsButtonLocator("filter data"));
+        // Need to do this because there is more than one "Filter" buton in the OM, but only want the visible one.
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
 
         if(CDSHelper.validateCounts)
         {
@@ -533,7 +534,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             assertEquals("incorrect number of points highlighted after clicking x axis categories",2707, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
             assertEquals("incorrect total number of points after clicking x axis categories",3713, getPointCount()); // TODO Test data dependent.
             //apply selection as exlusive filter
-            waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
+            waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
             waitForPointCount(3713 - 2707, 10000); // TODO Test data dependent.
         }
 
@@ -1386,7 +1387,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
         public static Locator plotTick = Locator.css("g.tick-text > g > text");
         public static Locator plotPoint = Locator.css("svg a.point");
-        public static Locator filterDataButton = Locator.xpath("//span[text()='filter data']");
-        public static Locator removeButton = Locator.xpath("//span[text()='remove']");
+        public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
+        public static Locator removeButton = Locator.xpath("//span[text()='Remove']");
     }
 }
