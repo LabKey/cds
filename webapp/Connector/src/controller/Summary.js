@@ -59,7 +59,7 @@ Ext.define('Connector.controller.Summary', {
 
             type = 'Connector.view.Summary';
             Ext.applyIf(c, {
-                store : this.getSummaryStore()
+                store: this.getStore('Summary')
             });
         }
 
@@ -81,15 +81,6 @@ Ext.define('Connector.controller.Summary', {
 
     getDefaultView : function() {
         return 'summary';
-    },
-
-    getSummaryStore : function() {
-        if (!this.summaryStore) {
-            this.summaryStore = this.getStore('Summary');
-            this.summaryStore.state = Connector.getState();
-        }
-
-        return this.summaryStore;
     },
 
     onSummarySelect : function(view) {

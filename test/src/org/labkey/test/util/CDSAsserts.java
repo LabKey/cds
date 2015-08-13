@@ -170,12 +170,13 @@ public class CDSAsserts
         for (String item : axisItems)
         {
             _test.waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+
+            if(CDSHelper.validateCounts)
+            {
+                _test.assertElementVisible(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+            }
         }
 
-        if(CDSHelper.validateCounts)
-        {
-            _test.assertElementPresent(Locator.tagWithClass("div", "detail-wrapper"), axisItems.size());
-        }
     }
 
     public void verifyEmptyLearnAboutStudyPage()
@@ -214,17 +215,17 @@ public class CDSAsserts
 
     public void assertFilterStatusCounts(int subjectCount, int studyCount, int assayCount)
     {
-        if(subjectCount > -1)
+        if (subjectCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(subjectCount, "Subject", "Subjects", true));
         }
 
-        if(studyCount > -1)
+        if (studyCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(studyCount, "Study", "Studies", true));
         }
 
-        if(assayCount > -1)
+        if (assayCount > -1)
         {
             _test.waitForElement(CDSHelper.Locators.getFilterStatusLocator(assayCount, "Assay", "Assays", true));
         }

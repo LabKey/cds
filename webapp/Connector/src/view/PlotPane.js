@@ -79,7 +79,7 @@ Ext.define('Connector.view.PlotPane', {
 //                    scope: this
 //                },
                 {
-                    text: 'close',
+                    text: 'Close',
                     cls: 'infoplotcancel', // tests
                     handler: function() { this.hide(); },
                     scope: this
