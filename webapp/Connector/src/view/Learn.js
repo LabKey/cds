@@ -232,10 +232,10 @@ Ext.define('Connector.view.Learn', {
 
     resolveModel : function(store, id) {
         var delimiter = Connector.getService('Learn').URL_DELIMITER;
-        if (id.indexOf(delimiter) != -1) {
+        if (Ext.isString(id) && id.indexOf(delimiter) != -1) {
             var _id = id.split(delimiter),
                     prop = _id[0],
-                    val = _id[1],
+                    val = Ext.isNumber(parseInt(_id[1])) ? parseInt(_id[1]) : _id[1],
                     data = store.data.items,
                     ret = [];
 

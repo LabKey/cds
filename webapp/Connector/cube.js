@@ -230,6 +230,7 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study Product]',
                 priority: 20,
+                friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
                 pluralName: 'Study products',
 

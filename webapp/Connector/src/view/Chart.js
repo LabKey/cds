@@ -1452,10 +1452,10 @@ Ext.define('Connector.view.Chart', {
         var xMeasure = this.measures[0], yMeasure = this.measures[1];
         var wrapped = [ this._getAxisWrappedMeasure(xMeasure), this._getAxisWrappedMeasure(yMeasure) ];
 
+        // TODO: Categorical filters need to only include their measures. This means modify wrapped
         var filter = Ext.create('Connector.model.Filter', {
             gridFilter: sqlFilters,
             plotMeasures: wrapped,
-            hierarchy: 'Subject',
             isPlot: true,
             isGrid: true,
             operator: LABKEY.app.model.Filter.OperatorTypes.OR,
@@ -1464,7 +1464,7 @@ Ext.define('Connector.view.Chart', {
             showInverseFilter: allowInverseFilter === true
         });
 
-        Connector.getState().addSelection([filter], true, false, true);
+        Connector.getState().addSelection(filter, true, false, true);
     },
 
     afterSelectionAnimation : function(node, view, name, target, multi) {
@@ -1477,8 +1477,7 @@ Ext.define('Connector.view.Chart', {
             for (var i=0; i < selections.length; i++) {
                 data = selections[i].get('gridFilter')[0];
                 if (data.getColumnName() === name) {
-                    values = values.concat(data.getValue());
-                    values = values.concat(';');
+                    values = values.concat(data.getValue()).concat(';');
                 }
             }
         }
@@ -1627,7 +1626,10 @@ Ext.define('Connector.view.Chart', {
 
     onShowGraph : function() {
 
-        if (!this.isHidden()) {
+        if (this.isHidden()) {
+            this.refreshRequired = true;
+        }
+        else {
             this.refreshRequired = false;
             this.requireStudyAxis = false;
 
@@ -1638,6 +1640,7 @@ Ext.define('Connector.view.Chart', {
             var activeMeasures = this.getActiveMeasures();
 
             // update variable selectors
+            // TODO: Stop doing this every time, only do it when the measure has changed (complex?)
             this.getYSelector().getModel().updateVariable([activeMeasures.y]);
             this.getXSelector().getModel().updateVariable([activeMeasures.x]);
             this.getColorSelector().getModel().updateVariable([activeMeasures.color]);
@@ -1656,7 +1659,9 @@ Ext.define('Connector.view.Chart', {
 
                 this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === "TIME";
 
+                // TODO: Refactor this
                 // TODO: We only want to update the 'In the plot' filter when any of the (x, y, color) measure configurations change
+                // TODO: This is what is causing our filter undo to fail because it causes the state to update twice
                 if (!this.fromFilter && activeMeasures.y !== null) {
                     this.updatePlotBasedFilter(activeMeasures);
                 }
@@ -1666,9 +1671,6 @@ Ext.define('Connector.view.Chart', {
 
                 this.requestChartData(activeMeasures);
             }
-        }
-        else {
-            this.refreshRequired = true;
         }
     },
 
@@ -1711,6 +1713,12 @@ Ext.define('Connector.view.Chart', {
         return wrappedMeasure;
     },
 
+    /**
+     *
+     * @param activeMeasures Set of active measures (x, y, color)
+     * @param {boolean} [includeFilterMeasures=false] Include all measures declared in all state filters
+     * @returns {{measures: (*|Array), wrapped: *}}
+     */
     getMeasureSet : function(activeMeasures, includeFilterMeasures) {
 
         var additionalMeasures = this.getAdditionalMeasures(activeMeasures),
@@ -1729,7 +1737,7 @@ Ext.define('Connector.view.Chart', {
         measures = additionalMeasures.concat(nonNullMeasures);
 
         // set of measures from data filters
-        if (includeFilterMeasures) {
+        if (includeFilterMeasures === true) {
             filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters());
             if (!Ext.isEmpty(filterMeasures)) {
                 measures = measures.concat(filterMeasures);
@@ -1760,7 +1768,7 @@ Ext.define('Connector.view.Chart', {
                 }
             }
 
-            var measures = this.getMeasureSet(activeMeasures, true /* Include any measures declared in filters */).measures;
+            var measures = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */).measures;
 
             this.applyFiltersToMeasure(measures, subjectList);
 
@@ -1961,12 +1969,12 @@ Ext.define('Connector.view.Chart', {
     },
 
     /**
-     * This function is meant to update the values within the 'In the plot' filter
+     * Update the values within the 'In the plot' filter
      * @param activeMeasures
      */
     updatePlotBasedFilter : function(activeMeasures) {
 
-        var wrapped = this.getMeasureSet(activeMeasures, false /* Do not include any measures declared in filters */).wrapped;
+        var wrapped = this.getMeasureSet(activeMeasures).wrapped;
 
         this.plotLock = true;
 

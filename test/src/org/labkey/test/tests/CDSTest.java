@@ -15,15 +15,14 @@
  */
 package org.labkey.test.tests;
 
+import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
-import org.labkey.test.TestTimeoutException;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.pages.ColorAxisVariableSelector;
@@ -39,10 +38,11 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
 import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.UIContainerHelper;
+import org.labkey.test.util.ReadOnlyTest;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,13 +56,11 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @Category({CDS.class})
-public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
+public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
 {
-    private static final String PROJECT_NAME = "CDSTest Project";
-    private final int WAIT_FOR_DELETE = 5 * 60 * 1000;
 
     private static final String GROUP_NULL = "Group creation cancelled";
-    private static final String GROUP_DESC = "Intersection of " + CDSHelper.LABS[1]+ " and " + CDSHelper.LABS[2];
+    private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     // Known Test Groups
@@ -78,24 +76,38 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
-    @Override
-    public void doCleanup(boolean afterTest) throws TestTimeoutException
-    {
-        if (!CDSHelper.debugTest)
-        {
-            // TODO Seeing errors when trying to delete via API, UI was more reliable. Need to investigate.
-            _containerHelper = new UIContainerHelper(this);
-            _containerHelper.deleteProject(PROJECT_NAME, afterTest, WAIT_FOR_DELETE);
-        }
-    }
-
-    @BeforeClass @LogMethod
-    public static void doSetup() throws Exception
+    public void doSetup() throws Exception
     {
         CDSTest initTest = (CDSTest)getCurrentTest();
-
         CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
         _initializer.setupDataspace();
+    }
+
+    @Override @LogMethod
+    public boolean needsSetup()
+    {
+        boolean callDoCleanUp = false;
+
+        try
+        {
+            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
+            {
+                callDoCleanUp = false;
+                doSetup();
+            }
+
+        }
+        catch (IOException fail)
+        {
+            callDoCleanUp =  true;
+        }
+        catch(java.lang.Exception ex)
+        {
+            callDoCleanUp = true;
+        }
+
+        // Returning true will cause BaseWebDriver to call it's cleanup method.
+        return callDoCleanUp;
     }
 
     @Before
@@ -107,7 +119,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // clean up groups
         cds.goToAppHome();
-        sleep(500); // let the group display load
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
         List<String> groups = new ArrayList<>();
         groups.add(GROUP_NAME);
@@ -135,7 +147,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     @Override
     public String getProjectName()
     {
-        return PROJECT_NAME;
+        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
@@ -159,8 +171,23 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
     @AfterClass
-    public static void postTest()
+    public static void afterClassCleanUp()
     {
+        CDSTest init = (CDSTest)getCurrentTest();
+
+        List<String> groups = new ArrayList<>();
+        groups.add(GROUP_NAME);
+        groups.add(GROUP_NAME2);
+        groups.add(GROUP_NAME3);
+        groups.add(GROUP_LIVE_FILTER);
+        groups.add(GROUP_STATIC_FILTER);
+        groups.add(STUDY_GROUP);
+        groups.add(HOME_PAGE_GROUP);
+        init.ensureGroupsDeleted(groups);
+
+        init.cds.ensureNoFilter();
+        init.cds.ensureNoSelection();
+
         Ext4Helper.resetCssPrefix();
     }
 
@@ -201,7 +228,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        this.sleep(500); // Not sure why I need this but test is more reliable with it.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // Not sure why I need this but test is more reliable with it.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
@@ -244,13 +271,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(667, 15, -1); // TODO Test data dependent.
 
-        // TODO: Enable this once fb_plots is merged
-//        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        // assert the SVG element and plot build properly
-
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        click(Locator.tagWithClass("div", "closeitem").index(0));
+        cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
         _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
@@ -269,8 +292,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         String raceMember3 = "Asian";
         String raceMember4 = "White";
 
-        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in current selection");
-        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in current selection");
+        Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("Has data in active filters");
+        Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("No data in active filters");
 
         //
         // Open an filter pane and close it
@@ -278,7 +301,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.openStatusInfoPane("Races");
-        click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
         _asserts.assertDefaultFilterStatusCounts();
 
         //
@@ -286,7 +309,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         cds.openStatusInfoPane("Races");
         cds.selectInfoPaneItem(raceMember, true);
-        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
         _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
@@ -294,7 +317,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         // Undo a info pane generated filter
         //
-        click(Locator.tagWithClass("div", "closeitem"));
+        cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
 
@@ -308,10 +331,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember));
         assertElementPresent(hasData);
-        assertElementPresent(noData);
+        assertElementNotPresent(noData);
 
         cds.selectInfoPaneItem(raceMember2, true);
-        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         _asserts.assertFilterStatusCounts(22, 12, -1); // TODO Test data dependent.
@@ -321,7 +344,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
         cds.selectInfoPaneItem(raceMember3, false);
-        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
@@ -333,7 +356,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
         cds.selectInfoPaneOperator(true);
-        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
@@ -341,11 +364,11 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         _asserts.assertFilterStatusCounts(0, 0, -1); // now it's 'AND'
 
         cds.openFilterInfoPane(CDSHelper.Locators.filterMemberLocator(raceMember2));
-        assertElementNotPresent(hasData);
-        assertElementPresent(noData);
+        assertElementPresent(hasData);
+        assertElementNotPresent(noData);
 
         cds.selectInfoPaneItem(raceMember4, true);
-        click(CDSHelper.Locators.cdsButtonLocator("update", "filterinfoaction"));
+        click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
         _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
         cds.ensureNoFilter();
@@ -356,16 +379,15 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.openStatusInfoPane("Races");
         cds.changeInfoPaneSort("Race", "Country at enrollment");
         cds.selectInfoPaneItem("South Africa", true);
-       // cds.selectInfoPaneItem("Thailand", true);
         cds.selectInfoPaneItem("United States", true);
-        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
         Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("United States");
         waitForElement(countryFilter);
         _asserts.assertFilterStatusCounts(5423, 47, -1); // TODO Test data dependent.
         cds.openFilterInfoPane(countryFilter);
-        assertElementNotPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
-        click(CDSHelper.Locators.cdsButtonLocator("cancel", "filterinfocancel"));
+        assertElementPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
+        click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
     }
 
     @Test
@@ -466,14 +488,14 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
         waitForText("create a new group");
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "groupupdatecancel"));
-        cds.clearFilter();
+        cds.clearFilters();
 
         // add a filter, which should be blown away when a group filter is selected
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        _asserts.assertFilterStatusCounts(969, 8, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(1690, 15, -1); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
@@ -510,7 +532,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // Verify delete works.
         cds.deleteGroupFromSummaryPage(STUDY_GROUP);
 
-        cds.clearFilter();
+        cds.clearFilters();
     }
 
     @Test
@@ -527,7 +549,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
 
         // verify buttons available
-        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("filter subjects"));
+        assertElementPresent(CDSHelper.Locators.cdsButtonLocator("Filter"));
         assertElementPresent(CDSHelper.Locators.cdsButtonLocator("clear"));
 
         // verify split display
@@ -549,31 +571,31 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         // verify multi-level filtering
         cds.goToSummary();
         cds.clickBy("Assays");
-        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[2]);
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]));
+        cds.selectBars(CDSHelper.ASSAYS[1], CDSHelper.ASSAYS[4]);
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]));
 
         cds.useSelectionAsSubjectFilter();
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]), 1);
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[2]), 1);
-        _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]), 1);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]), 1);
+        _asserts.assertFilterStatusCounts(195, 5, -1); // TODO Test data dependent.
 
         // remove filter
-        click(Locator.tagWithClass("div", "closeitem"));
+        cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
-        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
 
         // verify undo
         click(Locator.linkWithText("Undo"));
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
-       _asserts.assertFilterStatusCounts(75, 0, -1); // TODO Test data dependent.
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
+       _asserts.assertFilterStatusCounts(195, 5, -1); // TODO Test data dependent.
 
         // remove an undo filter
-        click(Locator.tagWithClass("div", "closeitem"));
+        cds.clearFilters();
         waitForText("Filter removed.");
         _asserts.assertDefaultFilterStatusCounts();
-        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[0]));
+        assertElementNotPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
 
         // ensure undo is removed on view navigation
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -597,7 +619,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(24391); // TODO Test data dependent.
             grid.assertPageTotal(976); // TODO Test data dependent.
@@ -610,16 +632,16 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.sort(CDSHelper.GRID_COL_SUBJECT_ID);
         grid.goToLastPage();
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertCurrentPage(976); // TODO Test data dependent.
             grid.assertCellContent("c264-003"); // TODO Test data dependent.
-            grid.assertCellContent("c265-001"); // TODO Test data dependent.
+            grid.assertCellContent("c256-001"); // TODO Test data dependent.
         }
 
         grid.clickPreviousBtn();
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertCurrentPage(975); // TODO Test data dependent.
             grid.assertCellContent("908-015"); // TODO Test data dependent.
@@ -628,7 +650,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         grid.goToFirstPage();
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertCellContent("039-001"); // TODO Test data dependent.
             grid.assertCellContent("039-017"); // TODO Test data dependent.
@@ -650,24 +672,25 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         //
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             grid.assertRowCount(110); // TODO Test data dependent.
         }
 
-        cds.clearFilter();
+        cds.clearFilters();
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(24391); // TODO Test data dependent.
-            assertElementPresent(DataGrid.Locators.cellLocator("063-001")); // TODO Test data dependent.
+            assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
         }
 
         gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_SEX, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(24391); // TODO Test data dependent.
         }
@@ -678,14 +701,14 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY);
         grid.ensureColumnsPresent(CDSHelper.NAB_LAB); // make sure other columns from the same source still exist
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(24391); // TODO Test data dependent.
         }
 
         grid.setFacet(CDSHelper.DEMO_RACE, "White");
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(16447); // TODO Test data dependent.
             grid.assertPageTotal(658); // TODO Test data dependent.
@@ -701,39 +724,39 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         grid.assertCurrentPage(2);
 
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-204"); // TODO Test data dependent.
-            grid.assertCellContent("908-203"); // TODO Test data dependent.
+            grid.assertCellContent("908-024"); // TODO Test data dependent.
+            grid.assertCellContent("908-023"); // TODO Test data dependent.
         }
 
         grid.clickPreviousBtn();
         grid.goToPreviousPage();
         grid.assertCurrentPage(3);
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-202"); // TODO Test data dependent.
+            grid.assertCellContent("505-2473"); // TODO Test data dependent.
         }
 
         grid.goToNextPage();
         grid.assertCurrentPage(5);
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-204"); // TODO Test data dependent.
-            grid.assertCellContent("908-203"); // TODO Test data dependent.
+            grid.assertCellContent("505-2410"); // TODO Test data dependent.
+            grid.assertCellContent("505-2402"); // TODO Test data dependent.
         }
 
         log("Change column set and ensure still filtered");
         gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERIC50);
 
-        if(CDSHelper.validateCounts)
+        if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(702); // TODO Test data dependent.
-            grid.assertPageTotal(29); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(84, 3, -1); // TODO Test data dependent.
+            grid.assertRowCount(16447); // TODO Test data dependent.
+            grid.assertPageTotal(658); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
         }
 
     }
@@ -765,8 +788,8 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
         _asserts.assertSelectionStatusCounts(5, 1, -1);
-        sleep(500);
-        cds.clearFilter();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.clearFilters();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
         cds.clearSelection();
         cds.goToSummary();
@@ -804,8 +827,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     }
 
 
-    // TODO Still needs work.
-//    @Test
+    @Test
     public void verifyFilters()
     {
         log("Verify multi-select");
@@ -813,84 +835,81 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         // 14910
         cds.goToSummary();
-//        waitAndClick(Locator.linkWithText("types"));
-        waitForElement(CDSHelper.Locators.dimensionHeaderLocator("Assays"));
-        waitForFormElementToEqual(hierarchySelector, "Type");
-        click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-        waitForElementToDisappear(CDSHelper.Locators.barLabel.withText(CDSHelper.EMPTY_ASSAY));
-        cds.shiftSelectBars(CDSHelper.ASSAYS[3], CDSHelper.ASSAYS[0]);
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Fake ADCC data"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator(), 3);
-        _asserts.assertSelectionStatusCounts(3, 1, 2);
+        cds.clickBy("Study products");
+        waitForFormElementToEqual(hierarchySelector, "Product Type");
+        cds.shiftSelectBars("Poly ICLC", "DEC-205-p24");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("Vaccine"), WAIT_FOR_JAVASCRIPT);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("Poly ICLC, Vaccine, DEC-205-p24"));
+        _asserts.assertSelectionStatusCounts(1, 1, -1);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts();
         // end 14910
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
-        cds.openStatusInfoPane("Labs");
-        waitForText(CDSHelper.LABS[1]);
-        cds.selectInfoPaneItem(CDSHelper.LABS[1], true);
-        cds.selectInfoPaneItem(CDSHelper.LABS[2], false);
-        click(CDSHelper.Locators.cdsButtonLocator("filter", "filterinfoaction"));
+        cds.openStatusInfoPane("Studies");
+        waitForText(CDSHelper.STUDIES[1]);
+        cds.selectInfoPaneItem(CDSHelper.STUDIES[1], true);
+        cds.selectInfoPaneItem(CDSHelper.STUDIES[4], false);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
         cds.saveLiveGroup(GROUP_NAME, GROUP_DESC);
-        _asserts.assertFilterStatusCounts(14, 1, 2);
-        cds.clearFilter();
+        _asserts.assertFilterStatusCounts(113, 2, -1);
+        cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
-        cds.goToSummary();
-        _asserts.assertAllSubjectsPortalPage();
 
         log("Verify operator filtering");
+        cds.goToSummary();
         cds.clickBy("Studies");
-        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
-        _asserts.assertSelectionStatusCounts(132, 2, 3);  // or
-        assertElementPresent(Locator.css("option").withText("OR"));
-        mouseOver(Locator.css("option").withText("OR"));
+        cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[4]);
+        _asserts.assertSelectionStatusCounts(115, 2, -1);  // or
+        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
+        mouseOver(Locator.css("option").withText("Subjects related to any (OR)"));
 
         WebElement selector = Locator.css("select").findElement(getDriver());
         assertEquals("Wrong initial combo selection", "UNION", selector.getAttribute("value"));
         selectOptionByValue(selector, "INTERSECT");
-        _asserts.assertSelectionStatusCounts(0, 0, 0); // and
+        _asserts.assertSelectionStatusCounts(0, 0, -1); // and
         cds.useSelectionAsSubjectFilter();
-        waitForElementToDisappear(Locator.css("span.barlabel"), CDSHelper.CDS_WAIT);
-        _asserts.assertFilterStatusCounts(0, 0, 0); // and
+        cds.hideEmpty();
+        waitForText("None of the selected");
+        _asserts.assertFilterStatusCounts(0, 0, -1); // and
 
         selector = Locator.css("select").findElement(getDriver());
-        waitForElement(Locator.css("option").withText("AND"));
-        mouseOver(Locator.css("option").withText("AND"));
+        waitForElement(Locator.css("option").withText("Subjects related to all (AND)"));
+        mouseOver(Locator.css("option").withText("Subjects related to all (AND)"));
 
         assertEquals("Combo box selection changed unexpectedly", "INTERSECT", selector.getAttribute("value"));
         selectOptionByValue(selector, "UNION");
-        _asserts.assertFilterStatusCounts(132, 2, 3);  // or
-        assertElementPresent(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
+        _asserts.assertFilterStatusCounts(115, 2, -1);  // or
+        waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[0]));
         cds.goToSummary();
-        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[1]);
         cds.clickBy("Assays");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
-        assertElementPresent(Locator.css("option").withText("OR"));
-       _asserts.assertFilterStatusCounts(132, 2, 3);  // and
-        cds.clearFilter();
+        assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
+        _asserts.assertFilterStatusCounts(115, 2, -1);  // or
+        cds.clearFilters();
         waitForText("All subjects");
         _asserts.assertDefaultFilterStatusCounts();
         assertTextPresent("All subjects");
-        cds.goToSummary();
 
         log("Verify selection messaging");
-        cds.clickBy("Assays");
-        cds.pickSort("Name");
-        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(0, 0, 0);
-        cds.pickDimension("Studies");
-        _asserts.assertFilterStatusCounts(0, 0, 0);
-        cds.clearFilter();
-        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[2]);
-        cds.selectBars(CDSHelper.STUDIES[0]);
-        cds.pickDimension("Assays");
         cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[0], CDSHelper.ASSAYS[1]);
+        _asserts.assertSelectionStatusCounts(75, 1, -1);
+        cds.pickDimension("Studies");
+        waitForText("Selection applied as filter.");
+        _asserts.assertFilterStatusCounts(75, 1, -1);
+        cds.clearFilters();
+        waitForText(CDSHelper.CDS_WAIT, CDSHelper.STUDIES[32]);
+        cds.selectBars(CDSHelper.STUDIES[32]);
+        cds.pickDimension("Assays");
+        waitForText("Selection applied as filter.");
 
         //test more group saving
+        cds.goToSummary();
         cds.clickBy("Subject characteristics");
-        cds.pickSort("Country");
-        cds.selectBars("USA");
+        cds.pickSort("Country at enrollment");
+        cds.selectBars("Switzerland");
 
         // save the group and request cancel
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -900,17 +919,13 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "cancelgroupsave"));
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
-        cds.selectBars("USA");
-
         // save the group and request save
         cds.saveLiveGroup(GROUP_NAME2, null);
-
-        cds.selectBars("USA");
 
         // save a group with an interior group
         cds.saveLiveGroup(GROUP_NAME3, null);
 
-        cds.clearFilter();
+        cds.clearFilters();
     }
 
     @Test
@@ -930,7 +945,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         cds.viewLearnAboutPage("Studies");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
@@ -967,7 +982,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "HVTN"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         log("Size: " + returnedItems.size());
         for(WebElement listItem : returnedItems)
@@ -981,7 +996,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "(vCP1452)"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -994,7 +1009,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "Phase IIB"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1006,7 +1021,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         searchString = "If this string ever appears something very odd happened.";
         log("Searching for '" + searchString + "'.");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         _asserts.verifyEmptyLearnAboutStudyPage();
 
@@ -1017,7 +1032,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
     {
         cds.viewLearnAboutPage("Study products");
 
-        List<String> studyProducts = Arrays.asList(CDSHelper.STUDIES);
+        List<String> studyProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(studyProducts);
     }
 
@@ -1029,7 +1044,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
 
         cds.viewLearnAboutPage("Study products");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
 
         int index = returnedItems.size()/2;
@@ -1071,7 +1086,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "AID"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         log("Size: " + returnedItems.size());
         for(WebElement listItem : returnedItems)
@@ -1085,7 +1100,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "inhibitor"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1098,7 +1113,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "GSK"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1111,7 +1126,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
         searchString = "is a"; // TODO Test data dependent.
         log("Searching for '" + searchString + "'.");
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         for(WebElement listItem : returnedItems)
         {
@@ -1123,7 +1138,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
         searchString = "If this string ever appears something very odd happened.";
         log("Searching for '" + searchString + "'.");
-        sleep(500);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         _asserts.verifyEmptyLearnAboutStudyProductsPage();
 
@@ -1241,11 +1256,23 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest
 
     private void ensureGroupsDeleted(List<String> groups)
     {
+        Boolean isVisible;
+
         List<String> deletable = new ArrayList<>();
         for (String group : groups)
         {
             String subName = group.substring(0, 10);
-            if (isTextPresent(subName))
+
+            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
+            try{
+                isVisible = isElementVisible(Locator.xpath("//div[contains(@class, 'grouplist-view')]//div[contains(@class, 'grouprow')]//div[contains(@title, '" + subName + "')]"));
+            }
+            catch(org.openqa.selenium.NoSuchElementException nse)
+            {
+                isVisible = false;
+            }
+
+            if (isTextPresent(subName) && isVisible)
                 deletable.add(subName);
         }
 

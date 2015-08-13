@@ -270,9 +270,12 @@ Ext.define('Connector.controller.Explorer', {
         }, this, [view, rec, node]);
     },
 
-    afterSelectionAnimation : function(view, rec, node) {
+    afterSelectionAnimation : function(view, rec) {
         var records = view.getSelectionModel().getSelection();
         var state = Connector.getState();
+
+        if (records.length == 0)
+            return;
 
         state.onMDXReady(function(mdx) {
 
@@ -282,7 +285,7 @@ Ext.define('Connector.controller.Explorer', {
             if (!hierarchy) {
                 var dim = mdx.getDimension(uniqueName);
                 if (!dim) {
-                    console.error('unable to determine sourcing dimension/hierarchy');
+                    throw 'unable to determine sourcing dimension/hierarchy';
                 }
 
                 Ext.each(dim.hierarchies, function(hier) {
@@ -296,27 +299,60 @@ Ext.define('Connector.controller.Explorer', {
             //
             // Build Selections
             //
-            var selections = [];
+            var members = [],
+                levelUniqueName;
             Ext.each(records, function(rec) {
-                selections.push({
-                    hierarchy: hierarchy.uniqueName,
-                    level: rec.get('levelUniqueName'),
-                    members: [{ uniqueName: rec.get('uniqueName') }],
-                    operator: hierarchy.defaultOperator,
-                    isWhereFilter: hierarchy.filterType === 'WHERE'
+                members.push({
+                    uniqueName: rec.get('uniqueName')
                 });
+
+                // TODO: It'd be better to choose the most specific level
+                levelUniqueName = rec.get('levelUniqueName');
             });
+
+            var data = {
+                hierarchy: hierarchy.uniqueName,
+                members: members,
+                operator: hierarchy.defaultOperator,
+                isWhereFilter: hierarchy.filterType === 'WHERE'
+            };
+
+            if (levelUniqueName) {
+                data.level = levelUniqueName;
+            }
+
+            var selection = Ext.create(state.getFilterModelName(), data);
+
+            // see if we're merging into a previous filter, this way we can respect other
+            // settings like operator, etc. This is related to merge but cannot use merge strictly
+            // since we allow for shift, ctrl select.
+            if (members.length > 1) {
+                var selections = state.getSelections(), _s;
+
+                if (!Ext.isEmpty(selections)) {
+                    for (var s=0; s < selections.length; s++) {
+                        if (selections[s].canMerge(selection)) {
+                            _s = selections[s];
+                            break;
+                        }
+                    }
+                }
+
+                if (Ext.isDefined(_s)) {
+                    selection.set({
+                        operator: _s.get('operator')
+                    })
+                }
+            }
 
             //
             // Apply Selections
             //
-            if (selections.length > 0) {
-                state.removePrivateSelection('hoverSelectionFilter');
-                state.addSelection(selections, false, true, true);
-                var v = this.getViewManager().getViewInstance('singleaxis');
-                if (v) {
-                    v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
-                }
+            state.removePrivateSelection('hoverSelectionFilter');
+            state.setSelections([selection]);
+            var v = this.getViewManager().getViewInstance('singleaxis');
+            if (v) {
+                v.saview.showMessage('Hold Shift, CTRL, or CMD to select multiple');
             }
 
         }, this);

@@ -33,13 +33,15 @@ import java.util.List;
 
 public class CDSHelper
 {
+    public static final String CDS_PROJECT_NAME = "CDSTest Project";
+
     public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
             "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
             "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
             "HVTN 065", "HVTN 067", "HVTN 068", "HVTN 069", "HVTN 070", "HVTN 071", "HVTN 072", "HVTN 073",
-            "HVTN 076", "HVTN 077", "HVTN 078", "HVTN 080", "HVTN 083", "HVTN 084", "HVTN 085", "HVTN 086",
+            "HVTN 076", "HVTN 077", "HVTN 078", "HVTN 080", "HVTN 082", "HVTN 083", "HVTN 084", "HVTN 085", "HVTN 086",
             "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
-            "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
+            "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 504", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
 
     public static final String[] PROT_NAMES = {"v078", "v044", "v503", "v060", "v204", "v041", "v205", "v049", "v049", "v505"}; //incomplete list, only first and last under each assay in find subjects view.
 
@@ -64,8 +66,118 @@ public class CDSHelper
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
+    public final static int CDS_WAIT_ANIMATION = 500;
+
+    public final static String RACE_ASIAN = "Asian";
+    public final static String RACE_BLACK = "Black";
+    public final static String RACE_HAWAIIAN = "Hawaiian/Pacific Isl";
+    public final static String RACE_MULTIRACIAL = "Multiracial";
+    public final static String RACE_NATIVE = "Native American";
+    public final static String RACE_NATIVE_ALAS = "Native American/Alas";
+    public final static String RACE_OTHER = "Other";
+    public final static String RACE_WHITE = "White";
+
     public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
 
+    // These are used to build ids of elements on the tree panels.
+    public static final String COLUMN_ID_NEUTRAL_TIER = "neutralization tier";
+    public static final String COLUMN_ID_ANTIGEN_CLADE = "clade";
+    public static final String COLUMN_ID_VIRUS_NAME = "virus";
+
+    public static final String ANTIGEN_A1_NAME = "A1.con.env03 140 CF";
+    public static final String ANTIGEN_A244_NAME = "A244 gp 120 gDneg/293F/mon";
+    public static final String ANTIGEN_AE244_NAME = "AE.A244 V1V2 Tags/293F";
+    public static final String ANTIGEN_BCON_NAME = "B.con.env03 140 CF";
+    public static final String ANTIGEN_C1086_NAME = "C.1086C_V1_V2 Tags";
+    public static final String ANTIGEN_CCON_NAME = "C.con.env03 140 CF";
+    public static final String ANTIGEN_CONS_NAME = "Con S gp140 CFI";
+    public static final String ANTIGEN_GP70_NAME = "gp70_B.CaseA_V1_V2";
+    public static final String ANTIGEN_P24_NAME = "p24";
+    public static final String[] ANTIGENS_NAME = {ANTIGEN_A1_NAME, ANTIGEN_A244_NAME, ANTIGEN_AE244_NAME, ANTIGEN_BCON_NAME,
+            ANTIGEN_C1086_NAME, ANTIGEN_CCON_NAME, ANTIGEN_CONS_NAME, ANTIGEN_GP70_NAME, ANTIGEN_P24_NAME};
+
+    public static final String ANTIGEN_CLADE_A = "A";
+    public static final String ANTIGEN_CLADE_B = "B";
+    public static final String ANTIGEN_CLADE_C = "C";
+    public static final String ANTIGEN_CLADE_CRF01 = "CRF01_AE";
+    public static final String ANTIGEN_CLADE_NOT_RECORDED = "Not Currently Recorded in Data";
+    public static final String[] ANTIGEN_CLADES = {ANTIGEN_CLADE_A, ANTIGEN_CLADE_B, ANTIGEN_CLADE_C, ANTIGEN_CLADE_CRF01, ANTIGEN_CLADE_NOT_RECORDED};
+
+    public static final String NEUTRAL_TIER_1 = "1";
+    public static final String NEUTRAL_TIER_2 = "2";
+    public static final String NEUTRAL_TIER_NA = "Not Available";
+    public static final String[] NEUTRAL_TIERS = {NEUTRAL_TIER_1, NEUTRAL_TIER_2, NEUTRAL_TIER_NA};
+
+    public static final String VIRUS_Q23 = "Q23.17";
+    public static final String VIRUS_BX08 = "BX08.16";
+    public static final String VIRUS_MN3 = "MN.3";
+    public static final String VIRUS_SF162 = "SF162.LS";
+    public static final String VIRUS_SS1196 = "SS1196.1";
+    public static final String VIRUS_REJO = "REJO4541.67";
+    public static final String VIRUS_RHPA = "RHPA4259.7";
+    public static final String VIRUS_SC422 = "SC422661.8";
+    public static final String VIRUS_TRO = "TRO.11";
+    public static final String VIRUS_WITO4 = "WITO4160.33";
+    public static final String VIRUS_92RW = "92RW020.2";
+    public static final String VIRUS_TV1 = "TV1.21";
+    public static final String VIRUS_NP03 = "NP03.13";
+    public static final String VIRUS_TH023 = "TH023.6";
+    public static final String VIRUS_9020 = "9020.A13.LucR.T2A.ecto";
+    public static final String VIRUS_96ZM = "96ZM651.2";
+    public static final String VIRUS_97ZA = "97ZA012.29";
+    public static final String VIRUS_BAL26 = "BaL.26";
+    public static final String VIRUS_C1080 = "C1080.c03.LucR.T2A.ecto";
+    public static final String VIRUS_C3347 = "C3347.c11.LucR.T2A.ecto";
+    public static final String VIRUS_CAAN = "CAAN5342.A2";
+    public static final String VIRUS_CH58 = "CH58.LucR.T2A.ecto";
+    public static final String VIRUS_CH77 = "CH77.LucR.T2A.ecto";
+    public static final String VIRUS_CM244 = "CM244.c01-ETH2220LucR.T2A.4";
+    public static final String VIRUS_CE1086 = "Ce1086_B2.LucR.T2A.ecto";
+    public static final String VIRUS_CE1176 = "Ce1176_A3.LucR.T2A.ecto";
+    public static final String VIRUS_CE2010 = "Ce2010_F5.LucR.T2A.ecto";
+    public static final String VIRUS_DU151 = "Du151.2.LucR.T2A.ecto";
+    public static final String VIRUS_DU422 = "Du422.1.LucR.T2A.ecto";
+    public static final String VIRUS_MW965 = "MW965.26";
+    public static final String VIRUS_R2184 = "R2184.c04.LucR.T2A.ecto";
+    public static final String VIRUS_REJOLUC = "REJO.LucR.T2A.ecto";
+    public static final String VIRUS_RHPALUC = "RHPA.LucR.T2A.ecto";
+    public static final String VIRUS_SC22 = "SC22.3C2.LucR.T2A.ecto";
+    public static final String VIRUS_SIVNL = "SIVmac239.ps-NL.LucR.T2A.ecto";
+    public static final String VIRUS_SIVLUC = "SIVmac239.ps.LucR.T2A.ecto";
+    public static final String VIRUS_SVA = "SVA-MLV";
+    public static final String VIRUS_TV1LUC = "TV1.21.LucR.T2A.ecto";
+    public static final String VIRUS_W61D = "W61D(TCLA).71";
+    public static final String VIRUS_WITO = "WITO.LucR.T2A.ecto";
+    public static final String[] VIRUSES = {VIRUS_Q23, VIRUS_BX08, VIRUS_MN3, VIRUS_SF162, VIRUS_SS1196, VIRUS_REJO, VIRUS_RHPA,
+            VIRUS_SC422, VIRUS_TRO, VIRUS_WITO4, VIRUS_92RW, VIRUS_TV1 , VIRUS_NP03, VIRUS_TH023, VIRUS_9020, VIRUS_96ZM,
+            VIRUS_97ZA, VIRUS_BAL26, VIRUS_C1080, VIRUS_C3347, VIRUS_CAAN, VIRUS_CH58, VIRUS_CH77, VIRUS_CM244, VIRUS_CE1086,
+            VIRUS_CE1176, VIRUS_CE2010, VIRUS_DU151, VIRUS_DU422, VIRUS_MW965, VIRUS_R2184, VIRUS_REJOLUC, VIRUS_RHPALUC,
+            VIRUS_SC22, VIRUS_SIVNL, VIRUS_SIVLUC, VIRUS_SVA, VIRUS_TV1LUC, VIRUS_W61D, VIRUS_WITO};
+
+    public static final String PROTEIN_PANEL_PTEA = "Any HIV PTEA";
+    public static final String PROTEIN_PANEL_PTEG = "Any HIV PTEg";
+    public static final String PROTEIN_PANEL_V503 = "Any v503 Vaccine Matched Antigen";
+    public static final String[] PROTEIN_PANELS = {PROTEIN_PANEL_PTEA, PROTEIN_PANEL_PTEG, PROTEIN_PANEL_V503};
+
+    public static final String PROTEIN_ENV = "ENV";
+    public static final String PROTEIN_GAG = "GAG";
+    public static final String PROTEIN_NEF = "NEF";
+    public static final String PROTEIN_POL = "POL";
+    public static final String[] PROTEINS = {PROTEIN_ENV, PROTEIN_GAG, PROTEIN_NEF, PROTEIN_POL};
+
+    // These are used in the detail selection of a variable.
+    public static final String TARGET_CELL_TZM = "TZM-bl";
+    public static final String TARGET_CELL_A3R5 = "A3R5";
+    public static final String[] TARGET_CELLS = {TARGET_CELL_TZM, TARGET_CELL_TZM};
+
+    public static final String CELL_TYPE_CD4 = "CD4+";
+    public static final String CELL_TYPE_CD8 = "CD8+";
+    public static final String[] CELL_TYPES = {CELL_TYPE_CD4, CELL_TYPE_CD8};
+
+    public static final String DATA_SUMMARY_PROTEIN = "Protein";
+    public static final String DATA_SUMMARY_PROTEIN_PANEL = "Protein Panel";
+
+    // The following (BAMA, DEMO, ELISPOT, ICS, NAB) are values used in the variable selector.
     public static final String BAMA = "BAMA (Binding Ab multiplex assay)";
     public static final String BAMA_ANTIGEN_CLADE = "Antigen clade";
     public static final String BAMA_ANTIGEN_NAME = "Antigen name";
@@ -81,8 +193,8 @@ public class CDSHelper
     public static final String BAMA_MAGNITUDE_BASELINE = "Magnitude (mfi) - Blank Baseline";
     public static final String BAMA_MAGNITUDE_DELTA = "Magnitude (mfi) - Delta";
     public static final String BAMA_MAGNITUDE_RAW = "Magnitude (mfi) - Raw";
-    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) – Delta Baseline";
-    public static final String BAMA_MAGNITUDE_RAW_BASELINE = "Magnitude (mfi) – Raw Baseline";
+    public static final String BAMA_MAGNITUDE_DELTA_BASELINE = "Magnitude (mfi) - Delta Baseline";
+    public static final String BAMA_MAGNITUDE_RAW_BASELINE = "Magnitude (mfi) - Raw Baseline";
     public static final String BAMA_PROTEIN = "Protein";
     public static final String BAMA_PROTEIN_PANEL = "Protein Panel";
     public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
@@ -175,6 +287,8 @@ public class CDSHelper
     public static final String NAB_TIER = "Tier";
     public static final String NAB_TITERIC50 = "Titer IC50";
     public static final String NAB_TITERIC80 = "Titer IC80";
+    public static final String NAB_VIRUS_NAME = "Virus name";
+    public static final String NAB_VIRUS_TYPE = "Virus type";
     public static final String NAB_VISIT = "Visit";
     public static final String NAB_VISIT_DAY = "Visit Day";
 
@@ -183,6 +297,7 @@ public class CDSHelper
     public static final String TIME_POINTS_WEEKS = "Study weeks";
     public static final String TIME_POINTS_MONTHS = "Study months";
 
+    // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = "BAMA";
     public static final String GRID_TITLE_DEMO = "Demographics";
     public static final String GRID_TITLE_ELISPOT = "ELISPOT";
@@ -192,8 +307,29 @@ public class CDSHelper
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
 
-    // Set this to true if you want to skip the import of data, setting up the project and cleaning up old projects.
-    public static final boolean debugTest = false;
+    // Time points alignments
+    public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";
+    public static final String TIME_POINTS_ALIGN_ENROLL = "Enrollment";
+    public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
+
+    // This function is used to build id for elements found on the tree panel.
+    public String buildIdentifier(String... elements)
+    {
+        String finalId = "";
+
+        for(String temp : elements)
+        {
+            temp = temp.replaceAll(" " , "_");
+            finalId += temp + "-";
+        }
+        if (finalId.length() > 0)
+        {
+            finalId = finalId.substring(0, finalId.length() - 1);
+        }
+
+        return finalId;
+    }
+
     // Because the test data changes frequently it can be useful to skip any steps that validate counts.
     public static final boolean validateCounts = false;
 
@@ -223,14 +359,9 @@ public class CDSHelper
     {
         _test.click(Locator.id("sae-hierarchy-dropdown"));
 
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+            return null;
         });
 
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
@@ -238,14 +369,9 @@ public class CDSHelper
 
     public void pickDimension(final String dimension)
     {
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locators.dimensionHeaderLocator(dimension));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.click(Locators.dimensionHeaderLocator(dimension));
+            return null;
         });
 
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
@@ -275,14 +401,9 @@ public class CDSHelper
             _test.click(Ext4Helper.Locators.radiobutton(_test, "Snapshot: Keep this group static"));
         }
 
-        applyAndMaybeWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
-                return null;
-            }
+        applyAndMaybeWaitForBars(aVoid -> {
+            _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));
+            return null;
         });
     }
 
@@ -372,18 +493,32 @@ public class CDSHelper
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
     }
 
-    public void clearFilter()
+    public void clearFilter(int index)
+    {
+        Locator.XPathLocator filterPane = CDSHelper.Locators.filterPane(index);
+        Locator.XPathLocator clearButtonLocator = filterPane.append(Locator.tagWithClass("span", "closeitem"));
+
+        // activate the hover close
+        _test.mouseOver(filterPane);
+        _test.waitForElement(clearButtonLocator.notHidden());
+
+        final WebElement clearButton = _test.waitForElement(clearButtonLocator);
+
+        applyAndMaybeWaitForBars(aVoid -> {
+            clearButton.click();
+            return null;
+        });
+
+        _test.waitForText("Filter removed.");
+    }
+
+    public void clearFilters()
     {
         final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
 
-        applyAndMaybeWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                clearButton.click();
-                return null;
-            }
+        applyAndMaybeWaitForBars(aVoid -> {
+            clearButton.click();
+            return null;
         });
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
@@ -393,7 +528,7 @@ public class CDSHelper
         // clear filters
         if (_test.isElementPresent(CDSHelper.Locators.cdsButtonLocator("clear", "filterclear").notHidden()))
         {
-            clearFilter();
+            clearFilters();
         }
     }
 
@@ -401,14 +536,9 @@ public class CDSHelper
     {
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
 
-        applyAndMaybeWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locator.linkWithText("Undo"));
-                return null;
-            }
+        applyAndMaybeWaitForBars(aVoid -> {
+            _test.click(Locator.linkWithText("Undo"));
+            return null;
         });
 
         _test.waitForElement(Locators.cdsButtonLocator("clear", "filterclear"));
@@ -416,19 +546,26 @@ public class CDSHelper
 
     public void useSelectionAsSubjectFilter()
     {
-        _test.click(Locators.cdsButtonLocator("filter subjects"));
-        waitForClearSelection(); // wait for animation
-    }
-
-    public void useSelectionAsDataFilter()
-    {
-        _test.click(Locators.cdsButtonLocator("filter data"));
+        _test.click(Locators.cdsButtonLocator("Filter"));
         waitForClearSelection(); // wait for animation
     }
 
     public void clearSelection()
     {
-        _test.click(Locators.cdsButtonLocator("clear", "selectionclear"));
+        Locator.XPathLocator selectionPane = CDSHelper.Locators.selectionPane();
+        Locator.XPathLocator clearButtonLocator = selectionPane.append(Locator.tagWithClass("span", "closeitem"));
+
+        // activate the hover close
+        _test.mouseOver(selectionPane);
+        _test.waitForElement(clearButtonLocator.notHidden());
+
+        final WebElement clearButton = _test.waitForElement(clearButtonLocator);
+
+        applyAndMaybeWaitForBars(aVoid -> {
+            clearButton.click();
+            return null;
+        });
+
         waitForClearSelection();
     }
 
@@ -444,56 +581,39 @@ public class CDSHelper
     private void waitForClearSelection()
     {
         _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.selectionpanel")));
-        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("span.status-subcount")));
     }
 
     public void clickBy(final String byNoun)
     {
         final WebElement link = _test.waitForElement(Locators.getByLocator(byNoun));
 
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                link.click();
-//                _test.waitForElement(Locator.css("div.label").withText("Showing number of: Subjects"), CDS_WAIT);
-                _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            link.click();
+            _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
+            return null;
         });
 
     }
 
     public void hideEmpty()
     {
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("hide empty"));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.click(Locators.cdsButtonLocator("Hide empty"));
+            return null;
         });
 
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
-        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("show empty"));
+        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Show empty"));
     }
 
     public void showEmpty()
     {
-        applyAndWaitForBars(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("show empty"));
-                return null;
-            }
+        applyAndWaitForBars(aVoid -> {
+            _test.click(Locators.cdsButtonLocator("Show empty"));
+            return null;
         });
 
-        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("hide empty"));
+        _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
 
     public void viewInfo(String barLabel)
@@ -543,9 +663,9 @@ public class CDSHelper
 
     public void toggleExplorerBar(String largeBarText)
     {
-        _test.sleep(500);
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
         _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        _test.sleep(500);
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
     public void openStatusInfoPane(String label)
@@ -558,10 +678,10 @@ public class CDSHelper
 
     public void openFilterInfoPane(Locator.XPathLocator filterMember)
     {
-        _test.click(Locator.tagWithClass("div", "wrapitem").withDescendant(filterMember));
+        _test.click(Locator.tagWithClass("div", "filter-item").withDescendant(filterMember));
 
         // 'update' button represents the update of a filter
-        _test.waitForElement(Locators.cdsButtonLocator("update", "filterinfoaction"));
+        _test.waitForElement(Locators.cdsButtonLocator("Update", "filterinfoaction"));
     }
 
     public void changeInfoPaneSort(String fromSort, String toSort)
@@ -609,6 +729,28 @@ public class CDSHelper
         _test.click(Locator.tagWithClass("label", "x-form-cb-label").containing(radioLabel));
     }
 
+    public boolean isCheckboxChecked(String xpath)
+    {
+        WebElement tableParent;
+        Locator checkBox;
+
+        checkBox = Locator.xpath(xpath + "/./ancestor-or-self::table[contains(@class, 'checkbox2')]");
+
+        tableParent = _test.getDriver().findElement(checkBox.toBy());
+
+        String classAttribute = tableParent.getAttribute("class");
+
+        if(classAttribute.contains("x-form-cb-checked"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)
     {
         if (_test.isElementPresent(Locator.id("single-axis-explorer")))
@@ -629,7 +771,10 @@ public class CDSHelper
 
         if (bars.size() > 0)
             _test.shortWait().until(ExpectedConditions.stalenessOf(bars.get(0)));
-        if(!_test.isElementPresent(Locator.tagWithClass("div", "saeempty")))
+
+        _test.waitForElement(Locator.tagWithClass("div", "saeempty"), 500, false);
+
+        if (!_test.isElementPresent(Locator.tagWithClass("div", "saeempty")))
             waitForBarAnimation();
     }
 
@@ -691,7 +836,7 @@ public class CDSHelper
 
         public static Locator.XPathLocator cdsButtonLocator(String text)
         {
-            return Locator.xpath("//a").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+            return Locator.xpath("//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
         }
 
         public static Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
@@ -754,8 +899,19 @@ public class CDSHelper
         {
             return Locator.tagWithClass("div", "dim-selector").append(Locator.tagWithClass("h1", "active").withText(dimension));
         }
+
+        public static Locator.XPathLocator selectionPane()
+        {
+            return Locator.tagWithClass("div", "selectionpanel");
+        }
+
+        public static Locator.XPathLocator filterPane(int index)
+        {
+            return Locator.tagWithClass("div", "filterpanel").append(Locator.tagWithClass("div", "activefilter")).index(index);
+        }
     }
 
+    // Used to identify data in the time axis.
     public static class TimeAxisData
     {
         public String study;
