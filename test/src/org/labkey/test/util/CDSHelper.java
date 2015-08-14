@@ -79,7 +79,14 @@ public class CDSHelper
 
     public static final String[] RACE_VALUES = {"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial", "Native American", "Native American/Alas", "Native Hawaiian/Paci", "Other", "Unknown", "White"};
 
+    // These are used for ids on the panel selectors and on titles in the Grid.
+    public static final String TITLE_NAB = "NAb";
+    public static final String TITLE_BAMA = "BAMA";
+    public static final String TITLE_ELISPOT = "ELISPOT";
+    public static final String TITLE_ICS = "ICS";
+
     // These are used to build ids of elements on the tree panels.
+    public static final String PANEL_PREFIX = "study";
     public static final String COLUMN_ID_NEUTRAL_TIER = "neutralization tier";
     public static final String COLUMN_ID_ANTIGEN_CLADE = "clade";
     public static final String COLUMN_ID_VIRUS_NAME = "virus";
@@ -298,11 +305,11 @@ public class CDSHelper
     public static final String TIME_POINTS_MONTHS = "Study months";
 
     // These are values used in the data grid.
-    public static final String GRID_TITLE_BAMA = "BAMA";
+    public static final String GRID_TITLE_BAMA = TITLE_BAMA;
     public static final String GRID_TITLE_DEMO = "Demographics";
-    public static final String GRID_TITLE_ELISPOT = "ELISPOT";
-    public static final String GRID_TITLE_ICS = "ICS";
-    public static final String GRID_TITLE_NAB = "NAb";
+    public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
+    public static final String GRID_TITLE_ICS = TITLE_ICS;
+    public static final String GRID_TITLE_NAB = TITLE_NAB;
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
@@ -313,9 +320,20 @@ public class CDSHelper
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
 
     // This function is used to build id for elements found on the tree panel.
-    public String buildIdentifier(String... elements)
+    public String buildIdentifier(String firstId, String... elements)
     {
-        String finalId = "";
+        String finalId;
+
+        // Need to special case the "all" checkbox case.
+        if(elements[0].toLowerCase().contains("all"))
+        {
+            finalId = firstId.replaceAll(" " , "_") + "-";
+        }
+        else
+        {
+            // In this case the firstId is an assay name.
+            finalId = PANEL_PREFIX + "_" + firstId + "_";
+        }
 
         for(String temp : elements)
         {

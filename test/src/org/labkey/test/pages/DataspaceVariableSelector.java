@@ -186,6 +186,10 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;
@@ -233,11 +237,15 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;
             case DataSummaryLevel:
-                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-summaer_level')]//div[contains(@class, 'main-label')]";
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-summary_level')]//div[contains(@class, 'main-label')]";
                 xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-summary_level-dropdown')]";
 
                 locDimField = Locator.xpath(xpathDimField);
@@ -249,6 +257,10 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;
@@ -292,6 +304,10 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;

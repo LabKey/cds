@@ -714,14 +714,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_DATA);
-        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         // yaxis window opens automatically
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -1029,7 +1029,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSHelper cds = new CDSHelper(this);
         String sharedVirus = CDSHelper.VIRUS_Q23;
         String uniqueVirus = CDSHelper.VIRUS_BAL26;
-        String uniqueVirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, uniqueVirus);
+        String uniqueVirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, uniqueVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1093,8 +1093,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSHelper cds = new CDSHelper(this);
         String xVirus = CDSHelper.VIRUS_TV1;
         String yVirus = CDSHelper.VIRUS_SF162;
-        String xVirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, xVirus);
-        String y1VirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, yVirus);
+        String xVirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, xVirus);
+        String y1VirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, yVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
