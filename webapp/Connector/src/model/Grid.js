@@ -89,7 +89,7 @@ Ext.define('Connector.model.Grid', {
                 columns.push(measure.alias);
             });
 
-            return columns;
+            return Ext.Array.unique(columns);
         },
 
         getSubjectFilterState : function(model, callback, scope) {
@@ -198,9 +198,7 @@ Ext.define('Connector.model.Grid', {
                         this.bindApplicationMeasures(state.getFilters());
                     }
 
-                    if (this.isActive()) {
-                        this.requestMetaData();
-                    }
+                    this.requestMetaData();
 
                 }, this);
             }, this);

@@ -34,6 +34,7 @@ Ext.define('Connector.view.Grid', {
         // maintain the sorts that appeared on the previous store instance. They are temporarily stored
         // on this property.
         this.sorters = undefined;
+        this.DATA_SOURCE_COLUMN = 'http://cpas.labkey.com/Study#Dataset';
 
         this.columnMap = {};
 
@@ -453,10 +454,12 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             maxRows = Connector.model.Grid.getMaxRows();
 
+        var columns = model.get('columnSet').concat('http://cpas.labkey.com/Study#Dataset');
+
         var config = {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
-            columns: model.get('columnSet'),
+            columns: columns,
             filterArray: model.getBaseFilters(),
             maxRows: maxRows,
             pageSize: maxRows,
@@ -557,7 +560,7 @@ Ext.define('Connector.view.Grid', {
         }, this);
     },
 
-    updateColumnMap : function(/* Ext.grid.header.Container */ gridHeader) {
+    updateColumnMap : function(gridHeader /* Ext.grid.header.Container */) {
         var columns = gridHeader.getGridColumns();
 
         Ext.each(columns, function(gridColumn, idx) {
@@ -569,25 +572,48 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             modelMap = {},
             columns,
-            models = model.get('metadata').columnModel;
+            models = model.get('metadata').columnModel,
+            applyChecker = false,
+            queryService = Connector.getService('Query');
 
         Ext.each(models, function(model) {
             modelMap[model.dataIndex] = model;
         }, this);
 
+        if (this.DATA_SOURCE_COLUMN in modelMap) {
+            applyChecker = true;
+        }
+
         Ext.each(columnGroups, function(group) {
             columns = group.columns;
             Ext.each(columns, function(column) {
+
                 var model = modelMap[column.dataIndex];
                 if (model) {
                     column.hidden = model.hidden;
                     column.header = Ext.htmlEncode(model.header);
                 }
 
+                if (applyChecker) {
+                    var measure = queryService.getMeasure(column.dataIndex);
+                    if (measure && (measure.isMeasure || measure.isDimension)) {
+                        column.renderer = Ext.bind(this.cellRenderer, this, [measure], 3);
+                    }
+                }
+
                 column.showLink = false;
             }, this);
 
         }, this);
+    },
+
+    cellRenderer : function(v, meta, record, measure) {
+        if (Ext.isEmpty(v) && record.get(this.DATA_SOURCE_COLUMN) !== measure.queryName) {
+            meta.style = "text-align: center;"; // Ext will inject this as 'right' if we don't
+            meta.tdCls += " no-value";
+            return null;
+        }
+        return v;
     },
 
     onTriggerClick : function(headerCt, column/*, evt, el */) {

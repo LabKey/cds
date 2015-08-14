@@ -99,6 +99,27 @@
       color: $black;
     }
   }
+
+  .x-grid-row {
+
+    td.no-value {
+      background-color: #dcd8d8;
+      color: #777777;
+
+      .x-grid-cell-inner:before {
+        content: 'no value';
+      }
+    }
+
+    &.x-grid-row-over {
+
+      td.no-value {
+        background-color: #beefef;
+        color: #777777;
+      }
+
+    }
+  }
 }
 
 /* Connector.window.Filter */
