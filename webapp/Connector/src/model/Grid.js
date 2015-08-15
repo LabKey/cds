@@ -170,6 +170,10 @@ Ext.define('Connector.model.Grid', {
         this.viewReady = false;
         this._ready = false;
 
+        this.metadataTask = new Ext.util.DelayedTask(function() {
+            Connector.getService('Query').getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this);
+        }, this);
+
         Connector.getState().onReady(function(state) {
             this.stateReady = true;
             this.applyFilters(this.bindFilters(state.getFilters()));
@@ -644,9 +648,11 @@ Ext.define('Connector.model.Grid', {
         this._init();
     },
 
+    /**
+     * retrieve new column metadata based on the model configuration
+     */
     requestMetaData : function() {
-        // retrieve new column metadata based on the model configuration
-        Connector.getService('Query').getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this);
+        this.metadataTask.delay(50);
     },
 
     /**
