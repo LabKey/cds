@@ -8,11 +8,13 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.InDevelopment;
+import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.PostgresOnlyTest;
 import org.labkey.test.util.ReadOnlyTest;
+import org.openqa.selenium.NoSuchElementException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -51,14 +53,16 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
         }
     }
 
-    @Override @LogMethod (quiet = true)
+    @Override
     public boolean needsSetup()
     {
         try
         {
-            return HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin"));
+            goToProjectHome();
+            new CDSHelper(this).enterApplication();
+            return false;
         }
-        catch (IOException e)
+        catch (NoSuchElementException e)
         {
             return true;
         }
