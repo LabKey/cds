@@ -321,23 +321,11 @@ Ext.define('Connector.model.Grid', {
         //
         // Cross-reference application measures
         //
-        var filters = filterSet,
-            SQLMeasures = [],
+        var SQLMeasures = [],
             plotMeasures = [],
-            defaultMeasureSet = {},
             queryService = Connector.getService('Query');
 
-        // map the default set of grid measures so they
-        // are not replicated as 'SQLMeasures'
-        Ext.each(this.getMeasures('defaultMeasures'), function(m) {
-            var key = m.alias;
-            if (Ext.isObject(m.lookup)) {
-                key += '/' + m.lookup.displayColumn;
-            }
-            defaultMeasureSet[key] = true;
-        });
-
-        Ext.each(filters, function(filter) {
+        Ext.each(filterSet, function(filter) {
             // respect plotted measures
             if (filter.isPlot() && !filter.isGrid()) {
                 var plotMeasureSet = filter.get('plotMeasures');
@@ -356,16 +344,14 @@ Ext.define('Connector.model.Grid', {
                 var gridFilters = filter.get('gridFilter');
                 Ext.each(gridFilters, function(gf) {
 
-                    if (!defaultMeasureSet[gf.getColumnName()]) {
-                        var measure = queryService.getMeasure(gf.getColumnName());
-                        if (Ext.isDefined(measure)) {
-                            SQLMeasures.push({
-                                measure: Ext.clone(measure),
-                                time: 'date',
-                                filterArray: gridFilters
-                            });
-                            return false;
-                        }
+                    var measure = queryService.getMeasure(gf.getColumnName());
+                    if (Ext.isDefined(measure)) {
+                        SQLMeasures.push({
+                            measure: Ext.clone(measure),
+                            time: 'date',
+                            filterArray: gridFilters
+                        });
+                        return false;
                     }
 
                 }, this);
