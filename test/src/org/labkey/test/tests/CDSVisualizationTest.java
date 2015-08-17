@@ -16,29 +16,23 @@
 package org.labkey.test.tests;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ReadOnlyTest;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -47,7 +41,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -61,10 +54,9 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 
-@Category({CDS.class})
-public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
+@Category({CDS.class, Git.class})
+public class CDSVisualizationTest extends CDSReadOnlyTest
 {
-
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String PGROUP1 = "visgroup 1";
@@ -77,40 +69,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String BRUSHED_FILL = "#14C9CC";
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
-
-    public void doSetup() throws Exception
-    {
-        CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setupDataspace();
-    }
-
-    @Override @LogMethod
-    public boolean needsSetup()
-    {
-        boolean callDoCleanUp = false;
-
-        try
-        {
-            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
-            {
-                callDoCleanUp = false;
-                doSetup();
-            }
-
-        }
-        catch (IOException fail)
-        {
-            callDoCleanUp =  true;
-        }
-        catch(java.lang.Exception ex)
-        {
-            callDoCleanUp = true;
-        }
-
-        // Returning true will cause BaseWebDriver to call it's cleanup method.
-        return callDoCleanUp;
-    }
 
     @Before
     public void preTest()
@@ -134,14 +92,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
 //        cvt.deleteParticipantGroups();
-        Ext4Helper.resetCssPrefix();
-    }
-
-    @Nullable
-    @Override
-    protected String getProjectName()
-    {
-        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
