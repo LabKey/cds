@@ -15,71 +15,27 @@
  */
 package org.labkey.test.tests;
 
-import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.Git;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ReadOnlyTest;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
-@Category({CDS.class})
-public class CDSSecurityTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
+@Category({CDS.class, Git.class})
+public class CDSSecurityTest extends CDSReadOnlyTest
 {
-
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
     private final String[] PERM_GROUPS = {"CDSSecurity Test Group01", "CDSSecurity Test Group02", "CDSSecurity Test Group03"};
-
-    public void doSetup() throws Exception
-    {
-        CDSSecurityTest initTest = (CDSSecurityTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setupDataspace();
-    }
-
-    @Override @LogMethod
-    public boolean needsSetup()
-    {
-        boolean callDoCleanUp = false;
-
-        try
-        {
-            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
-            {
-                callDoCleanUp = false;
-                doSetup();
-            }
-
-        }
-        catch (IOException fail)
-        {
-            callDoCleanUp =  true;
-        }
-        catch(java.lang.Exception ex)
-        {
-            callDoCleanUp = true;
-        }
-
-        // Returning true will cause BaseWebDriver to call it's cleanup method.
-        return callDoCleanUp;
-    }
 
     @Before
     public void preTest()
@@ -94,7 +50,6 @@ public class CDSSecurityTest extends BaseWebDriverTest implements PostgresOnlyTe
     {
         CDSSecurityTest init = (CDSSecurityTest)getCurrentTest();
         init.deletePermissionGroups();
-        Ext4Helper.resetCssPrefix();
     }
 
     @Override
@@ -104,21 +59,9 @@ public class CDSSecurityTest extends BaseWebDriverTest implements PostgresOnlyTe
     }
 
     @Override
-    public String getProjectName()
-    {
-        return CDSHelper.CDS_PROJECT_NAME;
-    }
-
-    @Override
     public List<String> getAssociatedModules()
     {
         return Arrays.asList("CDS");
-    }
-
-    @AfterClass
-    public static void postTest()
-    {
-        Ext4Helper.resetCssPrefix();
     }
 
     @Test
@@ -134,7 +77,7 @@ public class CDSSecurityTest extends BaseWebDriverTest implements PostgresOnlyTe
             clickButton("Save and Finish");
         }
 
-        clickProject(CDSHelper.CDS_PROJECT_NAME);
+        goToProjectHome();
         clickFolder("v082"); // TODO Test data dependent.
         _permissionsHelper.enterPermissionsUI();
         sleep(1000);
@@ -151,7 +94,7 @@ public class CDSSecurityTest extends BaseWebDriverTest implements PostgresOnlyTe
         _securityHelper.setProjectPerm(PERM_GROUPS[0], "Reader");
         clickButton("Save and Finish");
 
-        clickProject(CDSHelper.CDS_PROJECT_NAME);
+        goToProjectHome();
         _permissionsHelper.enterPermissionsUI();
         _securityHelper.setProjectPerm(PERM_GROUPS[0], "Reader");
         clickButton("Save and Finish");

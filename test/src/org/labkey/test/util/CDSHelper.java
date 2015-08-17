@@ -33,8 +33,6 @@ import java.util.List;
 
 public class CDSHelper
 {
-    public static final String CDS_PROJECT_NAME = "CDSTest Project";
-
     public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
             "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
             "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
