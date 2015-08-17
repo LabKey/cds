@@ -111,7 +111,7 @@ Ext.define('Connector.controller.Query', {
         var keys = [
             this.getSubjectColumnAlias(),
             'study_GridBase_Study',
-            'study_GridBase_Treatment Summary',
+            'study_GridBase_TreatmentSummary',
             'study_GridBase_SubjectVisit'
         ];
 
