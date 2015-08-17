@@ -1351,8 +1351,11 @@ Ext.define('Connector.view.Chart', {
         var values = [];
         selections.forEach(function(s) {
             var gridData = s.get('gridFilter');
-            if (gridData.length > 0 && Ext.isString(gridData[0].getValue())) {
-                values = gridData[0].getValue().split(';');
+            for (var i = 0; i < gridData.length; i++) {
+                if (gridData[i] != null && Ext.isString(gridData[i].getValue())) {
+                    values = gridData[i].getValue().split(';');
+                    break;
+                }
             }
         });
 
