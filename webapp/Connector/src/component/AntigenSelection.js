@@ -70,6 +70,8 @@ Ext.define('Connector.panel.AntigenSelection', {
                 }
             }
 
+            //addCls += ' ' + fields[fields.length - 1] + '-' + record.internalId.replace(/\|/g, '-').replace(/ /g, '_') + '-count';;
+            //
             checkboxItems.push(this.createSubjectCountCmp(record, addCls));
 
             prevRecord = record;
@@ -146,7 +148,9 @@ Ext.define('Connector.panel.AntigenSelection', {
     },
 
     createSubjectCountCmp : function(record, addCls) {
-        var value = record.get('subjectCount'), cls = 'col-count';
+        var value = record.get('subjectCount'),
+            cls = 'col-count',
+            testDataValue = record.internalId.replace(/\|/g, '-').replace(/ /g, '_') + '-count';
 
         if (value == 0) {
             value = '0';
@@ -160,7 +164,8 @@ Ext.define('Connector.panel.AntigenSelection', {
         return Ext.create('Ext.Component', {
             cls: cls,
             width: this.subjectColumnWidth,
-            html: value
+            tpl: new Ext.XTemplate('<div test-data-value="' + testDataValue + '">{.}</div>'),
+            data: value
         });
     },
 
