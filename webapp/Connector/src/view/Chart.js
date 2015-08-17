@@ -1693,19 +1693,25 @@ Ext.define('Connector.view.Chart', {
             return null;
         }
 
-        var options = measure.options;
-        var wrappedMeasure = {measure : measure};
+        var wrappedMeasure = {measure : measure},
+            options = measure.options;
 
-        // handle visit tag alignment for study axis
-        if (options && options.alignmentVisitTag !== undefined)
-        {
+        if (measure.variableType == 'TIME') {
             var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
                 interval: interval,
-                zeroDayVisitTag: options.alignmentVisitTag,
                 altQueryName: 'cds.VisitTagAlignment'
             };
+
+            // handle visit tag alignment for study axis
+            if (options && options.alignmentVisitTag !== undefined) {
+                wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
+            }
+        }
+        else if (this.requireStudyAxis) {
+            // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
+            wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.name, null, LABKEY.Filter.Types.NOT_MISSING)];
         }
 
         // we still respect the value if it is set explicitly on the measure
@@ -2432,8 +2438,14 @@ Ext.define('Connector.view.Chart', {
 
         this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
-        this.initPlot(chartData, studyAxisData);
-        this.initStudyAxis(studyAxisData);
+        if (chartData.getDataRows().totalCount == 0) {
+            // show empty plot message if we have no data in main plot or gutter plots
+            this.noPlot(true);
+        }
+        else {
+            this.initPlot(chartData, studyAxisData);
+            this.initStudyAxis(studyAxisData);
+        }
     },
 
     showVisitTagHover : function(data, visitTagEl) {
