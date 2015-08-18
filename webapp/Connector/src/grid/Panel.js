@@ -34,24 +34,34 @@ Ext.define('Connector.grid.Panel', {
     /*
      * The intent of these options is to infer column widths based on the data being shown
      */
-    charWidth: 6,   //TODO: this should be measured, but measuring is expensive so we only want to do it once
-    colPadding: 10, //TODO: also should be calculated
+    charWidth: 6,
+    colPadding: 10,
     maxColWidth: 400,
 
+    constructor : function(config) {
+        this.callParent([config]);
+
+        /**
+         * @event columnmodelcustomize
+         */
+        this.addEvents('columnmodelcustomize');
+    },
+
     initComponent : function() {
-        this.initStore();
+        if (!this.store) {
+            throw 'Must provide a store or store config when creating a ' + this.$className;
+        }
 
         Ext.applyIf(this, {
             columns: []
         });
 
-        if (LABKEY.ext4.Util.hasStoreLoaded(this.store)) {
-            this.columns = this.getColumnsConfig();
-        }
-
         this.callParent();
 
-        if (Ext.isEmpty(this.columns)) {
+        if (LABKEY.ext4.Util.hasStoreLoaded(this.store)) {
+            this.setupColumnModel();
+        }
+        else {
             this.mon(this.store, 'load', this.setupColumnModel, this, {single: true});
             if (!this.store.isLoading()) {
                 this.store.load({
@@ -61,41 +71,6 @@ Ext.define('Connector.grid.Panel', {
                     }
                 });
             }
-        }
-
-        this.mon(this.store, 'exception', this.onCommitException, this);
-        /**
-         * @event columnmodelcustomize
-         */
-        /**
-         * Experimental.  Lookups sometimes create a separate store to find the display string for a field.  When this
-         * store loads, it can cause the grid to refresh, which is expensive.  This event is used internally
-         * to batch these events and minimze the grid refreshes.
-         * @private
-         * @event lookupstoreload
-         */
-        this.addEvents('columnmodelcustomize', 'lookupstoreload');
-
-        this.on('lookupstoreload', this.onLookupStoreEventFired, this, {buffer: 200});
-    },
-
-    initStore : function() {
-        if (!this.store) {
-            console.error('Must provide a store or store config when creating a gridpanel');
-            return;
-        }
-
-        this.store.supressErrorAlert = true;
-
-        //TODO: need a better solution to this problem.  maybe be smarter when processing load() in the store?
-        //if we sort/filter remotely, we risk losing changes made on the client
-        if (this.editable) {
-            this.store.remoteSort = false;
-            this.store.remoteFilter = false;
-        }
-
-        if (this.autoSave) {
-            this.store.autoSync = true;  //could we just obligate users to put this on the store directly?
         }
     },
 
@@ -111,8 +86,8 @@ Ext.define('Connector.grid.Panel', {
         this.reconfigure(this.store, columns);
     },
 
-    _getColumnsConfig : function(store, config) {
-        var columns = LABKEY.ext4.Util.getColumnsConfig(store, this, config);
+    _getColumnsConfig : function(config) {
+        var columns = LABKEY.ext4.Util.getColumnsConfig(this.store, this, config);
 
         if (Ext.isDefined(this.model)) {
             var measureNameToQueryMap = {};
@@ -125,9 +100,11 @@ Ext.define('Connector.grid.Panel', {
             var plotMeasures = this.model.getMeasures('plotMeasures');
             Ext.each(columns, function(column) {
 
+                var lowerIndex = column.dataIndex.toLowerCase();
+
                 column.plotted = false;
                 for (var a=0; a < plotMeasures.length; a++) {
-                    if (LABKEY.MeasureUtil.getAlias(plotMeasures[a], true).toLowerCase() === column.dataIndex.toLowerCase()) {
+                    if (LABKEY.MeasureUtil.getAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
                         column.plotted = true;
                     }
                 }
@@ -135,36 +112,15 @@ Ext.define('Connector.grid.Panel', {
                 if (measureNameToQueryMap[column.dataIndex]) {
                     column.queryLabel = measureNameToQueryMap[column.dataIndex];
                 }
-            });
+
+                column.width = this.defaultColumnWidth;
+
+            }, this);
         }
-
-        return columns;
-    },
-
-    getColumnsConfig : function() {
-        var config = {
-            editable: this.editable,
-            defaults: {
-                sortable: false
-            }
-        };
-
-        if (this.metadataDefaults) {
-            Ext.Object.merge(config, this.metadataDefaults);
-        }
-
-        var columns = this._getColumnsConfig(this.store, config),
-            groupMap = {},
-            groups = [],
-            studyTime = [],
-            remainder = [],
-            plotted = [],
-            meta,
-            lookupStore;
 
         Ext.each(columns, function(column) {
 
-            column.width = this.defaultColumnWidth;
+            var meta, lookupStore;
 
             meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex);
             if (!meta) {
@@ -183,7 +139,33 @@ Ext.define('Connector.grid.Panel', {
 
         }, this);
 
-        var defaultColumns = Connector.getService('Query').getDefaultGridAliases();
+        return columns;
+    },
+
+    getColumnsConfig : function() {
+        var config = {
+            editable: this.editable,
+            defaults: {
+                sortable: false
+            }
+        };
+
+        if (this.metadataDefaults) {
+            Ext.Object.merge(config, this.metadataDefaults);
+        }
+
+        var columns = this._getColumnsConfig(config);
+
+        return this.groupColumns(columns);
+    },
+
+    groupColumns : function(columns) {
+        var defaultColumns = Connector.getService('Query').getDefaultGridAliases(),
+            groups = [],
+            groupMap = {},
+            studyTime = [],
+            remainder = [],
+            plotted = [];
 
         // Split columns into groups
         Ext.each(columns, function(col) {
@@ -238,15 +220,7 @@ Ext.define('Connector.grid.Panel', {
         return groups;
     },
 
-    //private.  separated to allow buffering, since refresh is expensive
-    onLookupStoreLoad : function(/* store */) {
-        if (this.rendered && this.getView()) {
-            this.fireEvent('lookupstoreload');
-        }
-    },
-
-    //private
-    onLookupStoreEventFired : function() {
+    onLookupStoreLoad : function() {
         this.getView().refresh();
     },
 

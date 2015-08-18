@@ -463,7 +463,8 @@ Ext.define('Connector.view.Grid', {
             filterArray: model.getBaseFilters(),
             maxRows: maxRows,
             pageSize: maxRows,
-            remoteSort: true
+            remoteSort: true,
+            supressErrorAlert: true
         };
 
         if (Ext.isDefined(this.sorters)) {
