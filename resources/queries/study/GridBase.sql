@@ -1,9 +1,9 @@
 SELECT
 -- Display Columns
-SV.participantId AS SubjectId,
+SV.participantId.participantId AS SubjectId,
 STUDY.label AS Study,
 TASM.arm_id.coded_label AS TreatmentSummary,
-SV.Visit AS SubjectVisit,
+SV.Visit.Label AS SubjectVisit,
 
 -- Join columns
 SV.sequencenum,
