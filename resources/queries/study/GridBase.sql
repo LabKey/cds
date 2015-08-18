@@ -10,5 +10,5 @@ SV.sequencenum,
 SV.container
 
 FROM study.SubjectVisit AS SV
-JOIN cds.treatmentarmsubjectmap AS TASM ON (TASM.participantId = SV.participantId)
-JOIN cds.study AS STUDY ON (SV.container = study.container)
+LEFT JOIN cds.study AS STUDY ON (SV.container = study.container)
+LEFT JOIN cds.treatmentarmsubjectmap AS TASM ON (TASM.participantId = SV.participantId)
