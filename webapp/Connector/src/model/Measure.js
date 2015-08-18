@@ -31,7 +31,16 @@ Ext.define('Connector.model.Measure', {
 
         // Misc properties about the measure display in the application
         {name: 'isRecommendedVariable', type: 'boolean', defaultValue: false},
-        {name: 'recommendedVariableGrouper', convert: function(val, rec) { return rec.data.isRecommendedVariable ? '0' : '1'; }},
+        {name: 'recommendedVariableGrouper', convert: function(val, rec) {
+            if( rec.data.isRecommendedVariable) {
+                return '0';
+            }
+            else if(rec.data.dimensions && rec.data.dimensions.indexOf(rec.data.alias) > -1)
+            {
+                return '1';
+            }
+            return '2';
+        }},
         {name: 'defaultScale', defaultValue: 'LINEAR'},
         {name: 'sortOrder', type: 'int', defaultValue: 0},
         {name: 'variableType', defaultValue: null}, // i.e. TIME, USER_GROUPS (default to null for query based variables)

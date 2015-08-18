@@ -1,3 +1,5 @@
+            // otherwise, we group measures into the Recommended or Additional groupings
+            //if (variableType == 'SELECTION' || variableType == 'SESSION') {
 /*
  * Copyright (c) 2015 LabKey Corporation
  *
@@ -325,6 +327,8 @@ Ext.define('Connector.panel.Selector', {
                 rowModel.clearSelections();
             }
         });
+
+        this.getMeasureSelectionGrid().show();
     },
 
     showSources : function() {
@@ -413,6 +417,9 @@ Ext.define('Connector.panel.Selector', {
                                 hdr = 'Recommended';
                             }
                             else if (value === '1') {
+                                hdr = 'Assay Required';
+                            }
+                            else if(value === '2') {
                                 hdr = 'Additional';
                             }
                             return hdr;
@@ -489,6 +496,7 @@ Ext.define('Connector.panel.Selector', {
      */
     showMeasures : function(source, activeMeasure) {
 
+        //gets the variableType of the current source
         var key = source.get('key'),
             variableType = source.get('variableType'),
             filter, aliases = {}, selModel,
@@ -589,7 +597,8 @@ Ext.define('Connector.panel.Selector', {
             }
             else {
                 // enable or disable the measure grid grouping feature based on the presence of a recommended variable
-                if (this.measureStore.find('isRecommendedVariable', true) > -1) {
+                if (this.measureStore.find('recommendedVariableGrouper', '0') ||
+                        this.measureStore.find('recommendedVariableGrouper', '1')) {
                     this.groupingFeature.enable();
                 }
                 else {
