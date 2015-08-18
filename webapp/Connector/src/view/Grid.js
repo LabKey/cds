@@ -283,7 +283,6 @@ Ext.define('Connector.view.Grid', {
             store = grid.getStore();
 
         store.filterArray = model.getBaseFilters();
-        store.load();
         store.loadPage(1);
 
         this.applyFilterColumnState(grid);

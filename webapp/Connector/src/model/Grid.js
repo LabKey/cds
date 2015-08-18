@@ -372,7 +372,14 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    applyFilters : function(filterArray, callback, scope) {
+    /**
+     *
+     * @param filterArray
+     * @param callback
+     * @param scope
+     * @param [silent=false]
+     */
+    applyFilters : function(filterArray, callback, scope, silent) {
         //
         // calculate the subject filter
         //
@@ -393,7 +400,9 @@ Ext.define('Connector.model.Grid', {
                 this.activeFilter = false;
                 this.activeColumn = false;
                 this.activeMeasure = false;
-                this.fireEvent('filterchange', this, this.getFilterArray());
+
+                if (!silent)
+                    this.fireEvent('filterchange', this, this.getFilterArray());
             }
             else {
                 this.activeFilter = true;
@@ -674,19 +683,19 @@ Ext.define('Connector.model.Grid', {
             columnSet: Connector.model.Grid.generateColumnSet(this)
         });
 
-        this.applyFilters(this.get('filterArray'));
+        this.applyFilters(this.get('filterArray'), function() {
+            this.initialized = true;
 
-        this.initialized = true;
-
-        if (this.isActive()) {
-            this.activeColumn = false;
-            this.activeFilter = false;
-            this.activeMeasure = false;
-            this.fireEvent('updatecolumns', this);
-        }
-        else {
-            this.activeColumn = true;
-        }
+            if (this.isActive()) {
+                this.activeColumn = false;
+                this.activeFilter = false;
+                this.activeMeasure = false;
+                this.fireEvent('updatecolumns', this);
+            }
+            else {
+                this.activeColumn = true;
+            }
+        }, this, true);
     },
 
     setActive : function(active) {
