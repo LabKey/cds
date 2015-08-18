@@ -1321,7 +1321,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.selectionpanel"
   ],
   "Connector.panel.Selector": [
-    "widget.newselector"
+    "widget.variableselector"
   ],
   "Connector.plugin.HeaderLock": [
     "plugin.headerlock"

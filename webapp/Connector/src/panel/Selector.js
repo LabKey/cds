@@ -22,6 +22,7 @@ Ext.define('Connector.panel.Selector', {
 
     headerTitle: 'Variable Selector',
     sectionTitle: 'Sources',
+    selectButtonTitle: undefined,
 
     sourceMeasureFilter: undefined,
 
@@ -327,6 +328,9 @@ Ext.define('Connector.panel.Selector', {
     },
 
     showSources : function() {
+        // clear any previous source selection so that the 'select' will fire if the same source is clicked
+        this.getSourcePane().getSelectionModel().deselectAll();
+
         this.toggleDisplay('source');
 
         this.setHeaderData({
@@ -1076,7 +1080,7 @@ Ext.define('Connector.panel.Selector', {
                     xtype: 'button',
                     disabled: !this.multiSelect,
                     hidden: true,
-                    text: 'Set ' + this.headerTitle,
+                    text: Ext.isDefined(this.selectButtonTitle) ? this.selectButtonTitle : 'Set ' + this.headerTitle,
                     handler: this.makeSelection,
                     scope: this,
                     listeners: {

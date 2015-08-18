@@ -121,6 +121,10 @@
     padding-top: 10px;
     padding-left: 40px;
 
+    .x-grid-header-ct, .x-grid-with-row-lines {
+      padding-right: 40px;
+    }
+
     .x-column-header-over {
       background-color: transparent;
       background-image: none;
@@ -142,6 +146,10 @@
 
     .x-grid-view {
       background-color: $light-color;
+    }
+
+    .x-grid-row-over .x-grid-td {
+      background-color: $select-hover-color !important;
     }
 
     .content-grouping {

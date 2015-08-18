@@ -316,6 +316,7 @@ Ext.define('Connector.view.Grid', {
             if (this.newSelector) {
                 this.columnSelectorPanel = Ext.create('Connector.panel.Selector', {
                     headerTitle: 'choose columns',
+                    selectButtonTitle: 'Done',
                     testCls: 'column-axis-selector',
                     multiSelect: true,
                     sourceMeasureFilter: {
@@ -477,6 +478,13 @@ Ext.define('Connector.view.Grid', {
                         }
                     }
                 });
+
+                // whenever the window is closed/hidden, go back to the sources panel
+                this.measureWindow.on('hide', function() {
+                    if (this.newSelector) {
+                        this.getColumnSelector().showSources();
+                    }
+                }, this);
             }
             else {
                 // TODO remove with AxisSelector
