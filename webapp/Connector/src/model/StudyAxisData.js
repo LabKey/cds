@@ -48,9 +48,9 @@ Ext.define('Connector.model.StudyAxisData', {
         var records = this.getRecords(), measure = this.getMeasure(),
                 containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
                 interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
-                study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
+                study, studyContainer, studyKeys, visit, studyVisits, visitId, visitKeys, visitKey, visitLabel, seqMin,
                 seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination,
-                shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
+                shiftVal, i, j, k, alignmentVisitTag, visitTagName, row, groupKeys, groupKey, groupVisits, group, groups;
 
         if (Ext.isDefined(measure.interval)) {
             interval = measure.interval.toLowerCase();
@@ -74,7 +74,8 @@ Ext.define('Connector.model.StudyAxisData', {
             studyMap[studyKeys[i]] = {
                 alignShiftValue: containerAlignmentDayMap[studyKeys[i]],
                 label: '',
-                visits: {}
+                visits: {},
+                groups: {}
             };
         }
 
@@ -104,8 +105,10 @@ Ext.define('Connector.model.StudyAxisData', {
             study.timepointType = timepointType;
 
             // track each unique visit in a study by rowId
-            if (visitId != null){
-                if (!study.visits.hasOwnProperty(visitId)) {
+            if (visitId != null)
+            {
+                if (!study.visits.hasOwnProperty(visitId))
+                {
                     study.visits[visitId] = {
                         studyLabel: studyLabel,
                         label: visitLabel,
@@ -120,10 +123,12 @@ Ext.define('Connector.model.StudyAxisData', {
 
                 visit = study.visits[visitId];
 
-                if (visitTagCaption !== null) {
+                if (visitTagCaption !== null)
+                {
                     // determine which visit tag/milestone glyph to display
                     // TODO: why is is_vaccination always coming back as false?
-                    if (isVaccination || visitTagCaption == 'Vaccination') {
+                    if (isVaccination || visitTagCaption == 'Vaccination')
+                    {
                         visit.imgSrc = 'vaccination_normal.svg';
                         visit.imgSize = 14;
                     }
@@ -135,21 +140,50 @@ Ext.define('Connector.model.StudyAxisData', {
                     range.min = alignedDay;
                 if (range.max == null || range.max < alignedDay)
                     range.max = alignedDay;
+
+                if (groupName != null)
+                {
+                    if (!study.groups.hasOwnProperty(groupName))
+                    {
+                        study.groups[groupName] = {
+                            visits: {}
+                        };
+                    }
+
+                    if (!study.groups[groupName].visits.hasOwnProperty(visitId))
+                    {
+                        study.groups[groupName].visits[visitId] = visit;
+                    }
+                }
             }
         }, this);
 
-        // Convert study map and visit maps into arrays.
+        // Convert study map, group map and visit maps into arrays.
         studyKeys = Object.keys(studyMap);
         for (i = 0; i < studyKeys.length; i++) {
             study = studyMap[studyKeys[i]];
             visitKeys = Object.keys(study.visits).sort();
-            visits = [];
+            studyVisits = [];
             for (j = 0; j < visitKeys.length; j++) {
                 visitKey = visitKeys[j];
-                visits.push(study.visits[visitKey]);
+                studyVisits.push(study.visits[visitKey]);
             }
-
-            study.visits = visits;
+            groupKeys = Object.keys(study.groups);
+            groups = [];
+            for (j = 0; j < groupKeys.length; j++) {
+                group = study.groups[groupKeys[j]]
+                visitKeys = Object.keys(group.visits).sort();
+                groupVisits = [];
+                for (k = 0; k < visitKeys.length; k++) {
+                    visitKey = visitKeys[k];
+                    groupVisits.push(group.visits[visitKey]);
+                }
+                group.label = groupKeys[j];
+                group.visits = groupVisits;
+                groups.push(group);
+            }
+            study.groups = groups;
+            study.visits = studyVisits;
             data.push(study);
         }
 

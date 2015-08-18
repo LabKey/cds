@@ -5,7 +5,7 @@
  */
 Connector.view.StudyAxis = function() {
     var canvas = null, width, height, perStudyHeight = 20, studyData, ALIGNMENT_DAY = 0, renderTo, xScale, yScale = d3.scale.ordinal(),
-            tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope;
+            tagMouseover, tagMouseout, tagMouseoverScope, tagMouseoutScope, leftIndent = 25, collapsed = true;
 
     var renderAlignment = function(selection) {
         var alignmentPath, x = xScale(ALIGNMENT_DAY);
@@ -66,7 +66,7 @@ Connector.view.StudyAxis = function() {
         bkgds.exit().remove();
         bkgds.enter().append('rect').attr('class', 'study-bkgd');
         bkgds.attr('y', function(d) { return yScale(d.label); })
-            .attr('x', 25)
+            .attr('x', 25 + leftIndent)
             .attr('width', width)
             .attr('height', perStudyHeight)
             .attr('fill', function(d) {
@@ -87,9 +87,77 @@ Connector.view.StudyAxis = function() {
             return d.label;
         });
         labels.attr('y', function(d) {return yScale(d.label) + perStudyHeight/2 + 4;})
-            .attr('x', 35)
+            .attr('x', 35 + leftIndent)
             .attr('fill', ChartUtils.colors.PRIMARYTEXT)
             .style('font', '11px Arial, serif');
+    };
+
+    var renderExpandCollapseButton = function(canvas) {
+        var button, iconHref;
+
+        canvas.append('g').append("image")
+                .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_normal.svg'; })
+                .attr('class', 'img-expand')
+                .attr('x', 20)
+                .attr('width', 22)
+                .attr('height', 22);
+
+        button = canvas.select('image.img-expand');
+
+        button.on('mouseover', function(d) {
+            if (collapsed) {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_hover.svg';
+                })
+            }
+            else {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_hover.svg';
+                })
+            }
+        });
+
+        button.on('mouseout', function(d) {
+            if (collapsed) {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_normal.svg';
+                })
+            }
+            else {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_normal.svg';
+                })
+            }
+        });
+
+        button.on('mousedown', function(d) {
+            if (collapsed) {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_normal.svg';
+                })
+            }
+            else {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_normal.svg';
+                })
+            }
+        });
+
+        button.on('mouseup', function(d) {
+            if (collapsed) {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_hover.svg';
+                });
+                collapsed = false;
+            }
+            else {
+                button.attr('xlink:href', function (d) {
+                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_hover.svg';
+                });
+                collapsed = true;
+            }
+        });
+
     };
 
     var studyAxis = function() {
@@ -107,6 +175,7 @@ Connector.view.StudyAxis = function() {
         document.getElementById(renderTo).innerHTML = '';
         canvas = d3.select('#' + renderTo).append('svg');
         canvas.attr('width', width).attr('height', height);
+        renderExpandCollapseButton(canvas);
 
         studies = canvas.selectAll('g.study').data(studyData);
         studies.exit().remove();
