@@ -296,7 +296,8 @@ Ext.define('Connector.controller.Query', {
      * @returns {Object}
      */
     getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
-        var subjectMeasure, wrappedMeasureSet = [], aliases = [], measureData;
+        var subjectMeasure, wrappedMeasureSet = [], aliases = [],
+            measureData, filterMeasures, index, filterMeasureRecord;
 
         if (Ext.isDefined(measureSet))
         {
@@ -327,18 +328,21 @@ Ext.define('Connector.controller.Query', {
                 });
 
                 // get the relevant application filters to add to the measure set
-                var filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters());
+                filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters());
                 Ext.each(filterMeasures, function(filterMeasure) {
-                    var index = aliases.indexOf(filterMeasure.measure.alias);
+                    index = aliases.indexOf(filterMeasure.measure.alias);
                     // if we already have this measure in our set, then just tack on the filterArray
                     if (index > -1) {
                         wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
                     }
                     else {
-                        wrappedMeasureSet.push({
-                            filterArray: filterMeasure.filterArray,
-                            measure: this.getMeasureRecordByAlias(filterMeasure.measure.alias)
-                        });
+                        filterMeasureRecord = this.getMeasureRecordByAlias(filterMeasure.measure.alias);
+                        if (Ext.isDefined(filterMeasureRecord)) {
+                            wrappedMeasureSet.push({
+                                filterArray: filterMeasure.filterArray,
+                                measure: Ext.clone(filterMeasureRecord.data)
+                            });
+                        }
                     }
                 }, this);
 
