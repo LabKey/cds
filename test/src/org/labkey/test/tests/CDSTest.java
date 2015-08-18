@@ -15,16 +15,16 @@
  */
 package org.labkey.test.tests;
 
-import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.SortDirection;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataGrid;
 import org.labkey.test.pages.DataGridVariableSelector;
@@ -32,20 +32,13 @@ import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ReadOnlyTest;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,10 +48,9 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@Category({CDS.class})
-public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
+@Category({CDS.class, Git.class})
+public class CDSTest extends CDSReadOnlyTest
 {
-
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
     private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
@@ -76,45 +68,9 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
 
-    public void doSetup() throws Exception
-    {
-        CDSTest initTest = (CDSTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setupDataspace();
-    }
-
-    @Override @LogMethod
-    public boolean needsSetup()
-    {
-        boolean callDoCleanUp = false;
-
-        try
-        {
-            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
-            {
-                callDoCleanUp = false;
-                doSetup();
-            }
-
-        }
-        catch (IOException fail)
-        {
-            callDoCleanUp =  true;
-        }
-        catch(java.lang.Exception ex)
-        {
-            callDoCleanUp = true;
-        }
-
-        // Returning true will cause BaseWebDriver to call it's cleanup method.
-        return callDoCleanUp;
-    }
-
     @Before
     public void preTest()
     {
-        Ext4Helper.setCssPrefix("x-");
-
         cds.enterApplication();
 
         // clean up groups
@@ -142,12 +98,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     public BrowserType bestBrowser()
     {
         return BrowserType.CHROME;
-    }
-
-    @Override
-    public String getProjectName()
-    {
-        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
@@ -187,8 +137,6 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
 
         init.cds.ensureNoFilter();
         init.cds.ensureNoSelection();
-
-        Ext4Helper.resetCssPrefix();
     }
 
     @Test
@@ -1145,7 +1093,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     }
 
     // TODO Putting this test on hold. "Learn about Assays" is a future feature.
-//    @Test @Ignore
+    @Test @Ignore
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");
@@ -1155,7 +1103,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     }
 
     // TODO Putting this test on hold. "Learn about Sites " is a future feature.
-//    @Test
+    @Test  @Ignore
     public void testLearnAboutSites()
     {
         cds.viewLearnAboutPage("Sites");
@@ -1165,11 +1113,10 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     }
 
 // TODO Need a test for "Learn about Labs " (a future feature).
-//    @Test
+    @Test  @Ignore
     public void testLearnAboutLabs()
     {
     }
-
 
     @Test
     public void testSummaryPageSingleAxisLinks()
@@ -1190,8 +1137,7 @@ public class CDSTest extends BaseWebDriverTest implements PostgresOnlyTest, Read
     }
 
 // TODO still debugging this test.
-//    @Test
-//    @Ignore("Needs to be implemented without side-effects")
+    @Test @Ignore("Needs to be implemented without side-effects")
     public void verifyLiveFilterGroups()
     {
         final String initialBMI = "21";
