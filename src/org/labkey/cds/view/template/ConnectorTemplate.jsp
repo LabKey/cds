@@ -109,7 +109,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/MeasurePicker.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/LoadingMask.js"></script>
 
     <!-- Ext Widget Dependencies -->
@@ -171,7 +170,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>

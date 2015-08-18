@@ -23,8 +23,6 @@ Ext.define('Connector.view.Grid', {
 
     paging: true,
 
-    newSelector: LABKEY.ActionURL.getParameter('_newSelector') ? true : false,
-
     constructor : function(config) {
         this.callParent([config]);
         this.addEvents('applyfilter', 'removefilter', 'measureselected');
@@ -313,62 +311,35 @@ Ext.define('Connector.view.Grid', {
 
     getColumnSelector : function() {
         if (!this.columnSelectorPanel) {
-            if (this.newSelector) {
-                this.columnSelectorPanel = Ext.create('Connector.panel.Selector', {
-                    headerTitle: 'choose columns',
-                    selectButtonTitle: 'Done',
-                    testCls: 'column-axis-selector',
-                    multiSelect: true,
-                    sourceMeasureFilter: {
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                        includeTimpointMeasures: true,
-                        includeHidden: this.canShowHidden
-                    },
-                    memberCountsFn: this.getSubjectsIn,
-                    memberCountsFnScope: this,
-                    supportSelectionGroup: true,
-                    supportSessionGroup: true,
-                    disableAdvancedOptions: true,
-                    listeners: {
-                        selectionmade: function(selected) {
-                            this.clearVisibleWindow();
+            this.columnSelectorPanel = Ext.create('Connector.panel.Selector', {
+                headerTitle: 'choose columns',
+                selectButtonTitle: 'Done',
+                testCls: 'column-axis-selector',
+                multiSelect: true,
+                sourceMeasureFilter: {
+                    queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                    includeTimpointMeasures: true,
+                    includeHidden: this.canShowHidden
+                },
+                memberCountsFn: this.getSubjectsIn,
+                memberCountsFnScope: this,
+                supportSelectionGroup: true,
+                supportSessionGroup: true,
+                disableAdvancedOptions: true,
+                listeners: {
+                    selectionmade: function(selected) {
+                        this.clearVisibleWindow();
 
-                            this.fireEvent('measureselected', selected);// TODO what about other parameters to be included?
-                            this.getMeasureSelectionWindow().hide();
-                        },
-                        cancel: function() {
-                            this.clearVisibleWindow();
-                            this.getMeasureSelectionWindow().hide();
-                        },
-                        scope: this
-                    }
-                });
-            }
-            else {
-                // TODO remove with AxisSelector
-                this.columnSelectorPanel = Ext.create('Connector.panel.AxisSelector', {
-                    ui: 'axispanel',
-                    bodyStyle: 'padding: 15px 27px 0 27px;',
-                    measureConfig : {
-                        cls: 'gridcolumnpicker',
-                        sourceCls: this.axisSourceCls,
-                        supportSelectionGroup: true,
-                        supportSessionGroup: true,
-                        displaySourceCounts: true,
-                        sourceCountSchema: Connector.studyContext.schemaName,
-                        measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
-                            queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                            includeTimpointMeasures: true,
-                            includeHidden: this.canShowHidden
-                        }).measures
+                        this.fireEvent('measureselected', selected);
+                        this.getMeasureSelectionWindow().hide();
                     },
-                    displayConfig: {
-                        mainTitle: 'Choose Measures for the Data Grid...'
+                    cancel: function() {
+                        this.clearVisibleWindow();
+                        this.getMeasureSelectionWindow().hide();
                     },
-                    disableLookups: false,
-                    disableScale: true
-                });
-            }
+                    scope: this
+                }
+            });
         }
 
         return this.columnSelectorPanel;
@@ -456,84 +427,30 @@ Ext.define('Connector.view.Grid', {
 
     getMeasureSelectionWindow : function() {
         if (!this.measureWindow) {
-            if (this.newSelector) {
-                this.measureWindow = Ext.create('Ext.window.Window', {
-                    ui: 'axiswindow',
-                    modal: true,
-                    draggable: false,
-                    header: false,
-                    resizable: false,
-                    closeAction: 'hide',
-                    style: 'padding: 0',
-                    minHeight: 580,
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    items: [ this.getColumnSelector() ],
-                    listeners: {
-                        scope: this,
-                        show: function(cmp) {
-                            this.setVisibleWindow(cmp);
-                        }
+            this.measureWindow = Ext.create('Ext.window.Window', {
+                ui: 'axiswindow',
+                modal: true,
+                draggable: false,
+                header: false,
+                resizable: false,
+                closeAction: 'hide',
+                style: 'padding: 0',
+                minHeight: 580,
+                border: false,
+                layout: {
+                    type: 'fit'
+                },
+                items: [ this.getColumnSelector() ],
+                listeners: {
+                    scope: this,
+                    show: function(cmp) {
+                        this.setVisibleWindow(cmp);
                     }
-                });
+                }
+            });
 
-                // whenever the window is closed/hidden, go back to the sources panel
-                this.measureWindow.on('hide', function() {
-                    if (this.newSelector) {
-                        this.getColumnSelector().showSources();
-                    }
-                }, this);
-            }
-            else {
-                // TODO remove with AxisSelector
-                this.measureWindow = Ext.create('Ext.window.Window', {
-                    id: 'gridmeasurewin',
-                    ui: 'axiswindow',
-                    cls: 'axiswindow gridaxiswindow',
-                    plain: true,
-                    modal: true,
-                    draggable: false,
-                    preventHeader: true,
-                    resizable: false,
-                    closeAction: 'hide',
-                    layout: 'fit',
-                    maxWidth: 1400,
-                    items: [ this.getColumnSelector() ],
-                    dockedItems : [{
-                        xtype : 'toolbar',
-                        dock : 'bottom',
-                        ui : 'footer',
-                        padding : 15,
-                        items : ['->',{
-                            text: 'select',
-                            handler : function() {
-                                this.clearVisibleWindow();
-
-                                var axispanel = this.getColumnSelector();
-                                var allMeasures = axispanel.getMeasurePicker().measuresStoreData.measures;
-                                this.fireEvent('measureselected', axispanel.getSelection(), allMeasures, axispanel.getLookups());
-                                this.measureWindow.hide();
-                            },
-                            scope: this
-                        },{
-                            text: 'cancel',
-                            handler : function() {
-                                this.clearVisibleWindow();
-                                this.measureWindow.hide();
-                            },
-                            scope: this
-                        }]
-                    }],
-                    listeners: {
-                        scope: this,
-                        show: function(cmp) {
-                            this.setVisibleWindow(cmp);
-                        }
-                    }
-                });
-            }
+            // whenever the window is closed/hidden, go back to the sources panel
+            this.measureWindow.on('hide', function() { this.getColumnSelector().showSources(); }, this);
         }
 
         return this.measureWindow;
@@ -744,28 +661,9 @@ Ext.define('Connector.view.Grid', {
 
     showMeasureSelection : function() {
         Connector.getService('Query').onQueryReady(function() {
-            if (this.newSelector) {
-                this.getColumnSelector().loadSourceCounts();
-                this.getMeasureSelectionWindow(this.getSelectColumnsButton().getEl()).show();
-            }
-            else {
-                // TODO remove with AxisSelector
-                var measureWindow = this.getMeasureSelectionWindow(),
-                        box = this.getBox(),
-                        mp = this.getColumnSelector().getMeasurePicker(),
-                        filterState = this.getModel().get('filterState');
-
-                measureWindow.setSize(box.width-100, box.height-100);
-                measureWindow.show();
-
-                // Run the query to determine current measure counts
-                mp.setCountMemberSet(filterState.hasFilters ? filterState.subjects : null);
-
-                // Open with 'Current columns' selected if we have a selection
-                if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
-                    mp.getSourcesView().getSelectionModel().select(mp.getSourceStore().getAt(0));
-                }
-            }
+            this.getColumnSelector().loadSourceCounts();
+            this.getMeasureSelectionWindow(this.getSelectColumnsButton().getEl()).show();
+            // TODO Open with 'Current columns' selected if we have a selection?
         }, this);
     },
 
