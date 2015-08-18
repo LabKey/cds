@@ -70,8 +70,6 @@ Ext.define('Connector.panel.AntigenSelection', {
                 }
             }
 
-            //addCls += ' ' + fields[fields.length - 1] + '-' + record.internalId.replace(/\|/g, '-').replace(/ /g, '_') + '-count';;
-            //
             checkboxItems.push(this.createSubjectCountCmp(record, addCls));
 
             prevRecord = record;
