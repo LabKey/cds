@@ -70,10 +70,12 @@ public class CDSInitializer
         // populate the app
         _etlHelper.getDiHelper().runTransformAndWait("{cds}/loadApplication", WAIT_ON_LOADAPP);
 
+        populateNewsFeed();
+
+        _test.goToProjectHome();
+
         PortalHelper portalHelper = new PortalHelper(_test);
         portalHelper.addWebPart("CDS Management");
-
-        populateNewsFeed();
     }
 
     @LogMethod

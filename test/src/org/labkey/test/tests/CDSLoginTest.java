@@ -15,97 +15,40 @@
  */
 package org.labkey.test.tests;
 
-import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.Nullable;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.Git;
 import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
-import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ReadOnlyTest;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
-import static org.labkey.test.pages.CDSLoginPage.Locators.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.labkey.test.pages.CDSLoginPage.Locators.emailField;
+import static org.labkey.test.pages.CDSLoginPage.Locators.passwordField;
+import static org.labkey.test.pages.CDSLoginPage.Locators.rememberMeCheckbox;
+import static org.labkey.test.pages.CDSLoginPage.Locators.termsCheckbox;
 
-@Category({CDS.class})
-public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
+@Category({CDS.class, Git.class})
+public class CDSLoginTest extends CDSReadOnlyTest
 {
-
-    private final CDSHelper _cds = new CDSHelper(this);
-    private static String _cdsAppURL;
-
-    public void doSetup() throws Exception
-    {
-        CDSLoginTest initTest = (CDSLoginTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setupDataspace();
-    }
-
-    @BeforeClass
-    public static void initTest() throws Exception
-    {
-        CDSLoginTest init = (CDSLoginTest)getCurrentTest();
-        init._cds.enterApplication();
-        _cdsAppURL = init.getCurrentRelativeURL();
-    }
-
-    @Override @LogMethod
-    public boolean needsSetup()
-    {
-        boolean callDoCleanUp = false;
-
-        try
-        {
-            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
-            {
-                callDoCleanUp = false;
-                doSetup();
-            }
-
-        }
-        catch (IOException fail)
-        {
-            callDoCleanUp =  true;
-        }
-        catch(java.lang.Exception ex)
-        {
-            callDoCleanUp = true;
-        }
-
-        // Returning true will cause BaseWebDriver to call it's cleanup method.
-        return callDoCleanUp;
-    }
-
     @Before
     public void preTest()
     {
         signOut();
-        beginAt(_cdsAppURL);
-        Ext4Helper.setCssPrefix("x-");
-    }
-
-    @AfterClass
-    public static void afterClassCleanUp()
-    {
-        Ext4Helper.resetCssPrefix();
+        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "begin"));
     }
 
     @Test
     public void testLoginPage()
     {
+        assertEquals("Wrong sign in page", "HIV CDS", getDriver().getTitle());
         assertFalse(emailField.findElement(getDriver()).isEnabled());
         assertFalse(passwordField.findElement(getDriver()).isEnabled());
         assertFalse(rememberMeCheckbox.findElement(getDriver()).isEnabled());
@@ -137,13 +80,6 @@ public class CDSLoginTest extends BaseWebDriverTest implements PostgresOnlyTest,
         }
 
         waitForElement(Locator.css("p.errormsg").withText("Your session has timed out. Please login to continue."));
-    }
-
-    @Nullable
-    @Override
-    protected String getProjectName()
-    {
-        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
