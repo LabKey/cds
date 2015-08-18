@@ -7,7 +7,7 @@ Ext.define('Connector.panel.Selector', {
 
     extend: 'Ext.panel.Panel',
 
-    alias: 'widget.newselector',
+    alias: 'widget.variableselector',
 
     cls: 'variable-selector',
 
@@ -136,7 +136,7 @@ Ext.define('Connector.panel.Selector', {
     loadSourcesAndMeasures : function() {
 
         var data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
-        if (this.supportSelectionGroup === true && this.multiSelect) {
+        if (this.supportSelectionGroup && this.multiSelect) {
             data.sources.push({
                 sortOrder: -100,
                 schemaName: '_current',
@@ -147,7 +147,7 @@ Ext.define('Connector.panel.Selector', {
             });
         }
 
-        if (this.supportSessionGroup === true && this.multiSelect) {
+        if (this.supportSessionGroup && this.multiSelect) {
             data.sources.push({
                 sortOrder: -99,
                 schemaName: '_session',
@@ -491,16 +491,28 @@ Ext.define('Connector.panel.Selector', {
             me = this;
 
         //checks whether the current selection is the current column
-        if (this.supportSelectionGroup === true && variableType === 'SELECTION') {
+        if (variableType === 'SELECTION') {
             Ext.each(this.getSelectedRecords(), function(measure) {
                 if (Ext.isDefined(measure.get('alias'))) {
                     //adds the selected measure to the current visible measures
                     aliases[measure.get('alias')] = true;
 
+                    // TODO: should this be moved to happen in all cases of showMeasures?
                     if (this.measureStore.findExact('alias', measure.get('alias')) > -1) {
                         this.getMeasureSelectionGrid().getSelectionModel().select(measure, true, true);
                     }
 
+                }
+            }, this);
+
+            filter = function(measure) {
+                return measure.get('alias') in aliases;
+            };
+        }
+        else if (variableType === 'SESSION') {
+            Ext.iterate(Connector.getState().getSessionColumns(), function(alias, measureData) {
+                if (Ext.isDefined(alias)) {
+                    aliases[alias] = true;
                 }
             }, this);
 
@@ -565,7 +577,7 @@ Ext.define('Connector.panel.Selector', {
         else if (Ext.isDefined(this.groupingFeature)) {
             // for the 'Current Columns' source, we group the measures by the query source
             // otherwise, we group measures into the Recommended or Additional groupings
-            if (this.supportSelectionGroup === true && variableType === 'SELECTION') {
+            if (variableType == 'SELECTION' || variableType == 'SESSION') {
                 this.groupingFeature.enable();
                 this.measureStore.groupers.first().property = 'queryLabel';
                 this.measureStore.group();

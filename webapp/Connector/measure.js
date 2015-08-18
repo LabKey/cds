@@ -12,12 +12,10 @@ Ext.define('Connector.measure.Configuration', {
             // See Connector.model.Source for the set of properties and default values.
             sources: {
                 'study|SubjectVisit': {
-                    queryLabel: 'Time points',
-                    queryDescription: 'Creates a categorical x axis, unlike the other time axes that are ordinal.'
+                    queryLabel: 'Time points'
                 },
                 'study|SubjectGroupMap': {
-                    queryLabel: 'User groups',
-                    queryDescription: 'Creates a categorical x axis of the selected user groups'
+                    queryLabel: 'User groups'
                 },
                 'study|Ad5': {
                     category: 'Assays'
@@ -205,7 +203,6 @@ Ext.define('Connector.measure.Configuration', {
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study days',
                     type: 'INTEGER',
-                    description:  'Creates a categorical x axis, unlike the other time axes that are ordinal. Each visit with data for the y axis is labeled separately with its study day.',
                     variableType: 'TIME'
                 },
                 'Weeks': {
@@ -217,7 +214,6 @@ Ext.define('Connector.measure.Configuration', {
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study weeks',
                     type: 'DOUBLE',
-                    description: 'Creates a categorical x axis, unlike the other time axes that are ordinal. Each visit with data for the y axis is labeled separately with its study week.',
                     variableType: 'TIME'
                 },
                 'Months': {
@@ -229,7 +225,6 @@ Ext.define('Connector.measure.Configuration', {
                     name: Connector.studyContext.protocolDayColumn,
                     label: 'Study months',
                     type: 'DOUBLE',
-                    description: 'Creates a categorical x axis, unlike the other time axes that are ordinal. Each visit with data for the y axis is labeled separately with its study month.',
                     variableType: 'TIME'
                 },
                 'SavedGroups': {
@@ -239,7 +234,6 @@ Ext.define('Connector.measure.Configuration', {
                     inNotNullSet: false,
                     name: 'GroupId',
                     label: 'My saved groups',
-                    description: 'Creates a categorical x axis of the selected saved groups',
                     type: 'VARCHAR',
                     isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
                     variableType: 'USER_GROUPS'

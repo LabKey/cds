@@ -213,7 +213,6 @@ Ext.define('Connector.view.Chart', {
         if (!this.xSelector) {
             this.xSelector = Ext.create('Connector.view.Variable', {
                 id: 'xvarselector',
-                xtype: 'variableselector',
                 btnCls: 'xaxisbtn',
                 model: Ext.create('Connector.model.Variable', {type: 'x'}),
                 listeners: {
