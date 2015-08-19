@@ -159,16 +159,45 @@ public class CDSHelper
             VIRUS_CE1176, VIRUS_CE2010, VIRUS_DU151, VIRUS_DU422, VIRUS_MW965, VIRUS_R2184, VIRUS_REJOLUC, VIRUS_RHPALUC,
             VIRUS_SC22, VIRUS_SIVNL, VIRUS_SIVLUC, VIRUS_SVA, VIRUS_TV1LUC, VIRUS_W61D, VIRUS_WITO};
 
+    public static final String PROTEIN_PANEL_GAGB = "GAG Consensus B";
     public static final String PROTEIN_PANEL_PTEA = "Any HIV PTEA";
+    public static final String PROTEIN_PANEL_PTEC = "Any HIV PTEC";
     public static final String PROTEIN_PANEL_PTEG = "Any HIV PTEg";
     public static final String PROTEIN_PANEL_V503 = "Any v503 Vaccine Matched Antigen";
-    public static final String[] PROTEIN_PANELS = {PROTEIN_PANEL_PTEA, PROTEIN_PANEL_PTEG, PROTEIN_PANEL_V503};
+    public static final String[] PROTEIN_PANELS = {PROTEIN_PANEL_GAGB, PROTEIN_PANEL_PTEA, PROTEIN_PANEL_PTEC, PROTEIN_PANEL_PTEG, PROTEIN_PANEL_V503};
 
     public static final String PROTEIN_ENV = "ENV";
     public static final String PROTEIN_GAG = "GAG";
     public static final String PROTEIN_NEF = "NEF";
     public static final String PROTEIN_POL = "POL";
     public static final String[] PROTEINS = {PROTEIN_ENV, PROTEIN_GAG, PROTEIN_NEF, PROTEIN_POL};
+
+    public static final String PEPTIDE_POOL_ENV1PTEC = "ENV-1-PTEC";
+    public static final String PEPTIDE_POOL_ENV2PTEC = "ENV-2-PTEC";
+    public static final String PEPTIDE_POOL_ENV3PTEC = "ENV-3-PTEC";
+    public static final String PEPTIDE_POOL_GAG1PTEC = "GAG-1-PTEC";
+    public static final String PEPTIDE_POOL_GAG2PTEC = "GAG-2-PTEC";
+    public static final String PEPTIDE_POOL_NEFPTEC = "NEF-PTEC";
+    public static final String PEPTIDE_POOL_POL1PTEC = "POL-1-PTEC";
+    public static final String PEPTIDE_POOL_POL2PTEC = "POL-2-PTEC";
+    public static final String PEPTIDE_POOL_POL3PTEC = "POL-3-PTEC";
+    public static final String PEPTIDE_POOL_ENV1PTEG = "ENV-1-PTEG";
+    public static final String PEPTIDE_POOL_ENV2PTEG = "ENV-2-PTEG";
+    public static final String PEPTIDE_POOL_ENV3PTEG = "ENV-3-PTEG";
+    public static final String PEPTIDE_POOL_GAG1PTEG = "GAG-1-PTEG";
+    public static final String PEPTIDE_POOL_GAG2PTEG = "GAG-2-PTEG";
+    public static final String PEPTIDE_POOL_NEFPTEG = "NEF-PTEG";
+    public static final String PEPTIDE_POOL_POL1PTEG = "POL-1-PTEG";
+    public static final String PEPTIDE_POOL_POL2PTEG = "POL-2-PTEG";
+    public static final String PEPTIDE_POOL_POL3PTEG = "POL-3-PTEG";
+    public static final String PEPTIDE_POOL_GAGCONB1 = "GagConB 1";
+    public static final String PEPTIDE_POOL_GAGCONB2 = "GagConB 2";
+    public static final String[] PEPTIDE_POOLS = {PEPTIDE_POOL_ENV1PTEC, PEPTIDE_POOL_ENV2PTEC, PEPTIDE_POOL_ENV3PTEC,
+            PEPTIDE_POOL_GAG1PTEC, PEPTIDE_POOL_GAG2PTEC, PEPTIDE_POOL_NEFPTEC, PEPTIDE_POOL_POL1PTEC,
+            PEPTIDE_POOL_POL2PTEC, PEPTIDE_POOL_POL3PTEC, PEPTIDE_POOL_ENV1PTEG, PEPTIDE_POOL_ENV2PTEG,
+            PEPTIDE_POOL_ENV3PTEG, PEPTIDE_POOL_GAG1PTEG, PEPTIDE_POOL_GAG2PTEG, PEPTIDE_POOL_NEFPTEG,
+            PEPTIDE_POOL_POL1PTEG, PEPTIDE_POOL_POL2PTEG, PEPTIDE_POOL_POL3PTEG, PEPTIDE_POOL_GAGCONB1,
+            PEPTIDE_POOL_GAGCONB2};
 
     // These are used in the detail selection of a variable.
     public static final String TARGET_CELL_TZM = "TZM-bl";
@@ -266,7 +295,7 @@ public class CDSHelper
     public static final String ICS_PEPTIDE_POOL = "Peptide pool";
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_CLADE = "Protein Clade";
-    public static final String ICS_PROTEIN_PANEL = "Protein panel";
+    public static final String ICS_PROTEIN_PANEL = "Protein Panel";
     public static final String ICS_VISIT_DAY = "Protocol Visit Day";
     public static final String ICS_RESPONSE = "Response call";
     public static final String ICS_SPECIMEN = "Specimen type";
@@ -346,8 +375,25 @@ public class CDSHelper
         return finalId;
     }
 
+    public String buildCountIdentifier(String... elements)
+    {
+        String finalId = "";
+
+        for(String temp : elements)
+        {
+            temp = temp.replaceAll(" " , "_");
+            finalId += temp + "-";
+        }
+        if (finalId.length() > 0)
+        {
+            finalId = finalId.substring(0, finalId.length() - 1);
+        }
+
+        return finalId + "-count";
+    }
+
     // Because the test data changes frequently it can be useful to skip any steps that validate counts.
-    public static final boolean validateCounts = false;
+    public static final boolean validateCounts = true;
 
     private final BaseWebDriverTest _test;
 
@@ -858,6 +904,11 @@ public class CDSHelper
         public static Locator.XPathLocator cdsButtonLocator(String text, String cssClass)
         {
             return Locator.xpath("//a[contains(@class, '" + cssClass + "')]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
+        }
+
+        public static Locator.XPathLocator cdsSelectorButtonLocator(String selector, String text)
+        {
+            return Locator.xpath("//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]").withPredicate(Locator.xpath("//span[contains(@class, 'x-btn-inner') and text()='" + text + "']"));
         }
 
         public static Locator.XPathLocator cdsButtonLocatorContainingText(String text)

@@ -21,6 +21,8 @@ import org.labkey.test.util.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.Map;
+
 public class YAxisVariableSelector extends DataspaceVariableSelector
 {
     private final String XPATHID = "y-axis-selector";
@@ -128,6 +130,31 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     public void setProtein(String... test_data_value)
     {
         super.setAssayDimension(XPATHID, AssayDimensions.Protein, test_data_value);
+    }
+
+    public void validateAntigenSubjectCount(Map<String, String> counts, Boolean cancelAtEnd)
+    {
+        super.verifyParticipantCount(XPATHID, AssayDimensions.AntigenName, counts, cancelAtEnd);
+    }
+
+    public void validatePeptidePoolSubjectCount(Map<String, String> counts, Boolean cancelAtEnd)
+    {
+        super.verifyParticipantCount(XPATHID, AssayDimensions.PeptidePool, counts, cancelAtEnd);
+    }
+
+    public void validateProteinSubjectCount(Map<String, String> counts, Boolean cancelAtEnd)
+    {
+        super.verifyParticipantCount(XPATHID, AssayDimensions.Protein, counts, cancelAtEnd);
+    }
+
+    public void validateProteinPanelSubjectCount(Map<String, String> counts, Boolean cancelAtEnd)
+    {
+        super.verifyParticipantCount(XPATHID, AssayDimensions.ProteinPanel, counts, cancelAtEnd);
+    }
+
+    public void validateVirusSubjectCount(Map<String, String> counts, Boolean cancelAtEnd)
+    {
+        super.verifyParticipantCount(XPATHID, AssayDimensions.VirusName, counts, cancelAtEnd);
     }
 
 }
