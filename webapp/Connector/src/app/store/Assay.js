@@ -92,6 +92,11 @@ Ext.define('Connector.app.store.Assay', {
 
     _onLoadComplete : function() {
         if (Ext.isDefined(this.assayData)) {
+
+            this.assayData.sort(function(assayA, assayB) {
+                return LABKEY.app.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
+            });
+
             this.loadRawData(this.assayData);
         }
     }
