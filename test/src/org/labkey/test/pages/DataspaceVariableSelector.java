@@ -15,7 +15,6 @@
  */
 package org.labkey.test.pages;
 
-import org.labkey.api.search.SearchService;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
@@ -23,8 +22,6 @@ import org.labkey.test.util.Ext4Helper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.sql.Driver;
 
 public abstract class DataspaceVariableSelector
 {
@@ -65,8 +62,8 @@ public abstract class DataspaceVariableSelector
     public Locator.CssLocator measuresPanelRow()
     {
         return isMeasureMultiSelect() ?
-                pickerPanel().append(" .measuresgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row"):
-                pickerPanel().append(" .measuresgrid div.itemrow");
+                pickerPanel().append(" .content-multiselect tr." + Ext4Helper.getCssPrefix() + "grid-data-row"):
+                pickerPanel().append(" .content div.content-item");
     }
 
     public Locator.CssLocator variableOptionsRow()
@@ -80,13 +77,14 @@ public abstract class DataspaceVariableSelector
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
+    // TODO remove, and update/remove sourcePanelRow / measuresPanelRow
     public void pickMultiPanelSource(String source)
     {
         _test.waitAndClick(sourcePanelRow().containing(source)); // This is used in multi-panel select.
     }
 
-    public void pickVariable(String source){
-        _test.click(window().append(" div.content-label").withText(source));
+    public void pickVariable(String variable){
+        _test.click(window().append(" div.content-label").withText(variable));
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
