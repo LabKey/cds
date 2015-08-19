@@ -40,7 +40,12 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.CssLocator window()
     {
-        return Locator.css(".y-axis-selector");
+        return Locator.css("." + XPATHID);
+    }
+
+    public Locator.XPathLocator xpathWindow()
+    {
+        return Locator.xpath("//div[contains(@class, '" + XPATHID + "')][not(contains(@style, 'display: none'))]");
     }
 
     @Override

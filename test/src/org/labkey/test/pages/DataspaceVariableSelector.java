@@ -178,6 +178,7 @@ public abstract class DataspaceVariableSelector
         _test.click(locDimField);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
         _test.waitForElement(Locator.xpath(xpathPanelSelector));
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         for(Map.Entry<String, String> entry : counts.entrySet()){
 

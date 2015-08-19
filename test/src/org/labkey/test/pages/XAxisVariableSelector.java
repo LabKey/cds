@@ -45,7 +45,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
 
     public Locator.XPathLocator xpathWindow()
     {
-        return Locator.xpath("//div[contains(@class, '" + XPATHID + "')]");
+        return Locator.xpath("//div[contains(@class, '" + XPATHID + "')][not(contains(@style, 'display: none'))]");
     }
 
     @Override
