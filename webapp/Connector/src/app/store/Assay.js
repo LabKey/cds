@@ -19,9 +19,9 @@ Ext.define('Connector.app.store.Assay', {
     loadSlice : function() {
         this.assayData = undefined;
 
-        LABKEY.Query.executeSql({
+        LABKEY.Query.selectRows({
             schemaName: 'cds',
-            sql: 'SELECT * FROM cds.assay AS AA LEFT JOIN (SELECT assay_identifier as id, count(assay_identifier) as "study_count" FROM(SELECT DISTINCT assay_identifier, study_name, FROM ds_subjectassay) GROUP by assay_identifier) AS BB ON AA.assay_identifier=BB.id',
+            queryName: 'learn_assay',
             success: this.onLoadAssays,
             scope: this
         });
