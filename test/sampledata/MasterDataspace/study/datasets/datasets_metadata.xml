@@ -70,6 +70,12 @@
         <columnTitle>BMI at Enrollment</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
+      <column columnName="agegroup_range">
+        <datatype>varchar</datatype>
+        <columnTitle>Age Group at Enrollment (Range)</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="agegroup_enrollment">
         <datatype>integer</datatype>
         <columnTitle>Age Group at Enrollment</columnTitle>
