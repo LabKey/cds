@@ -23,10 +23,17 @@
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
 <%@ page import="org.labkey.cds.CDSController" %>
 <%@ page import="org.labkey.cds.CDSUserSchema" %>
+<%@ page import="org.labkey.api.view.ActionURL" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%@ taglib prefix="labkey" uri="http://www.labkey.org/taglib" %>
 <%
     Container c = getContainer();
+
+    // Configure URL for editing the News Feed
+    ActionURL newsFeedURL = new ActionURL();
+    newsFeedURL.setContainer(c);
+    newsFeedURL.addParameter("schemaName", "announcement");
+    newsFeedURL.addParameter("query.queryName", "RSSFeeds");
 
     // 15438
     if (StudyService.get().getStudy(c) != null)
@@ -45,6 +52,7 @@
         <li><%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%></li>
         <li><%=textLink("Run ETLs", PageFlowUtil.urlProvider(DataIntegrationUrls.class).getBeginURL(c))%></li>
         <li><%=textLink("Browse Schema", PageFlowUtil.urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
+        <li><%=textLink("Manage News Feed", PageFlowUtil.urlProvider(QueryUrls.class).urlExecuteQuery(newsFeedURL))%></li>
     </ul>
 </div>
 <%

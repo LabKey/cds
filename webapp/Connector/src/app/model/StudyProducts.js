@@ -11,6 +11,8 @@ Ext.define('Connector.app.model.StudyProducts', {
 
     labelProperty: 'product_name',
 
+    resolvableField: 'product_name',
+
     fields: [
         {name: 'product_id', type: 'int'},
         {name: 'product_name'},
