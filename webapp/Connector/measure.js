@@ -232,12 +232,12 @@ Ext.define('Connector.measure.Configuration', {
                     description: 'Creates a categorical x axis, unlike the other time axes that are ordinal. Each visit with data for the y axis is labeled separately with its study month.',
                     variableType: 'TIME'
                 },
-                'SavedGroups': {
+                'study_SubjectGroupMap_GroupId_Label': {
                     sortOrder: -1,
                     schemaName: Connector.studyContext.schemaName,
                     queryName: 'SubjectGroupMap',
                     inNotNullSet: false,
-                    name: 'GroupId',
+                    name: 'GroupId/Label',
                     label: 'My saved groups',
                     description: 'Creates a categorical x axis of the selected saved groups',
                     type: 'VARCHAR',
