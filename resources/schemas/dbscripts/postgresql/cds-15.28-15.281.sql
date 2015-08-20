@@ -1,1 +1,0 @@
-ALTER TABLE cds.assay DROP COLUMN container;

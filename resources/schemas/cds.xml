@@ -487,6 +487,7 @@
     <table tableName="assay" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
+            <column columnName="container"/>
             <column columnName="assay_label"/>
             <column columnName="assay_short_name"/>
             <column columnName="assay_category"/>
