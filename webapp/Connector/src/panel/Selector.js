@@ -76,7 +76,7 @@ Ext.define('Connector.panel.Selector', {
                     }
                 },
                 {property: 'sortOrder'},
-                {property: 'queryLabel'}
+                {property: 'title'}
             ]
         });
 
@@ -84,7 +84,7 @@ Ext.define('Connector.panel.Selector', {
             model: 'Connector.model.Measure',
             groupField: 'recommendedVariableGrouper',
             sorters: [
-                {property: 'queryLabel'},
+                {property: 'sourceTitle'},
                 {property: 'isRecommendedVariable', direction: 'DESC'},
                 {property: 'sortOrder'},
                 {property: 'label'}
@@ -264,11 +264,7 @@ Ext.define('Connector.panel.Selector', {
                             '</tpl>',
                         '</tpl>',
                         '<div class="content-item {subjectCount:this.greyMe}">',
-                            '<tpl if="category == \'Assays\'">',
-                                '<div class="content-label">{queryName:htmlEncode}&nbsp;({queryLabel:htmlEncode})</div>',
-                            '<tpl else>',
-                                '<div class="content-label">{queryLabel:htmlEncode}</div>',
-                            '</tpl>',
+                            '<div class="content-label">{title:htmlEncode}</div>',
                             '<tpl if="subjectCount != -1">',
                                 '<div class="content-count maskit">{subjectCount:this.commaFormat}</div>',
                             '</tpl>',
@@ -282,9 +278,6 @@ Ext.define('Connector.panel.Selector', {
                             if (v == -1 || v > 0)
                                 return '';
                             return 'look-disabled';
-                        },
-                        showLabel : function(queryLabel, longLabel) {
-                            return longLabel && longLabel.length > 0 && (queryLabel != longLabel);
                         }
                     }
                 ),
@@ -541,7 +534,7 @@ Ext.define('Connector.panel.Selector', {
         this.setHeaderData({
             title: this.headerTitle,
             navText: 'Sources',
-            sectionTitle: this.getSourceTitle(source, false),
+            sectionTitle: source.get('title'),
             action: function() {
                 if (me.advancedPane) {
                     me.advancedPane.hide();
@@ -586,9 +579,9 @@ Ext.define('Connector.panel.Selector', {
             // otherwise, we group measures into the Recommended or Additional groupings
             if (variableType == 'SELECTION' || variableType == 'SESSION') {
                 this.groupingFeature.enable();
-                this.measureStore.groupers.first().property = 'queryLabel';
+                this.measureStore.groupers.first().property = 'sourceTitle';
                 this.measureStore.group();
-                this.measureStore.sort('queryLabel', 'ASC');
+                this.measureStore.sort('sourceTitle', 'ASC');
             }
             else {
                 // enable or disable the measure grid grouping feature based on the presence of a 'recommended' or 'assay required' variable
@@ -644,7 +637,7 @@ Ext.define('Connector.panel.Selector', {
         var me = this;
         this.setHeaderData({
             title: this.headerTitle,
-            navText: this.getSourceTitle(source, true),
+            navText: source.get('queryName'),
             sectionTitle: this.activeMeasure.get('label'),
             action: function() { me.hierarchicalSelectionDone(); },
             showCount: false
@@ -659,19 +652,6 @@ Ext.define('Connector.panel.Selector', {
                 me.updateSelectorPane();
             }
         });
-    },
-
-    getSourceTitle : function(source, abbr) {
-        var title = source.get('queryLabel');
-
-        if (abbr) {
-            title = source.get('queryName');
-        }
-        else if (source.get('category') == 'Assays') {
-            title = source.get('queryName') + ' (' + title + ')';
-        }
-
-        return title;
     },
 
     toggleRemoveVariableButton : function(show) {

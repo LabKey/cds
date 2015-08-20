@@ -30,16 +30,23 @@ Ext.define('Connector.model.Measure', {
         {name: 'inNotNullSet', defaultValue: undefined},
 
         // Misc properties about the measure display in the application
+        {name: 'sourceTitle', convert: function(val, rec) {
+            var title = rec.get('queryLabel');
+            if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
+                title = rec.get('queryName') + ' (' + title + ')';
+            }
+            return title;
+        }},
         {name: 'isRecommendedVariable', type: 'boolean', defaultValue: false},
         {name: 'recommendedVariableGrouper', convert: function(val, rec) {
-            if( rec.data.isRecommendedVariable) {
-                return '0';
+            // see Selector.js measuresGridGrouping for mapping to display value
+            if (rec.get('isRecommendedVariable')) {
+                return '0'; // Recommended
             }
-            else if(rec.data.dimensions && rec.data.dimensions.indexOf(rec.data.alias) > -1)
-            {
-                return '1';
+            else if (rec.get('dimensions') && rec.get('dimensions').indexOf(rec.get('alias')) > -1) {
+                return '1'; // Assay Required
             }
-            return '2';
+            return '2'; // Additional
         }},
         {name: 'defaultScale', defaultValue: 'LINEAR'},
         {name: 'sortOrder', type: 'int', defaultValue: 0},
