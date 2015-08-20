@@ -371,7 +371,27 @@ Ext.define('Connector.panel.Selector', {
     },
 
     getMeasureSelectionGrid : function() {
-        var config = Ext.apply(this.getBaseMeasureSelectionConfig(), {
+        var me = this, config, selModelConfig;
+
+        selModelConfig = {
+            mode: 'SIMPLE',
+            renderer: function(v,p,record) {
+                var cls = 'x-grid-row-checker';
+                if (me.getRecordIndex(me.getLockedRecords(), record) > -1) {
+                    cls += ' checker-disabled';
+                }
+                return '<div class="' + cls + '">&nbsp;</div>';
+            },
+            listeners: {
+                scope: this,
+                beforedeselect: function(sm, record, index) {
+                    // don't allow deselection of locked measures (i.e. plot measures or active filter measures)
+                    return this.getRecordIndex(this.getLockedRecords(), record) == -1;
+                }
+            }
+        };
+
+        config = Ext.apply(this.getBaseMeasureSelectionConfig(), {
             cls : 'content-multiselect',
             enableColumnResize: false,
             enableColumnHide: false,
@@ -379,9 +399,7 @@ Ext.define('Connector.panel.Selector', {
             viewConfig : { stripeRows : false },
             multiSelect: true,
             selType: 'checkboxmodel',
-            selModel: {
-                mode: 'SIMPLE'
-            },
+            selModel: selModelConfig,
             columns: [{
                 cls: 'content-header',
                 header: 'Select all columns',
@@ -390,7 +408,6 @@ Ext.define('Connector.panel.Selector', {
                 sortable: false,
                 menuDisabled: true
             }],
-            //adds the grouping feature onto the panel
             requires: ['Ext.grid.feature.Grouping'],
             features: [{
                 ftype: 'grouping',
@@ -1122,7 +1139,7 @@ Ext.define('Connector.panel.Selector', {
             this.getButton('select-button').enable();
         }
         else {
-            if (this.getSelectedRecordIndex(measure) == -1) {
+            if (this.getRecordIndex(this.getSelectedRecords(), measure) == -1) {
                 this.selectedMeasures.push(measure);
             }
         }
@@ -1130,16 +1147,16 @@ Ext.define('Connector.panel.Selector', {
 
     deselectMeasure : function(selectionCmp, measure) {
         if (this.multiSelect) {
-            var index = this.getSelectedRecordIndex(measure);
+            var index = this.getRecordIndex(this.getSelectedRecords(), measure);
             if (index > -1) {
                 this.selectedMeasures.splice(index, 1);
             }
         }
     },
 
-    getSelectedRecordIndex : function(measure) {
-        for (var i = 0; i < this.getSelectedRecords().length; i++) {
-            if (this.getSelectedRecords()[i].get('alias') == measure.get('alias')) {
+    getRecordIndex : function(measureArr, measure) {
+        for (var i = 0; i < measureArr.length; i++) {
+            if (measureArr[i].get('alias') == measure.get('alias')) {
                 return i;
             }
         }
