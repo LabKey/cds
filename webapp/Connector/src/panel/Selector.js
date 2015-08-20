@@ -615,7 +615,7 @@ Ext.define('Connector.panel.Selector', {
             }
             else {
                 // enable or disable the measure grid grouping feature based on the presence of a 'recommended' or 'assay required columns' variable
-                if (this.measureStore.find('recommendedVariableGrouper', '0') || this.measureStore.find('recommendedVariableGrouper', '1')) {
+                if (this.measureStore.findExact('recommendedVariableGrouper', '0') > -1 || this.measureStore.findExact('recommendedVariableGrouper', '1') > -1) {
                     this.groupingFeature.enable();
                 }
                 else {
