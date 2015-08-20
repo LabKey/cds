@@ -19,10 +19,6 @@
             <source schemaName="cds" queryName="ds_lab" />
             <destination schemaName="cds" queryName="lab" targetOption="truncate"/>
         </transform>
-        <transform id="PopulateAssay" type="TaskrefTransformStep">
-            <taskref ref="org.labkey.cds.data.steps.PopulateAssayTask">
-            </taskref>
-        </transform>
         <transform id="PopulateDemographics" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
                 <settings>
@@ -66,6 +62,10 @@
                     <setting name="sourceQuery" value="ds_bama"/>
                     <setting name="targetDataset" value="BAMA" />
                 </settings>
+            </taskref>
+        </transform>
+        <transform id="PopulateAssay" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateAssayTask">
             </taskref>
         </transform>
         <transform id="product" type="org.labkey.di.pipeline.TransformTask">
