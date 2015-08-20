@@ -44,7 +44,7 @@ Ext.define('Connector.model.Measure', {
                 return '0'; // Recommended
             }
             else if (rec.get('dimensions') && rec.get('dimensions').indexOf(rec.get('alias')) > -1) {
-                return '1'; // Assay Required
+                return '1'; // Assay required columns
             }
             return '2'; // Additional
         }},

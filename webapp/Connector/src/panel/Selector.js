@@ -30,6 +30,7 @@ Ext.define('Connector.panel.Selector', {
     memberCountsFnScope: undefined,
 
     multiSelect: false,
+    lockedMeasures: undefined,
     selectedMeasures: undefined,
     supportSelectionGroup: false,
     supportSessionGroup: false,
@@ -65,6 +66,7 @@ Ext.define('Connector.panel.Selector', {
         this.queryService = Connector.getService('Query');
         this.boundDimensionNames = [];
         this.selectedMeasures = [];
+        this.lockedMeasures = [];
 
         this.sourcesStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Source',
@@ -82,7 +84,7 @@ Ext.define('Connector.panel.Selector', {
 
         this.measureStore = Ext.create('Ext.data.Store', {
             model: 'Connector.model.Measure',
-            groupField: 'recommendedVariableGrouper',
+            groupField: this.multiSelect ? 'recommendedVariableGrouper' : undefined,
             sorters: [
                 {property: 'sourceTitle'},
                 {property: 'isRecommendedVariable', direction: 'DESC'},
@@ -306,9 +308,6 @@ Ext.define('Connector.panel.Selector', {
 
         this.hideLearnMessage('Source');
 
-        //clears any filter before the source is selected
-        this.measureStore.clearFilter();
-
         view.getEl().slideOut('l', {
             duration: 250,
             callback: function() {
@@ -338,7 +337,7 @@ Ext.define('Connector.panel.Selector', {
         if (!this.measurePane) {
             if (this.multiSelect) {
                 this.measurePane = this.getMeasureSelectionGrid();
-                this.groupingFeature = this.getMeasureSelectionGrid().view.getFeature('measuresGridGrouping');
+                this.groupingFeature = this.measurePane.view.getFeature('measuresGridGrouping');
             }
             else {
                 this.measurePane = this.getMeasureSelectionView();
@@ -406,7 +405,7 @@ Ext.define('Connector.panel.Selector', {
                                 hdr = 'Recommended';
                             }
                             else if (value === '1') {
-                                hdr = 'Assay Required';
+                                hdr = 'Assay required columns';
                             }
                             else if(value === '2') {
                                 hdr = 'Additional';
@@ -487,46 +486,48 @@ Ext.define('Connector.panel.Selector', {
 
         var key = source.get('key'),
             variableType = source.get('variableType'),
-            filter, aliases = {}, selModel,
+            filter, aliases = {},
+            selModel = this.getMeasurePane().getSelectionModel(),
             me = this;
 
-        //checks whether the current selection is the current column
-        if (variableType === 'SELECTION') {
-            Ext.each(this.getSelectedRecords(), function(measure) {
-                if (Ext.isDefined(measure.get('alias'))) {
-                    //adds the selected measure to the current visible measures
-                    aliases[measure.get('alias')] = true;
+        // collect the aliases for all locked measures
+        Ext.each(this.getLockedRecords(), function(measure) {
+            if (Ext.isDefined(measure.get('alias'))) {
+                aliases[measure.get('alias')] = true;
+            }
+        }, this);
 
-                    // TODO: should this be moved to happen in all cases of showMeasures?
-                    if (this.measureStore.findExact('alias', measure.get('alias')) > -1) {
-                        this.getMeasureSelectionGrid().getSelectionModel().select(measure, true, true);
-                    }
+        // collect the aliases for all selected measures
+        Ext.each(this.getSelectedRecords(), function(measure) {
+            if (Ext.isDefined(measure.get('alias'))) {
+                aliases[measure.get('alias')] = true;
+            }
+        }, this);
 
-                }
-            }, this);
 
+        // setup the measures store filter based on the selected source
+        if (variableType === 'SELECTION' || variableType === 'SESSION') {
             filter = function(measure) {
-                return measure.get('alias') in aliases;
-            };
-        }
-        else if (variableType === 'SESSION') {
-            Ext.iterate(Connector.getState().getSessionColumns(), function(alias, measureData) {
-                if (Ext.isDefined(alias)) {
-                    aliases[alias] = true;
-                }
-            }, this);
+                // include all measures from the locked and selected sets
+                var toInclude = measure.get('alias') in aliases;
 
-            filter = function(measure) {
-                return measure.get('alias') in aliases;
+                // if Session source, also check to see if the measures is in that set
+                if (variableType === 'SESSION' && !toInclude) {
+                    toInclude = measure.get('alias') in Connector.getState().getSessionColumns();
+                }
+
+                return toInclude;
             };
         }
         else {
+            // for all other sources, filter based on the schemaName/queryName source key
             filter = function(measure) {
                 return key == (measure.get('schemaName') + '|' + measure.get('queryName'));
             };
         }
 
-        //filters results by the filters applied above
+        // filters results by the filters applied above
+        this.measureStore.clearFilter();
         this.measureStore.filterBy(filter);
 
         this.toggleDisplay('measure');
@@ -547,7 +548,7 @@ Ext.define('Connector.panel.Selector', {
                         if (!me.multiSelect) {
                             me.initialized = false;
                             me.initOptions = undefined;
-                            me.getMeasurePane().getSelectionModel().deselectAll();
+                            selModel.deselectAll();
                         }
 
                         me.showSources();
@@ -557,8 +558,6 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        //gets the current model if multiselect isn't active
-        selModel = this.getMeasurePane().getSelectionModel();
         if (!this.multiSelect) {
             if (activeMeasure) {
                 if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
@@ -574,9 +573,23 @@ Ext.define('Connector.panel.Selector', {
                 Ext.defer(function() { selModel.select(0); }, 100, this);
             }
         }
-        else if (Ext.isDefined(this.groupingFeature)) {
-            // for the 'Current Columns' source, we group the measures by the query source
-            // otherwise, we group measures into the Recommended or Additional groupings
+        else {
+            // for the multiSelect case, we want to clear all selections and reselect each time so that
+            // the 'select all columns' checkbox works as expected (issue 24077)
+            selModel.suspendEvents();
+            selModel.deselectAll();
+            selModel.resumeEvents();
+            Ext.iterate(aliases, function(alias){
+                var index = this.measureStore.findExact('alias', alias);
+                if (index > -1) {
+                    selModel.select(index, true, true);
+                }
+            }, this);
+        }
+
+        // for the 'Current Columns' source, we group the measures by the query source
+        // otherwise, we group measures into the Recommended or Additional groupings
+        if (Ext.isDefined(this.groupingFeature)) {
             if (variableType == 'SELECTION' || variableType == 'SESSION') {
                 this.groupingFeature.enable();
                 this.measureStore.groupers.first().property = 'sourceTitle';
@@ -584,9 +597,8 @@ Ext.define('Connector.panel.Selector', {
                 this.measureStore.sort('sourceTitle', 'ASC');
             }
             else {
-                // enable or disable the measure grid grouping feature based on the presence of a 'recommended' or 'assay required' variable
-                if (this.measureStore.find('recommendedVariableGrouper', '0') ||
-                        this.measureStore.find('recommendedVariableGrouper', '1')) {
+                // enable or disable the measure grid grouping feature based on the presence of a 'recommended' or 'assay required columns' variable
+                if (this.measureStore.find('recommendedVariableGrouper', '0') || this.measureStore.find('recommendedVariableGrouper', '1')) {
                     this.groupingFeature.enable();
                 }
                 else {
@@ -1125,10 +1137,6 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
-    getSelectedRecords : function() {
-        return this.selectedMeasures;
-    },
-
     getSelectedRecordIndex : function(measure) {
         for (var i = 0; i < this.getSelectedRecords().length; i++) {
             if (this.getSelectedRecords()[i].get('alias') == measure.get('alias')) {
@@ -1137,5 +1145,22 @@ Ext.define('Connector.panel.Selector', {
         }
 
         return -1;
+    },
+
+    getSelectedRecords : function() {
+        return this.selectedMeasures;
+    },
+
+    getLockedRecords : function() {
+        return this.lockedMeasures;
+    },
+
+    setLockedMeasures : function(aliases) {
+        // track the lockedMeasures array so they show up in Current/Session columns for the grid column chooser
+        this.lockedMeasures = [];
+        Ext.each(aliases, function(alias) {
+            var record = this.queryService.getMeasureRecordByAlias(alias);
+            this.lockedMeasures.push(record);
+        }, this);
     }
 });

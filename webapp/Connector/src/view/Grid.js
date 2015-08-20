@@ -659,8 +659,17 @@ Ext.define('Connector.view.Grid', {
         return false;
     },
 
+    getLockedMeasureAliases : function() {
+        // return an array of measure aliases for those columns added to the grid via plot selection or active filters
+        var model = this.getModel(), aliases;
+        aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
+        aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
+        return aliases;
+    },
+
     showMeasureSelection : function() {
         Connector.getService('Query').onQueryReady(function() {
+            this.getColumnSelector().setLockedMeasures(this.getLockedMeasureAliases());
             this.getColumnSelector().loadSourceCounts();
             this.getMeasureSelectionWindow(this.getSelectColumnsButton().getEl()).show();
             // TODO Open with 'Current columns' selected if we have a selection?
