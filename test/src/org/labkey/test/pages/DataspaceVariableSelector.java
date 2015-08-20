@@ -84,6 +84,20 @@ public abstract class DataspaceVariableSelector
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
+    protected void backToSource(String selector){
+        while(!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + selector + "')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")))
+        {
+            _test.click(Locator.xpath("//div[contains(@class, '" + selector + "')]//span[contains(@class, 'back-action')]"));
+            _test.sleep(750);
+        }
+    }
+
+    protected void back(String selector)
+    {
+        _test.click(Locator.xpath("//div[contains(@class, '" + selector + "')]//span[contains(@class, 'back-action')]"));
+        _test.sleep(750);
+    }
+
     public void pickMultiPanelSource(String source)
     {
         _test.waitAndClick(sourcePanelRow().containing(source)); // This is used in multi-panel select.
@@ -297,7 +311,7 @@ public abstract class DataspaceVariableSelector
                 break;
             case CellType:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
                 allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
@@ -371,7 +385,7 @@ public abstract class DataspaceVariableSelector
                 break;
             case TargetCell:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-target_cell')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
 

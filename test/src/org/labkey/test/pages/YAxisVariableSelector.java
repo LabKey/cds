@@ -79,18 +79,24 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     }
 
     @Override
-    public void pickSource(String source){
+    public void pickSource(String source)
+    {
         // If not currently on the source page, move there.
-        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]")))
+        if(!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")))
         {
             backToSource();
         }
         super.pickSource(source);
     }
 
-    public void backToSource(){
-        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//span[contains(@class, 'back-action')]"));
-        _test.sleep(750);
+    public void backToSource()
+    {
+        super.backToSource(XPATHID);
+    }
+
+    public void back()
+    {
+        super.back(XPATHID);
     }
 
     public void setScale(Scale scale)
