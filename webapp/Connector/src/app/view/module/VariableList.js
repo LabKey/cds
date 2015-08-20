@@ -15,23 +15,23 @@ Ext.define('Connector.view.module.VariableList', {
                     '<div class="list-container">',
                         '<div class="list-entry-container">',
                             '<div class="list-category-container">',
-                                '<div class="list-category-detail">{[values.data.isRecommendedVariable ? "Recommended" : ""]}</div>',
+                                '<div class="list-category-detail">{[values.isRecommendedVariable ? "Recommended" : ""]}</div>',
                             '</div>',
                                 '<div class="list-entry-title">',
-                                '<h2>{[values.data.label]}</h2>',
+                                '<h2>{label:htmlEncode}</h2>',
                             '</div>',
                             '<div class="list-entry-description">',
-                                '<div>{[values.data.description]}</div>',
+                                '<div>{description:htmlEncode}</div>',
                             '</div>',
                         '</div>',
                     '</div>',
                 '</tpl>',
-            '</tpl>'),
-
+            '</tpl>'
+    ),
 
     initComponent : function() {
         var assayName = this.data.model.data.assay_type,
             store = StoreCache.getStore('Connector.app.store.VariableList');
-        this.data = store.getByAssayName(assayName);
+        this.data = Ext.Array.pluck(store.getByAssayName(assayName), 'data');
     }
 });
