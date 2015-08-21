@@ -34,6 +34,7 @@ Ext.define('Connector.Application', {
         'Messaging',
         'State',
         'Query',
+        'Analytics',
         'Update',
         'Group',
         'Main',
