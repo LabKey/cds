@@ -42,7 +42,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
     public void preTest()
     {
         signOut();
-        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "begin"));
+        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app"));
     }
 
     @Test
@@ -71,9 +71,9 @@ public class CDSLoginTest extends CDSReadOnlyTest
 
         sleep(1000);
 
-//        // It looks like there was a change in the behavior. If the test runs quickly calling signOutHTTP
-//        // will generate a session time out. If the test run slowly (like you are stepping through it) you will
-//        // see the grid navigation link and clicking on it will generate a time out message.
+        // It looks like there was a change in the behavior. If the test runs quickly calling signOutHTTP
+        // will generate a session time out. If the test run slowly (like you are stepping through it) you will
+        // see the grid navigation link and clicking on it will generate a time out message.
         if (isElementPresent(CDSHelper.NavigationLink.GRID.getLinkLocator()) && isElementVisible(CDSHelper.NavigationLink.GRID.getLinkLocator()))
         {
             clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());

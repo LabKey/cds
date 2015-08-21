@@ -262,7 +262,9 @@ Ext.define('Connector.model.InfoPane', {
                     }],
                     useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
                     showEmpty: true,
-                    success: this.processMembers,
+                    success: function(cellset) {
+                        this.processMembers(cellset, mdx);
+                    },
                     scope: this
                 });
             }
@@ -277,7 +279,7 @@ Ext.define('Connector.model.InfoPane', {
                         showEmpty: true,
                         success: function(cellset) {
                             state.removePrivateSelection(INFO_PANE_SELECTION);
-                            this.processMembers(cellset, innerFilters);
+                            this.processMembers(cellset, mdx);
                         },
                         failure: function() {
                             state.removePrivateSelection(INFO_PANE_SELECTION);
@@ -345,7 +347,29 @@ Ext.define('Connector.model.InfoPane', {
         return hier;
     },
 
-    processMembers : function(cellset) {
+
+    getDimension : function(levelUniqueName, mdx) {
+        var level = mdx.getLevel(levelUniqueName);
+
+        if (level && level.supportsLearn) {
+            var dimensionName = level.lookupDimension;
+            return dimensionName ? mdx.getDimension(dimensionName) : this.get('dimension');
+        }
+    },
+
+    getModel : function(dimension) {
+        if (dimension) {
+            var modelName = dimension.detailModel;
+            if (modelName) {
+                var tokens = modelName.split('.');
+                if (tokens[0] === 'Connector' && tokens[1] === 'app' && tokens[2] === 'model') {
+                    return Connector.app.model[tokens[3]];
+                }
+            }
+        }
+    },
+
+    processMembers : function(cellset, mdx) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
         var memberDefinitions = cellset.axes[1].positions,
@@ -353,21 +377,35 @@ Ext.define('Connector.model.InfoPane', {
             modelDatas = [],
             selectedItems = [],
             filterBased = this.isFilterBased(),
-            dim = this.get('dimension'),
-            hasDetails = dim.supportsDetails;
+            dim,
+            model;
 
         Ext.each(memberDefinitions, function(definition, idx) {
 
             var def = definition[0],
-                _count = counts[idx][0].value,
-                _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
+                    _count = counts[idx][0].value,
+                    _name = LABKEY.app.model.Filter.getMemberLabel(def.name),
+                    _prop = '',
+                    _hasDetails;
+
+            dim = dim ? dim : this.getDimension(def.level.uniqueName, mdx);
+            model = model ? model : this.getModel(dim);
+
+            if (model) {
+                _prop = model.prototype.resolvableField;
+                _hasDetails = true;
+            }
+            else {
+                _hasDetails = false;
+                _prop = '';
+            }
 
             modelDatas.push({
                 uniqueName: def.uniqueName,
                 name: _name,
                 count: _count,
-                hasDetails: hasDetails,
-                detailLink: Connector.getService('Learn').getURL(dim, _name, 'label')
+                hasDetails: _hasDetails,
+                detailLink: _hasDetails ? Connector.getService('Learn').getURL(dim.name, _name, _prop) : ''
             });
 
             if (filterBased) {
