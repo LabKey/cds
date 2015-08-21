@@ -469,10 +469,10 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hidepointmsg');
     },
 
-    mouseOverBins : function(event, binData, layerSel, layerScope) {
+    mouseOverBins : function(event, data, layerSel, bin, layerScope) {
         if (!layerScope.isBrushed) {
             var subjectIds = [];
-            binData.forEach(function(b) {
+            data.forEach(function(b) {
                 subjectIds.push(b.data.subjectId);
             });
 
@@ -480,7 +480,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    mouseOutBins : function(event, binData, layerSel, layerScope) {
+    mouseOutBins : function(event, data, layerSel, bin, layerScope) {
         if (!layerScope.isBrushed) {
             this.clearHighlightedData();
             this.highlightSelected();
@@ -511,17 +511,15 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidepointmsg', this);
     },
 
-    getLayerAes : function(layerScope, isBoxPlot) {
+    getLayerAes : function(layerScope) {
 
         var mouseOver = this.showPointsAsBin ? this.mouseOverBins : this.mouseOverPoints,
             mouseOut = this.showPointsAsBin ? this.mouseOutBins : this.mouseOutPoints;
 
-        var aes = {
+        return {
             mouseOverFn: Ext.bind(mouseOver, this, [layerScope], true),
             mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
         };
-
-        return aes;
     },
 
     getBinLayer : function(layerScope) {
@@ -533,7 +531,7 @@ Ext.define('Connector.view.Chart', {
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
             }),
-            aes: this.getLayerAes.call(this, layerScope, false)
+            aes: this.getLayerAes.call(this, layerScope)
         });
     },
 
@@ -545,12 +543,12 @@ Ext.define('Connector.view.Chart', {
                 position: position, // jitter or undefined
                 opacity: 0.5
             }),
-            aes: this.getLayerAes.call(this, layerScope, false)
+            aes: this.getLayerAes.call(this, layerScope)
         });
     },
 
     getBoxLayer : function(layerScope) {
-        var aes = this.getLayerAes.call(this, layerScope, true),
+        var aes = this.getLayerAes.call(this, layerScope),
             me = this;
 
         aes.boxMouseOverFn = function(event, box, data) {
