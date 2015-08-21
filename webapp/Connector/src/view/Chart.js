@@ -828,7 +828,6 @@ Ext.define('Connector.view.Chart', {
             plotConfig.brushing = {
                 dimension: properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : Ext.bind(function() {
-                    this.clearHighlightedData();
                     this.clearHighlightLabels(layerScope.plot);
                     layerScope.isBrushed = true;
                 }, this),
