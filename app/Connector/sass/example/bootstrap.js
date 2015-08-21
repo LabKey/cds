@@ -87,13 +87,13 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.AdvancedOptionBaseDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AntigenSelection": "../../../../webapp/Connector/src/component/AntigenSelection.js",
   "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.ColorSelector": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
-  "Connector.panel.HierarchicalSelectionPanel": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
   "Connector.panel.Selector": "../../../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Page.js",
@@ -108,6 +108,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.store.VisitTagMultiUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.store.VisitTagSingleUse": "../../../../webapp/Connector/src/store/VisitTag.js",
   "Connector.types.Filter": "../../../../webapp/Connector/src/types/Filter.js",
+  "Connector.utility.Chart": "../../../../webapp/Connector/src/utility/Chart.js",
   "Connector.view.About": "../../../../webapp/Connector/src/view/About.js",
   "Connector.view.Chart": "../../../../webapp/Connector/src/view/Chart.js",
   "Connector.view.DetailStatus": "../../../../webapp/Connector/src/view/DetailStatus.js",
@@ -275,13 +276,13 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.AdvancedOptionBaseDropdown": [],
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
+  "Connector.panel.AntigenSelection": [],
   "Connector.panel.AxisSelectDisplay": [],
   "Connector.panel.AxisSelector": [],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
-  "Connector.panel.HierarchicalSelectionPanel": [],
   "Connector.panel.Selection": [],
   "Connector.panel.Selector": [],
   "Connector.plugin.HeaderLock": [],
@@ -296,6 +297,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.store.VisitTagMultiUse": [],
   "Connector.store.VisitTagSingleUse": [],
   "Connector.types.Filter": [],
+  "Connector.utility.Chart": [
+    "ChartUtils"
+  ],
   "Connector.view.About": [],
   "Connector.view.Chart": [],
   "Connector.view.DetailStatus": [],
@@ -1296,6 +1300,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.AdvancedOptionBaseDropdown": [],
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
+  "Connector.panel.AntigenSelection": [],
   "Connector.panel.AxisSelectDisplay": [
     "widget.axisselectdisplay"
   ],
@@ -1312,7 +1317,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.GroupList": [
     "widget.grouplist"
   ],
-  "Connector.panel.HierarchicalSelectionPanel": [],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
   ],
@@ -1345,6 +1349,7 @@ Ext.ClassManager.addNameAliasMappings({
     "store.visittagsingle"
   ],
   "Connector.types.Filter": [],
+  "Connector.utility.Chart": [],
   "Connector.view.About": [
     "widget.about"
   ],

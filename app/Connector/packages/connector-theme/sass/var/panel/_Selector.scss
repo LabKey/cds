@@ -211,8 +211,17 @@
         white-space: nowrap;
       }
 
-      .col-check, .col-spacer {
+      .col-check, .col-spacer, .col-count {
         height: 26px;
+      }
+
+      .col-count {
+        padding: 5px 4px 0 0;
+        text-align: right;
+      }
+
+      .col-disable {
+        color: $placeholder-text-color;
       }
 
       .col-line {
@@ -224,6 +233,11 @@
         font-weight: bold;
         color: $heat-scale-2;
         padding: 0 8px 16px 0;
+      }
+
+      .col-count-title {
+        padding-right: 0;
+        text-align: right;
       }
 
       .col-check .x-form-cb-label {
@@ -270,6 +284,10 @@
 
       .radio-panel .x-form-cb-label-after {
         margin-left: 8px;
+      }
+
+      .look-disabled {
+        color: $heat-scale-2;
       }
     }
   }

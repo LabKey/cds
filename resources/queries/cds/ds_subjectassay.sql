@@ -4,6 +4,7 @@ assay_identifier,
 assay_type,
 SS.study_name,
 lab_code,
+label,
 FROM (
   SELECT
   DISTINCT participantid,

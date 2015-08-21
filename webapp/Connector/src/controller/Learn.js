@@ -23,13 +23,13 @@ Ext.define('Connector.controller.Learn', {
      * it will resolve to the dimensions learn about listing. If a property is
      * provided, the value must occur in a single record in order to resolve
      * successfully.
-     * @param dimension
+     * @param {String} [dimension] The name of the dimension.
      * @param {string} [value] The id/name/value of the resource to be resolved.
      * @param {string} [prop] The model property to resolve by. If not provided, it defaults to the identifying property.
      * @returns {string}
      */
     getURL : function(dimension, value, prop) {
-        var url = '#learn/learn/' + encodeURIComponent(dimension.name),
+        var url = '#learn/learn/' + encodeURIComponent(dimension),
             sep = '/';
 
         if (!Ext.isEmpty(value)) {

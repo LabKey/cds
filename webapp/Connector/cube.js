@@ -40,6 +40,8 @@ Ext4.define('Connector.cube.Configuration', {
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
         //      defaultOperator - AND/OR/REQ_AND/REQ_OR. Defaults to hierarchies value.
         //      filterType      - The default way of filtering for this level. Options are COUNT/WHERE. Defaults to hierarchy's value.
+        //      supportsLearn   - Whether or not the elements in the level are backed by learn about pages. Defaults to false.
+        //      lookupDimension - Specify a dimension to look up learn about pages if the level's elements belong to different dimension than the parent. For example a study level in the assay dimension. Default is undefined.
         //
         context: {
             dimensions: [{
@@ -129,6 +131,7 @@ Ext4.define('Connector.cube.Configuration', {
                         activeCount: 'highlight',
                         countPriority: 30,
                         countSingular: 'Study',
+                        supportsLearn: true,
                         countPlural: 'Studies'
                     }]
                 },{
@@ -137,7 +140,8 @@ Ext4.define('Connector.cube.Configuration', {
                     levels: [{
                         uniqueName: '[Study.Treatment].[Treatment]',
                         countSingular: 'Treatment Assignment Summary',
-                        countPlural: 'Treatment Assignment Summaries'
+                        countPlural: 'Treatment Assignment Summaries',
+                        supportsLearn: true
                     }]
                 },{
                     uniqueName: '[Study.Type]',
@@ -146,6 +150,15 @@ Ext4.define('Connector.cube.Configuration', {
                         uniqueName: '[Study.Type].[Type]',
                         countSingular: 'Study Type',
                         countPlural: 'Study Types'
+                    },{
+                        uniqueName: '[Study.Type].[Name]',
+                        supportsLearn: true
+                    }]
+                },{
+                    uniqueName: '[Study.Network]',
+                    levels:[{
+                        uniqueName: '[Study.Network].[Name]',
+                        supportsLearn: true
                     }]
                 }],
 
@@ -230,9 +243,28 @@ Ext4.define('Connector.cube.Configuration', {
             },{
                 uniqueName: '[Study Product]',
                 priority: 20,
+                friendlyName: 'Subjects given study products',
                 singularName: 'Study product',
                 pluralName: 'Study products',
-
+                hierarchies: [{
+                    uniqueName: '[Study Product.Product Type]',
+                    levels: [{
+                        uniqueName: '[Study Product.Product Type].[Name]',
+                        supportsLearn: true
+                    }]
+                },{
+                    uniqueName: '[Study Product.Developer]',
+                    levels: [{
+                        uniqueName: '[Study Product.Developer].[Name]',
+                        supportsLearn: true
+                    }]
+                },{
+                    uniqueName: '[Study Product.Product Class]',
+                    levels: [{
+                        uniqueName: '[Study Product.Product Class].[Name]',
+                        supportsLearn: true
+                    }]
+                }],
                 supportsDetails: true,
                 detailCollection: 'Connector.app.store.StudyProducts',
                 detailModel: 'Connector.app.model.StudyProducts',
@@ -287,7 +319,33 @@ Ext4.define('Connector.cube.Configuration', {
                 pluralName: 'Assays',
                 hierarchies: [{
                     uniqueName: "[Assay.Name]",
-                    label: "Assay Name"
+                    label: "Assay Name",
+                    levels: [{
+                        uniqueName: '[Assay.Name].[Assay]',
+                        supportsLearn: true
+                    }]
+                },{
+                    uniqueName: '[Assay.Study]',
+                    levels: [{
+                        uniqueName: '[Assay.Study].[Assay]',
+                        supportsLearn: true
+                    },{
+                        uniqueName: '[Assay.Study].[Study]',
+                        supportsLearn: true,
+                        lookupDimension: '[Study]'
+                    }]
+                },{
+                    uniqueName: '[Assay.Lab]',
+                    levels: [{
+                        uniqueName: '[Assay.Lab].[Assay]',
+                        supportsLearn: true
+                    }]
+                },{
+                    uniqueName: '[Assay.Immunogenicity Type]',
+                    level: [{
+                        uniqueName: '[Assay.Immunogenicity Type].[Assay]',
+                        supportsLearn: true
+                    }]
                 }],
 
                 supportsDetails: true,
@@ -381,7 +439,9 @@ Ext4.define('Connector.cube.Configuration', {
                 countPlural: undefined,
                 cellbased: true,
                 defaultOperator: 'parent::defaultOperator',
-                filterType: 'parent::filterType'
+                filterType: 'parent::filterType',
+                supportsLearn: false,
+                lookupDimension: undefined
             }
         }
     }

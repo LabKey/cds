@@ -50,18 +50,14 @@ Ext.define('Connector.model.InfoPane', {
         //
         if (this.isFilterBased()) {
             // Connector.model.Filter
-            Connector.getState().onMDXReady(function(mdx) {
+            var filter = this.get('filter');
 
-                var filter = this.get('filter');
-
-                if (!filter.isGrid() && !filter.isPlot()) {
-                    this.initializeModel(null, filter.get('hierarchy'), filter.get('level'));
-                }
-
-            }, this);
+            if (!filter.isGrid() && !filter.isPlot()) {
+                this.configure(null, filter.get('hierarchy'), filter.get('level'), false);
+            }
         }
         else {
-            this.initializeModel(this.get('dimension'), this.get('hierarchy'), this.get('level'));
+            this.configure(this.get('dimension'), this.get('hierarchy'), this.get('level'));
         }
     },
 
@@ -137,12 +133,33 @@ Ext.define('Connector.model.InfoPane', {
         return Ext.isDefined(this.get('filter'));
     },
 
-    initializeModel : function(dimName, hierName, lvlName) {
-
+    /**
+     * Configures the model based on a dimension/hierarchy/level configuration.
+     * Only one of these needs to be supplied in order to resolve. If a filter is supplied
+     * then the model will not lookup a filter and use it as the base filter
+     * @param {String} [dimName]
+     * @param {String} hierName
+     * @param {String} [lvlName]
+     * @param {boolean} [deferToFilters=true]
+     */
+    configure : function(dimName, hierName, lvlName, deferToFilters) {
         this.filterMemberMap = {};
 
+        var _deferToFilters = Ext.isBoolean(deferToFilters) ? deferToFilters : true;
+
+        if (_deferToFilters) {
+            this._configureFilter(hierName);
+        }
+
         if (this.isFilterBased()) {
-            var members = this.get('filter').get('members');
+
+            var filter = this.get('filter'),
+                members = filter.get('members');
+
+            dimName = null;
+            hierName = filter.get('hierarchy');
+            lvlName = filter.get('level');
+
             Ext.each(members, function(member) {
                 this.filterMemberMap[member.uniqueName] = true;
             }, this);
@@ -158,9 +175,29 @@ Ext.define('Connector.model.InfoPane', {
         this.setDimensionHierarchy(dimName, hierName, lvlName);
     },
 
+    _configureFilter : function(hierName) {
+
+        this._ready = false;
+
+        var filters = Connector.getState().getFilters(),
+                hierarchy = hierName,
+                activeFilter;
+
+        Ext.each(filters, function(f) {
+            if (f && !f.isPlot() && !f.isGrid() && f.get('hierarchy') === hierarchy) {
+                activeFilter = f;
+                return false;
+            }
+        });
+
+        this.set('filter', activeFilter); // undefined is OK
+    },
+
     setDimensionHierarchy : function(dimName, hierName, lvlName) {
 
-        Connector.getState().onMDXReady(function(mdx) {
+        var state = Connector.getState();
+
+        state.onMDXReady(function(mdx) {
 
             var dimHier = this.getDimensionHierarchy(mdx, dimName, hierName, lvlName),
                 dim = dimHier.dim,
@@ -201,16 +238,56 @@ Ext.define('Connector.model.InfoPane', {
 
             this.fireEvent('change', this);
 
-            mdx.query({
-                onRows: [{
-                    level: lvl.getUniqueName(),
-                    member: 'members'
-                }],
-                useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
-                showEmpty: true,
-                success: this.processMembers,
-                scope: this
+            var filters = state.getFilters(),
+                innerFilters = [],
+                outerFilters = [],
+                INFO_PANE_SELECTION = 'infopanecount';
+
+
+            Ext.each(filters, function(f) {
+                if (!f.isPlot() && !f.isGrid() && f.get('hierarchy') === hier.getUniqueName()) {
+                    innerFilters.push(f);
+                }
+                else {
+                    outerFilters.push(f);
+                }
             });
+
+            // There are not any filters on this hierarchy, just use the standard filters
+            if (Ext.isEmpty(innerFilters)) {
+                mdx.query({
+                    onRows: [{
+                        level: lvl.getUniqueName(),
+                        member: 'members'
+                    }],
+                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                    showEmpty: true,
+                    success: function(cellset) {
+                        this.processMembers(cellset, mdx);
+                    },
+                    scope: this
+                });
+            }
+            else {
+                state.addPrivateSelection(outerFilters, INFO_PANE_SELECTION, function() {
+                    mdx.query({
+                        onRows: [{
+                            level: lvl.getUniqueName(),
+                            member: 'members'
+                        }],
+                        useNamedFilters: [INFO_PANE_SELECTION],
+                        showEmpty: true,
+                        success: function(cellset) {
+                            state.removePrivateSelection(INFO_PANE_SELECTION);
+                            this.processMembers(cellset, mdx);
+                        },
+                        failure: function() {
+                            state.removePrivateSelection(INFO_PANE_SELECTION);
+                        },
+                        scope: this
+                    });
+                }, this);
+            }
 
         }, this);
     },
@@ -270,7 +347,29 @@ Ext.define('Connector.model.InfoPane', {
         return hier;
     },
 
-    processMembers : function(cellset) {
+
+    getDimension : function(levelUniqueName, mdx) {
+        var level = mdx.getLevel(levelUniqueName);
+
+        if (level && level.supportsLearn) {
+            var dimensionName = level.lookupDimension;
+            return dimensionName ? mdx.getDimension(dimensionName) : this.get('dimension');
+        }
+    },
+
+    getModel : function(dimension) {
+        if (dimension) {
+            var modelName = dimension.detailModel;
+            if (modelName) {
+                var tokens = modelName.split('.');
+                if (tokens[0] === 'Connector' && tokens[1] === 'app' && tokens[2] === 'model') {
+                    return Connector.app.model[tokens[3]];
+                }
+            }
+        }
+    },
+
+    processMembers : function(cellset, mdx) {
 
         // memberDefinitions - Array of arrays of member definitions {name, uniqueName}
         var memberDefinitions = cellset.axes[1].positions,
@@ -278,21 +377,35 @@ Ext.define('Connector.model.InfoPane', {
             modelDatas = [],
             selectedItems = [],
             filterBased = this.isFilterBased(),
-            dim = this.get('dimension'),
-            hasDetails = dim.supportsDetails;
+            dim,
+            model;
 
         Ext.each(memberDefinitions, function(definition, idx) {
 
             var def = definition[0],
-                _count = counts[idx][0].value,
-                _name = LABKEY.app.model.Filter.getMemberLabel(def.name);
+                    _count = counts[idx][0].value,
+                    _name = LABKEY.app.model.Filter.getMemberLabel(def.name),
+                    _prop = '',
+                    _hasDetails;
+
+            dim = dim ? dim : this.getDimension(def.level.uniqueName, mdx);
+            model = model ? model : this.getModel(dim);
+
+            if (model) {
+                _prop = model.prototype.resolvableField;
+                _hasDetails = true;
+            }
+            else {
+                _hasDetails = false;
+                _prop = '';
+            }
 
             modelDatas.push({
                 uniqueName: def.uniqueName,
                 name: _name,
                 count: _count,
-                hasDetails: hasDetails,
-                detailLink: Connector.getService('Learn').getURL(dim, _name, 'label')
+                hasDetails: _hasDetails,
+                detailLink: _hasDetails ? Connector.getService('Learn').getURL(dim.name, _name, _prop) : ''
             });
 
             if (filterBased) {

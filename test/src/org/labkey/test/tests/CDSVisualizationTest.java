@@ -16,29 +16,23 @@
 package org.labkey.test.tests;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
+import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.CDSInitializer;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.PostgresOnlyTest;
-import org.labkey.test.util.ReadOnlyTest;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -47,7 +41,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -61,10 +54,9 @@ import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 
-@Category({CDS.class})
-public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresOnlyTest, ReadOnlyTest
+@Category({CDS.class, Git.class})
+public class CDSVisualizationTest extends CDSReadOnlyTest
 {
-
     private final CDSHelper cds = new CDSHelper(this);
     private final CDSAsserts _asserts = new CDSAsserts(this);
     private final String PGROUP1 = "visgroup 1";
@@ -77,40 +69,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     protected static final String BRUSHED_FILL = "#14C9CC";
     protected static final String BRUSHED_STROKE = "#00393A";
     protected static final String NORMAL_COLOR = "#000000";
-
-    public void doSetup() throws Exception
-    {
-        CDSVisualizationTest initTest = (CDSVisualizationTest)getCurrentTest();
-        CDSInitializer _initializer = new CDSInitializer(initTest, initTest.getProjectName());
-        _initializer.setupDataspace();
-    }
-
-    @Override @LogMethod
-    public boolean needsSetup()
-    {
-        boolean callDoCleanUp = false;
-
-        try
-        {
-            if(HttpStatus.SC_NOT_FOUND == WebTestHelper.getHttpGetResponse(WebTestHelper.buildURL("project", getProjectName(), "begin")))
-            {
-                callDoCleanUp = false;
-                doSetup();
-            }
-
-        }
-        catch (IOException fail)
-        {
-            callDoCleanUp =  true;
-        }
-        catch(java.lang.Exception ex)
-        {
-            callDoCleanUp = true;
-        }
-
-        // Returning true will cause BaseWebDriver to call it's cleanup method.
-        return callDoCleanUp;
-    }
 
     @Before
     public void preTest()
@@ -134,14 +92,6 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSVisualizationTest cvt = (CDSVisualizationTest)getCurrentTest();
         //TODO add back (and improve already exists test) when verifySavedGroupPlot is implemented.
 //        cvt.deleteParticipantGroups();
-        Ext4Helper.resetCssPrefix();
-    }
-
-    @Nullable
-    @Override
-    protected String getProjectName()
-    {
-        return CDSHelper.CDS_PROJECT_NAME;
     }
 
     @Override
@@ -256,7 +206,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
     {
         //getText(Locator.css("svg")) on Chrome
 
-        final String ELISPOT_VISIT = "0\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
+        final String ELISPOT_VISIT = "0\n100\n200\n300\n400\n500\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
         final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5"; // TODO Test data dependent.
         final String NAB_IC50 = "1\n10\n1\n10\n100\n1000"; // TODO Test data dependent.
 
@@ -495,7 +445,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             //apply category selection as a filter
         }
 
-        waitAndClick(CDSHelper.Locators.cdsButtonLocator("filter data"));
+        // Need to do this because there is more than one "Filter" buton in the OM, but only want the visible one.
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("Filter"));
 
         if(CDSHelper.validateCounts)
         {
@@ -533,7 +484,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
             assertEquals("incorrect number of points highlighted after clicking x axis categories",2707, getPointCountByColor(MOUSEOVER_FILL)); // TODO Test data dependent.
             assertEquals("incorrect total number of points after clicking x axis categories",3713, getPointCount()); // TODO Test data dependent.
             //apply selection as exlusive filter
-            waitAndClick(CDSHelper.Locators.cdsButtonLocator("remove"));
+            waitAndClick(CDSHelper.Locators.cdsButtonLocator("Remove"));
             waitForPointCount(3713 - 2707, 10000); // TODO Test data dependent.
         }
 
@@ -605,14 +556,22 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
                         {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE, CDSHelper.BAMA_VISIT, CDSHelper.BAMA_VISIT_DAY},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE, CDSHelper.ELISPOT_VISIT, CDSHelper.ELISPOT_VISIT_DAY},
-                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_PANEL, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VISIT},
+                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VISIT},
                         {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80, CDSHelper.NAB_VISIT, CDSHelper.NAB_VISIT_DAY}};
         final String[][] COLOR_AXIS_SOURCES =
                 {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
                         {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
-                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_PROTEIN_PANEL, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN},
+                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN},
                         {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}};
+
+        final Map<String, String> SubjectCounts = new HashMap<String, String>();
+        SubjectCounts.put(CDSHelper.DEMOGRAPHICS, "8,373");
+        SubjectCounts.put(CDSHelper.TIME_POINTS, "8,373");
+        SubjectCounts.put(CDSHelper.BAMA, "75");
+        SubjectCounts.put(CDSHelper.ELISPOT, "477");
+        SubjectCounts.put(CDSHelper.ICS, "1,690");
+        SubjectCounts.put(CDSHelper.NAB, "899");
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -620,82 +579,612 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         xaxis.openSelectorWindow();
 
-        this.log("Validating the x-axis header text.");
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'main-title')][text()='x-axis']")));
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
+        log("Validating the x-axis header text.");
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'main-title')][text()='x-axis']")));
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
 
-        this.log("Validating the x-axis sources.");
+        log("Validating the x-axis sources.");
         for (String[] src : X_AXIS_SOURCES)
         {
-            assertTrue(this.isElementVisible(xaxis.window().append(" div.content-label").withText(src[0])));
-            this.log("Validating variables for " + src[0]);
+            assertTrue(isElementVisible(xaxis.window().append(" div.content-label").withText(src[0])));
+            assertTrue(isElementVisible(xaxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            log("Validating variables for " + src[0]);
             click(xaxis.window().append(" div.content-label").withText(src[0]));
-            this.waitForElement(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
+            waitForElement(Locator.xpath("//div[contains(@class, 'x-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
             for (int i = 1; i < src.length; i++)
             {
-                assertTrue(this.isElementVisible(xaxis.window().append(" div.content-label").withText(src[i])));
+                assertTrue(isElementVisible(xaxis.window().append(" div.content-label").withText(src[i])));
                 click(xaxis.window().append(" div.content-label").withText(src[i]));
             }
             xaxis.backToSource();
         }
 
-        this.log("Validating the x-axis cancel button.");
+        log("Validating the x-axis cancel button.");
         xaxis.cancelSelection();
 
-        this.log("Validating the y-axis selector.");
+        log("Validating the y-axis selector.");
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
         yaxis.openSelectorWindow();
 
-        this.log("Validating the y-axis header text.");
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'main-title')][text()='y-axis']")));
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
+        log("Validating the y-axis header text.");
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'main-title')][text()='y-axis']")));
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
 
-        this.log("Validating the y-axis sources.");
+        log("Validating the y-axis sources.");
         for (String[] src : Y_AXIS_SOURCES)
         {
-            assertTrue(this.isElementVisible(yaxis.window().append(" div.content-label").withText(src[0])));
-            this.log("Validating variables for " + src[0]);
+            assertTrue(isElementVisible(yaxis.window().append(" div.content-label").withText(src[0])));
+            assertTrue(isElementVisible(yaxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            log("Validating variables for " + src[0]);
             click(yaxis.window().append(" div.content-label").withText(src[0]));
-            this.waitForElement(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
+            waitForElement(Locator.xpath("//div[contains(@class, 'y-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
             for (int i = 1; i < src.length; i++)
             {
-                assertTrue(this.isElementVisible(yaxis.window().append(" div.content-label").withText(src[i])));
+                assertTrue(isElementVisible(yaxis.window().append(" div.content-label").withText(src[i])));
                 click(yaxis.window().append(" div.content-label").withText(src[i]));
             }
             yaxis.backToSource();
         }
 
-        this.log("Validating the y-axis cancel button.");
+        log("Validating the y-axis cancel button.");
         yaxis.cancelSelection();
 
-        this.log("Validating the color-axis selector.");
+        log("Validating the color-axis selector.");
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
         coloraxis.openSelectorWindow();
 
-        this.log("Validating the color-axis header text.");
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'main-title')][text()='color']")));
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
-        assertTrue(this.isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
+        log("Validating the color-axis header text.");
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'main-title')][text()='color']")));
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")));
+        assertTrue(isElementVisible(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'subject-count')][text()='Subject count']")));
 
-        this.log("Validating the color-axis sources.");
+        log("Validating the color-axis sources.");
         for (String[] src : COLOR_AXIS_SOURCES)
         {
-            assertTrue(this.isElementVisible(coloraxis.window().append(" div.content-label").withText(src[0])));
-            this.log("Validating variables for " + src[0]);
+            assertTrue(isElementVisible(coloraxis.window().append(" div.content-label").withText(src[0])));
+            assertTrue(isElementVisible(coloraxis.window().append(" div.content-count").withText(SubjectCounts.get(src[0])))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            log("Validating variables for " + src[0]);
             click(coloraxis.window().append(" div.content-label").withText(src[0]));
-            this.waitForElement(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
+            waitForElement(Locator.xpath("//div[contains(@class, 'color-axis-selector')]//span[contains(@class, 'section-title')][text()='" + src[0] + "']"));
             for (int i = 1; i < src.length; i++)
             {
-                assertTrue(this.isElementVisible(coloraxis.window().append(" div.content-label").withText(src[i])));
+                assertTrue(isElementVisible(coloraxis.window().append(" div.content-label").withText(src[i])));
                 click(coloraxis.window().append(" div.content-label").withText(src[i]));
             }
             coloraxis.backToSource();
         }
 
-        this.log("Validating the color-axis cancel button.");
+        log("Validating the color-axis cancel button.");
         coloraxis.cancelSelection();
+
+    }
+
+    @Test
+    public void verifySubjectCounts()
+    {
+
+        // TODO all the counts here are very test data dependent.
+
+        Map<String, String> sourcesSubjectCounts = new HashMap<>();
+        CDSHelper cds = new CDSHelper(this);
+        Map<String, String> antigenCounts = new HashMap<>();
+        Map<String, String> peptidePoolCounts = new HashMap<>();
+        Map<String, String> proteinCounts = new HashMap<>();
+        Map<String, String> proteinPanelCounts = new HashMap<>();
+        Map<String, String> virusCounts = new HashMap<>();
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        // Populate expected counts for antigens.
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A1_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A244_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_AE244_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_BCON_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_C1086_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_CCON_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_CONS_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_GP70_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_P24_NAME), "75");
+
+        // Populate expected counts for peptide pools.
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV1PTEC), "156");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV2PTEC), "156");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV3PTEC), "154");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAG1PTEC), "168");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAG2PTEC), "167");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEC), "156");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL1PTEC), "168");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL2PTEC), "163");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL3PTEC), "159");
+
+        // Populate expected counts for proteins.
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "178");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "1289");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "1146");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "739");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "1061");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "219");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "219");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "219");
+
+        // Populate expected counts for protein panels.
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "178");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "1325");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "219");
+
+        // Populate expected counts for viruses.
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "68");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "73");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "787");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "727");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "60");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_REJO), "119");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_RHPA), "60");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SC422), "60");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "60");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_WITO4), "60");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_92RW), "50");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "60");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "381");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "321");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_96ZM), "88");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_97ZA), "50");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "694");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_C1080), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_C3347), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CAAN), "60");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CH58), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CH77), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CM244), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CE1086), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CE1176), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_CE2010), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "741");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SIVLUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SIVNL), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SVA), "67");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_TV1LUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_W61D), "120");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_WITO), "0");
+
+        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "8,373");
+        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "8,373");
+        sourcesSubjectCounts.put(CDSHelper.BAMA, "75");
+        sourcesSubjectCounts.put(CDSHelper.ELISPOT, "477");
+        sourcesSubjectCounts.put(CDSHelper.ICS, "1,690");
+        sourcesSubjectCounts.put(CDSHelper.NAB, "899");
+
+        subjectCountsHelper(sourcesSubjectCounts, antigenCounts, peptidePoolCounts, proteinCounts, proteinPanelCounts, virusCounts);
+
+    }
+
+    @Test
+    public void verifySubjectCountsWithFilters()
+    {
+
+        // TODO all the counts here are very test data dependent.
+
+        Map<String, String> sourcesSubjectCounts = new HashMap<>();
+        Map<String, String> antigenCounts = new HashMap<>();
+        Map<String, String> peptidePoolCounts = new HashMap<>();
+        Map<String, String> proteinCounts = new HashMap<>();
+        Map<String, String> proteinPanelCounts = new HashMap<>();
+        Map<String, String> virusCounts = new HashMap<>();
+
+        CDSHelper cds = new CDSHelper(this);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        log("Validating subject count with a filter of BAMA assay.");
+
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[0]); // Select BAMA
+
+        // Populate expected counts for some of the antigens.
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A1_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A244_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_BCON_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_C1086_NAME), "75");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_P24_NAME), "75");
+
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV1PTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAG1PTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL1PTEC), "0");
+
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "0");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "74");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "0");
+
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "74");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "74");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "74");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "74");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "72");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "75");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "75");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "42");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "72");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "72");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "0");
+
+        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "75");
+        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "75");
+        sourcesSubjectCounts.put(CDSHelper.BAMA, "75");
+        sourcesSubjectCounts.put(CDSHelper.ELISPOT, "0");
+        sourcesSubjectCounts.put(CDSHelper.ICS, "75");
+        sourcesSubjectCounts.put(CDSHelper.NAB, "75");
+
+        subjectCountsHelper(sourcesSubjectCounts, antigenCounts, peptidePoolCounts, proteinCounts, proteinPanelCounts, virusCounts);
+
+        cds.clearFilters();
+
+        log("Validating subject count with a filter of race-asian.");
+
+        cds.openStatusInfoPane("Races");
+        cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+
+        sourcesSubjectCounts.clear();
+
+        antigenCounts.clear();
+        peptidePoolCounts.clear();
+        proteinCounts.clear();
+        proteinPanelCounts.clear();
+        virusCounts.clear();
+
+        // Populate expected counts for some of the antigens.
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A1_NAME), "1");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_A244_NAME), "1");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_BCON_NAME), "1");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_C1086_NAME), "1");
+        antigenCounts.put(cds.buildCountIdentifier(CDSHelper.ANTIGEN_P24_NAME), "1");
+
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV1PTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAG1PTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEC, CDSHelper.PROTEIN_POL, CDSHelper.PEPTIDE_POOL_POL1PTEC), "0");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV, CDSHelper.PEPTIDE_POOL_ENV2PTEG), "2");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF, CDSHelper.PEPTIDE_POOL_NEFPTEG), "2");
+        peptidePoolCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_GAGB, CDSHelper.PROTEIN_GAG, CDSHelper.PEPTIDE_POOL_GAGCONB1), "18");
+
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "9");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "27");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "0");
+
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "9");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "27");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "18");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "12");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "15");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "2");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "1");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "17");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "13");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "2");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "6");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "3");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "13");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "15");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "0");
+
+        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "147");
+        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "147");
+        sourcesSubjectCounts.put(CDSHelper.BAMA, "1");
+        sourcesSubjectCounts.put(CDSHelper.ELISPOT, "20");
+        sourcesSubjectCounts.put(CDSHelper.ICS, "28");
+        sourcesSubjectCounts.put(CDSHelper.NAB, "20");
+
+        subjectCountsHelper(sourcesSubjectCounts, antigenCounts, peptidePoolCounts, proteinCounts, proteinPanelCounts, virusCounts);
+
+        cds.clearFilters();
+
+    }
+
+    @Test
+    public void verifySubjectCountsWithFiltersAdvancedOptions()
+    {
+
+        // TODO all the counts here are very test data dependent.
+
+        Map<String, String> sourcesSubjectCounts = new HashMap<>();
+        Map<String, String> antigenCounts = new HashMap<>();
+        Map<String, String> peptidePoolCounts = new HashMap<>();
+        Map<String, String> proteinCounts = new HashMap<>();
+        Map<String, String> proteinPanelCounts = new HashMap<>();
+        Map<String, String> virusCounts = new HashMap<>();
+
+        CDSHelper cds = new CDSHelper(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Validating counts with filters of NAB A3R5 and then cell types of CD4+, CD8+ and both.");
+
+        cds.goToSummary();
+        cds.clickBy("Assays");
+        cds.selectBars(CDSHelper.ASSAYS[3]); // Select NAb A3R5
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA), "0");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG), "58");
+        proteinPanelCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503), "0");
+
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEA, CDSHelper.PROTEIN_ENV), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_ENV), "58");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_GAG), "58");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_NEF), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_PTEG, CDSHelper.PROTEIN_POL), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_GAG), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_NEF), "0");
+        proteinCounts.put(cds.buildCountIdentifier(CDSHelper.PROTEIN_PANEL_V503, CDSHelper.PROTEIN_POL), "0");
+
+        log("Validating the x-axis selector.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+        xaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+        xaxis.validateProteinSubjectCount(proteinCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+        xaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+        xaxis.validateProteinSubjectCount(proteinCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+        xaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+        xaxis.validateProteinSubjectCount(proteinCounts, false);
+        xaxis.backToSource();
+
+        xaxis.cancelSelection();
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        // Counts for the y-axis are the same as x-axis. So no need to repopulate the counts.
+
+        log("Validating the y-axis selector.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+        yaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+        yaxis.validateProteinSubjectCount(proteinCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+        yaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+        yaxis.validateProteinSubjectCount(proteinCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
+        yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+        yaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+        yaxis.validateProteinSubjectCount(proteinCounts, false);
+        yaxis.backToSource();
+
+        yaxis.cancelSelection();
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.clearFilters();
+
+
+        log("Validating counts with filters of Race=white and target cell of A3R5 and TZM-bl.");
+
+        cds.openStatusInfoPane("Races");
+        cds.selectInfoPaneItem(CDSHelper.RACE_WHITE, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        virusCounts.clear();
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "58");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "65");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "541");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "492");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "34");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "34");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "50");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "235");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "195");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "473");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "504");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "4");
+
+        log("Validating the x-axis selector.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        xaxis.setTargetCell(CDSHelper.TARGET_CELL_TZM);
+        xaxis.validateVirusSubjectCount(virusCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        // Counts change when moving to A3R5.
+
+        virusCounts.clear();
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "83");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "222");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "140");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "82");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "34");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "236");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "236");
+
+        xaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
+        xaxis.validateVirusSubjectCount(virusCounts, false);
+        xaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        xaxis.cancelSelection();
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        // Validating for the y-axis re-populate the counts like we did before.
+
+        virusCounts.clear();
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "58");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "65");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "541");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "492");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "34");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "34");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "50");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "235");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "195");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "473");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "504");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "4");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "4");
+
+        log("Validating the y-axis selector.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.NAB);
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        yaxis.setTargetCell(CDSHelper.TARGET_CELL_TZM);
+        yaxis.validateVirusSubjectCount(virusCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        virusCounts.clear();
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_A, CDSHelper.VIRUS_Q23), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_BX08), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_MN3), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SF162), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_SS1196), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_2, CDSHelper.ANTIGEN_CLADE_B, CDSHelper.VIRUS_TRO), "0");
+
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, CDSHelper.VIRUS_TV1), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_NP03), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_CRF01, CDSHelper.VIRUS_TH023), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_9020), "83");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_BAL26), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU151), "222");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_DU422), "140");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_MW965), "0");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_R2184), "82");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_REJOLUC), "34");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "236");
+        virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "236");
+
+        yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
+        yaxis.validateVirusSubjectCount(virusCounts, false);
+        yaxis.back();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        yaxis.cancelSelection();
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        cds.clearFilters();
 
     }
 
@@ -713,14 +1202,14 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_DATA);
-        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         // yaxis window opens automatically
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -1028,7 +1517,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSHelper cds = new CDSHelper(this);
         String sharedVirus = CDSHelper.VIRUS_Q23;
         String uniqueVirus = CDSHelper.VIRUS_BAL26;
-        String uniqueVirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, uniqueVirus);
+        String uniqueVirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, uniqueVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1092,8 +1581,8 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         CDSHelper cds = new CDSHelper(this);
         String xVirus = CDSHelper.VIRUS_TV1;
         String yVirus = CDSHelper.VIRUS_SF162;
-        String xVirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, xVirus);
-        String y1VirusId = cds.buildIdentifier(CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, yVirus);
+        String xVirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_C, xVirus);
+        String y1VirusId = cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_VIRUS_NAME, CDSHelper.NEUTRAL_TIER_1, CDSHelper.ANTIGEN_CLADE_B, yVirus);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -1357,6 +1846,178 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         }
     }
 
+    private void subjectCountsHelper(Map<String, String> sourcesSubjectCounts, Map<String, String> antigenCounts,
+                                     Map<String, String> peptidePoolCounts, Map<String, String> proteinCounts,
+                                     Map<String, String> proteinPanelCounts, Map<String, String> virusCounts)
+    {
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        log("Validating the x-axis sources.");
+
+        xaxis.openSelectorWindow();
+
+
+        if(sourcesSubjectCounts != null)
+        {
+//        Locator.XPathLocator source;
+            for (Map.Entry<String, String> entry : sourcesSubjectCounts.entrySet())
+            {
+                // TODO Would rather test with the commented code (more complete test). However there is an issue if a text value has a &nbsp; the xpath below fails to work, although it works correct in chrome debugger.
+//            source = xaxis.xpathWindow().append("//div[contains(@class, 'content-label')][translate(text(), '\\xA0', ' ')='" + entry.getKey() + "']");
+//            assertTrue(isElementVisible(source));
+//            assertTrue(isElementVisible(source.append("/./following-sibling::div[text()='" + entry.getValue() + "']")));
+                assertTrue(isElementVisible(xaxis.window().append(" div.content-label").withText(entry.getKey())));
+                assertTrue(isElementVisible(xaxis.window().append(" div.content-count").withText(entry.getValue()))); // TODO Bad test. It will pass if there is any tag wtih this count. Need to revisit.
+            }
+        }
+
+        if(antigenCounts != null)
+        {
+            log("Validating subject counts in the x-axis BAMA - Antigen.");
+            xaxis.pickSource(CDSHelper.BAMA);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.validateAntigenSubjectCount(antigenCounts, false);
+            xaxis.backToSource();
+        }
+
+        if(peptidePoolCounts != null)
+        {
+            log("Validating subject counts in the x-axis ELISPOT - Peptide Pool.");
+            xaxis.pickSource(CDSHelper.ELISPOT);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.validatePeptidePoolSubjectCount(peptidePoolCounts, false);
+            xaxis.backToSource();
+        }
+
+        if(proteinPanelCounts != null)
+        {
+            log("Validating subject counts in the x-axis ICS - Protein Panel.");
+            xaxis.pickSource(CDSHelper.ICS);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+            xaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+            xaxis.backToSource();
+        }
+
+        if(proteinCounts != null)
+        {
+            log("Validating subject counts in the x-axis ICS - Protein.");
+            xaxis.pickSource(CDSHelper.ICS);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+            xaxis.validateProteinSubjectCount(proteinCounts, false);
+            xaxis.backToSource();
+        }
+
+        if(virusCounts != null)
+        {
+            log("Validating subject counts in the x-axis NAB - Virus.");
+            xaxis.pickSource(CDSHelper.NAB);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.validateVirusSubjectCount(virusCounts, true);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        }
+        else{
+            xaxis.cancelSelection();
+        }
+
+        log("Validating the y-axis source.");
+        yaxis.openSelectorWindow();
+
+        if(sourcesSubjectCounts != null)
+        {
+            for (Map.Entry<String, String> entry : sourcesSubjectCounts.entrySet())
+            {
+                if (entry.getKey().compareTo(CDSHelper.TIME_POINTS) != 0)
+                {
+//            source = xaxis.xpathWindow().append("//div[contains(@class, 'content-label')][translate(text(), '\\xA0', ' ')='" + entry.getKey() + "']");
+//            assertTrue(isElementVisible(source));
+//            assertTrue(isElementVisible(source.append("/./following-sibling::div[text()='" + entry.getValue() + "']")));
+                    assertTrue(isElementVisible(yaxis.window().append(" div.content-label").withText(entry.getKey())));
+                    assertTrue(isElementVisible(yaxis.window().append(" div.content-count").withText(entry.getValue())));
+                }
+            }
+        }
+
+        if(antigenCounts != null)
+        {
+            log("Validating subject counts in the y-axis BAMA - Antigen.");
+            yaxis.pickSource(CDSHelper.BAMA);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.validateAntigenSubjectCount(antigenCounts, false);
+            yaxis.backToSource();
+        }
+
+        if(peptidePoolCounts != null)
+        {
+            log("Validating subject counts in the y-axis ELISPOT - Peptide Pool.");
+            yaxis.pickSource(CDSHelper.ELISPOT);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.validatePeptidePoolSubjectCount(peptidePoolCounts, false);
+            yaxis.backToSource();
+        }
+
+        if(proteinCounts != null)
+        {
+            log("Validating subject counts in the y-axis ICS - Protein.");
+            yaxis.pickSource(CDSHelper.ICS);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
+            yaxis.validateProteinSubjectCount(proteinCounts, false);
+            yaxis.backToSource();
+        }
+
+        if(proteinPanelCounts != null)
+        {
+            log("Validating subject counts in the y-axis ICS - Protein Panel.");
+            yaxis.pickSource(CDSHelper.ICS);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
+            yaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
+            yaxis.backToSource();
+        }
+
+        if(virusCounts != null)
+        {
+            log("Validating subject counts in the y-axis NAB - Virus.");
+            yaxis.pickSource(CDSHelper.NAB);
+            sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.validateVirusSubjectCount(virusCounts, true);
+        }
+        else{
+            yaxis.cancelSelection();
+        }
+
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        if(sourcesSubjectCounts != null)
+        {
+
+            log("Validating the color-axis source.");
+            coloraxis.openSelectorWindow();
+
+            for (Map.Entry<String, String> entry : sourcesSubjectCounts.entrySet())
+            {
+                if (entry.getKey().compareTo(CDSHelper.TIME_POINTS) != 0)
+                {
+//            source = xaxis.xpathWindow().append("//div[contains(@class, 'content-label')][translate(text(), '\\xA0', ' ')='" + entry.getKey() + "']");
+//            assertTrue(isElementVisible(source));
+//            assertTrue(isElementVisible(source.append("/./following-sibling::div[text()='" + entry.getValue() + "']")));
+                    assertTrue(isElementVisible(coloraxis.window().append(" div.content-label").withText(entry.getKey())));
+                    assertTrue(isElementVisible(coloraxis.window().append(" div.content-count").withText(entry.getValue())));
+                }
+            }
+
+            coloraxis.cancelSelection();
+        }
+
+    }
+
     @LogMethod
     private void createParticipantGroups()
     {
@@ -1386,7 +2047,7 @@ public class CDSVisualizationTest extends BaseWebDriverTest implements PostgresO
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
         public static Locator plotTick = Locator.css("g.tick-text > g > text");
         public static Locator plotPoint = Locator.css("svg a.point");
-        public static Locator filterDataButton = Locator.xpath("//span[text()='filter data']");
-        public static Locator removeButton = Locator.xpath("//span[text()='remove']");
+        public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
+        public static Locator removeButton = Locator.xpath("//span[text()='Remove']");
     }
 }
