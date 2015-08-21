@@ -84,6 +84,40 @@ Ext.define('Connector.model.Measure', {
         {name: 'distinctValueFilterColumnValue', defaultValue: undefined}
     ],
 
+    statics : {
+        getPlotAxisFilterMeasureRecords : function(measure) {
+            var records = [];
+
+            if (Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions)) {
+                Ext.iterate(measure.options.dimensions, function(key, values) {
+                    var record = Connector.model.Measure.createMeasureRecord({
+                        schemaName: measure.schemaName,
+                        queryName: measure.queryName,
+                        name: key,
+                        values: values
+                    });
+
+                    if (Ext.isDefined(record.values)) {
+                        records.push(record);
+                    }
+                });
+            }
+
+            return records;
+        },
+
+        createMeasureRecord : function(obj) {
+            return new LABKEY.Query.Visualization.Measure({
+                schemaName: obj.schemaName,
+                queryName: obj.queryName,
+                name: obj.name,
+                isMeasure: false,
+                isDimension: true,
+                values: Ext.isArray(obj.values) && obj.values.length > 0 ? obj.values : undefined
+            });
+        }
+    },
+
     shouldShowScale : function() {
         return this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
     },

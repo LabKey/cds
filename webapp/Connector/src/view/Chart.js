@@ -1945,15 +1945,7 @@ Ext.define('Connector.view.Chart', {
         }, this);
 
         Ext.iterate(measuresMap, function(k, m) {
-            var measureRecord = new LABKEY.Query.Visualization.Measure({
-                schemaName: m.schemaName,
-                queryName: m.queryName,
-                name: m.name,
-                isMeasure: false,
-                isDimension: true,
-                values: m.values.length > 0 ? m.values : undefined
-            });
-
+            var measureRecord = Connector.model.Measure.createMeasureRecord(m);
             additionalMeasuresArr.push({ measure: measureRecord });
         });
 

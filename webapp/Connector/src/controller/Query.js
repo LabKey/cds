@@ -598,6 +598,14 @@ Ext.define('Connector.controller.Query', {
                         if (plotMeasure.dateOptions) {
                             measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
                         }
+
+                        // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
+                        Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
+                            measureMap[LABKEY.MeasureUtil.getAlias(axisFilterRecord)] = {
+                                measure: axisFilterRecord,
+                                filterArray: []
+                            };
+                        }, this);
                     }
                 }
             }, this);
