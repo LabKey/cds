@@ -187,6 +187,12 @@ Ext.define('Connector.utility.Chart', {
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
+
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        sel.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
     },
 
     _brushPointPreFill : function(d, i, unknown, extent, subjects) {

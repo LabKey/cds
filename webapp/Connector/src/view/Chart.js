@@ -1287,13 +1287,10 @@ Ext.define('Connector.view.Chart', {
                     .attr('fill-opacity', 1)
                     .attr('stroke-opacity', 1);
 
-            points.each(function(d) {
-                // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                // are always visible.
+            // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+            this.plot.renderer.canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
                 var node = this.parentNode;
-                if (subjectIds.indexOf(d.subjectId) != -1) {
-                    node.parentNode.appendChild(node);
-                }
+                node.parentNode.appendChild(node);
             });
         }
     },
