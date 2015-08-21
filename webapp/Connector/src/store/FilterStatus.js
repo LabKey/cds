@@ -164,6 +164,10 @@ Ext.define('Connector.store.FilterStatus', {
             _rows = result.axes[1].positions,
             _cells = result.cells,
             hasSelections = Ext.isDefined(selResult),
+
+            // If we have selections, but no results are returned there are no rows returned.
+            // Thus, when this is true we'll display (0 / count) instead of just (count)
+            zeroSelections = false,
             _counts, r;
 
         //
@@ -189,17 +193,22 @@ Ext.define('Connector.store.FilterStatus', {
             _rows = selResult.axes[1].positions;
             _cells = selResult.cells;
 
-            for (r=0; r < _rows.length; r++) {
-                lvlUniqueName = _rows[r][0].level.uniqueName;
-                if (selLvlCounts[lvlUniqueName]) {
-                    selLvlCounts[lvlUniqueName].rowCount++;
-                }
-                else {
-                    selLvlCounts[lvlUniqueName] = {
-                        count: _cells[r][0].value,
-                        rowCount: 1
+            if (_rows.length > 0) {
+                for (r=0; r < _rows.length; r++) {
+                    lvlUniqueName = _rows[r][0].level.uniqueName;
+                    if (selLvlCounts[lvlUniqueName]) {
+                        selLvlCounts[lvlUniqueName].rowCount++;
+                    }
+                    else {
+                        selLvlCounts[lvlUniqueName] = {
+                            count: _cells[r][0].value,
+                            rowCount: 1
+                        }
                     }
                 }
+            }
+            else {
+                zeroSelections = true;
             }
         }
 
@@ -222,12 +231,12 @@ Ext.define('Connector.store.FilterStatus', {
                     rec.subcount = ca.cellbased ? selLvlCounts[ca.level].rowCount : selLvlCounts[ca.level].count;
                 }
                 else {
-                    rec.subcount = -1;
+                    rec.subcount = zeroSelections ? 0 : -1;
                 }
             }
             else {
                 rec.count = 0;
-                rec.subcount = -1;
+                rec.subcount = zeroSelections ? 0 : -1;
             }
 
             rec.label = rec.count != 1 ? ca.label.plural : ca.label.singular;
