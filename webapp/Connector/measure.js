@@ -239,6 +239,42 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'USER_GROUPS'
                 },
 
+                // recommended variables
+                'study_ICS_pctpos_adj': {
+                    isRecommendedVariable: true
+                },
+                'study_ICS_response_call': {
+                    isRecommendedVariable: true
+                },
+                'study_NAb_titer_ic50': {
+                    isRecommendedVariable: true
+                },
+                'study_NAb_response_call': {
+                    isRecommendedVariable: true
+                },
+                'study_BAMA_mfi_delta': {
+                    isRecommendedVariable: true
+                },
+                'study_BAMA_response_call': {
+                    isRecommendedVariable: true
+                },
+                'study_ELISPOT_mean_sfc': {
+                    isRecommendedVariable: true
+                },
+                'study_ELISPOT_response_call': {
+                    isRecommendedVariable: true
+                },
+                'study_Demographics_species': {
+                    isRecommendedVariable: true
+                },
+                'study_Demographics_sexatbirth': {
+                    isRecommendedVariable: true
+                },
+                'study_Demographics_age_enrollment': {
+                    isRecommendedVariable: true
+                },
+
+                // hidden variables
                 'study_ICS_summary_level': {
                     hidden: true
                 },
@@ -248,13 +284,28 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_protein_panel_protein': {
                     hidden: true
                 },
+                'study_ICS_SubjectVisit_Visit': {
+                    hidden: true
+                },
                 'study_NAb_summary_level': {
                     hidden: true
                 },
                 'study_NAb_tier_clade_virus': {
                     hidden: true
                 },
+                'study_NAb_SubjectVisit_Visit': {
+                    hidden: true
+                },
+                'study_NAb_visit_day': {
+                    hidden: true
+                },
                 'study_BAMA_summary_level': {
+                    hidden: true
+                },
+                'study_BAMA_SubjectVisit_Visit': {
+                    hidden: true
+                },
+                'study_BAMA_visit_day': {
                     hidden: true
                 },
                 'study_ELISPOT_summary_level': {
@@ -264,6 +315,15 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ELISPOT_protein_panel_protein': {
+                    hidden: true
+                },
+                'study_ELISPOT_SubjectVisit_Visit': {
+                    hidden: true
+                },
+                'study_ELISPOT_visit_day': {
+                    hidden: true
+                },
+                'study_Demographics_SubjectVisit_Visit': {
                     hidden: true
                 }
             }
