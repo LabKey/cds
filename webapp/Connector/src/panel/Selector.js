@@ -594,15 +594,16 @@ Ext.define('Connector.panel.Selector', {
         else {
             // for the multiSelect case, we want to clear all selections and reselect each time so that
             // the 'select all columns' checkbox works as expected (issue 24077)
-            selModel.suspendEvents();
-            selModel.deselectAll();
-            selModel.resumeEvents();
-            Ext.iterate(aliases, function(alias){
-                var index = this.measureStore.findExact('alias', alias);
-                if (index > -1) {
-                    selModel.select(index, true, true);
-                }
-            }, this);
+            // Issue 24116: re-selecting records needs to wait until the store filter is done and re-rendering complete (HACK...defer)
+            selModel.deselectAll(true);
+            Ext.defer(function() {
+                Ext.iterate(aliases, function(alias){
+                    var index = this.measureStore.findExact('alias', alias);
+                    if (index > -1) {
+                        selModel.select(index, true/* keepExisting */, true/* surpressEvents */);
+                    }
+                }, this);
+            }, 100, this);
         }
 
         // for the 'Current Columns' source, we group the measures by the query source
