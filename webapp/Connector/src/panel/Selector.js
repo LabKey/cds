@@ -1168,6 +1168,15 @@ Ext.define('Connector.panel.Selector', {
         return this.selectedMeasures;
     },
 
+    setSelectedMeasures : function(aliases) {
+        // Issue 24112: reset selected measures each time selector window is opened so 'cancel' works
+        this.selectedMeasures = [];
+        Ext.each(aliases, function(alias) {
+            var record = this.queryService.getMeasureRecordByAlias(alias);
+            this.selectedMeasures.push(record);
+        }, this);
+    },
+
     getLockedRecords : function() {
         return this.lockedMeasures;
     },
