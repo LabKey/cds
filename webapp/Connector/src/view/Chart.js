@@ -2477,8 +2477,8 @@ Ext.define('Connector.view.Chart', {
     },
 
     showVisitTagHover : function(data, visitTagEl) {
-        var bubbleWidth = 160,
-            groupTags = {}, maxGroupTagCount = 0,
+        var bubbleWidth,
+            groupTags = {}, maxWidth = 0,
             content = '', config;
 
         // content will display one row for each group so we need to gather together the tags for each group separately
@@ -2489,18 +2489,22 @@ Ext.define('Connector.view.Chart', {
 
             groupTags[data.visitTags[i].group].push(data.visitTags[i].tag);
 
-            if (groupTags[data.visitTags[i].group].length > maxGroupTagCount) {
-                maxGroupTagCount = groupTags[data.visitTags[i].group].length;
+            if (data.visitTags[i].group.length > maxWidth) {
+                maxWidth = data.visitTags[i].group.length;
+            }
+
+            if ((data.visitTags[i].tag.length + 3) > maxWidth) {
+                maxWidth = data.visitTags[i].tag.length + 3;
             }
         }
 
         for (var group in groupTags) {
-            content += '<p><span style="font-weight: bold;">' + group + '</span> : ' + groupTags[group].join(', ') + '</p>';
+            content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">' + group + '</span> <br> -' + groupTags[group].join('<br>-') + '</p>';
         }
 
-        if (maxGroupTagCount > 1) {
-            bubbleWidth = maxGroupTagCount * 90 + 70;
-        }
+        bubbleWidth = maxWidth * 8;
+        if(bubbleWidth > 400)
+            bubbleWidth = 400;
 
         config = {
             bubbleWidth: bubbleWidth,

@@ -17,7 +17,8 @@ Ext.define('Connector.utility.Chart', {
         SELECTED: '#01BFC2',
         UNSELECTED: '#E6E6E6',
         BOXSHADOW: '#CCCCCC',
-        PRIMARYTEXT: '#222222'
+        PRIMARYTEXT: '#222222',
+        PREENROLLMENT: 'rgba(255,165,0,0.3)'
     },
 
     tickFormat: {
