@@ -57,14 +57,14 @@ Ext.define('Connector.model.Measure', {
         // this property lists the parent column's alias.
         {name: 'hierarchicalSelectionParent', defaultValue: undefined},
 
-        // If provided, the column name specified will be used for hierarchical selection filtering on the plot's
+        // If provided, the column alias specified will be used for hierarchical selection filtering on the plot's
         // getData API request from the Advanced options panel of the Variable Selector.
-        {name: 'hierarchicalFilterColumnName', defaultValue: undefined},
+        {name: 'hierarchicalFilterColumnAlias', defaultValue: undefined},
 
-        // If a distinctValueFilterColumnName and distinctValueFilterColumnValue are provided, they will be used as
+        // If a distinctValueFilterColumnAlias and distinctValueFilterColumnValue are provided, they will be used as
         // a WHERE clause for the query to get the distinct values for the given measure in the Advanced options
         // panel of the Variable Selector.
-        {name: 'distinctValueFilterColumnName', defaultValue: undefined},
+        {name: 'distinctValueFilterColumnAlias', defaultValue: undefined},
         {name: 'distinctValueFilterColumnValue', defaultValue: undefined}
     ],
 
@@ -96,9 +96,29 @@ Ext.define('Connector.model.Measure', {
     },
 
     getFilterMeasure : function() {
-        if (Ext.isDefined(this.get('hierarchicalFilterColumnName'))) {
-            return Connector.getService('Query').getMeasureRecordByAlias('study_' + this.get('queryName') + '_' + this.get('hierarchicalFilterColumnName'));
+        if (Ext.isDefined(this.get('hierarchicalFilterColumnAlias'))) {
+            return Connector.getService('Query').getMeasureRecordByAlias(this.get('hierarchicalFilterColumnAlias'));
         }
         return this;
+    },
+
+    getDistinctValueStoreFilter : function() {
+        if (Ext.isDefined(this.get('distinctValueFilterColumnAlias')) && Ext.isDefined(this.get('distinctValueFilterColumnValue'))) {
+            return {
+                property: this.get('distinctValueFilterColumnAlias'),
+                value: this.get('distinctValueFilterColumnValue'),
+                exactMatch: true
+            };
+        }
+
+        return null;
+    },
+
+    getDistinctValueWhereClause : function() {
+        if (Ext.isDefined(this.get('distinctValueFilterColumnAlias')) && Ext.isDefined(this.get('distinctValueFilterColumnValue'))) {
+            return ' WHERE ' + this.get('distinctValueFilterColumnAlias') + ' = \'' + this.get('distinctValueFilterColumnValue') + '\'';
+        }
+
+        return '';
     }
 });

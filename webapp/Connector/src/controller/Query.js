@@ -237,7 +237,14 @@ Ext.define('Connector.controller.Query', {
         return undefined;
     },
 
-    getMeasureSetDistinctValues : function(measureSet, includeFilters, callback, scope) {
+    /**
+     * Returns the array of distinct rows for the measure set combination. The results are cached for the measure set using a key derived from the measure's aliases.
+     * @param {Array} measureSet Array of measures to use in the SELECT DISTINCT query. It is expected that they are all from the same schema/query.
+     * @param {Function} callback
+     * @param {Object} [scope]
+     * @returns {Array}
+     */
+    getMeasureSetDistinctValues : function(measureSet, callback, scope) {
         if (Ext.isDefined(measureSet))
         {
             if (!Ext.isArray(measureSet)) {
@@ -255,24 +262,15 @@ Ext.define('Connector.controller.Query', {
             }
             else
             {
-                var columnNames = '', columnSep = '', whereClause = '';
+                var columnNames = '', columnSep = '';
                 Ext.each(measureSet, function(measure) {
-                    columnNames += columnSep + measure.get('name');
+                    columnNames += columnSep + measure.get('name') + ' AS ' + measure.get('alias');
                     columnSep = ', ';
-
-                    // some measures use a filter on another column for its distinct values (i.e. data summary level filters)
-                    // Note: we only want to filter on the last measure in the set, so we keep overriding the where clause
-                    if (includeFilters && measure.get('distinctValueFilterColumnName') && measure.get('distinctValueFilterColumnValue')) {
-                        whereClause = ' WHERE ' + measure.get('distinctValueFilterColumnName') + ' = \''
-                                + measure.get('distinctValueFilterColumnValue') + '\'';
-                    }
                 });
 
-                // TODO: verify that all measures are from the same query/dataset
                 LABKEY.Query.executeSql({
                     schemaName: measureSet[0].get('schemaName'),
-                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName')
-                        + whereClause + ' ORDER BY ' + columnNames,
+                    sql: 'SELECT DISTINCT ' + columnNames + ' FROM ' + measureSet[0].get('queryName'),
                     scope: this,
                     success: function(data) {
                         // cache the distinct values array result
@@ -285,6 +283,123 @@ Ext.define('Connector.controller.Query', {
                 });
             }
         }
+    },
+
+    /**
+     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     *      for showing which values are relevant in the variable selector Advanced Options panels.
+     * @param {Object} dimension
+     * @param {Array} measureSet
+     * @param {Array} filterValuesMap
+     * @param {Function} callback
+     * @param {Object} [scope]
+     * @returns {Object}
+     */
+    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
+        var subjectMeasure, wrappedMeasureSet = [], aliases = [],
+            measureData, filterMeasures, index, filterMeasureRecord;
+
+        if (Ext.isDefined(measureSet))
+        {
+            if (!Ext.isArray(measureSet)) {
+                measureSet = [measureSet];
+            }
+
+            // get the cube subjectList so that we can filter the advanced option values accordingly
+            ChartUtils.getSubjectsIn(function(subjectList) {
+                subjectMeasure = new LABKEY.Query.Visualization.Measure({
+                    schemaName: dimension.get('schemaName'),
+                    queryName: dimension.get('queryName'),
+                    name: Connector.studyContext.subjectColumn,
+                    values: subjectList
+                });
+
+                aliases.push(Connector.studyContext.subjectColumn);
+                wrappedMeasureSet.push({measure: subjectMeasure});
+
+                Ext.each(measureSet, function(measure) {
+                    measureData = Ext.clone(measure.data);
+                    if (Ext.isArray(filterValuesMap[measure.get('alias')])) {
+                        measureData.values = filterValuesMap[measure.get('alias')];
+                    }
+
+                    aliases.push(measure.get('alias'));
+                    wrappedMeasureSet.push({measure: measureData});
+                });
+
+                // get the relevant application filters to add to the measure set
+                filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters());
+                Ext.each(filterMeasures, function(filterMeasure) {
+                    index = aliases.indexOf(filterMeasure.measure.alias);
+                    // if we already have this measure in our set, then just tack on the filterArray
+                    if (index > -1) {
+                        wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
+                    }
+                    else {
+                        filterMeasureRecord = this.getMeasureRecordByAlias(filterMeasure.measure.alias);
+                        if (Ext.isDefined(filterMeasureRecord)) {
+                            wrappedMeasureSet.push({
+                                filterArray: filterMeasure.filterArray,
+                                measure: Ext.clone(filterMeasureRecord.data)
+                            });
+                        }
+                    }
+                }, this);
+
+                LABKEY.Query.Visualization.getData({
+                    measures: wrappedMeasureSet,
+                    metaDataOnly: true,
+                    endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
+                    scope: this,
+                    success: function(response) {
+                        if (Ext.isFunction(callback)) {
+                            callback.call(scope || this, response);
+                        }
+                    }
+                });
+            }, this);
+        }
+    },
+
+    /**
+     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     *      for showing which values are relevant in the variable selector Advanced Options panels by returning the subject
+     *      count for each distinct value of a specific column in the temp query.
+     * @param {Object} dimension
+     * @param {Array} measureSet
+     * @param {Array} filterValuesMap
+     * @param {Function} callback
+     * @param {Object} [scope]
+     * @returns {Object}
+     */
+    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, callback, scope) {
+
+        // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
+        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
+            var alias = dimension.getFilterMeasure().get('alias'), sql;
+
+            // SQL to get the subject count for each value of the filter measure
+            sql = 'SELECT COUNT(DISTINCT ' + dimension.get('schemaName') + '_' + dimension.get('queryName') + '_SubjectId) AS SubjectCount, '
+                    + alias + ' FROM ' + response.queryName
+                    + dimension.getDistinctValueWhereClause()
+                    + ' GROUP BY ' + alias;
+
+            LABKEY.Query.executeSql({
+                schemaName: response.schemaName,
+                sql: sql,
+                success: function(data) {
+                    var subjectCountMap = {};
+                    Ext.each(data.rows, function(row){
+                        subjectCountMap[row[alias]] = row['SubjectCount'];
+                    }, this);
+
+                    if (Ext.isFunction(callback)) {
+                        callback.call(scope || this, subjectCountMap);
+                    }
+                },
+                scope: this
+            })
+        }, this);
     },
 
     /**

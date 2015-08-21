@@ -165,6 +165,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/button/RoundedButton.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/ActionTitle.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/AdvancedOption.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/component/AntigenSelection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/DropDown.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/component/GridPager.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/AbstractFilter.js"></script>

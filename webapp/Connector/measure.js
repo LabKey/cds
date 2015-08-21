@@ -94,21 +94,21 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_peptide_pool': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ICS_protein',
-                    hierarchicalFilterColumnName: 'protein_panel_protein_peptide_pool',
-                    distinctValueFilterColumnName: 'summary_level',
+                    hierarchicalFilterColumnAlias: 'study_ICS_protein_panel_protein_peptide_pool',
+                    distinctValueFilterColumnAlias: 'study_ICS_summary_level',
                     distinctValueFilterColumnValue: 'Peptide Pool'
                 },
                 'study_ICS_protein': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ICS_protein_panel',
-                    hierarchicalFilterColumnName: 'protein_panel_protein',
-                    distinctValueFilterColumnName: 'summary_level',
+                    hierarchicalFilterColumnAlias: 'study_ICS_protein_panel_protein',
+                    distinctValueFilterColumnAlias: 'study_ICS_summary_level',
                     distinctValueFilterColumnValue: 'Protein'
                 },
                 'study_ICS_protein_panel': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: null,
-                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnAlias: 'study_ICS_summary_level',
                     distinctValueFilterColumnValue: 'Protein Panel'
                 },
                 // study|NAb
@@ -125,8 +125,8 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_virus': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_NAb_clade',
-                    hierarchicalFilterColumnName: 'tier_clade_virus',
-                    distinctValueFilterColumnName: 'summary_level',
+                    hierarchicalFilterColumnAlias: 'study_NAb_tier_clade_virus',
+                    distinctValueFilterColumnAlias: 'study_NAb_summary_level',
                     distinctValueFilterColumnValue: 'Virus'
                 },
                 'study_NAb_clade': {
@@ -149,7 +149,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study_BAMA_antigen': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: null,
-                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnAlias: 'study_BAMA_summary_level',
                     distinctValueFilterColumnValue: 'Antigen'
                 },
                 'study_BAMA_dilution': {
@@ -171,21 +171,21 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_peptide_pool': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ELISPOT_protein',
-                    hierarchicalFilterColumnName: 'protein_panel_protein_peptide_pool',
-                    distinctValueFilterColumnName: 'summary_level',
+                    hierarchicalFilterColumnAlias: 'study_ELISPOT_protein_panel_protein_peptide_pool',
+                    distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Peptide Pool'
                 },
                 'study_ELISPOT_protein': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: 'study_ELISPOT_protein_panel',
-                    hierarchicalFilterColumnName: 'protein_panel_protein',
-                    distinctValueFilterColumnName: 'summary_level',
+                    hierarchicalFilterColumnAlias: 'study_ELISPOT_protein_panel_protein',
+                    distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein'
                 },
                 'study_ELISPOT_protein_panel': {
                     requiresSelection: true,
                     hierarchicalSelectionParent: null,
-                    distinctValueFilterColumnName: 'summary_level',
+                    distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein Panel'
                 }
             },
@@ -232,12 +232,12 @@ Ext.define('Connector.measure.Configuration', {
                     description: 'Creates a categorical x axis, unlike the other time axes that are ordinal. Each visit with data for the y axis is labeled separately with its study month.',
                     variableType: 'TIME'
                 },
-                'SavedGroups': {
+                'study_SubjectGroupMap_GroupId_Label': {
                     sortOrder: -1,
                     schemaName: Connector.studyContext.schemaName,
                     queryName: 'SubjectGroupMap',
                     inNotNullSet: false,
-                    name: 'GroupId',
+                    name: 'GroupId/Label',
                     label: 'My saved groups',
                     description: 'Creates a categorical x axis of the selected saved groups',
                     type: 'VARCHAR',
