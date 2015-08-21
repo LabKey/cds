@@ -87,11 +87,11 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.AdvancedOptionBaseDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionCheckboxDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionRadioDropdown": "../../webapp/Connector/src/component/AdvancedOption.js",
+  "Connector.panel.AntigenSelection": "../../webapp/Connector/src/component/AntigenSelection.js",
   "Connector.panel.ColorSelector": "../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../webapp/Connector/src/panel/GroupList.js",
-  "Connector.panel.HierarchicalSelectionPanel": "../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.Selection": "../../webapp/Connector/src/panel/Selection.js",
   "Connector.panel.Selector": "../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.HeaderLock": "../../webapp/Connector/src/view/Page.js",
@@ -274,11 +274,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.AdvancedOptionBaseDropdown": [],
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
+  "Connector.panel.AntigenSelection": [],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
-  "Connector.panel.HierarchicalSelectionPanel": [],
   "Connector.panel.Selection": [],
   "Connector.panel.Selector": [],
   "Connector.plugin.HeaderLock": [],
@@ -1296,6 +1296,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.AdvancedOptionBaseDropdown": [],
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
+  "Connector.panel.AntigenSelection": [],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [
     "widget.feedback"
@@ -1306,7 +1307,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.GroupList": [
     "widget.grouplist"
   ],
-  "Connector.panel.HierarchicalSelectionPanel": [],
   "Connector.panel.Selection": [
     "widget.selectionpanel"
   ],

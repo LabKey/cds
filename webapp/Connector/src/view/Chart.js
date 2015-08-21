@@ -468,10 +468,10 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hidepointmsg');
     },
 
-    mouseOverBins : function(event, binData, layerSel, layerScope) {
+    mouseOverBins : function(event, data, layerSel, bin, layerScope) {
         if (!layerScope.isBrushed) {
             var subjectIds = [];
-            binData.forEach(function(b) {
+            data.forEach(function(b) {
                 subjectIds.push(b.data.subjectId);
             });
 
@@ -479,7 +479,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    mouseOutBins : function(event, binData, layerSel, layerScope) {
+    mouseOutBins : function(event, data, layerSel, bin, layerScope) {
         if (!layerScope.isBrushed) {
             this.clearHighlightedData();
             this.highlightSelected();
@@ -510,17 +510,15 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidepointmsg', this);
     },
 
-    getLayerAes : function(layerScope, isBoxPlot) {
+    getLayerAes : function(layerScope) {
 
         var mouseOver = this.showPointsAsBin ? this.mouseOverBins : this.mouseOverPoints,
             mouseOut = this.showPointsAsBin ? this.mouseOutBins : this.mouseOutPoints;
 
-        var aes = {
+        return {
             mouseOverFn: Ext.bind(mouseOver, this, [layerScope], true),
             mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
         };
-
-        return aes;
     },
 
     getBinLayer : function(layerScope) {
@@ -532,7 +530,7 @@ Ext.define('Connector.view.Chart', {
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: true
             }),
-            aes: this.getLayerAes.call(this, layerScope, false)
+            aes: this.getLayerAes.call(this, layerScope)
         });
     },
 
@@ -544,12 +542,12 @@ Ext.define('Connector.view.Chart', {
                 position: position, // jitter or undefined
                 opacity: 0.5
             }),
-            aes: this.getLayerAes.call(this, layerScope, false)
+            aes: this.getLayerAes.call(this, layerScope)
         });
     },
 
     getBoxLayer : function(layerScope) {
-        var aes = this.getLayerAes.call(this, layerScope, true),
+        var aes = this.getLayerAes.call(this, layerScope),
             me = this;
 
         aes.boxMouseOverFn = function(event, box, data) {
@@ -829,7 +827,6 @@ Ext.define('Connector.view.Chart', {
             plotConfig.brushing = {
                 dimension: properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : Ext.bind(function() {
-                    this.clearHighlightedData();
                     this.clearHighlightLabels(layerScope.plot);
                     layerScope.isBrushed = true;
                 }, this),
@@ -1289,13 +1286,10 @@ Ext.define('Connector.view.Chart', {
                     .attr('fill-opacity', 1)
                     .attr('stroke-opacity', 1);
 
-            points.each(function(d) {
-                // Re-append the node so it is on top of all the other nodes, this way highlighted points
-                // are always visible.
+            // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+            this.plot.renderer.canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
                 var node = this.parentNode;
-                if (subjectIds.indexOf(d.subjectId) != -1) {
-                    node.parentNode.appendChild(node);
-                }
+                node.parentNode.appendChild(node);
             });
         }
     },
@@ -1350,8 +1344,11 @@ Ext.define('Connector.view.Chart', {
         var values = [];
         selections.forEach(function(s) {
             var gridData = s.get('gridFilter');
-            if (gridData.length > 0 && Ext.isString(gridData[0].getValue())) {
-                values = gridData[0].getValue().split(';');
+            for (var i = 0; i < gridData.length; i++) {
+                if (gridData[i] != null && Ext.isString(gridData[i].getValue())) {
+                    values = gridData[i].getValue().split(';');
+                    break;
+                }
             }
         });
 
@@ -1689,19 +1686,25 @@ Ext.define('Connector.view.Chart', {
             return null;
         }
 
-        var options = measure.options;
-        var wrappedMeasure = {measure : measure};
+        var wrappedMeasure = {measure : measure},
+            options = measure.options;
 
-        // handle visit tag alignment for study axis
-        if (options && options.alignmentVisitTag !== undefined)
-        {
+        if (measure.variableType == 'TIME') {
             var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
                 interval: interval,
-                zeroDayVisitTag: options.alignmentVisitTag,
                 altQueryName: 'cds.VisitTagAlignment'
             };
+
+            // handle visit tag alignment for study axis
+            if (options && options.alignmentVisitTag !== undefined) {
+                wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
+            }
+        }
+        else if (this.requireStudyAxis) {
+            // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
+            wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.name, null, LABKEY.Filter.Types.NOT_MISSING)];
         }
 
         // we still respect the value if it is set explicitly on the measure
@@ -1755,7 +1758,7 @@ Ext.define('Connector.view.Chart', {
      * @param activeMeasures
      */
     requestChartData : function(activeMeasures) {
-        this.getSubjectsIn(function(subjectList) {
+        ChartUtils.getSubjectsIn(function(subjectList) {
             // issue 23885: Do not include the color measure in request if it's noe from the x, y, or demographic datasets
             if (activeMeasures.color) {
                 var demographicSource = activeMeasures.color.isDemographic,
@@ -1773,7 +1776,7 @@ Ext.define('Connector.view.Chart', {
 
             // Request Chart MeasureStore Data
             Connector.getService('Query').getMeasureStore(measures, this.onChartDataSuccess, this.onFailure, this);
-        });
+        }, this);
     },
 
     onChartDataSuccess : function(measureStore, measureSet) {
@@ -2090,7 +2093,7 @@ Ext.define('Connector.view.Chart', {
                     measuresOnly: true,
                     includeHidden: this.canShowHidden
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
@@ -2135,7 +2138,7 @@ Ext.define('Connector.view.Chart', {
                     includeTimpointMeasures: true,
                     includeHidden: this.canShowHidden
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
@@ -2192,7 +2195,7 @@ Ext.define('Connector.view.Chart', {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
@@ -2343,49 +2346,6 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    getSubjectsIn : function(callback, scope) {
-        var me = this;
-        var state = Connector.getState();
-
-        state.onMDXReady(function(mdx) {
-
-            var filters = state.getFilters();
-
-            var validFilters = [];
-
-            Ext.each(filters, function(filter) {
-                if (!filter.isPlot() && !filter.isGrid()) {
-                    validFilters.push(filter);
-                }
-            });
-
-            if (validFilters.length > 0) {
-
-                var SUBJECT_IN = 'scattercount';
-                state.addPrivateSelection(validFilters, SUBJECT_IN, function() {
-                    mdx.queryParticipantList({
-                        useNamedFilters: [SUBJECT_IN],
-                        success : function(cellset) {
-                            state.removePrivateSelection(SUBJECT_IN);
-                            var ids = [], pos = cellset.axes[1].positions, a=0;
-                            for (; a < pos.length; a++) { ids.push(pos[a][0].name); }
-                            callback.call(scope || me, ids);
-                        },
-                        failure : function() {
-                            state.removePrivateSelection(SUBJECT_IN);
-                        },
-                        scope: this
-                    });
-                }, this);
-            }
-            else {
-                // no filters to apply
-                callback.call(scope || me, null);
-            }
-
-        }, me);
-    },
-
     applyFiltersToMeasure : function (measureSet, ptids) {
         var ptidMeasure;
 
@@ -2471,8 +2431,14 @@ Ext.define('Connector.view.Chart', {
 
         this.hasStudyAxisData = studyAxisData.getData().length > 0;
 
-        this.initPlot(chartData, studyAxisData);
-        this.initStudyAxis(studyAxisData);
+        if (chartData.getDataRows().totalCount == 0) {
+            // show empty plot message if we have no data in main plot or gutter plots
+            this.noPlot(true);
+        }
+        else {
+            this.initPlot(chartData, studyAxisData);
+            this.initStudyAxis(studyAxisData);
+        }
     },
 
     showVisitTagHover : function(data, visitTagEl) {
