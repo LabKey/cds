@@ -146,7 +146,7 @@
             <Hierarchy name="Study" visible="true" hasAll="true" primaryKey="participantid">
                 <Table name="ds_subjectassay" schema="cds"/>
                 <Level name="Assay" visible="true" column="assay_identifier" type="String" uniqueMembers="true" />
-                <Level name="Study" visible="true" column="study_name" type="String" uniqueMembers="false" />
+                <Level name="Study" visible="true" column="label" type="String" uniqueMembers="false" />
             </Hierarchy>
 
             <Hierarchy name="Immunogenicity Type" visible="true" hasAll="true" primaryKeyTable="ds_subjectassay" primaryKey="participantid">

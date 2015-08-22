@@ -8,6 +8,8 @@ Ext.define('Connector.app.model.Assay', {
     extend : 'Ext.data.Model',
 
     idProperty: 'assay_identifier',
+
+    resolvableField: 'assay_identifier',
     
     fields: [
         {name: 'assay_identifier'},

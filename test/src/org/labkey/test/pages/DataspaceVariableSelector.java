@@ -15,6 +15,7 @@
  */
 package org.labkey.test.pages;
 
+import org.junit.Assert;
 import org.labkey.api.search.SearchService;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
@@ -25,6 +26,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.sql.Driver;
+import java.util.Map;
+
+import org.junit.Assert.*;
 
 public abstract class DataspaceVariableSelector
 {
@@ -78,6 +82,20 @@ public abstract class DataspaceVariableSelector
     {
         _test.click(window().append(" div.content-label").withText(source));
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+    }
+
+    protected void backToSource(String selector){
+        while(!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + selector + "')]//div[contains(@class, 'sub-title')]//span[contains(@class, 'nav-text')][text()='Sources']")))
+        {
+            _test.click(Locator.xpath("//div[contains(@class, '" + selector + "')]//span[contains(@class, 'back-action')]"));
+            _test.sleep(750);
+        }
+    }
+
+    protected void back(String selector)
+    {
+        _test.click(Locator.xpath("//div[contains(@class, '" + selector + "')]//span[contains(@class, 'back-action')]"));
+        _test.sleep(750);
     }
 
     public void pickMultiPanelSource(String source)
@@ -164,6 +182,81 @@ public abstract class DataspaceVariableSelector
         return Locator.xpath(xpathPanelSelector);
 
     }
+
+    private void participantCountHelper(String selector, AssayDimensions dimension, Map<String, String> counts, Boolean cancelAtEnd, String xpathDimField, String xpathPanelSelector)
+    {
+        Locator locDimField;
+        String actualCount;
+
+        locDimField = Locator.xpath(xpathDimField);
+        _test.click(locDimField);
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        _test.waitForElement(Locator.xpath(xpathPanelSelector));
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        for(Map.Entry<String, String> entry : counts.entrySet()){
+
+            actualCount = _test.getText(Locator.xpath(xpathPanelSelector + "//div[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + entry.getKey().toLowerCase() + "']"));
+
+            // If expected count is -1 don't validate count.
+            if(entry.getValue() != "-1")
+            {
+
+                Assert.assertEquals("Count for " + entry.getKey() + " not as expected. Expected: " + entry.getValue() + " found: " + actualCount, actualCount, entry.getValue());
+
+                // If count is 0 validate UI as expected.
+                if (entry.getValue() == "0")
+                {
+                    Locator.XPathLocator parent = Locator.xpath(xpathPanelSelector + "//div[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + entry.getKey().toLowerCase() + "']/./parent::div");
+                    _test.assertElementPresent(parent.withAttributeContaining("class", "col-disable"));
+                }
+
+            }
+
+        }
+
+        if(cancelAtEnd)
+        {
+            _test.click(CDSHelper.Locators.cdsSelectorButtonLocator(selector, "Cancel"));
+        }
+
+    }
+
+    // This can be used to verify participant counts on the detail panels.
+    protected void verifyParticipantCount(String selector, AssayDimensions dimension, Map<String, String> counts, Boolean cancelAtEnd)
+    {
+        String xpathDimField, xpathPanelSelector;
+
+        switch(dimension){
+            case AntigenName:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antigen')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                participantCountHelper(selector, dimension, counts, cancelAtEnd, xpathDimField, xpathPanelSelector);
+                break;
+            case PeptidePool:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-peptide_pool')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                participantCountHelper(selector, dimension, counts, cancelAtEnd, xpathDimField, xpathPanelSelector);
+                break;
+            case Protein:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                participantCountHelper(selector, dimension, counts, cancelAtEnd, xpathDimField, xpathPanelSelector);
+                break;
+            case ProteinPanel:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein_panel')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                participantCountHelper(selector, dimension, counts, cancelAtEnd, xpathDimField, xpathPanelSelector);
+                break;
+            case VirusName:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-virus')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
+                xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
+                participantCountHelper(selector, dimension, counts, cancelAtEnd, xpathDimField, xpathPanelSelector);
+                break;
+        }
+
+    }
+
     // TODO Still working on this as part of the detail selection.
     protected void setAssayDimension(String selector, AssayDimensions dimension, String... value)
     {
@@ -186,6 +279,10 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;
@@ -214,7 +311,7 @@ public abstract class DataspaceVariableSelector
                 break;
             case CellType:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-cell_type')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-cell_type-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
                 allTag = Locator.xpath(xpathDimDropDown + "//label[text()='All']");
@@ -233,12 +330,16 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;
             case DataSummaryLevel:
-                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-summaer_level')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-summary_level-dropdown')]";
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-summary_level')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-summary_level-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
 
@@ -249,6 +350,10 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;
@@ -280,7 +385,7 @@ public abstract class DataspaceVariableSelector
                 break;
             case TargetCell:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-target_cell')]//div[contains(@class, 'main-label')]";
-                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-target_cell-dropdown')][not(contains(@style, 'display: none'))]";
 
                 locDimField = Locator.xpath(xpathDimField);
 
@@ -292,6 +397,10 @@ public abstract class DataspaceVariableSelector
                     for(String val : value){
                         _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
                     }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
                 }
 
                 break;

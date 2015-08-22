@@ -9,6 +9,8 @@ Ext.define('Connector.app.model.Study', {
 
     idProperty: 'study_name',
 
+    resolvableField: 'label',
+
     fields: [
         {name: 'study_name'},
         {name: 'Container'},

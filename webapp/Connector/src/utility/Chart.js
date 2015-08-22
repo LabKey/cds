@@ -187,6 +187,12 @@ Ext.define('Connector.utility.Chart', {
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
+
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        sel.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
     },
 
     _brushPointPreFill : function(d, i, unknown, extent, subjects) {
@@ -291,5 +297,47 @@ Ext.define('Connector.utility.Chart', {
             clearTimeout(timeout);
             calloutMgr.removeCallout(_id);
         }, scope);
+    },
+
+    getSubjectsIn : function(callback, scope) {
+        var state = Connector.getState();
+
+        state.onMDXReady(function(mdx) {
+
+            var filters = state.getFilters();
+
+            var validFilters = [];
+
+            Ext.each(filters, function(filter) {
+                if (!filter.isPlot() && !filter.isGrid()) {
+                    validFilters.push(filter);
+                }
+            });
+
+            if (validFilters.length > 0) {
+
+                var SUBJECT_IN = 'subjectinfilter';
+                state.addPrivateSelection(validFilters, SUBJECT_IN, function() {
+                    mdx.queryParticipantList({
+                        useNamedFilters: [SUBJECT_IN],
+                        success : function(cellset) {
+                            state.removePrivateSelection(SUBJECT_IN);
+                            var ids = [], pos = cellset.axes[1].positions, a=0;
+                            for (; a < pos.length; a++) { ids.push(pos[a][0].name); }
+                            callback.call(scope || this, ids);
+                        },
+                        failure : function() {
+                            state.removePrivateSelection(SUBJECT_IN);
+                        },
+                        scope: this
+                    });
+                }, this);
+            }
+            else {
+                // no filters to apply
+                callback.call(scope || this, null);
+            }
+
+        }, this);
     }
 });
