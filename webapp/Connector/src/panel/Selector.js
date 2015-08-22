@@ -229,7 +229,6 @@ Ext.define('Connector.panel.Selector', {
     loadSourceCounts : function() {
         this.fireEvent('beforeSourceCountsLoad', this);
 
-        // TODO: cache these source counts to use between selectors and invalidate the cache on filter/selection change
         // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
         var sources = this.sourcesStore.queryBy(function(record) {
             return record.get('queryName') != null && record.get('queryName') != 'SubjectGroupMap';

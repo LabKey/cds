@@ -307,6 +307,7 @@ Ext.define('Connector.view.Grid', {
         store.load();
         this.getGrid().getStore().loadPage(1);
         this.applyFilterColumnState(grid);
+        Connector.getService('Query').clearSourceCountsCache();
     },
 
     getColumnSelector : function() {
@@ -321,7 +322,7 @@ Ext.define('Connector.view.Grid', {
                     includeTimpointMeasures: true,
                     includeHidden: this.canShowHidden
                 },
-                memberCountsFn: this.getSubjectsIn,
+                memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
                 supportSelectionGroup: true,
                 supportSessionGroup: true,

@@ -2316,6 +2316,8 @@ Ext.define('Connector.view.Chart', {
         else {
             this.refreshRequired = true;
         }
+
+        Connector.getService('Query').clearSourceCountsCache();
     },
 
     onActivate: function() {

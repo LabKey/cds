@@ -753,11 +753,20 @@ Ext.define('Connector.controller.Query', {
         return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
     },
 
+    clearSourceCountsCache : function() {
+        this.SOURCE_COUNTS = undefined;
+    },
+
     getSourceCounts : function(sourceModels, callback, scope, membersFn, membersFnScope) {
 
         if (Ext.isFunction(callback)) {
 
             var makeRequest = function(members) {
+                // we cache the source count results so they can share between variable sectors
+                if (Ext.isDefined(this.SOURCE_COUNTS)) {
+                    callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
+                    return;
+                }
 
                 var json = {
                     schema: Connector.studyContext.schemaName,
@@ -774,8 +783,8 @@ Ext.define('Connector.controller.Query', {
                     method: 'POST',
                     jsonData: json,
                     success: function(response) {
-                        var counts = Ext.decode(response.responseText).counts;
-                        callback.call(scope || this, sourceModels, counts);
+                        this.SOURCE_COUNTS = Ext.decode(response.responseText).counts;
+                        callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
                     },
                     scope: this
                 });
