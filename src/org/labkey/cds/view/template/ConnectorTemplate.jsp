@@ -81,7 +81,7 @@
             {
     %>      <!-- see <%=new ActionURL("analytics","begin",ContainerManager.getRoot()).getURIString()%> -->
     <%
-        }
+            }
     %>
     <%=script%>
     <%
