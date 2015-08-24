@@ -325,9 +325,10 @@ Ext.define('Connector.model.ChartData', {
             else if (xa.isContinuous && yVal == null) {
                 undefinedYRows.push(entry);
             }
-            else {
-                mainPlotRows.push(entry);
-            }
+
+            // the main data row map will still include the x/y null rows,
+            // but the main plot won't render them (plotNullPoints = false)
+            mainPlotRows.push(entry);
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
@@ -346,7 +347,7 @@ Ext.define('Connector.model.ChartData', {
                 main: mainPlotRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
-                totalCount: mainPlotRows.length + undefinedXRows.length + undefinedYRows.length
+                totalCount: mainPlotRows.length
             },
             properties: {
                 xaxis: xa,
