@@ -684,6 +684,7 @@ Ext.define('Connector.view.Chart', {
             else {
                 scales.x = {
                     scaleType: 'discrete',
+                    sortFn: LABKEY.app.model.Filter.sorters.natural,
                     tickCls: 'xaxis-tick-text',
                     tickRectCls: 'xaxis-tick-rect',
                     tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
