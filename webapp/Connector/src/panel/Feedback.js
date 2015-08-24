@@ -9,16 +9,17 @@ Ext.define('Connector.panel.Feedback', {
 
     alias: 'widget.feedback',
 
-    cls: 'feedback',
+    cls: 'feedback variable-selector',
 
-   // border: false,
+    border: false,
 
     statics: {
         displayWindow : function(animateTarget) {
             var win = Ext.create('Ext.window.Window', {
                 ui: 'axiswindow',
-                border: true,
+                border: false,
                 modal: true,
+                resizable: false,
                 draggable: false,
                 header: false,
                 layout: {
@@ -33,102 +34,56 @@ Ext.define('Connector.panel.Feedback', {
                         scope: this
                     }
                 }],
-                width: 300,
-                height: 500
+                width: 520
             });
 
             win.show(animateTarget);
         }
     },
 
-    getLoaderPane : function() {
-        if (!this.loaderPane) {
-            this.loaderPane = Ext.create('Ext.Component', {
-                border: false,
-                flex: 1
-            });
-        }
-
-        return this.loaderPane;
-    },
-
-    getSourcePane : function() {
-        if (!this.sourcePane) {
-            this.sourcePane = Ext.create('Ext.panel.Panel', {
-                border: false,
-                hidden: true,
-                flex: 1,
-                autoScroll: true,
-                cls: 'content',
-                itemSelector: 'div.content-item',
-                store: this.sourcesStore,
-                tpl: new Ext.XTemplate(
-                        '<tpl for=".">',
-                        '<tpl if="category != null">',
-                        '<tpl if="xindex == 1">',
-                        '<div class="content-category">{category:htmlEncode}</div>',
-                        '<tpl elseif="parent[xindex-2].category != category">',
-                        '<div class="content-category content-line">{category:htmlEncode}</div>',
-                        '</tpl>',
-                        '</tpl>',
-                        '<div class="content-item {subjectCount:this.greyMe}">',
-                        '<tpl if="category == \'Assays\'">',
-                        '<div class="content-label">{queryName:htmlEncode}&nbsp;({queryLabel:htmlEncode})</div>',
-                        '<tpl else>',
-                        '<div class="content-label">{queryLabel:htmlEncode}</div>',
-                        '</tpl>',
-                        '<tpl if="subjectCount != -1">',
-                        '<div class="content-count maskit">{subjectCount:this.commaFormat}</div>',
-                        '</tpl>',
-                        '</div>',
-                        '</tpl>',
-                        {
-                            commaFormat : function(v) {
-                                return Ext.util.Format.number(v, '0,000');
-                            },
-                            greyMe : function(v) {
-                                if (v == -1 || v > 0)
-                                    return '';
-                                return 'look-disabled';
-                            },
-                            showLabel : function(queryLabel, longLabel) {
-                                return longLabel && longLabel.length > 0 && (queryLabel != longLabel);
-                            }
-                        }
-                )
-            });
-        }
-
-        return this.sourcePane;
-    },
-
     initComponent : function() {
         this.items = [
             this.getHeader(),
-            {html: 'hello'},
+            this.getForm(),
             this.getFooter()
-            // TODO: Create Header,
-            // TODO: Create Form,
-            // TODO: Create Footer,
         ];
         this.callParent();
     },
 
-    bindHeader : function(header, data) {
-        if (header && header.getEl() && data) {
-            if (Ext.isFunction(data.action)) {
-                var backActionEl = Ext.DomQuery.select('.back-action', header.getEl().id);
-                if (backActionEl.length > 0) {
-                    Ext.get(backActionEl[0]).on('click', data.action);
-                }
-            }
-        }
-    },
+    getForm : function() {
 
-    setHeaderData : function(data) {
-        this.headerData = data;
-        this.getHeader().update(data);
-        this.bindHeader(this.getHeader(), data);
+        if (!this.feedbackForm) {
+            this.feedbackForm = Ext.create('Ext.form.Panel', {
+                ui: 'custom',
+                bodyPadding: 5,
+                border: false,
+                flex: 1,
+                items: [{
+                    xtype: 'textfield',
+                    name: 'title',
+                    emptyText: 'Title',
+                    width: '100%',
+                    validateOnBlur: false,
+                    allowBlank: false
+                },{
+                    xtype: 'textareafield',
+                    name: 'comment',
+                    width: '100%',
+                    emptyText: 'Describe what you\'re seeing...',
+                    validateOnBlur: false,
+                    allowBlank: false
+                },{
+                    //If this box is checked the current page url is printed in the comments
+                    xtype: 'checkbox',
+                    boxLabel: 'Check this box if its the screen you are currently on',
+                    name: 'url',
+                    checked: false,
+                    inputValue: window.location.href
+                }]
+            });
+        }
+
+        return this.feedbackForm;
     },
 
     getHeader : function() {
@@ -140,40 +95,48 @@ Ext.define('Connector.panel.Feedback', {
             };
 
             var tpl = new Ext.XTemplate(
-                    '<div class="main-title">Provide Feedbeck</div>',
+                '<div class="main-title">Provide Feedback</div>',
                     '<div class="sub-title">',
                     '<span>Give us feedback on what we could improve</span>',
-                    '</div>'
+                '</div>'
             );
             this.headerPanel = Ext.create('Ext.panel.Panel', {
                 cls: 'header',
-                border: true,
+                border: false,
                 tpl: tpl,
-                data: initialData,
-                listeners: {
-                    click: function(evt, el) {
-                        console.log('we clicked here!');
-                    },
-                    afterrender: {
-                        fn: function(header) {
-                            this.bindHeader(header, this.headerData ? this.headerData : initialData);
-                        },
-                        scope: this,
-                        single: true
-                    }
-                }
+                data: initialData
             });
         }
 
         return this.headerPanel;
     },
 
+    postFeedback : function(title, comments, url) {
+
+        var config = {
+            url: LABKEY.ActionURL.buildURL('issues', 'insert.view'),
+            method: 'POST',
+            params: {
+                issueId: 0,
+                action: 'org.labkey.issue.IssuesController$InsertAction',
+                title: title,
+                priority: 3,
+                comment: comments
+            }
+        };
+
+        if (url) {
+            config.params.comment += '\n\n' + url;
+        }
+
+        Ext.Ajax.request(config);
+    },
+
     getFooter : function() {
-        XX = this;
         if (!this.footerPanel) {
             this.footerPanel = Ext.create('Ext.panel.Panel', {
                 bodyCls: 'footer',
-                border: true,
+                border: false,
                 layout: {
                     type: 'hbox',
                     pack: 'end'
@@ -186,7 +149,7 @@ Ext.define('Connector.panel.Feedback', {
                     text: 'Cancel',
                     listeners: {
                         click: function(evt, el) {
-                            XX.hide();
+                            this.hide();
                         },
                         element: 'el',
                         scope: this
@@ -201,7 +164,20 @@ Ext.define('Connector.panel.Feedback', {
                     text: 'Done',
                     listeners: {
                         click: function(evt, el) {
-                            XX.hide();
+                            var form = this.getForm();
+
+                            //checks whether both the title and comment sections are printed out
+                            if (form.isValid()) {
+                                var values = form.getValues();
+                                this.postFeedback(values.title, values.comment, values.url);
+                                this.hide();
+                            }
+
+                            //prints an alert otherwise
+                            else {
+                                alert('You need to specify the title and the comment!');
+                            }
+
                         },
                         element: 'el',
                         scope: this
