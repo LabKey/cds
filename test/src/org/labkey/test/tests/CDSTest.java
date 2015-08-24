@@ -1095,9 +1095,21 @@ public class CDSTest extends CDSReadOnlyTest
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");
-
-        List<String> assays = Arrays.asList(CDSHelper.ASSAYS);
+        List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays);
+
+        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").containing(assays.get(0)));
+        waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
+
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
+
+        refresh();
+
+        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
     }
 
     // TODO Putting this test on hold. "Learn about Sites " is a future feature.

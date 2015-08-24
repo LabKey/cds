@@ -66,6 +66,10 @@ Ext.define('Connector.app.store.StudyProducts', {
                 products.push(product);
             }, this);
 
+            products.sort(function(productA, productB) {
+                return LABKEY.app.model.Filter.sorters.natural(productA.product_name, productB.product_name);
+            });
+
             this.loadRawData(products);
         }
     }
