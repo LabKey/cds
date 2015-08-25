@@ -2245,6 +2245,7 @@ Ext.define('Connector.view.Chart', {
             win.hide(targetEl);
 
             this.fireEvent('userplotchange', this, {
+                targetId : targetEl.id,
                 x: this.activeXSelection,
                 y: this.activeYSelection,
                 color: this.activeColorSelection

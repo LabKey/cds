@@ -65,10 +65,12 @@ Ext.define("Connector.view.Header", {
                             url : LABKEY.ActionURL.buildURL('login', 'logoutAPI.api'),
                             method: 'POST',
                             success: function(response) {
+                                this.fireEvent('userLogout');
                                 if (Ext.decode(response.responseText).success) {
                                     LABKEY.user.isSignedIn = false;
                                     window.location.reload();
                                 }
+
                             },
                             failure: Ext.emptyFn,
                             scope: this

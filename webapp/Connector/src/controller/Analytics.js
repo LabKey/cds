@@ -13,14 +13,19 @@ Ext.define('Connector.controller.Analytics', {
 
         // Scenarios:
         // "Plot X, Plot Y, Plot Color"
-        // "Plot button: source"
-        // "Plot button: variable"
+        // "Plot button: source" // TODO what and where is this?
+        // "Plot button: variable" // TODO where is this?
         this.control('plot', {
-            userplotchange: function(axis) {
+            userplotchange: function(window, axis) {
                 // see axis.x, axis.y, and axis.color
                 if (Connector.controller.Analytics.isEnabled())
                 {
-                    _gaq.push(['_trackEvent', 'Plot', 'Change']);
+                    if (axis.targetId == "xvarselector")
+                        _gaq.push(['_trackEvent', 'Plot', 'Change X', axis.x.alias]);
+                    else if (axis.targetId == 'yvarselector')
+                        _gaq.push(['_trackEvent', 'Plot', 'Change Y', axis.y.alias]);
+                    else if (axis.targetId == 'colorselector')
+                        _gaq.push(['_trackEvent', 'Plot', 'Change color', axis.color.alias]);
                 }
             }
         });
@@ -35,6 +40,16 @@ Ext.define('Connector.controller.Analytics', {
             }
         });
 
+        this.control('connectorheader', {
+
+            userLogout: function() {
+                if (Connector.controller.Analytics.isEnabled()) {
+                    _gaq.push(['_deleteCustomVar', 1]);
+                    _gaq.push(['_trackEvent', 'User', 'Logout', LABKEY.user.email]);
+                }
+            }
+        });
+
         // Scenarios
         // "Export"
         // "Export: list of source names"
@@ -43,9 +58,12 @@ Ext.define('Connector.controller.Analytics', {
             requestexport: function(view, exportParams) {
                 if (Connector.controller.Analytics.isEnabled()) {
                     _gaq.push(['_trackEvent', 'Grid', 'Export', 'Column count', exportParams.columnNames.length]);
+                    _gaq.push(['_trackEvent', 'Grid', 'Export sources', this.getSourcesStringForLabel(exportParams.columnNames)])
                 }
             }
         });
+
+
 
         this.callParent();
 
@@ -73,7 +91,7 @@ Ext.define('Connector.controller.Analytics', {
 
         // Scenarios
         // "Add filter"
-        // "Add filter: filter noun"
+        // "Add filter: filter noun" // TODO what and where is this?
         Connector.getState().on('filterchange', function(filters) {
             // TODO: We'll probably want to make this more granular for 'add' but
             // TODO: that can get tricky with the way we merge filters.
@@ -85,13 +103,32 @@ Ext.define('Connector.controller.Analytics', {
 
         // Scenarios
         // "Save"
-        // "Save: Boolean for was there a plot?"
+        // "Save: Boolean for was there a plot?" // TODO what does this mean?
         Connector.getApplication().on('groupsaved', function(group, filters) {
             if (Connector.controller.Analytics.isEnabled())
             {
                 _gaq.push(['_trackEvent', 'Group', 'Save']);
             }
         });
+    },
+
+    getSourcesStringForLabel : function(columnNames) {
+        var sources = this.getSourcesArray(columnNames).toString();
+        // maximum length for a label in GA is 500 bytes, so we trim before sending it along
+        return sources.length > 500 ? sources.substring(0, 497) + "..." : sources.substring(0, length);
+    },
+
+    getSourcesArray: function(columnNames) {
+        var queryService = Connector.getService('Query'),
+        sources = {};
+
+        Ext.each(columnNames, function(columnAlias) {
+            var measure = queryService.getMeasure(columnAlias);
+            if (measure && measure.queryName) {
+                sources[measure.queryName] = true;
+            }
+        });
+        return Ext.Object.getKeys(sources);
     }
 
 });
