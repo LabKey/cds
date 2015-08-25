@@ -146,7 +146,14 @@ Connector.view.StudyAxis = function() {
                     return studyLabelOffset + leftIndent;
                 })
             .attr('fill', ChartUtils.colors.PRIMARYTEXT)
-            .style('font', '11px Arial, serif');
+            .style('font', '11px Arial, serif')
+            .attr('test-data-value', function(d) {
+                    var txt = ''
+                    if(d.study)
+                        txt += d.study.replace(/ /g, '_') + '-'
+                    txt += d.name.replace(/ /g, '_').replace(/,/g, '')
+                    return txt;
+                });
     };
 
     var renderExpandCollapseButton = function(canvas) {
