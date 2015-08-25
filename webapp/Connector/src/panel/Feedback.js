@@ -14,6 +14,7 @@ Ext.define('Connector.panel.Feedback', {
     border: false,
 
     statics: {
+        DEFAULT_ISSUE_USER: 'user@test.me',
         displayWindow : function(animateTarget) {
             var win = Ext.create('Ext.window.Window', {
                 ui: 'axiswindow',
@@ -79,8 +80,23 @@ Ext.define('Connector.panel.Feedback', {
                     name: 'url',
                     checked: false,
                     inputValue: window.location.href
+                },{
+                    xtype: 'numberfield',
+                    itemId: 'assignedToField',
+                    hidden: true,
+                    name: 'assignedTo'
                 }]
             });
+
+            // Request default issue user information
+            this.queryUsers(Connector.panel.Feedback.DEFAULT_ISSUE_USER, function(userInfo) {
+                if (Ext.isDefined(userInfo)) {
+                    this.feedbackForm.getComponent('assignedToField').setValue(userInfo.UserId);
+                }
+                else {
+                    console.warn(this.$className + ': Unable to determine default issue user.');
+                }
+            }, this);
         }
 
         return this.feedbackForm;
@@ -111,7 +127,7 @@ Ext.define('Connector.panel.Feedback', {
         return this.headerPanel;
     },
 
-    postFeedback : function(title, comments, url) {
+    postFeedback : function(title, comments, url, assignedUserId) {
 
         var config = {
             url: LABKEY.ActionURL.buildURL('issues', 'insert.view'),
@@ -125,11 +141,35 @@ Ext.define('Connector.panel.Feedback', {
             }
         };
 
+        if (assignedUserId) {
+            config.params.assignedTo = parseInt(assignedUserId);
+        }
+
         if (url) {
             config.params.comment += '\n\n' + url;
         }
 
         Ext.Ajax.request(config);
+    },
+
+    queryUsers: function(userEmail, callback, scope) {
+        LABKEY.Query.selectRows({
+            schemaName: 'core',
+            queryName: 'users',
+            filterArray: [
+                LABKEY.Filter.create('Email', userEmail)
+            ],
+            success: function(data) {
+
+                var userInfo;
+
+                if (data.rows.length > 0) {
+                    userInfo = data.rows[0];
+                }
+
+                callback.call(scope, userInfo);
+            }
+        });
     },
 
     getFooter : function() {
@@ -169,7 +209,7 @@ Ext.define('Connector.panel.Feedback', {
                             //checks whether both the title and comment sections are printed out
                             if (form.isValid()) {
                                 var values = form.getValues();
-                                this.postFeedback(values.title, values.comment, values.url);
+                                this.postFeedback(values.title, values.comment, values.url, values.assignedTo);
                                 this.hide();
                                 alert('Form Sent');
                             }
