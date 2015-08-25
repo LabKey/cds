@@ -1469,6 +1469,97 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyTimeAxisWithMultipleSchedules()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        expectedCounts.put("HVTN 060", new CDSHelper.TimeAxisData("HVTN 060", 5, 7, 0));
+        expectedCounts.put("HVTN 063", new CDSHelper.TimeAxisData("HVTN 063", 5, 8, 0));
+        expectedCounts.put("HVTN 069", new CDSHelper.TimeAxisData("HVTN 069", 4, 7, 0));
+        expectedCounts.put("HVTN 204", new CDSHelper.TimeAxisData("HVTN 204", 4, 12, 0));
+
+        final String yaxisScale = "\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
+        final String studyDaysScales = "0\n200\n400\n600\n800\n1000" + yaxisScale; // TODO Test data dependent.
+
+        log("Verify ELISPOT Magnitude - Background subtracted and Study Days with axis collapsed.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertTrue("For ELISPOT Magnitude - Background subtracted vs Time Visit Days a study axis was not present.", hasStudyAxis());
+        List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found" + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyDaysScales);
+
+        // Is this the best way to validate that the tool-tip is as expected?
+        log("Validate that the tool-tips are as expected.");
+        String expectedToolTipText = "HVTN 063 - Day 182\nGroup 1, T1, Vaccine\n-Follow-Up\nGroup 1, Ca, Placebo\n-Follow-Up\nGroup 2, Ca, Placebo\n" +
+                "-Follow-Up\nGroup 2, T2, Vaccine\n-Follow-Up\nGroup 3, Ca, Placebo\n-Follow-Up\nGroup 3, T3, Vaccine\n-Follow-Up\n" +
+                "Group 4, Ca, Placebo\n-Follow-Up\nGroup 4, T4, Vaccine\n-Follow-Up\nGroup 5, T5, Vaccine\n-Follow-Up\nGroup 5, Cb, Placebo\n" +
+                "-Follow-Up\nGroup 7, T7, Vaccine\n-Follow-Up\nGroup 7, Cb, Placebo\n-Follow-Up";
+        mouseOver(Locator.css("#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)"));
+        sleep(2 * CDSHelper.CDS_WAIT_ANIMATION);
+        assertTrue("Tool-tip was not present.", isElementVisible(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]")));
+        String actualToolTipText = getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
+        assertTrue("Tool tip not as expected. Expected: '" + expectedToolTipText + "', actual: '" + actualToolTipText + "'", expectedToolTipText.equals(actualToolTipText));
+
+        expectedToolTipText = "HVTN 069 - Day 70\nGroup 1, T1, Vaccine\n-Follow-Up\nGroup 2, T2, Vaccine\n-Follow-Up\nGroup 3, T3, Vaccine\n-Follow-Up";
+        mouseOver(Locator.css("#study-axis > svg > g:nth-child(4)  > image:nth-of-type(1)"));
+        sleep(2 * CDSHelper.CDS_WAIT_ANIMATION);
+        assertTrue("Tool-tip was not present.", isElementVisible(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]")));
+        actualToolTipText = getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
+        assertTrue("Tool tip not as expected. Expected: '" + expectedToolTipText + "', actual: '" + actualToolTipText + "'", expectedToolTipText.equals(actualToolTipText));
+
+        log("Expand the time axis and verify the counts.");
+        Locator.css("#study-axis > svg > g > image.img-expand").findElement(getDriver()).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        // TODO Need to see how I will validate treatment arm totals. Waiting for feedback from Cory and Marty.
+        expectedCounts.clear();
+        expectedCounts.put("HVTN 060", new CDSHelper.TimeAxisData("HVTN 060", 0, 0, 0));
+        expectedCounts.put("HVTN 063", new CDSHelper.TimeAxisData("HVTN 063", 0, 0, 0));
+        expectedCounts.put("HVTN 069", new CDSHelper.TimeAxisData("HVTN 069", 0, 0, 0));
+        expectedCounts.put("HVTN 204", new CDSHelper.TimeAxisData("HVTN 204", 0, 0, 0));
+
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
+        validateVisitCounts(studies, expectedCounts);
+        log("The counts are as expected.");
+
+        // Is this the best way to validate that the tool-tip is as expected?
+        log("Validate that the tool-tips are as expected when expanded.");
+        expectedToolTipText = "HVTN 060 - Day 168\nGroup 2, Ca, Placebo\n-Vaccination - Placebo mo(0,1,3)";
+        mouseOver(Locator.css("#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)"));
+        sleep(2 * CDSHelper.CDS_WAIT_ANIMATION);
+        assertTrue("Tool-tip was not present.", isElementVisible(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]")));
+        actualToolTipText = getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
+        assertTrue("Tool tip not as expected. Expected: '" + expectedToolTipText + "', actual: '" + actualToolTipText + "'", expectedToolTipText.equals(actualToolTipText));
+
+        expectedToolTipText = "HVTN 069 - Day 0\nGroup 1, T1, Vaccine\n-Enrollment\n-Vaccination - DNA mo(0,1,2) IM & Ad5 mo(6) IM";
+        mouseOver(Locator.css("#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)"));
+        sleep(2 * CDSHelper.CDS_WAIT_ANIMATION);
+        assertTrue("Tool-tip was not present.", isElementVisible(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]")));
+        actualToolTipText = getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
+        assertTrue("Tool tip not as expected. Expected: '" + expectedToolTipText + "', actual: '" + actualToolTipText + "'", expectedToolTipText.equals(actualToolTipText));
+
+    }
+
+    @Test
     public void verifyAntigenVariableSelector()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1840,9 +1931,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
             CDSHelper.TimeAxisData tad = expectedCounts.get(study.getText());
 
-            assertTrue("Vaccination count not as expected. Expected: " + tad.vaccinationCount + " found: " + vacCount, tad.vaccinationCount == vacCount);
-            assertTrue("Nonvaccination count not as expected. Expected: " + tad.nonvaccinationCount + " found: " + nonvacCount, tad.nonvaccinationCount == nonvacCount);
-            assertTrue("Challenge count not as expected. Expected: " + tad.challengeCount + " found: " + chalCount, tad.challengeCount == chalCount);
+            if(tad != null)
+            {
+                assertTrue("Vaccination count not as expected. Expected: " + tad.vaccinationCount + " found: " + vacCount, tad.vaccinationCount == vacCount);
+                assertTrue("Nonvaccination count not as expected. Expected: " + tad.nonvaccinationCount + " found: " + nonvacCount, tad.nonvaccinationCount == nonvacCount);
+                assertTrue("Challenge count not as expected. Expected: " + tad.challengeCount + " found: " + chalCount, tad.challengeCount == chalCount);
+            }
+
         }
     }
 
