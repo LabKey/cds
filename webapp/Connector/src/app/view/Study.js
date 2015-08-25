@@ -47,7 +47,7 @@ Ext.define('Connector.app.view.Study', {
                         '<tpl if="type && type.length &gt; 0">',
                             '<span class="phase-text">{type:htmlEncode}</span>',
                         '</tpl>',
-                        '<div class="description-text">{description}</div>', // they're allowed to place html here...
+                        '<div class="description-text">{description:htmlEncode}</div>', //Issue 24016: Prioritizing Security...
                     '</div>',
                     '<div class="study-date">',
                         '<tpl if="start_date && followup_complete_date">',
