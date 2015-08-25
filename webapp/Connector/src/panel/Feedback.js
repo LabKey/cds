@@ -171,6 +171,7 @@ Ext.define('Connector.panel.Feedback', {
                                 var values = form.getValues();
                                 this.postFeedback(values.title, values.comment, values.url);
                                 this.hide();
+                                alert('Form Sent');
                             }
 
                             //prints an alert otherwise
