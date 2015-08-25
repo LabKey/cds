@@ -232,7 +232,7 @@ Ext.define('Connector.model.ChartData', {
 
         // if we are plotting the same continuous variable on both the x and y axis,
         // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
-        if (xa.isContinuous && xa.schema == ya.schema && xa.query == ya.query) {
+        if (xa.schema == ya.schema && xa.query == ya.query) {
             yMeasureFilter = {};
             xMeasureFilter = {};
 
@@ -243,14 +243,16 @@ Ext.define('Connector.model.ChartData', {
 
                 if (!this.arraysEqual(xDimValue, yDimValue)) {
                     var alias = this.getAliasFromMeasure(key);
-                    excludeAliases.push(alias);
-
-                    // TODO: how do we properly filter a MeasureStore when the value is an array?
                     if (yDimValue) {
-                        yMeasureFilter[alias] = yDimValue.join(',');
+                        yMeasureFilter[alias] = yDimValue;
                     }
                     if (xDimValue) {
-                        xMeasureFilter[alias] = xDimValue.join(',');
+                        xMeasureFilter[alias] = xDimValue;
+                    }
+
+                    // issue 24008: only exclude the alias if the filters are for a single value on each side
+                    if (xDimValue != null && xDimValue.length == 1 && yDimValue != null && yDimValue.length == 1) {
+                        excludeAliases.push(alias);
                     }
                 }
             }, this);
@@ -284,7 +286,7 @@ Ext.define('Connector.model.ChartData', {
                 colorVal = this._getColorValue(color, _cid, _row);
             }
 
-            xVal = x ? this._getXValue(x, _xid, _row) : '';
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
             if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
                 if (xDomain[0] == null || xVal < xDomain[0])
                     xDomain[0] = xVal;
@@ -391,9 +393,12 @@ Ext.define('Connector.model.ChartData', {
         return row.y ? row.y.getMean() : null;
     },
 
-    _getXValue : function(measure, alias, row) {
+    _getXValue : function(measure, alias, row, xIsContinuous) {
         if (row.x.hasOwnProperty('isUnique')) {
-            return Ext.isDefined(row.x.value) && row.x.value != null ? row.x.value : 'undefined';
+            if (Ext.isDefined(row.x.value) && row.x.value != null) {
+                return row.x.value;
+            }
+            return xIsContinuous ? null : 'undefined';
         }
 
         return row.x.getMean();
