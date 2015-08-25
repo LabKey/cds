@@ -896,7 +896,7 @@ Ext.define('Connector.controller.Query', {
         var merged = [], keyOrder = [], aliases = {}, alias;
 
         Ext.each(measures, function(measure) {
-            alias = (measure.measure.alias || measure.measure.name).toLowerCase();
+            alias = measure.measure.alias || LABKEY.MeasureUtil.getAlias(measure.measure);
             if (!aliases[alias]) {
                 aliases[alias] = measure;
                 keyOrder.push(alias);

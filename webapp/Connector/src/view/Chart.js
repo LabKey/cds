@@ -2352,23 +2352,17 @@ Ext.define('Connector.view.Chart', {
     },
 
     applyFiltersToMeasure : function (measureSet, ptids) {
-        var ptidMeasure;
+        // find the subject column(s) in the measure set to apply the values filter (issue 24123)
+        if (Ext.isArray(ptids)) {
+            Ext.each(measureSet, function(m) {
+                if (m.measure && m.measure.name == Connector.studyContext.subjectColumn) {
+                    if (Ext.isArray(m.measure.values)) {
+                        console.error('There is a potentially unknown values array on the applied subject measure.');
+                    }
 
-        // find the subject column in the measure set by matching the subjectColumn name
-        Ext.each(measureSet, function(m) {
-            if (m.measure && m.measure.name == Connector.studyContext.subjectColumn) {
-                ptidMeasure = m.measure;
-                return false;
-            }
-        }, this);
-
-        if (ptidMeasure) {
-            if (ptids) {
-                ptidMeasure.values = ptids;
-            }
-            else if (Ext.isArray(ptidMeasure.values)) {
-                console.error('There is a potentially unknown values array on the applied subject measure.');
-            }
+                    m.measure.values = ptids;
+                }
+            }, this);
         }
     },
 
