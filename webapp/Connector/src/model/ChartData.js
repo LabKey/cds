@@ -405,11 +405,15 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getColorValue : function(measure, alias, row) {
-        if (row.z && row.z.value != null) {
+        if (Ext.isDefined(row.z) && row.z.value != null) {
             return row.z.value;
         }
         else if (Ext.isDefined(row[alias])) {
             return row[alias];
+        }
+        else if (Ext.isDefined(row.z) && !row.z.isUnique) {
+            // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
+            return 'Multiple values';
         }
         return null;
     },
