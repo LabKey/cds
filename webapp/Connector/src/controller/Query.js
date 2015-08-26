@@ -565,7 +565,7 @@ Ext.define('Connector.controller.Query', {
             getDataConfig.measures.push(measure);
         });
 
-        filterConfig.getData = getDataConfig;
+        filterConfig.getDataCDS = getDataConfig;
         filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
 
         return filterConfig;
