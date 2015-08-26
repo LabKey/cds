@@ -1565,12 +1565,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 060 - Day 168\nGroup 2, Ca, Placebo\n-Vaccination - Placebo mo(0,1,3)");
+        expectedToolTipText.add("HVTN 060 - Day 168");
+        expectedToolTipText.add("Group 2");
+        expectedToolTipText.add("-Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 069 - Day 0\nGroup 1, T1, Vaccine\n-Enrollment\n-Vaccination - DNA mo(0,1,2) IM & Ad5 mo(6) IM");
+        expectedToolTipText.add("HVTN 069 - Day 0");
+        expectedToolTipText.add("Group 1");
+        expectedToolTipText.add("-Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1595,7 +1599,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 060 - Day 379\nGroup 3, Ca, Placebo\n-Follow-Up");
+        expectedToolTipText.add("HVTN 060 - Day 379");
+        expectedToolTipText.add("Group 3");
         cssPath = "#study-axis > svg > g:nth-child(21) > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
