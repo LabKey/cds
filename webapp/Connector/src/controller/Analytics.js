@@ -3,6 +3,11 @@ Ext.define('Connector.controller.Analytics', {
     extend: 'Ext.app.Controller',
 
     statics: {
+        isInspectletEnabled: function()
+        {
+            return typeof _insp !== 'undefined';
+        },
+
         isEnabled: function ()
         {
             return typeof _gaq !== 'undefined';
@@ -13,25 +18,37 @@ Ext.define('Connector.controller.Analytics', {
 
         // Scenarios:
         // "Plot X, Plot Y, Plot Color"
-        // "Plot button: source" // TODO what and where is this?
-        // "Plot button: variable" // TODO where is this?
+        // "Plot button: source"
+        // "Plot button: variable"
         this.control('plot', {
             userplotchange: function(window, axis) {
                 // see axis.x, axis.y, and axis.color
                 if (Connector.controller.Analytics.isEnabled())
                 {
                     if (axis.targetId == "xvarselector")
-                        _gaq.push(['_trackEvent', 'Plot', 'Change X', axis.x.alias]);
+                    {
+                        _gaq.push(['_trackEvent', 'Plot', 'Change X source', axis.x.queryName]);
+                        _gaq.push(['_trackEvent', 'Plot', 'Change X', axis.x.name]);
+                    }
                     else if (axis.targetId == 'yvarselector')
+                    {
+                        _gaq.push(['_trackEvent', 'Plot', 'Change Y source', axis.y.queryName]);
                         _gaq.push(['_trackEvent', 'Plot', 'Change Y', axis.y.alias]);
+                    }
                     else if (axis.targetId == 'colorselector')
+                    {
+                        _gaq.push(['_trackEvent', 'Plot', 'Change color source', axis.color.queryName]);
                         _gaq.push(['_trackEvent', 'Plot', 'Change color', axis.color.alias]);
+                    }
                 }
             }
         });
 
         this.control('signinform', {
             userSignedIn: function() {
+                if (Connector.controller.Analytics.isInspectletEnabled())
+                    __insp.push(['identify', LABKEY.user.email]);
+
                 if (Connector.controller.Analytics.isEnabled())
                 {
                     _gaq.push(['_setCustomVar', 1, 'user', LABKEY.user.email, 2]);
@@ -58,12 +75,14 @@ Ext.define('Connector.controller.Analytics', {
             requestexport: function(view, exportParams) {
                 if (Connector.controller.Analytics.isEnabled()) {
                     _gaq.push(['_trackEvent', 'Grid', 'Export', 'Column count', exportParams.columnNames.length]);
-                    _gaq.push(['_trackEvent', 'Grid', 'Export sources', this.getSourcesStringForLabel(exportParams.columnNames)])
+                    var sources = this.getSourcesArray(exportParams.columnNames);
+                    for (var i = 0; i < sources.length; i++)
+                    {
+                        _gaq.push(['_trackEvent', 'Grid', 'Export source', sources[i]]);
+                    }
                 }
             }
         });
-
-
 
         this.callParent();
 
@@ -75,35 +94,27 @@ Ext.define('Connector.controller.Analytics', {
         });
 
 
-        //Connector.getState().on('selectionchange', function(filters) {
-        //    if (Connector.controller.Analytics.isEnabled())
-        //    {
-        //        for (f = 0; f < filters.length; f++)
-        //        {
-        //            var members = filters[f].get('members');
-        //            for (var i = 0; i < members.length; i++)
-        //            {
-        //                _gaq.push(['_trackEvent', 'Filter', 'Add', members[i].uniqueName]);
-        //            }
-        //        }
-        //    }
-        //});
-
         // Scenarios
         // "Add filter"
-        // "Add filter: filter noun" // TODO what and where is this?
+        // "Add filter: filter noun"
         Connector.getState().on('filterchange', function(filters) {
-            // TODO: We'll probably want to make this more granular for 'add' but
-            // TODO: that can get tricky with the way we merge filters.
             if (Connector.controller.Analytics.isEnabled())
             {
                 _gaq.push(['_trackEvent', 'Filter', 'Change']);
+                for (f = 0; f < filters.length; f++)
+                {
+                    var members = filters[f].get('members');
+                    for (var i = 0; i < members.length; i++)
+                    {
+                        _gaq.push(['_trackEvent', 'Filter', 'Add', members[i].uniqueName]);
+                    }
+                }
             }
         });
 
         // Scenarios
         // "Save"
-        // "Save: Boolean for was there a plot?" // TODO what does this mean?
+        // "Save: Boolean for was there a plot?" // TODO how do I determine that there is a plot
         Connector.getApplication().on('groupsaved', function(group, filters) {
             if (Connector.controller.Analytics.isEnabled())
             {
@@ -115,7 +126,7 @@ Ext.define('Connector.controller.Analytics', {
     getSourcesStringForLabel : function(columnNames) {
         var sources = this.getSourcesArray(columnNames).toString();
         // maximum length for a label in GA is 500 bytes, so we trim before sending it along
-        return sources.length > 500 ? sources.substring(0, 497) + "..." : sources.substring(0, length);
+        return sources.length > 500 ? sources.substring(0, 497) + "..." : sources.substring(0, 500);
     },
 
     getSourcesArray: function(columnNames) {
