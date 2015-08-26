@@ -210,16 +210,6 @@
             <column columnName="study_arm_description"/>
         </columns>
     </table>
-    <table tableName="import_studypartgrouparmvisittag" tableDbType="TABLE">
-        <columns>
-            <column columnName="prot"/>
-            <column columnName="study_part"/>
-            <column columnName="study_arm"/>
-            <column columnName="study_group"/>
-            <column columnName="study_day"/>
-            <column columnName="study_visit_tag"/>
-        </columns>
-    </table>
     <table tableName="import_nab" tableDbType="TABLE">
         <columns>
             <column columnName="row_id"/>
