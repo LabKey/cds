@@ -26,17 +26,11 @@ div.selitem {
 }
 
 div.filterpanel {
-
-  font-family: $info-font;
-  font-size: 12px;
+  font: $body-one-font;
   margin: 0;
 
-  .header {
-    font-size: $headline;
-    font-family: $data-font;
-    span {
-      color: $dark-color;
-    }
+  .filterpanel-header {
+    margin-left: 10px;
   }
 }
 
@@ -84,8 +78,7 @@ div.activefilter {
 
 div.selectionpanel {
 
-  font-family: $info-font;
-  font-size: 12px;
+  font: $body-one-font;
   margin: 0;
   padding: 5px 0;
   border: 1px solid #BEEFEF;
@@ -93,9 +86,8 @@ div.selectionpanel {
   @include border-radius(8px);
 
   .header {
-    font-size: 16px;
+    font: $nav-font;
     color: $select-color;
-    font-family: $data-font;
     padding: 0 10px;
   }
 

@@ -57,9 +57,28 @@
   }
 }
 
-svg g.study .visit-tag {
-  cursor: pointer;
+svg g {
+
+  &.study .visit-tag {
+    cursor: pointer;
+  }
+
+  .xaxis-tick-text, .highlight, .xaxis-tick-rect {
+    cursor: pointer;
+  }
+
+  text.yGutter-label, text.xGutter-label {
+    fill: $secondary-text-color;
+    cursor: pointer;
+  }
 }
+
+svg a {
+  &:hover, &:active {
+    text-decoration: none;
+  }
+}
+
 
 #plotymeasurewin:after,
 #plotymeasurewin:before {

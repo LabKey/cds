@@ -22,10 +22,9 @@ div.learnview {
   }
 
   p {
-    color: #black;
-    font-size: 12px;
+    color: $black;
+    font: $body-two-font;
     margin-right: 5%;
-    line-height: 16px;
 
     &.loading-data {
       color: $unselect-black;
@@ -95,6 +94,9 @@ div.learncolumnheader {
   border-bottom: 2px solid $heat-scale-4;
   overflow: auto;
   background-color: #fff;
+  font: $subhead-font;
+  color: $heat-scale-2;
+  text-transform: uppercase;
 }
 
 div.learn-map-container {
@@ -104,7 +106,6 @@ div.learn-map-container {
 
 h1.lhdv {
   float: left;
-  font-weight: normal;
   padding-right: 28px;
   color: $select-color;
 
@@ -130,40 +131,78 @@ h1.lhdv {
   border-bottom: 2px solid $heat-scale-4;
 }
 
-div.detail-wrapper {
-  padding: 0 $pageLeftPadding;
+.detail-left-column {
+  width: 60%;
+  float: left;
+}
 
-  .detail-container {
-    padding: 24px 0;
+.detail-middle-column {
+  width: 20%;
+  float: left;
+  padding-right: 10px;
+}
 
-    .study-description {
+.detail-right-column {
+  width: 20%;
+  float: right;
+}
+
+.detail-container {
+  padding: 0px $pageLeftPadding;
+
+  .detail-wrapper {
+    padding: $sectionTopPadding 0;
+    height: 170px;
+    border-bottom: 1px solid $heat-scale-4;
+    overflow: hidden;
+
+    .detail-description {
       height: 123px;
-      overflow:hidden;
+      overflow: hidden;
 
       h2 {
-        font-size: 18px;
+        font: $headline-font;
+      }
+
+      .detail-type-text {
+        font: $body-one-font;
+        color: $heat-scale-2;
+      }
+
+      .detail-description-text {
+        padding-top: 12px;
+        font: $body-one-font;
+        color: $heat-scale-1;
+        margin-right: 5%;
+
+        ol {
+          padding-left: 24px;
+        }
       }
     }
-  }
 
-  &:hover {
-    @include transition(background-color 0.2s ease-out);
-    background-color: $select-hover-color;
-    cursor: pointer;
+    .detail-text {
+      font: $body-one-font;
+
+      .detail-gray-text {
+        color: $heat-scale-1;
+      }
+
+      .detail-black-text {
+        color: $black;
+      }
+    }
+
+    &:hover {
+      @include transition(background-color 0.2s ease-out);
+      background-color: $select-hover-color;
+      cursor: pointer;
+      border-color: transparent;
+    }
   }
 }
 
-div.detail-container {
-  width: 100%;
-
-  div.detail-header {
-    font-size: 11px;
-    color: $heat-scale-2;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-}
-
+//todo: merge with detail container as interactive vs non-interactive list.
 div.list-container {
   padding-right: $pageLeftPadding + 17px; /* 17px is the width of the scroll bar */
 
@@ -171,12 +210,11 @@ div.list-container {
     min-height: 123px;
     border-bottom: 1px solid $heat-scale-4;
     overflow: hidden;
-    font-family: $info-font;
 
     div.list-entry-title{
       width: 60%;
       h2 {
-        font-size: 18px;
+        font: $headline-font;
       }
     }
 
@@ -185,6 +223,7 @@ div.list-container {
       padding-top: 12px;
       padding-bottom: 12px;
       color: $heat-scale-1;
+      font: $body-one-font;
     }
   }
 
@@ -193,73 +232,10 @@ div.list-container {
 
     div.list-category-detail {
       padding-top: 5px;
-      font-weight: bold;
+      font: $subhead-font;
       color: $heat-scale-1;
     }
   }
-}
-
-/* TODO: The Following study- selectors need to be renamed */
-div.study-detail {
-  height: 170px;
-  border-bottom: 1px solid $heat-scale-4;
-  overflow: hidden;
-
-  &:hover {
-    border-color: transparent;
-  }
-}
-
-div.study-description {
-  width: 60%;
-  float: left;
-  font-family: $info-font;
-
-  .phase-text {
-    font-size: 12px;
-    color: $heat-scale-2;
-  }
-
-  .description-text {
-    padding-top: 12px;
-    font-size: 12px;
-    line-height:15px;
-    color: $heat-scale-1;
-    margin-right: 5%;
-
-    ol {
-      padding-left: 24px;
-    }
-  }
-}
-
-div.study-date {
-  width: 20%;
-  float: left;
-  padding-right: 10px;
-  font-family: $info-font;
-  font-size: 12px;
-
-  .startdate-text {
-    display: block;
-  }
-
-  .enddate-text {
-    display: block;
-    color: $heat-scale-1;
-  }
-
-  .date-diff-text {
-    color: $heat-scale-1;
-  }
-}
-
-div.study-treatments {
-  width: 20%;
-  float: right;
-  font-family: $info-font;
-  font-size: 12px;
-  color: $heat-scale-1;
 }
 
 .learn-search-input {
@@ -293,7 +269,7 @@ div.study-treatments {
     vertical-align: top;
 
     &.item-label {
-      color: #777777;
+      color: $secondary-text-color;
       padding-right: 1em;
       width: 90px;
     }

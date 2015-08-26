@@ -1,8 +1,7 @@
 .navigation-view {
   padding: 16px 0 20px 0;
-  font-family: $data-font;
   color: $primary-text-color;
-  font-size: 16px;
+  font: $nav-font;
 }
 
 div.nav-label, div.dis-label {

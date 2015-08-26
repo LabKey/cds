@@ -45,7 +45,7 @@ a.x-btn {
 }
 
 .x-btn-paging-widget-pages-small .x-btn-inner {
-  color: #777777; /* Fallback for older browsers */
+  color: $secondary-text-color; /* Fallback for older browsers */
   color: rgba(0, 0, 0, 0.54);
 }
 
