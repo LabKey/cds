@@ -47,7 +47,7 @@ div.bycolumn {
 
 /* Detail column is the middle column of the Summary Display */
 div.detailcolumn {
-  font-size: 12px;
+  font:$body-one-font;
   width : 20%;
   white-space: pre-wrap;
   padding-top: 13px;

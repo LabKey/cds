@@ -9,9 +9,7 @@ LABKEY.ext4.MeasuresDataView.SplitPanels
 
   .groupheader {
     text-transform: uppercase;
-    font-size: 12px;
-    font-family: $bodycaps-font;
-    font-weight: normal;
+    font: $body-one-font;
   }
 
   .groupheaderline {

@@ -41,7 +41,7 @@ public class CDSHelper
             "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
             "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 504", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
 
-    public static final String[] PROT_NAMES = {"v078", "v044", "v503", "v060", "v204", "v041", "v205", "v049", "v049", "v505"}; //incomplete list, only first and last under each assay in find subjects view.
+    public static final String[] PROT_NAMES = {"HVTN 078", "HVTN 044", "HVTN 503", "HVTN 060", "HVTN 204", "HVTN 041", "HVTN 205", "HVTN 049", "HVTN 049", "HVTN 505"}; //incomplete list, only first and last under each assay in find subjects view.
 
     public static final String[] PRODUCTS = {"3BNC117", "acyclovir", "AIDSVAX B/B", "AIDSVAX B/E", "ALVAC-HIV (vCP1452)",
             "ALVAC-HIV (vCP1521)", "ALVAC-HIV (vCP2438)", "AS01B", "AS02A", "AVX101", "AVX201", "BufferGel", "Buprenorphine/naloxone",

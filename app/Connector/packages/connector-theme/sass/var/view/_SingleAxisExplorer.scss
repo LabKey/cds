@@ -55,7 +55,7 @@ span.animator {
 }
 
 .bar .barlabel {
-  font-family: $info-font;
+  font: $body-one-font;
   display: block;
   position: relative;
   z-index: 2;
@@ -63,22 +63,20 @@ span.animator {
 }
 
 .bar.large .barlabel {
-  font-size: 12px;
+  font: $body-one-font;
   z-index: 5002;
   padding: 14px 8px;
 }
 
 .bar.small .barlabel {
-  font-size: 12px;
+  font: $body-one-font;
   padding: 5px 8px;
-  font-weight: normal;
   z-index: 5002;
 }
 
 .barlabel.selected {
   padding: 5px;
-  font-weight: bold;
-  font-size: 12pt;
+  font: bold $body-one-font;
   position: absolute;
   z-index: 10000000;
 }
@@ -109,9 +107,7 @@ span.info {
 
 .bar .count {
   color: $legend-color;
-  font-family: $info-font;
-  font-weight: bold;
-  font-size: 12px;
+  font: bold $body-one-font;
   position: absolute;
   right: -60px;
   @include unselectable;
@@ -195,8 +191,7 @@ div.barcollapse {
 }
 
 div.saeempty {
-  font-family: $data-font;
-  font-size: 26px;
+  font: $display-two-font;
   margin-top: 24px;
   margin-left: $pageLeftPadding;
 }
