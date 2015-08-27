@@ -873,8 +873,13 @@ Ext.define('Connector.view.Chart', {
 
             // If using color variables sync color and shape with yGutter plot if it exists
             if (this.measures[2]) {
-                plotConfig.scales.color = this.yGutterPlot.layers[0].geom.colorScale;
-                plotConfig.scales.shape = this.yGutterPlot.layers[0].geom.shapeScale;
+                var plotLayer = this.yGutterPlot.layers[0];
+                if (Ext.isDefined(plotLayer.geom.colorScale)) {
+                    plotConfig.scales.color = plotLayer.geom.colorScale;
+                }
+                if (Ext.isDefined(plotLayer.geom.shapeScale)) {
+                    plotConfig.scales.shape = plotLayer.geom.shapeScale;
+                }
             }
         }
 
@@ -907,8 +912,13 @@ Ext.define('Connector.view.Chart', {
 
             // If using color variables sync color and shape with yGutter plot if it exists
             if (this.measures[2] && this.plot) {
-                gutterXPlotConfig.scales.color = this.plot.layers[0].geom.colorScale;
-                gutterXPlotConfig.scales.shape = this.plot.layers[0].geom.shapeScale;
+                var plotLayer = this.plot.layers[0];
+                if (Ext.isDefined(plotLayer.geom.colorScale)) {
+                    gutterXPlotConfig.scales.color = plotLayer.geom.colorScale;
+                }
+                if (Ext.isDefined(plotLayer.geom.shapeScale)) {
+                    gutterXPlotConfig.scales.shape = plotLayer.geom.shapeScale;
+                }
             }
 
             // render the gutter
