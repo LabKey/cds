@@ -9,12 +9,12 @@ Ext.define('Connector.panel.Feedback', {
 
     alias: 'widget.feedback',
 
-    cls: 'feedback variable-selector',
+    cls: 'feedback-panel',
 
     border: false,
 
     statics: {
-        DEFAULT_ISSUE_USER: 'user@test.me',
+        DEFAULT_ISSUE_USER: 'joec',
         displayWindow : function(animateTarget) {
             var win = Ext.create('Ext.window.Window', {
                 ui: 'axiswindow',
@@ -35,7 +35,8 @@ Ext.define('Connector.panel.Feedback', {
                         scope: this
                     }
                 }],
-                width: 520
+                width: 520,
+                height: 600
             });
 
             win.show(animateTarget);
@@ -70,13 +71,14 @@ Ext.define('Connector.panel.Feedback', {
                     xtype: 'textareafield',
                     name: 'comment',
                     width: '100%',
+                    height: '400px',
                     emptyText: 'Describe what you\'re seeing...',
                     validateOnBlur: false,
                     allowBlank: false
                 },{
                     //If this box is checked the current page url is printed in the comments
                     xtype: 'checkbox',
-                    boxLabel: 'Check this box if its the screen you are currently on',
+                    boxLabel: 'Check this box if the issue is on your current screen.',
                     name: 'url',
                     checked: false,
                     inputValue: window.location.href
@@ -113,7 +115,7 @@ Ext.define('Connector.panel.Feedback', {
             var tpl = new Ext.XTemplate(
                 '<div class="main-title">Provide Feedback</div>',
                     '<div class="sub-title">',
-                    '<span>Give us feedback on what we could improve</span>',
+                    '<span class="nav-text">Give us feedback on what we could improve</span>',
                 '</div>'
             );
             this.headerPanel = Ext.create('Ext.panel.Panel', {
@@ -152,12 +154,12 @@ Ext.define('Connector.panel.Feedback', {
         Ext.Ajax.request(config);
     },
 
-    queryUsers: function(userEmail, callback, scope) {
+    queryUsers: function(userDisplayName, callback, scope) {
         LABKEY.Query.selectRows({
             schemaName: 'core',
             queryName: 'users',
             filterArray: [
-                LABKEY.Filter.create('Email', userEmail)
+                LABKEY.Filter.create('DisplayName', userDisplayName)
             ],
             success: function(data) {
 
