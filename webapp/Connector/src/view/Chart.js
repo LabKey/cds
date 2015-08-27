@@ -1049,7 +1049,7 @@ Ext.define('Connector.view.Chart', {
 
     logRowCount : function(allDataRows) {
         if (LABKEY.devMode) {
-            console.log('total plotted rows:', allDataRows.main.length);
+            console.log('total plotted rows:', allDataRows.totalCount);
             if (allDataRows && allDataRows.undefinedX) {
                 console.log('plotted x gutter rows:', allDataRows.undefinedX.length);
             }

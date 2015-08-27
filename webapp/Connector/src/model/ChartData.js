@@ -185,6 +185,7 @@ Ext.define('Connector.model.ChartData', {
             xVal, yVal, colorVal = null,
             negX = false, negY = false,
             yMeasureFilter, xMeasureFilter, excludeAliases = [],
+            brushFilterAliases = [], mainCount = 0,
             _row;
 
         ca = this.getBaseMeasureConfig();
@@ -273,6 +274,11 @@ Ext.define('Connector.model.ChartData', {
             console.log('Plotting aggregate values using mean', this.getMeasureStore()._records.length, dataRows.length);
         }
 
+        // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
+        Ext.each(Connector.getService('Query').getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
+            brushFilterAliases.push(LABKEY.MeasureUtil.getAlias(brushFilterMeasure.measure));
+        });
+
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++) {
             _row = dataRows[r];
@@ -322,10 +328,17 @@ Ext.define('Connector.model.ChartData', {
 
             // split the data entry based on undefined x and y values for gutter plotting
             if (xVal == null) {
-                undefinedXRows.push(entry);
+                if (brushFilterAliases.indexOf(_xid) == -1) { // issue 24021
+                    undefinedXRows.push(entry);
+                }
             }
             else if (xa.isContinuous && yVal == null) {
-                undefinedYRows.push(entry);
+                if (brushFilterAliases.indexOf(_yid) == -1) { // issue 24021
+                    undefinedYRows.push(entry);
+                }
+            }
+            else {
+                mainCount++;
             }
 
             // the main data row map will still include the x/y null rows,
@@ -349,7 +362,7 @@ Ext.define('Connector.model.ChartData', {
                 main: mainPlotRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
-                totalCount: mainPlotRows.length
+                totalCount: mainCount + undefinedXRows.length + undefinedYRows.length
             },
             properties: {
                 xaxis: xa,

@@ -342,7 +342,7 @@ Ext.define('Connector.controller.Query', {
      */
     getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
         var subjectMeasure, wrappedMeasureSet = [], aliases = [],
-            measureData, filterMeasures, index, filterMeasureRecord;
+            measureData, filterMeasures, index, filterMeasureRecord, alias;
 
         if (Ext.isDefined(measureSet))
         {
@@ -375,18 +375,26 @@ Ext.define('Connector.controller.Query', {
                 // get the relevant application filters to add to the measure set
                 filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters());
                 Ext.each(filterMeasures, function(filterMeasure) {
-                    index = aliases.indexOf(filterMeasure.measure.alias);
-                    // if we already have this measure in our set, then just tack on the filterArray
-                    if (index > -1) {
-                        wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
-                    }
-                    else {
-                        filterMeasureRecord = this.getMeasureRecordByAlias(filterMeasure.measure.alias);
-                        if (Ext.isDefined(filterMeasureRecord)) {
-                            wrappedMeasureSet.push({
-                                filterArray: filterMeasure.filterArray,
-                                measure: Ext.clone(filterMeasureRecord.data)
-                            });
+
+                    // a filter is only relevant to a dimension if it is from the same query or is from a demographic dataset
+                    if (filterMeasure.measure.isDemographic ||
+                        (dimension.get('schemaName') == filterMeasure.measure.schemaName && dimension.get('queryName') == filterMeasure.measure.queryName)) {
+
+                        alias = LABKEY.MeasureUtil.getAlias(filterMeasure.measure);
+                        index = aliases.indexOf(alias);
+
+                        // if we already have this measure in our set, then just tack on the filterArray
+                        if (index > -1) {
+                            wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
+                        }
+                        else {
+                            filterMeasureRecord = this.getMeasureRecordByAlias(alias);
+                            if (Ext.isDefined(filterMeasureRecord)) {
+                                wrappedMeasureSet.push({
+                                    filterArray: filterMeasure.filterArray,
+                                    measure: Ext.clone(filterMeasureRecord.data)
+                                });
+                            }
                         }
                     }
                 }, this);
@@ -601,6 +609,28 @@ Ext.define('Connector.controller.Query', {
             if (filter.get('isWhereFilter') === true) {
                 var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
                 Ext.each(ms, function(m) { measures.push(m); });
+            }
+        }, this);
+
+        return measures;
+    },
+
+    /**
+     * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
+     * in plot brushing filters.
+     * @param includeAxisFilters
+     */
+    getPlotBrushFilterMeasures : function(includeAxisFilters) {
+        var measures = [], filters = Connector.getState().getFilters();
+
+        Ext.each(filters, function(filter) {
+            if (filter.get('isPlot') === true && filter.get('isWhereFilter') === true) {
+                var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
+                Ext.each(ms, function(m) {
+                    if (includeAxisFilters || Ext.isArray(m.filterArray)) {
+                        measures.push(m);
+                    }
+                });
             }
         }, this);
 
