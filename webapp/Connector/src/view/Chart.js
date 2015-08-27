@@ -2466,7 +2466,13 @@ Ext.define('Connector.view.Chart', {
         }
 
         for (var group in groupTags) {
-            content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">' + group + '</span> <br> -' + groupTags[group].join('<br>-') + '</p>';
+            // Escape HTML for security.
+            if(groupTags.hasOwnProperty(group)) {
+                for (var j = 0; j < groupTags[group].length; j++)
+                    groupTags[group][j] = ChartUtils.escapeHTML(groupTags[group][j]);
+            }
+            content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
+                + ChartUtils.escapeHTML(group) + '</span> <br> -' + groupTags[group].join('<br>-') + '</p>';
         }
 
         bubbleWidth = maxWidth * 8;
