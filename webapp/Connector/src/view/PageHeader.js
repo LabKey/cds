@@ -62,7 +62,7 @@ Ext.define('Connector.view.PageHeader', {
                 '<div class="learn-up titlepanel interactive inline">',
                     '<span class="iarrow">&nbsp;</span>{upText:htmlEncode}',
                 '</div>',
-                '<h2 class="inline">{title:htmlEncode}</h2>',
+                '<h1 class="inline">{title:htmlEncode}</h1>',
                 '<div class="dim-selector">',
                     '<tpl for="tabs">',
                         '<h1 class="lhdv">{label:htmlEncode}</h1>',

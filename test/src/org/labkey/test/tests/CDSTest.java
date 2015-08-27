@@ -888,7 +888,7 @@ public class CDSTest extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Studies");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -900,7 +900,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'pageheader')]//div//h2[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Study Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -987,7 +987,7 @@ public class CDSTest extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Study products");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -1001,7 +1001,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'pageheader')]//div//h2[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Product Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());

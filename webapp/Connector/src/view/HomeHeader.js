@@ -24,12 +24,11 @@ Ext.define('Connector.view.HomeHeader', {
             {
                 xtype: 'box',
                 itemId: 'statdisplay',
+                cls: 'cascade-header',
                 tpl: new Ext.XTemplate(
-                    '<div class="educational-titlepanel">',
-                        '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
-                        '<h1 style="opacity: 0.66;">{nstudy:htmlEncode} studies connected together combining</h1>',
-                        '<h1 style="opacity: 0.33; width: 50%;">{ndatapts:this.commaFormat} data points.</h1>',
-                    '</div>',
+                    '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
+                    '<h1 class="middle">{nstudy:htmlEncode} studies connected together combining</h1>',
+                    '<h1 class="bottom">{ndatapts:this.commaFormat} data points.</h1>',
                     {
                         commaFormat : function(v) {
                             return Ext.util.Format.number(v, '0,000');
