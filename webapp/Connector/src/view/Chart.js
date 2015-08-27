@@ -491,11 +491,11 @@ Ext.define('Connector.view.Chart', {
         var config, content = '', colon = ': ', linebreak = ',<br/>';
 
         if (data.xname) {
-            content += data.xname + colon + data.x;
+            content += ChartUtils.escapeHTML(data.xname) + colon + data.x;
         }
-        content += (content.length > 0 ? linebreak : '') + data.yname + colon + data.y;
+        content += (content.length > 0 ? linebreak : '') + ChartUtils.escapeHTML(data.yname) + colon + data.y;
         if (data.colorname) {
-            content += linebreak + data.colorname + colon + data.color;
+            content += linebreak + ChartUtils.escapeHTML(data.colorname) + colon + data.color;
         }
 
         config = {
