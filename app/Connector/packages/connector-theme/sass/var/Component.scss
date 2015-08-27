@@ -1,8 +1,6 @@
 /* Site wide coloring scheme */
-$select-color: #14C9CC;         // Bright Blue
-$select-hover-color: #BEEFEF;   // Light Blue
-/* read as 'select on grey' */
-
+$select-color: #14C9CC;            // Bright Blue
+$select-hover-color: #BEEFEF;      // Light Blue
 $primary-color: #DCD8D8;           // Main Gray
 $secondary-color: #F0F0F0;         // Light Gray
 $legend-color: #BAB4B4;            // 10% darker than $secondary-color
@@ -39,14 +37,24 @@ $bodycaps-font : Arial;
 $info-font : Arial, sans-serif;
 $data-font : Georgia, serif;
 
+$display-two-font: 26px $data-font;
+$display-one-font: 22px $data-font;
+$headline-font: 18px $data-font;
+$title-font: bold 14px $info-font;
+$subhead-font: bold 11px $info-font;
+$body-two-font: 13px/16px $info-font;
+$body-one-font: 12px/15px $info-font;
+$caption-font: 11px/14px $info-font;
+$nav-font: 16px $data-font;
+
 // General
 $connector-prefix: 'x-'; /* Used to mimic Ext's $prefix which is not defined yet when this file is compiled */
 $css-shadow-border-radius: 0;
 $font-family: $info-font;
 
 // form/field/Base.scss
-$form-label-font: normal 12px $info-font;
-$form-toolbar-field-font: normal 12px $info-font;
+$form-label-font: $body-one-font; //todo: this vs body 1
+$form-toolbar-field-font: $body-one-font; //todo: this vs body 1
 
 // form/field/Text.scss
 $form-field-background-image: none;
@@ -158,60 +166,23 @@ html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,
 *::-moz-focus-inner {border:0;}
 
 h1 {
-  font-size: 26px;
-  @include header;
+  font: $display-two-font;
 }
 
 h2 {
-  font-size: 22pt;
-  @include header;
+  font: $display-one-font;
 }
 
 h3 {
-  font-size: 20pt;
-  @include header;
+  font: $headline-font;
 }
 
 ul {
   list-style: none;
 }
 
-div.study-description .description-text {
-  font-size: 12px;
-}
-
-@media (max-width: 1300px) {
-  h2 {
-    font-size: 20pt;
-  }
-}
-
-@media (max-width: 1250px) {
-  h2 {
-    font-size: 18pt;
-  }
-}
-
 .nogridmsg h1 {
   white-space: nowrap;
-}
-
-@media (max-width: 1415px) {
-  .nogridmsg h1 {
-    font-size: 20pt;
-  }
-}
-
-@media (max-width: 1280px) {
-  .nogridmsg h1 {
-    font-size: 18pt;
-  }
-}
-
-@media (max-width: 1175px) {
-  .noplotmsg h1 {
-    font-size: 26px;
-  }
 }
 
 li.fadein {
@@ -251,23 +222,6 @@ a {
   }
 }
 
-svg g {
-  .xaxis-tick-text, .highlight, .xaxis-tick-rect {
-    cursor: pointer;
-  }
-
-  text.yGutter-label, text.xGutter-label {
-    fill: $secondary-text-color;
-    cursor: pointer;
-  }
-}
-
-svg a {
-  &:hover, &:active {
-    text-decoration: none;
-  }
-}
-
 .interactive {
   color: $interactive-color;
 
@@ -281,13 +235,17 @@ svg a {
   color: $secondary-text-color;
 }
 
-.educational-titlepanel {
+.cascade-header {
   padding: 31px 0 34px $pageLeftPadding;
   color: $black;
+  line-height: 32px;
 
-  h1 {
-    font-size: 26px!important;
-    line-height: 32px;
+  .middle {
+    opacity: 0.66;
+  }
+
+  .bottom {
+    opacity: 0.33;
   }
 }
 
@@ -330,11 +288,7 @@ svg a {
 }
 
 .titlepanel {
-  font-size: 16px;
-  line-height: 16px;
-  font-family: $bodycaps-font;
-  font-weight: bold;
-  text-transform: none;
+  font: $title-font;
   margin-right: 10px;
 }
 
@@ -395,8 +349,7 @@ svg a {
 }
 
 div.emptytext {
-  font-size: 12px;
-  font-family: $info-font;
+  font: $body-one-font;
   color: $heat-scale-2;
 }
 
@@ -497,7 +450,7 @@ div.emptytext {
 }
 
 .section-title {
-  font-size: $headline;
+  font: $headline-font;
 }
 
 .top-spacer {

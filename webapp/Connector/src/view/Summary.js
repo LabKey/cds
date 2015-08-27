@@ -23,13 +23,11 @@ Ext.define('Connector.view.Summary', {
 
         this.items = [{
             xtype: 'box',
-            cls: 'educational-titlepanel',
+            cls: 'cascade-header',
             tpl: new Ext.XTemplate(
-                '<h1>',
-                    'Find subjects of interest.<br/>',
-                    '<span style="opacity: 0.66;">Filter multiple attributes.</span><br/>',
-                    '<span style="opacity: 0.33;">Discover relationships.</span>',
-                '</h1>'
+                '<h1>Find subjects of interest.</h1>',
+                '<h1 class="middle">Filter multiple attributes.</h1>',
+                '<h1 class="bottom">Discover relationships.</h1>'
             ),
             data: {}
         }, this.getSummaryDataView()];

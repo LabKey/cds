@@ -7,18 +7,16 @@ Ext.define('Connector.app.view.StudyProducts', {
 
     extend : 'Ext.view.View',
 
-    itemSelector: 'div.study-detail',
+    itemSelector: 'div.detail-wrapper',
 
     cls: 'learnstudyproducts',
 
     statics: {
         columnHeaderTpl: new Ext.XTemplate(
             '<div class="learncolumnheader">',
-                '<div class="detail-container">',
-                    '<div class="study-description detail-header">Product name</div>',
-                    '<div class="study-date detail-header">Type</div>',
-                    '<div class="study-treatments detail-header">Developer</div>',
-                '</div>',
+                '<div class="detail-left-column">Product name</div>',
+                '<div class="detail-middle-column">Type</div>',
+                '<div class="detail-right-column">Developer</div>',
             '</div>'
         ),
         searchFields: ['product_name', 'product_description', 'product_type', 'product_class_label', 'product_subclass', 'product_developer']
@@ -29,18 +27,24 @@ Ext.define('Connector.app.view.StudyProducts', {
             '{[ Connector.app.view.StudyProducts.columnHeaderTpl.apply(values) ]}',
         '</tpl>',
         '<tpl for=".">',
-            '<div class="detail-wrapper">',
-                '<div class="detail-container study-detail">',
-                    '<div class="study-description">',
+            '<div class="detail-container">',
+                '<div class="detail-wrapper">',
+                    '<div class="detail-left-column detail-description">',
                         '<h2>{product_name:htmlEncode}</h2>',
-                        '<div class="description-text">{product_description:htmlEncode}</div>',
+                        '<div class="detail-description-text">{product_description:htmlEncode}</div>',
                     '</div>',
-                    '<div class="study-date">',
-                        '<span class="startdate-text">{product_type:htmlEncode}</span>',
-                        '<span class="enddate-text">Class: <span style="color: black;">{product_class_label:htmlEncode}</span></span>',
-                        '<span class="enddate-text">Subclass: <span style="color: black;">{product_subclass:htmlEncode}</span></span>',
+                    '<div class="detail-middle-column detail-text">',
+                        '<div class="detail-black-text">{product_type:htmlEncode}</div>',
+                        '<div>',
+                            '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class_label:htmlEncode}</span></span>',
+                        '</div>',
+                        '<div>',
+                            '<span class="detail-gray-text">Subclass: <span class="detail-black-text">{product_subclass:htmlEncode}</span></span>',
+                        '</div>',
                     '</div>',
-                    '<div class="study-treatments">{product_developer:htmlEncode}</div>',
+                    '<div class="detail-right-column detail-text">',
+                        '<div class="detail-gray-text"">{product_developer:htmlEncode}</div>',
+                    '</div>',
                 '</div>',
             '</div>',
         '</tpl>'

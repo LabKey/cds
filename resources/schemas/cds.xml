@@ -499,6 +499,7 @@
             <column columnName="assay_method_description"/>
             <column columnName="assay_endpoint_description"/>
             <column columnName="assay_endpoint_statistical_analysis"/>
+            <column columnName="assay_type"/>
         </columns>
     </table>
     <table tableName="subjectproductmap" tableDbType="TABLE">
