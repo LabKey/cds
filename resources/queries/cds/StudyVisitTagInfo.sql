@@ -20,4 +20,4 @@ LEFT JOIN cds.Study s ON s.study_name = sp.Label
 LEFT JOIN study.Visit v ON v.rowid = vtm.visit_row_id
 LEFT JOIN study.VisitTag vt ON vtm.visit_tag = vt.name
 LEFT JOIN cds.treatmentarm ta ON vtm.study_group_id.group_name = ta.arm_group AND vtm.study_group_id.container = ta.container
-WHERE s.label IS NOT NULL AND ta.coded_label IS NOT NULL
+WHERE s.label IS NOT NULL

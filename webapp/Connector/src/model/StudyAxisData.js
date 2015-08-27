@@ -222,9 +222,9 @@ Ext.define('Connector.model.StudyAxisData', {
 
         // sort by study label
         data.sort(function(a, b) {
-            if (a.label < b.label)
+            if (a.name < b.name)
                 return -1;
-            if (a.label > b.label)
+            if (a.name > b.name)
                 return 1;
             return 0;
         });

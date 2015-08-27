@@ -57,7 +57,7 @@ Connector.view.StudyAxis = function() {
         preenrollment.enter().append('rect').attr('class', 'preenrollment');
         preenrollment.attr('y', function(d) { return yScale(studyGroupName(d)) + 4; })
                 .attr('x', x)
-                .attr('width', function(d) {return xScale(d.enrollment) - x;})
+                .attr('width', function(d) {return (d.enrollment)?(xScale(d.enrollment) - x):0;})
                 .attr('height', perStudyHeight - 8)
                 .attr('fill', ChartUtils.colors.PREENROLLMENT);
     };
