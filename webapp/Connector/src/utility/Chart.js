@@ -141,7 +141,8 @@ Ext.define('Connector.utility.Chart', {
             xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
 
-            if (xMeasure.name.toLowerCase().indexOf("alignedDay") > -1) {
+            // Issue 24124: With time points, brushing can create a filter that is not a whole number
+            if (xMeasure.variableType == 'TIME') {
                 xMin = Math.floor(xMin);
                 xMax = Math.ceil(xMax);
             }
