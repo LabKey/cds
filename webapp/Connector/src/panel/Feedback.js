@@ -14,8 +14,13 @@ Ext.define('Connector.panel.Feedback', {
     border: false,
 
     statics: {
-        DEFAULT_ISSUE_USER: 'joec',
+        DEFAULT_ISSUE_USER: 'vikramt',
         displayWindow : function(animateTarget) {
+            var resizer = function() {
+                console.log('higher');
+                this.center();
+            };
+
             var win = Ext.create('Ext.window.Window', {
                 ui: 'axiswindow',
                 border: false,
@@ -30,15 +35,21 @@ Ext.define('Connector.panel.Feedback', {
                     xtype: 'feedback',
                     listeners: {
                         hide: function() {
+                            //removes the listener if the window is hidden so center isnt called for no reason
+                            Ext.EventManager.removeResizeListener(resizer, win);
                             win.hide(animateTarget);
                         },
                         scope: this
                     }
                 }],
                 width: 520,
-                height: 600
+                height: 600,
+                listeners: {
+                    afterrender: function(win) {
+                        Ext.EventManager.onWindowResize(resizer, win);
+                    }
+                }
             });
-
             win.show(animateTarget);
         }
     },
@@ -129,11 +140,20 @@ Ext.define('Connector.panel.Feedback', {
         return this.headerPanel;
     },
 
-    postFeedback : function(title, comments, url, assignedUserId) {
+    postFeedback : function(title, comments, url, assignedUserId, callback, scope) {
 
         var config = {
             url: LABKEY.ActionURL.buildURL('issues', 'insert.view'),
             method: 'POST',
+            success: callback,
+            failure: function() {
+                // This will only get called in the event that the server responds with something
+                // other than status 200 OK. Normally, a JSON-based API would return 'success' false or the like,
+                // however, since this API is HTML-only it will normally return 200 OK even when there are
+                // errors since it is trying to let the user re-see the issue in an attempt to rectify their errors.
+                Ext.Msg.alert('Failed to save feedback.');
+            },
+            scope: scope,
             params: {
                 issueId: 0,
                 action: 'org.labkey.issue.IssuesController$InsertAction',
@@ -211,14 +231,32 @@ Ext.define('Connector.panel.Feedback', {
                             //checks whether both the title and comment sections are printed out
                             if (form.isValid()) {
                                 var values = form.getValues();
-                                this.postFeedback(values.title, values.comment, values.url, values.assignedTo);
-                                this.hide();
-                                alert('Form Sent');
-                            }
+                                this.postFeedback(values.title, values.comment, values.url, values.assignedTo, function(response) {
+                                    var html = response.responseText;
 
-                            //prints an alert otherwise
-                            else {
-                                alert('You need to specify the title and the comment!');
+                                    // The issues API only returns HTML views. In the case of a successful creation
+                                    // of an issue the server responds with a different title than if it fails to save.
+                                    // This check is to attempt to inspect that the issue was actually created
+                                    if (html.indexOf('<title>Issue') > -1) {
+                                        Ext.Msg.show({
+                                            timeout: 5,
+                                            msg: 'Thanks for your feedback! <br> Posting Issue...'
+                                        });
+                                        this.hide();
+                                        setTimeout( function() {
+                                            Ext.Msg.hide();
+                                        },1000);
+                                        return;
+                                    }
+
+                                    Ext.Msg.show({
+                                        msg: 'Failed to save feedback. Sorry!'
+                                    });
+                                    setTimeout( function() {
+                                        Ext.Msg.hide();
+                                    },1000);
+
+                                }, this);
                             }
 
                         },
