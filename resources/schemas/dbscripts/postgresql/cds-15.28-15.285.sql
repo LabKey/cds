@@ -1,6 +1,3 @@
--- This is a running set of the changes in this branch. In the end this will be
--- rolled up into an upgrade script.
-
 DROP TABLE IF EXISTS cds.import_StudyPartGroupArmVisitTag CASCADE;
 
 ALTER TABLE cds.import_StudyPartGroupArmVisit ADD COLUMN ischallvis BOOLEAN DEFAULT FALSE;
