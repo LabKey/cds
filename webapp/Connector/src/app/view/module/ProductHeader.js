@@ -12,13 +12,32 @@ Ext.define('Connector.view.module.ProductHeader', {
     tpl : new Ext.XTemplate(
         '<tpl>',
             Connector.constant.Templates.module.title,
-            '<tpl if="model.get(\'product_type\')"><p class="item-row">Product Type: {[values.model.get("product_type")]}</p></tpl>',
-            //'<tpl if="model.get(\'Immunogen\')"><p class="item-row">Immunogen: {[values.model.get("Immunogen")]}</p></tpl>',
-            '<tpl if="model.get(\'product_class_label\')"><p class="item-row">Class: {[values.model.get("product_class_label")]}</p></tpl>',
-            //'<tpl if="model.get(\'VectorClass\')"><p class="item-row">Vector Class: {[values.model.get("Class")]}</p></tpl>',
-            '<tpl if="model.get(\'product_subclass\')"><p class="item-row">Subclass: {[values.model.get("product_subclass")]}</p></tpl>',
-            //'<tpl if="model.get(\'Clades\')"><p class="item-row">Clades: {[values.model.get("Clades")]}</p></tpl>',
-            //'<tpl if="model.get(\'Inserts\')"><p class="item-row">Inserts: {[values.model.get("Inserts")]}</p></tpl>',
+            '<table class="learn-study-info">',
+                '<tpl if="product_type">',
+                    '<tr>',
+                        '<td class="item-label">Product Type:</td>',
+                        '<td class="item-value">{product_type:htmlEncode}</td>',
+                    '</tr>',
+                '</tpl>',
+                '<tpl if="product_class_label">',
+                    '<tr>',
+                        '<td class="item-label">Class:</td>',
+                        '<td class="item-value">{product_class_label:htmlEncode}</td>',
+                    '</tr>',
+                '</tpl>',
+                '<tpl if="product_subclass">',
+                    '<tr>',
+                        '<td class="item-label">Subclass:</td>',
+                        '<td class="item-value">{product_subclass:htmlEncode}</td>',
+                    '</tr>',
+                '</tpl>',
+            '</table>',
         '</tpl>'
-    )
+    ),
+
+    initComponent : function() {
+        var data = this.initialConfig.data.model.data;
+        data['title'] = this.initialConfig.data.title;
+        this.update(data);
+    }
 });

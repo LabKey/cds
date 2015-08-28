@@ -14,6 +14,7 @@ SELECT
   dd.subject_circumcised_enrollment AS circumcisionstatusenrollment,
 
   -- INTEGER
+  CAST(ROUND(10 * Floor(dd.subject_age_enrollment_years / 10.0)) AS VARCHAR) || '-' || CAST(ROUND((10 * Floor(dd.subject_age_enrollment_years / 10.0)) + 9) AS VARCHAR) AS agegroup_range,
   CAST(ROUND(10 * Floor(dd.subject_age_enrollment_years / 10.0)) AS INTEGER) AS agegroup_enrollment,
   dd.subject_age_enrollment_years AS age_enrollment,
   -- import_demographics.subject_bmi_enrollment AS bmi,

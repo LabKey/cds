@@ -59,6 +59,7 @@ Ext.define('Connector.panel.FilterPanel', {
         // title
         var items = [{
             xtype: 'box',
+            cls: 'filterpanel-header',
             tpl: new Ext.XTemplate(
                 '<h2 class="section-title">{title:htmlEncode}</h2>'
             ),
@@ -95,6 +96,7 @@ Ext.define('Connector.panel.FilterPanel', {
         if (!this.emptyText) {
             this.emptyText = Ext.create('Ext.container.Container', {
                 itemId: 'emptypanel',
+                cls: 'filterpanel-header',
                 html : '<div class="emptytext">All subjects</div>'
             });
         }

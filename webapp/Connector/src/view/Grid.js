@@ -38,60 +38,39 @@ Ext.define('Connector.view.Grid', {
 
         this.columnMap = {};
 
-        this.items = [
-            {
-                xtype: 'container',
-                height: this.headerHeight,
-                ui: 'custom',
-                cls: 'header-container',
-                layout: {
-                    type: 'hbox'
-                },
-                items: [{
+        this.items = [{
+            xtype: 'container',
+            height: this.headerHeight,
+            ui: 'custom',
+            cls: 'header-container',
+            layout: {
+                type: 'hbox'
+            },
+            items: [
+                {
                     xtype: 'actiontitle',
                     text: 'View data grid'
-                },{
+                },
+                {
                     // This allows for the following items to be right aligned
                     xtype: 'box',
                     flex: 1,
                     autoEl: {
                         tag: 'div'
                     }
-                },{
-                    xtype: 'button',
-                    cls: 'gridexportbtn',
-                    ui: 'rounded-inverted-accent-text',
-                    text: 'export',
-                    margin: '0 15 0 0',
-                    handler: this.requestExport,
-                    scope: this
-                },{
-                    xtype: 'button',
-                    cls: 'gridcitationsbtn',
-                    text: 'citations',
-                    ui: 'rounded-inverted-accent-text',
-                    margin: '0 15 0 0',
-                    disabled: true,
-                    handler: function() {},
-                    scope: this
-                },{
-                    xtype: 'button',
-                    cls: 'gridcolumnsbtn',
-                    text: 'select columns',
-                    handler: this.showMeasureSelection,
-                    scope: this
-                }]
-            },{
-                // This provides a row count on the screen for testing purposes
-                id: 'gridrowcountcmp',
-                xtype: 'box',
-                style: 'position: absolute; top: 50px; left: 27px; color: transparent;',
-                tpl: '<span id="gridrowcount">Row Count: {count}</span>',
-                data: {
-                    count: -1
-                }
-            }
-        ];
+                },
+                this.getExportButton(),
+                this.getCitationsButton(),
+                this.getSelectColumnsButton()
+            ]
+        },{
+            // This provides a row count on the screen for testing purposes
+            id: 'gridrowcountcmp',
+            xtype: 'box',
+            style: 'position: absolute; top: 50px; left: 27px; color: transparent;',
+            tpl: '<span id="gridrowcount">Row Count: {count}</span>',
+            data: {count: -1}
+        }];
 
         this.callParent();
         var model = this.getModel();
@@ -139,6 +118,50 @@ Ext.define('Connector.view.Grid', {
         });
 
         this.on('beforehide', this.hideVisibleWindow);
+    },
+
+    getExportButton : function() {
+        if (!this.exportButton) {
+            this.exportButton = Ext.create('Ext.button.Button', {
+                cls: 'gridexportbtn',
+                ui: 'rounded-inverted-accent-text',
+                text: 'export',
+                margin: '0 15 0 0',
+                handler: this.requestExport,
+                scope: this
+            });
+        }
+
+        return this.exportButton;
+    },
+
+    getCitationsButton : function() {
+        if (!this.citationsButton) {
+            this.citationsButton = Ext.create('Ext.button.Button', {
+                cls: 'gridcitationsbtn',
+                text: 'citations',
+                ui: 'rounded-inverted-accent-text',
+                margin: '0 15 0 0',
+                disabled: true,
+                handler: function() {},
+                scope: this
+            });
+        }
+
+        return this.citationsButton;
+    },
+
+    getSelectColumnsButton : function() {
+        if (!this.selectColumnsButton) {
+            this.selectColumnsButton = Ext.create('Ext.button.Button', {
+                cls: 'gridcolumnsbtn',
+                text: 'select columns',
+                handler: this.showMeasureSelection,
+                scope: this
+            });
+        }
+
+        return this.selectColumnsButton;
     },
 
     setVisibleWindow : function(win) {
@@ -286,35 +309,43 @@ Ext.define('Connector.view.Grid', {
         store.loadPage(1);
 
         this.applyFilterColumnState(grid);
+        Connector.getService('Query').clearSourceCountsCache();
     },
 
-    getAxisSelector : function() {
-        if (!this.axisPanel) {
-            this.axisPanel = Ext.create('Connector.panel.AxisSelector', {
-                ui: 'axispanel',
-                bodyStyle: 'padding: 15px 27px 0 27px;',
-                measureConfig : {
-                    cls: 'gridcolumnpicker',
-                    sourceCls: this.axisSourceCls,
-                    supportSelectionGroup: true,
-                    supportSessionGroup: true,
-                    displaySourceCounts: true,
-                    sourceCountSchema: Connector.studyContext.schemaName,
-                    measuresStoreData: Connector.getService('Query').getMeasuresStoreData({
-                        queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                        includeTimpointMeasures: true,
-                        includeHidden: this.canShowHidden
-                    }).measures
+    getColumnSelector : function() {
+        if (!this.columnSelectorPanel) {
+            this.columnSelectorPanel = Ext.create('Connector.panel.Selector', {
+                headerTitle: 'choose columns',
+                selectButtonTitle: 'Done',
+                testCls: 'column-axis-selector',
+                multiSelect: true,
+                sourceMeasureFilter: {
+                    queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
+                    includeTimpointMeasures: true,
+                    includeHidden: this.canShowHidden
                 },
-                displayConfig: {
-                    mainTitle: 'Choose Measures for the Data Grid...'
-                },
-                disableLookups: false,
-                disableScale: true
+                memberCountsFn: ChartUtils.getSubjectsIn,
+                memberCountsFnScope: this,
+                supportSelectionGroup: true,
+                supportSessionGroup: true,
+                disableAdvancedOptions: true,
+                listeners: {
+                    selectionmade: function(selected) {
+                        this.clearVisibleWindow();
+
+                        this.fireEvent('measureselected', selected);
+                        this.getMeasureSelectionWindow().hide();
+                    },
+                    cancel: function() {
+                        this.clearVisibleWindow();
+                        this.getMeasureSelectionWindow().hide();
+                    },
+                    scope: this
+                }
             });
         }
 
-        return this.axisPanel;
+        return this.columnSelectorPanel;
     },
 
     getColumnMetadata : function(columnName) {
@@ -395,43 +426,19 @@ Ext.define('Connector.view.Grid', {
     getMeasureSelectionWindow : function() {
         if (!this.measureWindow) {
             this.measureWindow = Ext.create('Ext.window.Window', {
-                id: 'gridmeasurewin',
                 ui: 'axiswindow',
-                cls: 'axiswindow gridaxiswindow',
-                plain: true,
                 modal: true,
                 draggable: false,
-                preventHeader: true,
+                header: false,
                 resizable: false,
                 closeAction: 'hide',
-                layout: 'fit',
-                maxWidth: 1400,
-                items: [ this.getAxisSelector() ],
-                dockedItems : [{
-                    xtype : 'toolbar',
-                    dock : 'bottom',
-                    ui : 'footer',
-                    padding : 15,
-                    items : ['->',{
-                        text: 'select',
-                        handler : function() {
-                            this.clearVisibleWindow();
-
-                            var axispanel = this.getAxisSelector();
-                            var allMeasures = axispanel.getMeasurePicker().measuresStoreData.measures;
-                            this.fireEvent('measureselected', axispanel.getSelection(), allMeasures, axispanel.getLookups());
-                            this.measureWindow.hide();
-                        },
-                        scope: this
-                    },{
-                        text: 'cancel',
-                        handler : function() {
-                            this.clearVisibleWindow();
-                            this.measureWindow.hide();
-                        },
-                        scope: this
-                    }]
-                }],
+                style: 'padding: 0',
+                minHeight: 580,
+                border: false,
+                layout: {
+                    type: 'fit'
+                },
+                items: [ this.getColumnSelector() ],
                 listeners: {
                     scope: this,
                     show: function(cmp) {
@@ -439,6 +446,9 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             });
+
+            // whenever the window is closed/hidden, go back to the sources panel
+            this.measureWindow.on('hide', function() { this.getColumnSelector().showSources(); }, this);
         }
 
         return this.measureWindow;
@@ -673,23 +683,25 @@ Ext.define('Connector.view.Grid', {
         return false;
     },
 
+    getLockedMeasureAliases : function() {
+        // return an array of measure aliases for those columns added to the grid via plot selection or active filters
+        var model = this.getModel(), aliases;
+        aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
+        aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
+        return Ext4.Array.unique(aliases);
+    },
+
+    getSelectedMeasureAliases : function() {
+        // return an array of measure aliases for those columns added to the grid via the column chooser
+        return Ext.Array.pluck(this.getModel().getMeasures('measures'), 'alias');
+    },
+
     showMeasureSelection : function() {
         Connector.getService('Query').onQueryReady(function() {
-            var measureWindow = this.getMeasureSelectionWindow(),
-                    box = this.getBox(),
-                    mp = this.getAxisSelector().getMeasurePicker(),
-                    filterState = this.getModel().get('filterState');
-
-            measureWindow.setSize(box.width-100, box.height-100);
-            measureWindow.show();
-
-            // Run the query to determine current measure counts
-            mp.setCountMemberSet(filterState.hasFilters ? filterState.subjects : null);
-
-            // Open with 'Current columns' selected if we have a selection
-            if (mp.getSelectedRecords().length > 0 && mp.getSourceStore().getCount() > 0) {
-                mp.getSourcesView().getSelectionModel().select(mp.getSourceStore().getAt(0));
-            }
+            this.getColumnSelector().setLockedMeasures(this.getLockedMeasureAliases());
+            this.getColumnSelector().setSelectedMeasures(this.getSelectedMeasureAliases());
+            this.getColumnSelector().loadSourceCounts();
+            this.getMeasureSelectionWindow(this.getSelectColumnsButton().getEl()).show();
         }, this);
     },
 

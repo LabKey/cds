@@ -38,7 +38,6 @@
         <script path="../../../internal/explodedModule/web/app/Selection.js"/>
         <script path="../../../internal/explodedModule/web/app/AbstractViewController.js"/>
         <script path="../../../internal/explodedModule/web/app/OlapExplorer.js"/>
-        <script path="../../../internal/explodedModule/web/app/MeasurePicker.js"/>
         <script path="../../../internal/explodedModule/web/app/LoadingMask.js"/>
 
         <!-- Ext Widget Dependencies -->
@@ -104,7 +103,6 @@
         <script path="Connector/src/window/Filter.js"/>
         <script path="Connector/src/window/Facet.js"/>
         <script path="Connector/src/window/SystemMessage.js"/>
-        <script path="Connector/src/panel/AxisSelector.js"/>
         <script path="Connector/src/panel/Feedback.js"/>
         <script path="Connector/src/panel/FilterPanel.js"/>
         <script path="Connector/src/panel/Selection.js"/>
@@ -193,29 +191,27 @@
         <script path="Connector/src/app/model/Dataset.js"/>
         <script path="Connector/src/app/model/DatasetData.js"/>
         <script path="Connector/src/app/model/Labs.js"/>
-        <script path="Connector/src/app/model/Site.js"/>
         <script path="Connector/src/app/model/Study.js"/>
         <script path="Connector/src/app/model/StudyProducts.js"/>
+        <script path="Connector/src/app/model/VariableList.js"/>
 
         <script path="Connector/src/app/store/Assay.js"/>
         <script path="Connector/src/app/store/Dataset.js"/>
         <script path="Connector/src/app/store/DatasetData.js"/>
         <script path="Connector/src/app/store/Labs.js"/>
-        <script path="Connector/src/app/store/Site.js"/>
         <script path="Connector/src/app/store/Study.js"/>
         <script path="Connector/src/app/store/StudyProducts.js"/>
+        <script path="Connector/src/app/store/VariableList.js"/>
 
         <script path="Connector/src/app/view/Assay.js"/>
         <script path="Connector/src/app/view/Labs.js"/>
         <script path="Connector/src/app/view/ModuleContainer.js"/>
-        <script path="Connector/src/app/view/Site.js"/>
         <script path="Connector/src/app/view/Study.js"/>
         <script path="Connector/src/app/view/StudyProducts.js"/>
 
         <script path="Connector/src/app/view/module/AssayAnalyteList.js"/>
         <script path="Connector/src/app/view/module/AssayAntigenList.js"/>
         <script path="Connector/src/app/view/module/AssayHeader.js"/>
-        <script path="Connector/src/app/view/module/AssayVariableList.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
         <script path="Connector/src/app/view/module/ProductManufacturing.js"/>
         <script path="Connector/src/app/view/module/ProductProvidedBy.js"/>
