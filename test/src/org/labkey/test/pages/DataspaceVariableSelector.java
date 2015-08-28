@@ -20,6 +20,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.LabKeyExpectedConditions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -42,13 +43,27 @@ public abstract class DataspaceVariableSelector
     protected abstract Locator getOpenButton();
     public abstract Locator.CssLocator window();
 
-    public void openSelectorWindow()
+    public void openSelectorWindow(String selector, String selectorTitle)
     {
-        WebElement openButton = _test.shortWait().until(ExpectedConditions.elementToBeClickable(getOpenButton().toBy()));
+        String xpathToCancel = "//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']";
 
+        WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
+        _test.sleep(750); // Don't know why, but more reliable with the wait.
         openButton.click();
+        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText(selectorTitle).toBy()));
 
-        _test.shortWait().until(ExpectedConditions.elementToBeClickable(sourcePanelRow().toBy()));
+        // Use the cancel button as a validation that the selector is ready.
+        _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathToCancel)));
+        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(xpathToCancel).toBy()));
+
+        // Wait for the spinning orange circle to go away. In some cases don't even see that so wait until counts show up (possible bug?)
+        while(!_test.isElementPresent(Locator.xpath("//div[contains(@class, 'content-count')]"))
+                || (_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + selector + "')][contains(@class, 'item-spinner-mask-orange')]"))))
+        {
+            _test.log("Waiting for subject counts to complete before returning.");
+            _test.sleep(1000);
+        }
+
     }
 
     public Locator.CssLocator pickerPanel()
@@ -74,8 +89,15 @@ public abstract class DataspaceVariableSelector
         return window().append(" .variableoptionsgrid tr." + Ext4Helper.getCssPrefix() + "grid-data-row");
     }
 
-    public void pickSource(String source)
+    public void pickSource(String selector, String source)
     {
+        // Wait for the spinning orange circle to go away. In some cases don't even see that so wait until counts show up (possible bug?)
+        while(!_test.isElementPresent(Locator.xpath("//div[contains(@class, 'content-count')]"))
+                || (_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + selector + "')][contains(@class, 'item-spinner-mask-orange')]"))))
+        {
+            _test.log("Waiting for subject counts before clicking source.");
+            _test.sleep(1000);
+        }
         _test.click(window().append(" div.content-label").withText(source));
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
@@ -183,17 +205,21 @@ public abstract class DataspaceVariableSelector
     private void participantCountHelper(String selector, AssayDimensions dimension, Map<String, String> counts, Boolean cancelAtEnd, String xpathDimField, String xpathPanelSelector)
     {
         Locator locDimField;
-        String actualCount;
+        String actualCount, xpathToElement;
+        String xpath = "//div[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='*']";
 
         locDimField = Locator.xpath(xpathDimField);
         _test.click(locDimField);
         _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        _test.waitForElement(Locator.xpath(xpathPanelSelector));
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        _test.waitForElement(Locator.xpath(xpathPanelSelector), CDSHelper.CDS_WAIT_ANIMATION);
+        LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathPanelSelector));
 
         for(Map.Entry<String, String> entry : counts.entrySet()){
 
-            actualCount = _test.getText(Locator.xpath(xpathPanelSelector + "//div[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + entry.getKey().toLowerCase() + "']"));
+            xpathToElement = xpath.replaceAll("[*]", entry.getKey().toLowerCase());
+            _test.waitForElement(Locator.xpath(xpathPanelSelector + xpathToElement), 10000);
+
+            actualCount = _test.getText(Locator.xpath(xpathPanelSelector + xpathToElement));
 
             // If expected count is -1 don't validate count.
             if(entry.getValue() != "-1")
@@ -204,7 +230,7 @@ public abstract class DataspaceVariableSelector
                 // If count is 0 validate UI as expected.
                 if (entry.getValue() == "0")
                 {
-                    Locator.XPathLocator parent = Locator.xpath(xpathPanelSelector + "//div[translate(@test-data-value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='" + entry.getKey().toLowerCase() + "']/./parent::div");
+                    Locator.XPathLocator parent = Locator.xpath(xpathPanelSelector + xpathToElement + "/./parent::div");
                     _test.assertElementPresent(parent.withAttributeContaining("class", "col-disable"));
                 }
 
@@ -270,7 +296,11 @@ public abstract class DataspaceVariableSelector
 
                 if(_test.isElementPresent(locDimField))
                 {
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                     _test.click(locDimField);
+
+                    // Let the drop down render.
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
 
                     // Since it is a radio button shouldn't really iterate.
                     for(String val : value){
@@ -287,10 +317,14 @@ public abstract class DataspaceVariableSelector
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antigen')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
                 locDimField = Locator.xpath(xpathDimField);
+
+                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                 _test.click(locDimField);
-                _test.waitForElement(Locator.xpath(xpathPanelSelector));
 
                 allTag = Locator.xpath(xpathPanelSelector + "//label[text()='All']/./preceding-sibling::input");
+
+                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[text()='All']"))
@@ -315,7 +349,11 @@ public abstract class DataspaceVariableSelector
 
                 if(_test.isElementPresent(locDimField))
                 {
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                     _test.click(locDimField);
+
+                    // Let the drop down render.
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
 
                     // Clear the current selection.
                     if(!cds.isCheckboxChecked(xpathDimDropDown + "//label[text()='All']"))
@@ -342,7 +380,11 @@ public abstract class DataspaceVariableSelector
 
                 if(_test.isElementPresent(locDimField))
                 {
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                     _test.click(locDimField);
+
+                    // Let the drop down render.
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
 
                     for(String val : value){
                         _test.checkCheckbox(Locator.xpath(xpathDimDropDown + "//label[text()='" +val + "']"));
@@ -358,12 +400,15 @@ public abstract class DataspaceVariableSelector
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
                 locDimField = Locator.xpath(xpathDimField);
+                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                 _test.click(locDimField);
-                _test.waitForElement(Locator.xpath(xpathPanelSelector));
-                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+                _test.waitForElement(Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"), CDSHelper.CDS_WAIT_ANIMATION);
 
                 // Since a protein has multiple columns the allTag will point to the all tag in the far left column.
                 allTag = Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']");
+
+                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"))
@@ -388,7 +433,11 @@ public abstract class DataspaceVariableSelector
 
                 if(_test.isElementPresent(locDimField))
                 {
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                     _test.click(locDimField);
+
+                    // Let the drop down render.
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
 
                     // Since it is a radio button shouldn't really iterate.
                     for(String val : value){
@@ -405,12 +454,16 @@ public abstract class DataspaceVariableSelector
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-virus')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
                 locDimField = Locator.xpath(xpathDimField);
+                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                 _test.click(locDimField);
-                _test.waitForElement(Locator.xpath(xpathPanelSelector));
-                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
                 // Since a virus has multiple columns the allTag will point to the all tag in the far left column.
                 allTag = Locator.xpath(xpathPanelSelector + "//label[@test-data-value='neutralization_tier-all']");
+
+                _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+                _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
+
+                _test.waitForElement(allTag, 10000);
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='neutralization_tier-all']"))
