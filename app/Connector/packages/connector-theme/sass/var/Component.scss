@@ -1,24 +1,54 @@
 /* Site wide coloring scheme */
 $select-color: #14C9CC;            // Bright Blue
 $select-hover-color: #BEEFEF;      // Light Blue
-$primary-color: #DCD8D8;           // Main Gray
-$secondary-color: #F0F0F0;         // Light Gray
+
 $legend-color: #BAB4B4;            // 10% darker than $secondary-color
-$light-color: #FFFFFF;             // White
+$light-color: #ebebeb;             // Light Text
+$light-color-hover: #ffffff;      //  Light Text Hover
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
 $interactive-color: #9B0D96;       // Interactive
 $info-color: #F5A73A;              // Info
+$secondary-color: #F0F0F0;         // Light Gray
+
+$border-color: #BABABA;
+$box-shadow-color: #CCCCCC;
+
+/* NEW COLORS */
+$action-red: #fb2e5c;              // Red full Saturated
+$action-red-hover: #dc2850;         // Red Hover
+$action-red-hover-outline:  #82192d; //  Red hover outline
+
+$data-green: #41c49f;
+$data-green-hover: #3ab08f;
+$data-green-hover-outline: #2d876e;
+
+/* GRAY (DARKEST TO LIGHTEST) */
+
+$gray-1: #1e1e1e;           // Main Gray
+$gray-2: #323232;           // Main Gray
+$gray-25: #646464;           // Main Gray
+$gray-3: #828282;           // Main Gray
+$gray-4: #969696;           // Main Gray
+$gray-5: #bebebe;           // Main Gray
+$gray-6: #e1e1e1;           // Main Gray
+$gray-7: #ebebeb;           // Main Gray
+$gray-8: #f5f5f5;           // Main Gray
+
+/* WHITES */
+
+$white: #fff;
+$off-white: #fefefe;
+$black: #303030;
+$unselect-black: rgba(0, 0, 0, 0.4);
+
+/* TEXT COLORS */
 
 $primary-text-color: #222222;
 $secondary-text-color: #777777;
 $placeholder-text-color: #AFAFAF;
 
-$black: #303030;
-$unselect-black: rgba(0, 0, 0, 0.4);
 
-$border-color: #BABABA;
-$box-shadow-color: #CCCCCC;
 
 /* these could be an actual scale using a function -- stick with Artefact colors for now */
 $heat-scale-1: #666363;
@@ -45,7 +75,7 @@ $subhead-font: bold 11px $info-font;
 $body-two-font: 13px/16px $info-font;
 $body-one-font: 12px/15px $info-font;
 $caption-font: 11px/14px $info-font;
-$nav-font: 16px $data-font;
+$nav-font: 14px $data-font;
 
 // General
 $connector-prefix: 'x-'; /* Used to mimic Ext's $prefix which is not defined yet when this file is compiled */
@@ -71,7 +101,7 @@ $loadmask-opacity: 0.35;
 // Calendar
 $datepicker-base-color: $light-color;
 
-$window-body-background-color: $primary-color;
+$window-body-background-color: $gray-7;
 $window-header-color: $secondary-color;
 
 // Grid
@@ -148,6 +178,14 @@ $tip-body-color: $info-color;
   user-select: none;
 }
 
+@mixin prefixer($property, $value) {
+  -webkit-#{$property}: $value;
+  -moz-#{$property}: $value;
+  -ms-#{$property}: $value;
+  -o-#{$property}: $value;
+  #{$property}: $value;
+}
+
 @mixin rightFade {
   // needs latest Compass, add '@import "compass"' to your scss
   background-color: $secondary-color; // Old browsers
@@ -210,6 +248,13 @@ a {
   &.logout {
     color: $light-color;
     cursor: pointer;
+    transition: all 0.3s ease;
+
+
+    &:hover {
+      color: $light-color-hover;
+      text-decoration: none;
+    }
   }
 
   &.survey {
@@ -410,12 +455,12 @@ div.emptytext {
 
 .#{$connector-prefix}tip-anchor {
   border-width: 12px;
-  border-left-color: darken($primary-color, 10%);
+  border-left-color: darken($gray-7, 10%);
 }
 
 .#{$connector-prefix}tip-anchor-left {
   border-left-color: transparent !important;
-  border-right-color: darken($primary-color, 10%);
+  border-right-color: darken($gray-7, 10%);
 }
 
 .#{$connector-prefix}mask {

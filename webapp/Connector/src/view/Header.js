@@ -10,7 +10,7 @@ Ext.define("Connector.view.Header", {
 
     layout: 'hbox',
 
-    height: 48,
+    height: 56,
 
     cls: 'connectorheader',
 
@@ -28,17 +28,17 @@ Ext.define("Connector.view.Header", {
             cls: 'logo',
             flex: 4,
             tpl: [
-                '<img src="{imgSrc}">',
-                '<h2>HIV VACCINE <span>Collaborative DataSpace</span></h2>'
+                '<img src="{imgSrc}" width="56" height="56">',
+                '<h2>CAVD <span>Collaborative DataSpace</span></h2>'
             ],
             data: {
-                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo.png'
             }
         },{
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '18 14 0 0',
+            margin: '18 28 0 0',
             width: 250,
             items: [{
                 xtype: 'box',
@@ -59,7 +59,7 @@ Ext.define("Connector.view.Header", {
             },{
                 xtype: 'box',
                 itemId: 'about',
-                margin: '2 15 0 0',
+                margin: '2 36 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -69,7 +69,7 @@ Ext.define("Connector.view.Header", {
             },{
                 xtype: 'box',
                 itemId: 'logout',
-                margin: '2 15 0 0',
+                margin: '2 0 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',

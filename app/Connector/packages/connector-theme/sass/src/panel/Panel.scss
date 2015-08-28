@@ -1,13 +1,13 @@
 @include extjs-panel-ui(
   $ui-label: 'primary-view',
-  $ui-body-background-color: $light-color,
+  $ui-body-background-color: $gray-8,
   $ui-border-width: 0,
   $ui-body-border-width: 0
 );
 
 @include extjs-panel-ui(
   $ui-label: 'east-view',
-  $ui-body-background-color: $primary-color,
+  $ui-body-background-color: $gray-7,
   $ui-border-width: 0,
   $ui-body-border-width: 0
 );
@@ -17,14 +17,15 @@
 }
 
 .x-panel-body-east-view {
-  background: linear-gradient(90deg, #ebebeb, #f0f0f0) !important;
+  border-left: 1px solid $gray-6;
+  margin-top: 4px;
 }
 
 @include extjs-panel-ui(
   $ui-label: 'navigation',
   $ui-body-border-width: 0px,
-  $ui-body-background-color: $select-color,
-  $ui-body-font-size: 13.5pt
+  $ui-body-background-color: $gray-7,
+  $ui-body-font-size: 12px
 );
 
 div.xaxispicker div.x-panel-body,
@@ -167,7 +168,7 @@ div.definition-overflow {
   }
 
   .x-column-header-trigger {
-    border-left: 1px solid $primary-color;
+    border-left: 1px solid $gray-7;
     background-color: $heat-scale-4;
 
     &:hover {
@@ -228,7 +229,7 @@ div.definition-overflow {
   }
 
   .x-column-header-trigger {
-    border-left: 1px solid $primary-color;
+    border-left: 1px solid $gray-7;
     background-color: $heat-scale-4;
 
     &:hover {

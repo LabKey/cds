@@ -1,5 +1,7 @@
-.filterstatus {
-  padding: 20px 20px 0 20px;
+.filterstatus  {
+  padding: 24px 6px 24px 6px;
+  background: $white;
+  margin: 0 auto;
 }
 
 div.selitem {
@@ -30,19 +32,25 @@ div.filterpanel {
   margin: 0;
 
   .filterpanel-header {
-    margin-left: 10px;
+    margin-left: 0;
+  }
+
+  .x-container {
+    background-color: $gray-7;
+    @include prefixer(border-radius, 2px);
+    padding: 6px 0 0 0;
   }
 }
 
 div.activefilter {
   position: relative;
-  background-color: $light-color;
-  border: 1px solid transparent;
-  @include border-radius(8px);
+  background-color: $white;
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
+  @include prefixer(border-radius, 2px);
   display: inline-block;
-  width: 100%;
-  padding: 3px 9px;
-  margin-bottom: 6px;
+  width: 220px;
+  padding: 3px 8px;
+  margin: 0 6px 6px 6px;
 
   div.selitem {
     padding: 2px 5px 2px 0;
@@ -63,7 +71,6 @@ div.activefilter {
   }
 
   &:hover {
-    border: 1px solid #dddcdc;
     cursor: default;
 
     .closeitem {
@@ -83,7 +90,7 @@ div.selectionpanel {
   padding: 5px 0;
   border: 1px solid #BEEFEF;
   background-color: $light-color;
-  @include border-radius(8px);
+  @include prefixer(border-radius, 2px);
 
   .header {
     font: $nav-font;

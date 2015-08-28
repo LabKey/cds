@@ -5,10 +5,10 @@
 
     h2 {
       float: left;
-      padding: 20px 0 0 10px;
+      padding: 20px 0 0 12px;
       font-family: $bodycaps-font;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 14px;
 
       &:hover {
         cursor: pointer;
@@ -17,15 +17,17 @@
 
     span {
       font-weight: normal;
+      opacity: 0.95;
     }
 
     img {
-      width: 20px;
-      padding-top: 11px;
-      height: 40px;
+      width: 56px;
+      padding-top: 0;
+      height: 56px;
       display: block;
       float: left;
-      margin-left: 24px;
+      margin-left: 0;
+      background: $action-red;
     }
   }
 }

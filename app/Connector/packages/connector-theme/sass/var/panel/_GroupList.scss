@@ -4,7 +4,7 @@ div.grouplist-view {
 }
 
 .grouplist-header {
-  border-bottom: 1px solid $primary-color;
+  border-bottom: 1px solid $gray-7;
   padding-bottom: 3px;
   color: $heat-scale-2;
   @include smallStandout;
@@ -13,13 +13,13 @@ div.grouplist-view {
 .grouplist-empty {
   color: #b5b5b5;
   padding: 2px 0;
-  border-bottom: 1px solid $primary-color;
+  border-bottom: 1px solid $gray-7;
   text-align: center;
 }
 
 .grouprow {
   padding: 2px 0;
-  border-bottom: 1px solid $primary-color;
+  border-bottom: 1px solid $gray-7;
 
   .groupicon {
     display: inline-block;
