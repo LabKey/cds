@@ -15,32 +15,35 @@
  */
 package org.labkey.test.pages;
 
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import com.google.common.base.Function;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
-    DataGrid _dataGrid;
+    private DataGrid _dataGrid;
     public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withText("View data grid");
+    private final String XPATH = "column-axis-selector";
 
-    public DataGridVariableSelector(DataGrid dataGrid)
+    public DataGridVariableSelector(BaseWebDriverTest test, DataGrid grid)
     {
-        super(dataGrid._test);
-        _dataGrid = dataGrid;
+        super(test);
+        _dataGrid = grid;
     }
 
     @Override
     protected String getPickerClass()
     {
-        return "gridcolumnpicker";
+        return XPATH;
     }
 
     public Locator.CssLocator window()
     {
-        return Locator.id("gridmeasurewin").toCssLocator();
+        return Locator.css("." + getPickerClass());
     }
 
     @Override
@@ -60,18 +63,46 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         addGridColumn(source, source, measure, keepOpen, keepSelection);
     }
 
+    public void openSelectorWindow()
+    {
+//        if (!_test.isElementPresent(window()) || !_test.isElementVisible(window()))
+//        {
+//            _test.click(getOpenButton());
+//            _test.waitForElement(window());
+//        }
+        super.openSelectorWindow(XPATH, "choose columns");
+    }
+
+    public void pickSource(String source){
+        // If not currently on the source page, move there.
+        if(_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + getPickerClass() + "')]//span[contains(@class, 'back-action')]")))
+        {
+            backToSource();
+        }
+        super.pickSource(XPATH, source);
+    }
+
+    public void backToSource(){
+        _test.click(Locator.xpath("//div[contains(@class, '" + getPickerClass() + "')]//span[contains(@class, 'back-action')]"));
+        _test.sleep(750);
+    }
+
+    public void pickVariable(String variable, boolean keepSelection)
+    {
+        _test.shortWait().until(ExpectedConditions.elementToBeClickable(measuresPanelRow().toBy())); // if one row is ready, all should be
+        _test._ext4Helper.selectGridItem("label", variable, -1, getPickerClass() + " .content-multiselect", keepSelection);
+    }
+
     public void addGridColumn(String source, String sourceColumnTitle, String measure, boolean keepOpen, boolean keepSelection)
     {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
-        // allow for already open measures
-        if (!_test.isElementPresent(Locator.id("gridmeasurewin").notHidden()))
+        if((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
         {
-            _test.click(getOpenButton());
-            _test.waitForElement(Locator.id("gridmeasurewin").notHidden());
+            openSelectorWindow();
         }
-
-        pickMeasure(source, measure, keepSelection);
+        pickSource(source);
+        pickVariable(measure, keepSelection);
 
         if (!keepOpen)
         {
@@ -110,14 +141,11 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
-        // allow for already open measures
-        if (!_test.isElementPresent(Locator.id("gridmeasurewin").notHidden()))
+        if((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
         {
-            _test.click(getOpenButton());
-            _test.waitForElement(Locator.id("gridmeasurewin").notHidden());
+            openSelectorWindow();
         }
-
-        pickMultiPanelSource(source);
+        pickSource(source);
         _test._ext4Helper.uncheckGridRowCheckbox(measure);
 
         if (!keepOpen)
@@ -142,7 +170,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             @Override
             public Void apply(Void aVoid)
             {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("select"));
+                _test.click(CDSHelper.Locators.cdsButtonLocator("Done"));
                 return null;
             }
         });

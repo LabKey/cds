@@ -41,7 +41,7 @@ public class CDSHelper
             "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
             "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 504", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
 
-    public static final String[] PROT_NAMES = {"v078", "v044", "v503", "v060", "v204", "v041", "v205", "v049", "v049", "v505"}; //incomplete list, only first and last under each assay in find subjects view.
+    public static final String[] PROT_NAMES = {"HVTN 078", "HVTN 044", "HVTN 503", "HVTN 060", "HVTN 204", "HVTN 041", "HVTN 205", "HVTN 049", "HVTN 049", "HVTN 505"}; //incomplete list, only first and last under each assay in find subjects view.
 
     public static final String[] PRODUCTS = {"3BNC117", "acyclovir", "AIDSVAX B/B", "AIDSVAX B/E", "ALVAC-HIV (vCP1452)",
             "ALVAC-HIV (vCP1521)", "ALVAC-HIV (vCP2438)", "AS01B", "AS02A", "AVX101", "AVX201", "BufferGel", "Buprenorphine/naloxone",
@@ -239,8 +239,6 @@ public class CDSHelper
     public static final String BAMA_RESPONSE_CALL = "Response Call (1/0) Calculated per Response Code";
     public static final String BAMA_SPECIMEN = "Specimen type";
     public static final String BAMA_VACCINE = "Vaccine matched indicator";
-    public static final String BAMA_VISIT = "Visit";
-    public static final String BAMA_VISIT_DAY = "Visit Day";
 
     public static final String DEMOGRAPHICS = "Subject characteristics";
     public static final String DEMO_AGEGROUP = "Age Group at Enrollment";
@@ -253,7 +251,6 @@ public class CDSHelper
     public static final String DEMO_SEX = "Sexatbirth";
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
-    public static final String DEMO_VISIT = "Visit";
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
     public static final String ELISPOT_ANTIGEN = "Antigen Panel";
@@ -277,8 +274,6 @@ public class CDSHelper
     public static final String ELISPOT_RESPONSE =  "Response call";
     public static final String ELISPOT_SPECIMEN =  "Specimen type";
     public static final String ELISPOT_VACCINE =  "Vaccine matched indicator";
-    public static final String ELISPOT_VISIT =  "Visit";
-    public static final String ELISPOT_VISIT_DAY =  "Visit Day";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
     public static final String ICS_ANTIGEN = "Antigen";
@@ -301,11 +296,9 @@ public class CDSHelper
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_CLADE = "Protein Clade";
     public static final String ICS_PROTEIN_PANEL = "Protein Panel";
-    public static final String ICS_VISIT_DAY = "Protocol Visit Day";
     public static final String ICS_RESPONSE = "Response call";
     public static final String ICS_SPECIMEN = "Specimen type";
     public static final String ICS_VACCINE = "Vaccine matched";
-    public static final String ICS_VISIT = "Visit";
 
     public static final String NAB = "NAb (Neutralizing antibody)";
     public static final String NAB_ANTIGEN = "Antigen";
@@ -328,8 +321,6 @@ public class CDSHelper
     public static final String NAB_TITERIC80 = "Titer IC80";
     public static final String NAB_VIRUS_NAME = "Virus name";
     public static final String NAB_VIRUS_TYPE = "Virus type";
-    public static final String NAB_VISIT = "Visit";
-    public static final String NAB_VISIT_DAY = "Visit Day";
 
     public static final String TIME_POINTS = "Time points";
     public static final String TIME_POINTS_DAYS = "Study days";

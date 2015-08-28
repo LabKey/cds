@@ -306,7 +306,7 @@ Ext.define('Connector.model.Grid', {
         // set the wrapped measures, foreign columns
         this.set({
             measures: wrapped,
-            foreignColumns: foreignColumns
+            foreignColumns: Ext.isDefined(foreignColumns) ? foreignColumns : {}
         });
 
         if (silent !== true) {
