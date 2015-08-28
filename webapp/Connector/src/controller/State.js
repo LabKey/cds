@@ -40,15 +40,20 @@ Ext.define('Connector.controller.State', {
 
     initColumnListeners : function() {
 
-        this.control('groupdatagrid', {
-            measureselected: function(selected) {
-                Ext.each(selected, function(rec) { this.addSessionColumn(rec.raw); }, this);
-            }
-        });
+        this.control('variableselector', {
+            selectionmade: function(selected) {
+                if (!Ext.isArray(selected)) {
+                    selected = [selected];
+                }
 
-        this.control('plot', {
-            axisselect: function(plot, axis, selection) {
-                Ext.each(selection, this.addSessionColumn, this);
+                Ext.each(selected, function (selection) {
+                    if (selection.$className == 'Connector.model.Measure') {
+                        this.addSessionColumn(selection.raw);
+                    }
+                    else if (Ext.isObject(selection)) {
+                        this.addSessionColumn(selection);
+                    }
+                }, this);
             }
         });
     },

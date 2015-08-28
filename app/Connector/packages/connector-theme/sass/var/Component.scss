@@ -279,10 +279,6 @@ a {
   height: 30px !important;
 }
 
-.x-grid-view {
-  padding-bottom: 70px;
-}
-
 .inline {
   display: inline-block;
 }
@@ -636,7 +632,6 @@ div.hopscotch-bubble {
 @import 'view/Header';
 @import 'view/InfoPane';
 @import 'view/Learn';
-@import 'view/MeasurePicker';
 @import 'view/Navigation';
 @import 'view/Page';
 @import 'view/Chart';
