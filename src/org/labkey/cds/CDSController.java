@@ -40,6 +40,9 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
+import org.labkey.api.module.Module;
+import org.labkey.api.module.ModuleHtmlView;
+import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
@@ -49,11 +52,14 @@ import org.labkey.api.security.RequiresLogin;
 import org.labkey.api.security.RequiresNoPermission;
 import org.labkey.api.security.RequiresPermission;
 import org.labkey.api.security.permissions.ReadPermission;
+import org.labkey.api.util.Path;
+import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
+import org.labkey.cds.view.template.FrontPageTemplate;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
@@ -145,6 +151,25 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return root;
+        }
+    }
+
+    @RequiresNoPermission
+    @IgnoresTermsOfUse
+    public class FrontPageAction extends SimpleViewAction
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            HttpView template = new FrontPageTemplate(defaultPageConfig());
+            getPageConfig().setTemplate(PageConfig.Template.None);
+            return template;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
         }
     }
 

@@ -49,6 +49,7 @@
 <div class="cds-begin">
     <ul>
         <li><%=textLink("Application", CDSController.AppAction.class)%></li>
+        <li><%=textLink("Front Page", CDSController.FrontPageAction.class)%></li>
         <li><%=textLink("Manage Configuration", PageFlowUtil.urlProvider(SinglePageAppUrls.class).getManageAppURL(getContainer()))%></li>
         <li><%=textLink("Run ETLs", PageFlowUtil.urlProvider(DataIntegrationUrls.class).getBeginURL(c))%></li>
         <li><%=textLink("Browse Schema", PageFlowUtil.urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
