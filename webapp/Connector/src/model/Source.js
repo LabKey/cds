@@ -18,6 +18,13 @@ Ext.define('Connector.model.Source', {
         {name: 'description', defaultValue: undefined},
 
         // Misc properties about the source display in the application
+        {name: 'title', convert: function(val, rec) {
+            var title = rec.get('queryLabel');
+            if (rec.get('category') == 'Assays') {
+                title = rec.get('queryName') + ' (' + title + ')';
+            }
+            return title;
+        }},
         {name: 'sortOrder', type: 'int', defaultValue: 0},
         {name: 'variableType', defaultValue: undefined},
         {name: 'category', defaultValue: undefined},

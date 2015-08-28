@@ -87,8 +87,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AntigenSelection": "../../../../webapp/Connector/src/component/AntigenSelection.js",
-  "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
-  "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.ColorSelector": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
@@ -275,8 +273,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AntigenSelection": [],
-  "Connector.panel.AxisSelectDisplay": [],
-  "Connector.panel.AxisSelector": [],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
@@ -1298,12 +1294,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AntigenSelection": [],
-  "Connector.panel.AxisSelectDisplay": [
-    "widget.axisselectdisplay"
-  ],
-  "Connector.panel.AxisSelector": [
-    "widget.axisselector"
-  ],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [
     "widget.feedback"
@@ -1318,7 +1308,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.selectionpanel"
   ],
   "Connector.panel.Selector": [
-    "widget.newselector"
+    "widget.variableselector"
   ],
   "Connector.plugin.HeaderLock": [
     "plugin.headerlock"

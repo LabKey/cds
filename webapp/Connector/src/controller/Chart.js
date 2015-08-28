@@ -55,32 +55,6 @@ Ext.define('Connector.controller.Chart', {
             }
         });
 
-        this.control('axisselectdisplay > panel > panel > button#gotoassaypage', {
-            click: function(btn) {
-                var win = btn.up('window');
-                if (win) {
-                    win.hideLock = true;
-                    win.hide();
-                }
-
-                // issue 20664: find the assay label from the first dataset row
-                if (btn.source && btn.source.assaysLookup) {
-                    LABKEY.Query.selectRows({
-                        schemaName: Connector.studyContext.schemaName,
-                        queryName: btn.source.get('queryName'),
-                        columns: btn.source.assaysLookup.name + '/Label',
-                        maxRows: 1,
-                        scope: this,
-                        success: function(data) {
-                            if (data.rows.length == 1) {
-                                this.getViewManager().changeView('learn', 'learn', ['assay', data.rows[0][btn.source.assaysLookup.name + '/Label']]);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
         this.callParent();
     },
 
