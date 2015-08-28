@@ -27,6 +27,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
 {
     private DataGrid _dataGrid;
     public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withText("View data grid");
+    private final String XPATH = "column-axis-selector";
 
     public DataGridVariableSelector(BaseWebDriverTest test, DataGrid grid)
     {
@@ -37,7 +38,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     protected String getPickerClass()
     {
-        return "column-axis-selector";
+        return XPATH;
     }
 
     public Locator.CssLocator window()
@@ -62,24 +63,23 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
         addGridColumn(source, source, measure, keepOpen, keepSelection);
     }
 
-    @Override
     public void openSelectorWindow()
     {
-        if (!_test.isElementPresent(window()) || !_test.isElementVisible(window()))
-        {
-            _test.click(getOpenButton());
-            _test.waitForElement(window());
-        }
+//        if (!_test.isElementPresent(window()) || !_test.isElementVisible(window()))
+//        {
+//            _test.click(getOpenButton());
+//            _test.waitForElement(window());
+//        }
+        super.openSelectorWindow(XPATH, "choose columns");
     }
 
-    @Override
     public void pickSource(String source){
         // If not currently on the source page, move there.
         if(_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + getPickerClass() + "')]//span[contains(@class, 'back-action')]")))
         {
             backToSource();
         }
-        super.pickSource(source);
+        super.pickSource(XPATH, source);
     }
 
     public void backToSource(){
@@ -97,7 +97,10 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
-        openSelectorWindow();
+        if((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
+        {
+            openSelectorWindow();
+        }
         pickSource(source);
         pickVariable(measure, keepSelection);
 
@@ -138,7 +141,10 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     {
         _test.waitForElement(titleLocator); // make sure we are looking at grid
 
-        openSelectorWindow();
+        if((!_test.isElementPresent(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))) || (!_test.isElementVisible(Locator.xpath("//div[contains(@class, '" + XPATH + "')]"))))
+        {
+            openSelectorWindow();
+        }
         pickSource(source);
         _test._ext4Helper.uncheckGridRowCheckbox(measure);
 
