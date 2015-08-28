@@ -472,6 +472,7 @@
             <column columnName="study_group_id"/>
             <column columnName="single_use"/>
             <column columnName="is_vaccination"/>
+            <column columnName="is_challenge"/>
         </columns>
     </table>
     <table tableName="assay" tableDbType="TABLE">

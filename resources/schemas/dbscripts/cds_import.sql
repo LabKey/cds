@@ -22,3 +22,5 @@ ALTER TABLE cds.import_ELS_IFNg ADD COLUMN mean_sfc_neg NUMERIC(15,4);
 
 ALTER TABLE cds.import_ELS_IFNg DROP COLUMN mean_sfc_raw;
 ALTER TABLE cds.import_ELS_IFNg ADD COLUMN mean_sfc_raw NUMERIC(15,4);
+
+ALTER TABLE cds.VisitTagMap ADD COLUMN is_challenge BOOLEAN DEFAULT FALSE;

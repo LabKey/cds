@@ -11,7 +11,8 @@ v.SequenceNumMax AS sequence_num_max,
 vt.name AS visit_tag_name,
 vt.caption AS visit_tag_caption,
 vt.singleuse AS single_use,
-vtm.is_vaccination
+vtm.is_vaccination,
+vtm.is_challenge
 FROM visittagmap vtm
 FULL JOIN study.StudyProperties sp ON sp.container = vtm.container
 LEFT JOIN cds.Study s ON s.study_name = sp.Label

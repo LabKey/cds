@@ -48,7 +48,7 @@ Ext.define('Connector.model.StudyAxisData', {
         var records = this.getRecords(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
                 interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
-                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination,
+                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination, isChallenge,
                 shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
 
         if (this.getMeasure().interval) {
@@ -92,6 +92,7 @@ Ext.define('Connector.model.StudyAxisData', {
             groupName = record.get('group_name');
             visitTagCaption = record.get('visit_tag_caption');
             isVaccination = record.get('is_vaccination');
+            isChallenge = record.get('is_challenge');
 
             if (timepointType !== 'VISIT') {
                 seqMin = this.convertInterval(seqMin - shiftVal, interval);
