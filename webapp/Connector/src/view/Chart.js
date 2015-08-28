@@ -29,6 +29,8 @@ Ext.define('Connector.view.Chart', {
 
     studyAxisWidthOffset: 150,
 
+    minStudyAxisHeight: 75,
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -2528,7 +2530,7 @@ Ext.define('Connector.view.Chart', {
             this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
             // set max height to 1/3 of the center region height
-            this.getStudyAxisPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, 20 * numStudies + 5));
+            this.getStudyAxisPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, Math.max(20 * numStudies + 5, this.minStudyAxisHeight)));
         }
         else {
             this.plotEl.setStyle('padding', '0');
