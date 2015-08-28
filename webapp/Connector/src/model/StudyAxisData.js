@@ -44,6 +44,15 @@ Ext.define('Connector.model.StudyAxisData', {
         return this.get('range');
     },
 
+    getVisitTag : function(studyName, groupName, tagCaption, groupDesc) {
+        return {
+            study: studyName,
+            group: groupName,
+            tag: tagCaption,
+            desc: groupDesc
+        }
+    },
+
     getVisit : function(studyLabel, groupName, groupLabel, visitLabel, seqMin, seqMax, protocolDay, alignedDay) {
         return {
             studyLabel: studyLabel,
@@ -152,11 +161,9 @@ Ext.define('Connector.model.StudyAxisData', {
 
                 visit = this.setType(study.visits[visitId], visitTagCaption, isVaccination);
                 if(visitTagCaption !== null) {
-                    visit.visitTags.push({
-                        study: study.name,
-                        group: groupLabel,
-                        tag: visitTagCaption + ((isVaccination || visitTagCaption == 'Vaccination') ? ' - ' + groupDesc : '')
-                    });
+                    visit.visitTags.push(
+                        this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc ? groupDesc : '')
+                    );
                 }
                 study = this.setPreenrollment(study, visitTagCaption, protocolDay, alignedDay);
 
@@ -181,11 +188,9 @@ Ext.define('Connector.model.StudyAxisData', {
 
                     groupVisit = this.setType(study.groups[groupLabel].visits[visitId], visitTagCaption, isVaccination);
                     if(visitTagCaption !== null) {
-                        groupVisit.visitTags.push({
-                            study: study.name,
-                            group: groupLabel,
-                            tag: visitTagCaption + ((isVaccination || visitTagCaption == 'Vaccination') ? ' - ' + groupDesc : '')
-                        });
+                        groupVisit.visitTags.push(
+                                this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc ? groupDesc : '')
+                        );
                     }
                     study.groups[groupLabel] = this.setPreenrollment(study.groups[groupLabel], visitTagCaption, protocolDay, alignedDay);
                 }

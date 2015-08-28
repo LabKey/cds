@@ -12,8 +12,8 @@ Connector.view.StudyAxis = function() {
     // provide a unique name for each value in yScale
     var studyGroupName = function(el) {
         var name = "";
-        if(el && el.name && typeof el.name == "string") {
-            if(el.study && typeof el.study == "string") {
+        if(el && el.name &&  Ext.isString(el.name)) {
+            if(el.study && Ext.isString(el.study)) {
                 name = el.study + "-" + el.name;
             } else {
                 name = el.name;
@@ -36,17 +36,9 @@ Connector.view.StudyAxis = function() {
     };
 
     var renderPreenrollment = function(selection) {
-        var preenrollment, x, mainPanel, mainPlot, mainAxis;
+        var preenrollment, x;
 
-        mainPanel = document.querySelector('div.x-panel.plot');
-        mainPlot = document.querySelector('div.x-panel.plot > svg');
-        mainAxis = document.querySelector('div.x-panel.plot > svg > g.grid-rect > rect');
-
-        // Calculate left edge of main plot
-        if(mainPanel && mainPlot && mainAxis && !isNaN(Number(mainAxis.getAttribute('x'))))
-            x = Number(mainAxis.getAttribute('x')) + (mainPanel.offsetWidth - mainPlot.offsetWidth);
-        else
-            x = leftIndent + 100;
+        x = xScale(xScale.domain()[0]);
 
         preenrollment = selection.selectAll('rect.preenrollment').data(function(d) {
             if(collapsed || (!collapsed && d.study))
@@ -69,7 +61,8 @@ Connector.view.StudyAxis = function() {
             if(collapsed || (!collapsed && d.study))
                 return d.visits;
             else
-                return [];});
+                return [];
+        });
         visitTags.exit().remove();
         visitTags.enter().append("image").attr('class', 'visit-tag')
             .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/' + d.imgSrc; })
@@ -171,57 +164,32 @@ Connector.view.StudyAxis = function() {
         button = canvas.select('image.img-expand');
 
         button.on('mouseover', function(d) {
-            if (collapsed) {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_hover.svg';
-                })
-            }
-            else {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_hover.svg';
-                })
-            }
+            button.attr('xlink:href', function (d) {
+                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                    + (collapsed?'icon_general_expand_hover.svg':'icon_general_collapse_hover.svg');
+            });
         });
 
         button.on('mouseout', function(d) {
-            if (collapsed) {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_normal.svg';
-                })
-            }
-            else {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_normal.svg';
-                })
-            }
+            button.attr('xlink:href', function (d) {
+                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                        + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg');
+            });
         });
 
         button.on('mousedown', function(d) {
-            if (collapsed) {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_normal.svg';
-                })
-            }
-            else {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_normal.svg';
-                })
-            }
+            button.attr('xlink:href', function (d) {
+                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                        + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg');
+            });
         });
 
         button.on('mouseup', function(d) {
-            if (collapsed) {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_collapse_hover.svg';
-                });
-                collapsed = false;
-            }
-            else {
-                button.attr('xlink:href', function (d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/icon_general_expand_hover.svg';
-                });
-                collapsed = true;
-            }
+            button.attr('xlink:href', function (d) {
+                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                        + (collapsed?'icon_general_collapse_hover.svg':'icon_general_expand_hover.svg');
+            });
+            collapsed = !collapsed;
             studyAxis();
         });
 

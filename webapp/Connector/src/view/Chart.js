@@ -2446,40 +2446,46 @@ Ext.define('Connector.view.Chart', {
     },
 
     showVisitTagHover : function(data, visitTagEl) {
-        var bubbleWidth,
+        var bubbleWidth, groupWidth = 0, tagWidth = 0,
             groupTags = {}, maxWidth = 0,
             content = '', config;
 
         // content will display one row for each group so we need to gather together the tags for each group separately
         for (var i = 0; i < data.visitTags.length; i++) {
             if (!groupTags[data.visitTags[i].group]) {
-                groupTags[data.visitTags[i].group] = [];
+                groupTags[data.visitTags[i].group] = {
+                    tags:[],
+                    desc:""
+                };
             }
 
-            groupTags[data.visitTags[i].group].push(data.visitTags[i].tag);
+            groupTags[data.visitTags[i].group].tags.push(data.visitTags[i].tag);
+            groupTags[data.visitTags[i].group].desc = data.visitTags[i].desc;
 
-            if (data.visitTags[i].group.length > maxWidth) {
-                maxWidth = data.visitTags[i].group.length;
+            groupWidth = ChartUtils.escapeHTML(data.visitTags[i].group).length + ChartUtils.escapeHTML(data.visitTags[i].desc).length + 3;
+            if (groupWidth > maxWidth) {
+                maxWidth = groupWidth;
             }
 
-            if ((data.visitTags[i].tag.length + 3) > maxWidth) {
-                maxWidth = data.visitTags[i].tag.length + 3;
+            tagWidth =ChartUtils.escapeHTML(groupTags[data.visitTags[i].group].tags.join(',')).length + 4;
+            if (tagWidth > maxWidth) {
+                maxWidth = tagWidth;
             }
         }
 
         for (var group in groupTags) {
             // Escape HTML for security.
             if(groupTags.hasOwnProperty(group)) {
-                for (var j = 0; j < groupTags[group].length; j++)
-                    groupTags[group][j] = ChartUtils.escapeHTML(groupTags[group][j]);
+                for (var j = 0; j < groupTags[group].tags.length; j++)
+                    groupTags[group].tags[j] = ChartUtils.escapeHTML(groupTags[group].tags[j]);
+
+                content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
+                    + ChartUtils.escapeHTML(group) + ' :</span> ' + ChartUtils.escapeHTML(groupTags[group].desc)
+                    + '<br>-' + groupTags[group].tags.join(',') + '</p>';
             }
-            content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
-                + ChartUtils.escapeHTML(group) + '</span> <br> -' + groupTags[group].join('<br>-') + '</p>';
         }
 
-        bubbleWidth = maxWidth * 8;
-        if(bubbleWidth > 400)
-            bubbleWidth = 400;
+        bubbleWidth = Math.min(maxWidth * 8, 400);
 
         config = {
             bubbleWidth: bubbleWidth,
