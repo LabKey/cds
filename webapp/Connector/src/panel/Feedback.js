@@ -14,10 +14,9 @@ Ext.define('Connector.panel.Feedback', {
     border: false,
 
     statics: {
-        DEFAULT_ISSUE_USER: 'vikramt',
+        DEFAULT_ISSUE_USER: 'drienna',
         displayWindow : function(animateTarget) {
             var resizer = function() {
-                console.log('higher');
                 this.center();
             };
 
@@ -107,7 +106,7 @@ Ext.define('Connector.panel.Feedback', {
                     this.feedbackForm.getComponent('assignedToField').setValue(userInfo.UserId);
                 }
                 else {
-                    console.warn(this.$className + ': Unable to determine default issue user.');
+                    console.warn('Feedback: Unable to determine default issue user.');
                 }
             }, this);
         }
@@ -209,59 +208,47 @@ Ext.define('Connector.panel.Feedback', {
                     ui: 'rounded-inverted-accent-text',
                     hidden: false,
                     text: 'Cancel',
-                    listeners: {
-                        click: function(evt, el) {
-                            this.hide();
-                        },
-                        element: 'el',
-                        scope: this
-                    },
                     handler: function() {
-                        this.fireEvent('cancel');
+                        this.hide();
                     },
                     scope: this
                 },{
                     itemId: 'done-button',
                     xtype: 'button',
                     text: 'Done',
-                    listeners: {
-                        click: function(evt, el) {
-                            var form = this.getForm();
+                    handler: function(btn) {
+                        var form = this.getForm();
 
-                            //checks whether both the title and comment sections are printed out
-                            if (form.isValid()) {
-                                var values = form.getValues();
-                                this.postFeedback(values.title, values.comment, values.url, values.assignedTo, function(response) {
-                                    var html = response.responseText;
+                        //checks whether both the title and comment sections are printed out
+                        if (form.isValid()) {
+                            btn.disable();
+                            btn.setText('Submitting...');
 
-                                    // The issues API only returns HTML views. In the case of a successful creation
-                                    // of an issue the server responds with a different title than if it fails to save.
-                                    // This check is to attempt to inspect that the issue was actually created
-                                    if (html.indexOf('<title>Issue') > -1) {
-                                        Ext.Msg.show({
-                                            timeout: 5,
-                                            msg: 'Thanks for your feedback! <br> Posting Issue...'
-                                        });
-                                        this.hide();
-                                        setTimeout( function() {
-                                            Ext.Msg.hide();
-                                        },1000);
-                                        return;
+                            var values = form.getValues();
+                            this.postFeedback(values.title, values.comment, values.url, values.assignedTo, function(response) {
+                                btn.setText('Done');
+                                var html = response.responseText;
+
+                                // The issues API only returns HTML views. In the case of a successful creation
+                                // of an issue the server responds with a different title than if it fails to save.
+                                // This check is to attempt to inspect that the issue was actually created
+                                if (html.indexOf('<title>Issue') > -1) {
+                                    this.hide();
+
+                                    var viewManager = Connector.getApplication().getController('Connector');
+                                    if (viewManager) {
+                                        var fsview = viewManager.getViewInstance('filterstatus');
+                                        if (fsview) {
+                                            fsview.showMessage('Thanks for your feedback!', true);
+                                        }
+                                        else {
+                                            console.warn('no filterstatus view available');
+                                        }
                                     }
+                                }
 
-                                    Ext.Msg.show({
-                                        msg: 'Failed to save feedback. Sorry!'
-                                    });
-                                    setTimeout( function() {
-                                        Ext.Msg.hide();
-                                    },1000);
-
-                                }, this);
-                            }
-
-                        },
-                        element: 'el',
-                        scope: this
+                            }, this);
+                        }
                     },
                     scope: this
                 }]
