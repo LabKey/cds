@@ -42,8 +42,8 @@ Ext.define('Connector.app.view.Study', {
                 '<div class="detail-wrapper">',
                     '<div class="detail-left-column detail-description">',
                         '<h2>{label:htmlEncode}</h2>',
-                        '<tpl if="type && type.length &gt; 0">',
-                            '<span class="detail-type-text">{type:htmlEncode}</span>',
+                        '<tpl if="species && species.length &gt; 0">',
+                            '<span class="detail-type-text">{species:htmlEncode}</span>',
                         '</tpl>',
                         '<div class="detail-description-text">{description:htmlEncode}</div>', //Issue 24016: Prioritizing Security...
                     '</div>',
