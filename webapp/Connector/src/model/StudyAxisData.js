@@ -122,9 +122,12 @@ Ext.define('Connector.model.StudyAxisData', {
 
                 if (visitTagCaption !== null) {
                     // determine which visit tag/milestone glyph to display
-                    // TODO: why is is_vaccination always coming back as false?
-                    if (isVaccination || visitTagCaption == 'Vaccination') {
+                    if (isVaccination) {
                         visit.imgSrc = 'vaccination_normal.svg';
+                        visit.imgSize = 14;
+                    }
+                    else if (isChallenge) {
+                        visit.imgSrc = 'challenge_normal.svg';
                         visit.imgSize = 14;
                     }
 
