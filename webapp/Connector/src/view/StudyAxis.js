@@ -65,7 +65,9 @@ Connector.view.StudyAxis = function() {
         });
         visitTags.exit().remove();
         visitTags.enter().append("image").attr('class', 'visit-tag')
-            .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/' + d.imgSrc; })
+            .attr('xlink:href', function(d) {
+                return LABKEY.contextPath + '/production/Connector/resources/images/' + (d.imgSrc || 'nonvaccination_normal.svg');
+            })
             .attr("x", function(d) {return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
             .attr("y", function(d) {
                     var scale = yScale(d.studyLabel);

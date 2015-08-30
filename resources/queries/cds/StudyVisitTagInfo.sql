@@ -12,6 +12,7 @@ vt.name AS visit_tag_name,
 vt.caption AS visit_tag_caption,
 vt.singleuse AS single_use,
 vtm.is_vaccination,
+vtm.is_challenge,
 ta.coded_label AS group_label,
 ta.description AS group_description
 FROM visittagmap vtm
