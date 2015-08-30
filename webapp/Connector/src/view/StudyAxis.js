@@ -26,7 +26,9 @@ Connector.view.StudyAxis = function() {
         visitTags = selection.selectAll('image.visit-tag').data(function (d) { return d.visits; });
         visitTags.exit().remove();
         visitTags.enter().append("image").attr('class', 'visit-tag')
-            .attr('xlink:href', function(d) { return LABKEY.contextPath + '/production/Connector/resources/images/' + d.imgSrc; })
+            .attr('xlink:href', function(d) {
+                return LABKEY.contextPath + '/production/Connector/resources/images/' + (d.imgSrc || 'nonvaccination_normal.svg');
+            })
             .attr("x", function(d) { return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
             .attr("y", function(d) { return yScale(d.studyLabel) + perStudyHeight/2 - (d.imgSize || defaultImgSize)/2; })
             .attr("width", function(d) { return d.imgSize || defaultImgSize; })

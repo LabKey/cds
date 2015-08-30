@@ -48,7 +48,7 @@ Ext.define('Connector.model.StudyAxisData', {
         var records = this.getRecords(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
                 interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
                 study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
-                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination,
+                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination, isChallenge,
                 shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
 
         if (this.getMeasure().interval) {
@@ -92,6 +92,7 @@ Ext.define('Connector.model.StudyAxisData', {
             groupName = record.get('group_name');
             visitTagCaption = record.get('visit_tag_caption');
             isVaccination = record.get('is_vaccination');
+            isChallenge = record.get('is_challenge');
 
             if (timepointType !== 'VISIT') {
                 seqMin = this.convertInterval(seqMin - shiftVal, interval);
@@ -112,7 +113,7 @@ Ext.define('Connector.model.StudyAxisData', {
                         sequenceNumMax: seqMax,
                         protocolDay: protocolDay,
                         alignedDay: alignedDay,
-                        imgSrc: 'nonvaccination_normal.svg',
+                        imgSrc: null,
                         visitTags: []
                     };
                 }
@@ -121,9 +122,12 @@ Ext.define('Connector.model.StudyAxisData', {
 
                 if (visitTagCaption !== null) {
                     // determine which visit tag/milestone glyph to display
-                    // TODO: why is is_vaccination always coming back as false?
-                    if (isVaccination || visitTagCaption == 'Vaccination') {
+                    if (isVaccination) {
                         visit.imgSrc = 'vaccination_normal.svg';
+                        visit.imgSize = 14;
+                    }
+                    else if (isChallenge && visit.imgSrc == null) {
+                        visit.imgSrc = 'challenge_normal.svg';
                         visit.imgSize = 14;
                     }
 
