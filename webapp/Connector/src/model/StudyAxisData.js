@@ -113,7 +113,7 @@ Ext.define('Connector.model.StudyAxisData', {
                         sequenceNumMax: seqMax,
                         protocolDay: protocolDay,
                         alignedDay: alignedDay,
-                        imgSrc: 'nonvaccination_normal.svg',
+                        imgSrc: null,
                         visitTags: []
                     };
                 }
@@ -126,7 +126,7 @@ Ext.define('Connector.model.StudyAxisData', {
                         visit.imgSrc = 'vaccination_normal.svg';
                         visit.imgSize = 14;
                     }
-                    else if (isChallenge) {
+                    else if (isChallenge && visit.imgSrc == null) {
                         visit.imgSrc = 'challenge_normal.svg';
                         visit.imgSize = 14;
                     }
