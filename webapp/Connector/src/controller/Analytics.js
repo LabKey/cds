@@ -8,9 +8,47 @@ Ext.define('Connector.controller.Analytics', {
             return typeof _insp !== 'undefined';
         },
 
-        isEnabled: function ()
+        isGAClassicEnabled: function ()
         {
             return typeof _gaq !== 'undefined';
+        },
+
+        isGAUniversalEnabled: function()
+        {
+            return typeof ga !== 'undefined';
+        },
+
+        isEnabled: function ()
+        {
+            return Connector.controller.Analytics.isGAClassicEnabled() || Connector.controller.Analytics.isGAUniversalEnabled();
+        },
+
+        trackPageview : function(path)
+        {
+            if (Connector.controller.Analytics.isGAClassicEnabled())
+                _gaq.push(['_trackPageview', path])
+            else if (Connector.controller.Analytics.isGAUniversalEnabled())
+                ga('send', 'pageview', path);
+            ga('send', 'pageview', '/labkey/test.view');
+        },
+
+        setVariable: function(index, value, key, scope) {
+            if (Connector.controller.Analytics.isGAClassicEnabled())
+                _gaq.push(['_setCustomVar', index, key, value, scope]);
+            //else if (Connector.controller.Analytics.isGAUniversalEnabled())
+            //    ga('set', 'dimension' + index, value);
+        },
+
+        deleteVariable: function(index) {
+            if (Connector.controller.Analytics.isGAClassicEnabled())
+                _gaq.push(['_deleteCustomVar', index]);
+        },
+
+        trackEvent : function(category, action, label, value) {
+            if (Connector.controller.Analytics.isGAClassicEnabled())
+                _gaq.push(['_trackEvent', category, action, label, value]);
+            else if (Connector.controller.Analytics.isGAUniversalEnabled())
+                ga('send', 'event', category, action, label, value);
         }
     },
 
@@ -22,24 +60,20 @@ Ext.define('Connector.controller.Analytics', {
         // "Plot button: variable"
         this.control('plot', {
             userplotchange: function(window, axis) {
-                // see axis.x, axis.y, and axis.color
-                if (Connector.controller.Analytics.isEnabled())
+                if (axis.targetId == "xvarselector")
                 {
-                    if (axis.targetId == "xvarselector")
-                    {
-                        _gaq.push(['_trackEvent', 'Plot', 'Change X source', axis.x.queryName]);
-                        _gaq.push(['_trackEvent', 'Plot', 'Change X', axis.x.name]);
-                    }
-                    else if (axis.targetId == 'yvarselector')
-                    {
-                        _gaq.push(['_trackEvent', 'Plot', 'Change Y source', axis.y.queryName]);
-                        _gaq.push(['_trackEvent', 'Plot', 'Change Y', axis.y.alias]);
-                    }
-                    else if (axis.targetId == 'colorselector')
-                    {
-                        _gaq.push(['_trackEvent', 'Plot', 'Change color source', axis.color.queryName]);
-                        _gaq.push(['_trackEvent', 'Plot', 'Change color', axis.color.alias]);
-                    }
+                    Connector.controller.Analytics.trackEvent('Plot', 'Change X source', axis.x.queryName);
+                    Connector.controller.Analytics.trackEvent('Plot', 'Change X', axis.x.name);
+                }
+                else if (axis.targetId == 'yvarselector')
+                {
+                    Connector.controller.Analytics.trackEvent('Plot', 'Change Y source', axis.y.queryName);
+                    Connector.controller.Analytics.trackEvent('Plot', 'Change Y', axis.y.alias);
+                }
+                else if (axis.targetId == 'colorselector')
+                {
+                    Connector.controller.Analytics.trackEvent('Plot', 'Change color source', axis.color.queryName);
+                    Connector.controller.Analytics.trackEvent('Plot', 'Change color', axis.color.alias);
                 }
             }
         });
@@ -49,21 +83,18 @@ Ext.define('Connector.controller.Analytics', {
                 if (Connector.controller.Analytics.isInspectletEnabled())
                     __insp.push(['identify', LABKEY.user.email]);
 
-                if (Connector.controller.Analytics.isEnabled())
+                if (Connector.controller.Analytics.isGAClassicEnabled())
                 {
-                    _gaq.push(['_setCustomVar', 1, 'user', LABKEY.user.email, 2]);
-                    _gaq.push(['_trackEvent', 'User', 'Login', LABKEY.user.email]);
+                    Connector.controller.Analytics.setVariable(1, 'user', LABKEY.user.email, 2);
                 }
+                Connector.controller.Analytics.trackEvent('User', 'Login', LABKEY.user.email);
             }
         });
 
         this.control('connectorheader', {
-
             userLogout: function() {
-                if (Connector.controller.Analytics.isEnabled()) {
-                    _gaq.push(['_deleteCustomVar', 1]);
-                    _gaq.push(['_trackEvent', 'User', 'Logout', LABKEY.user.email]);
-                }
+                Connector.controller.Analytics.deleteVariable(1);
+                Connector.controller.Analytics.trackEvent('User', 'Logout', LABKEY.user.email);
             }
         });
 
@@ -73,13 +104,11 @@ Ext.define('Connector.controller.Analytics', {
         // "Export: # of columns"
         this.control('groupdatagrid', {
             requestexport: function(view, exportParams) {
-                if (Connector.controller.Analytics.isEnabled()) {
-                    _gaq.push(['_trackEvent', 'Grid', 'Export', 'Column count', exportParams.columnNames.length]);
-                    var sources = this.getSourcesArray(exportParams.columnNames);
-                    for (var i = 0; i < sources.length; i++)
-                    {
-                        _gaq.push(['_trackEvent', 'Grid', 'Export source', sources[i]]);
-                    }
+                Connector.controller.Analytics.trackEvent('Grid', 'Export', 'Column count', exportParams.columnNames.length);
+                var sources = this.getSourcesArray(exportParams.columnNames);
+                for (var i = 0; i < sources.length; i++)
+                {
+                    Connector.controller.Analytics.trackEvent('Grid', 'Export source', sources[i]);
                 }
             }
         });
@@ -88,9 +117,7 @@ Ext.define('Connector.controller.Analytics', {
 
         // tracking page views
         this.application.on('route', function(controller, view, viewContext) {
-           if (Connector.controller.Analytics.isEnabled()) {
-               _gaq.push(['_trackPageview', LABKEY.contextPath + LABKEY.container.path + "/app.view#" + controller ])
-           }
+           Connector.controller.Analytics.trackPageview(LABKEY.contextPath + LABKEY.container.path + "/app.view#" + controller);
         });
 
 
@@ -100,13 +127,13 @@ Ext.define('Connector.controller.Analytics', {
         Connector.getState().on('filterchange', function(filters) {
             if (Connector.controller.Analytics.isEnabled())
             {
-                _gaq.push(['_trackEvent', 'Filter', 'Change']);
+                Connector.controller.Analytics.trackEvent('Filter', 'Change');
                 for (f = 0; f < filters.length; f++)
                 {
                     var members = filters[f].get('members');
                     for (var i = 0; i < members.length; i++)
                     {
-                        _gaq.push(['_trackEvent', 'Filter', 'Add', members[i].uniqueName]);
+                        Connector.controller.Analytics.trackEvent('Filter', 'Add', members[i].uniqueName);
                     }
                 }
             }
@@ -118,10 +145,12 @@ Ext.define('Connector.controller.Analytics', {
         Connector.getApplication().on('groupsaved', function(group, filters) {
             if (Connector.controller.Analytics.isEnabled())
             {
-                _gaq.push(['_trackEvent', 'Group', 'Save']);
+                Connector.controller.Analytics.trackEvent('Group', 'Save');
             }
         });
     },
+
+
 
     getSourcesStringForLabel : function(columnNames) {
         var sources = this.getSourcesArray(columnNames).toString();
