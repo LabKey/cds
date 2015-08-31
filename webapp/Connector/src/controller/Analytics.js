@@ -29,7 +29,6 @@ Ext.define('Connector.controller.Analytics', {
                 _gaq.push(['_trackPageview', path])
             else if (Connector.controller.Analytics.isGAUniversalEnabled())
                 ga('send', 'pageview', path);
-            ga('send', 'pageview', '/labkey/test.view');
         },
 
         setVariable: function(index, value, key, scope) {
