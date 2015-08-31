@@ -15,7 +15,10 @@ Ext.define('Connector.utility.Chart', {
         HEATSCALE2: '#A09C9C',
         HEATSCALE3: '#CCC8C8',
         SELECTED: '#01BFC2',
-        UNSELECTED: '#E6E6E6'
+        UNSELECTED: '#E6E6E6',
+        BOXSHADOW: '#CCCCCC',
+        PRIMARYTEXT: '#222222',
+        PREENROLLMENT: 'rgba(255,165,0,0.3)'
     },
 
     tickFormat: {
@@ -342,5 +345,18 @@ Ext.define('Connector.utility.Chart', {
             }
 
         }, this);
+    },
+
+    escapeHTML : function(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    },
+
+    unescapeHTML : function(escapedStr) {
+        var div = document.createElement('div');
+        div.innerHTML = escapedStr;
+        var child = div.childNodes[0];
+        return child ? child.nodeValue : '';
     }
 });
