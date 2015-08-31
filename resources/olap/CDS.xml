@@ -52,7 +52,6 @@
             <Hierarchy name="Species" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
                 <Level name="Species" visible="true" column="species" type="String" uniqueMembers="true" />
-                <Level name="Subspecies" visible="true" column="subspecies" type="String" uniqueMembers="true" />
             </Hierarchy>
 
         </Dimension>

@@ -29,6 +29,8 @@ Ext.define('Connector.view.Chart', {
 
     studyAxisWidthOffset: 150,
 
+    minStudyAxisHeight: 75,
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -490,11 +492,11 @@ Ext.define('Connector.view.Chart', {
         var config, content = '', colon = ': ', linebreak = ',<br/>';
 
         if (data.xname) {
-            content += data.xname + colon + data.x;
+            content += ChartUtils.escapeHTML(data.xname) + colon + data.x;
         }
-        content += (content.length > 0 ? linebreak : '') + data.yname + colon + data.y;
+        content += (content.length > 0 ? linebreak : '') + ChartUtils.escapeHTML(data.yname) + colon + data.y;
         if (data.colorname) {
-            content += linebreak + data.colorname + colon + data.color;
+            content += linebreak + ChartUtils.escapeHTML(data.colorname) + colon + data.color;
         }
 
         config = {
@@ -1602,7 +1604,7 @@ Ext.define('Connector.view.Chart', {
                 measures.x = this.activeXSelection;
 
                 // special case to look for userGroups as a variable option to use as filter values for the x measure
-                if (measures.x.options.userGroups) {
+                if (Ext.isObject(measures.x.options) && measures.x.options.userGroups) {
                     measures.x.values = measures.x.options.userGroups;
                 }
             }
@@ -2451,30 +2453,46 @@ Ext.define('Connector.view.Chart', {
     },
 
     showVisitTagHover : function(data, visitTagEl) {
-        var bubbleWidth = 160,
-            groupTags = {}, maxGroupTagCount = 0,
+        var bubbleWidth, groupWidth = 0, tagWidth = 0,
+            groupTags = {}, maxWidth = 0,
             content = '', config;
 
         // content will display one row for each group so we need to gather together the tags for each group separately
         for (var i = 0; i < data.visitTags.length; i++) {
             if (!groupTags[data.visitTags[i].group]) {
-                groupTags[data.visitTags[i].group] = [];
+                groupTags[data.visitTags[i].group] = {
+                    tags:[],
+                    desc:""
+                };
             }
 
-            groupTags[data.visitTags[i].group].push(data.visitTags[i].tag);
+            groupTags[data.visitTags[i].group].tags.push(data.visitTags[i].tag);
+            groupTags[data.visitTags[i].group].desc = data.visitTags[i].desc;
 
-            if (groupTags[data.visitTags[i].group].length > maxGroupTagCount) {
-                maxGroupTagCount = groupTags[data.visitTags[i].group].length;
+            groupWidth = ChartUtils.escapeHTML(data.visitTags[i].group).length + ChartUtils.escapeHTML(data.visitTags[i].desc).length + 3;
+            if (groupWidth > maxWidth) {
+                maxWidth = groupWidth;
+            }
+
+            tagWidth =ChartUtils.escapeHTML(groupTags[data.visitTags[i].group].tags.join(',')).length + 4;
+            if (tagWidth > maxWidth) {
+                maxWidth = tagWidth;
             }
         }
 
         for (var group in groupTags) {
-            content += '<p><span style="font-weight: bold;">' + group + '</span> : ' + groupTags[group].join(', ') + '</p>';
+            // Escape HTML for security.
+            if(groupTags.hasOwnProperty(group)) {
+                for (var j = 0; j < groupTags[group].tags.length; j++)
+                    groupTags[group].tags[j] = ChartUtils.escapeHTML(groupTags[group].tags[j]);
+
+                content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
+                    + ChartUtils.escapeHTML(group) + ' :</span> ' + ChartUtils.escapeHTML(groupTags[group].desc)
+                    + '<br>-' + groupTags[group].tags.join(',') + '</p>';
+            }
         }
 
-        if (maxGroupTagCount > 1) {
-            bubbleWidth = maxGroupTagCount * 90 + 70;
-        }
+        bubbleWidth = Math.min(maxWidth * 8, 400);
 
         config = {
             bubbleWidth: bubbleWidth,
@@ -2525,7 +2543,7 @@ Ext.define('Connector.view.Chart', {
             this.plotEl.setStyle('padding', '0 0 0 ' + this.studyAxisWidthOffset + 'px');
             this.getStudyAxisPanel().setVisible(true);
             // set max height to 1/3 of the center region height
-            this.getStudyAxisPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, 20 * numStudies + 5));
+            this.getStudyAxisPanel().setHeight(Math.min(this.getCenter().getHeight() / 3, Math.max(20 * numStudies + 5, this.minStudyAxisHeight)));
         }
         else {
             this.plotEl.setStyle('padding', '0');
