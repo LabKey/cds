@@ -25,7 +25,7 @@ Ext.define('Connector.view.Grid', {
 
     constructor : function(config) {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'measureselected');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected');
     },
 
     initComponent : function() {
@@ -737,6 +737,8 @@ Ext.define('Connector.view.Grid', {
                     }
                 }
             });
+
+            this.fireEvent('requestexport', this, exportParams);
         }
     },
 

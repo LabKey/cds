@@ -168,6 +168,7 @@
         <script path="Connector/src/controller/Chart.js"/>
         <script path="Connector/src/controller/Connector.js"/>
         <script path="Connector/src/controller/Query.js"/>
+        <script path="Connector/src/controller/Analytics.js"/>
         <script path="Connector/src/controller/Update.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>

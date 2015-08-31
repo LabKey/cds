@@ -64,7 +64,7 @@ Ext.define('Connector.view.Chart', {
 
         this.callParent([config]);
 
-        this.addEvents('onready');
+        this.addEvents('onready', 'userplotchange');
 
         this.labelTextColor = ChartUtils.colors.HEATSCALE1;
         this.labelTextHltColor = ChartUtils.colors.WHITE;
@@ -2257,6 +2257,13 @@ Ext.define('Connector.view.Chart', {
             this.initialized = true;
             this.showTask.delay(10);
             win.hide(targetEl);
+
+            this.fireEvent('userplotchange', this, {
+                targetId : targetEl.id,
+                x: this.activeXSelection,
+                y: this.activeYSelection,
+                color: this.activeColorSelection
+            });
         }
         else {
             // if we don't yet have a y-axis selection, show that variable selector
