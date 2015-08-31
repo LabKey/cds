@@ -11,20 +11,19 @@ Ext.Loader.addClassPathMappings({
   "Connector.app.model.Dataset": "../../../../webapp/Connector/src/app/model/Dataset.js",
   "Connector.app.model.DatasetData": "../../../../webapp/Connector/src/app/model/DatasetData.js",
   "Connector.app.model.Labs": "../../../../webapp/Connector/src/app/model/Labs.js",
-  "Connector.app.model.Site": "../../../../webapp/Connector/src/app/model/Site.js",
   "Connector.app.model.Study": "../../../../webapp/Connector/src/app/model/Study.js",
   "Connector.app.model.StudyProducts": "../../../../webapp/Connector/src/app/model/StudyProducts.js",
+  "Connector.app.model.VariableList": "../../../../webapp/Connector/src/app/model/VariableList.js",
   "Connector.app.store.Assay": "../../../../webapp/Connector/src/app/store/Assay.js",
   "Connector.app.store.Dataset": "../../../../webapp/Connector/src/app/store/Dataset.js",
   "Connector.app.store.DatasetData": "../../../../webapp/Connector/src/app/store/DatasetData.js",
   "Connector.app.store.Labs": "../../../../webapp/Connector/src/app/store/Labs.js",
-  "Connector.app.store.Site": "../../../../webapp/Connector/src/app/store/Site.js",
   "Connector.app.store.Study": "../../../../webapp/Connector/src/app/store/Study.js",
   "Connector.app.store.StudyProducts": "../../../../webapp/Connector/src/app/store/StudyProducts.js",
+  "Connector.app.store.VariableList": "../../../../webapp/Connector/src/app/store/VariableList.js",
   "Connector.app.view.Assay": "../../../../webapp/Connector/src/app/view/Assay.js",
   "Connector.app.view.Labs": "../../../../webapp/Connector/src/app/view/Labs.js",
   "Connector.app.view.ModuleContainer": "../../../../webapp/Connector/src/app/view/ModuleContainer.js",
-  "Connector.app.view.Site": "../../../../webapp/Connector/src/app/view/Site.js",
   "Connector.app.view.Study": "../../../../webapp/Connector/src/app/view/Study.js",
   "Connector.app.view.StudyProducts": "../../../../webapp/Connector/src/app/view/StudyProducts.js",
   "Connector.app.view.module.StudySites": "../../../../webapp/Connector/src/app/view/module/StudySites.js",
@@ -88,8 +87,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.AdvancedOptionCheckboxDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AdvancedOptionRadioDropdown": "../../../../webapp/Connector/src/component/AdvancedOption.js",
   "Connector.panel.AntigenSelection": "../../../../webapp/Connector/src/component/AntigenSelection.js",
-  "Connector.panel.AxisSelectDisplay": "../../../../webapp/Connector/src/panel/AxisSelector.js",
-  "Connector.panel.AxisSelector": "../../../../webapp/Connector/src/panel/AxisSelector.js",
   "Connector.panel.ColorSelector": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
@@ -152,7 +149,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.AssayAnalyteList": "../../../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
   "Connector.view.module.AssayAntigenList": "../../../../webapp/Connector/src/app/view/module/AssayAntigenList.js",
   "Connector.view.module.AssayHeader": "../../../../webapp/Connector/src/app/view/module/AssayHeader.js",
-  "Connector.view.module.AssayVariableList": "../../../../webapp/Connector/src/app/view/module/AssayVariableList.js",
   "Connector.view.module.BaseModule": "../../../../webapp/Connector/src/view/module/BaseModule.js",
   "Connector.view.module.ContactCDS": "../../../../webapp/Connector/src/view/module/ContactCDS.js",
   "Connector.view.module.Person": "../../../../webapp/Connector/src/view/module/Person.js",
@@ -166,6 +162,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.module.StudyHeader": "../../../../webapp/Connector/src/app/view/module/StudyHeader.js",
   "Connector.view.module.StudyProducts": "../../../../webapp/Connector/src/app/view/module/StudyProducts.js",
   "Connector.view.module.Text": "../../../../webapp/Connector/src/view/module/Text.js",
+  "Connector.view.module.VariableList": "../../../../webapp/Connector/src/app/view/module/VariableList.js",
   "Connector.window.AbstractFilter": "../../../../webapp/Connector/src/window/AbstractFilter.js",
   "Connector.window.Facet": "../../../../webapp/Connector/src/window/Facet.js",
   "Connector.window.Filter": "../../../../webapp/Connector/src/window/Filter.js",
@@ -200,20 +197,19 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.app.model.Dataset": [],
   "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
-  "Connector.app.model.Site": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
+  "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
   "Connector.app.store.Dataset": [],
   "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
-  "Connector.app.store.Site": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
+  "Connector.app.store.VariableList": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
   "Connector.app.view.ModuleContainer": [],
-  "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
   "Connector.app.view.module.StudySites": [],
@@ -277,8 +273,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AntigenSelection": [],
-  "Connector.panel.AxisSelectDisplay": [],
-  "Connector.panel.AxisSelector": [],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
@@ -343,7 +337,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.AssayAnalyteList": [],
   "Connector.view.module.AssayAntigenList": [],
   "Connector.view.module.AssayHeader": [],
-  "Connector.view.module.AssayVariableList": [],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [],
   "Connector.view.module.Person": [],
@@ -357,6 +350,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.module.StudyHeader": [],
   "Connector.view.module.StudyProducts": [],
   "Connector.view.module.Text": [],
+  "Connector.view.module.VariableList": [],
   "Connector.window.AbstractFilter": [],
   "Connector.window.Facet": [],
   "Connector.window.Filter": [],
@@ -1206,20 +1200,19 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.app.model.Dataset": [],
   "Connector.app.model.DatasetData": [],
   "Connector.app.model.Labs": [],
-  "Connector.app.model.Site": [],
   "Connector.app.model.Study": [],
   "Connector.app.model.StudyProducts": [],
+  "Connector.app.model.VariableList": [],
   "Connector.app.store.Assay": [],
   "Connector.app.store.Dataset": [],
   "Connector.app.store.DatasetData": [],
   "Connector.app.store.Labs": [],
-  "Connector.app.store.Site": [],
   "Connector.app.store.Study": [],
   "Connector.app.store.StudyProducts": [],
+  "Connector.app.store.VariableList": [],
   "Connector.app.view.Assay": [],
   "Connector.app.view.Labs": [],
   "Connector.app.view.ModuleContainer": [],
-  "Connector.app.view.Site": [],
   "Connector.app.view.Study": [],
   "Connector.app.view.StudyProducts": [],
   "Connector.app.view.module.StudySites": [
@@ -1301,12 +1294,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.panel.AdvancedOptionCheckboxDropdown": [],
   "Connector.panel.AdvancedOptionRadioDropdown": [],
   "Connector.panel.AntigenSelection": [],
-  "Connector.panel.AxisSelectDisplay": [
-    "widget.axisselectdisplay"
-  ],
-  "Connector.panel.AxisSelector": [
-    "widget.axisselector"
-  ],
   "Connector.panel.ColorSelector": [],
   "Connector.panel.Feedback": [
     "widget.feedback"
@@ -1321,7 +1308,7 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.selectionpanel"
   ],
   "Connector.panel.Selector": [
-    "widget.newselector"
+    "widget.variableselector"
   ],
   "Connector.plugin.HeaderLock": [
     "plugin.headerlock"
@@ -1463,9 +1450,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.module.AssayHeader": [
     "widget.app.module.assayheader"
   ],
-  "Connector.view.module.AssayVariableList": [
-    "widget.app.module.assayvariablelist"
-  ],
   "Connector.view.module.BaseModule": [],
   "Connector.view.module.ContactCDS": [
     "widget.module.contactcds"
@@ -1502,6 +1486,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.module.Text": [
     "widget.module.text"
+  ],
+  "Connector.view.module.VariableList": [
+    "widget.app.module.variablelist"
   ],
   "Connector.window.AbstractFilter": [],
   "Connector.window.Facet": [

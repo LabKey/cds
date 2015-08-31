@@ -169,11 +169,11 @@ public class CDSAsserts
     {
         for (String item : axisItems)
         {
-            _test.waitForElement(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+            _test.waitForElement(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(item));
 
             if(CDSHelper.validateCounts)
             {
-                _test.assertElementVisible(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").withText(item));
+                _test.assertElementVisible(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").withText(item));
             }
         }
 

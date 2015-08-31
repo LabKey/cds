@@ -556,15 +556,14 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify Grid");
 
         DataGrid grid = new DataGrid(this);
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(grid);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
         waitForText("View data grid"); // grid warning
 
-        // TODO Need to change "Neutralizing antibody" once the selector changes.
-        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
-        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
+        gridColumnSelector.addGridColumn("NAb (Neutralizing antibody)", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn("NAb (Neutralizing antibody)", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
         if (CDSHelper.validateCounts)
@@ -644,8 +643,7 @@ public class CDSTest extends CDSReadOnlyTest
         }
 
         log("Remove a column");
-        // TODO Need to change "Neutralizing antibody" once the selector changes.
-        gridColumnSelector.removeGridColumn("Neutralizing antibody", CDSHelper.NAB_ASSAY, false);
+        gridColumnSelector.removeGridColumn("NAb (Neutralizing antibody)", CDSHelper.NAB_ASSAY, false);
         grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY);
         grid.ensureColumnsPresent(CDSHelper.NAB_LAB); // make sure other columns from the same source still exist
 
@@ -697,7 +695,7 @@ public class CDSTest extends CDSReadOnlyTest
         }
 
         log("Change column set and ensure still filtered");
-        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
+        gridColumnSelector.addGridColumn("NAb (Neutralizing antibody)", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERIC50);
 
         if (CDSHelper.validateCounts)
@@ -890,7 +888,7 @@ public class CDSTest extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudies')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Studies");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -902,7 +900,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'pageheader')]//div//h2[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Study Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -989,7 +987,7 @@ public class CDSTest extends CDSReadOnlyTest
     {
         List<WebElement> returnedItems;
         String[] itemParts;
-        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-wrapper')]";
+        final String XPATH_RESULTLIST = "//div[contains(@class, 'learnview')]//span//div//div[contains(@class, 'learnstudyproducts')]//div[contains(@class, 'learncolumnheader')]/./following-sibling::div[contains(@class, 'detail-container')]";
 
         cds.viewLearnAboutPage("Study products");
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -1003,7 +1001,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'pageheader')]//div//h2[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Product Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -1097,9 +1095,21 @@ public class CDSTest extends CDSReadOnlyTest
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");
-
-        List<String> assays = Arrays.asList(CDSHelper.ASSAYS);
+        List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays);
+
+        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").containing(assays.get(0)));
+        waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
+
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
+        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
+
+        refresh();
+
+        waitForElement(Locator.tagWithClass("div", "list-entry-container"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
     }
 
     // TODO Putting this test on hold. "Learn about Sites " is a future feature.

@@ -66,6 +66,10 @@ Ext.define('Connector.app.store.Study', {
                 studies.push(study);
             }, this);
 
+            studies.sort(function(studyA, studyB) {
+                return LABKEY.app.model.Filter.sorters.natural(studyA.label, studyB.label);
+            });
+
             this.loadRawData(studies);
         }
     }

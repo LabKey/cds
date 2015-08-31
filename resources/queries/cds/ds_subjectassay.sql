@@ -28,7 +28,7 @@ FROM (
 
   SELECT
   DISTINCT participantid,
-  'ELISpot' AS assay_type,
+  'ELISPOT' AS assay_type,
   assay_identifier,
   container,
   lab_code,

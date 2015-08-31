@@ -70,15 +70,23 @@
         <columnTitle>BMI at Enrollment</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
+      <column columnName="agegroup_range">
+        <datatype>varchar</datatype>
+        <columnTitle>Age Group at Enrollment</columnTitle>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
+      </column>
       <column columnName="agegroup_enrollment">
         <datatype>integer</datatype>
-        <columnTitle>Age Group at Enrollment</columnTitle>
+        <columnTitle>Age Group (Decade)</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <isHidden>true</isHidden>
       </column>
       <column columnName="age_enrollment">
         <datatype>integer</datatype>
         <columnTitle>Age at Enrollment</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>true</measure>
       </column>
     </columns>
     <tableTitle>Demographics</tableTitle>
@@ -463,20 +471,20 @@
         <datatype>integer</datatype>
         <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation, adjusted for number of spot forming cells without antigen stimulation.</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mean_sfc_neg">
         <datatype>integer</datatype>
         <columnTitle>Magnitude (% cells) - Background</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Number of Spot-forming Cells (SFC) in the absence of antigen stimulation.</description>
         <measure>true</measure>
       </column>
       <column columnName="mean_sfc_raw">
         <datatype>integer</datatype>
         <columnTitle>Magnitude (% cells) - Raw</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation.</description>
         <measure>true</measure>
       </column>
@@ -639,7 +647,7 @@
       <column columnName="initial_dilution">
         <datatype>integer</datatype>
         <columnTitle>Initial dilution</columnTitle>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Indicates the initial specimen dilution.</description>
         <dimension>true</dimension>
         <measure>false</measure>
@@ -648,13 +656,13 @@
         <datatype>integer</datatype>
         <columnTitle>Titer IC50</columnTitle>
         <description>The half maximal inhibitory concentration (IC50).</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="titer_ic80">
         <datatype>integer</datatype>
         <columnTitle>Titer IC80</columnTitle>
         <description>The 80% maximal inhibitory concentration (IC80).</description>
-        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
       </column>
       <column columnName="response_call">
         <datatype>boolean</datatype>

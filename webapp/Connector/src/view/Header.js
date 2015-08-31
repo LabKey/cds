@@ -39,8 +39,24 @@ Ext.define("Connector.view.Header", {
             layout: 'hbox',
             itemId: 'search',
             margin: '18 14 0 0',
-            width: 100,
+            width: 250,
             items: [{
+                xtype: 'box',
+                itemId: 'feedback',
+                margin: '2 50 0 0',
+                autoEl: {
+                    tag: 'a',
+                    cls: 'logout',
+                    html: 'Give feedback'
+                },
+                listeners: {
+                    click: function(evt, el) {
+                        Connector.panel.Feedback.displayWindow(el);
+                    },
+                    element: 'el',
+                    scope: this
+                }
+            },{
                 xtype: 'box',
                 itemId: 'about',
                 margin: '2 15 0 0',

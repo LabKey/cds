@@ -14,7 +14,7 @@ Ext.define('Connector.view.module.ProductOtherProducts', {
             Connector.constant.Templates.module.title,
             '<tpl for="items">',
                 '<div class="item-row">',
-                    '<p><a href="#learn/learn/Vaccine/{[encodeURIComponent(values)]}">{.}</a></p>',
+                    '<p><a href="#learn/learn/Vaccine/{[encodeURIComponent(values)]}">{.:htmlEncode}</a></p>',
                 '</div>',
             '</tpl>',
         '</p></tpl>'
