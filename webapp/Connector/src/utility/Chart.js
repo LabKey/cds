@@ -15,7 +15,10 @@ Ext.define('Connector.utility.Chart', {
         HEATSCALE2: '#A09C9C',
         HEATSCALE3: '#CCC8C8',
         SELECTED: '#01BFC2',
-        UNSELECTED: '#E6E6E6'
+        UNSELECTED: '#E6E6E6',
+        BOXSHADOW: '#CCCCCC',
+        PRIMARYTEXT: '#222222',
+        PREENROLLMENT: 'rgba(255,165,0,0.3)'
     },
 
     tickFormat: {
@@ -56,20 +59,8 @@ Ext.define('Connector.utility.Chart', {
     },
 
     brushBins : function(event, layerData, extent, plot, layerSelections) {
-        var sel = layerSelections[0]; // We only have one layer, so grab the first one.
-        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
-        var colorFn, assocColorFn, min, max;
-
-        // TODO: For now just do brushing on main plot not gutter plots
-        if (this.requireYGutter) {
-            sel[0][0] = null;
-            if (this.requireXGutter) {
-                sel[0][2] = null;
-            }
-        }
-        else if (this.requireXGutter) {
-            sel[0][1] = null;
-        }
+        var min, max,
+            subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
         // convert extent x/y values into aes scale as bins don't really have x/y values
         if (extent[0][0] !== null && extent[1][0] !== null) {
@@ -83,6 +74,20 @@ Ext.define('Connector.utility.Chart', {
             extent[0][1] = min;
             extent[1][1] = max;
         }
+
+        ChartUtils._brushBinsByCanvas(this.plot.renderer.canvas, extent, subjects);
+
+        if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+            ChartUtils._brushBinsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+        }
+
+        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+            ChartUtils._brushBinsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+        }
+    },
+
+    _brushBinsByCanvas : function(canvas, extent, subjects) {
+        var colorFn, assocColorFn;
 
         // set color, via style attribute, for the selected bins
         colorFn = function(d) {
@@ -100,7 +105,6 @@ Ext.define('Connector.utility.Chart', {
 
             return d.isSelected ? 'fill: #01BFC2;' : 'fill: #E6E6E6;';
         };
-        sel.selectAll('.vis-bin path').attr('style', colorFn);
 
         // set color, via style attribute, for the unselected bins
         assocColorFn = function(d) {
@@ -114,7 +118,8 @@ Ext.define('Connector.utility.Chart', {
             return this.getAttribute('style');
         };
 
-        sel.selectAll('.vis-bin path')
+        canvas.selectAll('.vis-bin path')
+                .attr('style', colorFn)
                 .attr('style', assocColorFn)
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
@@ -139,7 +144,8 @@ Ext.define('Connector.utility.Chart', {
             xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
 
-            if (xMeasure.name.toLowerCase().indexOf("alignedDay") > -1) {
+            // Issue 24124: With time points, brushing can create a filter that is not a whole number
+            if (xMeasure.variableType == 'TIME') {
                 xMin = Math.floor(xMin);
                 xMax = Math.ceil(xMax);
             }
@@ -166,21 +172,21 @@ Ext.define('Connector.utility.Chart', {
     },
 
     brushPoints : function(event, layerData, extent, plot, layerSelections) {
-        var sel = layerSelections[0], // We only have one layer, so grab the first one.
-            subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
-        // TODO: For now just do brushing on main plot not gutter plots
-        if (this.requireYGutter) {
-            sel[0][0] = null;
-            if (this.requireXGutter) {
-                sel[0][2] = null;
-            }
-        }
-        else if (this.requireXGutter) {
-            sel[0][1] = null;
+        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
+
+        if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
         }
 
-        sel.selectAll('.point path')
+        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+        }
+    },
+
+    _brushPointsByCanvas : function(canvas, extent, subjects) {
+        canvas.selectAll('.point path')
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke))
@@ -189,7 +195,7 @@ Ext.define('Connector.utility.Chart', {
                 .attr('stroke-opacity', 1);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
-        sel.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
         });
@@ -339,5 +345,18 @@ Ext.define('Connector.utility.Chart', {
             }
 
         }, this);
+    },
+
+    escapeHTML : function(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    },
+
+    unescapeHTML : function(escapedStr) {
+        var div = document.createElement('div');
+        div.innerHTML = escapedStr;
+        var child = div.childNodes[0];
+        return child ? child.nodeValue : '';
     }
 });

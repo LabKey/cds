@@ -185,6 +185,7 @@ Ext.define('Connector.model.ChartData', {
             xVal, yVal, colorVal = null,
             negX = false, negY = false,
             yMeasureFilter, xMeasureFilter, excludeAliases = [],
+            brushFilterAliases = [], mainCount = 0,
             _row;
 
         ca = this.getBaseMeasureConfig();
@@ -232,7 +233,7 @@ Ext.define('Connector.model.ChartData', {
 
         // if we are plotting the same continuous variable on both the x and y axis,
         // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
-        if (xa.isContinuous && xa.schema == ya.schema && xa.query == ya.query) {
+        if (xa.schema == ya.schema && xa.query == ya.query) {
             yMeasureFilter = {};
             xMeasureFilter = {};
 
@@ -243,14 +244,16 @@ Ext.define('Connector.model.ChartData', {
 
                 if (!this.arraysEqual(xDimValue, yDimValue)) {
                     var alias = this.getAliasFromMeasure(key);
-                    excludeAliases.push(alias);
-
-                    // TODO: how do we properly filter a MeasureStore when the value is an array?
                     if (yDimValue) {
-                        yMeasureFilter[alias] = yDimValue.join(',');
+                        yMeasureFilter[alias] = yDimValue;
                     }
                     if (xDimValue) {
-                        xMeasureFilter[alias] = xDimValue.join(',');
+                        xMeasureFilter[alias] = xDimValue;
+                    }
+
+                    // issue 24008: only exclude the alias if the filters are for a single value on each side
+                    if (xDimValue != null && xDimValue.length == 1 && yDimValue != null && yDimValue.length == 1) {
+                        excludeAliases.push(alias);
                     }
                 }
             }, this);
@@ -271,6 +274,11 @@ Ext.define('Connector.model.ChartData', {
             console.log('Plotting aggregate values using mean', this.getMeasureStore()._records.length, dataRows.length);
         }
 
+        // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
+        Ext.each(Connector.getService('Query').getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
+            brushFilterAliases.push(LABKEY.MeasureUtil.getAlias(brushFilterMeasure.measure));
+        });
+
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++) {
             _row = dataRows[r];
@@ -284,7 +292,7 @@ Ext.define('Connector.model.ChartData', {
                 colorVal = this._getColorValue(color, _cid, _row);
             }
 
-            xVal = x ? this._getXValue(x, _xid, _row) : '';
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
             if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
                 if (xDomain[0] == null || xVal < xDomain[0])
                     xDomain[0] = xVal;
@@ -320,14 +328,22 @@ Ext.define('Connector.model.ChartData', {
 
             // split the data entry based on undefined x and y values for gutter plotting
             if (xVal == null) {
-                undefinedXRows.push(entry);
+                if (brushFilterAliases.indexOf(_xid) == -1) { // issue 24021
+                    undefinedXRows.push(entry);
+                }
             }
             else if (xa.isContinuous && yVal == null) {
-                undefinedYRows.push(entry);
+                if (brushFilterAliases.indexOf(_yid) == -1) { // issue 24021
+                    undefinedYRows.push(entry);
+                }
             }
             else {
-                mainPlotRows.push(entry);
+                mainCount++;
             }
+
+            // the main data row map will still include the x/y null rows,
+            // but the main plot won't render them (plotNullPoints = false)
+            mainPlotRows.push(entry);
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
@@ -346,7 +362,7 @@ Ext.define('Connector.model.ChartData', {
                 main: mainPlotRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
-                totalCount: mainPlotRows.length + undefinedXRows.length + undefinedYRows.length
+                totalCount: mainCount + undefinedXRows.length + undefinedYRows.length
             },
             properties: {
                 xaxis: xa,
@@ -390,20 +406,27 @@ Ext.define('Connector.model.ChartData', {
         return row.y ? row.y.getMean() : null;
     },
 
-    _getXValue : function(measure, alias, row) {
+    _getXValue : function(measure, alias, row, xIsContinuous) {
         if (row.x.hasOwnProperty('isUnique')) {
-            return Ext.isDefined(row.x.value) && row.x.value != null ? row.x.value : 'undefined';
+            if (Ext.isDefined(row.x.value) && row.x.value != null) {
+                return row.x.value;
+            }
+            return xIsContinuous ? null : 'undefined';
         }
 
         return row.x.getMean();
     },
 
     _getColorValue : function(measure, alias, row) {
-        if (row.z && row.z.value != null) {
+        if (Ext.isDefined(row.z) && row.z.value != null) {
             return row.z.value;
         }
         else if (Ext.isDefined(row[alias])) {
             return row[alias];
+        }
+        else if (Ext.isDefined(row.z) && !row.z.isUnique) {
+            // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
+            return 'Multiple values';
         }
         return null;
     },

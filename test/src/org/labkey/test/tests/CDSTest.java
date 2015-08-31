@@ -556,15 +556,14 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify Grid");
 
         DataGrid grid = new DataGrid(this);
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(grid);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
         waitForText("View data grid"); // grid warning
 
-        // TODO Need to change "Neutralizing antibody" once the selector changes.
-        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
-        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
+        gridColumnSelector.addGridColumn("NAb (Neutralizing antibody)", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
+        gridColumnSelector.addGridColumn("NAb (Neutralizing antibody)", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
         if (CDSHelper.validateCounts)
@@ -644,8 +643,7 @@ public class CDSTest extends CDSReadOnlyTest
         }
 
         log("Remove a column");
-        // TODO Need to change "Neutralizing antibody" once the selector changes.
-        gridColumnSelector.removeGridColumn("Neutralizing antibody", CDSHelper.NAB_ASSAY, false);
+        gridColumnSelector.removeGridColumn("NAb (Neutralizing antibody)", CDSHelper.NAB_ASSAY, false);
         grid.assertColumnsNotPresent(CDSHelper.NAB_ASSAY);
         grid.ensureColumnsPresent(CDSHelper.NAB_LAB); // make sure other columns from the same source still exist
 
@@ -697,7 +695,7 @@ public class CDSTest extends CDSReadOnlyTest
         }
 
         log("Change column set and ensure still filtered");
-        gridColumnSelector.addGridColumn("Neutralizing antibody", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
+        gridColumnSelector.addGridColumn("NAb (Neutralizing antibody)", CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERIC50);
 
         if (CDSHelper.validateCounts)

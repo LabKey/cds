@@ -279,10 +279,6 @@ a {
   height: 30px !important;
 }
 
-.x-grid-view {
-  padding-bottom: 70px;
-}
-
 .inline {
   display: inline-block;
 }
@@ -545,6 +541,39 @@ div.emptytext {
   }
 }
 
+.feedback-panel {
+
+  .header {
+    padding: 18px 48px 18px 9px;
+
+    .main-title {
+      font: $nav-font;
+      color: $heat-scale-2;
+    }
+
+    .sub-title {
+      margin-top: 3px;
+
+      .nav-text {
+        color: $black;
+        font: $title-font;
+      }
+    }
+  }
+
+  .#{$connector-prefix}panel-body {
+    background-color: $heat-scale-6;
+  }
+
+  .#{$connector-prefix}form-textarea {
+    height: 390px;
+  }
+
+  .footer {
+    padding-right: 20px;
+  }
+}
+
 div.hopscotch-bubble {
   border: 1px solid $border-color;
   box-shadow: 2px 2px 0 $box-shadow-color;
@@ -636,7 +665,6 @@ div.hopscotch-bubble {
 @import 'view/Header';
 @import 'view/InfoPane';
 @import 'view/Learn';
-@import 'view/MeasurePicker';
 @import 'view/Navigation';
 @import 'view/Page';
 @import 'view/Chart';
