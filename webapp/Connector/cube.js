@@ -371,6 +371,11 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Assay information'
                         }
                     },{
+                        type: 'assayanalytelist',
+                        staticData: {
+                            title: 'Assay Analytes'
+                        }
+                    },{
                         type: 'text',
                         staticData: {
                             title: 'Description'
@@ -399,6 +404,19 @@ Ext4.define('Connector.cube.Configuration', {
                         staticData: {
                             title: 'Contact information'
                         }
+                    }]]
+                },{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'variablelist',
+                        staticData: {
+                            title: 'Assay Variables'
+                        }
+                    }]]
+                },{
+                    view: 'Connector.app.view.ModuleContainer',
+                    modules: [[{
+                        type: 'assayantigenlist'
                     }]]
                 }]
             }]

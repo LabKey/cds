@@ -7,7 +7,7 @@ Ext.define('Connector.app.view.Labs', {
 
     extend : 'Ext.view.View',
 
-    itemSelector: 'div.study-detail',
+    itemSelector: 'div.detail-wrapper',
 
     statics: {
         dateRenderer : Ext.util.Format.dateRenderer("M jS, Y"),
@@ -32,22 +32,24 @@ Ext.define('Connector.app.view.Labs', {
     },
 
     tpl: new Ext.XTemplate(
+
+        //todo: these css classes have been deprecated
         '<tpl if="values.length &gt; 0">',
-            '{[ Connector.app.view.Labs.columnHeaderTpl.apply(values) ]}',
+        '{[ Connector.app.view.Labs.columnHeaderTpl.apply(values) ]}',
         '</tpl>',
         '<tpl for=".">',
             '<div class="detail-wrapper">',
-                '<div class="detail-container study-detail">',
+                '<div class="detail-container">',
                     '<div class="study-description">',
                         '<h2>{Name}</h2>',
-                        '<div class="description-text">{Description}</div>',
+                        '<div class="description-text">{Description:htmlEncode}</div>',
                     '</div>',
                     '<div class="study-date">',
-                        '<span class="startdate-text">{PI}</span>',
+                        '<span class="startdate-text">{PI:htmlEncode}</span>',
                     '</div>',
                     '<div class="study-date">',
-                        '<span class="startdate-text">{Institution}</span>',
-                        '<span class="enddate-text">{Location}</span>',
+                        '<span class="startdate-text">{Institution:htmlEncode}</span>',
+                        '<span class="enddate-text">{Location:htmlEncode}</span>',
                     '</div>',
                 '</div>',
             '</div>',

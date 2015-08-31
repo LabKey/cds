@@ -11,10 +11,30 @@ Ext.define('Connector.view.module.AssayAnalyteList', {
 
     cls : 'module assaylist',
 
-    // TODO:
     tpl : new Ext.XTemplate(
         '<tpl>',
-            Connector.constant.Templates.module.title,
-            '<p class="item-row">Data currently unavailable</p>',
-        '</tpl>')
+            '<h3>Assay Analytes</h3>',
+            '<tpl if="values.length &gt; 0">',
+                '<table class="learn-study-info">',
+                    '<tpl for=".">',
+                        '<tr>',
+                            '<td class="item-label">{col:htmlEncode}:</td>',
+                            '<td class="item-value">{value:htmlEncode}</td>',
+                        '</tr>',
+                    '</tpl>',
+                '</table>',
+            '<tpl else>',
+                '<p>There are no Analytes to Display</p>',
+            '</tpl>',
+        '</tpl>'
+    ),
+
+    initComponent : function() {
+        var store = StoreCache.getStore('Connector.app.store.Assay'),
+            assay_type = this.data.model.get('assay_type');
+
+        store.loadAnalytes(assay_type, function(results) {
+            this.update(results);
+        }, this);
+    }
 });

@@ -133,7 +133,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Selection.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/AbstractViewController.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/OlapExplorer.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/app/MeasurePicker.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/LoadingMask.js"></script>
 
     <!-- Ext Widget Dependencies -->
@@ -196,7 +195,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Filter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/Facet.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/window/SystemMessage.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/panel/AxisSelector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Feedback.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/FilterPanel.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
@@ -287,29 +285,27 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/DatasetData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Labs.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/model/VariableList.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Dataset.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/DatasetData.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Labs.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/store/StudyProducts.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/store/VariableList.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Labs.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/ModuleContainer.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Site.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/Study.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/StudyProducts.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayVariableList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductManufacturing.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductProvidedBy.js"></script>
@@ -320,6 +316,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudyProducts.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/StudySites.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/VariableList.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/Application.js"></script>
 

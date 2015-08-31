@@ -18,6 +18,7 @@ package org.labkey.test.pages;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
+import org.labkey.test.util.LabKeyExpectedConditions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -74,17 +75,11 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         }
     }
 
-    @Override
     public void openSelectorWindow()
     {
-        WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
-        _test.sleep(750); // Don't know why, but more reliable with the wait.
-        openButton.click();
-        _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText("x-axis").toBy()));
-        _test.longWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']").toBy()));
+        super.openSelectorWindow(XPATHID, "x-axis");
     }
 
-    @Override
     public void pickSource(String source)
     {
         // If not currently on the source page, move there.
@@ -92,7 +87,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         {
             backToSource();
         }
-        super.pickSource(source);
+        super.pickSource(XPATHID, source);
     }
 
     public void backToSource()

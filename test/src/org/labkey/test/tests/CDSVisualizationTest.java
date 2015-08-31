@@ -41,10 +41,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -206,7 +208,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
         //getText(Locator.css("svg")) on Chrome
 
-        final String ELISPOT_VISIT = "0\n100\n200\n300\n400\n500\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
+        final String ELISPOT_DATA_PROV = "0\n500\n1000\n1500\n2000\n2500\n3000\n3500\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
         final String ICS_MAGNITUDE = "0\n1\n2\n3\n4\n5\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5"; // TODO Test data dependent.
         final String NAB_IC50 = "1\n10\n1\n10\n100\n1000"; // TODO Test data dependent.
 
@@ -217,7 +219,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ELISPOT);
-        xaxis.pickVariable(CDSHelper.ELISPOT_VISIT);
+        xaxis.pickVariable(CDSHelper.ELISPOT_DATA_PROV);
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ELISPOT);
@@ -227,7 +229,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if(CDSHelper.validateCounts)
         {
-            assertSVG(ELISPOT_VISIT);
+            assertSVG(ELISPOT_DATA_PROV);
         }
 
         yaxis.openSelectorWindow();
@@ -546,18 +548,18 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
 
         final String[][] Y_AXIS_SOURCES =
-                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
-                        {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
-                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_RAW},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW},
+                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
+                        {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW},
                         {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}};
         final String[][] X_AXIS_SOURCES =
-                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES, CDSHelper.DEMO_VISIT},
+                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_BMI, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SUBSPECIES},
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
-                        {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE, CDSHelper.BAMA_VISIT, CDSHelper.BAMA_VISIT_DAY},
-                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE, CDSHelper.ELISPOT_VISIT, CDSHelper.ELISPOT_VISIT_DAY},
-                        {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN, CDSHelper.ICS_VISIT},
-                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80, CDSHelper.NAB_VISIT, CDSHelper.NAB_VISIT_DAY}};
+                        {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
+                        {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
+                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}};
         final String[][] COLOR_AXIS_SOURCES =
                 {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
                         {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
@@ -931,9 +933,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // TODO all the counts here are very test data dependent.
 
-        Map<String, String> sourcesSubjectCounts = new HashMap<>();
-        Map<String, String> antigenCounts = new HashMap<>();
-        Map<String, String> peptidePoolCounts = new HashMap<>();
         Map<String, String> proteinCounts = new HashMap<>();
         Map<String, String> proteinPanelCounts = new HashMap<>();
         Map<String, String> virusCounts = new HashMap<>();
@@ -1290,13 +1289,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
 
         Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
-        expectedCounts.put("HVTN 041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0));
-        expectedCounts.put("HVTN 049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0));
-        expectedCounts.put("HVTN 049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0));
-        expectedCounts.put("HVTN 094", new CDSHelper.TimeAxisData("HVTN 094", 6, 22, 0));
-        expectedCounts.put("HVTN 096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0));
-        expectedCounts.put("HVTN 203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0));
-        expectedCounts.put("HVTN 205", new CDSHelper.TimeAxisData("HVTN 0205", 0, 0, 0));
+        expectedCounts.put("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 0));
+        expectedCounts.put("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 0));
+        expectedCounts.put("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 0));
+        expectedCounts.put("HVTN_094", new CDSHelper.TimeAxisData("HVTN 094", 6, 22, 0, 0));
+        expectedCounts.put("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 0));
+        expectedCounts.put("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 0));
+        expectedCounts.put("HVTN_205", new CDSHelper.TimeAxisData("HVTN 0205", 0, 0, 0, 0));
 
         final String yaxisScale = "\n0\n200\n400\n600\n800\n1000\n1200\n1400\n1600\n1800"; // TODO Test data dependent.
         final String studyDaysScales = "0\n100\n200\n300\n400\n500\n600" + yaxisScale; // TODO Test data dependent.
@@ -1469,6 +1468,148 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyTimeAxisWithMultipleSchedules()
+    {
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        String cssPath;
+        List<String> expectedToolTipText;
+
+        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        expectedCounts.put("HVTN_060", new CDSHelper.TimeAxisData("HVTN 060", 5, 7, 0, 0));
+        expectedCounts.put("HVTN_063", new CDSHelper.TimeAxisData("HVTN 063", 5, 8, 0, 0));
+        expectedCounts.put("HVTN_069", new CDSHelper.TimeAxisData("HVTN 069", 4, 7, 0, 0));
+        expectedCounts.put("HVTN_204", new CDSHelper.TimeAxisData("HVTN 204", 4, 12, 0, 0));
+
+        final String yaxisScale = "\n0\n5000\n10000\n15000\n20000\n25000\n30000\n35000\n40000\n45000"; // TODO Test data dependent.
+        final String studyDaysScales = "0\n200\n400\n600\n800\n1000" + yaxisScale; // TODO Test data dependent.
+
+        log("Verify ELISPOT Magnitude - Background subtracted and Study Days with axis collapsed and expanded.");
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.TIME_POINTS);
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
+        xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
+
+        assertTrue("For ELISPOT Magnitude - Background subtracted vs Time Visit Days a study axis was not present.", hasStudyAxis());
+        List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found" + studies.size() + ".", studies.size() == expectedCounts.size());
+        log("Study count was as expected.");
+
+        // Get the element again to avoid the stale-element error.
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        validateVisitCounts(studies, expectedCounts);
+        assertSVG(studyDaysScales);
+
+        log("Validate that the tool-tips are as expected.");
+
+        // Going to leave the values for the tool-tips hard coded here. Unlikely they would ever be used anywhere else.
+        // Alternative to hard coding the values would be to write a generator that would build the expected tool-tips,
+        // but that is more effort that I have time for now.
+        expectedToolTipText = new ArrayList<>();
+        expectedToolTipText.add("HVTN 060 - Day 379");
+        expectedToolTipText.add("Group 1, T1, Vaccine : gag DNA 1500mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 1, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 2, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 2, T2, Vaccine : gag DNA 1500mcg + IL-12 DNA 100 mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 3, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 3, T3, Vaccine : gag DNA 1500mcg + IL-12 DNA 500 mcg mo(0,1,3) \n-Follow-Up");
+        expectedToolTipText.add("Group 4, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 4, T4, Vaccine : gag DNA 1500mcg + IL-12 DNA 1500 mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 5, T5, Vaccine : gag DNA 1500mcg mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 5, Cb, Placebo : Placebo mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 6, T6, Vaccine : gag DNA 1500mcg + IL-12 DNA 1500 mcg mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 6, Cb, Placebo : Placebo mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 7, T7, Vaccine : gag DNA 1500mcg+IL-12 DNA 1500 mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 7, Cb, Placebo : Placebo mo(0,1,3,6,9)\n-Follow-Up");
+        cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)";
+        timeAxisToolTipsTester(cssPath, expectedToolTipText);
+
+        expectedToolTipText.clear();
+        expectedToolTipText.add("HVTN 069 - Day 70");
+        expectedToolTipText.add("Group 1, T1, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) IM\n-Follow-Up");
+        expectedToolTipText.add("Group 2, T2, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) ID\n-Follow-Up");
+        expectedToolTipText.add("Group 3, T3, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) SC\n-Follow-Up");
+        cssPath = "#study-axis > svg > g:nth-child(4)  > image:nth-of-type(1)";
+        timeAxisToolTipsTester(cssPath, expectedToolTipText);
+
+        log("Expand the time axis and verify the counts.");
+        Locator.css("#study-axis > svg > g > image.img-expand").findElement(getDriver()).click();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        expectedCounts.clear();
+        expectedCounts.put("HVTN_060", new CDSHelper.TimeAxisData("HVTN 060", 0, 0, 0, 0));
+        expectedCounts.put("HVTN_060-Group_7_Cb_Placebo", new CDSHelper.TimeAxisData("Group 7, Cb, Placebo", 5, 7, 0, 0));
+        expectedCounts.put("HVTN_063", new CDSHelper.TimeAxisData("HVTN 063", 0, 0, 0, 0));
+        expectedCounts.put("HVTN_063-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2, T2, Vaccine", 5, 8, 0, 0));
+        expectedCounts.put("HVTN_069", new CDSHelper.TimeAxisData("HVTN 069", 0, 0, 0, 0));
+        expectedCounts.put("HVTN_069-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1, T1, Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("HVTN_069-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2, T2, Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("HVTN_069-Group_3_T3_Vaccine", new CDSHelper.TimeAxisData("Group 3, T3, Vaccine", 4, 7, 0, 0));
+        expectedCounts.put("HVTN_204", new CDSHelper.TimeAxisData("HVTN 204", 0, 0, 0, 0));
+        expectedCounts.put("HVTN_204-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1, T1, Vaccine", 4, 12, 0, 0));
+        expectedCounts.put("HVTN_204-Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3, T3, Vaccine", 4, 12, 0, 0));
+
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
+        validateVisitCounts(studies, expectedCounts);
+        log("The counts are as expected.");
+
+        log("Validate that the tool-tips are as expected when expanded.");
+
+        expectedToolTipText.clear();
+        expectedToolTipText.add("HVTN 063 - Day 546");
+        expectedToolTipText.add("Group 1, Ca, Placebo : Placebo mo(0,1,3)");
+        expectedToolTipText.add("-Follow-Up");
+        cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
+        timeAxisToolTipsTester(cssPath, expectedToolTipText);
+
+        expectedToolTipText.clear();
+        expectedToolTipText.add("HVTN 069 - Day 0");
+        expectedToolTipText.add("Group 1, T1, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) IM");
+        expectedToolTipText.add("-Enrollment,Vaccination");
+        cssPath = "#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)";
+        timeAxisToolTipsTester(cssPath, expectedToolTipText);
+
+        log("Change time axis alignment and validate things remain the same.");
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
+        xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        expectedCounts.replace("HVTN_069-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1, T1, Vaccine", 4, 7, 0, 1));
+        expectedCounts.replace("HVTN_069-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2, T2, Vaccine", 4, 7, 0, 1));
+        expectedCounts.replace("HVTN_069-Group_3_T3_Vaccine", new CDSHelper.TimeAxisData("Group 3, T3, Vaccine", 4, 7, 0, 1));
+        expectedCounts.replace("HVTN_204-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1, T1, Vaccine", 4, 12, 0, 1));
+        expectedCounts.replace("HVTN_204-Group_2_C1_Placebo", new CDSHelper.TimeAxisData("Group 3, T3, Vaccine", 4, 12, 0, 1));
+
+        studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
+        assertTrue("Expected 35 studies in the Time Axis, found" + studies.size() + ".", studies.size() == 35);
+        validateVisitCounts(studies, expectedCounts);
+        log("The counts are as expected.");
+
+        log("Validate that the tool-tips are as expected when expanded.");
+
+        expectedToolTipText.clear();
+        expectedToolTipText.add("HVTN 063 - Day 182");
+        expectedToolTipText.add("Group 2, T2, Vaccine : gag DNA 1500mcg + IL-15 DNA 100 mcg mo(0,1,3)");
+        expectedToolTipText.add("-Follow-Up");
+        cssPath = "#study-axis > svg > g:nth-child(21) > image:nth-of-type(1)";
+        timeAxisToolTipsTester(cssPath, expectedToolTipText);
+
+    }
+
+    @Test
     public void verifyAntigenVariableSelector()
     {
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1533,7 +1674,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         yaxis.setVirusName(uniqueVirusId);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
@@ -1808,42 +1948,98 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         for(WebElement study : studies)
         {
-            List<WebElement> visits;
+            CDSHelper.TimeAxisData tad = expectedCounts.get(study.findElement(Locator.css("text.study-label").toBy()).getAttribute("test-data-value"));
 
-            log("study.getText(): " + study.getText());
-            visits = study.findElements(Locator.css("image.visit-tag").toBy());
-            log("visits.size(): " + visits.size());
-
-            int nonvacCount = 0, vacCount = 0, chalCount = 0;
-
-            // Had hoped to get a collection directly, but had trouble getting css to see the href value.
-            // So went with this approach for now. May revisit later.
-            for(int i=0; i < visits.size(); i++)
+            // If tad is null it means we don't want to check the totals for the given study (or a locator is messed up).
+            if(tad != null)
             {
-                if(visits.get(i).getAttribute("href").contains("/nonvaccination_normal.svg"))
+
+                int nonvacCount = 0, vacCount = 0, chalCount = 0, preCount = 0;
+                List<WebElement> visits;
+                WebElement preEnrollment;
+
+                log("Study Name: '" + study.getText() + "' ID: " + study.findElement(Locator.css("text.study-label").toBy()).getAttribute("test-data-value"));
+                visits = study.findElements(Locator.css("image.visit-tag").toBy());
+                log("Number of visits: " + visits.size());
+
+                // Had hoped to get a collection directly, but had trouble getting css to see the href value.
+                // So went with this approach for now. May revisit later.
+                for(int i=0; i < visits.size(); i++)
                 {
-                    nonvacCount++;
+                    if(visits.get(i).getAttribute("href").contains("/nonvaccination_normal.svg"))
+                    {
+                        nonvacCount++;
+                    }
+                    if(visits.get(i).getAttribute("href").contains("/vaccination_normal.svg"))
+                    {
+                        vacCount++;
+                    }
+                    if(visits.get(i).getAttribute("href").contains("/challenge_normal.svg"))
+                    {
+                        chalCount++;
+                    }
                 }
-                if(visits.get(i).getAttribute("href").contains("/vaccination_normal.svg"))
+
+                try
                 {
-                    vacCount++;
+                    preEnrollment = study.findElement(Locator.css("rect.preenrollment").toBy());
+                    if (preEnrollment.getAttribute("width").equals("0"))
+                    {
+                        preCount = 0;
+                    }
+                    else
+                    {
+                        preCount = 1;
+                    }
                 }
-                if(visits.get(i).getAttribute("href").contains("/challenge_normal.svg"))
+                catch(org.openqa.selenium.NoSuchElementException nosee)
                 {
-                    chalCount++;
+                    // When expanded the study rows will not have a pre-enrollment element.
+                    preCount = 0;
                 }
+
+                log("Non-Vaccination Count: " + nonvacCount);
+                log("Vaccination Count: " + vacCount);
+                log("Challenge Count: " + chalCount);
+                log("Preenrollment Count: " + preCount);
+
+                assertTrue("Vaccination count not as expected. Expected: " + tad.vaccinationCount + " found: " + vacCount, tad.vaccinationCount == vacCount);
+                assertTrue("Nonvaccination count not as expected. Expected: " + tad.nonvaccinationCount + " found: " + nonvacCount, tad.nonvaccinationCount == nonvacCount);
+                assertTrue("Challenge count not as expected. Expected: " + tad.challengeCount + " found: " + chalCount, tad.challengeCount == chalCount);
+                assertTrue("Preenrollment count not as expected. Expected: " + tad.preenrollmentCount + " found: " + preCount, tad.preenrollmentCount == preCount);
+
+                log("Visit counts as expected.");
+
+            }
+            else
+            {
+                log("Not validating counts for " + study.getText());
             }
 
-            log("nonvacCount: " + nonvacCount);
-            log("vacCount: " + vacCount);
-            log("chalCount: " + chalCount);
-
-            CDSHelper.TimeAxisData tad = expectedCounts.get(study.getText());
-
-            assertTrue("Vaccination count not as expected. Expected: " + tad.vaccinationCount + " found: " + vacCount, tad.vaccinationCount == vacCount);
-            assertTrue("Nonvaccination count not as expected. Expected: " + tad.nonvaccinationCount + " found: " + nonvacCount, tad.nonvaccinationCount == nonvacCount);
-            assertTrue("Challenge count not as expected. Expected: " + tad.challengeCount + " found: " + chalCount, tad.challengeCount == chalCount);
         }
+    }
+
+    private void timeAxisToolTipsTester(String cssVisit, List<String> expectedToolTipText)
+    {
+        String actualToolTipText, condensedActual, condensedExpected;
+
+        scrollIntoView(Locator.css(cssVisit));
+        mouseOver(Locator.css(cssVisit));
+        sleep(CDSHelper.CDS_WAIT_TOOLTIP);
+
+        assertTrue("Tool-tip was not present.", isElementVisible(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]")));
+        actualToolTipText = getText(Locator.xpath("//div[contains(@class, 'hopscotch-bubble')]"));
+
+        // Modify the strings to make the comparisons less susceptible to spaces, tabs, /n, etc... and capitalization.
+        condensedActual = actualToolTipText.toLowerCase().replaceAll("\\s+", "");
+
+        // Order of text in tool-tip may change from deployment to deployment. So look only from specific text as oppose to looking for an exact match.
+        for (String strTemp : expectedToolTipText)
+        {
+            condensedExpected = strTemp.toLowerCase().replaceAll("\\s+", "");
+            assertTrue("Item not found in tool tip. Expected: '" + strTemp + "' (" + condensedExpected + "), actual: '" + actualToolTipText + "' (" + condensedActual + ").", condensedActual.contains(condensedExpected));
+        }
+
     }
 
     private void subjectCountsHelper(Map<String, String> sourcesSubjectCounts, Map<String, String> antigenCounts,

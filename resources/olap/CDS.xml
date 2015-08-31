@@ -36,7 +36,7 @@
             </Hierarchy>
             <Hierarchy name="Age" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
-                <Level name="Age" visible="true" column="agegroup_enrollment" type="Integer" uniqueMembers="true"/>
+                <Level name="Age" visible="true" column="agegroup_range" type="String" uniqueMembers="true"/>
                 <Level name="Year" visible="true" column="age_enrollment" type="Integer" uniqueMembers="true"/>
             </Hierarchy>
             <Hierarchy name="Ethnicity" visible="true" hasAll="true" primaryKey="subjectid">
@@ -52,7 +52,6 @@
             <Hierarchy name="Species" visible="true" hasAll="true" primaryKey="subjectid">
                 <Table name="demographics" schema="study"/>
                 <Level name="Species" visible="true" column="species" type="String" uniqueMembers="true" />
-                <Level name="Subspecies" visible="true" column="subspecies" type="String" uniqueMembers="true" />
             </Hierarchy>
 
         </Dimension>
