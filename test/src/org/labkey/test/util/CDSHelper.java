@@ -70,6 +70,7 @@ public class CDSHelper
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
     public final static int CDS_WAIT_ANIMATION = 500;
+    public final static int CDS_WAIT_TOOLTIP = 1500;
 
     public final static String RACE_ASIAN = "Asian";
     public final static String RACE_BLACK = "Black";
@@ -977,17 +978,19 @@ public class CDSHelper
     // Used to identify data in the time axis.
     public static class TimeAxisData
     {
-        public String study;
+        public String studyName;
         public int vaccinationCount;
         public int nonvaccinationCount;
         public int challengeCount;
+        public int preenrollmentCount;
 
-        public TimeAxisData(String study, int vacCount, int nonvacCount, int chalCount)
+        public TimeAxisData(String studyName, int vacCount, int nonvacCount, int chalCount, int preCount)
         {
-            this.study = study;
+            this.studyName = studyName;
             vaccinationCount = vacCount;
             nonvaccinationCount = nonvacCount;
             challengeCount = chalCount;
+            preenrollmentCount = preCount;
         }
     }
 

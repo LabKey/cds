@@ -44,19 +44,70 @@ Ext.define('Connector.model.StudyAxisData', {
         return this.get('range');
     },
 
-    processStudyAxisData : function() {
-        var records = this.getRecords(), containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
-                interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
-                study, studyContainer, studyKeys, visit, visits, visitId, visitKeys, visitKey, visitLabel, seqMin,
-                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination,
-                shiftVal, i, j, alignmentVisitTag, visitTagName, _row;
+    getVisitTag : function(studyName, groupName, tagCaption, groupDesc) {
+        return {
+            study: studyName,
+            group: groupName,
+            tag: tagCaption,
+            desc: groupDesc
+        }
+    },
 
-        if (this.getMeasure().interval) {
-            interval = this.getMeasure().interval.toLowerCase();
+    getVisit : function(studyLabel, groupName, groupLabel, visitLabel, seqMin, seqMax, protocolDay, alignedDay) {
+        return {
+            studyLabel: studyLabel,
+            groupName: groupName,
+            groupLabel: groupLabel,
+            label: visitLabel,
+            sequenceNumMin: seqMin,
+            sequenceNumMax: seqMax,
+            protocolDay: protocolDay,
+            alignedDay: alignedDay,
+            imgSrc: null,
+            visitTags: []
+        };
+    },
+
+    setType : function(visit, visitTagCaption, isVaccination, isChallenge) {
+        if (visitTagCaption !== null) {
+            // determine which visit tag/milestone glyph to display
+            if (isVaccination) {
+                visit.imgSrc = 'vaccination_normal.svg';
+                visit.imgSize = 14;
+            }
+            else if (isChallenge && visit.imgSrc == null) {
+                visit.imgSrc = 'challenge_normal.svg';
+                visit.imgSize = 14;
+            }
+        }
+        return visit;
+    },
+
+    setPreenrollment : function(study, visitTagCaption, protocolDay, alignedDay) {
+
+        if(visitTagCaption !== null) {
+            if (visitTagCaption == 'Enrollment') {
+                study.enrollment = alignedDay;
+            }
+        }
+        return study
+    },
+
+    processStudyAxisData : function() {
+        var records = this.getRecords(), measure = this.getMeasure(),
+                containerAlignmentDayMap = this.getContainerAlignmentDayMap(),
+                interval, studyMap = {}, studyLabel, data = [], range = {min: null, max: null},
+                study, studyContainer, studyKeys, visit, studyVisits, visitId, visitKeys, visitKey, visitLabel, seqMin,
+                seqMax, protocolDay, alignedDay, timepointType, groupName, visitTagCaption, isVaccination, isChallenge,
+                shiftVal, i, j, k, alignmentVisitTag, visitTagName,
+                groupKeys, groupVisit, groupVisits, group, groups, groupLabel, groupDesc;
+
+        if (Ext.isDefined(measure.interval)) {
+            interval = measure.interval.toLowerCase();
         }
 
         // first we have to loop through the study axis visit information to find the alignment visit for each container
-        alignmentVisitTag = this.getMeasure().options ? this.getMeasure().options.alignmentVisitTag : null;
+        alignmentVisitTag = Ext.isObject(measure.options) ? measure.options.alignmentVisitTag : null;
         if (alignmentVisitTag != null)
         {
             Ext.each(records, function(record){
@@ -72,8 +123,9 @@ Ext.define('Connector.model.StudyAxisData', {
         for (i = 0; i < studyKeys.length; i++) {
             studyMap[studyKeys[i]] = {
                 alignShiftValue: containerAlignmentDayMap[studyKeys[i]],
-                label: '',
-                visits: {}
+                name: '',
+                visits: {},
+                groups: {}
             };
         }
 
@@ -90,8 +142,11 @@ Ext.define('Connector.model.StudyAxisData', {
             alignedDay = this.convertInterval(record.get('protocol_day') - shiftVal, interval);
             timepointType = record.get('timepoint_type');
             groupName = record.get('group_name');
+            groupLabel = record.get('group_label');
+            groupDesc = record.get('group_description');
             visitTagCaption = record.get('visit_tag_caption');
             isVaccination = record.get('is_vaccination');
+            isChallenge = record.get('is_challenge');
 
             if (timepointType !== 'VISIT') {
                 seqMin = this.convertInterval(seqMin - shiftVal, interval);
@@ -99,64 +154,89 @@ Ext.define('Connector.model.StudyAxisData', {
             }
 
             study = studyMap[studyContainer];
-            study.label = studyLabel;
+            study.name = studyLabel;
             study.timepointType = timepointType;
 
             // track each unique visit in a study by rowId
-            if (visitId != null){
+            if (visitId != null) {
                 if (!study.visits.hasOwnProperty(visitId)) {
-                    study.visits[visitId] = {
-                        studyLabel: studyLabel,
-                        label: visitLabel,
-                        sequenceNumMin: seqMin,
-                        sequenceNumMax: seqMax,
-                        protocolDay: protocolDay,
-                        alignedDay: alignedDay,
-                        imgSrc: 'nonvaccination_normal.svg',
-                        visitTags: []
-                    };
+                    study.visits[visitId] = this.getVisit(studyLabel, null, null, visitLabel, seqMin, seqMax, protocolDay, alignedDay);
                 }
 
-                visit = study.visits[visitId];
+                visit = this.setType(study.visits[visitId], visitTagCaption, isVaccination, isChallenge);
+                if(visitTagCaption !== null) {
+                    visit.visitTags.push(
+                        this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc ? groupDesc : '')
+                    );
+                }
+                study = this.setPreenrollment(study, visitTagCaption, protocolDay, alignedDay);
 
-                if (visitTagCaption !== null) {
-                    // determine which visit tag/milestone glyph to display
-                    // TODO: why is is_vaccination always coming back as false?
-                    if (isVaccination || visitTagCaption == 'Vaccination') {
-                        visit.imgSrc = 'vaccination_normal.svg';
-                        visit.imgSize = 14;
+                if (range.min == null || range.min > alignedDay) {
+                    range.min = alignedDay;
+                }
+                if (range.max == null || range.max < alignedDay) {
+                    range.max = alignedDay;
+                }
+
+                if (groupLabel != null) {
+                    if (!study.groups.hasOwnProperty(groupLabel)) {
+                        study.groups[groupLabel] = {
+                            study: study.name,
+                            name: groupLabel,
+                            alignShiftValue: 0,
+                            timepointType: timepointType,
+                            visits: {}
+                        };
                     }
 
-                    visit.visitTags.push({group: groupName, tag: visitTagCaption});
-                }
+                    if (!study.groups[groupLabel].visits.hasOwnProperty(visitId)) {
+                        study.groups[groupLabel].visits[visitId] = this.getVisit(studyLabel, groupName, groupLabel, visitLabel, seqMin, seqMax, protocolDay, alignedDay);
+                    }
 
-                if (range.min == null || range.min > alignedDay)
-                    range.min = alignedDay;
-                if (range.max == null || range.max < alignedDay)
-                    range.max = alignedDay;
+                    groupVisit = this.setType(study.groups[groupLabel].visits[visitId], visitTagCaption, isVaccination, isChallenge);
+                    if(visitTagCaption !== null) {
+                        groupVisit.visitTags.push(
+                                this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc ? groupDesc : '')
+                        );
+                    }
+                    study.groups[groupLabel] = this.setPreenrollment(study.groups[groupLabel], visitTagCaption, protocolDay, alignedDay);
+                }
             }
         }, this);
 
-        // Convert study map and visit maps into arrays.
+        // Convert study map, group map and visit maps into arrays.
         studyKeys = Object.keys(studyMap);
         for (i = 0; i < studyKeys.length; i++) {
             study = studyMap[studyKeys[i]];
             visitKeys = Object.keys(study.visits).sort();
-            visits = [];
+            studyVisits = [];
             for (j = 0; j < visitKeys.length; j++) {
                 visitKey = visitKeys[j];
-                visits.push(study.visits[visitKey]);
+                studyVisits.push(study.visits[visitKey]);
             }
-
-            study.visits = visits;
+            groupKeys = Object.keys(study.groups);
+            groups = [];
+            for (j = 0; j < groupKeys.length; j++) {
+                group = study.groups[groupKeys[j]];
+                visitKeys = Object.keys(group.visits).sort();
+                groupVisits = [];
+                for (k = 0; k < visitKeys.length; k++) {
+                    visitKey = visitKeys[k];
+                    groupVisits.push(group.visits[visitKey]);
+                }
+                group.visits = groupVisits;
+                groups.push(group);
+            }
+            study.groups = groups;
+            study.visits = studyVisits;
             data.push(study);
         }
 
         // sort by study label
         data.sort(function(a, b) {
-            if (a.label < b.label)
+            if (a.name < b.name)
                 return -1;
-            if (a.label > b.label)
+            if (a.name > b.name)
                 return 1;
             return 0;
         });
