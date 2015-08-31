@@ -1516,27 +1516,29 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Alternative to hard coding the values would be to write a generator that would build the expected tool-tips,
         // but that is more effort that I have time for now.
         expectedToolTipText = new ArrayList<>();
-        expectedToolTipText.add("HVTN 063 - Day 182");
-        expectedToolTipText.add("Group 1, T1, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 1, Ca, Placebo\n-Follow-Up");
-        expectedToolTipText.add("Group 2, Ca, Placebo\n-Follow-Up");
-        expectedToolTipText.add("Group 2, T2, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 3, Ca, Placebo\n-Follow-Up");
-        expectedToolTipText.add("Group 3, T3, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 4, Ca, Placebo\n-Follow-Up");
-        expectedToolTipText.add("Group 4, T4, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 5, T5, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 5, Cb, Placebo\n-Follow-Up");
-        expectedToolTipText.add("Group 7, T7, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 7, Cb, Placebo\n-Follow-Up");
+        expectedToolTipText.add("HVTN 060 - Day 379");
+        expectedToolTipText.add("Group 1, T1, Vaccine : gag DNA 1500mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 1, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 2, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 2, T2, Vaccine : gag DNA 1500mcg + IL-12 DNA 100 mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 3, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 3, T3, Vaccine : gag DNA 1500mcg + IL-12 DNA 500 mcg mo(0,1,3) \n-Follow-Up");
+        expectedToolTipText.add("Group 4, Ca, Placebo : Placebo mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 4, T4, Vaccine : gag DNA 1500mcg + IL-12 DNA 1500 mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 5, T5, Vaccine : gag DNA 1500mcg mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 5, Cb, Placebo : Placebo mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 6, T6, Vaccine : gag DNA 1500mcg + IL-12 DNA 1500 mcg mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 6, Cb, Placebo : Placebo mo(0,1,3,6,9)\n-Follow-Up");
+        expectedToolTipText.add("Group 7, T7, Vaccine : gag DNA 1500mcg+IL-12 DNA 1500 mcg mo(0,1,3)\n-Follow-Up");
+        expectedToolTipText.add("Group 7, Cb, Placebo : Placebo mo(0,1,3,6,9)\n-Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
         expectedToolTipText.add("HVTN 069 - Day 70");
-        expectedToolTipText.add("Group 1, T1, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 2, T2, Vaccine\n-Follow-Up");
-        expectedToolTipText.add("Group 3, T3, Vaccine\n-Follow-Up");
+        expectedToolTipText.add("Group 1, T1, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) IM\n-Follow-Up");
+        expectedToolTipText.add("Group 2, T2, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) ID\n-Follow-Up");
+        expectedToolTipText.add("Group 3, T3, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) SC\n-Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(4)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1565,16 +1567,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 060 - Day 168");
-        expectedToolTipText.add("Group 2");
-        expectedToolTipText.add("-Vaccination");
+        expectedToolTipText.add("HVTN 063 - Day 546");
+        expectedToolTipText.add("Group 1, Ca, Placebo : Placebo mo(0,1,3)");
+        expectedToolTipText.add("-Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
         expectedToolTipText.clear();
         expectedToolTipText.add("HVTN 069 - Day 0");
-        expectedToolTipText.add("Group 1");
-        expectedToolTipText.add("-Vaccination");
+        expectedToolTipText.add("Group 1, T1, Vaccine : DNA mo(0,1,2) IM & Ad5 mo(6) IM");
+        expectedToolTipText.add("-Enrollment,Vaccination");
         cssPath = "#study-axis > svg > g:nth-child(31) > image:nth-of-type(8)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1599,8 +1601,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that the tool-tips are as expected when expanded.");
 
         expectedToolTipText.clear();
-        expectedToolTipText.add("HVTN 060 - Day 379");
-        expectedToolTipText.add("Group 3");
+        expectedToolTipText.add("HVTN 063 - Day 182");
+        expectedToolTipText.add("Group 2, T2, Vaccine : gag DNA 1500mcg + IL-15 DNA 100 mcg mo(0,1,3)");
+        expectedToolTipText.add("-Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(21) > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
