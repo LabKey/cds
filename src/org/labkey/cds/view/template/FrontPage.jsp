@@ -73,6 +73,12 @@
                             LABKEY.user = response.user || LABKEY.user;
                             window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
                         }
+                        else {
+                            jQuery('.signin-modal .notifications p').html('Login Failed');
+                        }
+                    }),
+                    failure: LABKEY.Utils.getCallbackWrapper(function () {
+                        jQuery('.signin-modal .notifications p').html('Login Failed');
                     })
                 });
             }
