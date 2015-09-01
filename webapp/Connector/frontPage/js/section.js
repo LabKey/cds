@@ -13,6 +13,7 @@ define(['jquery', 'util'], function($, util) {
    */
   var section = function(options) {
     var self = this;
+    var dataPoints = undefined;
     self.options = options || {};
     self.index = self.options.index;
     self.gif = self.options.gif;
@@ -50,8 +51,44 @@ define(['jquery', 'util'], function($, util) {
      * we need to in order for that section to be displayed.
      */
     self.setup = function() {
+      if (self.index == 2) {
+        self.loadStatistics();
+      }
       self.createGIF();
       self.toggleNavigationSignIn();
+    };
+
+    /**
+     * loadStatistics
+     * Get JSON from data-statistics-url inject response
+     * into appropriate datapoint elements.
+     * Executed here to ensure DOM elements are present.
+     */
+    self.loadStatistics = function() {
+      if (!dataPoints) {
+        var labkey_host = 'http://localhost:8080/labkey/cds',
+            statistics_endpoint = '/CDSTest%20Project/properties.api',
+            statisticsUrl = labkey_host + statistics_endpoint;
+
+        $.getJSON(statisticsUrl, undefined, function (data)
+        {
+          dataPoints = {
+            products: data.products,
+            studies: data.studies,
+            subjects: data.subjects,
+            assays: data.assays,
+            created: data.created
+          };
+        });
+      }
+
+      $('.products.datapoint h1').html(dataPoints.products);
+      $('.studies.datapoint h1').html(dataPoints.studies);
+      $('.subjects.datapoint h1').html(dataPoints.subjects);
+      $('.assays.datapoint h1').html(dataPoints.assays);
+      $('.statistics .timestamp p.days').html(
+              util.date.dayDiffNow(new Date(dataPoints.created))
+      );
     };
 
     /**

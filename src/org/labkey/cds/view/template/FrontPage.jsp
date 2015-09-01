@@ -1,7 +1,10 @@
+<%@ page import="org.labkey.api.util.PageFlowUtil" %>
+<%@ page import="java.util.LinkedHashSet" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     String contextPath = request.getContextPath();
     String appPath = contextPath + "/Connector";
+    String sdkPath = contextPath + "/ext-4.2.1";
     String frontPagePath = appPath + "/frontPage";
 %>
 <!DOCTYPE html>
@@ -15,7 +18,53 @@
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/fullpage.js/jquery.fullPage.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/magnific-popup/dist/magnific-popup.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/video.js/dist/video-js/video-js.min.css">
+
+    <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/icon.png">
+
     <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
+    <!-- Include base labkey.js -->
+    <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
+    <script type="text/javascript">
+        Ext = {}; Ext4 = Ext;
+    </script>
+
+    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all-debug.js"></script>
+    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
+
+    <%--<!-- Client API Dependencies -->--%>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
+
+    <script>
+        function signin() {
+            LABKEY.Ajax.request({
+                url : LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
+                method: 'POST',
+                jsonData: {
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    remember: document.getElementById('remember-me-checkbox').value,
+                    approvedTermsOfUse: document.getElementById('tos-checkbox').value
+                },
+                success: LABKEY.Utils.getCallbackWrapper(function(response) {
+                    console.log('Success?');
+                    if (response && response.user && response.user.isSignedIn) {
+                        console.log('Success!');
+                        LABKEY.user = response.user || LABKEY.user;
+                        window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
+                    }
+                }),
+                failure: LABKEY.Utils.getCallbackWrapper(function() {
+                    console.log('Login Failed');
+                    window.location = LABKEY.ActionURL.buildURL("cds", "frontPage.view");
+                })
+            });
+        }
+    </script>
+
 </head>
 <body>
     <div id="navigation">
@@ -45,10 +94,11 @@
                 <div class="notifications">
                     <p></p>
                 </div>
-                <form action="http://localhost:8080/labkey/login/CDSTest%20Project/login.post" method="POST" class="form">
+                <%--<form action="http://localhost:8080/labkey/login/CDSTest%20Project/login.post" method="POST" class="form">--%>
+                <form class="form">
                     <div class="credentials">
-                        <input placeholder="Email" type="email" name="email" value="" required>
-                        <input placeholder="Password" name="password" type="password" value="" required>
+                        <input placeholder="Email" type="email" id="email" name="email" value="" required>
+                        <input placeholder="Password" name="password" id="password" type="password" value="" required>
                         <div class="checkbox">
                             <input type="checkbox" id="remember-me-checkbox">
                             <label for="remember-me-checkbox">Remember My email address</label>
@@ -140,7 +190,7 @@
                     </div>
                     <div class="links">
                         <a href="#" data-click="help" class="help">Sign-in Help</a>
-                        <input type="Submit" value="Submit" class="confirm">
+                        <input type="button" value="Submit" class="confirm" onclick="signin()">
                     </div>
                 </form>
             </div>
