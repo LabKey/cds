@@ -214,7 +214,8 @@ Ext.define('Connector.model.ChartData', {
                 label  : x.label,
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
-                isContinuous: Connector.model.ChartData.isContinuousMeasure(x)
+                isContinuous: Connector.model.ChartData.isContinuousMeasure(x),
+                isDimension: x.isDimension
             };
         }
 
