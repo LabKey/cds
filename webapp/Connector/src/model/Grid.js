@@ -29,8 +29,8 @@ Ext.define('Connector.model.Grid', {
         {name: 'SQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
-        {name: 'schemaName', defaultValue: 'study' },
-        {name: 'queryName', defaultValue: 'GridBase' }
+        {name: 'schemaName', defaultValue: Connector.studyContext.schemaName },
+        {name: 'queryName', defaultValue: Connector.studyContext.gridBase }
     ],
 
     statics: {

@@ -99,7 +99,11 @@ Ext.define('Connector.controller.Query', {
     },
 
     getSubjectColumnAlias : function() {
-        return 'study_GridBase_SubjectId';
+        return this.getGridBaseColumnAlias('SubjectId');
+    },
+
+    getGridBaseColumnAlias : function(colName) {
+        return Connector.studyContext.schemaName + '_' + Connector.studyContext.gridBase + '_' + colName;
     },
 
     /**
@@ -110,9 +114,9 @@ Ext.define('Connector.controller.Query', {
 
         var keys = [
             this.getSubjectColumnAlias(),
-            'study_GridBase_Study',
-            'study_GridBase_TreatmentSummary',
-            'study_GridBase_SubjectVisit'
+            this.getGridBaseColumnAlias('Study'),
+            this.getGridBaseColumnAlias('TreatmentSummary'),
+            this.getGridBaseColumnAlias('SubjectVisit')
         ];
 
         var result;
@@ -136,8 +140,8 @@ Ext.define('Connector.controller.Query', {
 
             this._gridMeasures = [];
 
-            var schema = 'study',
-                query = 'GridBase',
+            var schema = Connector.studyContext.schemaName,
+                query = Connector.studyContext.gridBase,
                 defaultAliases = this.getDefaultGridAliases();
 
             //
@@ -534,16 +538,16 @@ Ext.define('Connector.controller.Query', {
         if (!this._dataSorts) {
             // TODO: Source these differently? This is requiring us to split these out
             this._dataSorts = [{
-                schemaName: 'study',
-                queryName: 'GridBase',
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.gridBase,
                 name: 'Container'
             },{
-                schemaName: 'study',
-                queryName: 'GridBase',
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.gridBase,
                 name: 'SubjectId'
             },{
-                schemaName: 'study',
-                queryName: 'GridBase',
+                schemaName: Connector.studyContext.schemaName,
+                queryName: Connector.studyContext.gridBase,
                 name: 'SubjectVisit'
             }];
         }

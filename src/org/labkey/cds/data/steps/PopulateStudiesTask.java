@@ -50,7 +50,6 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         // Get the coalesced metadata for the studies (including container)
         Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
         List<Map<String, Object>> rows = new ArrayList<>();
-        BatchValidationException errors = new BatchValidationException();
 
         // Import Study metadata
         for (String studyName : studies.keySet())
@@ -72,6 +71,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
 
                     if (null != qud && !rows.isEmpty())
                     {
+                        BatchValidationException errors = new BatchValidationException();
                         ListofMapsDataIterator maps = new ListofMapsDataIterator(rows.get(0).keySet(), rows);
 
                         qud.importRows(user, c, maps, errors, null, null);
@@ -80,7 +80,7 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                         {
                             for (ValidationException error : errors.getRowErrors())
                             {
-                                logger.warn(error.getMessage());
+                                logger.error(error.getMessage());
                             }
                         }
                     }
