@@ -139,11 +139,17 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, BindException errors) throws Exception
         {
-            JspView view = new JspView("/org/labkey/cds/view/app.jsp");
-
-            HttpView template = new ConnectorTemplate(getViewContext(), getContainer(), view, defaultPageConfig(), new NavTree[0]);
+            HttpView template;
+            if (getUser().isGuest())
+            {
+                template = new FrontPageTemplate(defaultPageConfig());
+            }
+            else
+            {
+                JspView view = new JspView("/org/labkey/cds/view/app.jsp");
+                template = new ConnectorTemplate(getViewContext(), getContainer(), view, defaultPageConfig(), new NavTree[0]);
+            }
             getPageConfig().setTemplate(PageConfig.Template.None);
-
             return template;
         }
 

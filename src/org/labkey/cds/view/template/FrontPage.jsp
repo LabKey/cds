@@ -40,28 +40,45 @@
 
     <script>
         function signin() {
-            LABKEY.Ajax.request({
-                url : LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
-                method: 'POST',
-                jsonData: {
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value,
-                    remember: document.getElementById('remember-me-checkbox').value,
-                    approvedTermsOfUse: document.getElementById('tos-checkbox').value
-                },
-                success: LABKEY.Utils.getCallbackWrapper(function(response) {
-                    console.log('Success?');
-                    if (response && response.user && response.user.isSignedIn) {
-                        console.log('Success!');
-                        LABKEY.user = response.user || LABKEY.user;
-                        window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
-                    }
-                }),
-                failure: LABKEY.Utils.getCallbackWrapper(function() {
-                    console.log('Login Failed');
-                    window.location = LABKEY.ActionURL.buildURL("cds", "frontPage.view");
-                })
-            });
+
+            var loginFields = ['email', 'password', 'remember-me-checkbox', 'tos-checkbox'],
+                inputs = {},
+                allFieldsPresent = true;
+
+            for (var idx in loginFields) {
+                var field = loginFields[idx],
+                    el = document.getElementById(field),
+                    input = el.value;
+
+                if (input) {
+                    inputs[field] = input;
+                }
+                else {
+                    allFieldsPresent = false;
+                }
+            }
+
+            if (allFieldsPresent) {
+                LABKEY.Ajax.request({
+                    url: LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
+                    method: 'POST',
+                    jsonData: {
+                        email: inputs['email'],
+                        password: inputs['password'],
+                        remember: inputs['remember-me-checkbox'],
+                        approvedTermsOfUse: inputs['tos-checkbox']
+                    },
+                    success: LABKEY.Utils.getCallbackWrapper(function (response) {
+                        if (response && response.user && response.user.isSignedIn) {
+                            LABKEY.user = response.user || LABKEY.user;
+                            window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
+                        }
+                    })
+                });
+            }
+            else {
+                jQuery('.signin-modal .notifications p').html('Required fields are missing.');
+            }
         }
     </script>
 

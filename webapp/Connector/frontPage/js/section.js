@@ -66,12 +66,9 @@ define(['jquery', 'util'], function($, util) {
      */
     self.loadStatistics = function() {
       if (!dataPoints) {
-        var labkey_host = 'http://localhost:8080/labkey/cds',
-            statistics_endpoint = '/CDSTest%20Project/properties.api',
-            statisticsUrl = labkey_host + statistics_endpoint;
+        var statisticsUrl = LABKEY.ActionURL.buildURL('cds', 'properties.api');
 
-        $.getJSON(statisticsUrl, undefined, function (data)
-        {
+        $.getJSON(statisticsUrl, undefined, function (data) {
           dataPoints = {
             products: data.products,
             studies: data.studies,
