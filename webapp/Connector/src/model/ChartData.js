@@ -404,7 +404,7 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getYValue : function(measure, alias, row) {
-        return row.y ? row.y.getMean() : null;
+        return row.y ? row.y.getMedian() : null;
     },
 
     _getXValue : function(measure, alias, row, xIsContinuous) {
@@ -415,7 +415,7 @@ Ext.define('Connector.model.ChartData', {
             return xIsContinuous ? null : 'undefined';
         }
 
-        return row.x.getMean();
+        return row.x.getMedian();
     },
 
     _getColorValue : function(measure, alias, row) {

@@ -103,7 +103,7 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return '';
@@ -161,7 +161,7 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -219,10 +219,10 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -277,7 +277,7 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -335,10 +335,10 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -393,10 +393,10 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -452,15 +452,15 @@
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (1)'},
-                        y: {value: 'ICS Magnitude Mean Value (CD4+, Protein Panel)'},
-                        x: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'}
+                        y: {value: 'ICS Magnitude Median Value (CD4+, Protein Panel)'},
+                        x: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -515,15 +515,15 @@
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (2)'},
-                        y: {value: 'ELISPOT Magnitude Mean Value (IFNg+, Peptide Pool)'}, //
-                        x: {value: 'ICS Magnitude Mean Value (CD4+ and CD8+, Protein Panel)'}
+                        y: {value: 'ELISPOT Magnitude Median Value (IFNg+, Peptide Pool)'}, //
+                        x: {value: 'ICS Magnitude Median Value (CD4+ and CD8+, Protein Panel)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -579,15 +579,15 @@
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (3)'},
-                        y: {value: 'NAb IC50 Titer Mean Value (TZM-bl, Virus)'},
-                        x: {value: 'BAMA MFI Delta Mean Value (50, Antigen)'}
+                        y: {value: 'NAb IC50 Titer Median Value (TZM-bl, Virus)'},
+                        x: {value: 'BAMA MFI Delta Median Value (50, Antigen)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -637,12 +637,12 @@
 
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Unaligned)'},
-                        y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
+                        y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
                         x: {value: 'Time Points Weeks (Aligned by Day 0)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -695,12 +695,12 @@
 
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Aligned)'},
-                        y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
+                        y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
                         x: {value: 'Time Points Months (Last Vaccination)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -820,10 +820,10 @@
                 var xy = twoAxis.select([subjectColAlias, visitColAlias]);
 
                 var xFn = function(row) {
-                    return row.x ? row.x.getMean() : null;
+                    return row.x ? row.x.getMedian() : null;
                 };
                 var yFn = function(row) {
-                    return row.y ? row.y.getMean() : null;
+                    return row.y ? row.y.getMedian() : null;
                 };
 
                 var scatterLayer2 = new LABKEY.vis.Layer({
@@ -852,8 +852,8 @@
                         hoverText: function(row) {
                             return row[subjectColAlias]
                                     + '\n' + row[visitColAlias]
-                                    + '\n' + row.x.getMean()
-                                    + '\n' + row.y.getMean();
+                                    + '\n' + row.x.getMedian()
+                                    + '\n' + row.y.getMedian();
                         },
                         pointClickFn: function(event, data) {
                             console.log(data);
@@ -943,7 +943,7 @@
                     layers: [boxLayer],
                     aes: {
                         yLeft: function(row) {
-                            return row[yMeasureAlias].getMean();
+                            return row[yMeasureAlias].getMedian();
                         },
                         x: function(row) {
                             return row[xMeasureAlias].getValue();
