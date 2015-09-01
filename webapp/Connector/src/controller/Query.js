@@ -672,7 +672,7 @@ Ext.define('Connector.controller.Query', {
      * @private
      */
     _getMeasures : function(filterConfig, filtersAreInstances) {
-        var measures = [], measureMap = {};
+        var measures = [], measureMap = {}, alias;
 
         if (filterConfig.isPlot === true) {
             // use the plotMeasures to determine the measure set
@@ -703,10 +703,18 @@ Ext.define('Connector.controller.Query', {
 
                         // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
                         Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
-                            measureMap[LABKEY.MeasureUtil.getAlias(axisFilterRecord)] = {
-                                measure: axisFilterRecord,
-                                filterArray: []
-                            };
+                            alias = LABKEY.MeasureUtil.getAlias(axisFilterRecord);
+
+                            // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
+                            if (Ext.isDefined(measureMap[alias])) {
+                                measureMap[alias].measure.values = Ext.Array.unique(measureMap[alias].measure.values.concat(axisFilterRecord.values));
+                            }
+                            else {
+                                measureMap[alias] = {
+                                    measure: axisFilterRecord,
+                                    filterArray: []
+                                };
+                            }
                         }, this);
                     }
                 }
