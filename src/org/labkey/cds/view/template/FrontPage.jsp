@@ -38,55 +38,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
 
-    <script>
-        function signin() {
-
-            var loginFields = ['email', 'password', 'remember-me-checkbox', 'tos-checkbox'],
-                inputs = {},
-                allFieldsPresent = true;
-
-            for (var idx in loginFields) {
-                var field = loginFields[idx],
-                    el = document.getElementById(field),
-                    input = el.value;
-
-                if (input) {
-                    inputs[field] = input;
-                }
-                else {
-                    allFieldsPresent = false;
-                }
-            }
-
-            if (allFieldsPresent) {
-                LABKEY.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
-                    method: 'POST',
-                    jsonData: {
-                        email: inputs['email'],
-                        password: inputs['password'],
-                        remember: inputs['remember-me-checkbox'],
-                        approvedTermsOfUse: inputs['tos-checkbox']
-                    },
-                    success: LABKEY.Utils.getCallbackWrapper(function (response) {
-                        if (response && response.user && response.user.isSignedIn) {
-                            LABKEY.user = response.user || LABKEY.user;
-                            window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
-                        }
-                        else {
-                            jQuery('.signin-modal .notifications p').html('Login Failed');
-                        }
-                    }),
-                    failure: LABKEY.Utils.getCallbackWrapper(function () {
-                        jQuery('.signin-modal .notifications p').html('Login Failed');
-                    })
-                });
-            }
-            else {
-                jQuery('.signin-modal .notifications p').html('Required fields are missing.');
-            }
-        }
-    </script>
+    <script type="text/javascript" src="<%=text(frontPagePath)%>/js/signin.js"></script>
 
 </head>
 <body>
@@ -117,7 +69,6 @@
                 <div class="notifications">
                     <p></p>
                 </div>
-                <%--<form action="http://localhost:8080/labkey/login/CDSTest%20Project/login.post" method="POST" class="form">--%>
                 <form class="form">
                     <div class="credentials">
                         <input placeholder="Email" type="email" id="email" name="email" value="" required>
