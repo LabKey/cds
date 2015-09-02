@@ -1806,7 +1806,8 @@ Ext.define('Connector.view.Chart', {
         var chartData = Ext.create('Connector.model.ChartData', {
             measureSet: measureSet,
             plotMeasures: this.measures,
-            measureStore: measureStore
+            measureStore: measureStore,
+            plotScales: {x: this.getScale('x'), y: this.getScale('y')}
         });
 
         this.dataQWP = {
