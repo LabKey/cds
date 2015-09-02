@@ -76,16 +76,19 @@ define(['jquery', 'util'], function($, util) {
             assays: data.assays,
             created: data.created
           };
+
+          self.loadStatistics();
         });
       }
-
-      $('.products.datapoint h1').html(dataPoints.products);
-      $('.studies.datapoint h1').html(dataPoints.studies);
-      $('.subjects.datapoint h1').html(dataPoints.subjects);
-      $('.assays.datapoint h1').html(dataPoints.assays);
-      $('.statistics .timestamp p.days').html(
-              util.date.dayDiffNow(new Date(dataPoints.created))
-      );
+      else {
+        $('.products.datapoint h1').html(dataPoints.products);
+        $('.studies.datapoint h1').html(dataPoints.studies);
+        $('.subjects.datapoint h1').html(dataPoints.subjects);
+        $('.assays.datapoint h1').html(dataPoints.assays);
+        $('.statistics .timestamp p.days').html(
+                util.date.dayDiffNow(new Date(dataPoints.created))
+        );
+      }
     };
 
     /**

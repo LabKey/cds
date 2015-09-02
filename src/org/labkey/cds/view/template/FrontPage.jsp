@@ -163,7 +163,7 @@
                         <span class="agree"></span>
                     </div>
                     <div class="links">
-                        <input type="button" value="Submit" class="confirm" onclick="signin()">
+                        <input type="button" value="Submit" class="confirm" onclick="LABKEY.moduleContext.cds.signin()">
                     </div>
                 </form>
             </div>

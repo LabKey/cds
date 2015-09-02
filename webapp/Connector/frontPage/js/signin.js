@@ -1,3 +1,6 @@
+
+(function($) {
+
 function signin() {
 
     var loginFields = ['email', 'password', 'tos-checkbox'],
@@ -33,15 +36,19 @@ function signin() {
                     window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
                 }
                 else {
-                    jQuery('.signin-modal .notifications p').html('Login Failed');
+                    $('.signin-modal .notifications p').html('Login Failed');
                 }
             }),
             failure: LABKEY.Utils.getCallbackWrapper(function () {
-                jQuery('.signin-modal .notifications p').html('Login Failed');
+                $('.signin-modal .notifications p').html('Login Failed');
             })
         });
     }
     else {
-        jQuery('.signin-modal .notifications p').html('Required fields are missing.');
+        $('.signin-modal .notifications p').html('Required fields are missing.');
     }
 }
+
+LABKEY.moduleContext.cds.signin = signin;
+
+})(jQuery);
