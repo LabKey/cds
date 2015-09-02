@@ -1368,7 +1368,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck. Unfortunately waitForMaskToDisappear is not long enough for the axis to be regenerated.
 
         // When changing the alignment to anything other than Day 0 study HVTN 205 will not appear because it has no visit information.
-        expectedCounts.remove("HVTN 205");
+        expectedCounts.remove("HVTN_205");
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
@@ -1378,6 +1378,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertSVG(studyDaysScales);
 
         log("Change x-axis alignment to Last Vaccination, verify visit counts are as expected.");
+        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 1));
+        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 1));
+        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 1));
+        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 1));
+        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 1));
         xaxis.openSelectorWindow();
         // Should go to the variable selector window by default.
         xaxis.setAlignedBy("Last Vaccination");
@@ -1406,6 +1411,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
+        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 0));
+        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 0));
+        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 0));
+        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 0));
+        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 0));
+
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyWeeksScales);
 
@@ -1422,6 +1433,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
+
+        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 1));
+        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 1));
+        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 1));
+        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 1));
+        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 1));
 
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyWeeksScalesAlignedVaccination);
@@ -1440,6 +1457,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
 
+        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 0));
+        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 0));
+        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 0));
+        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 0));
+        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 0));
+
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyMonthsScales);
 
@@ -1456,6 +1479,12 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
         log("Study count was as expected.");
+
+        expectedCounts.replace("HVTN_041", new CDSHelper.TimeAxisData("HVTN 041", 3, 6, 0, 1));
+        expectedCounts.replace("HVTN_049", new CDSHelper.TimeAxisData("HVTN 049", 6, 8, 0, 1));
+        expectedCounts.replace("HVTN_049x", new CDSHelper.TimeAxisData("HVTN 049x", 3, 7, 0, 1));
+        expectedCounts.replace("HVTN_096", new CDSHelper.TimeAxisData("HVTN 096", 4, 9, 0, 1));
+        expectedCounts.replace("HVTN_203", new CDSHelper.TimeAxisData("HVTN 0203", 4, 6, 0, 1));
 
         validateVisitCounts(studies, expectedCounts);
         assertSVG(studyMonthsScalesAlignedVaccination);
@@ -1602,7 +1631,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         expectedToolTipText.clear();
         expectedToolTipText.add("HVTN 063 - Day 182");
-        expectedToolTipText.add("Group 2, T2, Vaccine : gag DNA 1500mcg + IL-15 DNA 100 mcg mo(0,1,3)");
+        expectedToolTipText.add("Group 2");
         expectedToolTipText.add("-Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(21) > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
