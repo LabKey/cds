@@ -40,6 +40,10 @@
 
     <script type="text/javascript" src="<%=text(frontPagePath)%>/js/signin.js"></script>
 
+    <script type="text/javascript">
+        var frontPageContext = LABKEY.moduleContext.cds.getEmailAndTerms();
+    </script>
+
 </head>
 <body>
     <div id="navigation">
@@ -72,15 +76,24 @@
                 <form class="form">
                     <div class="credentials">
                         <input placeholder="Email" type="email" id="email" name="email" value="" required>
+                        <script type="text/javascript">
+                            document.getElementById('email').value = frontPageContext.remember ? frontPageContext.email : '';
+                        </script>
                         <input placeholder="Password" name="password" id="password" type="password" value="" required>
                         <div class="checkbox">
                             <input type="checkbox" id="remember-me-checkbox">
-                            <label for="remember-me-checkbox">Remember My email address</label>
+                            <script type="text/javascript">
+                                document.getElementById('remember-me-checkbox').checked = frontPageContext.remember;
+                            </script>
+                            <label for="remember-me-checkbox">Remember Me</label>
                         </div>
                     </div>
                     <div class="tos">
                         <div class="checkbox">
                             <input type="checkbox" id="tos-checkbox" required>
+                            <script type="text/javascript">
+                                document.getElementById('tos-checkbox').checked = frontPageContext.remember ? frontPageContext.agreeToTerms : false;
+                            </script>
                             <label for="tos-checkbox">I will protect restricted data, credit others, and obtain approval to publish.</label>
                         </div>
                         <a href="#" data-click="terms-of-service" class="expand-tos">
