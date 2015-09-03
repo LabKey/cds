@@ -2014,7 +2014,6 @@ Ext.define('Connector.view.Chart', {
             // update
             inPlotFilter.set('gridFilter', sqlFilters);
             inPlotFilter.set('plotMeasures', wrapped);
-            inPlotFilter.set('plotScales', [this.getScale('x'), this.getScale('y')]);
             state.updateFilterMembersComplete(false);
         }
         else {
@@ -2025,7 +2024,6 @@ Ext.define('Connector.view.Chart', {
                 isGrid: false,
                 hierarchy: 'Subject',
                 plotMeasures: wrapped,
-                plotScales: [this.getScale('x'), this.getScale('y')],
                 filterSource: 'GETDATA',
                 isWhereFilter: false
             });
