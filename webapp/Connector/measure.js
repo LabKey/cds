@@ -48,7 +48,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study|BAMA': {
                     category: 'Assays',
                     dimensions: [
-                        'study_BAMA_antigen_isotype',
+                        'study_BAMA_antibody_isotype',
                         'study_BAMA_summary_level',
                         'study_BAMA_antigen',
                         'study_BAMA_dilution',
@@ -134,7 +134,7 @@ Ext.define('Connector.measure.Configuration', {
                     hierarchicalSelectionParent: null
                 },
                 // study|BAMA
-                'study_BAMA_antigen_isotype': {
+                'study_BAMA_antibody_isotype': {
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
