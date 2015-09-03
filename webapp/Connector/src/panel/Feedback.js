@@ -41,7 +41,7 @@ Ext.define('Connector.panel.Feedback', {
                         scope: this
                     }
                 }],
-                width: 520,
+                width: 540,
                 height: 600,
                 listeners: {
                     afterrender: function(win) {
@@ -82,7 +82,7 @@ Ext.define('Connector.panel.Feedback', {
                     name: 'comment',
                     width: '100%',
                     height: '400px',
-                    emptyText: 'Describe what you\'re seeing...',
+                    emptyText: 'Description. For a bug, include details that will help us reproduce it.',
                     validateOnBlur: false,
                     allowBlank: false
                 },{
@@ -123,9 +123,9 @@ Ext.define('Connector.panel.Feedback', {
             };
 
             var tpl = new Ext.XTemplate(
-                '<div class="main-title">Provide Feedback</div>',
+                '<div class="main-title">Give feedback</div>',
                     '<div class="sub-title">',
-                    '<span class="nav-text">Give us feedback on what we could improve</span>',
+                    '<span class="nav-text">Tell us what’s valuable, what’s broken, and what you’d like to see next.</span>',
                 '</div>'
             );
             this.headerPanel = Ext.create('Ext.panel.Panel', {
@@ -215,7 +215,7 @@ Ext.define('Connector.panel.Feedback', {
                 },{
                     itemId: 'done-button',
                     xtype: 'button',
-                    text: 'Done',
+                    text: 'Submit',
                     handler: function(btn) {
                         var form = this.getForm();
 
