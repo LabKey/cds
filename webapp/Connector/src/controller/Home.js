@@ -36,7 +36,7 @@ Ext.define('Connector.controller.Home', {
         }
         else if (xtype == 'about') {
             var header = Ext.create('Connector.view.PageHeader', {
-                title: "About the HIV Collaborative DataSpace",
+                title: "About the CAVD DataSpace",
                 upText: 'Home',
                 upLink: {
                     controller: 'home'

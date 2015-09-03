@@ -9,6 +9,6 @@ Ext.define('Connector.constant.Templates', {
 
 	module: {
 		title: '<h3>{title:htmlEncode}</h3>',
-		availableDataLegend: '<div class="item-row disabled"><div class="checkbox">&#10003</div> = available in the Collaborative DataSpace</div>'
+		availableDataLegend: '<div class="item-row disabled"><div class="checkbox">&#10003</div> = available in the CAVD DataSpace</div>'
 	}
 });

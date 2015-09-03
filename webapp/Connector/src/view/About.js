@@ -22,7 +22,7 @@ Ext.define('Connector.view.About', {
 	            	'Solutions will come from collective efforts and strong community interaction.',
 	            '</p>',
 	            '<p>',
-	            	'The HIV Vaccine Data Connector is the place to find potential relationships between data ',
+	            	'The CAVD DataSpace is the place to find potential relationships between data ',
 	            	'sets that were previously difficult to compare due to access restrictions and problems of ',
 	            	'data alignment.',
 	            '</p>',

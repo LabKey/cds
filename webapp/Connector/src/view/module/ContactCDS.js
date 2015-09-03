@@ -14,7 +14,7 @@ Ext.define('Connector.view.module.ContactCDS', {
         '<tpl>',
             Connector.constant.Templates.module.title,
             '<div class="item-row">',
-                '<a href=".">Contact the Collaborative DataSpace team</a> for more information<br/>',
+                '<a href=".">Contact the CAVD DataSpace team</a> for more information<br/>',
             '</div>',
             '<div class="item-row">',
                 '<a href="http://www.hvtn.org/en/science/submit-idea-proposal.html" target="_blank">Propose an ancillary study</a>',

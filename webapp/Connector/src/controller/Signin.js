@@ -55,7 +55,7 @@ Ext.define('Connector.controller.Signin', {
                 break;
             case 'terms':
                 var header = Ext.create('Connector.view.PageHeader', {
-                    title: 'Full Terms of Use Agreement: HIV Collaborative DataSpace',
+                    title: 'Full Terms of Use Agreement: CAVD DataSpace',
                     upLink: {
                         controller: 'home'
                     },
