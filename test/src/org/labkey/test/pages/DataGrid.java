@@ -23,6 +23,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.ExcelHelper;
+import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.openqa.selenium.WebElement;
@@ -67,6 +68,44 @@ public class DataGrid
         _test.waitForElement(hoveredColumn);
         _test.click(filterIcon);
         _test._ext4Helper.waitForMask();
+    }
+
+    public void setCheckBoxFilter(String columnName, Boolean clearFirst, String... values)
+    {
+
+        String cellXpathContst = "//div[contains(@class, 'x-window-filterwindow')]//tr[contains(@class, 'x-grid-data-row')]//td[contains(@role, 'gridcell')]//div[text()='*']";
+        String cellXpath;
+
+        openFilterPanel(columnName);
+        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath("//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-toolbar-text')][text()='" + columnName + "']")));
+
+        if(clearFirst)
+        {
+            String allXpath = "//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-column-header')]";
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(allXpath).toBy()));
+            _test.scrollIntoView(Locator.xpath(allXpath));
+            _test.click(Locator.xpath(allXpath));
+        }
+
+        for(String val : values)
+        {
+            cellXpath = cellXpathContst.replaceAll("[*]", val);
+            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(cellXpath).toBy()));
+            _test.scrollIntoView(Locator.xpath(cellXpath));
+            _test.click(Locator.xpath(cellXpath));
+        }
+
+        applyAndWaitForGrid(new Function<Void, Void>()
+        {
+            @Override
+            public Void apply(Void aVoid)
+            {
+                _test.click(CDSHelper.Locators.cdsButtonLocator("filter", "filter-btn"));
+                return null;
+            }
+        });
+        _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
+
     }
 
     public void setFilter(String columnName, String value)

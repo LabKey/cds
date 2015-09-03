@@ -334,9 +334,14 @@ public class CDSHelper
     public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
     public static final String GRID_TITLE_ICS = TITLE_ICS;
     public static final String GRID_TITLE_NAB = TITLE_NAB;
+    public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
+    public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
+    public static final String GRID_COL_STUDY_DAY = "Study Day";
+    public static final String GRID_COL_CUR_COL = "Current columns";
+    public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
     // Time points alignments
     public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";
