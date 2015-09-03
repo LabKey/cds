@@ -58,6 +58,12 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("StudyPartGroupArmSubject"),
 //        new TSVCopyConfig("StudySitePersonnel"),
 
+        //AntigenMetadata
+        new TSVCopyConfig("ICSAntigen", "AssayICSAntigen_Metadata"),
+        new TSVCopyConfig("ELISpotAntigen", "AssayELSAntigen_Metadata"),
+        new TSVCopyConfig("NAbAntigen", "AssayNABAntigen_Metadata"),
+        new TSVCopyConfig("BAMAAntigen", "AssayBAMAAntigen_Metadata"),
+
         // Datasets
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("ICS", "AssayICS"),

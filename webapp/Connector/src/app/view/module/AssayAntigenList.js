@@ -9,15 +9,28 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     extend : 'Connector.view.module.BaseModule',
 
-    cls : 'module assaylist',
-
     tpl : new Ext.XTemplate(
         '<tpl>',
-            Connector.constant.Templates.module.title,
-            '<p class="item-row"><i><h1>Antigens Coming Soon</h1></i></p>',
-        '</tpl>'),
+            '<tpl for=".">',
+                '<div class="list-container">',
+                    '<div class="list-entry-container">',
+                        '<div class="list-entry-title">',
+                            '<h2>{antigen_name:htmlEncode}</h2>',
+                        '</div>',
+                        '<div class="list-entry-description">',
+                            '<div>{antigen_description:htmlEncode}</div>',
+                        '</div>',
+                    '</div>',
+                '</div>',
+            '</tpl>',
+        '</tpl>'
+    ),
 
     initComponent : function() {
-
+        var assayName = this.data.model.data.assay_type,
+            store = StoreCache.getStore('Connector.app.store.Assay');
+        store.loadAntigens(assayName, function(results) {
+            this.update(results);
+        }, this);
     }
 });

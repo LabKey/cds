@@ -28,6 +28,17 @@ Ext.define('Connector.app.store.Assay', {
 
     },
 
+    loadAntigens : function(assayName, callback, scope) {
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: 'SELECT * FROM cds.' + assayName + 'antigen',
+            success: function(result) {
+                callback.call(scope, result.rows);
+            },
+            scope: scope
+        })
+    },
+
     loadAnalytes : function(assayName, callback, scope) {
         var queryService = Connector.getService('Query'),
             dimensions = queryService.getDimensions('study', assayName),
