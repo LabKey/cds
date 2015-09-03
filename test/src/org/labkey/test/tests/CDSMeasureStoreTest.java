@@ -60,6 +60,13 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
         ));
 
         verifyPlot(new Plot(
+            "Same X-Axis Measure with Different Filter (axisName)",
+            3978,
+            new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
+            new String[]{"0", "2", "4", "6", "8", "10", "12", "14"}
+        ));
+
+        verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (1)",
             3861,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5"},
