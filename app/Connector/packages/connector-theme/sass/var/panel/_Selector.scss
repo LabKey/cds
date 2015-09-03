@@ -47,7 +47,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-
         padding-left: 24px;
         color: $black;
         font-size: 20px;
@@ -142,14 +141,11 @@
     .x-grid-row .x-grid-cell {
       border-color: transparent !important;
       font-family: $info-font;
+      background: $white;
     }
 
     .x-grid-view {
       background-color: $light-color;
-    }
-
-    .x-grid-row-over .x-grid-td {
-      background-color: $select-hover-color !important;
     }
 
     .checker-disabled {
@@ -358,7 +354,11 @@
   }
 }
 
+.x-grid-row-over .x-grid-td,
+.x-grid-row-selected .x-grid-td {
+  background-color: $white !important;
+}
+
 .checkbox2 .x-form-checkbox {
   background-image: url(images/form/checkbox2.gif);
 }
-

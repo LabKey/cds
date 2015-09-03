@@ -12,7 +12,7 @@ $info-color: #F5A73A;              // Info
 $secondary-color: #F0F0F0;         // Light Gray
 
 $border-color: #BABABA;
-$box-shadow-color: #CCCCCC;
+$box-shadow-color: #e1e1e1;
 
 /* NEW COLORS */
 $action-red: #fb2e5c;              // Red full Saturated
@@ -76,6 +76,9 @@ $body-two-font: 13px/16px $info-font;
 $body-one-font: 12px/15px $info-font;
 $caption-font: 11px/14px $info-font;
 $nav-font: 14px $data-font;
+$infopane-font: 18px/24px $data-font;
+$active-filter-font: 11px/17px $info-font;
+
 
 // General
 $connector-prefix: 'x-'; /* Used to mimic Ext's $prefix which is not defined yet when this file is compiled */
@@ -324,6 +327,10 @@ a {
   height: 30px !important;
 }
 
+.x-grid-view {
+  padding-bottom: 70px;
+}
+
 .inline {
   display: inline-block;
 }
@@ -536,7 +543,9 @@ div.emptytext {
 }
 
 .x-css-shadow {
-  border-radius: 5px!important;
+  @include prefixer(border-radius, 2px!important);
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6!important);
+
 }
 
 /* Visualization Library */
@@ -586,42 +595,9 @@ div.emptytext {
   }
 }
 
-.feedback-panel {
-
-  .header {
-    padding: 18px 48px 18px 9px;
-
-    .main-title {
-      font: $nav-font;
-      color: $heat-scale-2;
-    }
-
-    .sub-title {
-      margin-top: 3px;
-
-      .nav-text {
-        color: $black;
-        font: $title-font;
-      }
-    }
-  }
-
-  .#{$connector-prefix}panel-body {
-    background-color: $heat-scale-6;
-  }
-
-  .#{$connector-prefix}form-textarea {
-    height: 390px;
-  }
-
-  .footer {
-    padding-right: 20px;
-  }
-}
-
 div.hopscotch-bubble {
   border: 1px solid $border-color;
-  box-shadow: 2px 2px 0 $box-shadow-color;
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
 
   .hopscotch-title {
     font-size: 13px;

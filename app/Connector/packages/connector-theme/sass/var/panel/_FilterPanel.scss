@@ -2,16 +2,23 @@
   padding: 24px 6px 24px 6px;
   background: $white;
   margin: 0 auto;
+
+  h2.section-title {
+    padding: 0 24px;
+  }
+
 }
 
 div.selitem {
-  padding: 4px 0;
+  font-weight: 700!important;
 }
 
 .sel-list-item {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  line-height: 17px;
+  width: 95%;
 }
 
 .closeitem {
@@ -22,8 +29,8 @@ div.selitem {
   }
 
   img {
-    height: 18px;
-    width: 18px;
+    height: 16px;
+    width: 16px;
   }
 }
 
@@ -40,6 +47,12 @@ div.filterpanel {
     @include prefixer(border-radius, 2px);
     padding: 6px 0 0 0;
   }
+
+  .x-container:first-child {
+    background-color: $white;
+    @include prefixer(border-radius, 0px);
+    padding: 0;
+  }
 }
 
 div.activefilter {
@@ -47,13 +60,13 @@ div.activefilter {
   background-color: $white;
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
   @include prefixer(border-radius, 2px);
-  display: inline-block;
-  width: 220px;
-  padding: 3px 8px;
+  display: block;
+  width: 219px;
+  padding: 4px 8px;
   margin: 0 6px 6px 6px;
 
   div.selitem {
-    padding: 2px 5px 2px 0;
+    line-height: 17px;
     width: 95%;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -61,7 +74,9 @@ div.activefilter {
   }
 
   .sel-label {
-    font-weight: bold;
+    font-weight: 400;
+    color: $black;
+    opacity: 0.9;
   }
 
   .closeitem {
@@ -78,9 +93,6 @@ div.activefilter {
     }
   }
 
-  select {
-    margin: 10px 0;
-  }
 }
 
 div.selectionpanel {
@@ -102,8 +114,10 @@ div.selectionpanel {
     border: none !important;
 
     .closeitem {
-      top: -20px;
+      top: -22px;
     }
+
+
   }
 
   .x-toolbar-footer {
@@ -119,14 +133,27 @@ div.selectionpanel {
 }
 
 .filter-item {
-
+  font-weight: 700!important;
+  font: $active-filter-font;
   .selitem {
-    display: inline-block;
+    display: block;
+  }
+
+  select {
+    background: $white;
+    border: 1px solid $gray-6;
+    height: 24px;
+    padding: 3px;
+    margin: 12px 0 5px 0;
+    @include prefixer(border-radius, 2px);
+    color: $black;
+    font: $active-filter-font;
+    width: 100%;
   }
 
   &:hover {
     .closeitem {
-      display: inline-block;
+      display: block;
     }
   }
 }

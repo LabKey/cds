@@ -1,37 +1,52 @@
 .infopane {
   background-color: $white;
   font-size: 12px;
+  padding: 24px 16px!important;
+  margin: 6px!important;
+  width:230px!important;
+  @include prefixer(border-radius, 2px);
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
 
   h2 {
-    font: $nav-font;
+    font: $infopane-font;
     margin-bottom: 24px;
   }
 
+  .imgbutton {
+    width: 16px!important;
+    height: 16px!important;
+    top: 30px!important;
+    left: 175px!important;
+  }
+
   .label {
-    font-size: 11px;
+    font-size: 12px;
     text-transform: none;
     display: block;
-    color: $heat-scale-2;
+    color: $gray-25;
     margin-bottom: 4px;
   }
 
   .sorter {
     span.sorter-label {
-      font-size: 11px;
+      font-size: 12px;
       text-transform: none;
       display: block;
-      color: $heat-scale-2;
+      color: $gray-25;
+      padding: 0 0 4px 0;
     }
 
     span.sorter-content {
       font-size: 12px;
-      margin: 4px 0;
+      margin: 4px 0 20px 0;
       padding: 4px 8px;
       display: block;
-      @include border-radius(15px);
-      background-color: $light-color;
-      border: 1px solid #DDDCDC;
-      line-height: 16px;
+      @include prefixer(border-radius, 2px);
+      background-color: $white;
+      border: 1px solid $gray-6;
+      line-height: 22px;
+      height: 32px;
+      width:200px;
     }
 
     @include smallStandout;
@@ -86,10 +101,10 @@ a.expando {
   display: inline-block;
   text-decoration: none;
   position: absolute;
-  right: 10px;
+  right: 0;
   visibility: hidden;
   float: right;
-  border-radius: 15px;
+  border-radius: 2px;
   border: 2px solid $info-color;
   width: 17px;
   height: 17px;
@@ -121,4 +136,36 @@ a.expando {
       color: $light-color;
     }
   }
+}
+
+.infosortmenu.x-menu {
+  @include prefixer(border-radius, 2px);
+  border: 1px solid $gray-6;
+  width:200px;
+  right: 32px;
+
+  .x-menu-body {
+    background: $white;
+
+    .x-menu-item {
+      color: $gray-3  ;
+      height:32px;
+      padding: 4px 0;
+      line-height: 24px;
+    }
+
+    .x-menu-item-active {
+      @include prefixer(border-radius, 2px);
+      outline: none;
+      background: $gray-7;
+      color: $black;
+      opacity: 1.0!important;
+      border: 0 solid transparent;
+
+      .x-menu-item-text {
+        color: $black;
+      }
+    }
+  }
+
 }
