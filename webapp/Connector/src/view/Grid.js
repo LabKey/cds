@@ -308,7 +308,6 @@ Ext.define('Connector.view.Grid', {
         store.filterArray = model.getBaseFilters();
         store.loadPage(1);
 
-        this.applyFilterColumnState(grid);
         Connector.getService('Query').clearSourceCountsCache();
     },
 
@@ -537,12 +536,12 @@ Ext.define('Connector.view.Grid', {
             if (Ext.isDefined(column.getEl())) {
                 column.getEl().removeCls('filtered-column');
             }
-        }, this);
+        });
 
         Ext.iterate(this.columnMap, function(dataIndex) {
             colMeta = this.getColumnMetadata(dataIndex);
 
-            if (Ext.isDefined(colMeta.filterField)) {
+            if (colMeta && Ext.isDefined(colMeta.filterField)) {
                 filterFieldMap[colMeta.filterField] = {
                     metdata: colMeta,
                     dataIndex: dataIndex
