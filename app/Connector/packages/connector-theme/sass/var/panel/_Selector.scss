@@ -61,7 +61,7 @@
   }
 
   .content {
-    background-color: $light-color;
+    background-color: $gray-7;
     padding: 10px 40px;
 
     .look-disabled {
@@ -111,12 +111,12 @@
 
     .content-selected, .content-selected:hover {
       background-color: $select-color;
-      color: $light-color;
+      color: $gray-7;
     }
   }
 
   .content-multiselect {
-    background-color: $light-color;
+    background-color: $gray-7;
     padding-top: 10px;
     padding-left: 40px;
 
@@ -145,7 +145,7 @@
     }
 
     .x-grid-view {
-      background-color: $light-color;
+      background-color: $gray-7;
     }
 
     .checker-disabled {

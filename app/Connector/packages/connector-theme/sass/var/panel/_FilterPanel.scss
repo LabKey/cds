@@ -101,7 +101,7 @@ div.selectionpanel {
   margin: 0;
   padding: 5px 0;
   border: 1px solid #BEEFEF;
-  background-color: $light-color;
+  background-color: $gray-7;
   @include prefixer(border-radius, 2px);
 
   .header {

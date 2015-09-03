@@ -74,7 +74,7 @@
   width: 100%;
   border-radius: 0px 0px 12px 12px;
   @include background-image(linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%));
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#001e5799', endColorstr=$light-color,GradientType=0 );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#001e5799', endColorstr=$gray-7,GradientType=0 );
 
   .ellipse {
     position: absolute;
@@ -133,7 +133,7 @@ a.expando {
 
     .icontext {
       display: inline;
-      color: $light-color;
+      color: $gray-7;
     }
   }
 }

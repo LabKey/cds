@@ -3,11 +3,11 @@ $select-color: #14C9CC;            // Bright Blue
 $select-hover-color: #BEEFEF;      // Light Blue
 
 $legend-color: #BAB4B4;            // 10% darker than $secondary-color
-$light-color: #ebebeb;             // Light Text
-$light-color-hover: #ffffff;      //  Light Text Hover
+$gray-7: #ebebeb;             // Light Text
+$gray-7-hover: #ffffff;      //  Light Text Hover
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
-$interactive-color: #9B0D96;       // Interactive
+$interactive-color: #fb2e5c;       // Interactive
 $info-color: #F5A73A;              // Info
 $secondary-color: #F0F0F0;         // Light Gray
 
@@ -102,7 +102,7 @@ $loadmask-background-color: $dark-color;
 $loadmask-opacity: 0.35;
 
 // Calendar
-$datepicker-base-color: $light-color;
+$datepicker-base-color: $gray-7;
 
 $window-body-background-color: $gray-7;
 $window-header-color: $secondary-color;
@@ -112,12 +112,12 @@ $grid-row-cell-over-background-color: $select-hover-color;
 $grid-row-cell-over-color: $black;
 $grid-row-cell-font-size: 14px/15px;
 
-$grid-cell-selected-background-color: $light-color; //$select-color;
-$grid-row-cell-selected-background-color: $light-color; //$select-color;
-$grid-row-cell-selected-color: $black; //$light-color;
-$grid-row-cell-selected-border-color: $light-color; //$select-color;
-$grid-row-cell-alt-background-color: $light-color;
-$grid-row-cell-background-color: $light-color;
+$grid-cell-selected-background-color: $gray-7; //$select-color;
+$grid-row-cell-selected-background-color: $gray-7; //$select-color;
+$grid-row-cell-selected-color: $black; //$gray-7;
+$grid-row-cell-selected-border-color: $gray-7; //$select-color;
+$grid-row-cell-alt-background-color: $gray-7;
+$grid-row-cell-background-color: $gray-7;
 
 /* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
@@ -126,7 +126,7 @@ $grid-header-background-color: transparent;
 $grid-header-over-background-color: $select-hover-color;
 
 // Tips
-$tip-background-color: $light-color;
+$tip-background-color: $gray-7;
 $tip-border-color: $info-color;
 $tip-body-color: $info-color;
 
@@ -192,8 +192,8 @@ $tip-body-color: $info-color;
 @mixin rightFade {
   // needs latest Compass, add '@import "compass"' to your scss
   background-color: $secondary-color; // Old browsers
-  @include filter-gradient($secondary-color, $light-color, horizontal); // IE6-9
-  @include background-image(linear-gradient(left,  $secondary-color 85%,$light-color 95%));
+  @include filter-gradient($secondary-color, $gray-7, horizontal); // IE6-9
+  @include background-image(linear-gradient(left,  $secondary-color 85%,$gray-7 95%));
 }
 
 // --- END DEFINE MIXINS ----
@@ -249,13 +249,13 @@ a {
   text-decoration: none;
 
   &.logout {
-    color: $light-color;
+    color: $gray-7;
     cursor: pointer;
     transition: all 0.3s ease;
 
 
     &:hover {
-      color: $light-color-hover;
+      color: $gray-7-hover;
       text-decoration: none;
     }
   }
@@ -349,10 +349,10 @@ a {
 }
 
 .header-container {
-  margin: $pageLeftPadding $pageLeftPadding 0 $pageLeftPadding;
+  margin: 0;
 
   &-slim {
-    margin: 14px $pageLeftPadding 0 $pageLeftPadding;
+    margin: 0;
   }
 }
 
@@ -426,7 +426,7 @@ div.emptytext {
 }
 
 .#{$connector-prefix}border-layout-ct {
-  background-color: $light-color;
+  background-color: $gray-7;
 }
 
 .#{$connector-prefix}form-item {
@@ -471,14 +471,14 @@ div.emptytext {
 }
 
 .#{$connector-prefix}mask {
-  background-color: $light-color !important;
+  background-color: $black !important;
   opacity: .8 !important;
 }
 
 /* Ext Message Box */
 .#{$connector-prefix}window-default,
 .#{$connector-prefix}window-header-default-top {
-  background-color: $light-color;
+  background-color: $gray-7;
 }
 
 .#{$connector-prefix}toolbar .#{$connector-prefix}toolbar-separator-horizontal {

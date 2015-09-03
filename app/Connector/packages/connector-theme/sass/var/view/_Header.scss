@@ -44,7 +44,7 @@
 
 .connectorheader, .connectorheader-collapse {
   background-color: $black;
-  color : $light-color;
+  color : $gray-7;
   background-image: -webkit-gradient(linear, 0% 0%, 100% 0%, from($black), to($dark-color)); // TODO: Change to compass
   background: -moz-linear-gradient(left, $black,  $dark-color);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#333333',GradientType=1);

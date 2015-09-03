@@ -8,7 +8,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'paging-widget-pages-small',
 
-  $border-radius : 10px,
+  $border-radius : 2px,
 
   $background-color: #FFFFFF,
   $background-color-over: #a1d9da,
@@ -70,7 +70,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-small',
 
-  $border-radius : 15px,
+  $border-radius : 2px,
 
   $background-color: $secondary-color,
   $background-color-focus: darken($secondary-color, 8),
@@ -78,8 +78,8 @@ a.x-btn {
 
   $border-width : 2px,
   $border-color: #FFFFFF,
-  $border-color-over: $light-color,
-  $border-color-focus: $light-color,
+  $border-color-over: $gray-7,
+  $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
   $border-color-disabled: $dark-color,
 
@@ -102,7 +102,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-accent-small',
 
-  $border-radius : 15px,
+  $border-radius : 2px,
   $background-color: $interactive-color,
   $background-color-over: opacify($interactive-color, 0.4),
   $border-width : 0px,
@@ -124,7 +124,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'darkrounded-small',
 
-  $border-radius : 15px,
+  $border-radius : 2px,
 
   $background-color: $heat-scale-2,
   $background-color-pressed: $heat-scale-1,
@@ -139,8 +139,8 @@ a.x-btn {
 
   $text-padding: 8px,
 
-  $color: $light-color,
-  $color-over: $light-color,
+  $color: $gray-7,
+  $color-over: $gray-7,
   $color-disabled: $heat-scale-3,
 
   $font-size : 12px,
@@ -168,19 +168,19 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'dropdown-small',
 
-  $border-radius : 16px,
+  $border-radius : 2px,
 
   $background-color: $interactive-color,
-  $background-color-over: $light-color,
+  $background-color-over: $gray-7,
 
   $border-width : 0px,
   $border-color: #FFFFFF,
-  $border-color-over: $light-color,
-  $border-color-focus: $light-color,
+  $border-color-over: $gray-7,
+  $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
   $border-color-disabled: $dark-color,
 
-  $color: $light-color,
+  $color: $gray-7,
   $color-over : $interactive-color,
   $color-disabled: $dark-color,
 
@@ -213,7 +213,7 @@ a.x-btn {
 }
 
 .x-btn-dropdown-small-hld {
-  background-color: $light-color;
+  background-color: $gray-7;
 
   span.x-btn-inner {
     color: $interactive-color;
@@ -223,19 +223,19 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'dropdown-alt-small',
 
-  $border-radius : 16px,
+  $border-radius : 2px,
 
   $background-color: $interactive-color,
-  $background-color-over: $light-color,
+  $background-color-over: $gray-7,
 
   $border-width : 0px,
   $border-color: #FFFFFF,
-  $border-color-over: $light-color,
-  $border-color-focus: $light-color,
+  $border-color-over: $gray-7,
+  $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
   $border-color-disabled: $dark-color,
 
-  $color: $light-color,
+  $color: $gray-7,
   $color-over : $interactive-color,
   $color-disabled: $dark-color,
 
@@ -269,7 +269,7 @@ a.x-btn {
 }
 
 .x-btn-dropdown-alt-small-hld {
-  background-color: $light-color;
+  background-color: $gray-7;
 
   span.x-btn-inner {
     color: $interactive-color;
@@ -279,7 +279,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'linked-small',
 
-  $border-radius : 0px,
+  $border-radius : 2px,
   $border-width : 0px,
   $border-color: transparent,
   $border-color-over: transparent,
@@ -309,7 +309,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'linked-ul-small',
 
-  $border-radius : 0px,
+  $border-radius : 2px,
   $border-width : 0px,
   $border-color: transparent,
   $border-color-over: transparent,
@@ -343,7 +343,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-small',
 
-  $border-radius : 16px,
+  $border-radius : 2px,
 
   $background-color: $interactive-color,
   $background-color-over: $interactive-color,
@@ -351,14 +351,14 @@ a.x-btn {
 
   $border-width : 0px,
   $border-color: #ffffff,
-  $border-color-over: $light-color,
-  $border-color-focus: $light-color,
+  $border-color-over: $gray-7,
+  $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
-  $border-color-disabled: $light-color,
+  $border-color-disabled: $gray-7,
 
-  $color: $light-color,
+  $color: $gray-7,
   $color-over : #ffffff,
-  $color-disabled: $light-color,
+  $color-disabled: $gray-7,
 
   $font-size : 12px,
   $font-family: $info-font,
@@ -374,7 +374,7 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-text-small',
 
-  $border-radius : 16px,
+  $border-radius : 2px,
 
   $background-color: transparent,
   $background-color-over: transparent,
@@ -412,18 +412,18 @@ a.x-btn {
 @include extjs-button-ui (
   $ui: 'rounded-inverted-accent-icon-small',
 
-  $border-radius : 15px,
+  $border-radius : 2px,
   $border-width : 2px,
   $border-color: #F5D9B3,
   $border-color-over: $info-color,
 
-  $background-color: $light-color,
+  $background-color: $gray-7,
   $background-color-over: opacify($info-color, 0.4),
 
   $text-padding: 0px,
 
   $color: $info-color,
-  $color-over: $light-color,
+  $color-over: $gray-7,
   $color-disabled: $heat-scale-4,
 
   $font-size : 12px!important,
@@ -449,12 +449,12 @@ a.x-btn {
   background-color: black;
 
   span {
-    color: $light-color;
+    color: $gray-7;
   }
 
   &:hover {
-    border: 2px solid $light-color;
-    background-color: $light-color;
+    border: 2px solid $gray-7;
+    background-color: $gray-7;
     span {
       color: black;
     }
@@ -513,7 +513,7 @@ input.x-btn-rounded-inverted-accent-small {
   opacity: 0.9;
 
   svg {
-    fill: $light-color;
+    fill: $gray-7;
   }
 }
 
@@ -546,7 +546,7 @@ input.x-btn-rounded-inverted-accent-small {
   border-color : $info-color;
 
   .x-btn-inner {
-    color: $light-color;
+    color: $gray-7;
   }
 
   .icon {
