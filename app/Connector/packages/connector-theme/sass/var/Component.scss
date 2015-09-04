@@ -60,8 +60,8 @@ $heat-scale-6: #EEEEEE;
 
 $title: 26px;
 $headline: 16px;
-$pageLeftPadding: 24px;
-$sectionTopPadding: 24px;
+$pageLeftPadding: 28px;
+$sectionTopPadding: 28px;
 
 $bodycaps-font : Arial;
 $info-font : Arial, sans-serif;
@@ -335,22 +335,57 @@ a {
   display: inline-block;
 }
 
-.titlepanel {
-  font: $title-font;
-  margin-right: 10px;
+.learnheader {
+
+  .titlepanel {
+    font: $title-font;
+    background: $gray-7;
+    display: block;
+    width:100%;
+    height: 56px;
+    line-height: 56px;
+    padding-left: 16px;
+    clear: all;
+  }
+
+  .breadcrumb {
+    font-weight: 400;
+    color: $gray-25;
+    text-transform: uppercase;
+    display: block;
+    float: left;
+    padding-right:4px;
+  }
+
+  .studyname {
+    font-weight: 100;
+    font-size: 22px;
+    font-family: $data-font;
+    color: $black;
+    display: block;
+    float: left;
+  }
+
+  .iarrow {
+    background-image: url(images/navigatebackward.svg);
+    background-repeat: no-repeat;
+    background-color: $gray-8;
+    width: 56px;
+    height: 56px;
+    margin: 0 16px 0 -16px;
+    vertical-align: bottom;
+    display: block;
+    float: left;
+  }
+
 }
 
-.iarrow {
-  background-image: url(images/navigatebackward.svg);
-  background-repeat: no-repeat;
-  width: 14px;
-  vertical-align: bottom;
-  display: inline-block;
-}
+
+
 
 .header-container {
   margin: 0;
-
+  padding: 0!important;
   &-slim {
     margin: 0;
   }

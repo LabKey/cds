@@ -20,6 +20,8 @@ Ext.define('Connector.panel.Selection', {
         { text: 'Remove', itemId: 'inverse' }
     ],
 
+    bodyCls: 'selection-panel-wrapper',
+
     initHeader : function() {
 
         return {

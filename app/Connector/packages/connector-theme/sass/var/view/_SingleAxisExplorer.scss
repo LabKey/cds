@@ -15,7 +15,11 @@ span.animator {
 }
 
 .dim-selector {
-  margin-top: 19px;
+  margin: 0 28px 0 28px;
+  clear: both;
+  height: 56px;
+  line-height: 56px;
+  border-bottom: 1px solid $gray-5;
 }
 
 .explorer-box {
