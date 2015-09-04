@@ -170,6 +170,7 @@
             <column columnName="study_arm_visit_label"/>
             <column columnName="study_arm_visit_detail_label"/>
             <column columnName="isvaccvis"/>
+            <column columnName="ischallvis"/>
         </columns>
     </table>
     <table tableName="import_studysitepersonnel" tableDbType="TABLE">
