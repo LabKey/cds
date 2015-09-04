@@ -385,6 +385,13 @@ Ext.define('Connector.view.Chart', {
             this.onReady(this.handleResize, this);
         }, this);
 
+        this.hideHeatmapModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hideheatmapmsg', this);
+        }, this);
+        this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hidemedianmsg', this);
+        }, this);
+
         this.on('resize', function() {
             this.resizeTask.delay(150);
         }, this);
@@ -1901,6 +1908,14 @@ Ext.define('Connector.view.Chart', {
     toggleHeatmapMode : function() {
         this.getColorSelector().setDisabled(this.showPointsAsBin);
         this.getHeatmapModeIndicator().setVisible(this.showPointsAsBin);
+
+        // Show binning message for a few seconds if first time user hits it
+        var msgKey = 'HEATMAP_MODE';
+        if (this.showPointsAsBin && Connector.getService('Messaging').isAllowed(msgKey)) {
+            this.showWhyBinning();
+            this.hideHeatmapModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
+        }
     },
 
     showWhyBinning : function() {
@@ -1921,6 +1936,14 @@ Ext.define('Connector.view.Chart', {
 
     toggleMedianMode : function() {
         this.getMedianModeIndicator().setVisible(this.showAsMedian);
+
+        // Show median message for a few seconds if first time user hits it
+        var msgKey = 'MEDIAN_MODE';
+        if (this.showAsMedian && Connector.getService('Messaging').isAllowed(msgKey)) {
+            this.showWhyMedian();
+            this.hideMedianModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
+        }
     },
 
     showWhyMedian : function() {
