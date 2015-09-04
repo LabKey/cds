@@ -207,7 +207,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
-        _asserts.assertFilterStatusCounts(667, 15, -1);
+        _asserts.assertFilterStatusCounts(538, 14, -1);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
         final String saveLabel = "Group \"A Plotted...\" saved.";
@@ -225,7 +225,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
-        _asserts.assertFilterStatusCounts(667, 15, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(538, 14, -1); // TODO Test data dependent.
 
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -634,6 +634,7 @@ public class CDSTest extends CDSReadOnlyTest
         }
 
         cds.clearFilters();
+        _ext4Helper.waitForMaskToDisappear();
 
         if (CDSHelper.validateCounts)
         {
@@ -791,7 +792,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Now add a new column to the mix.");
         gridColumnSelector.openSelectorWindow();
-        shortWait().until(LabKeyExpectedConditions.animationIsDone(gridColumnSelector.window()));
+        shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, ' content ')]")));
+        sleep(CDSHelper.CDS_WAIT_ANIMATION); // TODO tired of trying to find a good fix for this.
         gridColumnSelector.pickSource(CDSHelper.ELISPOT);
         gridColumnSelector.pickVariable(CDSHelper.ELISPOT_ANTIGEN, false);
         gridColumnSelector.confirmSelection();
@@ -959,13 +961,51 @@ public class CDSTest extends CDSReadOnlyTest
         click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
         gridColumnSelector.confirmSelection();
 
-
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
                 "Study NAb Titer Ic50", CDSHelper.DEMO_RACE);
 
-        cds.goToAppHome();
+        log("Validate the column chooser is correct when a column is removed.");
+        String selectorText, selectorTextClean;
+        String expectedText, expectedTextClean;
+
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_ALL_VARS);
+        assertElementPresent("Could not find unchecked checkbox with text: '" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "'", Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//tbody//tr[not(contains(@class, 'x-grid-row-selected'))]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"), 1);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_CUR_COL);
+
+        selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
+        assertFalse("Found '" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "' in current columns and it should not be there.", selectorText.contains(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB));
+        gridColumnSelector.confirmSelection();
+
+        log("Clear the filters and make sure the selector reflects this.");
         cds.clearFilters();
+        waitForText(5000, "Filter removed.");
+        _ext4Helper.waitForMaskToDisappear();
+
+        gridColumnSelector.openSelectorWindow();
+
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_ALL_VARS);
+        selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
+        selectorTextClean = selectorText.toLowerCase().replaceAll("\\n", "");
+        selectorTextClean = selectorTextClean.replaceAll("\\s+", "");
+
+        expectedText = "ICS (Intracellular Cytokine Staining)\n  Magnitude (% cells) - Background subtracted\n  Antigen\nNAb (Neutralizing antibody)\n  Titer IC50\nSubject characteristics\n  Race";
+        expectedTextClean = expectedText.toLowerCase().replaceAll("\\n", "");
+        expectedTextClean = expectedTextClean.replaceAll("\\s+", "");
+
+        assertTrue("Values not as expected in all variables. Expected: '" + expectedText + "' Actual: '" + selectorText + "'.", expectedTextClean.equals(selectorTextClean));
+
+        gridColumnSelector.pickSource(CDSHelper.GRID_COL_CUR_COL);
+        selectorText = Locator.xpath("//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]").findElement(getDriver()).getText();
+        selectorText = selectorText.trim();
+
+        assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.length() == 0);
+
+        gridColumnSelector.confirmSelection();
+
+        cds.goToAppHome();
 
     }
 
