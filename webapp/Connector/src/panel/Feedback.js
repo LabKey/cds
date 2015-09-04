@@ -15,6 +15,7 @@ Ext.define('Connector.panel.Feedback', {
 
     statics: {
         DEFAULT_ISSUE_USER: 'drienna',
+        DEFAULT_ISSUE_PROJECT: 'Feedback',
         displayWindow : function(animateTarget) {
             var resizer = function() {
                 this.center();
@@ -142,16 +143,10 @@ Ext.define('Connector.panel.Feedback', {
     postFeedback : function(title, comments, url, assignedUserId, callback, scope) {
 
         var config = {
-            url: LABKEY.ActionURL.buildURL('issues', 'insert.view'),
+            url: LABKEY.ActionURL.buildURL('issues', 'insert.view', Connector.panel.Feedback.DEFAULT_ISSUE_PROJECT),
             method: 'POST',
             success: callback,
-            failure: function() {
-                // This will only get called in the event that the server responds with something
-                // other than status 200 OK. Normally, a JSON-based API would return 'success' false or the like,
-                // however, since this API is HTML-only it will normally return 200 OK even when there are
-                // errors since it is trying to let the user re-see the issue in an attempt to rectify their errors.
-                Ext.Msg.alert('Failed to save feedback.');
-            },
+            failure: callback,
             scope: scope,
             params: {
                 issueId: 0,
@@ -227,23 +222,29 @@ Ext.define('Connector.panel.Feedback', {
                             var values = form.getValues();
                             this.postFeedback(values.title, values.comment, values.url, values.assignedTo, function(response) {
                                 btn.setText('Done');
-                                var html = response.responseText;
 
-                                // The issues API only returns HTML views. In the case of a successful creation
-                                // of an issue the server responds with a different title than if it fails to save.
-                                // This check is to attempt to inspect that the issue was actually created
-                                if (html.indexOf('<title>Issue') > -1) {
-                                    this.hide();
+                                if (response) {
+                                    var html = response.responseText;
 
-                                    var viewManager = Connector.getApplication().getController('Connector');
-                                    if (viewManager) {
-                                        var fsview = viewManager.getViewInstance('filterstatus');
-                                        if (fsview) {
-                                            fsview.showMessage('Thanks for your feedback!', true);
+                                    // The issues API only returns HTML views. In the case of a successful creation
+                                    // of an issue the server responds with a different title than if it fails to save.
+                                    // This check is to attempt to inspect that the issue was actually created
+                                    if (response.status === 403 || html.indexOf('<title>Issue') > -1) {
+                                        this.hide();
+
+                                        var viewManager = Connector.getApplication().getController('Connector');
+                                        if (viewManager) {
+                                            var fsview = viewManager.getViewInstance('filterstatus');
+                                            if (fsview) {
+                                                fsview.showMessage('Thanks for your feedback!', true);
+                                            }
+                                            else {
+                                                console.warn('no filterstatus view available');
+                                            }
                                         }
-                                        else {
-                                            console.warn('no filterstatus view available');
-                                        }
+                                    }
+                                    else {
+                                        Ext.Msg.alert('Oops! Looks like something went wrong in gathering your feedback.');
                                     }
                                 }
 
