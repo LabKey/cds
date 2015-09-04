@@ -104,7 +104,6 @@ public class DataGrid
                 return null;
             }
         });
-        _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
 
     }
 

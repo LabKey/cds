@@ -45,8 +45,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -879,6 +881,7 @@ public class CDSTest extends CDSReadOnlyTest
         coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
         coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
@@ -890,139 +893,112 @@ public class CDSTest extends CDSReadOnlyTest
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
                 "Study NAb Titer Ic50", CDSHelper.DEMO_RACE);
 
-        log("Validate that Current columns are as expected and not selectable.");
-        List<WebElement> checkBoxes;
-        WebElement checkBox;
-        String xpathColumnNameTemplate = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//td[contains(@role, 'gridcell')]//div[contains(@class, 'x-grid-cell-inner')][text()='*']";
-        String xpathSelectorColumnName;
-        String xpathAllCheckboxes = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//div[contains(@class, 'x-grid-row-checker')]";
-        String xpathSpecificCheckboxesTemplate = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//tr//td//div[text()='*']/./ancestor::tr//div[contains(@class, 'x-grid-row-checker')]";
-        String xpathSpecificCheckbox;
-
         gridColumnSelector.openSelectorWindow();
-        gridColumnSelector.pickSource(CDSHelper.GRID_COL_CUR_COL);
+        Map<String, Boolean> columns = new HashMap<>();
+        columns.put(CDSHelper.ICS_ANTIGEN, false);
+        columns.put(CDSHelper.NAB_TITERIC50, false);
+        columns.put(CDSHelper.DEMO_RACE, false);
 
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-
-        checkBoxes = Locator.xpath(xpathAllCheckboxes).findElements(getDriver());
-        for (WebElement cb : checkBoxes)
-        {
-            assertTrue("Current columns check-box is not disabled and it should be.",cb.getAttribute("class").toLowerCase().contains("checker-disabled"));
-        }
-
+        log("Validate that Current columns are as expected and not selectable.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
         log("Validate that All columns are as expected and not selectable.");
-        gridColumnSelector.pickSource(CDSHelper.GRID_COL_ALL_VARS);
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-
-        checkBoxes = Locator.xpath(xpathAllCheckboxes).findElements(getDriver());
-        for (WebElement cb : checkBoxes)
-        {
-            assertTrue("Current columns check-box is not disabled and it should be.",cb.getAttribute("class").toLowerCase().contains("checker-disabled"));
-        }
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
 
         log("Validate that column selectors are as expected in their specific variable selector.");
-
-        gridColumnSelector.pickSource(CDSHelper.DEMOGRAPHICS);
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.DEMO_RACE + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        gridColumnSelector.pickSource(CDSHelper.ICS);
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.ICS_ANTIGEN + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        gridColumnSelector.pickSource(CDSHelper.NAB);
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.NAB_TITERIC50 + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
+        Map<String, Boolean> oneColumn = new HashMap<>();
+        oneColumn.put(CDSHelper.DEMO_RACE, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.DEMOGRAPHICS, oneColumn);
+        oneColumn.clear();
+        oneColumn.put(CDSHelper.ICS_ANTIGEN, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, oneColumn);
+        oneColumn.clear();
+        oneColumn.put(CDSHelper.NAB_TITERIC50, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.NAB, oneColumn);
+        oneColumn.clear();
 
         log("Now add a new column to the mix.");
-        gridColumnSelector.pickSource(CDSHelper.NAB);
-        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='"+ CDSHelper.NAB_LAB + "']"));
+        gridColumnSelector.pickSource(CDSHelper.ICS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
         // TODO Why doesn't this selector work?
-//        gridColumnSelector.pickVariable(CDSHelper.NAB_LAB, false);
+//        gridColumnSelector.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, false);
 
         log("Validate that Current columns are as expected and enabled or not as appropriate.");
-        gridColumnSelector.pickSource(CDSHelper.GRID_COL_CUR_COL);
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.ICS_ANTIGEN + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.NAB_TITERIC50 + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.DEMO_RACE + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_LAB);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.NAB_LAB);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertFalse("Check-box for " + CDSHelper.NAB_LAB + " is disabled and it should not be.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
+        columns.put(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, true);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
         log("Validate that All columns are as expected and enabled or not as appropriate.");
-        gridColumnSelector.pickSource(CDSHelper.GRID_COL_ALL_VARS);
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.ICS_ANTIGEN);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.ICS_ANTIGEN + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.NAB_TITERIC50);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.NAB_TITERIC50 + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.DEMO_RACE);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertTrue("Check-box for " + CDSHelper.DEMO_RACE + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
-
-        xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", CDSHelper.NAB_LAB);
-        assertElementVisible(Locator.xpath(xpathSelectorColumnName));
-        xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", CDSHelper.NAB_LAB);
-        checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
-        assertFalse("Check-box for " + CDSHelper.NAB_LAB + " is disabled and it should not be.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
 
         gridColumnSelector.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                "Study NAb Titer Ic50", CDSHelper.DEMO_RACE, "Study NAb Lab Code");
+                "Study NAb Titer Ic50", CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+
+        log("Filter on added column, check to make sure it is now 'locked' in the selector.");
+        grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Less Than or Equal To", "0.003");
+
+        gridColumnSelector.openSelectorWindow();
+        columns.replace(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, false);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        log("Validate that All columns are as expected and enabled or not as appropriate.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+        gridColumnSelector.cancelSelection();
+
+        log("Remove the filter on the column, and validate that the selector goes back to as before.");
+        grid.clearFilters(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        columns.replace(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, true);
+
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        log("Validate that All columns are as expected and enabled or not as appropriate.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
+
+        log("Remove the column and validate the columns are as expected.");
+        gridColumnSelector.pickSource(CDSHelper.ICS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-grid-cell-inner')][text()='" + CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB + "']"));
+        gridColumnSelector.confirmSelection();
+
+
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
+                CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
+                "Study NAb Titer Ic50", CDSHelper.DEMO_RACE);
 
         cds.goToAppHome();
         cds.clearFilters();
+
+    }
+
+    private void gridColumnSelectorValidator(DataGridVariableSelector gridColumnSelector, String source, Map<String, Boolean> columns)
+    {
+        String xpathColumnNameTemplate = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//td[contains(@role, 'gridcell')]//div[contains(@class, 'x-grid-cell-inner')][text()='*']";
+        String xpathSelectorColumnName;
+        String xpathSpecificCheckboxesTemplate = "//div[contains(@class, 'column-axis-selector')]//table[contains(@role, 'presentation')]//tr//td//div[text()='*']/./ancestor::tr//div[contains(@class, 'x-grid-row-checker')]";
+        String xpathSpecificCheckbox;
+        WebElement checkBox;
+
+        gridColumnSelector.pickSource(source);
+
+        for(Map.Entry<String, Boolean> entry : columns.entrySet())
+        {
+            xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", entry.getKey());
+            assertElementVisible(Locator.xpath(xpathSelectorColumnName));
+
+            xpathSpecificCheckbox = xpathSpecificCheckboxesTemplate.replaceAll("[*]", entry.getKey());
+            checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
+
+            // Should the checkbox be enabled/checkable?
+            if(entry.getValue())
+            {
+                assertFalse("Check-box for " + entry.getKey() + " is disabled and it should not be.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
+            }
+            else
+            {
+                assertTrue("Check-box for " + entry.getKey() + " is not disabled.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
+            }
+        }
+
+        gridColumnSelector.backToSource();
 
     }
 
