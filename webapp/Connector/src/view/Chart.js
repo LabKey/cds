@@ -97,7 +97,6 @@ Ext.define('Connector.view.Chart', {
             }
         });
 
-        this.showmsg = true;
         this.addPlugin({
             ptype: 'messaging',
             calculateY : function(cmp, box, msg) {
@@ -175,7 +174,7 @@ Ext.define('Connector.view.Chart', {
             },
             items: [{
                 xtype: 'container',
-                width: '50%',
+                width: '33%',
                 margin: '16 0 0 24',
                 layout: {
                     type: 'hbox',
@@ -184,7 +183,19 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getYSelector()]
             },{
                 xtype: 'container',
-                width: '50%',
+                width: '34%',
+                margin: '16 0 0 0',
+                layout: {
+                    type: 'hbox',
+                    pack: 'center'
+                },
+                items: [
+                    this.getHeatmapModeIndicator(),
+                    this.getMedianModeIndicator()
+                ]
+            },{
+                xtype: 'container',
+                width: '33%',
                 margin: '16 24 0 0',
                 layout: {
                     type: 'hbox',
@@ -193,6 +204,44 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getColorSelector()]
             }]
         };
+    },
+
+    getHeatmapModeIndicator : function() {
+        if (!this.heatmapIndicator) {
+            this.heatmapIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Heatmap on',
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhyBinning(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hideheatmapmsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.heatmapIndicator;
+    },
+
+    getMedianModeIndicator : function() {
+        if (!this.medianIndicator) {
+            this.medianIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Median values',
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhyMedian(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hidemedianmsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.medianIndicator;
     },
 
     getYSelector : function() {
@@ -235,9 +284,8 @@ Ext.define('Connector.view.Chart', {
                 model: Ext.create('Connector.model.Variable', {type: 'color'}),
                 listeners: {
                     afterrender : function(c) {
-                        c.getEl().on('mouseover', function() { this.showWhyBinTask.delay(300); }, this);
-                        c.getEl().on('mouseout', function() { this.showWhyBinTask.cancel(); }, this);
-                        this.on('hideload', function() { this.showWhyBinTask.cancel(); }, this);
+                        c.getEl().on('mouseover', function() { this.showWhyBinning(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hideheatmapmsg', this); }, this);
                     },
                     requestvariable: this.onShowVariableSelection,
                     scope: this
@@ -335,11 +383,6 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.resizeTask = new Ext.util.DelayedTask(function() {
             this.onReady(this.handleResize, this);
-        }, this);
-        this.showWhyBinTask = new Ext.util.DelayedTask(function() {
-            if (this.showPointsAsBin) {
-                this._showWhyBinning();
-            }
         }, this);
 
         this.on('resize', function() {
@@ -795,17 +838,11 @@ Ext.define('Connector.view.Chart', {
 
         this.logRowCount(allDataRows);
 
-        // only call handlers when state has changed
-        var lastShowPointsAsBin = this.showPointsAsBin;
         this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
-        if (lastShowPointsAsBin != this.showPointsAsBin) {
-            if (this.showPointsAsBin) {
-                this.onEnableBinning();
-            }
-            else {
-                this.onDisableBinning();
-            }
-        }
+        this.toggleHeatmapMode();
+
+        this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
+        this.toggleMedianMode();
 
         var me = this;
         this.highlightSelectedFn = function () {
@@ -1828,35 +1865,6 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    onEnableBinning : function() {
-
-        // Disable the color axis selector
-        this.getColorSelector().disable();
-
-        // Show binning message
-        var msgKey = 'PLOTBIN_LIMIT';
-        var learnId = Ext.id(), dismissId = Ext.id();
-        var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Got it</a>';
-
-        var shown = this.sessionMessage(msgKey, msg, true);
-
-        if (shown) {
-            var el = Ext.get(dismissId);
-            if (el) {
-                el.on('click', function() {
-                    this.showmsg = true;
-                    this.hideMessage();
-                    Connector.getService('Messaging').block(msgKey);
-                }, this, {single: true});
-            }
-
-            el = Ext.get(learnId);
-            if (el) {
-                el.on('click', function() { this.showWhyBinTask.delay(0); }, this);
-            }
-        }
-    },
-
     _showWhyXGutter : function(data) {
         var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2),
             config = {
@@ -1890,46 +1898,45 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideguttermsg', this);
     },
 
-    /**
-     * Shows the description of why the heatmap is enabled, color disabled
-     * Do not call this function directly, use this.showWhyBinTask.delay(ms) instead.
-     * @private
-     */
-    _showWhyBinning : function() {
-        if (!this.showWhyBin) {
-            this.showWhyBin = true;
-            var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
-                    calloutMgr = hopscotch.getCalloutManager(),
-                    _id = Ext.id();
+    toggleHeatmapMode : function() {
+        this.getColorSelector().setDisabled(this.showPointsAsBin);
+        this.getHeatmapModeIndicator().setVisible(this.showPointsAsBin);
+    },
 
-            calloutMgr.createCallout({
-                id: _id,
-                target: this.getColorSelector().getActiveButton().getEl().dom,
+    showWhyBinning : function() {
+        if (this.showPointsAsBin) {
+            var config = {
+                target: this.getHeatmapModeIndicator().getEl().dom,
                 placement: 'bottom',
-                title: 'Heatmap mode',
-                xOffset: -305,
-                arrowOffset: 235,
-                content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
-                // If the user explicitly closes the tip, then don't ever show it again.
-                //onClose : function() {
-                //    me.showWhyBin = false;
-                //}
-            });
+                title: 'Heatmap on',
+                xOffset: -115,
+                arrowOffset: 145,
+                content: 'There are too many dots to show interactively. Higher data density is represented by darker'
+                + ' tones. Color variables are disabled. Reduce the amount of data plotted to see dots again.'
+            };
 
-            this.showmsg = true;
-            this.hideMessage();
-
-            this.on('hideload', function() {
-                calloutMgr.removeCallout(_id);
-                this.showWhyBin = false;
-            }, this, {single: true});
+            ChartUtils.showCallout(config, 'hideheatmapmsg', this);
         }
     },
 
-    onDisableBinning : function() {
+    toggleMedianMode : function() {
+        this.getMedianModeIndicator().setVisible(this.showAsMedian);
+    },
 
-        // Enable the color axis selector
-        this.getColorSelector().enable();
+    showWhyMedian : function() {
+        if (this.showAsMedian) {
+            var config = {
+                target: this.getMedianModeIndicator().getEl().dom,
+                placement: 'bottom',
+                title: 'Median values',
+                xOffset: -105,
+                arrowOffset: 145,
+                content: 'To enable an x-y plot, each subject now has one dot for its median response value at each visit.'
+                + ' To see individual responses, narrow the choices in the X and Y controls.'
+            };
+
+            ChartUtils.showCallout(config, 'hidemedianmsg', this);
+        }
     },
 
     getAdditionalMeasures : function(activeMeasures) {

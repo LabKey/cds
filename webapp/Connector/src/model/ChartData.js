@@ -17,7 +17,8 @@ Ext.define('Connector.model.ChartData', {
         {name: 'rows', defaultValue: []}, // results of AxisMeasureStore.select()
         {name: 'xDomain', defaultValue: [0,0]},
         {name: 'yDomain', defaultValue: [0,0]},
-        {name: 'properties', defaultValue: {}}
+        {name: 'properties', defaultValue: {}},
+        {name: 'usesMedian', defaultValue: false}
     ],
 
     statics: {
@@ -103,6 +104,10 @@ Ext.define('Connector.model.ChartData', {
 
     getPlotMeasure : function(index) {
         return this.getPlotMeasures()[index];
+    },
+
+    usesMedian : function() {
+        return this.get('usesMedian');
     },
 
     getAliasFromMeasure : function(measure) {
@@ -270,9 +275,6 @@ Ext.define('Connector.model.ChartData', {
 
         // select the data out of AxisMeasureStore based on the dimensions
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
-        if (LABKEY.devMode && this.getMeasureStore()._records.length != dataRows.length) {
-            console.log('Plotting aggregate values using mean', this.getMeasureStore()._records.length, dataRows.length);
-        }
 
         // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
         Ext.each(Connector.getService('Query').getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
@@ -403,7 +405,15 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getYValue : function(measure, alias, row) {
-        return row.y ? row.y.getMean() : null;
+        if (row.y) {
+            if (!this.usesMedian() && row.y.values.length > 1) {
+                this.set('usesMedian', true);
+            }
+
+            return row.y.getMedian();
+        }
+
+        return null;
     },
 
     _getXValue : function(measure, alias, row, xIsContinuous) {
@@ -414,7 +424,11 @@ Ext.define('Connector.model.ChartData', {
             return xIsContinuous ? null : 'undefined';
         }
 
-        return row.x.getMean();
+        if (!this.usesMedian() && row.x.values.length > 1) {
+            this.set('usesMedian', true);
+        }
+
+        return row.x.getMedian();
     },
 
     _getColorValue : function(measure, alias, row) {
