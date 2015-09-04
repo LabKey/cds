@@ -43,7 +43,8 @@
         }
       }
 
-      .section-title {
+      .section-title,
+      .section-title-filtered {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;

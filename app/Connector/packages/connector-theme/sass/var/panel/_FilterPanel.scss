@@ -4,9 +4,21 @@
   margin: 0 auto;
 
   h2.section-title {
-    padding: 0 24px;
+    padding: 0 42px 0 28px;
   }
 
+  h2.section-title-filtered {
+    padding: 0 42px 0 6px;
+  }
+
+  .emptytext {
+    padding: 12px 0 0 28px;
+  }
+}
+
+.filterstatus-content {
+  background-color: $gray-7;
+  padding: 5px;
 }
 
 div.selitem {
@@ -81,7 +93,7 @@ div.activefilter {
 
   .closeitem {
     position: absolute;
-    right: 4px;
+    right: 12px;
     top: 4px;
   }
 
@@ -98,13 +110,20 @@ div.activefilter {
 div.selectionpanel {
 
   font: $body-one-font;
-  margin: 0;
+  margin: 3px 0 0 0;
   padding: 5px 0;
-  border: 1px solid #BEEFEF;
-  background-color: $gray-7;
+  border: 3px solid $select-hover-color;
+  background-color: $off-white;
   @include prefixer(border-radius, 2px);
 
   .header {
+    font: $nav-font;
+    color: $black;
+    opacity: 0.9;
+    padding: 0 10px;
+  }
+
+  .instruction {
     font: $nav-font;
     color: $select-color;
     padding: 0 10px;
@@ -114,7 +133,7 @@ div.selectionpanel {
     border: none !important;
 
     .closeitem {
-      top: -22px;
+      top: -48px;
     }
 
 
