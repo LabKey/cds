@@ -91,10 +91,9 @@ div.learncolumnheader {
   padding-bottom: 12px;
   margin-left: $pageLeftPadding;
   margin-right: $pageLeftPadding;
-  border-bottom: 2px solid $heat-scale-4;
+  border-bottom: 1px solid $gray-6;
   overflow: auto;
-  background-color: #fff;
-  font: $subhead-font;
+  font: 12px;
   color: $heat-scale-2;
   text-transform: uppercase;
 }
@@ -254,7 +253,7 @@ div.list-container {
   clear: both;
   display: block;
   margin: 32px 0 12px 28px;
-  width: 60%;
+  width: 40%;
 
   tbody,
   tr,
@@ -264,7 +263,7 @@ div.list-container {
   }
 
   input {
-    width: 560px;
+    width: 100%;
     padding: 16px 12px;
     font-size: 12px;
     border-radius: 2px;
