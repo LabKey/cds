@@ -26,7 +26,7 @@ Ext.define('Connector.controller.Summary', {
             }
         });
 
-        /* Refresh event gets fired often on views so a delay is put in to prevent unncessary link registrations */
+        /* Refresh event gets fired often on views so a delay is put in to prevent unnecessary link registrations */
         this.summaryLinkTask = new Ext.util.DelayedTask(function(view) {
             var links = Ext.DomQuery.select('a', view.getEl().id);
             for (var i=0; i < links.length; i++) {
