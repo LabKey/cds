@@ -160,7 +160,8 @@ Ext.define('Connector.grid.Panel', {
     },
 
     groupColumns : function(columns) {
-        var defaultColumns = Connector.getService('Query').getDefaultGridAliases(),
+        var queryService = Connector.getService('Query'),
+            defaultColumns = queryService.getDefaultGridAliases(),
             groups = [],
             groupMap = {},
             studyTime = [],
@@ -193,9 +194,17 @@ Ext.define('Connector.grid.Panel', {
             });
         }
 
-        // All other groups based on query name
+        // All other groups based on query label
         Ext.each(remainder, function(col) {
-            var queryName = col.dataIndex.split('_')[1];
+            var measure = queryService.getMeasure(col.dataIndex),
+                queryName;
+
+            if (measure) {
+                queryName = measure.queryLabel || measure.queryName;
+            }
+            else {
+                queryName = col.dataIndex.split('_')[1];
+            }
 
             // HACK: special case to map SubjectGroupMap -> User groups
             if (queryName == "SubjectGroupMap")
