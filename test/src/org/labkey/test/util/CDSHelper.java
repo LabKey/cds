@@ -330,10 +330,10 @@ public class CDSHelper
 
     // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = TITLE_BAMA;
-    public static final String GRID_TITLE_DEMO = "Demographics";
+    public static final String GRID_TITLE_DEMO = "Subject characteristics";
     public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
     public static final String GRID_TITLE_ICS = TITLE_ICS;
-    public static final String GRID_TITLE_NAB = TITLE_NAB;
+    public static final String GRID_TITLE_NAB = "Neutralizing antibody";
     public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
