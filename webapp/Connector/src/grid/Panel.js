@@ -162,6 +162,7 @@ Ext.define('Connector.grid.Panel', {
     groupColumns : function(columns) {
         var queryService = Connector.getService('Query'),
             defaultColumns = queryService.getDefaultGridAliases(),
+            definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
             groups = [],
             groupMap = {},
             studyTime = [],
@@ -200,7 +201,12 @@ Ext.define('Connector.grid.Panel', {
                 queryName;
 
             if (measure) {
-                queryName = measure.queryLabel || measure.queryName;
+                if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
+                    queryName = definedMeasureSourceMap[measure.alias];
+                }
+                else {
+                    queryName = measure.queryLabel || measure.queryName;
+                }
             }
             else {
                 queryName = col.dataIndex.split('_')[1];

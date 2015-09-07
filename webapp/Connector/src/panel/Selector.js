@@ -486,21 +486,24 @@ Ext.define('Connector.panel.Selector', {
 
         var key = source.get('key'),
             variableType = source.get('variableType'),
-            filter, aliases = {}, toInclude, index,
+            filter, aliases = {}, toInclude, index, alias,
             selModel = this.getMeasurePane().getSelectionModel(),
+            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap(),
             me = this;
 
         // collect the aliases for all locked measures
         Ext.each(this.getLockedRecords(), function(measure) {
-            if (Ext.isDefined(measure.get('alias'))) {
-                aliases[measure.get('alias')] = true;
+            alias = measure.get('alias');
+            if (Ext.isDefined(alias)) {
+                aliases[alias] = true;
             }
         }, this);
 
         // collect the aliases for all selected measures
         Ext.each(this.getSelectedRecords(), function(measure) {
-            if (Ext.isDefined(measure.get('alias'))) {
-                aliases[measure.get('alias')] = true;
+            alias = measure.get('alias');
+            if (Ext.isDefined(alias)) {
+                aliases[alias] = true;
             }
         }, this);
 
@@ -508,12 +511,19 @@ Ext.define('Connector.panel.Selector', {
         // setup the measures store filter based on the selected source
         if (variableType === 'VIRTUAL') {
             filter = function(measure) {
+                alias = measure.get('alias');
+
                 // include all measures from the locked and selected sets
-                toInclude = measure.get('alias') in aliases;
+                toInclude = alias in aliases;
 
                 // if Session source, also check to see if the measures is in that set
                 if (source.get('schemaName') === '_session' && !toInclude) {
-                    toInclude = measure.get('alias') in Connector.getState().getSessionColumns();
+                    toInclude = alias in Connector.getState().getSessionColumns();
+                }
+
+                // for those measures being included, set the sourceTitle if the measure is part of a DEFINED_MEASURES source
+                if (toInclude && Ext.isDefined(definedMeasureSourceMap[alias])) {
+                    measure.set('sourceTitle', definedMeasureSourceMap[alias]);
                 }
 
                 return toInclude;
@@ -521,8 +531,14 @@ Ext.define('Connector.panel.Selector', {
         }
         else if (variableType == 'DEFINED_MEASURES') {
             filter = function(measure) {
-                if (source.get('measures').indexOf(measure.get('alias')) > -1) {
-                    measure.set('selectedSourceKey', source.get('key'));
+                alias = measure.get('alias');
+
+                if (source.get('measures').indexOf(alias) > -1) {
+                    measure.set({
+                        selectedSourceKey: source.get('key'),
+                        sourceTitle: source.get('queryLabel')
+                    });
+
                     return true;
                 }
 

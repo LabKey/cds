@@ -569,6 +569,22 @@ Ext.define('Connector.controller.Query', {
         };
     },
 
+    getDefinedMeasuresSourceTitleMap : function() {
+        if (!this.DEFINED_MEASURE_SOURCE_MAP) {
+            this.DEFINED_MEASURE_SOURCE_MAP = {};
+
+            Ext.iterate(Connector.measure.Configuration.context.sources, function(key, props) {
+                if (Ext.isArray(props.measures)) {
+                    Ext.each(props.measures, function(measureAlias) {
+                        this.DEFINED_MEASURE_SOURCE_MAP[measureAlias] = props.queryLabel;
+                    }, this);
+                }
+            }, this);
+        }
+
+        return this.DEFINED_MEASURE_SOURCE_MAP;
+    },
+
     getDataSorts : function() {
         if (!this._dataSorts) {
             // TODO: Source these differently? This is requiring us to split these out

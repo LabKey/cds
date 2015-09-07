@@ -31,11 +31,17 @@ Ext.define('Connector.model.Measure', {
 
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
-            var title = rec.get('queryLabel');
-            if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
-                title = rec.get('queryName') + ' (' + title + ')';
+            if (Ext.isString(val) && val.length > 0) {
+                return val;
             }
-            return title;
+            else {
+                var title = rec.get('queryLabel');
+                if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
+                    title = rec.get('queryName') + ' (' + title + ')';
+                }
+
+                return title;
+            }
         }},
         {name: 'isRecommendedVariable', type: 'boolean', defaultValue: false},
         {name: 'recommendedVariableGrouper', convert: function(val, rec) {
