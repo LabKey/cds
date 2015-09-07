@@ -5,6 +5,7 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.etl.ListofMapsDataIterator;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
@@ -73,6 +74,8 @@ public class PopulateDatasetTask extends AbstractPopulateTask
         // Assumes all child containers are studies
         for (Container container : project.getChildren())
         {
+            if (job.checkInterrupted())
+                return;
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
 
@@ -104,11 +107,15 @@ public class PopulateDatasetTask extends AbstractPopulateTask
                     }
 
                     logger.info("Inserting " + subjects.length + " rows into \"" + targetDataset.getName() + "\" dataset. (" + container.getName() + ")");
-                    start = System.currentTimeMillis();
-                    targetDataset.getUpdateService().insertRows(user, container, Arrays.asList(subjects), errors, null, null);
-                    finish = System.currentTimeMillis();
-                    logger.info("Insert took " + DateUtil.formatDuration(finish - start) + ".");
-                    insertCount += subjects.length;
+                    if (subjects.length > 0)
+                    {
+                        start = System.currentTimeMillis();
+                        ListofMapsDataIterator maps = new ListofMapsDataIterator(subjects[0].keySet(), Arrays.asList(subjects));
+                        targetDataset.getUpdateService().importRows(user, container, maps, errors, null, null);
+                        finish = System.currentTimeMillis();
+                        logger.info("Insert took " + DateUtil.formatDuration(finish - start) + ".");
+                        insertCount += subjects.length;
+                    }
 
                     if (errors.hasErrors())
                     {
