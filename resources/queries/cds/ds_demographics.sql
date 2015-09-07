@@ -19,10 +19,30 @@ SELECT
   dd.subject_age_enrollment_years AS age_enrollment,
   -- import_demographics.subject_bmi_enrollment AS bmi,
 
---   -- STUDY RELATED
---   istudy.study_label,
---   istudy.network AS study_network,
---   istudy.study_type
+  -- STUDY RELATED
+  istudy.study_label,
+  istudy.study_start_date,
+  istudy.study_first_enr_date,
+  istudy.study_fu_complete_date,
+  istudy.study_public_date,
+  istudy.network AS study_network,
+  istudy.study_type,
+
+  -- TREATMENT RELATED
+  it.study_part,
+  it.study_group,
+  it.study_arm,
+  it.study_arm_description,
+  it.study_arm_description_coded_label AS study_arm_coded_label,
+  it.study_randomization,
+  it.product_class_combination_label AS study_product_class_combination,
+  it.product_combination_label AS study_product_combination
 
 FROM cds.import_studysubject AS dd
--- JOIN cds.import_study AS istudy ON istudy.prot = dd.prot
+LEFT JOIN cds.import_study AS istudy
+  ON istudy.prot = dd.prot
+LEFT JOIN cds.import_studypartgrouparmsubject AS its
+  ON its.prot = dd.prot AND its.subject_id = dd.subject_id
+LEFT JOIN cds.import_studypartgrouparm it
+  ON it.prot = dd.prot AND it.study_part = its.study_part
+    AND it.study_group = its.study_group AND it.study_arm = its.study_arm
