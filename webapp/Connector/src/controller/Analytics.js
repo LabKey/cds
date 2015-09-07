@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 Ext.define('Connector.controller.Analytics', {
 
     extend: 'Ext.app.Controller',
@@ -61,18 +66,28 @@ Ext.define('Connector.controller.Analytics', {
             userplotchange: function(window, axis) {
                 if (axis.targetId == "xvarselector")
                 {
-                    Connector.controller.Analytics.trackEvent('Plot', 'Change X source', axis.x.queryName);
-                    Connector.controller.Analytics.trackEvent('Plot', 'Change X', axis.x.name);
+                    if (Ext.isDefined(axis.x)) {
+                        Connector.controller.Analytics.trackEvent('Plot', 'Change X source', axis.x.queryName);
+                        Connector.controller.Analytics.trackEvent('Plot', 'Change X', axis.x.name);
+                    }
+                    else {
+                        Connector.controller.Analytics.trackEvent('Plot', 'Removed X');
+                    }
                 }
                 else if (axis.targetId == 'yvarselector')
                 {
                     Connector.controller.Analytics.trackEvent('Plot', 'Change Y source', axis.y.queryName);
                     Connector.controller.Analytics.trackEvent('Plot', 'Change Y', axis.y.alias);
                 }
-                else if (axis.targetId == 'colorselector')
+                else if (axis.targetId == 'colorvarselector')
                 {
-                    Connector.controller.Analytics.trackEvent('Plot', 'Change color source', axis.color.queryName);
-                    Connector.controller.Analytics.trackEvent('Plot', 'Change color', axis.color.alias);
+                    if (Ext.isDefined(axis.color)) {
+                        Connector.controller.Analytics.trackEvent('Plot', 'Change color source', axis.color.queryName);
+                        Connector.controller.Analytics.trackEvent('Plot', 'Change color', axis.color.alias);
+                    }
+                    else {
+                        Connector.controller.Analytics.trackEvent('Plot', 'Removed color');
+                    }
                 }
             }
         });

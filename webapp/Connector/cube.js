@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -56,7 +56,16 @@ Ext4.define('Connector.cube.Configuration', {
                 defaultOperator: 'OR',
                 hierarchies: [{
                     uniqueName: '[Subject]',
-                    hidden: true
+                    hidden: true,
+                    levels: [{
+                        uniqueName: '[Subject].[(All)]',
+                        activeCount: 'highlight',
+                        activeCountLink: false,
+                        countPriority: 0,
+                        countSingular: 'Subject',
+                        countPlural: 'Subjects',
+                        cellbased: false
+                    }]
                 },{
                     uniqueName: '[Subject.Sex]',
                     defaultOperator: 'REQ_OR',
@@ -119,14 +128,6 @@ Ext4.define('Connector.cube.Configuration', {
                     label: 'Name',
                     hidden: true,
                     levels: [{
-                        uniqueName: '[Study].[(All)]',
-                        activeCount: 'highlight',
-                        activeCountLink: false,
-                        countPriority: 0,
-                        countSingular: 'Subject',
-                        countPlural: 'Subjects',
-                        cellbased: false
-                    },{
                         uniqueName: '[Study].[Name]',
                         activeCount: 'highlight',
                         countPriority: 30,

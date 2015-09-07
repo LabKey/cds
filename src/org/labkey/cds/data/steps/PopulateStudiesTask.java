@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
@@ -8,6 +23,7 @@ import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.etl.ListofMapsDataIterator;
 import org.labkey.api.module.FolderType;
 import org.labkey.api.module.FolderTypeManager;
 import org.labkey.api.pipeline.PipelineJobException;
@@ -49,11 +65,13 @@ public class PopulateStudiesTask extends AbstractPopulateTask
         // Get the coalesced metadata for the studies (including container)
         Map<String, Map<String, Object>> studies = getStudies(project, user, logger);
         List<Map<String, Object>> rows = new ArrayList<>();
-        BatchValidationException errors = new BatchValidationException();
 
         // Import Study metadata
         for (String studyName : studies.keySet())
         {
+            if (job.checkInterrupted())
+                return;
+
             if (studies.containsKey(studyName))
             {
                 Container c = ContainerManager.getChild(project, studyName);
@@ -66,15 +84,18 @@ public class PopulateStudiesTask extends AbstractPopulateTask
                     TableInfo studyTable = new CDSSimpleTable(new CDSUserSchema(user, c), CDSSchema.getInstance().getSchema().getTable("Study"));
                     QueryUpdateService qud = studyTable.getUpdateService();
 
-                    if (null != qud)
+                    if (null != qud && !rows.isEmpty())
                     {
-                        qud.insertRows(user, c, rows, errors, null, null);
+                        BatchValidationException errors = new BatchValidationException();
+                        ListofMapsDataIterator maps = new ListofMapsDataIterator(rows.get(0).keySet(), rows);
+
+                        qud.importRows(user, c, maps, errors, null, null);
 
                         if (errors.hasErrors())
                         {
                             for (ValidationException error : errors.getRowErrors())
                             {
-                                logger.warn(error.getMessage());
+                                logger.error(error.getMessage());
                             }
                         }
                     }

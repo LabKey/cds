@@ -11,6 +11,7 @@ Ext.define('Connector.model.ChartData', {
         {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cdsGetData API call
         {name: 'plotMeasures', defaultValue: [null, null, null]}, // Array [x, y, color]
         {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
+        {name: 'plotScales', defaultValue: {}}, // {x: log/linear, y: log/linear}
 
         /* generated properties based on the processing of the MeasureStore */
         {name: 'containerAlignmentDayMap', defaultValue: {}},
@@ -43,6 +44,10 @@ Ext.define('Connector.model.ChartData', {
 
     getMeasureStore : function() {
         return this.get('measureStore');
+    },
+
+    getPlotScales : function() {
+        return this.get('plotScales');
     },
 
     getColumnAliases : function() {
@@ -214,7 +219,8 @@ Ext.define('Connector.model.ChartData', {
                 label  : x.label,
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
-                isContinuous: Connector.model.ChartData.isContinuousMeasure(x)
+                isContinuous: Connector.model.ChartData.isContinuousMeasure(x),
+                isDimension: x.isDimension
             };
         }
 
@@ -347,12 +353,8 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
-        if (yDomain[0] != null) {
-            yDomain[0] = Math.min(yDomain[0], 0);
-        }
-        if (xa.isContinuous && xDomain[0] != null) {
-            xDomain[0] = Math.min(xDomain[0], 0);
-        }
+        this.setMinAxisDomain(yDomain, 'y', negY);
+        this.setMinAxisDomain(xDomain, 'x', negX);
 
         this.set({
             containerAlignmentDayMap: containerAlignmentDayMap,
@@ -372,6 +374,15 @@ Ext.define('Connector.model.ChartData', {
                 setYLinear: negY
             }
         });
+    },
+
+    setMinAxisDomain : function(axisDomain, axis, hasNegVal) {
+        // issue 24074: set the min to 1 instead of 0 if log scale
+        var min  = this.get('plotScales')[axis] == 'log' && !hasNegVal ? 1 : 0;
+
+        if (axisDomain[0] != null) {
+            axisDomain[0] = Math.min(axisDomain[0], min);
+        }
     },
 
     arraysEqual : function(arrA, arrB) {
@@ -403,7 +414,7 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getYValue : function(measure, alias, row) {
-        return row.y ? row.y.getMean() : null;
+        return row.y ? row.y.getMedian() : null;
     },
 
     _getXValue : function(measure, alias, row, xIsContinuous) {
@@ -414,7 +425,7 @@ Ext.define('Connector.model.ChartData', {
             return xIsContinuous ? null : 'undefined';
         }
 
-        return row.x.getMean();
+        return row.x.getMedian();
     },
 
     _getColorValue : function(measure, alias, row) {
