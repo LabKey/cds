@@ -134,6 +134,13 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
+      <column columnName="study_last_vaccination_day">
+        <datatype>integer</datatype>
+        <columnTitle>Study day of last vaccination</columnTitle>
+        <description>Target study day for the last vaccination to be administered for the treatment arm.</description>
+        <rangeURI>http://www.w3.org/2001/XMLSchema#int</rangeURI>
+        <measure>true</measure>
+      </column>
       <column columnName="study_type">
         <datatype>varchar</datatype>
         <columnTitle>Study Type</columnTitle>
@@ -162,7 +169,7 @@
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
       </column>
-      <column columnName="study_arm_description">
+      <column columnName="study_arm_summary">
         <datatype>varchar</datatype>
         <columnTitle>Treatment Summary</columnTitle>
         <description>A brief summary of information about the assigned treatment arm, including the study part, group, vaccinee/placebo, and products administered.</description>

@@ -26,13 +26,17 @@ SELECT
   istudy.study_fu_complete_date,
   istudy.study_public_date,
   istudy.network AS study_network,
+  it.study_arm_last_exp_vacc_day AS study_last_vaccination_day,
   istudy.study_type,
 
   -- TREATMENT RELATED
   it.study_part,
   it.study_group,
   it.study_arm,
-  it.study_arm_description,
+  CASE WHEN (it.study_part IS NULL OR it.study_part = 'NA')
+    THEN (it.study_group || ', ' || it.study_arm || ', ' || it.study_randomization)
+    ELSE (it.study_part || ', ' || it.study_group || ', ' || it.study_arm || ', ' || it.study_randomization)
+    END AS study_arm_summary,
   it.study_arm_description_coded_label AS study_arm_coded_label,
   it.study_randomization,
   it.product_class_combination_label AS study_product_class_combination,

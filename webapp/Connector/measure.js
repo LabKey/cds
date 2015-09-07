@@ -111,9 +111,10 @@ Ext.define('Connector.measure.Configuration', {
                         'study_Demographics_study_fu_complete_date',
                         'study_Demographics_study_public_date',
                         'study_Demographics_study_network',
+                        //'study_Demographics_study_last_vaccination_day',
                         'study_Demographics_study_type',
                         'study_Demographics_study_arm',
-                        'study_Demographics_study_arm_description',
+                        'study_Demographics_study_arm_summary',
                         'study_Demographics_study_arm_coded_label',
                         'study_Demographics_study_randomization',
                         'study_Demographics_study_product_class_combination',
@@ -328,7 +329,7 @@ Ext.define('Connector.measure.Configuration', {
                 'study_Demographics_study_label': {
                     isRecommendedVariable: true
                 },
-                'study_Demographics_study_arm_description': {
+                'study_Demographics_study_arm_summary': {
                     isRecommendedVariable: true
                 },
 
