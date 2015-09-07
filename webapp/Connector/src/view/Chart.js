@@ -719,7 +719,7 @@ Ext.define('Connector.view.Chart', {
             };
         }
         else {
-            if (properties.xaxis.isContinuous) {
+            if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
                 scales.x = {
                     scaleType: 'continuous',
                     domain: chartData.getXDomain(studyAxisInfo)
@@ -785,7 +785,7 @@ Ext.define('Connector.view.Chart', {
 
     getPlotLayer : function(noplot, properties, layerScope) {
         if (!noplot) {
-            if (properties.xaxis && properties.xaxis.isContinuous) {
+            if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
                 // Scatter. Binned if over max row limit.
                 return this.showPointsAsBin ? this.getBinLayer(layerScope, false) : this.getPointLayer(layerScope, false);
             }
@@ -872,7 +872,7 @@ Ext.define('Connector.view.Chart', {
             var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
 
             plotConfig.brushing = {
-                dimension: properties.xaxis.isContinuous ? 'both' : 'y',
+                dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : Ext.bind(function() {
                     this.clearHighlightLabels(layerScope.plot);
                     layerScope.isBrushed = true;
@@ -1301,7 +1301,7 @@ Ext.define('Connector.view.Chart', {
 
                 // Check if value matches target or another selection
                 if (subjectIds.indexOf(subject) === -1) {
-                    if (d.x === target) {
+                    if (d.x == target) {
                         subjectIds.push(subject);
                     }
                     else if (selections.indexOf(d.x) != -1) {
@@ -1850,7 +1850,8 @@ Ext.define('Connector.view.Chart', {
         var chartData = Ext.create('Connector.model.ChartData', {
             measureSet: measureSet,
             plotMeasures: this.measures,
-            measureStore: measureStore
+            measureStore: measureStore,
+            plotScales: {x: this.getScale('x'), y: this.getScale('y')}
         });
 
         this.dataQWP = {
@@ -2043,7 +2044,6 @@ Ext.define('Connector.view.Chart', {
             // update
             inPlotFilter.set('gridFilter', sqlFilters);
             inPlotFilter.set('plotMeasures', wrapped);
-            inPlotFilter.set('plotScales', [this.getScale('x'), this.getScale('y')]);
             state.updateFilterMembersComplete(false);
         }
         else {
@@ -2054,7 +2054,6 @@ Ext.define('Connector.view.Chart', {
                 isGrid: false,
                 hierarchy: 'Subject',
                 plotMeasures: wrapped,
-                plotScales: [this.getScale('x'), this.getScale('y')],
                 filterSource: 'GETDATA',
                 isWhereFilter: false
             });
