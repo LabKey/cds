@@ -940,7 +940,10 @@ Ext.define('Connector.controller.Query', {
                 };
 
                 Ext.each(sourceModels, function(source) {
-                    json.sources.push(source.get('queryName'));
+                    var queryName = source.get('subjectCountQueryName') || source.get('queryName');
+                    if (json.sources.indexOf(queryName) == -1) {
+                        json.sources.push(queryName);
+                    }
                 });
 
                 Ext.Ajax.request({

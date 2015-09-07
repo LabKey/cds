@@ -212,14 +212,15 @@ Ext.define('Connector.panel.Selector', {
     loadSourceCounts : function() {
         this.fireEvent('beforeSourceCountsLoad', this);
 
-        // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
         var sources = this.sourcesStore.queryBy(function(record) {
-            return record.get('queryName') != null && record.get('queryName') != 'SubjectGroupMap';
+            return (Ext.isString(record.get('queryName')) || Ext.isString(record.get('subjectCountQueryName')))
+                    // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
+                    && record.get('queryName') != 'SubjectGroupMap';
         }).items;
 
         this.queryService.getSourceCounts(sources, function(s, counts) {
             Ext.each(sources, function(source) {
-                var count = counts[source.get('queryName')];
+                var count = counts[source.get('subjectCountQueryName') || source.get('queryName')];
                 if (Ext.isDefined(count)) {
                     source.set('subjectCount', count);
                 }

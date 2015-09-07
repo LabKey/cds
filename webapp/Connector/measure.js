@@ -85,6 +85,7 @@ Ext.define('Connector.measure.Configuration', {
                     schemaName: 'study',
                     queryName: null,
                     queryLabel: 'Subject characteristics',
+                    subjectCountQueryName: 'Demographics',
                     variableType: 'DEFINED_MEASURES',
                     measures: [
                         'study_Demographics_species',
@@ -103,6 +104,7 @@ Ext.define('Connector.measure.Configuration', {
                     schemaName: 'study',
                     queryName: null,
                     queryLabel: 'Study and treatment variables',
+                    subjectCountQueryName: 'Demographics',
                     variableType: 'DEFINED_MEASURES',
                     measures: [
                         'study_Demographics_study_label',
