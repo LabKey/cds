@@ -321,12 +321,12 @@ Ext.define('Connector.view.Grid', {
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeTimpointMeasures: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeVirtualSources: true,
+                    includeDefinedMeasureSources: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
-                supportSelectionGroup: true,
-                supportSessionGroup: true,
                 disableAdvancedOptions: true,
                 listeners: {
                     selectionmade: function(selected) {

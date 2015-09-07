@@ -32,8 +32,6 @@ Ext.define('Connector.panel.Selector', {
     multiSelect: false,
     lockedMeasures: undefined,
     selectedMeasures: undefined,
-    supportSelectionGroup: false,
-    supportSessionGroup: false,
 
     testCls: undefined,
 
@@ -139,34 +137,17 @@ Ext.define('Connector.panel.Selector', {
 
     loadSourcesAndMeasures : function() {
 
-        var data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
-        if (this.supportSelectionGroup && this.multiSelect) {
-            data.sources.push({
-                sortOrder: -100,
-                schemaName: '_current',
-                name: '',
-                queryName: null,
-                queryLabel: 'Current columns',
-                variableType: 'SELECTION'
-            });
-        }
-
-        if (this.supportSessionGroup && this.multiSelect) {
-            data.sources.push({
-                sortOrder: -99,
-                schemaName: '_session',
-                name: '',
-                queryName: null,
-                queryLabel: 'All variables from this session',
-                variableType: 'SESSION'
-            });
-        }
+        var selectedSourceKey, data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
 
         this.sourcesStore.loadRawData(data.sources);
         this.measureStore.loadRawData(data.measures);
 
         if (this.activeMeasure) {
+            // keep track of the selectedSourceKey, if present, so we can reselect it correctly on reshow
+            selectedSourceKey = this.activeMeasure.get('selectedSourceKey');
+
             this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
+            this.activeMeasure.set('selectedSourceKey', selectedSourceKey);
         }
 
         this.updateSelectorPane();
@@ -215,7 +196,9 @@ Ext.define('Connector.panel.Selector', {
         var source = null;
         if (measure)
         {
-            var sourceKey = measure.get('schemaName') + '|' + measure.get('queryName');
+            var sourceKey = measure.get('selectedSourceKey')
+                                ? measure.get('selectedSourceKey')
+                                : measure.get('schemaName') + '|' + measure.get('queryName');
             source = this.sourcesStore.getById(sourceKey);
 
             if (source == null) {
@@ -503,7 +486,7 @@ Ext.define('Connector.panel.Selector', {
 
         var key = source.get('key'),
             variableType = source.get('variableType'),
-            filter, aliases = {},
+            filter, aliases = {}, toInclude, index,
             selModel = this.getMeasurePane().getSelectionModel(),
             me = this;
 
@@ -523,18 +506,28 @@ Ext.define('Connector.panel.Selector', {
 
 
         // setup the measures store filter based on the selected source
-        if (variableType === 'SELECTION' || variableType === 'SESSION') {
+        if (variableType === 'VIRTUAL') {
             filter = function(measure) {
                 // include all measures from the locked and selected sets
-                var toInclude = measure.get('alias') in aliases;
+                toInclude = measure.get('alias') in aliases;
 
                 // if Session source, also check to see if the measures is in that set
-                if (variableType === 'SESSION' && !toInclude) {
+                if (source.get('schemaName') === '_session' && !toInclude) {
                     toInclude = measure.get('alias') in Connector.getState().getSessionColumns();
                 }
 
                 return toInclude;
             };
+        }
+        else if (variableType == 'DEFINED_MEASURES') {
+            filter = function(measure) {
+                if (source.get('measures').indexOf(measure.get('alias')) > -1) {
+                    measure.set('selectedSourceKey', source.get('key'));
+                    return true;
+                }
+
+                return false;
+            }
         }
         else {
             // for all other sources, filter based on the schemaName/queryName source key
@@ -597,7 +590,7 @@ Ext.define('Connector.panel.Selector', {
             selModel.deselectAll(true);
             Ext.defer(function() {
                 Ext.iterate(aliases, function(alias){
-                    var index = this.measureStore.findExact('alias', alias);
+                    index = this.measureStore.findExact('alias', alias);
                     if (index > -1) {
                         selModel.select(index, true/* keepExisting */, true/* surpressEvents */);
                     }
@@ -608,7 +601,7 @@ Ext.define('Connector.panel.Selector', {
         // for the 'Current Columns' source, we group the measures by the query source
         // otherwise, we group measures into the Recommended or Additional groupings
         if (Ext.isDefined(this.groupingFeature)) {
-            if (variableType == 'SELECTION' || variableType == 'SESSION') {
+            if (variableType == 'VIRTUAL') {
                 this.groupingFeature.enable();
                 this.measureStore.groupers.first().property = 'sourceTitle';
                 this.measureStore.group();
@@ -799,15 +792,15 @@ Ext.define('Connector.panel.Selector', {
         if (measureSet.length > 0) {
             // query for the distinct set of values across all of the measures involved in the dimension set
             this.queryService.getMeasureSetDistinctValues(measureSet, function(data) {
-                this.processMeasureSetDistintValues(advancedOptionCmps, measureSet, data);
+                this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, data);
             }, this);
         }
         else {
-            this.processMeasureSetDistintValues(advancedOptionCmps, measureSet, []);
+            this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, []);
         }
     },
 
-    processMeasureSetDistintValues : function(advancedOptionCmps, measureSet, data) {
+    processMeasureSetDistinctValues : function(advancedOptionCmps, measureSet, data) {
         var store = this.createMeasureSetStore(measureSet, data);
 
         this.insertDimensionHeader();

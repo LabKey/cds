@@ -2134,8 +2134,9 @@ Ext.define('Connector.view.Chart', {
                 activeMeasure: this.activeYSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                    measuresOnly: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeDefinedMeasureSources: true,
+                    measuresOnly: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
@@ -2179,8 +2180,9 @@ Ext.define('Connector.view.Chart', {
                 activeMeasure: this.activeXSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                    includeTimpointMeasures: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeDefinedMeasureSources: true,
+                    includeTimpointMeasures: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
@@ -2235,6 +2237,7 @@ Ext.define('Connector.view.Chart', {
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
+                    includeDefinedMeasureSources: true,
                     userFilter : function(row) {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }

@@ -491,36 +491,45 @@ Ext.define('Connector.controller.Query', {
      * @param {Boolean} config.measuresOnly Whether or not to filter the measure objects to just those specifically declared as "measures" in the ColumnInfo
      * @param {Boolean} config.includeTimpointMeasures Whether or not to include the timepoint/group measures
      * @param {Boolean} config.includeHidden Whether or not the include hidden columns
+     * @param {Boolean} config.includeVirtualSources Whether or not the include sources defined as variableType VIRTUAL
+     * @param {Boolean} config.includeDefinedMeasureSources Include sources defined as variableType DEFINED_MEASURES
      */
     getMeasuresStoreData : function(config) {
         if (!this._ready) {
             console.warn('Requested measure store data before measure caching prepared.');
         }
 
-        var sources = {}, sourceArray = [];
-        var measures = [];
+        var sources = {}, sourceArray = [], measures = {}, measureArray = [],
+            queryTypeMatch, measureOnlyMatch, timepointMatch,
+            hiddenMatch, notSubjectColMatch, userFilterMatch,
+            key, source, sourceContextMap = Connector.measure.Configuration.context.sources;
 
         Ext.each(this.MEASURE_STORE.getRange(), function(record) {
-            var queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
-            var measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
-            var timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
-            var hiddenMatch = config.includeHidden || !record.get('hidden');
-            var notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
+            queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
+            measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
+            timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
+            hiddenMatch = config.includeHidden || !record.get('hidden');
+            notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
 
             // The userFilter is a function used to further filter down the available measures.
             // Needed so the color picker only displays categorical measures.
-            var userFilterMatch = !Ext4.isFunction(config.userFilter) || config.userFilter(record.data);
+            userFilterMatch = !Ext4.isFunction(config.userFilter) || config.userFilter(record.data);
 
             if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch && userFilterMatch)
             {
-                measures.push(Ext.clone(record.raw));
+                measures[record.get('alias')] = true;
+                measureArray.push(Ext.clone(record.raw));
 
-                var key = record.get('schemaName') + '|' + record.get('queryName');
-                var source = this.SOURCE_STORE.getById(key);
+                key = record.get('schemaName') + '|' + record.get('queryName');
+                source = this.SOURCE_STORE.getById(key);
 
                 if (!sources[key] && source) {
                     sources[key] = true;
-                    sourceArray.push(Ext.clone(source.data));
+
+                    // check the 'white list' of sources for the variable selector in the metadata
+                    if (Ext.isDefined(sourceContextMap[key])) {
+                        sourceArray.push(Ext.clone(source.data));
+                    }
                 }
                 else if (!source) {
                     throw 'Unable to find source for \'' + key + '\'';
@@ -528,9 +537,35 @@ Ext.define('Connector.controller.Query', {
             }
         }, this);
 
+        // Examples: for grid column chooser include 'Current columns' and 'All variables from this session'
+        if (Ext.isBoolean(config.includeVirtualSources) && config.includeVirtualSources) {
+            Ext.iterate(sourceContextMap, function(key, props) {
+                if (props.variableType === 'VIRTUAL') {
+                    props.key = key;
+                    sourceArray.push(Ext.clone(props));
+                }
+            });
+        }
+
+        // Examples: instead of Demographics dataset, expose 'Subject characteristics' and 'Study and treatment arms'
+        if (Ext.isBoolean(config.includeDefinedMeasureSources) && config.includeDefinedMeasureSources) {
+            Ext.iterate(sourceContextMap, function(key, props) {
+                if (props.variableType === 'DEFINED_MEASURES' && Ext.isArray(props.measures)) {
+                    // only add the source if at least one of its defined measures are in the current matched set
+                    for (var i = 0; i < props.measures.length; i++) {
+                        if (Ext.isDefined(measures[props.measures[i]])) {
+                            props.key = key;
+                            sourceArray.push(Ext.clone(props));
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
         return {
             sources: sourceArray,
-            measures: measures
+            measures: measureArray
         };
     },
 
