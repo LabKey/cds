@@ -17,7 +17,7 @@ Ext.define('Connector.view.module.ContactCDS', {
                 '<a href=".">Contact the CAVD DataSpace team</a> for more information<br/>',
             '</div>',
             '<div class="item-row">',
-                '<a href="http://www.hvtn.org/en/science/submit-idea-proposal.html" target="_blank">Propose an ancillary study</a>',
+                '<a href="https://portal.cavd.org/CAVDStudyProposals/Pages/RequestCSFServices.aspx" target="_blank">Request Central Service Facilities support for an ancillary study</a>',
             '</div>',
         '</tpl>')
 });
