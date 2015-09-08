@@ -23,8 +23,12 @@ study_randomization AS randomization,
 study_arm_description AS description,
 -- Ignoring study_part for now
 CASE WHEN (study_group = study_arm)
-THEN ('Group ' || study_group || ' ' || study_randomization)
-ELSE ('Group ' || study_group || ' Arm ' || study_arm || ' ' || study_randomization)
+THEN ('Group ' || study_group || ' ' || study_randomization) -- e.g. Group 1 Vaccine
+ELSE
+      CASE WHEN (study_group LIKE 'Group%' OR study_group LIKE 'group%')
+      THEN (study_group || ' Arm ' || study_arm || ' ' || study_randomization) -- e.g. Group 1 Arm 2 Vaccine
+      ELSE ('Group ' || study_group || ' Arm ' || study_arm || ' ' || study_randomization) -- e.g. Group 1 Arm 2 Vaccine
+      END
 END AS coded_label,
 -- study_arm_description_coded_label AS coded_label,
 study_arm_last_exp_vacc_day AS last_day,
