@@ -46,7 +46,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -272,7 +271,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("For NAB vs ICS y-axis gutter plot was not present.", hasYGutter());
 
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
         xaxis.pickVariable(CDSHelper.DEMO_AGE);
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
@@ -386,7 +385,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Choose a categorical axis to verify that multiple box plots will appear.
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
         xaxis.pickVariable(CDSHelper.DEMO_SEX);
         xaxis.confirmSelection();
 
@@ -412,7 +411,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Verify that we can go back to boxes after being in scatter mode.
         xaxis.openSelectorWindow();
         xaxis.backToSource();
-        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
         xaxis.pickVariable(CDSHelper.DEMO_RACE);
         xaxis.confirmSelection();
 
@@ -467,7 +466,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.confirmSelection();
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
         xaxis.pickVariable(CDSHelper.DEMO_RACE);
         xaxis.confirmSelection();
 
@@ -548,27 +547,36 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     {
 
         final String[][] Y_AXIS_SOURCES =
-                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
+                {
+                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
                         {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW},
-                        {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}};
+                        {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}
+                };
         final String[][] X_AXIS_SOURCES =
-                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_BMI, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SUBSPECIES},
+                {
+                        {CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_DATE_SUBJ_ENR, CDSHelper.DEMO_DATE_FUP_COMP, CDSHelper.DEMO_DATE_PUB, CDSHelper.DEMO_DATE_START, CDSHelper.DEMO_NETWORK, CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM, CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC},
+                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_AGEGROUP, CDSHelper.DEMO_BMI, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SUBSPECIES},
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
                         {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
-                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}};
+                        {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}
+                };
         final String[][] COLOR_AXIS_SOURCES =
-                {{CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
+                {
+                        {CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_NETWORK, CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM, CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC},
+                        {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_CIRCUMCISED, CDSHelper.DEMO_COUNTRY, CDSHelper.DEMO_HISPANIC, CDSHelper.DEMO_RACE, CDSHelper.DEMO_SEX, CDSHelper.DEMO_SPECIES, CDSHelper.DEMO_SUBSPECIES},
                         {CDSHelper.BAMA, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_CLADE, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
                         {CDSHelper.ICS, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_SPECIMEN},
-                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}};
+                        {CDSHelper.NAB, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL}
+                };
 
         final Map<String, String> SubjectCounts = new HashMap<String, String>();
-        SubjectCounts.put(CDSHelper.DEMOGRAPHICS, "8,373");
+        SubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "8,373");
+        SubjectCounts.put(CDSHelper.SUBJECT_CHARS, "8,373");
         SubjectCounts.put(CDSHelper.TIME_POINTS, "8,373");
         SubjectCounts.put(CDSHelper.BAMA, "75");
         SubjectCounts.put(CDSHelper.ELISPOT, "477");
@@ -760,7 +768,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_W61D), "120");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_WITO), "0");
 
-        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "8,373");
+        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "8,373");
+        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "8,373");
         sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "8,373");
         sourcesSubjectCounts.put(CDSHelper.BAMA, "75");
         sourcesSubjectCounts.put(CDSHelper.ELISPOT, "477");
@@ -840,7 +849,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "0");
 
-        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "75");
+        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "75");
+        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "75");
         sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "75");
         sourcesSubjectCounts.put(CDSHelper.BAMA, "75");
         sourcesSubjectCounts.put(CDSHelper.ELISPOT, "0");
@@ -914,7 +924,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "0");
 
-        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "147");
+        sourcesSubjectCounts.put(CDSHelper.STUDY_TREATMENT_VARS, "147");
+        sourcesSubjectCounts.put(CDSHelper.SUBJECT_CHARS, "147");
         sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "147");
         sourcesSubjectCounts.put(CDSHelper.BAMA, "1");
         sourcesSubjectCounts.put(CDSHelper.ELISPOT, "20");
@@ -1213,7 +1224,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         color.openSelectorWindow();
-        color.pickSource(CDSHelper.DEMOGRAPHICS);
+        color.pickSource(CDSHelper.SUBJECT_CHARS);
         color.pickVariable(CDSHelper.DEMO_RACE);
         color.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
@@ -2158,7 +2169,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             for (Map.Entry<String, String> entry : sourcesSubjectCounts.entrySet())
             {
-                if (entry.getKey().compareTo(CDSHelper.TIME_POINTS) != 0)
+                if (entry.getKey().compareTo(CDSHelper.STUDY_TREATMENT_VARS) != 0 && entry.getKey().compareTo(CDSHelper.TIME_POINTS) != 0)
                 {
 //            source = xaxis.xpathWindow().append("//div[contains(@class, 'content-label')][translate(text(), '\\xA0', ' ')='" + entry.getKey() + "']");
 //            assertTrue(isElementVisible(source));

@@ -38,7 +38,6 @@ import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
 import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -198,12 +197,12 @@ public class CDSTest extends CDSReadOnlyTest
 
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
         coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
         coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
-        cds.clickBy(CDSHelper.DEMOGRAPHICS);
+        cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
@@ -642,8 +641,8 @@ public class CDSTest extends CDSReadOnlyTest
             assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
         }
 
-        gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_SEX, true, true);
-        gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
 
         if (CDSHelper.validateCounts)
@@ -727,7 +726,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Filter on race.");
         cds.goToSummary();
-        cds.clickBy(CDSHelper.DEMOGRAPHICS);
+        cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.selectBars(false, CDSHelper.RACE_ASIAN);
 
         log("Create a plot that will filter.");
@@ -773,7 +772,7 @@ public class CDSTest extends CDSReadOnlyTest
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
 
         coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
         coloraxis.pickVariable(CDSHelper.DEMO_SEX);
         coloraxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
@@ -880,7 +879,7 @@ public class CDSTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
         coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
@@ -909,7 +908,7 @@ public class CDSTest extends CDSReadOnlyTest
         log("Validate that column selectors are as expected in their specific variable selector.");
         Map<String, Boolean> oneColumn = new HashMap<>();
         oneColumn.put(CDSHelper.DEMO_RACE, false);
-        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.DEMOGRAPHICS, oneColumn);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.SUBJECT_CHARS, oneColumn);
         oneColumn.clear();
         oneColumn.put(CDSHelper.ICS_ANTIGEN, false);
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, oneColumn);
