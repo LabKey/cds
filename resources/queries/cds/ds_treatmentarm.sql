@@ -21,9 +21,10 @@ study_group AS arm_group,
 study_arm AS arm_name,
 study_randomization AS randomization,
 study_arm_description AS description,
-CASE WHEN (study_part IS NULL OR study_part = 'NA')
-THEN (study_group || ', ' || study_arm || ', ' || study_randomization)
-ELSE (study_part || ', ' || study_group || ', ' || study_arm || ', ' || study_randomization)
+-- Ignoring study_part for now
+CASE WHEN (study_group = study_arm)
+THEN ('Group ' || study_group || ' ' || study_randomization)
+ELSE ('Group ' || study_group || ' Arm ' || study_arm || ' ' || study_randomization)
 END AS coded_label,
 -- study_arm_description_coded_label AS coded_label,
 study_arm_last_exp_vacc_day AS last_day,
