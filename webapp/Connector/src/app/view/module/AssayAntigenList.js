@@ -9,9 +9,6 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     extend : 'Connector.view.module.BaseModule',
 
-    htmlTest : '<div class="detail-middle-column detail-text">' +
-    '<div class="detail-gray-text">{antigen_type}</div>',
-
     initComponent : function() {
         var assay_type = this.data.model.data.assay_type,
             store = StoreCache.getStore('Connector.app.store.Assay');
@@ -29,7 +26,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                             '<div class="detail-small-column detail-text">',
                                 '<div class="detail-gray-text">{[values.control ? "yes" : "no"]}</div>',
                             '</div>',
-                            this.renderTest(assay_type),
+                            this.renderBody(assay_type),
                         '</div>',
                     '</div>',
                 '</tpl>',
@@ -76,7 +73,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
 
     },
 
-    renderTest : function(assay_type) {
+    renderBody : function(assay_type) {
         assay_type = assay_type.toUpperCase();
 
         if (assay_type === 'NAB') {
