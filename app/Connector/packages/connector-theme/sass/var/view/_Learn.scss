@@ -255,7 +255,6 @@ div.list-container {
     }
 
     div.list-entry-description {
-      width: 50%;
       padding-top: 12px;
       padding-bottom: 12px;
       color: $heat-scale-1;
@@ -263,6 +262,7 @@ div.list-container {
     }
 
     .list-detail-text {
+      padding-top: 24px;
       font: $body-one-font;
 
       .list-detail-gray-text {
