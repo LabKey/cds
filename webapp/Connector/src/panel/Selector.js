@@ -475,7 +475,7 @@ Ext.define('Connector.panel.Selector', {
                     calloutMgr.createCallout({
                         id: _id,
                         bubbleWidth: 160,
-                        yOffset: -15,
+                        yOffset: item.scrollHeight - 37, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
                         xOffset: 50,
                         showCloseButton: false,
                         target: item,
