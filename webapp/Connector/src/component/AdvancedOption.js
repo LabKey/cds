@@ -291,7 +291,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             if (value != null) {
                 var valueObj = {subjectCount: -1};
                 valueObj[this.storeValueField] = value;
-                valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ');
+                valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ').replace(/null/g, '[Blank]');
                 data.push(valueObj);
             }
         }, this);
