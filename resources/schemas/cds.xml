@@ -523,4 +523,16 @@
             <column columnName="datacount"/>
         </columns>
     </table>
+    <table tableName="gridbase" tableDbType="TABLE">
+        <columns>
+            <column columnName="subjectid"/>
+            <column columnName="study"/>
+            <column columnName="treatmentsummary"/>
+            <column columnName="subjectvisit"/>
+            <column columnName="participantsequencenum"/>
+            <column columnName="sequencenum"/>
+            <column columnName="container"/>
+            <column columnName="participantcontainer"/>
+        </columns>
+    </table>
 </tables>

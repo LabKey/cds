@@ -13,7 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* TODO This is a temporary fix, should update app to query cds.GridBase directly */
 
-SELECT SubjectId, Study, TreatmentSummary, SubjectVisit, ParticipantSequenceNum, SequenceNum, participantContainer AS Container
-FROM cds.GridBase
+DROP TABLE IF EXISTS cds.GridBase;
+
+CREATE TABLE cds.GridBase
+(
+  SubjectId VARCHAR(250),
+  Study VARCHAR(250),
+  TreatmentSummary VARCHAR(250),
+  SubjectVisit VARCHAR(250),
+
+  ParticipantSequenceNum VARCHAR(250),
+  SequenceNum NUMERIC(15,4),
+  Container ENTITYID,
+  participantContainer ENTITYID,
+
+  CONSTRAINT PK_GridBase_ParticipantSequenceNum PRIMARY KEY (participantContainer, ParticipantSequenceNum)
+);
+
+CREATE INDEX IX_GridBase_Study ON cds.GridBase(Study);
+CREATE INDEX IX_GridBase_SubjectId ON cds.GridBase(SubjectId);

@@ -80,6 +80,10 @@
             <taskref ref="org.labkey.cds.data.steps.PopulateTreatmentArmTask">
             </taskref>
         </transform>
+        <transform id="PopulateGridBase" type="org.labkey.di.pipeline.TransformTask">
+            <source schemaName="study" queryName="qGridBase" />
+            <destination schemaName="cds" queryName="GridBase" targetOption="truncate" />
+        </transform>
         <transform id="PopulateFacts" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="ds_facts" />
             <destination schemaName="cds" queryName="Facts" targetOption="truncate"/>
