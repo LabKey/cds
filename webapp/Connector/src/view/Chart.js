@@ -343,7 +343,12 @@ Ext.define('Connector.view.Chart', {
         }, this);
 
         this.on('resize', function() {
-            this.resizeTask.delay(150);
+            this.plotEl.update('');
+            this.getStudyAxisPanel().setVisible(false);
+            this.getNoPlotMsg().hide();
+            this.getEmptyPlotMsg().hide();
+
+            this.resizeTask.delay(300);
         }, this);
     },
 
@@ -386,14 +391,6 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        var plotBox = this.plotEl.getBox();
-        var size = this.getPlotSize(plotBox);
-
-        if (!this.initialized && !this.showNoPlot) {
-            this.showNoPlot = true;
-            this.noPlot(false);
-        }
-
         if (this.ywin && this.ywin.isVisible()) {
             this.updateSelectorWindow(this.ywin);
         }
@@ -406,31 +403,22 @@ Ext.define('Connector.view.Chart', {
             this.updateSelectorWindow(this.colorwin);
         }
 
-        if (this.plot) {
-            this.plot.setSize(size.width, size.height, true);
-        }
-
-        if (this.xGutterPlot) {
-            this.xGutterPlot.setSize(size.width + (this.requireYGutter ? this.yGutterWidth : 0), this.xGutterHeight, true)
-        }
-
-        if (this.yGutterPlot) {
-            this.yGutterPlot.setSize(this.yGutterWidth, size.height, true);
-        }
-
-        if (this.getStudyAxisPanel().isVisible() && this.studyAxis && this.hasStudyAxisData) {
-            this.studyAxis.width(Math.max(0, this.getStudyAxisPanel().getWidth()- 40));
-            this.studyAxis.scale(this.plot.scales.x.scale);
-            this.studyAxis();
-        }
-
-        this.resizePlotMsg(this.getNoPlotMsg(), plotBox);
-        this.resizePlotMsg(this.getEmptyPlotMsg(), plotBox);
-
+        this.redrawPlot();
         this.resizeMessage();
 
         if (Ext.isFunction(this.highlightSelectedFn)) {
             this.highlightSelectedFn();
+        }
+    },
+
+    redrawPlot : function() {
+        if (Ext.isDefined(this.lastInitPlotParams)) {
+            if (this.lastInitPlotParams.noplot) {
+                this.noPlot(this.lastInitPlotParams.emptyPlot);
+            }
+            else {
+                this.initPlot(this.lastInitPlotParams.chartData, this.lastInitPlotParams.studyAxisInfo);
+            }
         }
     },
 
@@ -752,8 +740,9 @@ Ext.define('Connector.view.Chart', {
      * @param chartData
      * @param {object} [studyAxisInfo]
      * @param {boolean} [noplot=false]
+     * @param {boolean} [emptyPlot=false]
      */
-    initPlot : function(chartData, studyAxisInfo, noplot) {
+    initPlot : function(chartData, studyAxisInfo, noplot, emptyPlot) {
 
         if (this.isHidden()) {
             // welp, that was a huge waste..
@@ -769,6 +758,14 @@ Ext.define('Connector.view.Chart', {
             plotConfig, gutterXPlotConfig, gutterYPlotConfig;
 
         noplot = Ext.isBoolean(noplot) ? noplot : false;
+
+        // Issue 23731: hold onto last set of properties for resize/redraw
+        this.lastInitPlotParams = {
+            chartData: chartData,
+            studyAxisInfo: studyAxisInfo,
+            noplot: noplot,
+            emptyPlot: emptyPlot
+        };
 
         // get the data rows for the chart
         if (chartData instanceof Connector.model.ChartData) {
@@ -2045,7 +2042,7 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, null, true);
+        this.initPlot(map, null, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
