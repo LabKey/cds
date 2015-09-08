@@ -281,14 +281,12 @@ CREATE TABLE cds.import_StudySubject (
   subject_bmi_enrollment NUMERIC(15,4),
   subject_circumcised_enrollment VARCHAR(250),
 
-  -- TODO: Bunch more to come 5.14.2015
-
   CONSTRAINT PK_import_StudySubject PRIMARY KEY (prot, subject_id)
 );
 
 CREATE TABLE cds.import_StudyPartGroupArmSubject (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  subject_id VARCHAR(250) NOT NULL, -- Reference import_StudySubject?
+  subject_id VARCHAR(250) NOT NULL,
   study_part VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
   study_arm VARCHAR(250) NOT NULL,
