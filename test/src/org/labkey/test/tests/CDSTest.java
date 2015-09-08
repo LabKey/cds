@@ -38,7 +38,6 @@ import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
 import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -167,7 +166,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(dataPoints);
 
         click(Locator.tagWithText("a", "About"));
-        waitForText("About the HIV Collaborative DataSpace");
+        waitForText("About the CAVD DataSpace");
         getDriver().navigate().back();
         waitForElement(dataPoints.notHidden());
 
@@ -232,7 +231,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
-        _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElementToDisappear(Locator.css("div.groupicon img"));
 
@@ -268,7 +267,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
 
         //
         // Undo a info pane generated filter
@@ -280,7 +279,7 @@ public class CDSTest extends CDSReadOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
 
         //
         // open the filter pane via a created filter
@@ -293,7 +292,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
-        _asserts.assertFilterStatusCounts(22, 12, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(23, 13, -1); // TODO Test data dependent.
 
         //
         // update the current filter
@@ -305,7 +304,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
         // TODO Test data dependent.
-        _asserts.assertFilterStatusCounts(169, 36, -1); // default is 'OR'
+        _asserts.assertFilterStatusCounts(173, 36, -1); // default is 'OR'
 
         //
         // change the operator
@@ -326,7 +325,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(raceMember4, true);
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
-        _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         cds.ensureNoFilter();
 
         //
@@ -340,7 +339,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("United States");
         waitForElement(countryFilter);
-        _asserts.assertFilterStatusCounts(5423, 47, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(5519, 47, -1); // TODO Test data dependent.
         cds.openFilterInfoPane(countryFilter);
         assertElementPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
@@ -482,7 +481,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
+        waitForText("Welcome to the CAVD DataSpace.");
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
@@ -753,8 +752,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Validating gid counts");
         _asserts.assertFilterStatusCounts(28, 12, -1);
-        grid.assertPageTotal(23);
-        grid.assertRowCount(561);
+        grid.assertPageTotal(22);
+        grid.assertRowCount(543);
 
         log("Applying a column filter.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Is Greater Than or Equal To", "1");
