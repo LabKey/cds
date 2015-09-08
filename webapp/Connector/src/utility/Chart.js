@@ -350,18 +350,5 @@ Ext.define('Connector.utility.Chart', {
             }
 
         }, this);
-    },
-
-    escapeHTML : function(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-    },
-
-    unescapeHTML : function(escapedStr) {
-        var div = document.createElement('div');
-        div.innerHTML = escapedStr;
-        var child = div.childNodes[0];
-        return child ? child.nodeValue : '';
     }
 });
