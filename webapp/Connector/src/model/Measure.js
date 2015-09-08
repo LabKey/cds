@@ -119,7 +119,7 @@ Ext.define('Connector.model.Measure', {
     },
 
     shouldShowScale : function() {
-        return this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
+        return !this.get('isDimension') && this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
     },
 
     getHierarchicalMeasures : function() {
