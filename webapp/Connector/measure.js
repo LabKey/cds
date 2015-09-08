@@ -29,6 +29,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ICS_cell_type',
                         'study_ICS_functional_marker_name',
                         'study_ICS_summary_level',
+                        'study_ICS_peptide_pool',
                         'study_ICS_protein_panel',
                         'study_ICS_protein',
                         'study_ICS_specimen_type',
@@ -64,6 +65,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ELISPOT_functional_marker_name',
                         'study_ELISPOT_summary_level',
                         'study_ELISPOT_peptide_pool',
+                        'study_ELISPOT_protein',
+                        'study_ELISPOT_protein_panel',
                         'study_ELISPOT_specimen_type',
                         'study_ELISPOT_lab_code'
                     ]
@@ -151,9 +154,7 @@ Ext.define('Connector.measure.Configuration', {
                     distinctValueFilterColumnValue: 'Antigen'
                 },
                 'study_BAMA_dilution': {
-                    requiresSelection: true,
-                    allowMultiSelect: false,
-                    defaultSelection: {all: false}
+                    requiresSelection: true
                 },
                 // study|ELISPOT
                 'study_ELISPOT_functional_marker_name': {
