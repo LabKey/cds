@@ -2490,18 +2490,18 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
-        for (var group in groupTags) {
-            // Escape HTML for security.
-            if (groupTags.hasOwnProperty(group)) {
-                for (var j = 0; j < groupTags[group].tags.length; j++) {
-                    groupTags[group].tags[j] = Ext.htmlEncode(groupTags[group].tags[j]);
+        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural);
+        Ext.each(groupKeys, function(key) {
+            if (groupTags.hasOwnProperty(key)) {
+                for (var j=0; i < groupTags[key].tags.length; j++) {
+                    groupTags[key].tags[j] = Ext.htmlEncode(groupTags[key].tags[j]);
                 }
 
                 content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
-                    + Ext.htmlEncode(group) + ' :</span> ' + Ext.htmlEncode(groupTags[group].desc)
-                    + '<br>-' + groupTags[group].tags.join(',') + '</p>';
+                    + Ext.htmlEncode(key) + ' :</span> ' + Ext.htmlEncode(groupTags[key].desc)
+                    + '<br>-' + groupTags[key].tags.join(',') + '</p>';
             }
-        }
+        });
 
         bubbleWidth = Math.min(maxWidth * 8, 400);
 
