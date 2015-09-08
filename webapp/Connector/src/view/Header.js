@@ -22,25 +22,10 @@ Ext.define("Connector.view.Header", {
 
     initComponent : function() {
 
-        this.items = [{
-            xtype: 'box',
-            itemId: 'logo',
-            cls: 'logo',
-            flex: 4,
-            tpl: [
-                '<img src="{imgSrc}">',
-                '<h2>CAVD <span>DataSpace</span></h2>'
-            ],
-            data: {
-                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
-            }
-        },{
-            xtype: 'panel',
-            layout: 'hbox',
-            itemId: 'search',
-            margin: '18 14 0 0',
-            width: 250,
-            items: [{
+        var toolbarItems = [];
+
+        if (LABKEY.user.isSignedIn) {
+            toolbarItems.push({
                 xtype: 'box',
                 itemId: 'feedback',
                 margin: '2 50 0 0',
@@ -56,7 +41,9 @@ Ext.define("Connector.view.Header", {
                     element: 'el',
                     scope: this
                 }
-            },{
+            });
+
+            toolbarItems.push({
                 xtype: 'box',
                 itemId: 'about',
                 margin: '2 15 0 0',
@@ -66,7 +53,9 @@ Ext.define("Connector.view.Header", {
                     html: 'About',
                     href: '#home/about'
                 }
-            },{
+            });
+
+            toolbarItems.push({
                 xtype: 'box',
                 itemId: 'logout',
                 margin: '2 15 0 0',
@@ -95,7 +84,28 @@ Ext.define("Connector.view.Header", {
                     element: 'el',
                     scope: this
                 }
-            }]
+            });
+        }
+
+        this.items = [{
+            xtype: 'box',
+            itemId: 'logo',
+            cls: 'logo',
+            flex: 4,
+            tpl: [
+                '<img src="{imgSrc}">',
+                '<h2>CAVD <span>DataSpace</span></h2>'
+            ],
+            data: {
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
+            }
+        },{
+            xtype: 'panel',
+            layout: 'hbox',
+            itemId: 'search',
+            margin: '18 14 0 0',
+            width: 250,
+            items: toolbarItems
         }];
 
         this.callParent();
