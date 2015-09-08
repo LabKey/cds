@@ -29,14 +29,49 @@ Ext.define('Connector.app.store.Assay', {
     },
 
     loadAntigens : function(assayName, callback, scope) {
-        LABKEY.Query.executeSql({
-            schemaName: 'cds',
-            sql: 'SELECT * FROM cds.' + assayName + 'antigen',
-            success: function(result) {
-                callback.call(scope, result.rows);
-            },
-            scope: scope
-        })
+        if (assayName === 'ICS' || assayName === 'ELISPOT') {
+            LABKEY.Query.selectRows({
+                schemaName: 'cds',
+                queryName: 'learn_' + assayName + '_antigens',
+                success: function(result) {
+                    var ret = [],
+                        idx = 0;
+                    Ext.each(result.rows, function(row) {
+                        if(ret[idx-1] && ret[idx-1].antigen_name === row.antigen_name) {
+                            ret[idx-1].protienAndPools.push({
+                                protein: row.protein,
+                                pools: row.pools
+                            });
+                        }
+                        else {
+                            ret[idx] = {
+                                antigen_name: row.antigen_name,
+                                antigen_description: row.antigen_description,
+                                antigen_control: row.antigen_control,
+                                clades: row.clades,
+                                protienAndPools: [{
+                                    protein: row.protein,
+                                    pools: row.pools
+                                }]
+                            };
+                            idx++;
+                        }
+                    });
+                    callback.call(scope, ret);
+                },
+                scope: scope
+            })
+        }
+        else {
+            LABKEY.Query.selectRows({
+                schemaName: 'cds',
+                queryName: assayName + 'antigen',
+                success: function (result) {
+                    callback.call(scope, result.rows);
+                },
+                scope: scope
+            })
+        }
     },
 
     loadAnalytes : function(assayName, callback, scope) {
