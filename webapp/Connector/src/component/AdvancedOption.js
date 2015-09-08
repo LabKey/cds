@@ -299,6 +299,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         this.store = Ext.create('Ext.data.Store', {
             measureSet: measureSet,
             fields: [this.storeValueField, this.storeLabelField, 'subjectCount'],
+            sorters: [{property: this.storeLabelField}],
             data: data
         });
 

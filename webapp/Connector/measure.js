@@ -151,9 +151,7 @@ Ext.define('Connector.measure.Configuration', {
                     distinctValueFilterColumnValue: 'Antigen'
                 },
                 'study_BAMA_dilution': {
-                    requiresSelection: true,
-                    allowMultiSelect: false,
-                    defaultSelection: {all: false}
+                    requiresSelection: true
                 },
                 // study|ELISPOT
                 'study_ELISPOT_functional_marker_name': {
