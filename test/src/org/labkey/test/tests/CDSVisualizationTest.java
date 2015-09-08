@@ -253,7 +253,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.confirmSelection();
-
         _ext4Helper.waitForMaskToDisappear();
 
         if (CDSHelper.validateCounts)
@@ -267,6 +266,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For NAB vs ICS x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For NAB vs ICS y-axis gutter plot was not present.", hasYGutter());
@@ -276,6 +276,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_AGE);
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
+        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For NAB vs Demographics x-axis gutter plot was not present.", hasXGutter());
         assertFalse("For NAB vs Demographics y-axis gutter plot was present and it should not be.", hasYGutter());
@@ -838,8 +839,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_RHPALUC), "0");
         virusCounts.put(cds.buildCountIdentifier(CDSHelper.NEUTRAL_TIER_NA, CDSHelper.ANTIGEN_CLADE_NOT_RECORDED, CDSHelper.VIRUS_SC22), "0");
 
-        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "147");
-        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "147");
+        sourcesSubjectCounts.put(CDSHelper.DEMOGRAPHICS, "150");
+        sourcesSubjectCounts.put(CDSHelper.TIME_POINTS, "150");
         sourcesSubjectCounts.put(CDSHelper.BAMA, "1");
         sourcesSubjectCounts.put(CDSHelper.ELISPOT, "20");
         sourcesSubjectCounts.put(CDSHelper.ICS, "28");
@@ -2030,6 +2031,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             log("Validating subject counts in the x-axis BAMA - Antigen.");
             xaxis.pickSource(CDSHelper.BAMA);
             sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            xaxis.setIsotype("IgG");
             xaxis.validateAntigenSubjectCount(antigenCounts, false);
             xaxis.backToSource();
         }
@@ -2099,6 +2101,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             log("Validating subject counts in the y-axis BAMA - Antigen.");
             yaxis.pickSource(CDSHelper.BAMA);
             sleep(CDSHelper.CDS_WAIT_ANIMATION);
+            yaxis.setIsotype("IgG");
             yaxis.validateAntigenSubjectCount(antigenCounts, false);
             yaxis.backToSource();
         }

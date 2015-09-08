@@ -122,6 +122,8 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
         return super.openAntigenPanel(XPATHID);
     }
 
+    public void setIsotype(String... value) { super.setAssayDimension(XPATHID, AssayDimensions.Isotype, value);}
+
     public void setVirusName(String... test_data_value)
     {
         super.setAssayDimension(XPATHID, AssayDimensions.VirusName, test_data_value);

@@ -396,6 +396,33 @@ public abstract class DataspaceVariableSelector
                 }
 
                 break;
+            case Isotype:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antibody_isotype')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-antibody_isotype-dropdown')][not(contains(@style, 'display: none'))]";
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
+                    _test.click(locDimField);
+
+                    // Let the drop down render.
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
+
+                    // Since it is a radio button shouldn't really iterate.
+                    for(String val : value){
+                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" + val + "']"));
+                    }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
+                }
+
+                break;
             case Protein:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
@@ -493,6 +520,7 @@ public abstract class DataspaceVariableSelector
         Dilution,
         FunctionalMarkerName,
         InstrumentCode,
+        Isotype,
         LabId,
         PeptidePool,
         Protein,
