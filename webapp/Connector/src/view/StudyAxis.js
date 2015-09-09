@@ -66,7 +66,7 @@ Connector.view.StudyAxis = function() {
         visitTags.exit().remove();
         visitTags.enter().append("image").attr('class', 'visit-tag')
             .attr('xlink:href', function(d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/' + (d.imgSrc || 'nonvaccination_normal.svg');
+                return Connector.resourceContext.imgPath + '/' + (d.imgSrc || 'nonvaccination_normal.svg');
             })
             .attr("x", function(d) {return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
             .attr("y", function(d) {
@@ -156,7 +156,7 @@ Connector.view.StudyAxis = function() {
 
         canvas.append('g').append("image")
                 .attr('xlink:href', function(d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/'
+                    return Connector.resourceContext.imgPath + '/'
                         + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg'); })
                 .attr('class', 'img-expand')
                 .attr('x', 20)
@@ -167,28 +167,28 @@ Connector.view.StudyAxis = function() {
 
         button.on('mouseover', function(d) {
             button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                return Connector.resourceContext.imgPath + '/'
                     + (collapsed?'icon_general_expand_hover.svg':'icon_general_collapse_hover.svg');
             });
         });
 
         button.on('mouseout', function(d) {
             button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                return Connector.resourceContext.imgPath + '/'
                         + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg');
             });
         });
 
         button.on('mousedown', function(d) {
             button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                return Connector.resourceContext.imgPath + '/'
                         + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg');
             });
         });
 
         button.on('mouseup', function(d) {
             button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
+                return Connector.resourceContext.imgPath + '/'
                         + (collapsed?'icon_general_collapse_hover.svg':'icon_general_expand_hover.svg');
             });
             collapsed = !collapsed;

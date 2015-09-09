@@ -710,7 +710,7 @@ Ext.define('Connector.controller.Query', {
                             alias = LABKEY.MeasureUtil.getAlias(axisFilterRecord);
 
                             // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
-                            if (Ext.isDefined(measureMap[alias])) {
+                            if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
                                 measureMap[alias].measure.values = Ext.Array.unique(measureMap[alias].measure.values.concat(axisFilterRecord.values));
                             }
                             else {

@@ -296,22 +296,6 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Studies using this product'
                         }
                     }]]
-                    //},{
-                    //    type: 'productprovidedby',
-                    //    staticData: {
-                    //        title: 'Product provided by'
-                    //    }
-                    //},{
-                    //    type: 'productmanufacturing',
-                    //    staticData: {
-                    //        title: 'Product manufacturing'
-                    //    }
-                    //}],[{
-                    //    type: 'productotherproducts',
-                    //    staticData: {
-                    //        title: 'Used with other products'
-                    //    }
-                    //}]]
                 }]
             },{
                 uniqueName: '[Assay]',
@@ -374,7 +358,7 @@ Ext4.define('Connector.cube.Configuration', {
                     },{
                         type: 'assayanalytelist',
                         staticData: {
-                            title: 'Assay Analytes'
+                            title: 'Assay analytes'
                         }
                     },{
                         type: 'text',
@@ -411,7 +395,7 @@ Ext4.define('Connector.cube.Configuration', {
                     modules: [[{
                         type: 'variablelist',
                         staticData: {
-                            title: 'Assay Variables'
+                            title: 'Assay variables'
                         }
                     }]]
                 },{

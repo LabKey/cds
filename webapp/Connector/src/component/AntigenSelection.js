@@ -52,7 +52,7 @@ Ext.define('Connector.panel.AntigenSelection', {
             var concatValue = '', sep = '', addCls;
 
             for (var i = 0; i < fields.length; i++) {
-                concatValue += sep + record.get(fields[i]);
+                concatValue += sep + (record.get(fields[i]) || 'null');
                 sep = '|';
 
                 if (!Ext.isDefined(columnValueCounts[concatValue])) {
@@ -96,7 +96,9 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         Ext.each(this.hierarchyMeasures, function(measure) {
             fields.push(measure.get('alias'));
-            sorters.push({property: measure.get('alias')});
+            sorters.push({property: measure.get('alias'), transform: function(val) {
+                return val == null ? '[Blank]' : val;
+            }});
 
             if (Ext.isDefined(measure.get('distinctValueFilterColumnAlias')) && Ext.isDefined(measure.get('distinctValueFilterColumnValue'))) {
                 filterColumnAlias = measure.get('distinctValueFilterColumnAlias');
@@ -130,7 +132,7 @@ Ext.define('Connector.panel.AntigenSelection', {
     getConcatKeyForRecord : function(record, fields) {
         var key = '', sep = '';
         Ext.each(fields, function(field) {
-            key += sep + record.get(field);
+            key += sep + (record.get(field) || 'null');
             sep = '|';
         });
         return key;
@@ -202,7 +204,7 @@ Ext.define('Connector.panel.AntigenSelection', {
             boxLabelAttrTpl: 'test-data-value=' + fields[index] + '-' + value.replace(/\|/g, '-').replace(/ /g, '_'),
             parentFieldAlias: index > 0 ? fields[index - 1] : null,
             fieldAlias: fields[index],
-            fieldValue: record.get(fields[index]),
+            fieldValue: record.get(fields[index]) || 'null',
             inputValue: value,
             checked: this.initSelection && this.initSelection.indexOf(value) > -1, // this will set only the leaf checkboxes as checked
             width: Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length),
@@ -219,7 +221,7 @@ Ext.define('Connector.panel.AntigenSelection', {
 
         // add the parent values to this checkbox for reference for the change listeners (see checkboxSelectionChange)
         for (var j = 0; j < index; j++) {
-            checkbox[fields[j]] = record.get(fields[j]);
+            checkbox[fields[j]] = record.get(fields[j]) || 'null';
         }
 
         return checkbox;

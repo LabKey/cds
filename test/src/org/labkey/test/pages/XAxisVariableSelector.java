@@ -119,6 +119,8 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         super.setAssayDimension(XPATHID, AssayDimensions.AlignBy, value);
     }
 
+    public void setIsotype(String... value) { super.setAssayDimension(XPATHID, AssayDimensions.Isotype, value);}
+
     public void setTargetCell(String... value)
     {
         super.setAssayDimension(XPATHID, AssayDimensions.TargetCell, value);

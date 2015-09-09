@@ -22,7 +22,7 @@ Ext.define('Connector.view.module.ProductHeader', {
                 '<tpl if="product_class_label">',
                     '<tr>',
                         '<td class="item-label">Class:</td>',
-                        '<td class="item-value">{product_class_label:htmlEncode}</td>',
+                        '<td class="item-value">{product_class:htmlEncode}</td>',
                     '</tr>',
                 '</tpl>',
                 '<tpl if="product_subclass">',

@@ -46,3 +46,38 @@ Ext.define('Connector.window.Filter', {
         }
     }
 });
+
+Ext.define('Connector.field.BooleanCombo', {
+    extend: 'Ext.form.field.ComboBox',
+
+    alias: 'widget.labkey-booleantextfield',
+
+    displayField: 'displayText',
+    valueField: 'value',
+    triggerAction: 'all',
+    listWidth: 200,
+    forceSelection: true,
+    queryMode: 'local',
+
+    initComponent : function() {
+        Ext.apply(this, {
+            store: Ext.create('Ext.data.ArrayStore', {
+                fields: [
+                    'value',
+                    'displayText'
+                ],
+                idIndex: 0,
+                data: [
+                    [false, 'No'],
+                    [true, 'Yes']
+                ]
+            })
+        });
+
+        this.callParent(arguments);
+
+        if (this.includeNullRecord) {
+            this.store.add([[null, ' ']]);
+        }
+    }
+});

@@ -100,7 +100,7 @@ public class DataGrid
             @Override
             public Void apply(Void aVoid)
             {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("filter", "filter-btn"));
+                _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
                 return null;
             }
         });
@@ -126,7 +126,7 @@ public class DataGrid
             @Override
             public Void apply(Void aVoid)
             {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("filter", "filter-btn"));
+                _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
                 return null;
             }
         });
@@ -143,8 +143,8 @@ public class DataGrid
 
         _test.waitAndClick(10000, row, 0);
 
-        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("update", "filter-btn");
-        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("filter", "filter-btn");
+        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("Update", "filter-btn");
+        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn");
 
         List<WebElement> buttons = new ArrayList<>();
         buttons.addAll(update.findElements(_test.getDriver()));
@@ -174,7 +174,7 @@ public class DataGrid
             @Override
             public Void apply(Void aVoid)
             {
-                _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("clear", "filter-btn"));
+                _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
                 return null;
             }
         });
