@@ -1558,7 +1558,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedToolTipText.add("HVTN 063 - Day 182");
         expectedToolTipText.add("Group 2");
         expectedToolTipText.add("-Follow-Up");
-        cssPath = "#study-axis > svg > g:nth-child(21) > image:nth-of-type(1)";
+        cssPath = "#study-axis > svg > g.study:nth-child(21) > image.visit-tag[x^='3']";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
     }
