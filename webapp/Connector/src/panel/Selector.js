@@ -459,7 +459,7 @@ Ext.define('Connector.panel.Selector', {
                     calloutMgr.createCallout({
                         id: _id,
                         bubbleWidth: 160,
-                        yOffset: -15,
+                        yOffset: item.scrollHeight - 37, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
                         xOffset: 50,
                         showCloseButton: false,
                         target: item,
@@ -996,8 +996,10 @@ Ext.define('Connector.panel.Selector', {
 
     getDimensionsForMeasure : function(measure) {
         // check if a white-list of dimensions was declared for the measure or its source
-        var dimensions = measure.get('dimensions');
-        var source = this.getSourceForMeasure(measure);
+        var dimensions = measure.get('dimensions'),
+            source = this.getSourceForMeasure(measure),
+            measureIsDimension = false;
+
         if (dimensions == undefined && source) {
             dimensions = source.get('dimensions');
         }
@@ -1012,10 +1014,19 @@ Ext.define('Connector.panel.Selector', {
                     var _dim = this.queryService.getMeasureRecordByAlias(dim);
                     if (_dim) {
                         newDimensions.push(_dim);
+
+                        if (measure.get('alias') == dim) {
+                            measureIsDimension = true;
+                        }
                     }
                 }
             }, this);
             dimensions = newDimensions;
+        }
+
+        // Issue 24211: Do not display dimension in advanced options if it is the currently selected axis
+        if (measureIsDimension) {
+            return [];
         }
 
         return dimensions;

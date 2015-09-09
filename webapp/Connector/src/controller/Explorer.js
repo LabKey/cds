@@ -11,12 +11,16 @@ Ext.define('Connector.controller.Explorer', {
 
     views : ['SingleAxisExplorer'],
 
+    statics: {
+        HOVER_FILTER: 'hoverSelectionFilter'
+    },
+
     init : function() {
 
         this.control('singleaxisview', {
-            itemmouseenter : this.onExplorerEnter,
-            itemmouseleave : this.onExplorerLeave,
-            itemclick      : this.onExplorerSelect
+            itemmouseenter: this.onExplorerEnter,
+            itemmouseleave: this.onExplorerLeave,
+            itemclick: this.onExplorerSelect
         });
 
         this.control('#dimensionbtn', {
@@ -76,13 +80,13 @@ Ext.define('Connector.controller.Explorer', {
 
         this.hoverTask = new Ext.util.DelayedTask(function(view, rec, add) {
             if (add) {
-                Connector.getState().addPrivateSelection({
+                Connector.getState().addPrivateSelection([{
                     hierarchy: rec.get('hierarchy'),
                     members: [{ uniqueName: rec.get('uniqueName') }]
-                }, 'hoverSelectionFilter');
+                }], Connector.controller.Explorer.HOVER_FILTER);
             }
             else {
-                Connector.getState().removePrivateSelection('hoverSelectionFilter');
+                Connector.getState().removePrivateSelection(Connector.controller.Explorer.HOVER_FILTER);
             }
         }, this);
 
@@ -115,7 +119,7 @@ Ext.define('Connector.controller.Explorer', {
                 filterchange: v.onFilterChange,
                 selectionchange: v.onSelectionChange,
                 privateselectionchange: function(sels, name) {
-                    if (name == 'hoverSelectionFilter') {
+                    if (name === Connector.controller.Explorer.HOVER_FILTER) {
                         v.onSelectionChange.call(v, sels, true);
                     }
                 },
@@ -200,11 +204,11 @@ Ext.define('Connector.controller.Explorer', {
                     this.fireEvent('dimension', dim, idx);
                 }
                 else {
-                    alert('Failed:' + context.dimension);
+                    Ext.Msg.alert('Failed:' + context.dimension);
                 }
             }
             else {
-                alert('Failed:' + context.dimension);
+                Est.Msg.alert('Failed:' + context.dimension);
             }
         }, this);
     },
@@ -348,7 +352,7 @@ Ext.define('Connector.controller.Explorer', {
             //
             // Apply Selections
             //
-            state.removePrivateSelection('hoverSelectionFilter');
+            state.removePrivateSelection(Connector.controller.Explorer.HOVER_FILTER);
             state.setSelections([selection]);
             var v = this.getViewManager().getViewInstance('singleaxis');
             if (v) {

@@ -58,6 +58,7 @@ public class CDSImportTask extends TaskRefTaskImpl
 //        new TSVCopyConfig("Personnel"),
 //        new TSVCopyConfig("Site"),
         new TSVCopyConfig("Lab"),
+        new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
 
         // Dependent Tables
 //        new TSVCopyConfig("StudyPersonnel"),
@@ -74,7 +75,6 @@ public class CDSImportTask extends TaskRefTaskImpl
 //        new TSVCopyConfig("StudySitePersonnel"),
 
         // Datasets
-        new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("ICS", "AssayICS"),
         new TSVCopyConfig("ELS_IFNg", "AssayELS_IFNg"),
         new TSVCopyConfig("NAB", "AssayNAB"),

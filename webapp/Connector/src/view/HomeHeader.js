@@ -31,7 +31,7 @@ Ext.define('Connector.view.HomeHeader', {
                 itemId: 'statdisplay',
                 cls: 'cascade-header',
                 tpl: new Ext.XTemplate(
-                    '<h1>Welcome to the HIV Vaccine Collaborative Dataspace.</h1>',
+                    '<h1>Welcome to the CAVD DataSpace.</h1>',
                     '<h1 class="middle">{nstudy:htmlEncode} studies connected together combining</h1>',
                     '<h1 class="bottom">{ndatapts:this.commaFormat} data points.</h1>',
                     {

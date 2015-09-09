@@ -393,7 +393,12 @@ Ext.define('Connector.view.Chart', {
         }, this);
 
         this.on('resize', function() {
-            this.resizeTask.delay(150);
+            this.plotEl.update('');
+            this.getStudyAxisPanel().setVisible(false);
+            this.getNoPlotMsg().hide();
+            this.getEmptyPlotMsg().hide();
+
+            this.resizeTask.delay(300);
         }, this);
     },
 
@@ -436,14 +441,6 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        var plotBox = this.plotEl.getBox();
-        var size = this.getPlotSize(plotBox);
-
-        if (!this.initialized && !this.showNoPlot) {
-            this.showNoPlot = true;
-            this.noPlot(false);
-        }
-
         if (this.ywin && this.ywin.isVisible()) {
             this.updateSelectorWindow(this.ywin);
         }
@@ -456,31 +453,22 @@ Ext.define('Connector.view.Chart', {
             this.updateSelectorWindow(this.colorwin);
         }
 
-        if (this.plot) {
-            this.plot.setSize(size.width, size.height, true);
-        }
-
-        if (this.xGutterPlot) {
-            this.xGutterPlot.setSize(size.width + (this.requireYGutter ? this.yGutterWidth : 0), this.xGutterHeight, true)
-        }
-
-        if (this.yGutterPlot) {
-            this.yGutterPlot.setSize(this.yGutterWidth, size.height, true);
-        }
-
-        if (this.getStudyAxisPanel().isVisible() && this.studyAxis && this.hasStudyAxisData) {
-            this.studyAxis.width(Math.max(0, this.getStudyAxisPanel().getWidth()- 40));
-            this.studyAxis.scale(this.plot.scales.x.scale);
-            this.studyAxis();
-        }
-
-        this.resizePlotMsg(this.getNoPlotMsg(), plotBox);
-        this.resizePlotMsg(this.getEmptyPlotMsg(), plotBox);
-
+        this.redrawPlot();
         this.resizeMessage();
 
         if (Ext.isFunction(this.highlightSelectedFn)) {
             this.highlightSelectedFn();
+        }
+    },
+
+    redrawPlot : function() {
+        if (Ext.isDefined(this.lastInitPlotParams)) {
+            if (this.lastInitPlotParams.noplot) {
+                this.noPlot(this.lastInitPlotParams.emptyPlot);
+            }
+            else {
+                this.initPlot(this.lastInitPlotParams.chartData, this.lastInitPlotParams.studyAxisInfo);
+            }
         }
     },
 
@@ -542,11 +530,11 @@ Ext.define('Connector.view.Chart', {
         var config, content = '', colon = ': ', linebreak = ',<br/>';
 
         if (data.xname) {
-            content += ChartUtils.escapeHTML(data.xname) + colon + data.x;
+            content += Ext.htmlEncode(data.xname) + colon + data.x;
         }
-        content += (content.length > 0 ? linebreak : '') + ChartUtils.escapeHTML(data.yname) + colon + data.y;
+        content += (content.length > 0 ? linebreak : '') + Ext.htmlEncode(data.yname) + colon + data.y;
         if (data.colorname) {
-            content += linebreak + ChartUtils.escapeHTML(data.colorname) + colon + data.color;
+            content += linebreak + Ext.htmlEncode(data.colorname) + colon + data.color;
         }
 
         config = {
@@ -802,8 +790,9 @@ Ext.define('Connector.view.Chart', {
      * @param chartData
      * @param {object} [studyAxisInfo]
      * @param {boolean} [noplot=false]
+     * @param {boolean} [emptyPlot=false]
      */
-    initPlot : function(chartData, studyAxisInfo, noplot) {
+    initPlot : function(chartData, studyAxisInfo, noplot, emptyPlot) {
 
         if (this.isHidden()) {
             // welp, that was a huge waste..
@@ -819,6 +808,14 @@ Ext.define('Connector.view.Chart', {
             plotConfig, gutterXPlotConfig, gutterYPlotConfig;
 
         noplot = Ext.isBoolean(noplot) ? noplot : false;
+
+        // Issue 23731: hold onto last set of properties for resize/redraw
+        this.lastInitPlotParams = {
+            chartData: chartData,
+            studyAxisInfo: studyAxisInfo,
+            noplot: noplot,
+            emptyPlot: emptyPlot
+        };
 
         // get the data rows for the chart
         if (chartData instanceof Connector.model.ChartData) {
@@ -2075,7 +2072,7 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, null, true);
+        this.initPlot(map, null, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
@@ -2466,7 +2463,7 @@ Ext.define('Connector.view.Chart', {
 
     getStudyVisitTagRecords : function(store, chartData) {
         var alignMap = chartData.getContainerAlignmentDayMap(),
-                studyContainers = Object.keys(alignMap);
+            studyContainers = Object.keys(alignMap);
 
         // filter the StudyVisitTag store based on the study container id array
         var containerFilteredRecords = store.queryBy(function(record) {
@@ -2494,48 +2491,53 @@ Ext.define('Connector.view.Chart', {
     showVisitTagHover : function(data, visitTagEl) {
         var bubbleWidth, groupWidth = 0, tagWidth = 0,
             groupTags = {}, maxWidth = 0,
-            content = '', config;
+            content = '', config, visitTag, visitTagGrp;
 
         // content will display one row for each group so we need to gather together the tags for each group separately
         for (var i = 0; i < data.visitTags.length; i++) {
-            if (!groupTags[data.visitTags[i].group]) {
-                groupTags[data.visitTags[i].group] = {
-                    tags:[],
-                    desc:""
+
+            visitTag = data.visitTags[i];
+            visitTagGrp = visitTag.group;
+
+            if (!groupTags[visitTagGrp]) {
+                groupTags[visitTagGrp] = {
+                    tags: [],
+                    desc: ''
                 };
             }
 
-            groupTags[data.visitTags[i].group].tags.push(data.visitTags[i].tag);
-            groupTags[data.visitTags[i].group].desc = data.visitTags[i].desc;
+            groupTags[visitTagGrp].tags.push(visitTag.tag);
+            groupTags[visitTagGrp].desc = visitTag.desc;
 
-            groupWidth = ChartUtils.escapeHTML(data.visitTags[i].group).length + ChartUtils.escapeHTML(data.visitTags[i].desc).length + 3;
+            groupWidth = Ext.htmlEncode(visitTag.group).length + Ext.htmlEncode(visitTag.desc).length + 3;
             if (groupWidth > maxWidth) {
                 maxWidth = groupWidth;
             }
 
-            tagWidth =ChartUtils.escapeHTML(groupTags[data.visitTags[i].group].tags.join(',')).length + 4;
+            tagWidth = Ext.htmlEncode(groupTags[visitTagGrp].tags.join(',')).length + 4;
             if (tagWidth > maxWidth) {
                 maxWidth = tagWidth;
             }
         }
 
-        for (var group in groupTags) {
-            // Escape HTML for security.
-            if(groupTags.hasOwnProperty(group)) {
-                for (var j = 0; j < groupTags[group].tags.length; j++)
-                    groupTags[group].tags[j] = ChartUtils.escapeHTML(groupTags[group].tags[j]);
+        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural);
+        Ext.each(groupKeys, function(key) {
+            if (groupTags.hasOwnProperty(key)) {
+                for (var j=0; i < groupTags[key].tags.length; j++) {
+                    groupTags[key].tags[j] = Ext.htmlEncode(groupTags[key].tags[j]);
+                }
 
                 content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
-                    + ChartUtils.escapeHTML(group) + ' :</span> ' + ChartUtils.escapeHTML(groupTags[group].desc)
-                    + '<br>-' + groupTags[group].tags.join(',') + '</p>';
+                    + Ext.htmlEncode(key) + ' :</span> ' + Ext.htmlEncode(groupTags[key].desc)
+                    + '<br>-' + groupTags[key].tags.join(',') + '</p>';
             }
-        }
+        });
 
         bubbleWidth = Math.min(maxWidth * 8, 400);
 
         config = {
             bubbleWidth: bubbleWidth,
-            xOffset: -(bubbleWidth / 2),          // the nonvaccination icon is slightly smaller
+            xOffset: -(bubbleWidth / 2),          // the non-vaccination icon is slightly smaller
             arrowOffset: (bubbleWidth / 2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
             target: visitTagEl,
             placement: 'top',

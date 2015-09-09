@@ -27,7 +27,10 @@ antigen,
 antigen_type,
 neutralization_tier,
 clade,
-neutralization_tier || '|' || clade || '|' || virus AS tier_clade_virus,
+(CASE WHEN neutralization_tier IS NULL THEN 'null' ELSE neutralization_tier END)
+  || '|' || (CASE WHEN clade IS NULL THEN 'null' ELSE clade END)
+  || '|' || (CASE WHEN virus IS NULL THEN 'null' ELSE virus END)
+  AS tier_clade_virus,
 vaccine_matched,
 target_cell,
 initial_dilution,

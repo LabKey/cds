@@ -166,7 +166,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(dataPoints);
 
         click(Locator.tagWithText("a", "About"));
-        waitForText("About the HIV Collaborative DataSpace");
+        waitForText("About the CAVD DataSpace");
         getDriver().navigate().back();
         waitForElement(dataPoints.notHidden());
 
@@ -231,7 +231,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
-        _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElementToDisappear(Locator.css("div.groupicon img"));
 
@@ -267,7 +267,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
 
         //
         // Undo a info pane generated filter
@@ -279,7 +279,7 @@ public class CDSTest extends CDSReadOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(2727, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
 
         //
         // open the filter pane via a created filter
@@ -292,7 +292,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
-        _asserts.assertFilterStatusCounts(22, 12, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(23, 13, -1); // TODO Test data dependent.
 
         //
         // update the current filter
@@ -304,7 +304,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
         // TODO Test data dependent.
-        _asserts.assertFilterStatusCounts(169, 36, -1); // default is 'OR'
+        _asserts.assertFilterStatusCounts(173, 36, -1); // default is 'OR'
 
         //
         // change the operator
@@ -325,7 +325,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(raceMember4, true);
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
-        _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         cds.ensureNoFilter();
 
         //
@@ -339,7 +339,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("United States");
         waitForElement(countryFilter);
-        _asserts.assertFilterStatusCounts(5423, 47, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(5519, 47, -1); // TODO Test data dependent.
         cds.openFilterInfoPane(countryFilter);
         assertElementPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
@@ -481,7 +481,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
+        waitForText("Welcome to the CAVD DataSpace.");
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
@@ -575,8 +575,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
-            grid.assertPageTotal(1029); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
+            grid.assertPageTotal(980); // TODO Test data dependent.
         }
 
         //
@@ -588,8 +588,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCurrentPage(1029); // TODO Test data dependent.
-            grid.assertCellContent("c264-003"); // TODO Test data dependent.
+            grid.assertCurrentPage(980); // TODO Test data dependent.
+            grid.assertCellContent("908-047"); // TODO Test data dependent.
             grid.assertCellContent("c256-001"); // TODO Test data dependent.
         }
 
@@ -597,7 +597,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCurrentPage(1028); // TODO Test data dependent.
+            grid.assertCurrentPage(979); // TODO Test data dependent.
             grid.assertCellContent("908-020"); // TODO Test data dependent.
             grid.assertCellContent("908-026"); // TODO Test data dependent.
         }
@@ -637,7 +637,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
             assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
         }
 
@@ -647,7 +647,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
         }
 
         log("Remove a column");
@@ -657,16 +657,16 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
         }
 
         grid.setFacet(CDSHelper.DEMO_RACE, "White");
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(17551); // TODO Test data dependent.
-            grid.assertPageTotal(703); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+            grid.assertPageTotal(662); // TODO Test data dependent.
+            grid.assertRowCount(16528); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         }
 
         //
@@ -708,9 +708,9 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(17551); // TODO Test data dependent.
-            grid.assertPageTotal(703); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+            grid.assertPageTotal(662); // TODO Test data dependent.
+            grid.assertRowCount(16528); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         }
 
     }
@@ -752,8 +752,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Validating gid counts");
         _asserts.assertFilterStatusCounts(28, 12, -1);
-        grid.assertPageTotal(23);
-        grid.assertRowCount(561);
+        grid.assertPageTotal(22);
+        grid.assertRowCount(543);
 
         log("Applying a column filter.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Is Greater Than or Equal To", "1");
@@ -799,11 +799,11 @@ public class CDSTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertPageTotal(89);
+        grid.assertPageTotal(2);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
                 CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
-        grid.assertRowCount(126);
+        grid.assertRowCount(28);
 
         log("Validate checkerboarding.");
         List<WebElement> gridRows, gridRowCells;
@@ -826,19 +826,16 @@ public class CDSTest extends CDSReadOnlyTest
 
         }
 
-        log("Remove the grid and validate that the columns and counts remain the same.");
+        log("Remove the plot and validate that the columns stay the same, but the counts could change.");
 
-        mouseOver(Locator.xpath("//span[contains(@class, 'sel-label')][text()='In the plot:']"));
-        click(Locator.xpath("//img[contains(@src, 'icon_general_clearsearch_normal.svg')]"));
-        sleep(5000);
-        _ext4Helper.waitForMaskToDisappear(30000);
+        cds.clearFilter(0);
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertPageTotal(89);
+        grid.assertPageTotal(4);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
                 CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
-        grid.assertRowCount(126);
+        grid.assertRowCount(92);
 
         cds.goToAppHome();
         cds.clearFilters();
