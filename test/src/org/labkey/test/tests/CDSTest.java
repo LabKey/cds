@@ -575,8 +575,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
-            grid.assertPageTotal(1029); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
+            grid.assertPageTotal(980); // TODO Test data dependent.
         }
 
         //
@@ -588,8 +588,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCurrentPage(1029); // TODO Test data dependent.
-            grid.assertCellContent("c264-003"); // TODO Test data dependent.
+            grid.assertCurrentPage(980); // TODO Test data dependent.
+            grid.assertCellContent("908-047"); // TODO Test data dependent.
             grid.assertCellContent("c256-001"); // TODO Test data dependent.
         }
 
@@ -597,7 +597,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCurrentPage(1028); // TODO Test data dependent.
+            grid.assertCurrentPage(979); // TODO Test data dependent.
             grid.assertCellContent("908-020"); // TODO Test data dependent.
             grid.assertCellContent("908-026"); // TODO Test data dependent.
         }
@@ -637,7 +637,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
             assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
         }
 
@@ -647,7 +647,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
         }
 
         log("Remove a column");
@@ -657,16 +657,16 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(25714); // TODO Test data dependent.
+            grid.assertRowCount(24487); // TODO Test data dependent.
         }
 
         grid.setFacet(CDSHelper.DEMO_RACE, "White");
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(17551); // TODO Test data dependent.
-            grid.assertPageTotal(703); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+            grid.assertPageTotal(662); // TODO Test data dependent.
+            grid.assertRowCount(16528); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         }
 
         //
@@ -708,9 +708,9 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(17551); // TODO Test data dependent.
-            grid.assertPageTotal(703); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(4911, 50, -1); // TODO Test data dependent.
+            grid.assertPageTotal(662); // TODO Test data dependent.
+            grid.assertRowCount(16528); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         }
 
     }
@@ -799,11 +799,11 @@ public class CDSTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertPageTotal(89);
+        grid.assertPageTotal(2);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
                 CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
-        grid.assertRowCount(126);
+        grid.assertRowCount(28);
 
         log("Validate checkerboarding.");
         List<WebElement> gridRows, gridRowCells;
@@ -826,19 +826,16 @@ public class CDSTest extends CDSReadOnlyTest
 
         }
 
-        log("Remove the grid and validate that the columns and counts remain the same.");
+        log("Remove the plot and validate that the columns stay the same, but the counts could change.");
 
-        mouseOver(Locator.xpath("//span[contains(@class, 'sel-label')][text()='In the plot:']"));
-        click(Locator.xpath("//img[contains(@src, 'icon_general_clearsearch_normal.svg')]"));
-        sleep(5000);
-        _ext4Helper.waitForMaskToDisappear(30000);
+        cds.clearFilter(0);
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertPageTotal(89);
+        grid.assertPageTotal(4);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
                 CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
-        grid.assertRowCount(126);
+        grid.assertRowCount(92);
 
         cds.goToAppHome();
         cds.clearFilters();
