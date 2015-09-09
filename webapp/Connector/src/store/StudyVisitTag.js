@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -14,8 +14,7 @@ Ext.define('Connector.store.StudyVisitTag', {
     loading: true,
 
     loadStudyVisitTags : function (data) {
-        if (data && data.rows)
-        {
+        if (data && data.rows) {
             var rows = [];
             for (var i = 0; i < data.rows.length; i++) {
                 rows.push(Ext.create('Connector.model.StudyVisitTag', data.rows[i]));

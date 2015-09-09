@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,6 +121,8 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     {
         return super.openAntigenPanel(XPATHID);
     }
+
+    public void setIsotype(String... value) { super.setAssayDimension(XPATHID, AssayDimensions.Isotype, value);}
 
     public void setVirusName(String... test_data_value)
     {

@@ -330,13 +330,18 @@ public class CDSHelper
 
     // These are values used in the data grid.
     public static final String GRID_TITLE_BAMA = TITLE_BAMA;
-    public static final String GRID_TITLE_DEMO = "Demographics";
+    public static final String GRID_TITLE_DEMO = "Subject characteristics";
     public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
     public static final String GRID_TITLE_ICS = TITLE_ICS;
-    public static final String GRID_TITLE_NAB = TITLE_NAB;
+    public static final String GRID_TITLE_NAB = "Neutralizing antibody";
+    public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
+    public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
+    public static final String GRID_COL_STUDY_DAY = "Study Day";
+    public static final String GRID_COL_CUR_COL = "Current columns";
+    public static final String GRID_COL_ALL_VARS = "All variables from this session";
 
     // Time points alignments
     public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";
@@ -407,7 +412,7 @@ public class CDSHelper
         _test.addUrlParameter("_showPlotData=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
-        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
+        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
@@ -544,7 +549,7 @@ public class CDSHelper
     public void goToAppHome()
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the HIV Vaccine"));
+        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));
     }
 
     public void goToSummary()
@@ -716,7 +721,7 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("delete"));
         _test.waitForText("Are you sure you want to delete");
         _test.click(Locator.linkContainingText("Delete"));
-        _test.waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
+        _test.waitForText("Welcome to the CAVD DataSpace");
         _test.waitForElementToDisappear(groupListing);
     }
 

@@ -65,7 +65,7 @@ Ext.define('Connector.view.GroupListView', {
             '<div class="grouprow">',
                 '<div title="{label:htmlEncode}" class="grouplabel">{label:this.groupLabel}</div>',
                 '<tpl if="this.plotter(containsPlot)">',
-                    '<div class="groupicon"><img src="' + LABKEY.contextPath + '/production/Connector/resources/images/plot.png"></div>',
+                    '<div class="groupicon"><img src="' + Connector.resourceContext.imgPath + '/plot.png"></div>',
                 '</tpl>',
             '</div>',
         '</tpl>',

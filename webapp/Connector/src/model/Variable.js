@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -40,7 +40,7 @@ Ext.define('Connector.model.Variable', {
                 if (Ext.isObject(variable.options.dimensions)) {
                     Ext.Object.each(variable.options.dimensions, function(key, value) {
                         if (Ext.isArray(value) && value.length > 0) {
-                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ');
+                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ').replace(/null/g, '[Blank]');
                             sep = '; ';
                         }
                     });

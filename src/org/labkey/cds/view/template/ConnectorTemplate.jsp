@@ -40,6 +40,7 @@
     String srcPath = appPath + "/src";
     String productionPath = contextPath + "/production/Connector";
     String resourcePath = productionPath + "/resources";
+    String imageResourcePath = resourcePath + "/images";
     User user = getUser();
 %>
 <!DOCTYPE html>
@@ -61,12 +62,14 @@
         var Connector = {
             studyContext: {
                 schemaName: 'study',
+                gridBase: 'GridBase',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
                 protocolDayColumn: 'Visit/ProtocolDay'
             },
             resourceContext: {
-                path: <%=PageFlowUtil.jsString(resourcePath)%>
+                path: <%=PageFlowUtil.jsString(resourcePath)%>,
+                imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
             }
         };
 

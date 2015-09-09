@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 (function($) {
 
     // set to undefined to use default getData
@@ -16,6 +21,7 @@
             plotYMeasureXSameAssayCat: plotYMeasureXSameAssayCat,
             plotYMeasureXSameAssayNum: plotYMeasureXSameAssayNum,
             plotYMeasureXSameDiffFilter: plotYMeasureXSameDiffFilter,
+            plotYMeasureXSameDiffFilter2: plotYMeasureXSameDiffFilter2,
             plotYMeasureXDiffAssay: plotYMeasureXDiffAssay,
             plotYMeasureXDiffAssay2: plotYMeasureXDiffAssay2,
             plotYMeasureXDiffAssay3: plotYMeasureXDiffAssay3,
@@ -103,7 +109,7 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return '';
@@ -161,7 +167,7 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -219,10 +225,10 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -277,7 +283,7 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -335,10 +341,10 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -369,7 +375,8 @@
                     { measure: getVisMeasure('ICS', 'specimen_type')},
                     { measure: getVisMeasure('ICS', 'lab_code')},
                     { measure: yMeasure},
-                    { measure: xMeasure}
+                    { measure: xMeasure},
+                    { measure: getDemVisMeasure('Demographics', 'race')}
                 ],
                 endpoint: ENDPOINT,
                 success: function(measureStore) {
@@ -393,10 +400,85 @@
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
+                        }
+                    };
+
+                    var plot = new LABKEY.vis.Plot(config);
+                    plot.render();
+
+                    logStoreData(measureStore, data);
+                },
+                failure: onError
+            });
+        }
+
+        function plotYMeasureXSameDiffFilter2()
+        {
+            $('#plot').html('');
+
+            LABKEY.Query.experimental.MeasureStore.getData({
+                measures: [
+                    { measure: getVisMeasure('ICS', 'Container', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'SubjectId', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD8+'], 'x')},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'], 'x')},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'], 'x')},
+                    { measure: getVisMeasure('ICS', 'protein_panel', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'protein', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'specimen_type', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'lab_code', false, undefined, 'x')},
+                    { measure: getVisMeasure('ICS', 'pctpos', true, undefined, 'x')},
+
+                    { measure: getVisMeasure('ICS', 'Container', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'SubjectId', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'SequenceNum', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'cell_type', false, ['CD4+'], 'y')},
+                    { measure: getVisMeasure('ICS', 'functional_marker_name', false, ['IL2/ifngamma'], 'y')},
+                    { measure: getVisMeasure('ICS', 'summary_level', false, ['Protein Panel'], 'y')},
+                    { measure: getVisMeasure('ICS', 'protein_panel', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'protein', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'specimen_type', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'lab_code', false, undefined, 'y')},
+                    { measure: getVisMeasure('ICS', 'pctpos', true, undefined, 'y')},
+
+                    { measure: getDemVisMeasure('Demographics', 'race')}
+                ],
+                endpoint: ENDPOINT,
+                success: function(measureStore) {
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
+                    axisMeasureStore.setXMeasure(measureStore, 'study_ICS_pctpos', {'http://cpas.labkey.com/Study#Dataset': 'x'});
+                    axisMeasureStore.setYMeasure(measureStore, 'study_ICS_pctpos', {'http://cpas.labkey.com/Study#Dataset': 'y'});
+                    axisMeasureStore.setZMeasure(measureStore, 'study_Demographics_race');
+
+                    var data = axisMeasureStore.select([
+                        'http://cpas.labkey.com/Study#SubjectId', 'http://cpas.labkey.com/Study#SequenceNum',
+                        'study_ICS_functional_marker_name', 'study_ICS_summary_level',
+                        'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
+                        'study_ICS_lab_code', 'study_Demographics_race'
+                    ]);
+
+                    var config = getScatterPlotBaseConfig(data);
+                    config.labels = {
+                        main: {value: 'Same X-Axis Measure with Different Filter (axisName)'},
+                        y: {value: 'ICS Magnitude (CD4+, Protein Panel)'},
+                        x: {value: 'ICS Magnitude (CD8+, Protein Panel)'}
+                    };
+                    config.aes = {
+                        y: function(row) {
+                            return row.y ? row.y.getMedian() : null;
+                        },
+                        x: function(row) {
+                            return row.x ? row.x.getMedian() : null;
+                        },
+                        color: function(row) {
+                            if (!row.z.value)
+                                return row['study_Demographics_race'];
+                            return row.z.value;
                         }
                     };
 
@@ -452,15 +534,15 @@
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (1)'},
-                        y: {value: 'ICS Magnitude Mean Value (CD4+, Protein Panel)'},
-                        x: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'}
+                        y: {value: 'ICS Magnitude Median Value (CD4+, Protein Panel)'},
+                        x: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -515,15 +597,15 @@
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (2)'},
-                        y: {value: 'ELISPOT Magnitude Mean Value (IFNg+, Peptide Pool)'}, //
-                        x: {value: 'ICS Magnitude Mean Value (CD4+ and CD8+, Protein Panel)'}
+                        y: {value: 'ELISPOT Magnitude Median Value (IFNg+, Peptide Pool)'}, //
+                        x: {value: 'ICS Magnitude Median Value (CD4+ and CD8+, Protein Panel)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -579,15 +661,15 @@
                     var config = getScatterPlotBaseConfig(data);
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (3)'},
-                        y: {value: 'NAb IC50 Titer Mean Value (TZM-bl, Virus)'},
-                        x: {value: 'BAMA MFI Delta Mean Value (50, Antigen)'}
+                        y: {value: 'NAb IC50 Titer Median Value (TZM-bl, Virus)'},
+                        x: {value: 'BAMA MFI Delta Median Value (50, Antigen)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.getMean() : null;
+                            return row.x ? row.x.getMedian() : null;
                         }
                     };
 
@@ -637,12 +719,12 @@
 
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Unaligned)'},
-                        y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
+                        y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
                         x: {value: 'Time Points Weeks (Aligned by Day 0)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -695,12 +777,12 @@
 
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Aligned)'},
-                        y: {value: 'NAb IC50 Titer Mean Value (A3R5, Virus)'},
+                        y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
                         x: {value: 'Time Points Months (Last Vaccination)'}
                     };
                     config.aes = {
                         y: function(row) {
-                            return row.y ? row.y.getMean() : null;
+                            return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
                             return row.x ? row.x.value : null;
@@ -820,10 +902,10 @@
                 var xy = twoAxis.select([subjectColAlias, visitColAlias]);
 
                 var xFn = function(row) {
-                    return row.x ? row.x.getMean() : null;
+                    return row.x ? row.x.getMedian() : null;
                 };
                 var yFn = function(row) {
-                    return row.y ? row.y.getMean() : null;
+                    return row.y ? row.y.getMedian() : null;
                 };
 
                 var scatterLayer2 = new LABKEY.vis.Layer({
@@ -837,7 +919,7 @@
                 var scatter = new LABKEY.vis.Plot({
                     renderTo: 'plot',
                     rendererType: 'd3',
-                    width: 1000,
+                    width: 950,
                     height: 500,
                     labels: {
                         main: {value: 'BAMA MFI Delta'},
@@ -852,8 +934,8 @@
                         hoverText: function(row) {
                             return row[subjectColAlias]
                                     + '\n' + row[visitColAlias]
-                                    + '\n' + row.x.getMean()
-                                    + '\n' + row.y.getMean();
+                                    + '\n' + row.x.getMedian()
+                                    + '\n' + row.y.getMedian();
                         },
                         pointClickFn: function(event, data) {
                             console.log(data);
@@ -932,7 +1014,7 @@
                     renderTo: 'plot',
                     rendererType: 'd3',
                     clipRect: true,
-                    width: 1000,
+                    width: 950,
                     height: 500,
                     labels: {
                         main: {value: 'Categorical, Single-Axis'},
@@ -943,7 +1025,7 @@
                     layers: [boxLayer],
                     aes: {
                         yLeft: function(row) {
-                            return row[yMeasureAlias].getMean();
+                            return row[yMeasureAlias].getMedian();
                         },
                         x: function(row) {
                             return row[xMeasureAlias].getValue();
@@ -979,7 +1061,7 @@
                 renderTo: 'plot',
                 rendererType: 'd3',
                 clipRect: true,
-                width: 1000,
+                width: 950,
                 height: 500,
                 data: data,
                 layers: [
@@ -1010,7 +1092,7 @@
                 renderTo: 'plot',
                 rendererType: 'd3',
                 clipRect: true,
-                width: 1000,
+                width: 950,
                 height: 500,
                 data: data,
                 layers: [
@@ -1038,9 +1120,10 @@
             };
         }
 
-        function getVisMeasure(queryName, colName, isMeasure, values)
+        function getVisMeasure(queryName, colName, isMeasure, values, axisName)
         {
             return new LABKEY.Query.Visualization.Measure({
+                axisName: axisName,
                 schemaName:'study',
                 queryName: queryName,
                 name: colName,
@@ -1050,9 +1133,10 @@
             });
         }
 
-        function getDemVisMeasure(queryName, colName)
+        function getDemVisMeasure(queryName, colName, axisName)
         {
             return new LABKEY.Query.Visualization.Measure({
+                axisName: axisName,
                 schemaName:'study',
                 queryName: queryName,
                 name: colName,

@@ -53,7 +53,7 @@ public class CDSInitializer
         _test._containerHelper.enableModule(_project, "CDS");
         _test._containerHelper.enableModule(_project, "DataIntegration");
 
-        _test.setPipelineRoot(TestFileUtils.getLabKeyRoot() + "/server/optionalModules/cds/test/sampledata");
+        _test.setPipelineRoot(TestFileUtils.getSampleData("MasterDataspace/folder.xml").getParentFile().getParent());
         _test.importFolderFromPipeline("/MasterDataspace/folder.xml");
 
         _test.goToProjectHome();

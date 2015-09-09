@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -19,7 +19,7 @@ Ext.define('Connector.app.view.StudyProducts', {
                 '<div class="detail-right-column">Developer</div>',
             '</div>'
         ),
-        searchFields: ['product_name', 'product_description', 'product_type', 'product_class_label', 'product_subclass', 'product_developer']
+        searchFields: ['product_name', 'product_description', 'product_type', 'product_class', 'product_class_label', 'product_subclass', 'product_developer']
     },
 
     tpl: new Ext.XTemplate(
@@ -36,7 +36,7 @@ Ext.define('Connector.app.view.StudyProducts', {
                     '<div class="detail-middle-column detail-text">',
                         '<div class="detail-black-text">{product_type:htmlEncode}</div>',
                         '<div>',
-                            '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class_label:htmlEncode}</span></span>',
+                            '<span class="detail-gray-text">Class: <span class="detail-black-text">{product_class:htmlEncode}</span></span>',
                         '</div>',
                         '<div>',
                             '<span class="detail-gray-text">Subclass: <span class="detail-black-text">{product_subclass:htmlEncode}</span></span>',
