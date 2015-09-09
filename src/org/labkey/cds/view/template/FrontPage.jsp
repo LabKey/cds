@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>CAVD Dataspace</title>
+    <title>CAVD DataSpace</title>
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/css/application.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/fullpage.js/jquery.fullPage.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/magnific-popup/dist/magnific-popup.css">
@@ -54,7 +54,7 @@
         </div>
         <div class="title">
             <strong>CAVD</strong>
-            <p>Dataspace</p>
+            <p>DataSpace</p>
         </div>
         <div class="links">
             <div class="link hide sign-in">
@@ -102,7 +102,7 @@
                         </a>
                         <div data-action="terms-of-service" class="terms-of-service">
                             <h1>Full Terms of Use agreement</h1>
-                            <p>To access and view data in this site you much agree to the Terms of User for HIV Collaborative DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</p>
+                            <p>To access and view data in this site you much agree to the Terms of User for CAVD DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</p>
                             <h3>GENERAL INFORMATION</h3>
                             <p>The Collaborative Data Space Portal ("Site") is made available by the Statistical Center for HIV/AIDS Research & Prevention ("SCHARP") at Fred Hutchinson Cancer Research Center ("FHCRC") as a test site in support of SCHARP’s project entitled “The HIV Vaccine Research Collaborative Data Space? (“Project?). The purpose of the Project is to design a pilot infrastructure for depositing, annotating, accessing and analyzing research data.</p>
                             <h3>EXTERNAL LINKS</h3>
@@ -191,7 +191,7 @@
             <div class="welcome">
                 <div class="title">
                     <h1>Welcome to the</h1>
-                    <h1>CAVD Dataspace</h1>
+                    <h1>CAVD DataSpace</h1>
                 </div>
             </div>
             <div class="video-container">
