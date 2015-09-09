@@ -15,7 +15,7 @@ Ext.define('Connector.view.Grid', {
 
     columnWidth: 125,
 
-    headerHeight: 160,
+    headerHeight: 180,
 
     titleHeight: 93,
 

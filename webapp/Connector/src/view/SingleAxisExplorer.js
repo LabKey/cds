@@ -18,7 +18,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
     width : '100%',
 
-    dimViewHeight: 156,
+    dimViewHeight: 180,
 
     lowerBufferHeight: 200,
 
@@ -79,14 +79,14 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                         },
                         {
                             xtype: 'button',
-                            margin: '9px 15px 0 0',
+                            margin: '9px 0 0 30px',
                             text: (this.showEmpty ? 'Hide empty' : 'Show empty'),
                             handler: this.onEmptySelection,
                             scope: this
                         },
                         {
                             xtype: 'box',
-                            margin: '15px 30px 0 0',
+                            margin: '45px 30px 0 0',
                             autoEl: {
                                 tag: 'div',
                                 cls: 'label',

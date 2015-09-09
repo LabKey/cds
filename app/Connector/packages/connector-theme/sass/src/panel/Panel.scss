@@ -16,6 +16,10 @@
   z-index: 10000;
 }
 
+.x-grid-body {
+  background: transparent!important;
+}
+
 .x-panel-body-east-view {
   border-left: 1px solid $gray-6;
   margin-top: 4px;
