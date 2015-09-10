@@ -525,14 +525,13 @@
     </table>
     <table tableName="gridbase" tableDbType="TABLE">
         <columns>
-            <column columnName="subjectid"/>
-            <column columnName="study"/>
-            <column columnName="treatmentsummary"/>
-            <column columnName="subjectvisit"/>
-            <column columnName="participantsequencenum"/>
-            <column columnName="sequencenum"/>
-            <column columnName="container"/>
-            <column columnName="participantcontainer"/>
+            <column columnName="SubjectId"/>
+            <column columnName="Study"/>
+            <column columnName="TreatmentSummary"/>
+            <column columnName="SubjectVisit"/>
+            <column columnName="ParticipantSequenceNum"/>
+            <column columnName="SequenceNum"/>
+            <column columnName="Container"/>
         </columns>
     </table>
 </tables>

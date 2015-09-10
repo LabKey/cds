@@ -103,7 +103,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     getGridBaseColumnAlias : function(colName) {
-        return Connector.studyContext.schemaName + '_' + Connector.studyContext.gridBase + '_' + colName;
+        return Connector.studyContext.gridBaseSchema + '_' + Connector.studyContext.gridBase + '_' + colName;
     },
 
     /**
@@ -140,7 +140,7 @@ Ext.define('Connector.controller.Query', {
 
             this._gridMeasures = [];
 
-            var schema = Connector.studyContext.schemaName,
+            var schema = Connector.studyContext.gridBaseSchema,
                 query = Connector.studyContext.gridBase,
                 defaultAliases = this.getDefaultGridAliases();
 
@@ -202,7 +202,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     addMeasure : function(measure) {
-        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
+        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase()))) {
             var sourceKey = measure.schemaName + '|' + measure.queryName;
             var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
 
@@ -242,7 +242,7 @@ Ext.define('Connector.controller.Query', {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
-        return this.MEASURE_STORE.getById(alias);
+        return this.MEASURE_STORE.getById(alias.toLowerCase());
     },
 
     /**
@@ -538,15 +538,15 @@ Ext.define('Connector.controller.Query', {
         if (!this._dataSorts) {
             // TODO: Source these differently? This is requiring us to split these out
             this._dataSorts = [{
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
                 name: 'Container'
             },{
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
                 name: 'SubjectId'
             },{
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
                 name: 'SubjectVisit'
             }];

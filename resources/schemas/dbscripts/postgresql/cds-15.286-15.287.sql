@@ -16,8 +16,7 @@
 
 DROP TABLE IF EXISTS cds.GridBase;
 
-CREATE TABLE cds.GridBase
-(
+CREATE TABLE cds.GridBase (
   SubjectId VARCHAR(250),
   Study VARCHAR(250),
   TreatmentSummary VARCHAR(250),
@@ -26,9 +25,8 @@ CREATE TABLE cds.GridBase
   ParticipantSequenceNum VARCHAR(250),
   SequenceNum NUMERIC(15,4),
   Container ENTITYID,
-  participantContainer ENTITYID,
 
-  CONSTRAINT PK_GridBase_ParticipantSequenceNum PRIMARY KEY (participantContainer, ParticipantSequenceNum)
+  CONSTRAINT PK_GridBase_ParticipantSequenceNum PRIMARY KEY (Container, ParticipantSequenceNum)
 );
 
 CREATE INDEX IX_GridBase_Study ON cds.GridBase(Study);

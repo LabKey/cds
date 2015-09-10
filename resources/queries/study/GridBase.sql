@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* TODO This is a temporary fix, should update app to query cds.GridBase directly */
-
-SELECT SubjectId, Study, TreatmentSummary, SubjectVisit, ParticipantSequenceNum, SequenceNum, participantContainer AS Container
+/* TODO This is a temporary fix, should update app to query cds.GridBase directly, however, cdsGetData does not currently allow for cross schema joining */
+SELECT
+SubjectId,
+Study,
+TreatmentSummary,
+SubjectVisit,
+ParticipantSequenceNum,
+SequenceNum,
+Container
 FROM cds.GridBase

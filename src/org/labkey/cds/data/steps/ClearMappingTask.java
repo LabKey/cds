@@ -63,6 +63,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
         for (Container container : project.getChildren())
         {
             clearTable("cds", "facts", container, logger);
+            clearTable("cds", "GridBase", container, logger);
             clearTable("cds", "visittagalignment", container, logger);
             clearTable("cds", "visittagmap", container, logger);
             clearTable("cds", "treatmentarmsubjectmap", container, logger);
