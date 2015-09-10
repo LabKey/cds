@@ -527,10 +527,11 @@ Ext.define('Connector.view.Chart', {
     },
 
     pointHoverText : function(point, data) {
-        var config, content = '', colon = ': ', linebreak = ',<br/>';
+        var config, val, content = '', colon = ': ', linebreak = ',<br/>';
 
         if (data.xname) {
-            content += Ext.htmlEncode(data.xname) + colon + data.x;
+            val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
+            content += Ext.htmlEncode(data.xname) + colon + val;
         }
         content += (content.length > 0 ? linebreak : '') + Ext.htmlEncode(data.yname) + colon + data.y;
         if (data.colorname) {

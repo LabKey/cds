@@ -59,7 +59,7 @@ Ext.define('Connector.view.GridPane', {
                         }
 
                         // issue 21879: split Equals One Of filter values into new lines
-                        var filterStr = LABKEY.app.model.Filter.getGridLabel(gf);
+                        var filterStr = Connector.model.Filter.getGridLabel(gf);
                         var filterType = gf.getFilterType().getDisplayText();
                         if (filterType == 'Equals One Of') {
                             var values = [];

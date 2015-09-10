@@ -39,6 +39,12 @@ Ext.define('Connector.model.Filter', {
 
                 Connector.model.Filter.loaded = true;
             }
+        },
+        getGridLabel : function(gf) {
+            if (gf.getFilterType().getURLSuffix() === 'dategte' || gf.getFilterType().getURLSuffix() === 'datelte') {
+                return LABKEY.app.model.Filter.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + ChartUtils.tickFormat.date(gf.getValue());
+            }
+            return LABKEY.app.model.Filter.getGridLabel(gf);
         }
     }
 });

@@ -30,7 +30,7 @@ Ext.define('Connector.utility.Chart', {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.
             var d = new Date(val);
-            return d.toDateString();
+            return d.toLocaleDateString();
         },
         empty : function() {
             return '';

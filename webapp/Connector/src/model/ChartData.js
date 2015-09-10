@@ -355,8 +355,10 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
-        this.setMinAxisDomain(yDomain, 'y', negY);
-        this.setMinAxisDomain(xDomain, 'x', negX);
+        this.setAxisDomain(yDomain, 'y', negY, y.type);
+        if (x) {
+            this.setAxisDomain(xDomain, 'x', negX, x.type);
+        }
 
         this.set({
             containerAlignmentDayMap: containerAlignmentDayMap,
@@ -378,11 +380,18 @@ Ext.define('Connector.model.ChartData', {
         });
     },
 
-    setMinAxisDomain : function(axisDomain, axis, hasNegVal) {
+    setAxisDomain : function(axisDomain, axis, hasNegVal, type) {
         // issue 24074: set the min to 1 instead of 0 if log scale
         var min  = this.get('plotScales')[axis] == 'log' && !hasNegVal ? 1 : 0;
 
-        if (axisDomain[0] != null) {
+        if (type == 'TIMESTAMP') {
+            // if the min and max dates are the same, +/- 3
+            if (axisDomain[0] != null && axisDomain[0] == axisDomain[1]) {
+                axisDomain[0] = new Date(axisDomain[0].getFullYear(),axisDomain[0].getMonth(),axisDomain[0].getDate() - 3);
+                axisDomain[1] = new Date(axisDomain[1].getFullYear(),axisDomain[1].getMonth(),axisDomain[1].getDate() + 3);
+            }
+        }
+        else if (axisDomain[0] != null) {
             axisDomain[0] = Math.min(axisDomain[0], min);
         }
     },
@@ -430,7 +439,7 @@ Ext.define('Connector.model.ChartData', {
     _getXValue : function(measure, alias, row, xIsContinuous) {
         if (row.x.hasOwnProperty('isUnique')) {
             if (Ext.isDefined(row.x.value) && row.x.value != null) {
-                return row.x.value;
+                return this._getValue(row.x.value, measure.type);
             }
             return xIsContinuous ? null : 'undefined';
         }
@@ -456,24 +465,22 @@ Ext.define('Connector.model.ChartData', {
         return null;
     },
 
-    _getValue : function(measure, colName, row) {
-        var val, type = measure.type;
+    _getValue : function(value, type) {
+        var val;
 
         if (type === 'INTEGER') {
-            val = parseInt(row[colName]);
+            val = parseInt(value);
             return this.isValidNumber(val) ? val : null;
         }
         else if (type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
-            val = parseFloat(row[colName]);
+            val = parseFloat(value);
             return this.isValidNumber(val) ? val : null;
         }
         else if (type === 'TIMESTAMP') {
-            val = row[colName];
-            return val !== undefined && val !== null ? new Date(val) : null;
+            return Ext.isString(value) ? new Date(value) : null;
         }
 
-        // Assume categorical.
-        return (val !== undefined) ? row[colName] : null;
+        return value;
     },
 
     isValidNumber : function(number) {

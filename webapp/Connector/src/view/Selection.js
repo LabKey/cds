@@ -174,11 +174,8 @@ Ext.define('Connector.view.Selection', {
                             var val = filter.getValue();
                             var fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
 
-                            if (filter.getFilterType().getURLSuffix() === 'dategte') {
-                                var d = new Date(val);
-                                var year = (d.getFullYear()%1000);
-                                year = year.toString().length == 1 ? "0" + year : year;
-                                val = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
+                            if (filter.getFilterType().getURLSuffix() === 'dategte' || filter.getFilterType().getURLSuffix() === 'datelte') {
+                                val = ChartUtils.tickFormat.date(val);
                             }
 
                             filterValString += sep + fil + ' ' + val;
