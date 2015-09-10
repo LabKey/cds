@@ -31,7 +31,7 @@ Ext.define('Connector.view.Chart', {
 
     minStudyAxisHeight: 75,
 
-    disableAutoMessaging: false,
+    disableAutoMsg: false,
 
     constructor : function(config) {
 
