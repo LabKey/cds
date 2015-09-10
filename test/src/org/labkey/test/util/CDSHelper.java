@@ -61,11 +61,13 @@ public class CDSHelper
     public static final String[] I_TYPES = {"Cellular", "Humoral"};
     public static final String[] H_TYPES = {"HIV Immunogenicity"};
     public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
-    public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody): Luminex Mutiplex Assay",
-            "ICS (Intracellular Cytokine Staining): Flow Cytometry Fluorescence-Activated Cell Sorting (FACS)",
-            "IFNg ELISpot (IFNg ELISpot): ELISpot", "NAB (HIV Neutralizing Antibody): Fluorimeter"};
+    public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
+            "ICS (Intracellular Cytokine Staining)",
+            "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
-    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Visit Day", "Target study day defined for a study visit. "};
+    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
+    public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_TAB_DATA = {"00MSA 4076 gp140", "P66 (RT)"};
+    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"ANY HIV", "ANY POL: POL1, POL2", "ANY NEF: NEF", "ANY HIV:", "ANY GAG: GAG/POL, GAG1, GAG2/POL", "ANY ENV: ENV1, ENV2, ENV3"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;

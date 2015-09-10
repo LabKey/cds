@@ -1090,18 +1090,18 @@ public class CDSTest extends CDSReadOnlyTest
 
     }
 
-    // TODO Putting this test on hold. "Learn about Assays" is a future feature.
-    @Test @Ignore
+    @Test
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays);
 
-        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").containing(assays.get(0)));
+        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
 
+        //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         waitForElement(Locator.tagWithClass("div", "list-entry-container"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
@@ -1110,6 +1110,24 @@ public class CDSTest extends CDSReadOnlyTest
 
         waitForElement(Locator.tagWithClass("div", "list-entry-container"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
+
+        //testing BAMA antigens page
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_TAB_DATA);
+
+        refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
+
+        //testing ICS antigens page
+        waitAndClick(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/h2").containing(assays.get(1)));
+        waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+
+        refresh();
+
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
     }
 
     // TODO Putting this test on hold. "Learn about Sites " is a future feature.
