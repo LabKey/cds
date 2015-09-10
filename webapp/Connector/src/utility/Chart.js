@@ -249,13 +249,14 @@ Ext.define('Connector.utility.Chart', {
 
         // Issue 20116
         if (isX && isY) { // 2D
-            return x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1];
+            return x != null && x > xExtent[0] && x < xExtent[1] &&
+                   y != null && y > yExtent[0] && y < yExtent[1];
         }
         else if (isX) { // 1D
-            return x > xExtent[0] && x < xExtent[1];
+            return x != null && x > xExtent[0] && x < xExtent[1];
         }
         else if (isY) { // 1D
-            return y > yExtent[0] && y < yExtent[1];
+            return y != null && y > yExtent[0] && y < yExtent[1];
         }
 
         return false;
