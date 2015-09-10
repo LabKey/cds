@@ -791,10 +791,11 @@
         <description>The name of the panel of proteins for which a magnitude and response call are calculated. The magnitude and response calls are the maximum of the values of magnitude and response for the proteins making up the panel.</description>
         <dimension>true</dimension>
       </column>
-      <column columnName="antigen_isotype">
+      <column columnName="antibody_isotype">
         <datatype>varchar</datatype>
         <columnTitle>Isotype</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
+        <dimension>true</dimension>
       </column>
       <column columnName="clade">
         <datatype>varchar</datatype>

@@ -712,13 +712,13 @@ Ext.define('Connector.view.Grid', {
             var exportParams = {
                 schemaName: [model.get('schemaName')],
                 "query.queryName": [model.get('queryName')],
-                "query.showRows": ["ALL"],
+                "query.showRows": ['ALL'],
                 columnNames: [],
                 columnAliases: []
             };
 
             // apply filters
-            Ext.each(model.getFilterArray(true /* includeBaseFilters */), function(filter) {
+            Ext.each(model.getBaseFilters(), function(filter) {
                 exportParams[filter.getURLParameterName()] = [filter.getURLParameterValue()];
             });
 

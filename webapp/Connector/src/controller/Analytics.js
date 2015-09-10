@@ -10,16 +10,19 @@ Ext.define('Connector.controller.Analytics', {
     statics: {
         isInspectletEnabled: function()
         {
+            // This variable is defined in the inspectlet snippet
             return typeof _insp !== 'undefined';
         },
 
         isGAClassicEnabled: function ()
         {
+            // This variable is defined in the GA snippet
             return typeof _gaq !== 'undefined';
         },
 
         isGAUniversalEnabled: function()
         {
+            // This variable is defined in the GA snippet
             return typeof ga !== 'undefined';
         },
 
@@ -31,16 +34,22 @@ Ext.define('Connector.controller.Analytics', {
         trackPageview : function(path)
         {
             if (Connector.controller.Analytics.isGAClassicEnabled())
-                _gaq.push(['_trackPageview', path])
+                _gaq.push(['_trackPageview', path]);
             else if (Connector.controller.Analytics.isGAUniversalEnabled())
                 ga('send', 'pageview', path);
         },
 
-        setVariable: function(index, value, key, scope) {
+        setIndexedVariable: function(index, value, key, scope) {
             if (Connector.controller.Analytics.isGAClassicEnabled())
                 _gaq.push(['_setCustomVar', index, key, value, scope]);
             //else if (Connector.controller.Analytics.isGAUniversalEnabled())
             //    ga('set', 'dimension' + index, value);
+        },
+
+        setVariable : function(variable, value)
+        {
+            if (Connector.controller.Analytics.isGAUniversalEnabled())
+                ga('set', variable, value);
         },
 
         deleteVariable: function(index) {
@@ -99,16 +108,20 @@ Ext.define('Connector.controller.Analytics', {
 
                 if (Connector.controller.Analytics.isGAClassicEnabled())
                 {
-                    Connector.controller.Analytics.setVariable(1, 'user', LABKEY.user.email, 2);
+                    Connector.controller.Analytics.setIndexedVariable(1, 'user', LABKEY.user.userId, 2);
                 }
-                Connector.controller.Analytics.trackEvent('User', 'Login', LABKEY.user.email);
+                else if (Connector.controller.Analytics.isGAUniversalEnabled())
+                {
+                    Connector.controller.Analytics.setVariable('userId', LABKEY.user.userId);
+                }
+                Connector.controller.Analytics.trackEvent('User', 'Login', LABKEY.user.userId);
             }
         });
 
         this.control('connectorheader', {
             userLogout: function() {
                 Connector.controller.Analytics.deleteVariable(1);
-                Connector.controller.Analytics.trackEvent('User', 'Logout', LABKEY.user.email);
+                Connector.controller.Analytics.trackEvent('User', 'Logout', LABKEY.user.userId);
             }
         });
 
@@ -131,7 +144,8 @@ Ext.define('Connector.controller.Analytics', {
 
         // tracking page views
         this.application.on('route', function(controller, view, viewContext) {
-           Connector.controller.Analytics.trackPageview(LABKEY.contextPath + LABKEY.container.path + "/app.view#" + controller);
+            Connector.controller.Analytics.setVariable('userId', LABKEY.user.userId);
+            Connector.controller.Analytics.trackPageview(LABKEY.contextPath + LABKEY.container.path + "/app.view#" + controller);
         });
 
 

@@ -9,5 +9,5 @@ Ext.define('Connector.plugin.LoadingMask', {
 
     alias: 'plugin.loadingmask',
 
-    productionGifPath: '/production/Connector/resources/images/mask/'
+    productionGifPath: Connector.resourceContext.imgPath + '/mask/'
 });

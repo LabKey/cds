@@ -18,6 +18,7 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'product_name'},
         {name: 'product_type'},
         {name: 'product_subclass'},
+        {name: 'product_class'},
         {name: 'product_class_label'},
         {name: 'product_developer'},
         {name: 'product_manufacturer'},

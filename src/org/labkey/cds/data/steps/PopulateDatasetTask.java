@@ -95,55 +95,52 @@ public class PopulateDatasetTask extends AbstractPopulateTask
             sql.add(container.getName());
 
             Map<String, Object>[] subjects = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (subjects.length > 0)
+            try
             {
-                try
+                targetSchema = DefaultSchema.get(user, container).getSchema("study");
+
+                if (null == targetSchema)
+                    throw new PipelineJobException("Unable to find study schema for " + container.getPath());
+
+                targetDataset = targetSchema.getTable(datasetName);
+                targetService = targetDataset.getUpdateService();
+
+                if (null == targetService)
+                    throw new PipelineJobException("Unable to find update service for " + targetSchema.getName() + "." + targetDataset.getName() + " in " + container.getPath());
+
+                sql = new SQLFragment("SELECT * FROM ").append(targetDataset).append(" LIMIT 1");
+                Map<String, Object>[] rows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
+                if (rows.length > 0)
                 {
-                    targetSchema = DefaultSchema.get(user, container).getSchema("study");
+                    logger.info("Starting truncate of " + datasetName + " dataset. (" + container.getName() + ")");
+                    start = System.currentTimeMillis();
+                    targetService.truncateRows(user, container, null, null);
+                    finish = System.currentTimeMillis();
+                    logger.info("Truncate took " + DateUtil.formatDuration(finish - start) + ".");
+                }
 
-                    if (null == targetSchema)
-                        throw new PipelineJobException("Unable to find study schema for " + container.getPath());
-
-                    targetDataset = targetSchema.getTable(datasetName);
-                    targetService = targetDataset.getUpdateService();
-
-                    if (null == targetService)
-                        throw new PipelineJobException("Unable to find update service for " + targetSchema.getName() + "." + targetDataset.getName() + " in " + container.getPath());
-
-                    sql = new SQLFragment("SELECT * FROM ").append(targetDataset).append(" LIMIT 1");
-                    Map<String, Object>[] rows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
-                    if (rows.length > 0)
-                    {
-                        logger.info("Starting truncate of " + datasetName + " dataset. (" + container.getName() + ")");
-                        start = System.currentTimeMillis();
-                        targetService.truncateRows(user, container, null, null);
-                        finish = System.currentTimeMillis();
-                        logger.info("Truncate took " + DateUtil.formatDuration(finish - start) + ".");
-                    }
-
+                if (subjects.length > 0)
+                {
                     logger.info("Inserting " + subjects.length + " rows into \"" + targetDataset.getName() + "\" dataset. (" + container.getName() + ")");
-                    if (subjects.length > 0)
-                    {
-                        start = System.currentTimeMillis();
-                        ListofMapsDataIterator maps = new ListofMapsDataIterator(subjects[0].keySet(), Arrays.asList(subjects));
-                        targetDataset.getUpdateService().importRows(user, container, maps, errors, null, null);
-                        finish = System.currentTimeMillis();
-                        logger.info("Insert took " + DateUtil.formatDuration(finish - start) + ".");
-                        insertCount += subjects.length;
-                    }
+                    start = System.currentTimeMillis();
+                    ListofMapsDataIterator maps = new ListofMapsDataIterator(subjects[0].keySet(), Arrays.asList(subjects));
+                    targetDataset.getUpdateService().importRows(user, container, maps, errors, null, null);
+                    finish = System.currentTimeMillis();
+                    logger.info("Insert took " + DateUtil.formatDuration(finish - start) + ".");
+                    insertCount += subjects.length;
+                }
 
-                    if (errors.hasErrors())
+                if (errors.hasErrors())
+                {
+                    for (ValidationException error : errors.getRowErrors())
                     {
-                        for (ValidationException error : errors.getRowErrors())
-                        {
-                            logger.warn(error.getMessage());
-                        }
+                        logger.warn(error.getMessage());
                     }
                 }
-                catch (Exception e)
-                {
-                    logger.error(e.getMessage(), e);
-                }
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
             }
         }
         long fullFinish = System.currentTimeMillis();

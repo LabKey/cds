@@ -94,7 +94,7 @@ Ext.define("Connector.view.Header", {
             flex: 4,
             tpl: [
                 '<img src="{imgSrc}">',
-                '<h2>HIV VACCINE <span>Collaborative DataSpace</span></h2>'
+                '<h2>CAVD <span>DataSpace</span></h2>'
             ],
             data: {
                 imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
