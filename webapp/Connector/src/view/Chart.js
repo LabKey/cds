@@ -31,6 +31,8 @@ Ext.define('Connector.view.Chart', {
 
     minStudyAxisHeight: 75,
 
+    disableAutoMessaging: false,
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -54,6 +56,9 @@ Ext.define('Connector.view.Chart', {
             if (Ext.isNumber(num)) {
                 this.binRowLimit = num;
             }
+        }
+        if (Ext.isDefined(params['_disableAutoMsg'])) {
+            this.disableAutoMsg = true;
         }
 
         this._ready = false;
@@ -1933,7 +1938,7 @@ Ext.define('Connector.view.Chart', {
 
         // Show binning message for a few seconds if first time user hits it
         var msgKey = 'HEATMAP_MODE';
-        if (this.showPointsAsBin && Connector.getService('Messaging').isAllowed(msgKey)) {
+        if (!this.disableAutoMsg && this.showPointsAsBin && Connector.getService('Messaging').isAllowed(msgKey)) {
             this.showWhyBinning();
             this.hideHeatmapModeTask.delay(5000);
             Connector.getService('Messaging').block(msgKey);
@@ -1961,7 +1966,7 @@ Ext.define('Connector.view.Chart', {
 
         // Show median message for a few seconds if first time user hits it
         var msgKey = 'MEDIAN_MODE';
-        if (this.showAsMedian && Connector.getService('Messaging').isAllowed(msgKey)) {
+        if (!this.disableAutoMsg && this.showAsMedian && Connector.getService('Messaging').isAllowed(msgKey)) {
             this.showWhyMedian();
             this.hideMedianModeTask.delay(5000);
             Connector.getService('Messaging').block(msgKey);
