@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 // This is a singleton for charting utilities
 Ext.define('Connector.utility.Chart', {
 
@@ -345,18 +350,5 @@ Ext.define('Connector.utility.Chart', {
             }
 
         }, this);
-    },
-
-    escapeHTML : function(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-    },
-
-    unescapeHTML : function(escapedStr) {
-        var div = document.createElement('div');
-        div.innerHTML = escapedStr;
-        var child = div.childNodes[0];
-        return child ? child.nodeValue : '';
     }
 });

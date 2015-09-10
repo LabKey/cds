@@ -6,7 +6,7 @@
 Ext.define('Connector.controller.State', {
     extend: 'LABKEY.app.controller.State',
 
-    defaultTitle: 'HIV Vaccine Collaborative Dataspace',
+    defaultTitle: 'CAVD DataSpace',
 
     subjectName: 'Subject',
 

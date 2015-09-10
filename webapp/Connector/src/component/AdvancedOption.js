@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+ */
 Ext.define('Connector.component.AdvancedOptionBase', {
 
     extend: 'Ext.form.FieldSet',
@@ -286,7 +291,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
             if (value != null) {
                 var valueObj = {subjectCount: -1};
                 valueObj[this.storeValueField] = value;
-                valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ');
+                valueObj[this.storeLabelField] = value.toString().replace(/\|/g, ' ').replace(/null/g, '[Blank]');
                 data.push(valueObj);
             }
         }, this);
@@ -294,6 +299,7 @@ Ext.define('Connector.component.AdvancedOptionDimension', {
         this.store = Ext.create('Ext.data.Store', {
             measureSet: measureSet,
             fields: [this.storeValueField, this.storeLabelField, 'subjectCount'],
+            sorters: [{property: this.storeLabelField}],
             data: data
         });
 

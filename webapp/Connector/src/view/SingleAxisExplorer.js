@@ -121,7 +121,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             }
         }, this);
 
-        return Ext.create('Ext.Panel', {
+        return Ext.create('Ext.panel.Panel', {
             ui    : 'custom',
             id    : 'single-axis-explorer',
             bodyStyle : 'overflow-y: auto;',
@@ -391,6 +391,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     loadStore : function() {
         this.callParent();
         this.fireEvent('showLoad', this);
+        this.resizeTask.delay(100, null, null, [this.up('#single-axis-explorer')]);
     },
 
     onMaxCount : function(count) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -31,165 +31,218 @@ Ext.define('Connector.store.FilterStatus', {
     _load : function() {
         Connector.getState().onMDXReady(function(mdx) {
             this.fireEvent('beforeload', this);
-
-            if (!this.requests) {
-                this.requests = this.bindRequestConfigs(mdx);
-            }
-            this.loadGroups();
+            this.makeRequest(mdx);
         }, this);
     },
 
-    bindRequestConfigs : function(mdx) {
+    makeRequest : function(mdx) {
 
-        var request = {
-            configs: [],
-            success: this.loadResults,
-            scope: this
-        };
+        var rows = [],
+            configs = [],
+            selConfigs = [],
+            hasSelections = Connector.getState().hasSelections(),
+            dims = mdx.getDimensions(),
+            hiers,
+            lvls, lvl,
+            d, h, l;
 
-        this.sels = {};
+        //
+        // Binds cube metadata on a per level basis
+        //
+        for (d=0; d < dims.length; d++) {
+            hiers = dims[d].getHierarchies();
+            for (h=0; h < hiers.length; h++) {
+                lvls = hiers[h].levels;
+                for (l=0; l < lvls.length; l++) {
+                    lvl = lvls[l];
+                    if (lvl.activeCount) {
 
-        if (mdx) {
-            //
-            // Binds cube metadata on a per level basis
-            //
-            var dims = mdx.getDimensions(), requestId = 0;
-            for (var d=0; d < dims.length; d++) {
-                var hiers = dims[d].getHierarchies();
-                for (var h=0; h < hiers.length; h++) {
-                    var lvls = hiers[h].levels, lvl;
-                    for (var l=0; l < lvls.length; l++) {
-                        lvl = lvls[l];
-                        if (lvl.activeCount) {
+                        configs.push({
+                            level: lvl.uniqueName,
+                            dd: dims[d].uniqueName,
+                            hh: hiers[h].uniqueName,
+                            label: {
+                                singular: lvl.countSingular,
+                                plural: lvl.countPlural
+                            },
+                            highlight: lvl.activeCount === 'highlight',
+                            activeCountLink: lvl.activeCountLink === true,
+                            dataBasedCount: lvl.dataBasedCount,
+                            cellbased: lvl.cellbased,
+                            priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
+                        });
 
-                            requestId++;
-
-                            //
-                            // Filter based request
-                            //
-                            request.configs.push({
-                                requestId: requestId,
-                                onRows: [ { level: lvl.uniqueName } ],
-                                useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
-                                dd: dims[d].uniqueName,
-                                hh: hiers[h].uniqueName,
-                                ll: lvl.uniqueName,
-                                label: {
-                                    singular: lvl.countSingular,
-                                    plural: lvl.countPlural
-                                },
-                                highlight: lvl.activeCount === 'highlight',
-                                activeCountLink: lvl.activeCountLink === true,
-                                dataBasedCount: lvl.dataBasedCount,
-                                cellbased: lvl.cellbased,
-                                priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
+                        if (hasSelections) {
+                            selConfigs.push({
+                                level: lvl.uniqueName
                             });
-
-                            //
-                            // Selection based request
-                            //
-                            this.sels[requestId] = {
-                                requestId: requestId,
-                                selectionBased: true,
-                                onRows: [ { level: lvl.uniqueName } ],
-                                useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
-                                cellbased: lvl.cellbased
-                            };
                         }
                     }
                 }
             }
-
-            // sort according to priority
-            request.configs.sort(function(a,b) {
-                return a.priority - b.priority;
-            });
-
-            // tack on selections
-            for (var s in this.sels) {
-                if (this.sels.hasOwnProperty(s)) {
-                    request.configs.push(this.sels[s]);
-                    this.sels[s] = request.configs[request.configs.length-1];
-                }
-            }
         }
 
-        return request;
-    },
+        var querySelections = hasSelections && selConfigs.length > 0,
+            flight = ++this.flight,
+            countResult, selResult;
 
-    loadGroups : function() {
-        this.flight++;
-        var requests = this.requests;
-        requests.configs[0].flight = this.flight;
-
-        Connector.getState().onMDXReady(function(mdx) {
-            mdx.queryMultiple(requests.configs, requests.success, requests.failure, requests.scope);
-        }, this);
-    },
-
-    loadResults : function(qrArray, configArray) {
-        if (configArray[0].flight != this.flight) {
-            return;
-        }
-
-        var recs = [], rec = {}, count, subcount, qrSels = {};
-
-        // pick out selections
-        for (var i=0; i < qrArray.length; i++) {
-            if (configArray[i]['selectionBased'] === true) {
-                qrSels[configArray[i].requestId] = qrArray[i];
-            }
-        }
-
-        var hasSelections = Connector.getState().hasSelections(), qr, ca;
-        for (i=0; i < qrArray.length; i++) {
-
-            qr = qrArray[i];
-            ca = configArray[i];
-
-            if (ca['selectionBased'] === true) {
-                continue;
-            }
-
-            count = 0; subcount = 0;
-            if (ca.cellbased) {
-
-                var t = qr;
-                for (var c=0; c < t.cells.length; c++) {
-
-                    if (t.cells[c][0].value > 0)
-                        count++;
-                }
-
-                t = qrSels[ca.requestId];
-                for (c=0; c < t.cells.length; c++) {
-
-                    if (t.cells[c][0].value > 0)
-                        subcount++;
+        var _load = function() {
+            if (querySelections) {
+                if (Ext.isDefined(countResult) && Ext.isDefined(selResult)) {
+                    if (this.flight === configs[0].flight &&
+                        this.flight === selConfigs[0].flight) {
+                        this.loadResults(mdx, countResult, configs, selResult);
+                    }
                 }
             }
             else {
-                if (qr.cells.length > 0)
-                    count = qr.cells[0][0].value;
-                if (qrSels[ca.requestId].cells.length > 0)
-                    subcount = qrSels[ca.requestId].cells[0][0].value;
+                if (Ext.isDefined(countResult)) {
+                    if (this.flight === configs[0].flight) {
+                        this.loadResults(mdx, countResult, configs);
+                    }
+                }
             }
+        };
+
+        var handleCounts = function(results) {
+            countResult = results; _load.call(this);
+        };
+
+        var handleSelections = function(results) {
+            selResult = results; _load.call(this);
+        };
+
+        if (configs.length > 0) {
+
+            configs.sort(function(a, b) {
+                return a.priority - b.priority;
+            });
+
+            for (d=0; d < configs.length; d++) {
+                rows.push({
+                    level: configs[d].level
+                });
+            }
+
+            configs[0].flight = flight;
+            mdx.query({
+                onRows: [{
+                    operator: 'UNION',
+                    arguments: rows
+                }],
+                useNamedFilters: [LABKEY.app.constant.STATE_FILTER],
+                success: handleCounts,
+                scope: this
+            });
+
+            if (querySelections) {
+
+                selConfigs[0].flight = flight;
+                mdx.query({
+                    onRows: [{
+                        operator: 'UNION',
+                        arguments: selConfigs
+                    }],
+                    useNamedFilters: [LABKEY.app.constant.STATE_FILTER, LABKEY.app.constant.SELECTION_FILTER],
+                    success: handleSelections,
+                    scope: this
+                });
+            }
+            else {
+                handleSelections.call(this);
+            }
+        }
+    },
+
+    loadResults : function(mdx, result, configs, selResult) {
+
+        var lvlCounts = {},
+            selLvlCounts = {},
+            lvlUniqueName,
+            recs = [],
+            rec,
+            _rows = result.axes[1].positions,
+            _cells = result.cells,
+            hasSelections = Ext.isDefined(selResult),
+
+            // If we have selections, but no results are returned there are no rows returned.
+            // Thus, when this is true we'll display (0 / count) instead of just (count)
+            zeroSelections = false,
+            _counts, r;
+
+        //
+        // process counts by level
+        //
+        for (r=0; r < _rows.length; r++) {
+            lvlUniqueName = _rows[r][0].level.uniqueName;
+            if (lvlCounts[lvlUniqueName]) {
+                lvlCounts[lvlUniqueName].rowCount++;
+            }
+            else {
+                lvlCounts[lvlUniqueName] = {
+                    count: _cells[r][0].value,
+                    subCount: -1,
+                    rowCount: 1,
+                    subRowCount: -1
+                }
+            }
+        }
+
+        if (hasSelections) {
+
+            _rows = selResult.axes[1].positions;
+            _cells = selResult.cells;
+
+            if (_rows.length > 0) {
+                for (r=0; r < _rows.length; r++) {
+                    lvlUniqueName = _rows[r][0].level.uniqueName;
+                    if (selLvlCounts[lvlUniqueName]) {
+                        selLvlCounts[lvlUniqueName].rowCount++;
+                    }
+                    else {
+                        selLvlCounts[lvlUniqueName] = {
+                            count: _cells[r][0].value,
+                            rowCount: 1
+                        }
+                    }
+                }
+            }
+            else {
+                zeroSelections = true;
+            }
+        }
+
+        Ext.each(configs, function(ca) {
+            _counts = lvlCounts[ca.level];
 
             rec = {
                 dimension: ca.dd,
                 hierarchy: ca.hh,
-                level: ca.ll,
-                count: count,
-                subcount: hasSelections ? subcount : -1,
+                level: ca.level,
                 highlight: ca.highlight,
                 activeCountLink: ca.activeCountLink,
                 dataBasedCount: ca.dataBasedCount
             };
 
+            if (_counts) {
+                rec.count = ca.cellbased ? _counts.rowCount : _counts.count;
+
+                if (hasSelections && selLvlCounts[ca.level]) {
+                    rec.subcount = ca.cellbased ? selLvlCounts[ca.level].rowCount : selLvlCounts[ca.level].count;
+                }
+                else {
+                    rec.subcount = zeroSelections ? 0 : -1;
+                }
+            }
+            else {
+                rec.count = 0;
+                rec.subcount = zeroSelections ? 0 : -1;
+            }
+
             rec.label = rec.count != 1 ? ca.label.plural : ca.label.singular;
 
             recs.push(rec);
-        }
+        });
 
         this.loadData(recs);
         this.fireEvent('load', this);

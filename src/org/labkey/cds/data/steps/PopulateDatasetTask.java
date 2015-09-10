@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
@@ -5,6 +20,7 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.etl.ListofMapsDataIterator;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
@@ -73,55 +89,58 @@ public class PopulateDatasetTask extends AbstractPopulateTask
         // Assumes all child containers are studies
         for (Container container : project.getChildren())
         {
+            if (job.checkInterrupted())
+                return;
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
             sql.add(container.getName());
 
             Map<String, Object>[] subjects = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (subjects.length > 0)
+            try
             {
-                try
+                targetSchema = DefaultSchema.get(user, container).getSchema("study");
+
+                if (null == targetSchema)
+                    throw new PipelineJobException("Unable to find study schema for " + container.getPath());
+
+                targetDataset = targetSchema.getTable(datasetName);
+                targetService = targetDataset.getUpdateService();
+
+                if (null == targetService)
+                    throw new PipelineJobException("Unable to find update service for " + targetSchema.getName() + "." + targetDataset.getName() + " in " + container.getPath());
+
+                sql = new SQLFragment("SELECT * FROM ").append(targetDataset).append(" LIMIT 1");
+                Map<String, Object>[] rows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
+                if (rows.length > 0)
                 {
-                    targetSchema = DefaultSchema.get(user, container).getSchema("study");
+                    logger.info("Starting truncate of " + datasetName + " dataset. (" + container.getName() + ")");
+                    start = System.currentTimeMillis();
+                    targetService.truncateRows(user, container, null, null);
+                    finish = System.currentTimeMillis();
+                    logger.info("Truncate took " + DateUtil.formatDuration(finish - start) + ".");
+                }
 
-                    if (null == targetSchema)
-                        throw new PipelineJobException("Unable to find study schema for " + container.getPath());
-
-                    targetDataset = targetSchema.getTable(datasetName);
-                    targetService = targetDataset.getUpdateService();
-
-                    if (null == targetService)
-                        throw new PipelineJobException("Unable to find update service for " + targetSchema.getName() + "." + targetDataset.getName() + " in " + container.getPath());
-
-                    sql = new SQLFragment("SELECT * FROM ").append(targetDataset).append(" LIMIT 1");
-                    Map<String, Object>[] rows = new SqlSelector(targetDataset.getSchema(), sql).getMapArray();
-                    if (rows.length > 0)
-                    {
-                        logger.info("Starting truncate of " + datasetName + " dataset. (" + container.getName() + ")");
-                        start = System.currentTimeMillis();
-                        targetService.truncateRows(user, container, null, null);
-                        finish = System.currentTimeMillis();
-                        logger.info("Truncate took " + DateUtil.formatDuration(finish - start) + ".");
-                    }
-
+                if (subjects.length > 0)
+                {
                     logger.info("Inserting " + subjects.length + " rows into \"" + targetDataset.getName() + "\" dataset. (" + container.getName() + ")");
                     start = System.currentTimeMillis();
-                    targetDataset.getUpdateService().insertRows(user, container, Arrays.asList(subjects), errors, null, null);
+                    ListofMapsDataIterator maps = new ListofMapsDataIterator(subjects[0].keySet(), Arrays.asList(subjects));
+                    targetDataset.getUpdateService().importRows(user, container, maps, errors, null, null);
                     finish = System.currentTimeMillis();
                     logger.info("Insert took " + DateUtil.formatDuration(finish - start) + ".");
                     insertCount += subjects.length;
+                }
 
-                    if (errors.hasErrors())
+                if (errors.hasErrors())
+                {
+                    for (ValidationException error : errors.getRowErrors())
                     {
-                        for (ValidationException error : errors.getRowErrors())
-                        {
-                            logger.warn(error.getMessage());
-                        }
+                        logger.warn(error.getMessage());
                     }
                 }
-                catch (Exception e)
-                {
-                    logger.error(e.getMessage(), e);
-                }
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
             }
         }
         long fullFinish = System.currentTimeMillis();

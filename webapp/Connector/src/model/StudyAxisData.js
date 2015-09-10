@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -85,7 +85,7 @@ Ext.define('Connector.model.StudyAxisData', {
 
     setPreenrollment : function(study, visitTagCaption, protocolDay, alignedDay) {
 
-        if(visitTagCaption !== null) {
+        if (visitTagCaption !== null) {
             if (visitTagCaption == 'Enrollment') {
                 study.enrollment = alignedDay;
             }
@@ -194,7 +194,7 @@ Ext.define('Connector.model.StudyAxisData', {
                     }
 
                     groupVisit = this.setType(study.groups[groupLabel].visits[visitId], visitTagCaption, isVaccination, isChallenge);
-                    if(visitTagCaption !== null) {
+                    if (visitTagCaption !== null) {
                         groupVisit.visitTags.push(
                                 this.getVisitTag(study.name, groupLabel, visitTagCaption, groupDesc ? groupDesc : '')
                         );
@@ -227,18 +227,18 @@ Ext.define('Connector.model.StudyAxisData', {
                 group.visits = groupVisits;
                 groups.push(group);
             }
-            study.groups = groups;
+
+            // sort groups separately (e.g. 'Group 1 Vaccine, Group 2 Vaccine, Group 10 Vaccine, etc'
+            study.groups = groups.sort(function(a, b) {
+                return LABKEY.app.model.Filter.sorters.natural(a.name, b.name);
+            });
             study.visits = studyVisits;
             data.push(study);
         }
 
         // sort by study label
         data.sort(function(a, b) {
-            if (a.name < b.name)
-                return -1;
-            if (a.name > b.name)
-                return 1;
-            return 0;
+            return LABKEY.app.model.Filter.sorters.natural(a.name, b.name);
         });
 
         this.set({
