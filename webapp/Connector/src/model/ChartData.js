@@ -456,7 +456,7 @@ Ext.define('Connector.model.ChartData', {
             return row.z.value;
         }
         else if (Ext.isDefined(row[alias])) {
-            return row[alias];
+            return row[alias] || ChartUtils.emptyTxt;
         }
         else if (Ext.isDefined(row.z) && !row.z.isUnique) {
             // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
