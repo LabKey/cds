@@ -171,11 +171,14 @@ Ext.define('Connector.view.Selection', {
                     if (measure && filters && filters.length > 0) {
 
                         Ext.each(filters, function(filter) {
-                            var val = filter.getValue();
-                            var fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
+                            var val = filter.getValue(),
+                                fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
 
                             if (filter.getFilterType().getURLSuffix() === 'dategte' || filter.getFilterType().getURLSuffix() === 'datelte') {
                                 val = ChartUtils.tickFormat.date(val);
+                            }
+                            else if (filter.getFilterType() == LABKEY.Filter.Types.EQUALS_ONE_OF) {
+                                val = Connector.model.Filter.getFilterValuesAsArray(filter).join(';');
                             }
 
                             filterValString += sep + fil + ' ' + val;

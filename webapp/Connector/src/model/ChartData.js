@@ -441,7 +441,7 @@ Ext.define('Connector.model.ChartData', {
             if (Ext.isDefined(row.x.value) && row.x.value != null) {
                 return this._getValue(row.x.value, measure.type);
             }
-            return xIsContinuous ? null : 'undefined';
+            return xIsContinuous ? null : ChartUtils.emptyTxt;
         }
 
         if (!this.usesMedian() && row.x.values.length > 1) {

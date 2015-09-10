@@ -724,7 +724,16 @@ Ext.define('Connector.view.Chart', {
             else {
                 scales.x = {
                     scaleType: 'discrete',
-                    sortFn: LABKEY.app.model.Filter.sorters.natural,
+                    sortFn: function(a, b) {
+                        // sort empty category to the right side
+                        if (a == ChartUtils.emptyTxt) {
+                            return 1;
+                        }
+                        else if (b == ChartUtils.emptyTxt) {
+                            return -1;
+                        }
+                        return LABKEY.app.model.Filter.sorters.natural(a, b);
+                    },
                     tickCls: 'xaxis-tick-text',
                     tickRectCls: 'xaxis-tick-rect',
                     tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
@@ -1417,6 +1426,13 @@ Ext.define('Connector.view.Chart', {
             }
         });
 
+        // issue 24244: special handling for 'undefined' categorical selection
+        for (var i = 0; i < values.length; i++) {
+            if (values[i] == '') {
+                values[i] = ChartUtils.emptyTxt;
+            }
+        }
+
         return values;
     },
 
@@ -1529,10 +1545,10 @@ Ext.define('Connector.view.Chart', {
     },
 
     afterSelectionAnimation : function(node, view, name, target, multi) {
-        var sqlFilters = [null, null, null, null];
-        var values = '';
-        var selections = Connector.getState().getSelections();
-        var data;
+        var sqlFilters = [null, null, null, null],
+            selections = Connector.getState().getSelections(),
+            type = LABKEY.Filter.Types.EQUAL,
+            allowInverseFilter = true, values = '', data;
 
         if (multi) {
             for (var i=0; i < selections.length; i++) {
@@ -1542,14 +1558,21 @@ Ext.define('Connector.view.Chart', {
                 }
             }
         }
-        values = values.concat(target);
 
-        if (multi && selections.length > 0)
-            sqlFilters[0] = LABKEY.Filter.create(name, values, LABKEY.Filter.Types.EQUALS_ONE_OF);
-        else
-            sqlFilters[0] = LABKEY.Filter.create(name, values);
+        // issue 24244: filtering for emptyTxt category needs to apply a different filter
+        values = values.concat(target == ChartUtils.emptyTxt ? '' : target);
 
-        this.createSelectionFilter(sqlFilters, true);
+        if (multi && selections.length > 0) {
+            type = LABKEY.Filter.Types.EQUALS_ONE_OF;
+        }
+        else if (target == ChartUtils.emptyTxt) {
+            type = LABKEY.Filter.Types.ISBLANK;
+            allowInverseFilter = false;
+        }
+
+        sqlFilters[0] = LABKEY.Filter.create(name, values, type);
+
+        this.createSelectionFilter(sqlFilters, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 

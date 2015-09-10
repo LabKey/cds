@@ -61,16 +61,9 @@ Ext.define('Connector.view.GridPane', {
                         // issue 21879: split Equals One Of filter values into new lines
                         var filterStr = Connector.model.Filter.getGridLabel(gf);
                         var filterType = gf.getFilterType().getDisplayText();
-                        if (filterType == 'Equals One Of') {
-                            var values = [];
-                            Ext.each(gf.getValue(), function(value) {
-                                Ext.each(value.split(';'), function(v) {
-                                    if (v)
-                                        values.push(Ext.htmlEncode('- ' + v));
-                                });
-                            });
-
-                            filterStr = filterType + ':<br/><ul class="indent"><li>' + values.join('</li><li>') + '</li></ul>';
+                        if (filterType == 'Equals One Of' || filterType == 'Does Not Equal Any Of') {
+                            var values = Connector.model.Filter.getFilterValuesAsArray(gf);
+                            filterStr = filterType + ':<br/><ul class="indent"><li>- ' + values.join('</li><li>- ') + '</li></ul>';
                         }
 
                         content.push({

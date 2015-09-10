@@ -26,6 +26,8 @@ Ext.define('Connector.utility.Chart', {
         PREENROLLMENT: 'rgba(255,165,0,0.3)'
     },
 
+    emptyTxt: 'undefined',
+
     tickFormat: {
         date: function(val) {
             // D3 converts dates to integers, so we need to convert it back to a date to get the format.
