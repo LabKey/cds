@@ -18,6 +18,7 @@ Ext.define('Connector.app.store.Assay', {
 
     loadSlice : function() {
         this.assayData = undefined;
+        this.assayStudies = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -25,7 +26,17 @@ Ext.define('Connector.app.store.Assay', {
             success: this.onLoadAssays,
             scope: this
         });
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: 'SELECT DISTINCT assay_identifier, label, study_name FROM ds_subjectassay',
+            success: this.onLoadStudies,
+            scope: this
+        })
+    },
 
+    onLoadAssays: function (assayData) {
+        this.assayData = assayData.rows;
+        this._onLoadComplete();
     },
 
     loadAntigens : function(assayName, callback, scope) {
@@ -71,6 +82,38 @@ Ext.define('Connector.app.store.Assay', {
                 },
                 scope: scope
             })
+        }
+    },
+
+    onLoadStudies: function (assayStudies) {
+        this.assayStudies = assayStudies.rows;
+        this._onLoadComplete();
+    },
+
+    _onLoadComplete : function() {
+        if (Ext.isDefined(this.assayData) && Ext.isDefined(this.assayStudies)) {
+
+            this.assayData.sort(function(assayA, assayB) {
+                return LABKEY.app.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
+            });
+
+            var assays = [];
+
+            Ext.each(this.assayData, function(assay) {
+                var studies = [];
+                for (var s = 0; s < this.assayStudies.length; s++) {
+                    if (assay.assay_identifier === this.assayStudies[s].assay_identifier) {
+                        studies.push({
+                            id: this.assayStudies[s].study_name,
+                            label: this.assayStudies[s].label
+                        });
+                    }
+                }
+                assay.studies = studies;
+                assays.push(assay);
+            }, this);
+
+            this.loadRawData(assays);
         }
     },
 
@@ -128,22 +171,6 @@ Ext.define('Connector.app.store.Assay', {
                 },
                 scope: scope
             });
-        }
-    },
-
-    onLoadAssays: function (assayData) {
-        this.assayData = assayData.rows;
-        this._onLoadComplete();
-    },
-
-    _onLoadComplete : function() {
-        if (Ext.isDefined(this.assayData)) {
-
-            this.assayData.sort(function(assayA, assayB) {
-                return LABKEY.app.model.Filter.sorters.natural(assayA.assay_short_name, assayB.assay_short_name);
-            });
-
-            this.loadRawData(this.assayData);
         }
     }
 });

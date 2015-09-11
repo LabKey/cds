@@ -19,6 +19,7 @@ Ext.define('Connector.app.store.Study', {
     loadSlice : function(slice) {
         this.studyData = undefined;
         this.productData = undefined;
+        this.assayData = undefined;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
@@ -33,6 +34,12 @@ Ext.define('Connector.app.store.Study', {
             requiredVersion: 13.2,
             scope: this
         });
+        LABKEY.Query.executeSql({
+            schemaName: 'cds',
+            sql: 'SELECT DISTINCT assay_identifier, label, study_name FROM ds_subjectassay',
+            success: this.onLoadAssays,
+            scope: this
+        })
     },
 
     onLoadStudies : function(studyData) {
@@ -45,8 +52,13 @@ Ext.define('Connector.app.store.Study', {
         this._onLoadComplete();
     },
 
+    onLoadAssays : function(assayData) {
+        this.assayData = assayData.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
-        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData)) {
+        if (Ext.isDefined(this.studyData) && Ext.isDefined(this.productData) && Ext.isDefined(this.assayData)) {
             var studies = [], products;
 
             // join products to study
@@ -62,7 +74,16 @@ Ext.define('Connector.app.store.Study', {
                         });
                     }
                 }
+                var assays = [];
+                for (var a=0; a < this.assayData.length; a++) {
+                    if (study.study_name === this.assayData[a].study_name) {
+                        assays.push({
+                            assay_identifier: this.assayData[a].assay_identifier
+                        });
+                    }
+                }
                 study.products = products;
+                study.assays = assays;
                 studies.push(study);
             }, this);
 

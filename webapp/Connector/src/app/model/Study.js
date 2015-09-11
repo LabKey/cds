@@ -38,6 +38,9 @@ Ext.define('Connector.app.model.Study', {
         {name: 'context'},
         {name: 'products', convert : function(value) {
             return Ext.isArray(value) ? value : [];
+        }},
+        {name: 'assays', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
         }}
     ]
 });
