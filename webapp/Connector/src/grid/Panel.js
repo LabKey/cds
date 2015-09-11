@@ -205,7 +205,7 @@ Ext.define('Connector.grid.Panel', {
                     queryName = definedMeasureSourceMap[measure.alias];
                 }
                 else {
-                    queryName = measure.queryLabel || measure.queryName;
+                    queryName = measure.queryName;
                 }
             }
             else {
@@ -225,9 +225,10 @@ Ext.define('Connector.grid.Panel', {
             }
         }, this);
 
+        var columnCharacterWidth = 14;
         Ext.iterate(groupMap, function(key, value) {
             groups.push({
-                text: key,
+                text: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
                 columns: value
             });
         }, this);
