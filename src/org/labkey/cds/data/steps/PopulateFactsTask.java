@@ -1,11 +1,13 @@
 package org.labkey.cds.data.steps;
 
 import org.apache.log4j.Logger;
+import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerFilter;
 import org.labkey.api.data.ContainerFilterable;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SqlSelector;
 import org.labkey.api.data.TableInfo;
+import org.labkey.api.etl.ListofMapsDataIterator;
 import org.labkey.api.pipeline.PipelineJobException;
 import org.labkey.api.query.BatchValidationException;
 import org.labkey.api.query.DefaultSchema;
@@ -42,25 +44,6 @@ public class PopulateFactsTask extends AbstractPopulateTask
             throw new PipelineJobException("Unable to find target table: \"" + TARGET_QUERY + "\".");
         }
 
-        QuerySchema sourceSchema = projectSchema.getSchema(SOURCE_SCHEMA);
-
-        if (null == sourceSchema)
-        {
-            throw new PipelineJobException("Unable to find source schema: \"" + SOURCE_SCHEMA + "\".");
-        }
-
-        TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY);
-
-        if (null == sourceTable)
-        {
-            throw new PipelineJobException("Unable to find source table: \"" + SOURCE_QUERY + "\".");
-        }
-
-        if (sourceTable instanceof ContainerFilterable)
-        {
-            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
-        }
-
         // Get a new TableInfo with the default container filter
         targetTable = targetSchema.getTable(TARGET_QUERY);
 
@@ -69,27 +52,52 @@ public class PopulateFactsTask extends AbstractPopulateTask
         BatchValidationException errors = new BatchValidationException();
         long start = System.currentTimeMillis();
 
-        sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
-        rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-
         // Insert all the rows
-        if (rows.length > 0)
+        for (Container container : project.getChildren())
         {
-            try
-            {
-                targetTable.getUpdateService().insertRows(user, project, Arrays.asList(rows), errors, null, null);
+            DefaultSchema childSchema = DefaultSchema.get(user, container);
 
-                if (errors.hasErrors())
+            QuerySchema sourceSchema = childSchema.getSchema(SOURCE_SCHEMA);
+
+            if (null == sourceSchema)
+            {
+                throw new PipelineJobException("Unable to find source schema: \"" + SOURCE_SCHEMA + "\".");
+            }
+
+            TableInfo sourceTable = sourceSchema.getTable(SOURCE_QUERY);
+
+            if (null == sourceTable)
+            {
+                throw new PipelineJobException("Unable to find source table: \"" + SOURCE_QUERY + "\".");
+            }
+
+            if (sourceTable instanceof ContainerFilterable)
+            {
+                ((ContainerFilterable) sourceTable).setContainerFilter(ContainerFilter.CURRENT);
+            }
+
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+
+            if (rows.length > 0)
+            {
+                try
                 {
-                    for (ValidationException error : errors.getRowErrors())
+                    ListofMapsDataIterator maps = new ListofMapsDataIterator(rows[0].keySet(), Arrays.asList(rows));
+                    targetTable.getUpdateService().importRows(user, container, maps, errors, null, null);
+
+                    if (errors.hasErrors())
                     {
-                        logger.warn(error.getMessage());
+                        for (ValidationException error : errors.getRowErrors())
+                        {
+                            logger.warn(error.getMessage());
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                logger.error(e.getMessage(), e);
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
             }
         }
 

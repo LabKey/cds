@@ -15,7 +15,7 @@
  */
 SELECT
 DD.participantid,
-DD.folder.parent.entityid as container,
+DD.folder.entityid as container,
 DD.container as study,
 S.label AS study_label,
 TA.coded_label AS treatment_arm
