@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/* Materialize the GridBase query */
 DROP TABLE IF EXISTS cds.GridBase;
 
 CREATE TABLE cds.GridBase (
@@ -32,5 +33,15 @@ CREATE TABLE cds.GridBase (
 CREATE INDEX IX_GridBase_Study ON cds.GridBase(Study);
 CREATE INDEX IX_GridBase_SubjectId ON cds.GridBase(SubjectId);
 
+/* Add Treatment Arm dimension columns to fact table */
 ALTER TABLE cds.Facts ADD COLUMN treatment_arm VARCHAR(250);
 ALTER TABLE cds.Facts ADD COLUMN study_label VARCHAR(250);
+
+/* */
+DELETE FROM cds.VisitTagMap;
+
+ALTER TABLE cds.VisitTagMap ADD COLUMN arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id);
+ALTER TABLE cds.VisitTagMap ADD COLUMN detail_label VARCHAR(250);
+
+ALTER TABLE cds.VisitTagMap DROP CONSTRAINT PK_VisitTagMap;
+ALTER TABLE cds.VisitTagMap ADD CONSTRAINT PK_VisitTagMap PRIMARY KEY (visit_tag, visit_row_id, study_group_id, arm_id, container);
