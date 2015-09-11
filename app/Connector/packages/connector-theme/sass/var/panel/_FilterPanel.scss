@@ -8,7 +8,8 @@
   }
 
   h2.section-title-filtered {
-    padding: 0 42px 0 6px;
+    padding: 0 42px 24px 8px;
+    font-size: 18px!important;
   }
 
   .emptytext {
@@ -18,7 +19,7 @@
 
 .filterstatus-content {
   background-color: $gray-7;
-  padding: 5px;
+  padding: 0 6px 6px 6px;
 }
 
 div.selitem {
@@ -61,8 +62,7 @@ div.filterpanel {
   }
 
   .x-container:first-child {
-    background-color: $white;
-    @include prefixer(border-radius, 0px);
+    @include prefixer(border-radius, 2px);
     padding: 0;
   }
 }
@@ -75,7 +75,7 @@ div.activefilter {
   display: block;
   width: 219px;
   padding: 4px 8px;
-  margin: 0 6px 6px 6px;
+  margin: 6px 0 0 0;
 
   div.selitem {
     line-height: 17px;
@@ -93,7 +93,7 @@ div.activefilter {
 
   .closeitem {
     position: absolute;
-    right: 12px;
+    right: 4px;
     top: 4px;
   }
 
@@ -110,32 +110,44 @@ div.activefilter {
 div.selectionpanel {
 
   font: $body-one-font;
-  margin: 3px 0 0 0;
+  margin: 6px 0 0 0;
   padding: 5px 0;
-  border: 3px solid $select-hover-color;
-  background-color: $off-white;
+  border: 3px solid $data-green;
+  background-color: $white;
   @include prefixer(border-radius, 2px);
 
   .header {
-    font: $nav-font;
-    color: $black;
-    opacity: 0.9;
-    padding: 0 10px;
+    font-family: $info-font;
+    font-color: $black;
+    font-size: 11px;
+    line-height:15px;
+    opacity: 0.7;
+    padding: 0 8px 0 8px;
   }
 
   .instruction {
-    font: $nav-font;
-    color: $select-color;
-    padding: 0 10px;
+    font-family: $info-font;
+    font-size: 11px;
+    font-weight: bold;
+    color: $data-green;
+    padding: 0 0 8px;
+    line-height:15px;
+    width: 80%;
+    border-bottom: 1px solid $gray-7;
+    margin: 0 8px 4px 8px;
   }
 
   .activefilter {
     border: none !important;
 
     .closeitem {
-      top: -48px;
+      top: -64px;
+      right: 8px;
     }
 
+    .x-btn-rounded-inverted-accent-small {
+      background: $data-green!important;
+    }
 
   }
 

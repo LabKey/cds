@@ -140,8 +140,9 @@ $tip-body-color: $info-color;
 }
 
 @mixin dialogheader {
-  font-family: $data-font;
-  color: $heat-scale-2;
+  font-family: $info-font;
+  color: $black;
+  font-weight: 700;
 };
 
 @mixin bodycaps {

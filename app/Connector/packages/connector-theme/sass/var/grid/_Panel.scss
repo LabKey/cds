@@ -116,3 +116,21 @@ div.filterpanel .x-panel-body-default {
   background: transparent;
 }
 /* END Connector.window.Filter */
+
+.x-panel-body-default {
+  background: transparent!important;
+}
+
+.x-panel-body-primary-view {
+  .chartview {
+    .x-box-item{
+    background: $white!important;
+    .x-btn {
+      background: $action-red!important;
+    }
+    }
+  }
+  .x-border-layout-ct {
+    background: transparent!important;
+  }
+}

@@ -10,8 +10,8 @@ a.x-btn {
 
   $border-radius : 2px,
 
-  $background-color: #FFFFFF,
-  $background-color-over: #a1d9da,
+  $background-color: $white,
+  $background-color-over: $gray-7,
 
   $border-width : 0px,
   $text-padding: 0px,
@@ -23,7 +23,7 @@ a.x-btn {
   $font-family-pressed: $info-font,
   $font-family-disabled: $info-font,
 
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-paging-widget-pages-small {
@@ -34,12 +34,12 @@ a.x-btn {
 }
 
 .x-btn-paging-widget-pages-small:hover .x-btn-inner {
-  color: #222222; /* Fallback for older browsers */
+  color: $white; /* Fallback for older browsers */
   color: rgba(0, 0, 0, 0.87);
 }
 
 .x-btn-paging-widget-pages-small:active .x-btn-inner {
-  color: #FFFFFF; /* Fallback for older browsers */
+  color: $white; /* Fallback for older browsers */
   color: white; /* Fallback for older browsers */
   color: rgba(255, 255, 255, 1) !important;
 }
@@ -58,10 +58,10 @@ a.x-btn {
 }
 
 .x-btn-paging-widget-pages-small.selected {
-  background-color: #14c9cc !important;
+  background-color: $action-red !important;
 
   .x-btn-inner {
-    color: #FFFFFF; /* Fallback for older browsers */
+    color: $white; /* Fallback for older browsers */
     color: rgba(255, 255, 255, 1) !important;
   }
 }
@@ -77,7 +77,7 @@ a.x-btn {
   $background-color-over: darken($secondary-color, 8),
 
   $border-width : 2px,
-  $border-color: #FFFFFF,
+  $border-color: $white,
   $border-color-over: $gray-7,
   $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
@@ -96,7 +96,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 15px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 @include extjs-button-ui (
@@ -118,7 +118,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 10px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 @include extjs-button-ui (
@@ -151,7 +151,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 15px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-darkrounded-small {
@@ -174,7 +174,7 @@ a.x-btn {
   $background-color-over: $gray-7,
 
   $border-width : 0px,
-  $border-color: #FFFFFF,
+  $border-color: $white,
   $border-color-over: $gray-7,
   $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
@@ -192,7 +192,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 18px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-dropdown-small {
@@ -229,13 +229,13 @@ a.x-btn {
   $background-color-over: $gray-7,
 
   $border-width : 0px,
-  $border-color: #FFFFFF,
+  $border-color: $white,
   $border-color-over: $gray-7,
   $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
   $border-color-disabled: $dark-color,
 
-  $color: $gray-7,
+  $color: $white,
   $color-over : $interactive-color,
   $color-disabled: $dark-color,
 
@@ -247,7 +247,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 12px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-dropdown-alt-small {
@@ -303,7 +303,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 12px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 @include extjs-button-ui (
@@ -333,7 +333,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 12px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-linked-ul-small .x-btn-inner {
@@ -350,14 +350,14 @@ a.x-btn {
   $background-color-disabled: $heat-scale-4,
 
   $border-width : 0px,
-  $border-color: #ffffff,
+  $border-color: $white,
   $border-color-over: $gray-7,
   $border-color-focus: $gray-7,
   $border-color-pressed: $dark-color,
   $border-color-disabled: $gray-7,
 
-  $color: $gray-7,
-  $color-over : #ffffff,
+  $color: $white,
+  $color-over : $white,
   $color-disabled: $gray-7,
 
   $font-size : 12px,
@@ -368,7 +368,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 12px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 @include extjs-button-ui (
@@ -399,7 +399,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 12px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-rounded-inverted-accent-small,
@@ -434,7 +434,7 @@ a.x-btn {
   $font-family-disabled: $info-font,
 
   $icon-size : 15px,
-  $glyph-color : #FFFFFF
+  $glyph-color : $white
 );
 
 .x-btn-rounded-small,
@@ -492,7 +492,7 @@ input:-webkit-autofill {
 
 input.x-btn-rounded-inverted-accent-small {
   padding: 4px 12px 4px 12px!important;
-  color: #ffffff;
+  color: $white;
   font-weight: normal;
   font-size: 12px;
   font-family: $info-font;
@@ -500,7 +500,7 @@ input.x-btn-rounded-inverted-accent-small {
   &:hover {
     &.enabled {
       opacity: 0.9;
-      color: #ffffff;
+      color: $white;
     }
   }
 }
