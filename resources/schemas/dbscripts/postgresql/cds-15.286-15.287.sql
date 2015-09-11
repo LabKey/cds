@@ -31,3 +31,6 @@ CREATE TABLE cds.GridBase (
 
 CREATE INDEX IX_GridBase_Study ON cds.GridBase(Study);
 CREATE INDEX IX_GridBase_SubjectId ON cds.GridBase(SubjectId);
+
+ALTER TABLE cds.Facts ADD COLUMN treatment_arm VARCHAR(250);
+ALTER TABLE cds.Facts ADD COLUMN study_label VARCHAR(250);
