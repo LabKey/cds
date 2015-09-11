@@ -1760,7 +1760,7 @@ Ext.define('Connector.view.Chart', {
 
         // set of measures from data filters
         if (includeFilterMeasures === true) {
-            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters());
+            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
             if (!Ext.isEmpty(filterMeasures)) {
                 measures = measures.concat(filterMeasures);
             }
@@ -1770,6 +1770,19 @@ Ext.define('Connector.view.Chart', {
             measures: queryService.mergeMeasures(measures),
             wrapped: wrappedMeasures
         };
+    },
+
+    getQueryKeys : function(measures) {
+        var queryKeys = [], key;
+
+        Ext.each(measures, function(m){
+            key = m.measure.schemaName + '|' + m.measure.queryName;
+            if (queryKeys.indexOf(key) == -1) {
+                queryKeys.push(key);
+            }
+        });
+
+        return queryKeys;
     },
 
     /**
