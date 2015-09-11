@@ -38,6 +38,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.server.handler.FindElements;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -121,13 +122,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ELISPOT);
         xaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_RAW);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertFalse("For BAMA Magnitude vs NAB Lab x-axis gutter plot was present it should not have been.", hasXGutter());
         assertTrue("For BAMA Magnitude vs NAB Lab y-axis gutter plot was not present.", hasYGutter());
@@ -142,13 +141,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC80);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", hasXGutter());
         assertFalse("For NAB IC80 vs ICS Magnitude y-axis gutter plot was present and it should not have been.", hasYGutter());
@@ -164,7 +161,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.openSelectorWindow();
@@ -186,13 +182,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For ELISPOT Background vs Time Visit Days a study axis was not present.", hasStudyAxis());
         assertFalse("For ELISPOT Background vs Time Visit Days x-axis gutter plot was present, it should not be.", hasXGutter());
@@ -220,11 +214,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ELISPOT);
         xaxis.pickVariable(CDSHelper.ELISPOT_DATA_PROV);
         xaxis.confirmSelection();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         if (CDSHelper.validateCounts)
         {
@@ -236,14 +228,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For ELISPOT vs ICS x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For ELISPOT vs ICS y-axis gutter plot was not present.", hasYGutter());
@@ -252,7 +241,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         if (CDSHelper.validateCounts)
         {
@@ -265,7 +253,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setScale(DataspaceVariableSelector.Scale.Log);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For NAB vs ICS x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For NAB vs ICS y-axis gutter plot was not present.", hasYGutter());
@@ -275,7 +262,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.DEMO_AGE);
         xaxis.setScale(DataspaceVariableSelector.Scale.Log);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For NAB vs Demographics x-axis gutter plot was not present.", hasXGutter());
         assertFalse("For NAB vs Demographics y-axis gutter plot was present and it should not be.", hasYGutter());
@@ -284,6 +270,172 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             assertSVG(NAB_IC50);
         }
+    }
+
+    @Test
+    public void verifyStudyAndTreatmentVars()
+    {
+        String expectedXYValues;
+        int expectedTickCount;
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        xaxis.pickVariable(CDSHelper.DEMO_STUDY_NAME);
+        xaxis.confirmSelection();
+        expectedXYValues = "HVTN 044\nHVTN 049\nHVTN 049x\nHVTN 054\nHVTN 055\nHVTN 065\nHVTN 068\nHVTN 069\nHVTN 070\nHVTN 071\nHVTN 077\nHVTN 078\nHVTN 080\nHVTN 204\nHVTN 503\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            assertSVG(expectedXYValues);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
+        xaxis.confirmSelection();
+        expectedTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+
+        assertEquals("Expected 60 tick marks on the x-axis. Found: " + expectedTickCount, 60, expectedTickCount);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
+        xaxis.confirmSelection();
+        expectedXYValues = "9/8/2001\n4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        assertTrue("For Date First Subject Enrolled x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues, 1);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_DATE_FUP_COMP);
+        xaxis.confirmSelection();
+        expectedXYValues = "4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        assertTrue("For Date Followed Up Complete x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For Date Followed Up Complete y-axis gutter plot was not present.", hasYGutter());
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues, 1);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_DATE_PUB);
+        xaxis.confirmSelection();
+        expectedXYValues = "6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        assertTrue("For Date Study Published x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For Date Study Published y-axis gutter plot was not present.", hasYGutter());
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues, 1);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_DATE_START);
+        xaxis.confirmSelection();
+        expectedXYValues = "4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        assertTrue("For Date Study Start x-axis gutter plot was not present.", hasXGutter());
+        assertTrue("For Date Study Start y-axis gutter plot was not present.", hasYGutter());
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues, 1);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_NETWORK);
+        xaxis.confirmSelection();
+        expectedXYValues = "HVTN\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
+        xaxis.confirmSelection();
+        expectedXYValues = "derived\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
+        xaxis.confirmSelection();
+        expectedXYValues = "derived\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
+        xaxis.confirmSelection();
+        expectedXYValues = "Phase I\nPhase II\nPhase IIB\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
+        xaxis.confirmSelection();
+        expectedTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+
+        assertEquals("Expected 28 tick marks on the x-axis. Found: " + expectedTickCount, 28, expectedTickCount);
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
+        xaxis.confirmSelection();
+        expectedXYValues = "undefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues);
+        }
+
+        xaxis.openSelectorWindow();
+        xaxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
+        xaxis.confirmSelection();
+        expectedXYValues = "Placebo\nVaccine\nundefined\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+
+        if (CDSHelper.validateCounts)
+        {
+            // Because there will be gutter plots the text we are interested in will be at svg 1.
+            assertSVG(expectedXYValues);
+        }
+
     }
 
     @Test
@@ -1138,21 +1290,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_DATA);
         xaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         // yaxis window opens automatically
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         color.openSelectorWindow();
         color.pickSource(CDSHelper.SUBJECT_CHARS);
         color.pickVariable(CDSHelper.DEMO_RACE);
         color.confirmSelection();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         Locator.CssLocator colorLegend = Locator.css("#color-legend > svg");
         Locator.CssLocator colorLegendGlyph = colorLegend.append("> .legend-point");
@@ -1247,13 +1394,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For NAb Titer 50, A3R5 vs Time Visit Days a study axis was not present.", hasStudyAxis());
         List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1268,8 +1413,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1284,8 +1427,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Should go to the variable selector window by default.
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected 7 studies in the Time Axis, found " + studies.size() + ".", studies.size() == 7);
@@ -1300,8 +1441,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck. Unfortunately waitForMaskToDisappear is not long enough for the axis to be regenerated.
 
         // When changing the alignment to anything other than Day 0 study HVTN 205 will not appear because it has no visit information.
         expectedCounts.remove("HVTN_205");
@@ -1323,8 +1462,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Should go to the variable selector window by default.
         xaxis.setAlignedBy("Last Vaccination");
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
         assertTrue("Expected " + expectedCounts.size() + " studies in the Time Axis, found " + studies.size() + ".", studies.size() == expectedCounts.size());
@@ -1339,8 +1476,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1362,8 +1497,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1385,8 +1518,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_ENROLL);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1408,8 +1539,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_MONTHS);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // yuck.
 
         // Need to get studies again, otherwise get a stale element error.
         studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1457,13 +1586,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.TIME_POINTS);
         xaxis.pickVariable(CDSHelper.TIME_POINTS_DAYS);
         xaxis.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
 
         assertTrue("For ELISPOT Magnitude - Background subtracted vs Time Visit Days a study axis was not present.", hasStudyAxis());
         List<WebElement> studies = Locator.css("#study-axis > svg > g.study").findElements(getDriver());
@@ -1550,7 +1677,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.TIME_POINTS_WEEKS);
         xaxis.setAlignedBy(CDSHelper.TIME_POINTS_ALIGN_LAST_VAC);
         xaxis.confirmSelection();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         expectedCounts.replace("HVTN_069-Group_1_T1_Vaccine", new CDSHelper.TimeAxisData("Group 1 Arm T1 Vaccine", 4, 7, 0, 1));
         expectedCounts.replace("HVTN_069-Group_2_T2_Vaccine", new CDSHelper.TimeAxisData("Group 2 Arm T2 Vaccine", 4, 7, 0, 1));
@@ -1633,14 +1759,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_LAB);
-        xaxis.setVirusName(uniqueVirusId);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setVirusName(uniqueVirusId);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText(CDSHelper.LABS[2]));
@@ -1663,7 +1786,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_VIRUS_TYPE);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
 
         waitForElement(plotTick.withText("Pseudovirus"));
@@ -1704,7 +1826,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setVirusName(y1VirusId);
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText("5000"));
@@ -1724,7 +1845,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
         waitForElement(plotTick.withText("40"));
@@ -1757,10 +1877,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ICS_DATA);
         xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.setCellType("All");
         xaxis.confirmSelection();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
@@ -1768,18 +1886,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
 
         // Verify the binning message
-        waitForText("Heatmap enabled");
-        click(Locator.linkWithText("Learn why"));
-        waitForText("The color variable is disabled");
-
-        // Verify the binning message layers correctly
-        xaxis.openSelectorWindow();
-        waitForTextToDisappear("Heatmap enabled");
-        xaxis.cancelSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        waitForText("Heatmap on");
 
         cds.ensureNoFilter();
     }
@@ -2051,7 +2162,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the x-axis ELISPOT - Peptide Pool.");
             xaxis.pickSource(CDSHelper.ELISPOT);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             xaxis.validatePeptidePoolSubjectCount(peptidePoolCounts, false);
             xaxis.backToSource();
         }
@@ -2060,7 +2170,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the x-axis ICS - Protein Panel.");
             xaxis.pickSource(CDSHelper.ICS);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
             xaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
             xaxis.backToSource();
@@ -2070,7 +2179,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the x-axis ICS - Protein.");
             xaxis.pickSource(CDSHelper.ICS);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             xaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
             xaxis.validateProteinSubjectCount(proteinCounts, false);
             xaxis.backToSource();
@@ -2080,9 +2188,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the x-axis NAB - Virus.");
             xaxis.pickSource(CDSHelper.NAB);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             xaxis.validateVirusSubjectCount(virusCounts, true);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
         }
         else
         {
@@ -2111,7 +2217,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the y-axis BAMA - Antigen.");
             yaxis.pickSource(CDSHelper.BAMA);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             yaxis.setIsotype("IgG");
             yaxis.validateAntigenSubjectCount(antigenCounts, false);
             yaxis.backToSource();
@@ -2121,7 +2226,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the y-axis ELISPOT - Peptide Pool.");
             yaxis.pickSource(CDSHelper.ELISPOT);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             yaxis.validatePeptidePoolSubjectCount(peptidePoolCounts, false);
             yaxis.backToSource();
         }
@@ -2130,7 +2234,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the y-axis ICS - Protein.");
             yaxis.pickSource(CDSHelper.ICS);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN);
             yaxis.validateProteinSubjectCount(proteinCounts, false);
             yaxis.backToSource();
@@ -2140,7 +2243,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the y-axis ICS - Protein Panel.");
             yaxis.pickSource(CDSHelper.ICS);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             yaxis.setDataSummaryLevel(CDSHelper.ICS_PROTEIN_PANEL);
             yaxis.validateProteinPanelSubjectCount(proteinPanelCounts, false);
             yaxis.backToSource();
@@ -2150,7 +2252,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         {
             log("Validating subject counts in the y-axis NAB - Virus.");
             yaxis.pickSource(CDSHelper.NAB);
-            sleep(CDSHelper.CDS_WAIT_ANIMATION);
             yaxis.validateVirusSubjectCount(virusCounts, true);
         }
         else
