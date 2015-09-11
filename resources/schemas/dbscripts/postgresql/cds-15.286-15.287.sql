@@ -36,8 +36,9 @@ CREATE INDEX IX_GridBase_SubjectId ON cds.GridBase(SubjectId);
 /* Add Treatment Arm dimension columns to fact table */
 ALTER TABLE cds.Facts ADD COLUMN treatment_arm VARCHAR(250);
 ALTER TABLE cds.Facts ADD COLUMN study_label VARCHAR(250);
+ALTER TABLE cds.Facts ADD COLUMN product_group VARCHAR(250);
 
-/* */
+/* Alter VisitTagMap to support vaccination, non-vaccination scenarios */
 DELETE FROM cds.VisitTagMap;
 
 ALTER TABLE cds.VisitTagMap ADD COLUMN arm_id VARCHAR(250) NOT NULL REFERENCES cds.TreatmentArm (arm_id);
