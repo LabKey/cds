@@ -66,17 +66,9 @@
                 <Level name="Name" visible="true" table="study" column="label" type="String" uniqueMembers="true" />
             </Hierarchy>
 
-            <!-- TODO: This currently assumes every participant is in a treatment arm -->
-            <Hierarchy name="Treatment" visible="true" hasAll="true" primaryKey="participantid" primaryKeyTable="TreatmentArmSubjectMap">
-                <Join leftKey="arm_id" rightKey="arm_id">
-                    <Table name="TreatmentArmSubjectMap" schema="cds"/>
-                    <Join leftKey="container" rightKey="container">
-                        <Table name="treatmentarm" schema="cds"/>
-                        <Table name="study" schema="cds"/>
-                    </Join>
-                </Join>
-                <Level name="Treatment" visible="true" table="study" column="label" type="String" uniqueMembers="false" />
-                <Level name="Arm" visible="true" column="coded_label" type="String" uniqueMembers="false" />
+            <Hierarchy name="Treatment" visible="true" hasAll="true" primaryKey="participantid">
+                <Level name="Treatment" visible="true" column="study_label" type="String" uniqueMembers="true" />
+                <Level name="Arm" visible="true" column="treatment_arm" type="String" uniqueMembers="false" />
             </Hierarchy>
 
             <Hierarchy name="Type" visible="true" hasAll="true" primaryKey="subjectid" primaryKeyTable="Demographics">
@@ -99,31 +91,22 @@
 
         </Dimension>
 
-        <Dimension  name="Study Product" visible="true" highCardinality="false" foreignKey="participantid">
+        <Dimension  name="Study Product" visible="true" highCardinality="false" foreignKey="product_group">
 
-            <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
-                <Join leftKey="product_id" rightKey="product_id">
-                    <Table name="SubjectProductMap" schema="cds"/>
-                    <Table name="Product" schema="cds"/>
-                </Join>
+            <Hierarchy name="Product Type" visible="true" hasAll="false" primaryKey="product_group">
+                <Table name="subjectproduct_bridge" schema="cds"/>
                 <Level name="Type" visible="true" column="product_type" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
 
-            <Hierarchy name="Developer" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
-                <Join leftKey="product_id" rightKey="product_id">
-                    <Table name="SubjectProductMap" schema="cds"/>
-                    <Table name="Product" schema="cds"/>
-                </Join>
+            <Hierarchy name="Developer" visible="true" hasAll="false" primaryKey="product_group">
+                <Table name="subjectproduct_bridge" schema="cds"/>
                 <Level name="Developer" visible="true" column="product_developer" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
 
-            <Hierarchy name="Product Class" visible="true" hasAll="false" primaryKey="participantid" primaryKeyTable="SubjectProductMap">
-                <Join leftKey="product_id" rightKey="product_id">
-                    <Table name="SubjectProductMap" schema="cds"/>
-                    <Table name="Product" schema="cds"/>
-                </Join>
+            <Hierarchy name="Product Class" visible="true" hasAll="false" primaryKey="product_group">
+                <Table name="subjectproduct_bridge" schema="cds"/>
                 <Level name="Class" visible="true" column="product_class_label" type="String" uniqueMembers="true" />
                 <Level name="Name" visible="true" column="product_name" type="String" uniqueMembers="true" />
             </Hierarchy>
