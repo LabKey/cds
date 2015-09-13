@@ -73,6 +73,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
             clearTable("cds", "study", container, logger);
         }
 
+        clearTable("cds", "facts", project, logger);
         clearTable("study", "visittag", project, logger);
 
         long finish = System.currentTimeMillis();
