@@ -64,10 +64,11 @@ public class CDSHelper
     public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
             "ICS (Intracellular Cytokine Staining)",
             "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
-    public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
+    public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
     public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
-    public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_TAB_DATA = {"00MSA 4076 gp140", "P66 (RT)"};
-    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"ANY HIV", "ANY POL: POL1, POL2", "ANY NEF: NEF", "ANY HIV:", "ANY GAG: GAG/POL, GAG1, GAG2/POL", "ANY ENV: ENV1, ENV2, ENV3"};
+    public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
+    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
+//    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;

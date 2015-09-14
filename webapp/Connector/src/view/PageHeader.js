@@ -74,7 +74,7 @@ Ext.define('Connector.view.PageHeader', {
             this.tabs = undefined;
         }
 
-        this.getTabHeader(this.tabs[this.activeTab]);
+        this.setTabHeader();
 
         this.renderTpl = new Ext.XTemplate(
             '<div>',
@@ -131,9 +131,10 @@ Ext.define('Connector.view.PageHeader', {
         }, this);
     },
 
-    getTabHeader : function(tab) {
+    setTabHeader : function() {
         //rare case so deal with on a case by case basis
-        if (tab.url != 'antigens') {
+        if (!Ext.isDefined(this.tabs) || this.tabs[this.activeTab].url != 'antigens') {
+            //default behavior
             this.cls = this.cls + ' pageheader';
         }
     },
