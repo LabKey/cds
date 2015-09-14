@@ -146,7 +146,7 @@ Ext.define('Connector.panel.Selector', {
             // keep track of the selectedSourceKey, if present, so we can reselect it correctly on reshow
             selectedSourceKey = this.activeMeasure.get('selectedSourceKey');
 
-            this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
+            this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('lowerAlias'));
             this.activeMeasure.set('selectedSourceKey', selectedSourceKey);
         }
 
