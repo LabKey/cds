@@ -85,7 +85,7 @@ Ext.define('Connector.app.store.Assay', {
         }
     },
 
-    onLoadAssays: function (assayData) {
+    onLoadAssays: function(assayData) {
         this.assayData = assayData.rows;
         this._onLoadComplete();
     },

@@ -14,7 +14,7 @@ Ext.define('Connector.controller.Analytics', {
             return typeof _insp !== 'undefined';
         },
 
-        isGAClassicEnabled: function ()
+        isGAClassicEnabled: function()
         {
             // This variable is defined in the GA snippet
             return typeof _gaq !== 'undefined';
@@ -26,7 +26,7 @@ Ext.define('Connector.controller.Analytics', {
             return typeof ga !== 'undefined';
         },
 
-        isEnabled: function ()
+        isEnabled: function()
         {
             return Connector.controller.Analytics.isGAClassicEnabled() || Connector.controller.Analytics.isGAUniversalEnabled();
         },
@@ -65,7 +65,7 @@ Ext.define('Connector.controller.Analytics', {
         }
     },
 
-    init: function () {
+    init: function() {
 
         // Scenarios:
         // "Plot X, Plot Y, Plot Color"
@@ -156,7 +156,7 @@ Ext.define('Connector.controller.Analytics', {
             if (Connector.controller.Analytics.isEnabled())
             {
                 Connector.controller.Analytics.trackEvent('Filter', 'Change');
-                for (f = 0; f < filters.length; f++)
+                for (var f = 0; f < filters.length; f++)
                 {
                     var members = filters[f].get('members');
                     for (var i = 0; i < members.length; i++)

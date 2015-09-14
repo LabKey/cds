@@ -13,7 +13,7 @@ Ext.define('Connector.controller.Update', {
 
     UPDATE_FLAG: 'dataUpdate',
 
-    init : function () {
+    init : function() {
 
         if (LABKEY.devMode) {
             UPDATE = this;

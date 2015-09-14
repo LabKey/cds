@@ -898,7 +898,7 @@ Ext.define('Connector.controller.Query', {
             }
         }
 
-        Ext.iterate(measureMap, function (alias, config) {
+        Ext.iterate(measureMap, function(alias, config) {
             var mc = {
                 measure: this.cleanMeasure(config.measure)
             };

@@ -281,12 +281,12 @@ Ext.define('Connector.view.Popup', {
         this.layout = {
             type: 'hbox',
             align: 'stretch'
-        }
+        };
 
         affordance.html = this.arrows[pos];
 
         var first = affordance;
-POP=this;
+
         if (this.width) {
             container.width = this.width;
         }

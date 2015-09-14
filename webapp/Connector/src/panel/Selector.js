@@ -188,7 +188,7 @@ Ext.define('Connector.panel.Selector', {
         this.updateSelectorPane();
     },
 
-    clearSelection : function () {
+    clearSelection : function() {
         this.setActiveMeasure(null);
     },
 
@@ -408,7 +408,7 @@ Ext.define('Connector.panel.Selector', {
                             else if (value === '1') {
                                 hdr = 'Assay required columns';
                             }
-                            else if(value === '2') {
+                            else if (value === '2') {
                                 hdr = 'Additional';
                             }
                             return hdr;

@@ -896,7 +896,7 @@ Ext.define('Connector.view.Chart', {
         this.toggleMedianMode();
 
         var me = this;
-        this.highlightSelectedFn = function () {
+        this.highlightSelectedFn = function() {
             if (me.plot && !layerScope.isBrushed) {
                 me.highlightLabels.call(me, me.plot, me.getCategoricalSelectionValues(), me.labelTextHltColor, me.labelBkgdHltColor, true);
                 me.highlightSelected.call(me);
@@ -1171,7 +1171,7 @@ Ext.define('Connector.view.Chart', {
         if (layerScope.plot.renderer)
         {
             nodes = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
-            nodes[0].forEach(function (n)
+            nodes[0].forEach(function(n)
             {
                 if (n.innerHTML === target)
                     node = n;
@@ -1186,7 +1186,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    xAxisMouseOut : function (target, index, y, layerScope) {
+    xAxisMouseOut : function(target, index, y, layerScope) {
         // Do not do mouse over/out for selected labels or labels in process of selection
         if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
             // Clear plot highlights
@@ -1212,7 +1212,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    retrieveBinSubjectIds : function (plot, target, subjects) {
+    retrieveBinSubjectIds : function(plot, target, subjects) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1225,7 +1225,7 @@ Ext.define('Connector.view.Chart', {
             var bins = plot.renderer.canvas.selectAll('.vis-bin path');
             var selections = this.getCategoricalSelectionValues();
 
-            bins.each(function (d)
+            bins.each(function(d)
             {
                 // Check if value matches target or another selection
                 for (var i = 0; i < d.length; i++)
@@ -1246,7 +1246,7 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightBins : function (target, subjects) {
+    highlightBins : function(target, subjects) {
         // get the set of subjectIds in the binData
         var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects);
         if (subjects) {
@@ -1256,7 +1256,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.plot.renderer) {
-            var isSubjectInMouseBin = function (d, yesVal, noVal) {
+            var isSubjectInMouseBin = function(d, yesVal, noVal) {
                 if (d.length > 0 && d[0].data) {
                     for (var i = 0; i < d.length; i++) {
                         if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
@@ -1268,7 +1268,7 @@ Ext.define('Connector.view.Chart', {
                 return noVal;
             };
 
-            var colorFn = function (d)
+            var colorFn = function(d)
             {
                 // keep original color of the bin (note: uses style instead of fill attribute)
                 d.origStyle = d.origStyle || this.getAttribute('style');
@@ -1276,7 +1276,7 @@ Ext.define('Connector.view.Chart', {
                 return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle);
             };
 
-            var opacityFn = function (d)
+            var opacityFn = function(d)
             {
                 return isSubjectInMouseBin(d, 1, 0.15);
             };
@@ -1299,7 +1299,7 @@ Ext.define('Connector.view.Chart', {
             .attr('stroke-opacity', opacityFn);
     },
 
-    clearHighlightBins : function () {
+    clearHighlightBins : function() {
         if (this.plot.renderer) {
             this.clearBinsByCanvas(this.plot.renderer.canvas);
 
@@ -1315,12 +1315,12 @@ Ext.define('Connector.view.Chart', {
 
     clearBinsByCanvas : function(canvas) {
         canvas.selectAll('.vis-bin path')
-                .attr('style', function (d) {return d.origStyle || this.getAttribute('style');})
+                .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
     },
 
-    clearHighlightedData : function () {
+    clearHighlightedData : function() {
         if (this.showPointsAsBin)
             this.clearHighlightBins();
         else
@@ -1340,7 +1340,7 @@ Ext.define('Connector.view.Chart', {
                 selections = this.getCategoricalSelectionValues(),
                 subject;
 
-            points.each(function (d) {
+            points.each(function(d) {
                 subject = d.subjectId;
 
                 // Check if value matches target or another selection
@@ -1358,7 +1358,7 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightPlotData : function (target, subjects) {
+    highlightPlotData : function(target, subjects) {
         if (this.showPointsAsBin) {
             this.highlightBins(target, subjects);
         }
@@ -1367,7 +1367,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    highlightPoints : function (target, subjects) {
+    highlightPoints : function(target, subjects) {
         var subjectIds = this.retrievePointSubjectIds(target, subjects);
 
         var fillColorFn = function(d) {
@@ -1402,7 +1402,7 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    clearHighlightPoints : function () {
+    clearHighlightPoints : function() {
         var colorFn, colorScale = null, colorAcc = null;
 
         if (this.plot.scales.color && this.plot.scales.color.scale) {
@@ -1439,7 +1439,7 @@ Ext.define('Connector.view.Chart', {
                 .attr('stroke-opacity', 0.5);
     },
 
-    highlightSelected : function () {
+    highlightSelected : function() {
         var targets = this.getCategoricalSelectionValues(), me = this;
         if (targets.length < 1) {
             me.clearHighlightedData();
@@ -1450,7 +1450,7 @@ Ext.define('Connector.view.Chart', {
         })
     },
 
-    getCategoricalSelectionValues : function () {
+    getCategoricalSelectionValues : function() {
         var selections = Connector.getState().getSelections();
         var values = [];
         selections.forEach(function(s) {
@@ -1473,7 +1473,7 @@ Ext.define('Connector.view.Chart', {
         return values;
     },
 
-    isSelection : function (target) {
+    isSelection : function(target) {
         var values = this.getCategoricalSelectionValues(),
             found = false;
 
@@ -2473,7 +2473,7 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    applyFiltersToMeasure : function (measureSet, ptids) {
+    applyFiltersToMeasure : function(measureSet, ptids) {
         // find the subject column(s) in the measure set to apply the values filter (issue 24123)
         if (Ext.isArray(ptids)) {
             Ext.each(measureSet, function(m) {
