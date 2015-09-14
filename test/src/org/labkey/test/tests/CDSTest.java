@@ -1001,6 +1001,39 @@ public class CDSTest extends CDSReadOnlyTest
 
         gridColumnSelector.confirmSelection();
 
+        log("Validating treatment and study variables");
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelector.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-column-header-checkbox')]"));
+        gridColumnSelector.confirmSelection();
+        sleep(500); //Wait for mask to appear.
+        _ext4Helper.waitForMaskToDisappear();
+
+        grid.ensureColumnsPresent(CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_DATE_SUBJ_ENR,
+                CDSHelper.DEMO_DATE_FUP_COMP, CDSHelper.DEMO_DATE_PUB, CDSHelper.DEMO_DATE_START, CDSHelper.DEMO_NETWORK,
+                CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM,
+                CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC);
+
+        columns.clear();
+        columns.put(CDSHelper.DEMO_STUDY_NAME, true);
+        columns.put(CDSHelper.DEMO_TREAT_SUMM, true);
+        columns.put(CDSHelper.DEMO_DATE_SUBJ_ENR, true);
+        columns.put(CDSHelper.DEMO_DATE_FUP_COMP, true);
+        columns.put(CDSHelper.DEMO_DATE_PUB, true);
+        columns.put(CDSHelper.DEMO_DATE_START, true);
+        columns.put(CDSHelper.DEMO_NETWORK, true);
+        columns.put(CDSHelper.DEMO_PROD_CLASS, true);
+        columns.put(CDSHelper.DEMO_PROD_COMB, true);
+        columns.put(CDSHelper.DEMO_STUDY_TYPE, true);
+        columns.put(CDSHelper.DEMO_TREAT_ARM, true);
+        columns.put(CDSHelper.DEMO_TREAT_CODED, true);
+        columns.put(CDSHelper.DEMO_VACC_PLAC, true);
+
+        gridColumnSelector.openSelectorWindow();
+        log("Validate that Current columns are as expected and selectable.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        gridColumnSelector.cancelSelection();
+
         cds.goToAppHome();
 
     }
