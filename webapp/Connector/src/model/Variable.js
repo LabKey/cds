@@ -15,11 +15,18 @@ Ext.define('Connector.model.Variable', {
 
     statics: {
         getSourceDisplayText : function(variable) {
-            var sourceTxt;
+            var sourceTxt, isAssayDataset,
+                sourceContextMap = Connector.measure.Configuration.context.sources;
 
             if (Ext.isObject(variable)) {
-                var isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
-                sourceTxt = variable[isAssayDataset ? 'queryName': 'queryLabel'];
+                isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
+
+                if (Ext.isDefined(sourceContextMap[variable.selectedSourceKey])) {
+                    sourceTxt = sourceContextMap[variable.selectedSourceKey].queryLabel;
+                }
+                else {
+                    sourceTxt = variable[isAssayDataset ? 'queryName': 'queryLabel'];
+                }
             }
 
             return sourceTxt;
