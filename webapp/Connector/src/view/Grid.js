@@ -687,7 +687,7 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(), aliases;
         aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
         aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
-        return Ext4.Array.unique(aliases);
+        return Ext.Array.unique(aliases);
     },
 
     getSelectedMeasureAliases : function() {

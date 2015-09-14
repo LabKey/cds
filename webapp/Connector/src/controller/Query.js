@@ -509,7 +509,7 @@ Ext.define('Connector.controller.Query', {
 
             // The userFilter is a function used to further filter down the available measures.
             // Needed so the color picker only displays categorical measures.
-            userFilterMatch = !Ext4.isFunction(config.userFilter) || config.userFilter(record.data);
+            userFilterMatch = !Ext.isFunction(config.userFilter) || config.userFilter(record.data);
 
             if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch && userFilterMatch)
             {
