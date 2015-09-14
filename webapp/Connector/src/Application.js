@@ -33,7 +33,6 @@ Ext.define('Connector.Application', {
         'State',
         'Query',
         'Analytics',
-        'Update',
         'Group',
         'Main',
         'Router',
