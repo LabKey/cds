@@ -187,25 +187,25 @@ Connector.view.StudyAxis = function() {
         button = canvas.select('image.img-expand');
 
         button.on('mouseover', function(d) {
-            button.attr('xlink:href', function (d) {
+            button.attr('xlink:href', function(d) {
                 return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedHoverImg : collapsedHoverImg);
             });
         });
 
         button.on('mouseout', function(d) {
-            button.attr('xlink:href', function (d) {
+            button.attr('xlink:href', function(d) {
                 return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedImg : collapsedImg);
             });
         });
 
         button.on('mousedown', function(d) {
-            button.attr('xlink:href', function (d) {
+            button.attr('xlink:href', function(d) {
                 return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedImg : collapsedImg);
             });
         });
 
         button.on('mouseup', function(d) {
-            button.attr('xlink:href', function (d) {
+            button.attr('xlink:href', function(d) {
                 return Connector.resourceContext.imgPath + '/' + (collapsed ? collapsedHoverImg : expandedHoverImg);
             });
             collapsed = !collapsed;

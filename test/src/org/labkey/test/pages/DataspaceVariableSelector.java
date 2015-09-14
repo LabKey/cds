@@ -99,7 +99,8 @@ public abstract class DataspaceVariableSelector
             _test.sleep(1000);
         }
         _test.click(window().append(" div.content-label").withText(source));
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+//        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(window().append(" div.content-label").withText(source)));
+        _test.sleep(1000);
     }
 
     protected void backToSource(String selector){
@@ -507,6 +508,8 @@ public abstract class DataspaceVariableSelector
 
                 break;
         }
+
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
     // TODO Still working on this as part of the detail selection.

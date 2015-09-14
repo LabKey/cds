@@ -67,7 +67,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set x-axis"));
         if (_test.isElementPresent(Locator.tagWithClass("button", "yaxisbtn").notHidden()))
         {
+            _test.sleep(1500);
             _test._ext4Helper.waitForMaskToDisappear();
+            _test.waitForElementToDisappear(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number"));
         }
         else // Opens y-axis dialog automatically
         {

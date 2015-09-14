@@ -15,7 +15,7 @@ Ext.define('Connector.store.VisitTag', {
 
     singleUseOnly: undefined,
 
-    loadVisitTags : function (data) {
+    loadVisitTags : function(data) {
         if (data && data.rows)
         {
             var rows = [];

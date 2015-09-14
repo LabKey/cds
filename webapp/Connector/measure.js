@@ -20,9 +20,6 @@ Ext.define('Connector.measure.Configuration', {
                 'study|Ad5': {
                     category: 'Assays'
                 },
-                'study|Demographics': {
-                    queryLabel: 'Subject characteristics'
-                },
                 'study|ICS': {
                     category: 'Assays',
                     dimensions: [
@@ -69,6 +66,64 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ELISPOT_protein_panel',
                         'study_ELISPOT_specimen_type',
                         'study_ELISPOT_lab_code'
+                    ]
+                },
+
+                // New/virtual sources
+                'CurrentColumns': {
+                    sortOrder: -100,
+                    schemaName: '_current',
+                    queryName: null,
+                    queryLabel: 'Current columns',
+                    variableType: 'VIRTUAL'
+                },
+                'SessionColumns': {
+                    sortOrder: -99,
+                    schemaName: '_session',
+                    queryName: null,
+                    queryLabel: 'All variables from this session',
+                    variableType: 'VIRTUAL'
+                },
+                'SubjectCharacteristics': {
+                    schemaName: 'study',
+                    queryName: null,
+                    queryLabel: 'Subject characteristics',
+                    subjectCountQueryName: 'Demographics',
+                    variableType: 'DEFINED_MEASURES',
+                    measures: [
+                        'study_Demographics_species',
+                        'study_Demographics_subspecies',
+                        'study_Demographics_sexatbirth',
+                        'study_Demographics_race',
+                        'study_Demographics_ethnicity',
+                        'study_Demographics_country_enrollment',
+                        'study_Demographics_circumcised_enrollment',
+                        'study_Demographics_bmi_enrollment',
+                        'study_Demographics_agegroup_range',
+                        'study_Demographics_age_enrollment'
+                    ]
+                },
+                'StudyTreatmentVariables': {
+                    schemaName: 'study',
+                    queryName: null,
+                    queryLabel: 'Study and treatment variables',
+                    subjectCountQueryName: 'Demographics',
+                    variableType: 'DEFINED_MEASURES',
+                    measures: [
+                        'study_Demographics_study_label',
+                        'study_Demographics_study_start_date',
+                        'study_Demographics_study_first_enr_date',
+                        'study_Demographics_study_fu_complete_date',
+                        'study_Demographics_study_public_date',
+                        'study_Demographics_study_network',
+                        //'study_Demographics_study_last_vaccination_day',
+                        'study_Demographics_study_type',
+                        'study_Demographics_study_arm',
+                        'study_Demographics_study_arm_summary',
+                        'study_Demographics_study_arm_coded_label',
+                        'study_Demographics_study_randomization',
+                        'study_Demographics_study_product_class_combination',
+                        'study_Demographics_study_product_combination'
                     ]
                 }
             },
@@ -272,6 +327,12 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_Demographics_age_enrollment': {
+                    isRecommendedVariable: true
+                },
+                'study_Demographics_study_label': {
+                    isRecommendedVariable: true
+                },
+                'study_Demographics_study_arm_summary': {
                     isRecommendedVariable: true
                 },
 
