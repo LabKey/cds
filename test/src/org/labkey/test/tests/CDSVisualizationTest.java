@@ -276,7 +276,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     public void verifyStudyAndTreatmentVars()
     {
         String expectedXYValues;
-        int expectedTickCount;
+        int actualTickCount;
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
@@ -303,9 +303,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
         xaxis.confirmSelection();
-        expectedTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
-        assertEquals("Expected 60 tick marks on the x-axis. Found: " + expectedTickCount, 60, expectedTickCount);
+        assertEquals("Expected 60 tick marks on the x-axis. Found: " + actualTickCount, 60, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
@@ -410,9 +410,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
         xaxis.confirmSelection();
-        expectedTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
-        assertEquals("Expected 28 tick marks on the x-axis. Found: " + expectedTickCount, 28, expectedTickCount);
+        assertEquals("Expected 28 tick marks on the x-axis. Found: " + actualTickCount, 28, actualTickCount);
 
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
@@ -439,6 +439,107 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyColorStudyAndTreatmentVars()
+    {
+        String expectedXYValues;
+        int actualTickCount;
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        cds.openStatusInfoPane("Races");
+        sleep(500);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+
+        sleep(500); // Wait for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_STUDY_NAME);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 15 Study Names in the color axis. Found: " + actualTickCount, 15, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 30 Treatment Summaries in the color axis. Found: " + actualTickCount, 30, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_NETWORK);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 1 Network in the color axis. Found: " + actualTickCount, 1, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_PROD_COMB);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 2 Product Class Combinations in the color axis. Found: " + actualTickCount, 2, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_PROD_CLASS);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 2 Product Classes in the color axis. Found: " + actualTickCount, 2, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_STUDY_TYPE);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 4 Study Types in the color axis. Found: " + actualTickCount, 4, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 19 Treatment Arms in the color axis. Found: " + actualTickCount, 19, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_TREAT_CODED);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 1 Treatment Arm Coded Label in the color axis. Found: " + actualTickCount, 1, actualTickCount);
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickVariable(CDSHelper.DEMO_VACC_PLAC);
+        coloraxis.confirmSelection();
+
+        actualTickCount = Locator.css("#colorvarselector-innerCt  svg > path.legend-point").findElements(getDriver()).size();
+
+        assertEquals("Expected 3 Vaccinne or Placebos in the color axis. Found: " + actualTickCount, 3, actualTickCount);
+
+    }
+
+        @Test
     public void verifyBoxPlots()
     {
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
