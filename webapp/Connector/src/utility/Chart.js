@@ -146,8 +146,8 @@ Ext.define('Connector.utility.Chart', {
         }
 
         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
-            xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true, plot.scales.x.scale.domain());
-            xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false, plot.scales.x.scale.domain());
+            xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true);
+            xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false);
 
             // Issue 24124: With time points, brushing can create a filter that is not a whole number
             if (xMeasure.variableType == 'TIME') {
@@ -166,8 +166,8 @@ Ext.define('Connector.utility.Chart', {
         }
 
         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
-            yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true, plot.scales.yLeft.scale.domain());
-            yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false, plot.scales.yLeft.scale.domain());
+            yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
+            yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
             sqlFilters[2] = LABKEY.Filter.create(yMeasure.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
             sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
@@ -249,20 +249,22 @@ Ext.define('Connector.utility.Chart', {
 
         // Issue 20116
         if (isX && isY) { // 2D
-            return x > xExtent[0] && x < xExtent[1] && y > yExtent[0] && y < yExtent[1];
+            return x != null && x > xExtent[0] && x < xExtent[1] &&
+                   y != null && y > yExtent[0] && y < yExtent[1];
         }
         else if (isX) { // 1D
-            return x > xExtent[0] && x < xExtent[1];
+            return x != null && x > xExtent[0] && x < xExtent[1];
         }
         else if (isY) { // 1D
-            return y > yExtent[0] && y < yExtent[1];
+            return y != null && y > yExtent[0] && y < yExtent[1];
         }
 
         return false;
     },
 
-    transformVal : function(val, type, isMin, domain) {
+    transformVal : function(val, type, isMin) {
         var trans = val;
+
         if (type === 'INTEGER') {
             trans = isMin ? Math.floor(val) : Math.ceil(val);
         }
@@ -270,19 +272,16 @@ Ext.define('Connector.utility.Chart', {
             trans = isMin ? new Date(Math.floor(val)) : new Date(Math.ceil(val));
         }
         else if (type === 'DOUBLE' || type === 'REAL' || type === 'FLOAT') {
-            var precision, d = domain[1];
+            var precision = 3;
 
-            if (d >= 1000) {
+            if (trans > 100 || trans < -100) {
                 precision = 0;
             }
-            else if (d >= 100) {
+            else if (trans > 10 || trans < -10) {
                 precision = 1;
             }
-            else if (d >= 10) {
+            else if (trans > 1 || trans < -1) {
                 precision = 2;
-            }
-            else {
-                precision = 3;
             }
 
             trans = parseFloat(val.toFixed(precision));

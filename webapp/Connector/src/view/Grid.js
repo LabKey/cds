@@ -155,7 +155,7 @@ Ext.define('Connector.view.Grid', {
         if (!this.selectColumnsButton) {
             this.selectColumnsButton = Ext.create('Ext.button.Button', {
                 cls: 'gridcolumnsbtn',
-                text: 'select columns',
+                text: 'Select columns',
                 handler: this.showMeasureSelection,
                 scope: this
             });
@@ -205,10 +205,10 @@ Ext.define('Connector.view.Grid', {
                         style: 'position: absolute; left: 600px; top: 47%;',
                         children: [{
                             tag: 'h1',
-                            html: 'Add columns about your filtered subjects.'
+                            html: 'Choose columns of subject data.'
                         },{
                             tag: 'h1',
-                            html: 'Sort, filter, and make subgroups.',
+                            html: 'Sort, filter, and label subjects.',
                             style: 'color: #7a7a7a;'
                         },{
                             tag: 'h1',

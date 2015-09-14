@@ -103,7 +103,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     getGridBaseColumnAlias : function(colName) {
-        return Connector.studyContext.schemaName + '_' + Connector.studyContext.gridBase + '_' + colName;
+        return Connector.studyContext.gridBaseSchema + '_' + Connector.studyContext.gridBase + '_' + colName;
     },
 
     /**
@@ -140,7 +140,7 @@ Ext.define('Connector.controller.Query', {
 
             this._gridMeasures = [];
 
-            var schema = Connector.studyContext.schemaName,
+            var schema = Connector.studyContext.gridBaseSchema,
                 query = Connector.studyContext.gridBase,
                 defaultAliases = this.getDefaultGridAliases();
 
@@ -202,7 +202,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     addMeasure : function(measure) {
-        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias))) {
+        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase()))) {
             var sourceKey = measure.schemaName + '|' + measure.queryName;
             var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
 
@@ -242,7 +242,7 @@ Ext.define('Connector.controller.Query', {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
-        return this.MEASURE_STORE.getById(alias);
+        return this.MEASURE_STORE.getById(alias.toLowerCase());
     },
 
     /**
@@ -371,7 +371,8 @@ Ext.define('Connector.controller.Query', {
      */
     getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
         var subjectMeasure, wrappedMeasureSet = [], aliases = [],
-            measureData, filterMeasures, index, filterMeasureRecord, alias;
+            measureData, filterMeasures, index, filterMeasureRecord, alias,
+            dimQueryKey = dimension.get('schemaName') + '|' + dimension.get('queryName');
 
         if (Ext.isDefined(measureSet))
         {
@@ -402,28 +403,23 @@ Ext.define('Connector.controller.Query', {
                 });
 
                 // get the relevant application filters to add to the measure set
-                filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters());
+                // (i.e. if it is from the same query or is from a demographic dataset)
+                filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters(), true, [dimQueryKey]);
                 Ext.each(filterMeasures, function(filterMeasure) {
+                    alias = LABKEY.MeasureUtil.getAlias(filterMeasure.measure);
+                    index = aliases.indexOf(alias);
 
-                    // a filter is only relevant to a dimension if it is from the same query or is from a demographic dataset
-                    if (filterMeasure.measure.isDemographic ||
-                        (dimension.get('schemaName') == filterMeasure.measure.schemaName && dimension.get('queryName') == filterMeasure.measure.queryName)) {
-
-                        alias = LABKEY.MeasureUtil.getAlias(filterMeasure.measure);
-                        index = aliases.indexOf(alias);
-
-                        // if we already have this measure in our set, then just tack on the filterArray
-                        if (index > -1) {
-                            wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
-                        }
-                        else {
-                            filterMeasureRecord = this.getMeasureRecordByAlias(alias);
-                            if (Ext.isDefined(filterMeasureRecord)) {
-                                wrappedMeasureSet.push({
-                                    filterArray: filterMeasure.filterArray,
-                                    measure: Ext.clone(filterMeasureRecord.data)
-                                });
-                            }
+                    // if we already have this measure in our set, then just tack on the filterArray
+                    if (index > -1) {
+                        wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
+                    }
+                    else {
+                        filterMeasureRecord = this.getMeasureRecordByAlias(alias);
+                        if (Ext.isDefined(filterMeasureRecord)) {
+                            wrappedMeasureSet.push({
+                                filterArray: filterMeasure.filterArray,
+                                measure: Ext.clone(filterMeasureRecord.data)
+                            });
                         }
                     }
                 }, this);
@@ -538,15 +534,15 @@ Ext.define('Connector.controller.Query', {
         if (!this._dataSorts) {
             // TODO: Source these differently? This is requiring us to split these out
             this._dataSorts = [{
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
                 name: 'Container'
             },{
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
                 name: 'SubjectId'
             },{
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
                 name: 'SubjectVisit'
             }];
@@ -632,14 +628,27 @@ Ext.define('Connector.controller.Query', {
      * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
      * in all whereFilters with the appropriate configuration.
      * @param filters
+     * @param includeDemographic true to include all fitlers from demographic queries
+     * @param relevantQueryKeys array of relevant query keys (schema|query) for which filters to be included from
      */
-    getWhereFilterMeasures : function(filters) {
-        var measures = [];
+    getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys) {
+        var measures = [], queryKey, include;
 
         Ext.each(filters, function(filter) {
             if (filter.get('isWhereFilter') === true) {
                 var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
-                Ext.each(ms, function(m) { measures.push(m); });
+                Ext.each(ms, function(m) {
+                    queryKey = m.measure.schemaName + '|' + m.measure.queryName;
+
+                    include = !Ext.isArray(relevantQueryKeys) || relevantQueryKeys.indexOf(queryKey) > -1;
+                    if (m.measure.isDemographic) {
+                        include = !Ext.isBoolean(includeDemographic) || includeDemographic;
+                    }
+
+                    if (include) {
+                        measures.push(m);
+                    }
+                });
             }
         }, this);
 
