@@ -387,14 +387,22 @@ a {
 .header-container {
 
   .titlepanel {
-    font: $title-font;
     background: $gray-7;
     display: block;
     width:100%;
     height: 56px;
-    line-height: 56px;
     padding-left: 16px;
     clear: all;
+
+    .title {
+      font: $title-font;
+      line-height: 56px;
+    }
+
+    .buttons {
+      padding-top: 16px;
+      padding-right: 24px;
+    }
   }
 
   margin: 0;

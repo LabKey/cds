@@ -45,23 +45,16 @@ Ext.define('Connector.view.Grid', {
             layout: {
                 type: 'hbox'
             },
-            items: [
-                {
-                    xtype: 'actiontitle',
-                    text: 'View data grid'
-                },
-                {
-                    // This allows for the following items to be right aligned
-                    xtype: 'box',
-                    flex: 1,
-                    autoEl: {
-                        tag: 'div'
-                    }
-                },
-                this.getExportButton(),
-                this.getCitationsButton(),
-                this.getSelectColumnsButton()
-            ]
+            items: [{
+                xtype: 'actiontitle',
+                flex: 1,
+                text: 'View data grid',
+                buttons: [
+                    this.getExportButton(),
+                    this.getCitationsButton(),
+                    this.getSelectColumnsButton()
+                ]
+            }]
         },{
             // This provides a row count on the screen for testing purposes
             id: 'gridrowcountcmp',
@@ -109,7 +102,7 @@ Ext.define('Connector.view.Grid', {
             ptype: 'messaging'
         });
 
-        this.footer = Ext.create('Connector.component.GridPager', {
+            this.footer = Ext.create('Connector.component.GridPager', {
             listeners: {
                 updatepage: this.showAlignFooter,
                 scope: this
