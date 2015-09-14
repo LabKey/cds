@@ -29,7 +29,7 @@ Ext.define('Connector.model.Grid', {
         {name: 'SQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
-        {name: 'schemaName', defaultValue: Connector.studyContext.schemaName },
+        {name: 'schemaName', defaultValue: Connector.studyContext.gridBaseSchema },
         {name: 'queryName', defaultValue: Connector.studyContext.gridBase }
     ],
 
@@ -327,7 +327,8 @@ Ext.define('Connector.model.Grid', {
         //
         var SQLMeasures = [],
             plotMeasures = [],
-            queryService = Connector.getService('Query');
+            queryService = Connector.getService('Query'),
+            measureMap = {};
 
         Ext.each(filterSet, function(filter) {
             // respect plotted measures
@@ -343,24 +344,31 @@ Ext.define('Connector.model.Grid', {
                     }
                 }, this);
             }
-            else if (filter.isGrid() && !filter.isPlot()) {
+            else if (filter.isGrid()) {
                 // For each grid filter find the associated measure
                 var gridFilters = filter.get('gridFilter');
                 Ext.each(gridFilters, function(gf) {
 
-                    var measure = queryService.getMeasure(gf.getColumnName());
-                    if (Ext.isDefined(measure)) {
-                        SQLMeasures.push({
-                            measure: Ext.clone(measure),
-                            time: 'date',
-                            filterArray: gridFilters
-                        });
-                        return false;
+                    if (gf && gf != '_null') {
+                        var measure = queryService.getMeasure(gf.getColumnName());
+                        if (!measureMap[measure.alias]) {
+                            measureMap[measure.alias] = {
+                                measure: Ext.clone(measure),
+                                time: 'date',
+                                filterArray: []
+                            }
+                        }
+
+                        measureMap[measure.alias].filterArray.push(gf);
                     }
 
                 }, this);
             }
         }, this);
+
+        Ext.iterate(measureMap, function(alias, measureConfig) {
+            SQLMeasures.push(measureConfig);
+        });
 
         this.set({
             plotMeasures: plotMeasures,
@@ -434,7 +442,7 @@ Ext.define('Connector.model.Grid', {
     },
 
     bindFilters : function(appFilters) {
-        var filterArray = [], nonGridFilters = [];
+        var filterArray = [];
         Ext.each(appFilters, function(filter) {
             if (filter.isGrid()) {
                 var gridFilters = filter.get('gridFilter');
@@ -444,9 +452,6 @@ Ext.define('Connector.model.Grid', {
                         this.addToFilters(gf, filter.id);
                     }
                 }, this);
-            }
-            else {
-                nonGridFilters.push(filter);
             }
         }, this);
         return filterArray;

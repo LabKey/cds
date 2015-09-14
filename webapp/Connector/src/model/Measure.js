@@ -5,10 +5,16 @@
  */
 Ext.define('Connector.model.Measure', {
     extend : 'Ext.data.Model',
-    idProperty : 'alias',
+    idProperty : 'lowerAlias',
     fields : [
         {name: 'id'},
         {name: 'alias'},
+        {
+            name: 'lowerAlias',
+            convert: function(val, rec) {
+                return rec.get('alias').toLowerCase();
+            }
+        },
 
         // Properties from the LabKey schema and query
         {name: 'name', defaultValue: undefined},

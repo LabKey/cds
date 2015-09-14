@@ -155,7 +155,7 @@ Ext.define('Connector.view.Grid', {
         if (!this.selectColumnsButton) {
             this.selectColumnsButton = Ext.create('Ext.button.Button', {
                 cls: 'gridcolumnsbtn',
-                text: 'select columns',
+                text: 'Select columns',
                 handler: this.showMeasureSelection,
                 scope: this
             });
