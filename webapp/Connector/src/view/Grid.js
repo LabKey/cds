@@ -305,7 +305,7 @@ Ext.define('Connector.view.Grid', {
         var grid = this.getGrid(),
             store = grid.getStore();
 
-        store.filterArray = model.getFilterArray(true);
+        store.filterArray = model.getBaseFilters();
         store.loadPage(1);
 
         Connector.getService('Query').clearSourceCountsCache();
@@ -468,7 +468,7 @@ Ext.define('Connector.view.Grid', {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
             columns: columns,
-            filterArray: model.getFilterArray(true),
+            filterArray: model.getBaseFilters(),
             maxRows: maxRows,
             pageSize: maxRows,
             remoteSort: true,
@@ -686,6 +686,7 @@ Ext.define('Connector.view.Grid', {
         // return an array of measure aliases for those columns added to the grid via plot selection or active filters
         var model = this.getModel(), aliases;
         aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
+        aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
         return Ext4.Array.unique(aliases);
     },
 

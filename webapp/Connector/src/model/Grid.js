@@ -26,6 +26,7 @@ Ext.define('Connector.model.Grid', {
         {name: 'defaultMeasures', defaultValue: []},
         {name: 'measures', defaultValue: []},
         {name: 'plotMeasures', defaultValue: []},
+        {name: 'SQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
         {name: 'schemaName', defaultValue: Connector.studyContext.gridBaseSchema },
@@ -306,6 +307,7 @@ Ext.define('Connector.model.Grid', {
             return Ext.Array.push(
                 Ext.Array.pluck(this.get('defaultMeasures'), 'measure'),
                 Ext.Array.pluck(this.get('plotMeasures'), 'measure'),
+                Ext.Array.pluck(this.get('SQLMeasures'), 'measure'),
                 Ext.Array.pluck(this.get('measures'), 'measure')
             );
         }
@@ -315,6 +317,7 @@ Ext.define('Connector.model.Grid', {
     getWrappedMeasures : function() {
         return this.get('defaultMeasures')
                 .concat(this.get('plotMeasures'))
+                .concat(this.get('SQLMeasures'))
                 .concat(this.get('measures'));
     },
 
@@ -322,7 +325,10 @@ Ext.define('Connector.model.Grid', {
         //
         // Cross-reference application measures
         //
-        var plotMeasures = [];
+        var SQLMeasures = [],
+            plotMeasures = [],
+            queryService = Connector.getService('Query'),
+            measureMap = {};
 
         Ext.each(filterSet, function(filter) {
             // respect plotted measures
@@ -338,9 +344,36 @@ Ext.define('Connector.model.Grid', {
                     }
                 }, this);
             }
+            else if (filter.isGrid()) {
+                // For each grid filter find the associated measure
+                var gridFilters = filter.get('gridFilter');
+                Ext.each(gridFilters, function(gf) {
+
+                    if (gf && gf != '_null') {
+                        var measure = queryService.getMeasure(gf.getColumnName());
+                        if (!measureMap[measure.alias]) {
+                            measureMap[measure.alias] = {
+                                measure: Ext.clone(measure),
+                                time: 'date',
+                                filterArray: []
+                            }
+                        }
+
+                        measureMap[measure.alias].filterArray.push(gf);
+                    }
+
+                }, this);
+            }
         }, this);
 
-        this.set('plotMeasures', plotMeasures);
+        Ext.iterate(measureMap, function(alias, measureConfig) {
+            SQLMeasures.push(measureConfig);
+        });
+
+        this.set({
+            plotMeasures: plotMeasures,
+            SQLMeasures: SQLMeasures
+        });
 
         if (!this.isActive()) {
             this.activeMeasure = true;
