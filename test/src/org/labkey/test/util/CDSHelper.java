@@ -280,9 +280,9 @@ public class CDSHelper
     public static final String ELISPOT_MARKER_NAME = "Functional marker name";
     public static final String ELISPOT_MARKER_TYPE = "Functional marker type";
     public static final String ELISPOT_LAB = "Lab ID";
-    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
-    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
-    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (SFC) - Background";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (SFC) - Background subtracted";
+    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (SFC) - Raw";
     public static final String ELISPOT_PEPTIDE_POOL = "Peptide Pool";
     public static final String ELISPOT_PROTEIN =  "Protein";
     public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";

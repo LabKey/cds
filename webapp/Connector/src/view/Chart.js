@@ -33,6 +33,38 @@ Ext.define('Connector.view.Chart', {
 
     disableAutoMsg: false,
 
+    statics: {
+        // Template used for contents of VisitTag tooltips
+        studyAxisTipTpl: new Ext.XTemplate(
+            '<tpl if="isAggregate">',
+                '<tpl for="groups">',
+                    '<div style="margin: 0 20px; text-indent: -20px">',
+                        '<span style="font-weight: bold;">{label:htmlEncode}: </span>',
+                        '{tags:this.renderTags}',
+                    '</div>',
+                '</tpl>',
+            '<tpl else>',
+                '<tpl for="groups">',
+                    '<div style="margin: 0 20px; text-indent: -20px">',
+                        '<span style="font-weight: bold;">{label:htmlEncode}: </span>',
+                        '<tpl if="isVaccination">',
+                            '{desc:htmlEncode}',
+                            '<br/>',
+                            '{tags:this.renderTags}',
+                        '<tpl else>',
+                            '{tags:this.renderTags}',
+                        '</tpl>',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            {
+                renderTags: function(tags) {
+                    return Ext.htmlEncode(tags.join(', '));
+                }
+            }
+        )
+    },
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -1833,7 +1865,7 @@ Ext.define('Connector.view.Chart', {
 
         // set of measures from data filters
         if (includeFilterMeasures === true) {
-            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters());
+            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
             if (!Ext.isEmpty(filterMeasures)) {
                 measures = measures.concat(filterMeasures);
             }
@@ -1843,6 +1875,19 @@ Ext.define('Connector.view.Chart', {
             measures: queryService.mergeMeasures(measures),
             wrapped: wrappedMeasures
         };
+    },
+
+    getQueryKeys : function(measures) {
+        var queryKeys = [], key;
+
+        Ext.each(measures, function(m){
+            key = m.measure.schemaName + '|' + m.measure.queryName;
+            if (queryKeys.indexOf(key) == -1) {
+                queryKeys.push(key);
+            }
+        });
+
+        return queryKeys;
     },
 
     /**
@@ -2520,46 +2565,65 @@ Ext.define('Connector.view.Chart', {
     showVisitTagHover : function(data, visitTagEl) {
         var bubbleWidth, groupWidth = 0, tagWidth = 0,
             groupTags = {}, maxWidth = 0,
-            content = '', config, visitTag, visitTagGrp;
+            config, visitTag, visitTagGrp, keyCount = 0;
 
-        // content will display one row for each group so we need to gather together the tags for each group separately
+        // map data to set object mapped by group (i.e. 'Group 1 Vaccine')
         for (var i = 0; i < data.visitTags.length; i++) {
 
             visitTag = data.visitTags[i];
             visitTagGrp = visitTag.group;
 
             if (!groupTags[visitTagGrp]) {
+                keyCount++;
                 groupTags[visitTagGrp] = {
                     tags: [],
-                    desc: ''
+                    desc: '',
+                    isChallenge: data.isChallenge,
+                    isVaccination: data.isVaccination
                 };
             }
 
             groupTags[visitTagGrp].tags.push(visitTag.tag);
             groupTags[visitTagGrp].desc = visitTag.desc;
 
-            groupWidth = Ext.htmlEncode(visitTag.group).length + Ext.htmlEncode(visitTag.desc).length + 3;
-            if (groupWidth > maxWidth) {
-                maxWidth = groupWidth;
-            }
-
+            // CONSIDER: Ideally, we could somehow measure the resulting tag's width by
+            // asking the browser how wide the element would be (shadow DOM?)
+            groupWidth = Ext.htmlEncode(visitTag.group).length;
             tagWidth = Ext.htmlEncode(groupTags[visitTagGrp].tags.join(',')).length + 4;
-            if (tagWidth > maxWidth) {
-                maxWidth = tagWidth;
+
+            if ((groupWidth + tagWidth) > maxWidth) {
+                maxWidth = groupWidth + tagWidth;
             }
         }
 
-        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural);
-        Ext.each(groupKeys, function(key) {
-            if (groupTags.hasOwnProperty(key)) {
-                for (var j=0; i < groupTags[key].tags.length; j++) {
-                    groupTags[key].tags[j] = Ext.htmlEncode(groupTags[key].tags[j]);
-                }
+        if (keyCount == 1) {
 
-                content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
-                    + Ext.htmlEncode(key) + ' :</span> ' + Ext.htmlEncode(groupTags[key].desc)
-                    + '<br>-' + groupTags[key].tags.join(',') + '</p>';
+            var labelLength = Ext.htmlEncode(visitTag.group).length,
+                tagLength = Ext.htmlEncode(groupTags[visitTagGrp].tags.join(',')).length + 4,
+                descLength = Ext.htmlEncode(groupTags[visitTagGrp].desc).length + 3;
+
+            if (groupTags[visitTagGrp].isVaccination) {
+                maxWidth = Math.max(labelLength + descLength, tagLength);
             }
+            else {
+                maxWidth = labelLength + tagLength;
+            }
+        }
+
+        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural),
+            isAggregate = groupKeys.length > 1,
+            tplGroups = [];
+
+        Ext.each(groupKeys, function(key) {
+            var group = groupTags[key];
+
+            tplGroups.push({
+                label: key,
+                desc: group.desc,
+                tags: group.tags,
+                isChallenge: group.isChallenge,
+                isVaccination: group.isVaccination
+            });
         });
 
         bubbleWidth = Math.min(maxWidth * 8, 400);
@@ -2567,11 +2631,14 @@ Ext.define('Connector.view.Chart', {
         config = {
             bubbleWidth: bubbleWidth,
             xOffset: -(bubbleWidth / 2),          // the non-vaccination icon is slightly smaller
-            arrowOffset: (bubbleWidth / 2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
+            arrowOffset: (bubbleWidth / 2) - 10 - ((data.isVaccination || data.isChallenge) ? 4 : 0),
             target: visitTagEl,
             placement: 'top',
             title: data.studyLabel + ' - ' + data.label,
-            content: content
+            content: Connector.view.Chart.studyAxisTipTpl.apply({
+                groups: tplGroups,
+                isAggregate: isAggregate
+            })
         };
 
         ChartUtils.showCallout(config, 'hidevisittagmsg', this);

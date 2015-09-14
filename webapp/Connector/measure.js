@@ -337,9 +337,6 @@ Ext.define('Connector.measure.Configuration', {
                 },
 
                 // hidden variables
-                'study_ICS_summary_level': {
-                    hidden: true
-                },
                 'study_ICS_protein_panel_protein_peptide_pool': {
                     hidden: true
                 },
@@ -347,9 +344,6 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ICS_SubjectVisit_Visit': {
-                    hidden: true
-                },
-                'study_NAb_summary_level': {
                     hidden: true
                 },
                 'study_NAb_tier_clade_virus': {
@@ -361,16 +355,10 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_visit_day': {
                     hidden: true
                 },
-                'study_BAMA_summary_level': {
-                    hidden: true
-                },
                 'study_BAMA_SubjectVisit_Visit': {
                     hidden: true
                 },
                 'study_BAMA_visit_day': {
-                    hidden: true
-                },
-                'study_ELISPOT_summary_level': {
                     hidden: true
                 },
                 'study_ELISPOT_protein_panel_protein_peptide_pool': {

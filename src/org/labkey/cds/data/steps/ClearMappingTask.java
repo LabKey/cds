@@ -63,6 +63,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
         for (Container container : project.getChildren())
         {
             clearTable("cds", "facts", container, logger);
+            clearTable("cds", "GridBase", container, logger);
             clearTable("cds", "visittagalignment", container, logger);
             clearTable("cds", "visittagmap", container, logger);
             clearTable("cds", "treatmentarmsubjectmap", container, logger);
@@ -72,6 +73,7 @@ public class ClearMappingTask extends TaskRefTaskImpl
             clearTable("cds", "study", container, logger);
         }
 
+        clearTable("cds", "facts", project, logger);
         clearTable("study", "visittag", project, logger);
 
         long finish = System.currentTimeMillis();

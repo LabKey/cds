@@ -585,21 +585,21 @@
       </column>
       <column columnName="mean_sfc">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude (% cells) - Background subtracted</columnTitle>
+        <columnTitle>Magnitude (SFC) - Background subtracted</columnTitle>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation, adjusted for number of spot forming cells without antigen stimulation.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <measure>true</measure>
       </column>
       <column columnName="mean_sfc_neg">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude (% cells) - Background</columnTitle>
+        <columnTitle>Magnitude (SFC) - Background</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Number of Spot-forming Cells (SFC) in the absence of antigen stimulation.</description>
         <measure>true</measure>
       </column>
       <column columnName="mean_sfc_raw">
         <datatype>integer</datatype>
-        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
+        <columnTitle>Magnitude (SFC) - Raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
         <description>Mean Number of Spot-forming Cells (SFC) in response to antigen stimulation.</description>
         <measure>true</measure>
