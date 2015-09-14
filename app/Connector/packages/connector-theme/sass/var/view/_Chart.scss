@@ -59,6 +59,10 @@
 
 svg g {
 
+  &.layer {
+    cursor: crosshair;
+  }
+
   &.study .visit-tag {
     cursor: pointer;
   }
