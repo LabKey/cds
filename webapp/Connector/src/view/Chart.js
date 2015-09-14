@@ -211,7 +211,6 @@ Ext.define('Connector.view.Chart', {
             },
             items: [{
                 xtype: 'container',
-                width: '33%',
                 margin: '16 0 0 24',
                 layout: {
                     type: 'hbox',
@@ -220,7 +219,7 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getYSelector()]
             },{
                 xtype: 'container',
-                width: '34%',
+                flex: 1,
                 margin: '16 0 0 0',
                 layout: {
                     type: 'hbox',
@@ -232,7 +231,6 @@ Ext.define('Connector.view.Chart', {
                 ]
             },{
                 xtype: 'container',
-                width: '33%',
                 margin: '16 24 0 0',
                 layout: {
                     type: 'hbox',
@@ -249,6 +247,7 @@ Ext.define('Connector.view.Chart', {
                 hidden: true,
                 cls: 'plotmodeon',
                 html: 'Heatmap on',
+                width: 110,
                 listeners: {
                     scope: this,
                     afterrender : function(c) {
@@ -268,6 +267,7 @@ Ext.define('Connector.view.Chart', {
                 hidden: true,
                 cls: 'plotmodeon',
                 html: 'Median values',
+                width: 115,
                 listeners: {
                     scope: this,
                     afterrender : function(c) {
