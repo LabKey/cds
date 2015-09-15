@@ -235,6 +235,11 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Products'
                         }
                     },{
+                        type: 'studyassays',
+                        staticData: {
+                            title: 'Assays'
+                        }
+                    },{
                         type: 'studydatasets',
                         staticData: {
                             title: "Lab & clinical data"
@@ -388,6 +393,11 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'contactcds',
                         staticData: {
                             title: 'Contact information'
+                        }
+                    },{
+                        type: 'assaystudies',
+                        staticData: {
+                            title: 'Studies'
                         }
                     }]]
                 },{

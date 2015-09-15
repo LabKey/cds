@@ -142,6 +142,21 @@ h1.lhdv {
   padding-right: 10px;
 }
 
+.detail-small-column {
+  width: 10%;
+  float: left;
+}
+
+.detail-medium-column {
+  width: 30%;
+  float: left;
+}
+
+.detail-large-column {
+  width: 50%;
+  float: left;
+}
+
 .detail-right-column {
   width: 20%;
   float: right;
@@ -206,6 +221,16 @@ h1.lhdv {
 div.list-container {
   padding-right: $pageLeftPadding + 17px; /* 17px is the width of the scroll bar */
 
+  div.list-title-bar {
+    padding-bottom: 12px;
+    border-bottom: 2px solid $heat-scale-4;
+    overflow: auto;
+    background-color: #fff;
+    font: $subhead-font;
+    color: $heat-scale-2;
+    text-transform: uppercase;
+  }
+
   div.list-entry-container {
     min-height: 123px;
     border-bottom: 1px solid $heat-scale-4;
@@ -219,11 +244,23 @@ div.list-container {
     }
 
     div.list-entry-description {
-      width: 60%;
       padding-top: 12px;
       padding-bottom: 12px;
       color: $heat-scale-1;
       font: $body-one-font;
+    }
+
+    .list-detail-text {
+      padding-top: 24px;
+      font: $body-one-font;
+
+      .list-detail-gray-text {
+        color: $heat-scale-1;
+      }
+
+      .list-detail-black-text {
+        color: $black;
+      }
     }
   }
 

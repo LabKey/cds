@@ -307,6 +307,7 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductManufacturing.js"></script>
