@@ -58,7 +58,7 @@ Ext.define('Connector.app.store.Assay', {
                             ret[idx] = {
                                 antigen_name: row.antigen_name,
                                 antigen_description: row.antigen_description,
-                                antigen_control: row.antigen_control,
+                                antigen_control: row.antigen_control, //this assumes the control status is the same for all peptide pools of a protein panel
                                 clades: row.clades,
                                 protienAndPools: [{
                                     protein: row.protein,

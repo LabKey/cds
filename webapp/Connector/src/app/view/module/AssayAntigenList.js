@@ -26,7 +26,7 @@ Ext.define('Connector.view.module.AssayAntigenList', {
                                 '</div>',
                             '</div>',
                             '<div class="detail-small-column list-detail-text">',
-                                '<div class="list-detail-gray-text">{[values.control ? "YES" : "NO"]}</div>',
+                                '<div class="list-detail-gray-text">{[values.antigen_control && values.antigen_control != "0" ? "YES" : "NO"]}</div>',
                             '</div>',
                             this.renderBody(assay_type),
                         '</div>',
