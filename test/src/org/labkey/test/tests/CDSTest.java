@@ -1426,7 +1426,7 @@ public class CDSTest extends CDSReadOnlyTest
     {
         cds.viewLearnAboutPage("Assays");
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
-        _asserts.verifyLearnAboutPage(assays, true);
+        _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
         waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
