@@ -197,6 +197,59 @@
             <column columnName="assay_endpoint_statistical_analysis"/>
         </columns>
     </table>
+    <table tableName="import_nabantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="target_cell"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_icsantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_elispotantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_bamaantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
     <table tableName="import_studypartgrouparm" tableDbType="TABLE">
         <columns>
             <column columnName="prot"/>
@@ -485,6 +538,59 @@
             <column columnName="assay_endpoint_description"/>
             <column columnName="assay_endpoint_statistical_analysis"/>
             <column columnName="assay_type"/>
+        </columns>
+    </table>
+    <table tableName="nabantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="target_cell"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="icsantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="elispotantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="bamaantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
         </columns>
     </table>
     <table tableName="subjectproductmap" tableDbType="TABLE">

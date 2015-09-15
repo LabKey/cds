@@ -3,9 +3,9 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
-Ext.define('Connector.view.module.StudyAssays', {
+Ext.define('Connector.view.module.AssayStudies', {
 
-    xtype : 'app.module.studyassays',
+    xtype : 'app.module.assaystudies',
 
     extend : 'Connector.view.module.BaseModule',
 
@@ -15,21 +15,21 @@ Ext.define('Connector.view.module.StudyAssays', {
         }
 
         Ext.apply(this.data, {
-            assays: this.data.model ? this.data.model.get('assays'): []
+            studies: this.data.model ? this.data.model.get('studies'): []
         });
 
         this.tpl = new Ext.XTemplate(
                 '<tpl><p>',
                     Connector.constant.Templates.module.title,
-                    '<tpl if="assays.length &gt; 0">',
-                        '<tpl for="assays">',
+                    '<tpl if="studies.length &gt; 0">',
+                        '<tpl for="studies">',
                             '<div class="item-row">',
-                                '<p><a href="#learn/learn/Assay/{[encodeURIComponent(values.assay_identifier)]}">{assay_identifier:htmlEncode}</a></p>',
+                                '<p><a href="#learn/learn/Study/{[encodeURIComponent(values.id)]}">{label:htmlEncode}</a></p>',
                             '</div>',
                         '</tpl>',
                     '<tpl else>',
                         '<div class="item-row">',
-                            '<p>No related assays</p>',
+                        '   <p>No related assays</p>',
                         '</div>',
                     '</tpl>',
                 '</p></tpl>'
