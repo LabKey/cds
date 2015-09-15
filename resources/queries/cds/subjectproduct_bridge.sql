@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-SELECT tasm.Container AS container,
-tasm.ParticipantId AS participantid,
-vtm.visit_row_id AS visitid,
-v.ProtocolDay AS protocolday,
-vtm.visit_tag AS visittagname
-FROM cds.treatmentarmsubjectmap tasm
-LEFT JOIN cds.visittagmap vtm ON tasm.arm_id = vtm.arm_id AND tasm.container = vtm.container AND vtm.single_use
-LEFT JOIN study.visit v ON vtm.visit_row_id = v.RowId
-WHERE vtm.visit_tag IS NOT NULL
+SELECT
+DD.participantid,
+DD.folder.entityid as container,
+DD.participantid || '-product' AS product_group,
+SPM.product_id.product_name,
+SPM.insert_name,
+SPM.clade_name,
+P.product_type,
+P.product_developer,
+P.product_class_label,
+FROM study.demographics AS DD
+LEFT JOIN cds.subjectproductmap AS SPM ON (DD.participantId = SPM.participantId AND DD.folder = SPM.container)
+LEFT JOIN cds.product AS P ON (SPM.product_id = P.product_id)

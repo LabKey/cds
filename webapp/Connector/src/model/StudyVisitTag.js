@@ -23,6 +23,6 @@ Ext.define('Connector.model.StudyVisitTag', {
         {name: 'is_vaccination'},
         {name: 'is_challenge'},
         {name: 'group_label'},
-        {name: 'group_description'}
+        {name: 'detail_label'}
     ]
 });

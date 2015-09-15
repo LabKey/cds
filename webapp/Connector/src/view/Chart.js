@@ -31,6 +31,40 @@ Ext.define('Connector.view.Chart', {
 
     minStudyAxisHeight: 75,
 
+    disableAutoMsg: false,
+
+    statics: {
+        // Template used for contents of VisitTag tooltips
+        studyAxisTipTpl: new Ext.XTemplate(
+            '<tpl if="isAggregate">',
+                '<tpl for="groups">',
+                    '<div style="margin: 0 20px; text-indent: -20px">',
+                        '<span style="font-weight: bold;">{label:htmlEncode}: </span>',
+                        '{tags:this.renderTags}',
+                    '</div>',
+                '</tpl>',
+            '<tpl else>',
+                '<tpl for="groups">',
+                    '<div style="margin: 0 20px; text-indent: -20px">',
+                        '<span style="font-weight: bold;">{label:htmlEncode}: </span>',
+                        '<tpl if="isVaccination">',
+                            '{desc:htmlEncode}',
+                            '<br/>',
+                            '{tags:this.renderTags}',
+                        '<tpl else>',
+                            '{tags:this.renderTags}',
+                        '</tpl>',
+                    '</div>',
+                '</tpl>',
+            '</tpl>',
+            {
+                renderTags: function(tags) {
+                    return Ext.htmlEncode(tags.join(', '));
+                }
+            }
+        )
+    },
+
     constructor : function(config) {
 
         if (LABKEY.devMode) {
@@ -54,6 +88,9 @@ Ext.define('Connector.view.Chart', {
             if (Ext.isNumber(num)) {
                 this.binRowLimit = num;
             }
+        }
+        if (Ext.isDefined(params['_disableAutoMsg'])) {
+            this.disableAutoMsg = true;
         }
 
         this._ready = false;
@@ -97,7 +134,6 @@ Ext.define('Connector.view.Chart', {
             }
         });
 
-        this.showmsg = true;
         this.addPlugin({
             ptype: 'messaging',
             calculateY : function(cmp, box, msg) {
@@ -175,7 +211,6 @@ Ext.define('Connector.view.Chart', {
             },
             items: [{
                 xtype: 'container',
-                width: '50%',
                 margin: '16 0 0 24',
                 layout: {
                     type: 'hbox',
@@ -184,7 +219,18 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getYSelector()]
             },{
                 xtype: 'container',
-                width: '50%',
+                flex: 1,
+                margin: '16 0 0 0',
+                layout: {
+                    type: 'hbox',
+                    pack: 'center'
+                },
+                items: [
+                    this.getHeatmapModeIndicator(),
+                    this.getMedianModeIndicator()
+                ]
+            },{
+                xtype: 'container',
                 margin: '16 24 0 0',
                 layout: {
                     type: 'hbox',
@@ -193,6 +239,46 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getColorSelector()]
             }]
         };
+    },
+
+    getHeatmapModeIndicator : function() {
+        if (!this.heatmapIndicator) {
+            this.heatmapIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Heatmap on',
+                width: 110,
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhyBinning(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hideheatmapmsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.heatmapIndicator;
+    },
+
+    getMedianModeIndicator : function() {
+        if (!this.medianIndicator) {
+            this.medianIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Median values',
+                width: 115,
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhyMedian(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hidemedianmsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.medianIndicator;
     },
 
     getYSelector : function() {
@@ -235,9 +321,8 @@ Ext.define('Connector.view.Chart', {
                 model: Ext.create('Connector.model.Variable', {type: 'color'}),
                 listeners: {
                     afterrender : function(c) {
-                        c.getEl().on('mouseover', function() { this.showWhyBinTask.delay(300); }, this);
-                        c.getEl().on('mouseout', function() { this.showWhyBinTask.cancel(); }, this);
-                        this.on('hideload', function() { this.showWhyBinTask.cancel(); }, this);
+                        c.getEl().on('mouseover', function() { this.showWhyBinning(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hideheatmapmsg', this); }, this);
                     },
                     requestvariable: this.onShowVariableSelection,
                     scope: this
@@ -336,10 +421,12 @@ Ext.define('Connector.view.Chart', {
         this.resizeTask = new Ext.util.DelayedTask(function() {
             this.onReady(this.handleResize, this);
         }, this);
-        this.showWhyBinTask = new Ext.util.DelayedTask(function() {
-            if (this.showPointsAsBin) {
-                this._showWhyBinning();
-            }
+
+        this.hideHeatmapModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hideheatmapmsg', this);
+        }, this);
+        this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hidemedianmsg', this);
         }, this);
 
         this.on('resize', function() {
@@ -477,10 +564,11 @@ Ext.define('Connector.view.Chart', {
     },
 
     pointHoverText : function(point, data) {
-        var config, content = '', colon = ': ', linebreak = ',<br/>';
+        var config, val, content = '', colon = ': ', linebreak = ',<br/>';
 
         if (data.xname) {
-            content += Ext.htmlEncode(data.xname) + colon + data.x;
+            val = Ext.typeOf(data.x) == 'date' ? ChartUtils.tickFormat.date(data.x) : data.x;
+            content += Ext.htmlEncode(data.xname) + colon + val;
         }
         content += (content.length > 0 ? linebreak : '') + Ext.htmlEncode(data.yname) + colon + data.y;
         if (data.colorname) {
@@ -673,7 +761,16 @@ Ext.define('Connector.view.Chart', {
             else {
                 scales.x = {
                     scaleType: 'discrete',
-                    sortFn: LABKEY.app.model.Filter.sorters.natural,
+                    sortFn: function(a, b) {
+                        // sort empty category to the right side
+                        if (a == ChartUtils.emptyTxt) {
+                            return 1;
+                        }
+                        else if (b == ChartUtils.emptyTxt) {
+                            return -1;
+                        }
+                        return LABKEY.app.model.Filter.sorters.natural(a, b);
+                    },
                     tickCls: 'xaxis-tick-text',
                     tickRectCls: 'xaxis-tick-rect',
                     tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
@@ -792,20 +889,14 @@ Ext.define('Connector.view.Chart', {
 
         this.logRowCount(allDataRows);
 
-        // only call handlers when state has changed
-        var lastShowPointsAsBin = this.showPointsAsBin;
         this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
-        if (lastShowPointsAsBin != this.showPointsAsBin) {
-            if (this.showPointsAsBin) {
-                this.onEnableBinning();
-            }
-            else {
-                this.onDisableBinning();
-            }
-        }
+        this.toggleHeatmapMode();
+
+        this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
+        this.toggleMedianMode();
 
         var me = this;
-        this.highlightSelectedFn = function () {
+        this.highlightSelectedFn = function() {
             if (me.plot && !layerScope.isBrushed) {
                 me.highlightLabels.call(me, me.plot, me.getCategoricalSelectionValues(), me.labelTextHltColor, me.labelBkgdHltColor, true);
                 me.highlightSelected.call(me);
@@ -1080,7 +1171,7 @@ Ext.define('Connector.view.Chart', {
         if (layerScope.plot.renderer)
         {
             nodes = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
-            nodes[0].forEach(function (n)
+            nodes[0].forEach(function(n)
             {
                 if (n.innerHTML === target)
                     node = n;
@@ -1095,7 +1186,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    xAxisMouseOut : function (target, index, y, layerScope) {
+    xAxisMouseOut : function(target, index, y, layerScope) {
         // Do not do mouse over/out for selected labels or labels in process of selection
         if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
             // Clear plot highlights
@@ -1121,7 +1212,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    retrieveBinSubjectIds : function (plot, target, subjects) {
+    retrieveBinSubjectIds : function(plot, target, subjects) {
         var subjectIds = [];
         if (subjects) {
             subjects.forEach(function(s) {
@@ -1134,7 +1225,7 @@ Ext.define('Connector.view.Chart', {
             var bins = plot.renderer.canvas.selectAll('.vis-bin path');
             var selections = this.getCategoricalSelectionValues();
 
-            bins.each(function (d)
+            bins.each(function(d)
             {
                 // Check if value matches target or another selection
                 for (var i = 0; i < d.length; i++)
@@ -1155,7 +1246,7 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightBins : function (target, subjects) {
+    highlightBins : function(target, subjects) {
         // get the set of subjectIds in the binData
         var subjectIds = this.retrieveBinSubjectIds(this.plot, target, subjects);
         if (subjects) {
@@ -1165,7 +1256,7 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.plot.renderer) {
-            var isSubjectInMouseBin = function (d, yesVal, noVal) {
+            var isSubjectInMouseBin = function(d, yesVal, noVal) {
                 if (d.length > 0 && d[0].data) {
                     for (var i = 0; i < d.length; i++) {
                         if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
@@ -1177,7 +1268,7 @@ Ext.define('Connector.view.Chart', {
                 return noVal;
             };
 
-            var colorFn = function (d)
+            var colorFn = function(d)
             {
                 // keep original color of the bin (note: uses style instead of fill attribute)
                 d.origStyle = d.origStyle || this.getAttribute('style');
@@ -1185,7 +1276,7 @@ Ext.define('Connector.view.Chart', {
                 return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle);
             };
 
-            var opacityFn = function (d)
+            var opacityFn = function(d)
             {
                 return isSubjectInMouseBin(d, 1, 0.15);
             };
@@ -1208,7 +1299,7 @@ Ext.define('Connector.view.Chart', {
             .attr('stroke-opacity', opacityFn);
     },
 
-    clearHighlightBins : function () {
+    clearHighlightBins : function() {
         if (this.plot.renderer) {
             this.clearBinsByCanvas(this.plot.renderer.canvas);
 
@@ -1224,12 +1315,12 @@ Ext.define('Connector.view.Chart', {
 
     clearBinsByCanvas : function(canvas) {
         canvas.selectAll('.vis-bin path')
-                .attr('style', function (d) {return d.origStyle || this.getAttribute('style');})
+                .attr('style', function(d) {return d.origStyle || this.getAttribute('style');})
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
     },
 
-    clearHighlightedData : function () {
+    clearHighlightedData : function() {
         if (this.showPointsAsBin)
             this.clearHighlightBins();
         else
@@ -1249,7 +1340,7 @@ Ext.define('Connector.view.Chart', {
                 selections = this.getCategoricalSelectionValues(),
                 subject;
 
-            points.each(function (d) {
+            points.each(function(d) {
                 subject = d.subjectId;
 
                 // Check if value matches target or another selection
@@ -1267,7 +1358,7 @@ Ext.define('Connector.view.Chart', {
         return subjectIds;
     },
 
-    highlightPlotData : function (target, subjects) {
+    highlightPlotData : function(target, subjects) {
         if (this.showPointsAsBin) {
             this.highlightBins(target, subjects);
         }
@@ -1276,7 +1367,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    highlightPoints : function (target, subjects) {
+    highlightPoints : function(target, subjects) {
         var subjectIds = this.retrievePointSubjectIds(target, subjects);
 
         var fillColorFn = function(d) {
@@ -1311,7 +1402,7 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    clearHighlightPoints : function () {
+    clearHighlightPoints : function() {
         var colorFn, colorScale = null, colorAcc = null;
 
         if (this.plot.scales.color && this.plot.scales.color.scale) {
@@ -1348,7 +1439,7 @@ Ext.define('Connector.view.Chart', {
                 .attr('stroke-opacity', 0.5);
     },
 
-    highlightSelected : function () {
+    highlightSelected : function() {
         var targets = this.getCategoricalSelectionValues(), me = this;
         if (targets.length < 1) {
             me.clearHighlightedData();
@@ -1359,7 +1450,7 @@ Ext.define('Connector.view.Chart', {
         })
     },
 
-    getCategoricalSelectionValues : function () {
+    getCategoricalSelectionValues : function() {
         var selections = Connector.getState().getSelections();
         var values = [];
         selections.forEach(function(s) {
@@ -1372,10 +1463,17 @@ Ext.define('Connector.view.Chart', {
             }
         });
 
+        // issue 24244: special handling for 'undefined' categorical selection
+        for (var i = 0; i < values.length; i++) {
+            if (values[i] == '') {
+                values[i] = ChartUtils.emptyTxt;
+            }
+        }
+
         return values;
     },
 
-    isSelection : function (target) {
+    isSelection : function(target) {
         var values = this.getCategoricalSelectionValues(),
             found = false;
 
@@ -1484,10 +1582,10 @@ Ext.define('Connector.view.Chart', {
     },
 
     afterSelectionAnimation : function(node, view, name, target, multi) {
-        var sqlFilters = [null, null, null, null];
-        var values = '';
-        var selections = Connector.getState().getSelections();
-        var data;
+        var sqlFilters = [null, null, null, null],
+            selections = Connector.getState().getSelections(),
+            type = LABKEY.Filter.Types.EQUAL,
+            allowInverseFilter = true, values = '', data;
 
         if (multi) {
             for (var i=0; i < selections.length; i++) {
@@ -1497,14 +1595,21 @@ Ext.define('Connector.view.Chart', {
                 }
             }
         }
-        values = values.concat(target);
 
-        if (multi && selections.length > 0)
-            sqlFilters[0] = LABKEY.Filter.create(name, values, LABKEY.Filter.Types.EQUALS_ONE_OF);
-        else
-            sqlFilters[0] = LABKEY.Filter.create(name, values);
+        // issue 24244: filtering for emptyTxt category needs to apply a different filter
+        values = values.concat(target == ChartUtils.emptyTxt ? '' : target);
 
-        this.createSelectionFilter(sqlFilters, true);
+        if (multi && selections.length > 0) {
+            type = LABKEY.Filter.Types.EQUALS_ONE_OF;
+        }
+        else if (target == ChartUtils.emptyTxt) {
+            type = LABKEY.Filter.Types.ISBLANK;
+            allowInverseFilter = false;
+        }
+
+        sqlFilters[0] = LABKEY.Filter.create(name, values, type);
+
+        this.createSelectionFilter(sqlFilters, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 
@@ -1760,7 +1865,7 @@ Ext.define('Connector.view.Chart', {
 
         // set of measures from data filters
         if (includeFilterMeasures === true) {
-            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters());
+            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
             if (!Ext.isEmpty(filterMeasures)) {
                 measures = measures.concat(filterMeasures);
             }
@@ -1770,6 +1875,19 @@ Ext.define('Connector.view.Chart', {
             measures: queryService.mergeMeasures(measures),
             wrapped: wrappedMeasures
         };
+    },
+
+    getQueryKeys : function(measures) {
+        var queryKeys = [], key;
+
+        Ext.each(measures, function(m){
+            key = m.measure.schemaName + '|' + m.measure.queryName;
+            if (queryKeys.indexOf(key) == -1) {
+                queryKeys.push(key);
+            }
+        });
+
+        return queryKeys;
     },
 
     /**
@@ -1826,35 +1944,6 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    onEnableBinning : function() {
-
-        // Disable the color axis selector
-        this.getColorSelector().disable();
-
-        // Show binning message
-        var msgKey = 'PLOTBIN_LIMIT';
-        var learnId = Ext.id(), dismissId = Ext.id();
-        var msg = 'Heatmap enabled, color disabled.&nbsp;<a id="' + learnId +'">Learn why</a>&nbsp;<a id="' + dismissId +'">Got it</a>';
-
-        var shown = this.sessionMessage(msgKey, msg, true);
-
-        if (shown) {
-            var el = Ext.get(dismissId);
-            if (el) {
-                el.on('click', function() {
-                    this.showmsg = true;
-                    this.hideMessage();
-                    Connector.getService('Messaging').block(msgKey);
-                }, this, {single: true});
-            }
-
-            el = Ext.get(learnId);
-            if (el) {
-                el.on('click', function() { this.showWhyBinTask.delay(0); }, this);
-            }
-        }
-    },
-
     _showWhyXGutter : function(data) {
         var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2),
             config = {
@@ -1888,46 +1977,61 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideguttermsg', this);
     },
 
-    /**
-     * Shows the description of why the heatmap is enabled, color disabled
-     * Do not call this function directly, use this.showWhyBinTask.delay(ms) instead.
-     * @private
-     */
-    _showWhyBinning : function() {
-        if (!this.showWhyBin) {
-            this.showWhyBin = true;
-            var limit = Ext.util.Format.number(this.binRowLimit, '0,000'),
-                    calloutMgr = hopscotch.getCalloutManager(),
-                    _id = Ext.id();
+    toggleHeatmapMode : function() {
+        this.getColorSelector().setDisabled(this.showPointsAsBin);
+        this.getHeatmapModeIndicator().setVisible(this.showPointsAsBin);
 
-            calloutMgr.createCallout({
-                id: _id,
-                target: this.getColorSelector().getActiveButton().getEl().dom,
-                placement: 'bottom',
-                title: 'Heatmap mode',
-                xOffset: -305,
-                arrowOffset: 235,
-                content: 'When the plot has over ' + limit + ' points heatmap mode is automatically enabled to maximize performance. The color variable is disabled until active filters show less than ' + limit + ' points in the plot.'
-                // If the user explicitly closes the tip, then don't ever show it again.
-                //onClose : function() {
-                //    me.showWhyBin = false;
-                //}
-            });
-
-            this.showmsg = true;
-            this.hideMessage();
-
-            this.on('hideload', function() {
-                calloutMgr.removeCallout(_id);
-                this.showWhyBin = false;
-            }, this, {single: true});
+        // Show binning message for a few seconds if first time user hits it
+        var msgKey = 'HEATMAP_MODE';
+        if (!this.disableAutoMsg && this.showPointsAsBin && Connector.getService('Messaging').isAllowed(msgKey)) {
+            this.showWhyBinning();
+            this.hideHeatmapModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
         }
     },
 
-    onDisableBinning : function() {
+    showWhyBinning : function() {
+        if (this.showPointsAsBin) {
+            var config = {
+                target: this.getHeatmapModeIndicator().getEl().dom,
+                placement: 'bottom',
+                title: 'Heatmap on',
+                xOffset: -115,
+                arrowOffset: 145,
+                content: 'There are too many dots to show interactively. Higher data density is represented by darker'
+                + ' tones. Color variables are disabled. Reduce the amount of data plotted to see dots again.'
+            };
 
-        // Enable the color axis selector
-        this.getColorSelector().enable();
+            ChartUtils.showCallout(config, 'hideheatmapmsg', this);
+        }
+    },
+
+    toggleMedianMode : function() {
+        this.getMedianModeIndicator().setVisible(this.showAsMedian);
+
+        // Show median message for a few seconds if first time user hits it
+        var msgKey = 'MEDIAN_MODE';
+        if (!this.disableAutoMsg && this.showAsMedian && Connector.getService('Messaging').isAllowed(msgKey)) {
+            this.showWhyMedian();
+            this.hideMedianModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
+        }
+    },
+
+    showWhyMedian : function() {
+        if (this.showAsMedian) {
+            var config = {
+                target: this.getMedianModeIndicator().getEl().dom,
+                placement: 'bottom',
+                title: 'Median values',
+                xOffset: -105,
+                arrowOffset: 145,
+                content: 'To enable an x-y plot, each subject now has one dot for its median response value at each visit.'
+                + ' To see individual responses, narrow the choices in the X and Y controls.'
+            };
+
+            ChartUtils.showCallout(config, 'hidemedianmsg', this);
+        }
     },
 
     getAdditionalMeasures : function(activeMeasures) {
@@ -2101,8 +2205,9 @@ Ext.define('Connector.view.Chart', {
                 activeMeasure: this.activeYSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                    measuresOnly: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeDefinedMeasureSources: true,
+                    measuresOnly: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
@@ -2146,8 +2251,9 @@ Ext.define('Connector.view.Chart', {
                 activeMeasure: this.activeXSelection,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
-                    includeTimpointMeasures: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeDefinedMeasureSources: true,
+                    includeTimpointMeasures: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
@@ -2202,6 +2308,7 @@ Ext.define('Connector.view.Chart', {
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
+                    includeDefinedMeasureSources: true,
                     userFilter : function(row) {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }
@@ -2366,7 +2473,7 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    applyFiltersToMeasure : function (measureSet, ptids) {
+    applyFiltersToMeasure : function(measureSet, ptids) {
         // find the subject column(s) in the measure set to apply the values filter (issue 24123)
         if (Ext.isArray(ptids)) {
             Ext.each(measureSet, function(m) {
@@ -2458,46 +2565,65 @@ Ext.define('Connector.view.Chart', {
     showVisitTagHover : function(data, visitTagEl) {
         var bubbleWidth, groupWidth = 0, tagWidth = 0,
             groupTags = {}, maxWidth = 0,
-            content = '', config, visitTag, visitTagGrp;
+            config, visitTag, visitTagGrp, keyCount = 0;
 
-        // content will display one row for each group so we need to gather together the tags for each group separately
+        // map data to set object mapped by group (i.e. 'Group 1 Vaccine')
         for (var i = 0; i < data.visitTags.length; i++) {
 
             visitTag = data.visitTags[i];
             visitTagGrp = visitTag.group;
 
             if (!groupTags[visitTagGrp]) {
+                keyCount++;
                 groupTags[visitTagGrp] = {
                     tags: [],
-                    desc: ''
+                    desc: '',
+                    isChallenge: data.isChallenge,
+                    isVaccination: data.isVaccination
                 };
             }
 
             groupTags[visitTagGrp].tags.push(visitTag.tag);
             groupTags[visitTagGrp].desc = visitTag.desc;
 
-            groupWidth = Ext.htmlEncode(visitTag.group).length + Ext.htmlEncode(visitTag.desc).length + 3;
-            if (groupWidth > maxWidth) {
-                maxWidth = groupWidth;
-            }
-
+            // CONSIDER: Ideally, we could somehow measure the resulting tag's width by
+            // asking the browser how wide the element would be (shadow DOM?)
+            groupWidth = Ext.htmlEncode(visitTag.group).length;
             tagWidth = Ext.htmlEncode(groupTags[visitTagGrp].tags.join(',')).length + 4;
-            if (tagWidth > maxWidth) {
-                maxWidth = tagWidth;
+
+            if ((groupWidth + tagWidth) > maxWidth) {
+                maxWidth = groupWidth + tagWidth;
             }
         }
 
-        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural);
-        Ext.each(groupKeys, function(key) {
-            if (groupTags.hasOwnProperty(key)) {
-                for (var j=0; i < groupTags[key].tags.length; j++) {
-                    groupTags[key].tags[j] = Ext.htmlEncode(groupTags[key].tags[j]);
-                }
+        if (keyCount == 1) {
 
-                content += '<p style="margin:0 20px; text-indent: -20px"><span style="font-weight: bold;">'
-                    + Ext.htmlEncode(key) + ' :</span> ' + Ext.htmlEncode(groupTags[key].desc)
-                    + '<br>-' + groupTags[key].tags.join(',') + '</p>';
+            var labelLength = Ext.htmlEncode(visitTag.group).length,
+                tagLength = Ext.htmlEncode(groupTags[visitTagGrp].tags.join(',')).length + 4,
+                descLength = Ext.htmlEncode(groupTags[visitTagGrp].desc).length + 3;
+
+            if (groupTags[visitTagGrp].isVaccination) {
+                maxWidth = Math.max(labelLength + descLength, tagLength);
             }
+            else {
+                maxWidth = labelLength + tagLength;
+            }
+        }
+
+        var groupKeys = Object.keys(groupTags).sort(LABKEY.app.model.Filter.sorters.natural),
+            isAggregate = groupKeys.length > 1,
+            tplGroups = [];
+
+        Ext.each(groupKeys, function(key) {
+            var group = groupTags[key];
+
+            tplGroups.push({
+                label: key,
+                desc: group.desc,
+                tags: group.tags,
+                isChallenge: group.isChallenge,
+                isVaccination: group.isVaccination
+            });
         });
 
         bubbleWidth = Math.min(maxWidth * 8, 400);
@@ -2505,11 +2631,14 @@ Ext.define('Connector.view.Chart', {
         config = {
             bubbleWidth: bubbleWidth,
             xOffset: -(bubbleWidth / 2),          // the non-vaccination icon is slightly smaller
-            arrowOffset: (bubbleWidth / 2) - 10 - (data.imgSrc == 'nonvaccination_normal.svg' ? 4 : 0),
+            arrowOffset: (bubbleWidth / 2) - 10 - ((data.isVaccination || data.isChallenge) ? 4 : 0),
             target: visitTagEl,
             placement: 'top',
             title: data.studyLabel + ' - ' + data.label,
-            content: content
+            content: Connector.view.Chart.studyAxisTipTpl.apply({
+                groups: tplGroups,
+                isAggregate: isAggregate
+            })
         };
 
         ChartUtils.showCallout(config, 'hidevisittagmsg', this);

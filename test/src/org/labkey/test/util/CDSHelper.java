@@ -244,7 +244,8 @@ public class CDSHelper
     public static final String BAMA_SPECIMEN = "Specimen type";
     public static final String BAMA_VACCINE = "Vaccine matched indicator";
 
-    public static final String DEMOGRAPHICS = "Subject characteristics";
+    public static final String SUBJECT_CHARS = "Subject characteristics";
+    public static final String STUDY_TREATMENT_VARS = "Study and treatment variables";
     public static final String DEMO_AGEGROUP = "Age Group at Enrollment";
     public static final String DEMO_AGE = "Age at Enrollment";
     public static final String DEMO_BMI = "BMI at Enrollment";
@@ -255,6 +256,19 @@ public class CDSHelper
     public static final String DEMO_SEX = "Sexatbirth";
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
+    public static final String DEMO_STUDY_NAME = "Study Name";
+    public static final String DEMO_TREAT_SUMM = "Treatment Summary";
+    public static final String DEMO_DATE_SUBJ_ENR = "Date First Subject Enrolled";
+    public static final String DEMO_DATE_FUP_COMP = "Date Follow-up Complete";
+    public static final String DEMO_DATE_PUB = "Date Study Made Public";
+    public static final String DEMO_DATE_START = "Date of Study Start";
+    public static final String DEMO_NETWORK = "Network";
+    public static final String DEMO_PROD_CLASS = "Product Class Combination";
+    public static final String DEMO_PROD_COMB = "Product Combination";
+    public static final String DEMO_STUDY_TYPE = "Study Type";
+    public static final String DEMO_TREAT_ARM = "Treatment Arm";
+    public static final String DEMO_TREAT_CODED = "Treatment Arm Coded Label";
+    public static final String DEMO_VACC_PLAC = "Vaccine or Placebo";
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
     public static final String ELISPOT_ANTIGEN = "Antigen Panel";
@@ -269,9 +283,9 @@ public class CDSHelper
     public static final String ELISPOT_MARKER_NAME = "Functional marker name";
     public static final String ELISPOT_MARKER_TYPE = "Functional marker type";
     public static final String ELISPOT_LAB = "Lab ID";
-    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
-    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
-    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (SFC) - Background";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (SFC) - Background subtracted";
+    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (SFC) - Raw";
     public static final String ELISPOT_PEPTIDE_POOL = "Peptide Pool";
     public static final String ELISPOT_PROTEIN =  "Protein";
     public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
@@ -412,7 +426,7 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("_showPlotData=true");
+        _test.addUrlParameter("_showPlotData=true&_disableAutoMsg=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
         _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));

@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+SELECT
+-- Display Columns
+SV.participantId.participantId AS SubjectId,
+STUDY.label AS Study,
+TS.coded_label AS TreatmentSummary,
+SV.Visit.Label AS SubjectVisit,
 
-SELECT tasm.Container AS container,
-tasm.ParticipantId AS participantid,
-vtm.visit_row_id AS visitid,
-v.ProtocolDay AS protocolday,
-vtm.visit_tag AS visittagname
-FROM cds.treatmentarmsubjectmap tasm
-LEFT JOIN cds.visittagmap vtm ON tasm.arm_id = vtm.arm_id AND tasm.container = vtm.container AND vtm.single_use
-LEFT JOIN study.visit v ON vtm.visit_row_id = v.RowId
-WHERE vtm.visit_tag IS NOT NULL
+-- Join columns
+SV.participantsequencenum,
+SV.sequencenum,
+SV.container
+
+FROM study.ParticipantVisit AS SV
+LEFT JOIN cds.study AS STUDY ON (SV.container = study.container)
+LEFT JOIN cds.treatmentarmsubjectmap AS TASM ON (TASM.participantId = SV.participantId AND TASM.container = SV.container)
+LEFT JOIN cds.treatmentarm AS TS ON (TASM.arm_id = TS.arm_id)

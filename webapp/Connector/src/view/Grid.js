@@ -155,7 +155,7 @@ Ext.define('Connector.view.Grid', {
         if (!this.selectColumnsButton) {
             this.selectColumnsButton = Ext.create('Ext.button.Button', {
                 cls: 'gridcolumnsbtn',
-                text: 'select columns',
+                text: 'Select columns',
                 handler: this.showMeasureSelection,
                 scope: this
             });
@@ -205,10 +205,10 @@ Ext.define('Connector.view.Grid', {
                         style: 'position: absolute; left: 600px; top: 47%;',
                         children: [{
                             tag: 'h1',
-                            html: 'Add columns about your filtered subjects.'
+                            html: 'Choose columns of subject data.'
                         },{
                             tag: 'h1',
-                            html: 'Sort, filter, and make subgroups.',
+                            html: 'Sort, filter, and label subjects.',
                             style: 'color: #7a7a7a;'
                         },{
                             tag: 'h1',
@@ -321,12 +321,12 @@ Ext.define('Connector.view.Grid', {
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeTimpointMeasures: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeVirtualSources: true,
+                    includeDefinedMeasureSources: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
-                supportSelectionGroup: true,
-                supportSessionGroup: true,
                 disableAdvancedOptions: true,
                 listeners: {
                     selectionmade: function(selected) {
@@ -687,7 +687,7 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(), aliases;
         aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
         aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
-        return Ext4.Array.unique(aliases);
+        return Ext.Array.unique(aliases);
     },
 
     getSelectedMeasureAliases : function() {

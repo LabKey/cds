@@ -343,7 +343,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         },
         resolveDetail : function(model, success, scope) {
             if (model && model.data && model.data.levelUniqueName && Ext.isFunction(success)) {
-                Connector.getState().onMDXReady(function (mdx) {
+                Connector.getState().onMDXReady(function(mdx) {
                     var lvl = mdx.getLevel(model.data.levelUniqueName);
                     if (lvl && lvl.hierarchy.dimension.supportsDetails === true) {
                         success.call(scope);

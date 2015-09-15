@@ -62,6 +62,7 @@
         var Connector = {
             studyContext: {
                 schemaName: 'study',
+                gridBaseSchema: 'study',
                 gridBase: 'GridBase',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
@@ -248,7 +249,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Popup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
@@ -271,7 +271,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Update.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>

@@ -35,5 +35,7 @@ Ext.define('Connector.view.module.VariableList', {
         var assayName = this.data.model.data.assay_type,
             store = StoreCache.getStore('Connector.app.store.VariableList');
         this.data = Ext.Array.pluck(store.getByAssayName(assayName), 'data');
+
+        this.callParent();
     }
 });

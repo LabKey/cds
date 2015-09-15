@@ -144,10 +144,10 @@ Ext.define('Connector.panel.ColorSelector', {
         return new Ext.XTemplate(
             '<h1 unselectable="on">{type:htmlEncode}&nbsp;=</h1>',
             '<ul style="{[this.displayNone(values)]}">',
-                '<li>{[this.renderLabel(values)]}</li>',
+                '<li class="source-label">{[this.renderLabel(values)]}</li>',
                 // The legend is always an nbsp on first render because we have to wait till after we get the data to
                 // actually render it.
-                '<li id="color-legend">&nbsp;</li>',
+                '<li id="color-legend"></li>',
             '</ul>',
             {
                 displayNone : function(values) {
@@ -208,7 +208,8 @@ Ext.define('Connector.panel.ColorSelector', {
         var smallCanvas,
             glyphs,
             hoverRect,
-            iconSize = 18,
+            // rendering the svg causes height to get calculated incorrectly on resize
+            iconSize = 18 - 5,
             svgWidth,
             scope = this;
 

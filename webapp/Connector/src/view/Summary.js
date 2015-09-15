@@ -66,7 +66,7 @@ Ext.define('Connector.view.Summary', {
         return this.summaryPanel;
     },
 
-    refresh : function () {
+    refresh : function() {
         this.refreshRequired = false;
         this.summaryPanel.getStore().load();
     },

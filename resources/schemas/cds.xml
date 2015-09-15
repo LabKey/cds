@@ -437,21 +437,12 @@
     </table>
     <table tableName="facts" tableDbType="TABLE">
         <columns>
-            <column columnName="participantid">
-                <fk>
-                    <fkDbSchema>study</fkDbSchema>
-                    <fkTable>Subject</fkTable>
-                    <fkColumnName>ParticipantId</fkColumnName>
-                </fk>
-            </column>
+            <column columnName="participantid"/>
             <column columnName="container"/>
-            <column columnName="study">
-                <fk>
-                    <fkDbSchema>core</fkDbSchema>
-                    <fkTable>Containers</fkTable>
-                    <fkColumnName>EntityId</fkColumnName>
-                </fk>
-            </column>
+            <column columnName="study"/>
+            <column columnName="treatment_arm"/>
+            <column columnName="study_label"/>
+            <column columnName="product_group"/>
         </columns>
     </table>
     <table tableName="visittagalignment" tableDbType="TABLE">
@@ -527,6 +518,8 @@
             <column columnName="single_use"/>
             <column columnName="is_vaccination"/>
             <column columnName="is_challenge"/>
+            <column columnName="arm_id"/>
+            <column columnName="detail_label"/>
         </columns>
     </table>
     <table tableName="assay" tableDbType="TABLE">
@@ -627,6 +620,17 @@
             <column columnName="studies"/>
             <column columnName="subjects"/>
             <column columnName="datacount"/>
+        </columns>
+    </table>
+    <table tableName="gridbase" tableDbType="TABLE">
+        <columns>
+            <column columnName="SubjectId"/>
+            <column columnName="Study"/>
+            <column columnName="TreatmentSummary"/>
+            <column columnName="SubjectVisit"/>
+            <column columnName="ParticipantSequenceNum"/>
+            <column columnName="SequenceNum"/>
+            <column columnName="Container"/>
         </columns>
     </table>
 </tables>
