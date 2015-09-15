@@ -53,11 +53,14 @@ Ext.define('Connector.app.store.Assay', {
                                 protein: row.protein,
                                 pools: row.pools
                             });
+                            if (!Ext.Array.contains(ret[idx-1].antigen_description, row.antigen_description[0])) {
+                                ret[idx-1].antigen_description.push(', ' + row.antigen_description[0]);
+                            }
                         }
                         else {
                             ret[idx] = {
                                 antigen_name: row.antigen_name,
-                                antigen_description: row.antigen_description,
+                                antigen_description: [row.antigen_description[0]],
                                 antigen_control: row.antigen_control, //this assumes the control status is the same for all peptide pools of a protein panel
                                 clades: row.clades,
                                 protienAndPools: [{

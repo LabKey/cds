@@ -3,15 +3,16 @@ SELECT DISTINCT
   protein_panel as antigen_name,
   protein,
   pools,
-  antigen_description,
+  description as antigen_description,
   antigen_control,
   clades
 FROM icsantigen AS MAIN
 JOIN (
-	SELECT
-  	protein_panel as pp,
-		protein as p,
-    GROUP_CONCAT(DISTINCT peptide_pool, ', ') AS pools
+  SELECT
+    protein_panel as pp,
+   	protein as p,
+    GROUP_CONCAT(DISTINCT peptide_pool, ', ') AS pools,
+    GROUP_CONCAT(DISTINCT antigen_description, ', ') AS description
   FROM cds.icsantigen
   GROUP BY icsantigen.protein_panel, icsantigen.protein) AS pool_query
 ON MAIN.protein_panel = pool_query.pp AND MAIN.protein = pool_query.p
