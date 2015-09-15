@@ -6,19 +6,20 @@ SELECT DISTINCT
   antigen_description,
   antigen_control,
   clades
-FROM ds_elispotantigen AS MAIN
+FROM elispotantigen AS MAIN
 JOIN (
-	SELECT
-		protein as p,
-        GROUP_CONCAT(DISTINCT peptide_pool, ', ') AS pools
-   	FROM cds.ds_elispotantigen
-  	GROUP BY ds_elispotantigen.protein) AS pool_query
-ON MAIN.protein = pool_query.p
+  SELECT
+    protein_panel as pp,
+   	protein as p,
+    GROUP_CONCAT(DISTINCT peptide_pool, ', ') AS pools
+  FROM cds.elispotantigen
+  GROUP BY elispotantigen.protein_panel, elispotantigen.protein) AS pool_query
+ON MAIN.protein_panel = pool_query.pp AND MAIN.protein = pool_query.p
 JOIN (
    SELECT
        protein_panel AS pp,
        GROUP_CONCAT(DISTINCT clade, ', ') AS clades
-	FROM cds.ds_elispotantigen
-	GROUP BY ds_elispotantigen.protein_panel) AS clade_query
+	FROM cds.elispotantigen
+	GROUP BY elispotantigen.protein_panel) AS clade_query
 ON MAIN.protein_panel = clade_query.pp
-ORDER BY antigen_name
+ORDER BY MAIN.protein_panel
