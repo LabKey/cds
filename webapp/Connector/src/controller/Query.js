@@ -787,7 +787,7 @@ Ext.define('Connector.controller.Query', {
 
         // look at the grid filters to determine measure set
         if (!Ext.isEmpty(filterConfig.gridFilter)) {
-            var gridFilters = filterConfig.gridFilter, columnName, measure, stringFilter;
+            var gridFilters = filterConfig.gridFilter, columnName, measure, encodedFilter;
 
             for (var g=0; g < gridFilters.length; g++) {
                 var gf = gridFilters[g];
@@ -848,8 +848,8 @@ Ext.define('Connector.controller.Query', {
                                 measureMap[alias].measure.inNotNullSet = false;
                             }
 
-                            var nfString = nf.getURLParameterName() + '=' + nf.getURLParameterValue();
-                            measureMap[alias].filterArray.push(filtersAreInstances ? nf : nfString);
+                            encodedFilter = this.encodeURLFilter(nf);
+                            measureMap[alias].filterArray.push(filtersAreInstances ? nf : encodedFilter);
                         }
                         else {
 
@@ -880,14 +880,14 @@ Ext.define('Connector.controller.Query', {
                             }
 
                             if (columnName === measure.name || isTimeBased) {
-                                stringFilter = gf.getURLParameterName() + '=' + gf.getURLParameterValue();
-                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : stringFilter);
+                                encodedFilter = this.encodeURLFilter(gf);
+                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : encodedFilter);
                             }
                             else {
                                 // create a filter with the measure 'name' rather than the 'alias' as the column
                                 var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
-                                stringFilter = _gf.getURLParameterName() + '=' + _gf.getURLParameterValue();
-                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : stringFilter);
+                                encodedFilter = this.encodeURLFilter(_gf);
+                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : encodedFilter);
                             }
                         }
                     }
@@ -1051,6 +1051,10 @@ Ext.define('Connector.controller.Query', {
         });
 
         return merged;
+    },
+
+    encodeURLFilter : function(filter) {
+        return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
     }
 });
 
