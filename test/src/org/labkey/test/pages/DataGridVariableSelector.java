@@ -26,7 +26,7 @@ import com.google.common.base.Function;
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
     private DataGrid _dataGrid;
-    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withText("View data grid");
+    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "title").withText("View data grid");
     private final String XPATH = "column-axis-selector";
 
     public DataGridVariableSelector(BaseWebDriverTest test, DataGrid grid)
