@@ -84,6 +84,9 @@ Ext.define('Connector.view.Grid', {
         // bind view to model
         model.on('filterchange', this.onFilterChange, this, {buffer: 500});
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
+        model.on('gridFilter', function(filters) {
+            this.fireEvent('gridFilter', filters);
+        }, this);
 
         // bind view to view
         this.on('resize', this.onViewResize, this);

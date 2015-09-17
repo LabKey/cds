@@ -78,6 +78,10 @@ Ext.define('Connector.controller.Analytics', {
             }
         });
 
+        this.control('groupdatagrid', {
+            gridFilter: this.filterEvent
+        });
+
         this.control('signinform', {
             userSignedIn: function() {
                 if (this.isInspectletEnabled()) {
@@ -120,19 +124,53 @@ Ext.define('Connector.controller.Analytics', {
         // Scenarios
         // "Add filter"
         // "Add filter: filter noun"
-        Connector.getState().on('filterchange', function(filters) {
-            for (var f = 0; f < filters.length; f++) {
-                var members = filters[f].get('members');
-                for (var i = 0; i < members.length; i++) {
-                    this.trackEvent('Filter', 'Add', members[i].uniqueName);
+        Connector.getState().on('selectionToFilter', this.filterEvent, this);
+    },
+
+    filterEvent : function(filters) {
+        var filter,
+            members,
+            measure,
+            values,
+            value,
+            queryService = Connector.getService('Query'),
+            f, i;
+
+        // normally, this is one event
+        for (f = 0; f < filters.length; f++) {
+            filter = filters[f];
+            if (filter.isGrid() || filter.isPlot()) {
+                // plot / grid
+                members = filter.get('gridFilter');
+                values = {};
+
+                for (i = 0; i < members.length; i++) {
+                    measure = queryService.getMeasure(members[i].getColumnName());
+                    if (measure) {
+                        value = (Ext.isDefined(measure.sourceTitle) ? measure.sourceTitle : measure.queryName);
+                        value += '.' + (Ext.isDefined(measure.label) ? measure.label : measure.name);
+                        values[value] = true;
+                    }
+                }
+
+                var keys = Object.keys(values);
+                for (i = 0; i < keys.length; i++) {
+                    this.trackEvent('Filter', 'Add', filter.isPlot() ? 'Plot' : 'Grid', keys[i]);
                 }
             }
-        }, this);
+            else {
+                // olap
+                members = filter.get('members');
+                for (i = 0; i < members.length; i++) {
+                    this.trackEvent('Filter', 'Add', 'Find Subjects', members[i].uniqueName);
+                }
+            }
+        }
     },
 
     isInspectletEnabled : function() {
         // This variable is defined in the inspectlet snippet
-        return Ext.isDefined(window._insp);
+        return Ext.isDefined(window.__insp);
     },
 
     isGAClassicEnabled : function() {
