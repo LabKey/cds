@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -66,7 +66,7 @@ Ext.define('Connector.view.Summary', {
         return this.summaryPanel;
     },
 
-    refresh : function () {
+    refresh : function() {
         this.refreshRequired = false;
         this.summaryPanel.getStore().load();
     },

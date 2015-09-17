@@ -1,0 +1,25 @@
+<query xmlns="http://labkey.org/data/xml/query">
+    <metadata>
+        <tables xmlns="http://labkey.org/data/xml">
+            <table tableName="GridBase" tableDbType="NOT_IN_DB">
+                <columns>
+                    <column columnName="SubjectVisit">
+                        <columnTitle>Study Day</columnTitle>
+                    </column>
+                    <column columnName="participantsequencenum">
+                        <isHidden>true</isHidden>
+                    </column>
+                    <column columnName="sequencenum">
+                        <isHidden>true</isHidden>
+                    </column>
+                    <column columnName="container">
+                        <isHidden>true</isHidden>
+                    </column>
+                    <column columnName="sourcecontainer">
+                        <isHidden>true</isHidden>
+                    </column>
+                </columns>
+            </table>
+        </tables>
+    </metadata>
+</query>

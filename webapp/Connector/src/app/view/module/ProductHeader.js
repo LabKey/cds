@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -22,7 +22,7 @@ Ext.define('Connector.view.module.ProductHeader', {
                 '<tpl if="product_class_label">',
                     '<tr>',
                         '<td class="item-label">Class:</td>',
-                        '<td class="item-value">{product_class_label:htmlEncode}</td>',
+                        '<td class="item-value">{product_class:htmlEncode}</td>',
                     '</tr>',
                 '</tpl>',
                 '<tpl if="product_subclass">',

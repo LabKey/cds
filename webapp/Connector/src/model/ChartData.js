@@ -11,13 +11,15 @@ Ext.define('Connector.model.ChartData', {
         {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cdsGetData API call
         {name: 'plotMeasures', defaultValue: [null, null, null]}, // Array [x, y, color]
         {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
+        {name: 'plotScales', defaultValue: {}}, // {x: log/linear, y: log/linear}
 
         /* generated properties based on the processing of the MeasureStore */
         {name: 'containerAlignmentDayMap', defaultValue: {}},
         {name: 'rows', defaultValue: []}, // results of AxisMeasureStore.select()
         {name: 'xDomain', defaultValue: [0,0]},
         {name: 'yDomain', defaultValue: [0,0]},
-        {name: 'properties', defaultValue: {}}
+        {name: 'properties', defaultValue: {}},
+        {name: 'usesMedian', defaultValue: false}
     ],
 
     statics: {
@@ -43,6 +45,10 @@ Ext.define('Connector.model.ChartData', {
 
     getMeasureStore : function() {
         return this.get('measureStore');
+    },
+
+    getPlotScales : function() {
+        return this.get('plotScales');
     },
 
     getColumnAliases : function() {
@@ -103,6 +109,10 @@ Ext.define('Connector.model.ChartData', {
 
     getPlotMeasure : function(index) {
         return this.getPlotMeasures()[index];
+    },
+
+    usesMedian : function() {
+        return this.get('usesMedian');
     },
 
     getAliasFromMeasure : function(measure) {
@@ -214,7 +224,8 @@ Ext.define('Connector.model.ChartData', {
                 label  : x.label,
                 type   : x.type,
                 isNumeric : x.type === 'INTEGER' || x.type === 'DOUBLE' || x.type === 'FLOAT' || x.type === 'REAL',
-                isContinuous: Connector.model.ChartData.isContinuousMeasure(x)
+                isContinuous: Connector.model.ChartData.isContinuousMeasure(x),
+                isDimension: x.isDimension
             };
         }
 
@@ -270,9 +281,6 @@ Ext.define('Connector.model.ChartData', {
 
         // select the data out of AxisMeasureStore based on the dimensions
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
-        if (LABKEY.devMode && this.getMeasureStore()._records.length != dataRows.length) {
-            console.log('Plotting aggregate values using mean', this.getMeasureStore()._records.length, dataRows.length);
-        }
 
         // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
         Ext.each(Connector.getService('Query').getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
@@ -347,11 +355,9 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
-        if (yDomain[0] != null) {
-            yDomain[0] = Math.min(yDomain[0], 0);
-        }
-        if (xa.isContinuous && xDomain[0] != null) {
-            xDomain[0] = Math.min(xDomain[0], 0);
+        this.setAxisDomain(yDomain, 'y', negY, y.type);
+        if (x) {
+            this.setAxisDomain(xDomain, 'x', negX, x.type);
         }
 
         this.set({
@@ -372,6 +378,22 @@ Ext.define('Connector.model.ChartData', {
                 setYLinear: negY
             }
         });
+    },
+
+    setAxisDomain : function(axisDomain, axis, hasNegVal, type) {
+        // issue 24074: set the min to 1 instead of 0 if log scale
+        var min  = this.get('plotScales')[axis] == 'log' && !hasNegVal ? 1 : 0;
+
+        if (type == 'TIMESTAMP') {
+            // if the min and max dates are the same, +/- 3
+            if (axisDomain[0] != null && axisDomain[0] == axisDomain[1]) {
+                axisDomain[0] = new Date(axisDomain[0].getFullYear(),axisDomain[0].getMonth(),axisDomain[0].getDate() - 3);
+                axisDomain[1] = new Date(axisDomain[1].getFullYear(),axisDomain[1].getMonth(),axisDomain[1].getDate() + 3);
+            }
+        }
+        else if (axisDomain[0] != null) {
+            axisDomain[0] = Math.min(axisDomain[0], min);
+        }
     },
 
     arraysEqual : function(arrA, arrB) {
@@ -403,18 +425,30 @@ Ext.define('Connector.model.ChartData', {
     },
 
     _getYValue : function(measure, alias, row) {
-        return row.y ? row.y.getMean() : null;
+        if (row.y) {
+            if (!this.usesMedian() && row.y.values.length > 1) {
+                this.set('usesMedian', true);
+            }
+
+            return row.y.getMedian();
+        }
+
+        return null;
     },
 
     _getXValue : function(measure, alias, row, xIsContinuous) {
         if (row.x.hasOwnProperty('isUnique')) {
             if (Ext.isDefined(row.x.value) && row.x.value != null) {
-                return row.x.value;
+                return this._getValue(row.x.value, measure.type);
             }
-            return xIsContinuous ? null : 'undefined';
+            return xIsContinuous ? null : ChartUtils.emptyTxt;
         }
 
-        return row.x.getMean();
+        if (!this.usesMedian() && row.x.values.length > 1) {
+            this.set('usesMedian', true);
+        }
+
+        return row.x.getMedian();
     },
 
     _getColorValue : function(measure, alias, row) {
@@ -422,7 +456,7 @@ Ext.define('Connector.model.ChartData', {
             return row.z.value;
         }
         else if (Ext.isDefined(row[alias])) {
-            return row[alias];
+            return row[alias] || ChartUtils.emptyTxt;
         }
         else if (Ext.isDefined(row.z) && !row.z.isUnique) {
             // issue 23903: if the color value isn't unique because of aggregation, use 'Multiple values' for the legend
@@ -431,24 +465,22 @@ Ext.define('Connector.model.ChartData', {
         return null;
     },
 
-    _getValue : function(measure, colName, row) {
-        var val, type = measure.type;
+    _getValue : function(value, type) {
+        var val;
 
         if (type === 'INTEGER') {
-            val = parseInt(row[colName]);
+            val = parseInt(value);
             return this.isValidNumber(val) ? val : null;
         }
         else if (type === 'DOUBLE' || type === 'FLOAT' || type === 'REAL') {
-            val = parseFloat(row[colName]);
+            val = parseFloat(value);
             return this.isValidNumber(val) ? val : null;
         }
         else if (type === 'TIMESTAMP') {
-            val = row[colName];
-            return val !== undefined && val !== null ? new Date(val) : null;
+            return Ext.isString(value) ? new Date(value) : null;
         }
 
-        // Assume categorical.
-        return (val !== undefined) ? row[colName] : null;
+        return value;
     },
 
     isValidNumber : function(number) {

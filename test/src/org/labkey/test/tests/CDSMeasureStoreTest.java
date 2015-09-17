@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.labkey.test.tests;
 
 import org.junit.Test;
@@ -33,7 +48,7 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Demographic",
-            10542,
+            10638,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
             new String[]{"20", "25", "30", "35", "40", "45", "50", "55", "60"}
         ));
@@ -60,24 +75,31 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
         ));
 
         verifyPlot(new Plot(
+            "Same X-Axis Measure with Different Filter (axisName)",
+            3978,
+            new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
+            new String[]{"0", "2", "4", "6", "8", "10", "12", "14"}
+        ));
+
+        verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (1)",
             3861,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5"},
-            new String[]{"50", "100", "150", "200", "250", "300"}
+            new String[]{"20", "40", "60", "80", "100", "120", "140"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (2)",
             4255,
-            new String[]{"0", "1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000", "9000", "10000", "11000"},
+            new String[]{"0", "200", "400", "600", "800", "1000", "1200", "1400", "1600", "1800", "2000", "2200"},
             new String[]{"0", "2", "4", "6", "8", "10", "12", "14"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (3)",
             1453,
-            new String[]{"200", "400", "600", "800", "1000", "1200", "1400"},
-            new String[]{"2000", "4000", "6000", "8000", "10000", "12000", "14000", "16000", "18000"}
+            new String[]{"50", "100", "150", "200", "250", "300", "350"},
+            new String[]{"5000", "10000", "15000", "20000", "25000"}
         ));
 
         verifyPlot(new Plot(

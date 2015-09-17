@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -48,14 +48,26 @@ Ext.define('Connector.app.view.Study', {
                         '<div class="detail-description-text">{description:htmlEncode}</div>', //Issue 24016: Prioritizing Security...
                     '</div>',
                     '<div class="detail-middle-column detail-text">',
-                        '<tpl if="start_date && followup_complete_date">',
-                            '<div class="detail-black-text">{start_date:this.renderDate}</div>',
-                            '<div class="detail-gray-text">to {followup_complete_date:this.renderDate}</div>',
-                            '<div class="detail-gray-text">{[this.monthDiff(values.start_date, values.followup_complete_date)]} months in duration</div>',
-                        '<tpl elseif="start_date">',
-                            '<div class="detail-black-text">Began {start_date:this.renderDate}</div>',
-                        '<tpl elseif="followup_complete_date">',
-                            '<div class="detail-gray-text">Ended {followup_complete_date:this.renderDate}</div>',
+                        '<tpl if="first_enr_date || followup_complete_date">',
+                            '<tpl if="first_enr_date && followup_complete_date">',
+                                '<div class="detail-black-text">{first_enr_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">to {followup_complete_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">{[this.monthDiff(values.first_enr_date, values.followup_complete_date)]} months in duration</div>',
+                            '<tpl elseif="first_enr_date">',
+                                '<div class="detail-black-text">Began {first_enr_date:this.renderDate}</div>',
+                            '<tpl elseif="followup_complete_date">',
+                                '<div class="detail-gray-text">Ended {followup_complete_date:this.renderDate}</div>',
+                            '</tpl>',
+                        '<tpl elseif="start_date || public_date">',
+                            '<tpl if="start_date && public_date">',
+                                '<div class="detail-black-text">{start_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">to {public_date:this.renderDate}</div>',
+                                '<div class="detail-gray-text">{[this.monthDiff(values.start_date, values.public_date)]} months in duration</div>',
+                            '<tpl elseif="start_date">',
+                                '<div class="detail-black-text">Began {start_date:this.renderDate}</div>',
+                            '<tpl elseif="public_date">',
+                                '<div class="detail-gray-text">Ended {public_date:this.renderDate}</div>',
+                            '</tpl>',
                         '</tpl>',
                     '</div>',
                     '<div class="detail-right-column detail-text">',

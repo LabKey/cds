@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -81,6 +81,7 @@ Ext.define("Connector.view.Header", {
                             url : LABKEY.ActionURL.buildURL('login', 'logoutAPI.api'),
                             method: 'POST',
                             success: function(response) {
+                                this.fireEvent('userLogout');
                                 if (Ext.decode(response.responseText).success) {
                                     LABKEY.user.isSignedIn = false;
                                     window.location.reload();

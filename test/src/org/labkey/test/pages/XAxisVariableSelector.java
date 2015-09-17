@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,9 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set x-axis"));
         if (_test.isElementPresent(Locator.tagWithClass("button", "yaxisbtn").notHidden()))
         {
+            _test.sleep(1500);
             _test._ext4Helper.waitForMaskToDisappear();
+            _test.waitForElementToDisappear(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number"));
         }
         else // Opens y-axis dialog automatically
         {
@@ -118,6 +120,8 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     {
         super.setAssayDimension(XPATHID, AssayDimensions.AlignBy, value);
     }
+
+    public void setIsotype(String... value) { super.setAssayDimension(XPATHID, AssayDimensions.Isotype, value);}
 
     public void setTargetCell(String... value)
     {

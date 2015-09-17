@@ -127,7 +127,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
             }
         }, this);
 
-        return Ext.create('Ext.Panel', {
+        return Ext.create('Ext.panel.Panel', {
             ui    : 'custom',
             id    : 'single-axis-explorer',
             bodyStyle : 'overflow-y: auto;',
@@ -349,7 +349,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         },
         resolveDetail : function(model, success, scope) {
             if (model && model.data && model.data.levelUniqueName && Ext.isFunction(success)) {
-                Connector.getState().onMDXReady(function (mdx) {
+                Connector.getState().onMDXReady(function(mdx) {
                     var lvl = mdx.getLevel(model.data.levelUniqueName);
                     if (lvl && lvl.hierarchy.dimension.supportsDetails === true) {
                         success.call(scope);
@@ -397,6 +397,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
     loadStore : function() {
         this.callParent();
         this.fireEvent('showLoad', this);
+        this.resizeTask.delay(100, null, null, [this.up('#single-axis-explorer')]);
     },
 
     onMaxCount : function(count) {

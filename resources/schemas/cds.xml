@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,6 +170,7 @@
             <column columnName="study_arm_visit_label"/>
             <column columnName="study_arm_visit_detail_label"/>
             <column columnName="isvaccvis"/>
+            <column columnName="ischallvis"/>
         </columns>
     </table>
     <table tableName="import_studysitepersonnel" tableDbType="TABLE">
@@ -194,6 +195,59 @@
             <column columnName="assay_method_description"/>
             <column columnName="assay_endpoint_description"/>
             <column columnName="assay_endpoint_statistical_analysis"/>
+        </columns>
+    </table>
+    <table tableName="import_nabantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="target_cell"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_icsantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_elispotantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="import_bamaantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
         </columns>
     </table>
     <table tableName="import_studypartgrouparm" tableDbType="TABLE">
@@ -383,21 +437,12 @@
     </table>
     <table tableName="facts" tableDbType="TABLE">
         <columns>
-            <column columnName="participantid">
-                <fk>
-                    <fkDbSchema>study</fkDbSchema>
-                    <fkTable>Subject</fkTable>
-                    <fkColumnName>ParticipantId</fkColumnName>
-                </fk>
-            </column>
+            <column columnName="participantid"/>
             <column columnName="container"/>
-            <column columnName="study">
-                <fk>
-                    <fkDbSchema>core</fkDbSchema>
-                    <fkTable>Containers</fkTable>
-                    <fkColumnName>EntityId</fkColumnName>
-                </fk>
-            </column>
+            <column columnName="study"/>
+            <column columnName="treatment_arm"/>
+            <column columnName="study_label"/>
+            <column columnName="product_group"/>
         </columns>
     </table>
     <table tableName="visittagalignment" tableDbType="TABLE">
@@ -473,6 +518,8 @@
             <column columnName="single_use"/>
             <column columnName="is_vaccination"/>
             <column columnName="is_challenge"/>
+            <column columnName="arm_id"/>
+            <column columnName="detail_label"/>
         </columns>
     </table>
     <table tableName="assay" tableDbType="TABLE">
@@ -491,6 +538,63 @@
             <column columnName="assay_endpoint_description"/>
             <column columnName="assay_endpoint_statistical_analysis"/>
             <column columnName="assay_type"/>
+        </columns>
+    </table>
+    <table tableName="nabantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="target_cell"/>
+            <column columnName="antigen_type"/>
+            <column columnName="virus"/>
+            <column columnName="virus_type"/>
+            <column columnName="virus_insert_name"/>
+            <column columnName="neutralization_tier"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="icsantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="elispotantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="peptide_pool"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
+        </columns>
+    </table>
+    <table tableName="bamaantigen" tableDbType="TABLE">
+        <columns>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+            <column columnName="antigen_name"/>
+            <column columnName="antigen_type"/>
+            <column columnName="protein_panel"/>
+            <column columnName="protein"/>
+            <column columnName="clade"/>
+            <column columnName="antigen_description"/>
+            <column columnName="antigen_control"/>
         </columns>
     </table>
     <table tableName="subjectproductmap" tableDbType="TABLE">
@@ -520,6 +624,17 @@
             <column columnName="studies"/>
             <column columnName="subjects"/>
             <column columnName="datacount"/>
+        </columns>
+    </table>
+    <table tableName="gridbase" tableDbType="TABLE">
+        <columns>
+            <column columnName="SubjectId"/>
+            <column columnName="Study"/>
+            <column columnName="TreatmentSummary"/>
+            <column columnName="SubjectVisit"/>
+            <column columnName="ParticipantSequenceNum"/>
+            <column columnName="SequenceNum"/>
+            <column columnName="Container"/>
         </columns>
     </table>
 </tables>

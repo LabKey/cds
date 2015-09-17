@@ -147,7 +147,6 @@
         <script path="Connector/src/view/Navigation.js"/>
         <script path="Connector/src/view/Page.js"/>
         <script path="Connector/src/view/PageHeader.js"/>
-        <script path="Connector/src/view/Popup.js"/>
         <script path="Connector/src/view/Grid.js"/>
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/StudyAxis.js"/>
@@ -168,7 +167,7 @@
         <script path="Connector/src/controller/Chart.js"/>
         <script path="Connector/src/controller/Connector.js"/>
         <script path="Connector/src/controller/Query.js"/>
-        <script path="Connector/src/controller/Update.js"/>
+        <script path="Connector/src/controller/Analytics.js"/>
         <script path="Connector/src/controller/Explorer.js"/>
         <script path="Connector/src/controller/FilterStatus.js"/>
         <script path="Connector/src/controller/Group.js"/>
@@ -211,6 +210,7 @@
 
         <script path="Connector/src/app/view/module/AssayAnalyteList.js"/>
         <script path="Connector/src/app/view/module/AssayAntigenList.js"/>
+        <script path="Connector/src/app/view/module/AssayStudies.js"/>
         <script path="Connector/src/app/view/module/AssayHeader.js"/>
         <script path="Connector/src/app/view/module/ProductHeader.js"/>
         <script path="Connector/src/app/view/module/ProductManufacturing.js"/>
@@ -222,6 +222,7 @@
         <script path="Connector/src/app/view/module/StudyHeader.js"/>
         <script path="Connector/src/app/view/module/StudyProducts.js"/>
         <script path="Connector/src/app/view/module/StudySites.js"/>
+        <script path="Connector/src/app/view/module/VariableList.js"/>
 
         <script path="Connector/src/Application.js"/>
 

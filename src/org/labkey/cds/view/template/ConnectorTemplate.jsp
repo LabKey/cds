@@ -20,9 +20,16 @@
 <%@ page import="org.labkey.api.view.HttpView" %>
 <%@ page import="org.labkey.api.view.template.PrintTemplate" %>
 <%@ page import="java.util.LinkedHashSet" %>
+<%@ page import="org.labkey.api.view.template.PageConfig" %>
+<%@ page import="org.labkey.api.analytics.AnalyticsService" %>
+<%@ page import="org.labkey.api.view.ActionURL" %>
+<%@ page import="org.labkey.api.data.ContainerManager" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
+<%@ page import="org.labkey.api.security.User" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
     PrintTemplate me   = (PrintTemplate) HttpView.currentView();
+    PageConfig pageConfigBean = me.getModelBean(); // TODO make sure we pass in the page config when we create this template.
     String contextPath = request.getContextPath();
     String serverHash = PageFlowUtil.getServerSessionHash();
     String devModeParam = getActionURL().getParameter("devMode");
@@ -33,6 +40,8 @@
     String srcPath = appPath + "/src";
     String productionPath = contextPath + "/production/Connector";
     String resourcePath = productionPath + "/resources";
+    String imageResourcePath = resourcePath + "/images";
+    User user = getUser();
 %>
 <!DOCTYPE html>
 <html>
@@ -53,17 +62,36 @@
         var Connector = {
             studyContext: {
                 schemaName: 'study',
+                gridBaseSchema: 'study',
+                gridBase: 'GridBase',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
                 protocolDayColumn: 'Visit/ProtocolDay'
             },
             resourceContext: {
-                path: <%=PageFlowUtil.jsString(resourcePath)%>
+                path: <%=PageFlowUtil.jsString(resourcePath)%>,
+                imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
             }
         };
 
         Ext = {}; Ext4 = Ext;
     </script>
+    <% if (pageConfigBean.getAllowTrackingScript())
+    {
+        String script = AnalyticsService.getTrackingScript();
+        if (StringUtils.isNotEmpty(script))
+        {
+            if (user.isSiteAdmin())
+            {
+    %>      <!-- see <%=new ActionURL("analytics","begin",ContainerManager.getRoot()).getURIString()%> -->
+    <%
+            }
+    %>
+    <%=script%>
+    <%
+            }
+        }
+    %>
 
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/internal/jQuery/jquery-1.11.2.min.js"></script>
@@ -215,7 +243,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Navigation.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Page.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/PageHeader.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/Popup.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Grid.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Variable.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/StudyAxis.js"></script>
@@ -237,7 +264,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Chart.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Connector.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Query.js"></script>
-    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Update.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/controller/Analytics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Explorer.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/FilterStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/controller/Group.js"></script>
@@ -280,6 +307,7 @@
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAnalyteList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayAntigenList.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayStudies.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/AssayHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductHeader.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/view/module/ProductManufacturing.js"></script>

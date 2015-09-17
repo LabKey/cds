@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -36,7 +36,7 @@ Ext.define('Connector.controller.Home', {
         }
         else if (xtype == 'about') {
             var header = Ext.create('Connector.view.PageHeader', {
-                title: "About the HIV Collaborative DataSpace",
+                title: "About the CAVD DataSpace",
                 upText: 'Home',
                 upLink: {
                     controller: 'home'

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -9,63 +9,38 @@ Ext.define('Connector.view.module.StudyAssays', {
 
     extend : 'Connector.view.module.BaseModule',
 
-    tpl : new Ext.XTemplate(
-        '<tpl><p>',
-            Connector.constant.Templates.module.title,
-            '<tpl if="values.assays">',
-                Connector.constant.Templates.module.availableDataLegend,
-                '<tpl for="assays">',
-                    '<div class="item-row">',
-                        '<div class="checkbox">',
-                            '<tpl if="count">',
-                                '&#10003',
-                            '</tpl>',
-                        '</div>',
-                        '<p><a href="#learn/learn/assay/{[encodeURIComponent(values.name)]}">{name:htmlEncode}</a></p>',
-                    '</div>',
-                '</tpl>',
-            '</tpl>',
-        '</p></tpl>'),
-
     initComponent : function() {
-        var data = this.data;
+        if (!Ext.isObject(this.data)) {
+            this.data = {};
+        }
 
-        var study = data.model;
-        var studyId = study.get('Label');
-
-        //var hierarchy = view.dimension.getHierarchies()[0];
-        var config = {
-            onRows: [{ level: '[Assay.Platform].[Name]' }],
-            filter: [ {hierarchy : 'Study', members: ["[Study].["+studyId+"]"]} ],
-            success: function(slice) {
-                var cells = slice.cells, row;
-                var assaySet = [], assay;
-                for (var c=0; c < cells.length; c++) {
-                    row = cells[c][0];
-                    assay = row.positions[row.positions.length-1][0];
-                    //if (row.value > 0) {
-                    assaySet.push({
-                        name: assay.name,
-                        count: row.value
-                    });
-                    //}
-                }
-                data.assays = assaySet;
-                this.update(data);
-                this.fireEvent('hideLoad', this);
-            },
-            scope: this
-        };
-        Connector.getState().onMDXReady(function(mdx) {
-            mdx.query(config);
+        Ext.apply(this.data, {
+            assays: this.data.model ? this.data.model.get('assays'): []
         });
+
+        this.tpl = new Ext.XTemplate(
+                '<tpl><p>',
+                    Connector.constant.Templates.module.title,
+                    '<tpl if="assays.length &gt; 0">',
+                        '<tpl for="assays">',
+                            '<div class="item-row">',
+                                '<p><a href="#learn/learn/Assay/{[encodeURIComponent(values.assay_identifier)]}">{assay_identifier:htmlEncode}</a></p>',
+                            '</div>',
+                        '</tpl>',
+                    '<tpl else>',
+                        '<div class="item-row">',
+                            '<p>No related assays</p>',
+                        '</div>',
+                    '</tpl>',
+                '</p></tpl>'
+        );
 
         this.callParent();
 
-        this.on('render', function() {
-            if (!data.assays) {
-                this.fireEvent('showLoad', this);
-            }
-        }, this);
+        var data = this.data;
+        this.on('afterrender', function(sp) {
+            sp.update(data);
+            sp.fireEvent('hideLoad', sp);
+        });
     }
 });

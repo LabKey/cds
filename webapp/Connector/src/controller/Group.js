@@ -180,11 +180,9 @@ Ext.define('Connector.controller.Group', {
 
             state.onMDXReady(function(mdx) {
 
-                var me = this;
-
                 var saveSuccess = function(response) {
                     var group = Ext.decode(response.responseText);
-                    me.application.fireEvent('groupsaved', group, state.getFilters(true));
+                    Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
                     view.reset();
                     Connector.model.Group.getGroupStore().load();
                 };

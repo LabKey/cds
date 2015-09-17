@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -15,11 +15,18 @@ Ext.define('Connector.model.Variable', {
 
     statics: {
         getSourceDisplayText : function(variable) {
-            var sourceTxt;
+            var sourceTxt, isAssayDataset,
+                sourceContextMap = Connector.measure.Configuration.context.sources;
 
             if (Ext.isObject(variable)) {
-                var isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
-                sourceTxt = variable[isAssayDataset ? 'queryName': 'queryLabel'];
+                isAssayDataset = variable['queryType'] == 'datasets' && !variable['isDemographic'];
+
+                if (Ext.isDefined(sourceContextMap[variable.selectedSourceKey])) {
+                    sourceTxt = sourceContextMap[variable.selectedSourceKey].queryLabel;
+                }
+                else {
+                    sourceTxt = variable[isAssayDataset ? 'queryName': 'queryLabel'];
+                }
             }
 
             return sourceTxt;
@@ -40,7 +47,7 @@ Ext.define('Connector.model.Variable', {
                 if (Ext.isObject(variable.options.dimensions)) {
                     Ext.Object.each(variable.options.dimensions, function(key, value) {
                         if (Ext.isArray(value) && value.length > 0) {
-                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ');
+                            optionsTxt += sep + value.join(', ').replace(/\|/g, ' ').replace(/null/g, '[Blank]');
                             sep = '; ';
                         }
                     });

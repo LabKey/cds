@@ -15,13 +15,12 @@
  */
 package org.labkey.test.pages;
 
+import com.google.common.base.Function;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import com.google.common.base.Function;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
@@ -49,7 +48,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public Locator getOpenButton()
     {
-        return CDSHelper.Locators.cdsButtonLocator("select columns", "gridcolumnsbtn");
+        return CDSHelper.Locators.cdsButtonLocator("Select columns", "gridcolumnsbtn");
     }
 
     @Override

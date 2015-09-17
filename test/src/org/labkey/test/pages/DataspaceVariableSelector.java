@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,8 @@ public abstract class DataspaceVariableSelector
             _test.sleep(1000);
         }
         _test.click(window().append(" div.content-label").withText(source));
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+//        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(window().append(" div.content-label").withText(source)));
+        _test.sleep(1000);
     }
 
     protected void backToSource(String selector){
@@ -396,6 +397,33 @@ public abstract class DataspaceVariableSelector
                 }
 
                 break;
+            case Isotype:
+                xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-antibody_isotype')]//div[contains(@class, 'main-label')]";
+                xpathDimDropDown = "//div[contains(@class, '" + selector + "-option-antibody_isotype-dropdown')][not(contains(@style, 'display: none'))]";
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                locDimField = Locator.xpath(xpathDimField);
+
+                if(_test.isElementPresent(locDimField))
+                {
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
+                    _test.click(locDimField);
+
+                    // Let the drop down render.
+                    _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
+
+                    // Since it is a radio button shouldn't really iterate.
+                    for(String val : value){
+                        _test.checkRadioButton(Locator.xpath(xpathDimDropDown + "//label[text()='" + val + "']"));
+                    }
+
+                    // Move the mouse to close the drop down.
+                    _test.mouseOver(Locator.xpath("//div[contains(@class, '" + selector + "')]"));
+
+                }
+
+                break;
             case Protein:
                 xpathDimField = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'advanced')]//fieldset[contains(@class, '" + selector + "-option-protein')][not(contains(@style, 'display: none'))]//div[contains(@class, 'main-label')]";
                 xpathPanelSelector = "//div[contains(@class, '" + selector + "')]//div[contains(@class, 'content')]";
@@ -480,6 +508,8 @@ public abstract class DataspaceVariableSelector
 
                 break;
         }
+
+        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
     }
 
     // TODO Still working on this as part of the detail selection.
@@ -493,6 +523,7 @@ public abstract class DataspaceVariableSelector
         Dilution,
         FunctionalMarkerName,
         InstrumentCode,
+        Isotype,
         LabId,
         PeptidePool,
         Protein,

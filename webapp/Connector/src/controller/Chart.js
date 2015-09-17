@@ -80,7 +80,7 @@ Ext.define('Connector.controller.Chart', {
                 // If a chart view is being activated, ensure it is not
                 // a view of plotType so to not deactivate the view unintentionally
                 if (controller == 'chart') {
-                    if (Ext4.isDefined(view) && view != plotType) {
+                    if (Ext.isDefined(view) && view != plotType) {
                         v.onDeactivate.call(v);
                     }
                 }

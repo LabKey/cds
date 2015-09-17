@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -43,6 +43,41 @@ Ext.define('Connector.window.Filter', {
         if (view.isValid()) {
             this.fireEvent('filter', this, this.columnMetadata, view.getFilters());
             this.close();
+        }
+    }
+});
+
+Ext.define('Connector.field.BooleanCombo', {
+    extend: 'Ext.form.field.ComboBox',
+
+    alias: 'widget.labkey-booleantextfield',
+
+    displayField: 'displayText',
+    valueField: 'value',
+    triggerAction: 'all',
+    listWidth: 200,
+    forceSelection: true,
+    queryMode: 'local',
+
+    initComponent : function() {
+        Ext.apply(this, {
+            store: Ext.create('Ext.data.ArrayStore', {
+                fields: [
+                    'value',
+                    'displayText'
+                ],
+                idIndex: 0,
+                data: [
+                    [false, 'No'],
+                    [true, 'Yes']
+                ]
+            })
+        });
+
+        this.callParent(arguments);
+
+        if (this.includeNullRecord) {
+            this.store.add([[null, ' ']]);
         }
     }
 });

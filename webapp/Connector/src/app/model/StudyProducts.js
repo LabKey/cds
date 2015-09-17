@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -18,6 +18,7 @@ Ext.define('Connector.app.model.StudyProducts', {
         {name: 'product_name'},
         {name: 'product_type'},
         {name: 'product_subclass'},
+        {name: 'product_class'},
         {name: 'product_class_label'},
         {name: 'product_developer'},
         {name: 'product_manufacturer'},

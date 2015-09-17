@@ -15,7 +15,7 @@ Ext.define('Connector.store.AssayDistinctValue', {
 
     sorters: [{property: 'Name'}],
 
-    loadAntigens : function (data) {
+    loadAntigens : function(data) {
         if (data && data.rows)
         {
             var rows = [];

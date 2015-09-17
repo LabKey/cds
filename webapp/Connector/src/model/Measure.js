@@ -5,10 +5,16 @@
  */
 Ext.define('Connector.model.Measure', {
     extend : 'Ext.data.Model',
-    idProperty : 'alias',
+    idProperty : 'lowerAlias',
     fields : [
         {name: 'id'},
         {name: 'alias'},
+        {
+            name: 'lowerAlias',
+            convert: function(val, rec) {
+                return rec.get('alias').toLowerCase();
+            }
+        },
 
         // Properties from the LabKey schema and query
         {name: 'name', defaultValue: undefined},
@@ -31,11 +37,17 @@ Ext.define('Connector.model.Measure', {
 
         // Misc properties about the measure display in the application
         {name: 'sourceTitle', convert: function(val, rec) {
-            var title = rec.get('queryLabel');
-            if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
-                title = rec.get('queryName') + ' (' + title + ')';
+            if (Ext.isString(val) && val.length > 0) {
+                return val;
             }
-            return title;
+            else {
+                var title = rec.get('queryLabel');
+                if (rec.get('queryType') == 'datasets' && !rec.get('isDemographic')) {
+                    title = rec.get('queryName') + ' (' + title + ')';
+                }
+
+                return title;
+            }
         }},
         {name: 'isRecommendedVariable', type: 'boolean', defaultValue: false},
         {name: 'recommendedVariableGrouper', convert: function(val, rec) {
@@ -54,6 +66,7 @@ Ext.define('Connector.model.Measure', {
         {name: 'queryType', defaultValue: null}, // see LABKEY.Query.Visualization.Filter.QueryType
         {name: 'sourceCount', type: 'int', defaultValue: undefined},
         {name: 'uniqueKeys', defaultValue: undefined},
+        {name: 'selectedSourceKey', defaultValue: undefined}, // when used with variable selected, track what source it was selected from
 
         // Array of configs for what options to display in the Advanced options panel of the Variable Selector.
         // If undefined, fallback to the dimensions defined on the source query.
@@ -119,7 +132,7 @@ Ext.define('Connector.model.Measure', {
     },
 
     shouldShowScale : function() {
-        return this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
+        return !this.get('isDimension') && this.get('variableType') == null && (this.get('type') == 'INTEGER' || this.get('type') == 'DOUBLE');
     },
 
     getHierarchicalMeasures : function() {

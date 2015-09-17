@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,9 @@ public class ColorAxisVariableSelector extends DataspaceVariableSelector
     public void confirmSelection()
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set color"));
+        _test.sleep(1500);
         _test._ext4Helper.waitForMaskToDisappear();
+        _test.waitForElementToDisappear(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number"));
     }
 
     public void openSelectorWindow()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -10,6 +10,8 @@ Ext.define('Connector.app.model.Assay', {
     idProperty: 'assay_identifier',
 
     resolvableField: 'assay_identifier',
+
+    labelProperty: 'assay_label',
     
     fields: [
         {name: 'assay_identifier'},
@@ -26,6 +28,9 @@ Ext.define('Connector.app.model.Assay', {
         {name: 'assay_method_description'},
         {name: 'assay_endpoint_description'},
         {name: 'assay_endpoint_statistical_analysis'},
-        {name: 'study_count'} //generated when the assay store is loaded.
+        {name: 'study_count'}, //generated when the assay store is loaded.
+        {name: 'studies', convert : function(value) {
+            return Ext.isArray(value) ? value : [];
+        }}
     ]
 });

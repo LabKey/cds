@@ -32,7 +32,7 @@ Ext.define('Connector.Application', {
         'Messaging',
         'State',
         'Query',
-        'Update',
+        'Analytics',
         'Group',
         'Main',
         'Router',

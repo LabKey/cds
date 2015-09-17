@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -15,6 +15,7 @@ Ext.define('Connector.panel.Feedback', {
 
     statics: {
         DEFAULT_ISSUE_USER: 'drienna',
+        DEFAULT_ISSUE_PROJECT: 'Feedback',
         displayWindow : function(animateTarget) {
             var resizer = function() {
                 this.center();
@@ -41,7 +42,7 @@ Ext.define('Connector.panel.Feedback', {
                         scope: this
                     }
                 }],
-                width: 520,
+                width: 540,
                 height: 600,
                 listeners: {
                     afterrender: function(win) {
@@ -82,7 +83,7 @@ Ext.define('Connector.panel.Feedback', {
                     name: 'comment',
                     width: '100%',
                     height: '400px',
-                    emptyText: 'Describe what you\'re seeing...',
+                    emptyText: 'Description. For a bug, include details that will help us reproduce it.',
                     validateOnBlur: false,
                     allowBlank: false
                 },{
@@ -123,9 +124,9 @@ Ext.define('Connector.panel.Feedback', {
             };
 
             var tpl = new Ext.XTemplate(
-                '<div class="main-title">Provide Feedback</div>',
+                '<div class="main-title">Give feedback</div>',
                     '<div class="sub-title">',
-                    '<span class="nav-text">Give us feedback on what we could improve</span>',
+                    '<span class="nav-text">Tell us what’s valuable, what’s broken, and what you’d like to see next.</span>',
                 '</div>'
             );
             this.headerPanel = Ext.create('Ext.panel.Panel', {
@@ -142,16 +143,10 @@ Ext.define('Connector.panel.Feedback', {
     postFeedback : function(title, comments, url, assignedUserId, callback, scope) {
 
         var config = {
-            url: LABKEY.ActionURL.buildURL('issues', 'insert.view'),
+            url: LABKEY.ActionURL.buildURL('issues', 'insert.view', Connector.panel.Feedback.DEFAULT_ISSUE_PROJECT),
             method: 'POST',
             success: callback,
-            failure: function() {
-                // This will only get called in the event that the server responds with something
-                // other than status 200 OK. Normally, a JSON-based API would return 'success' false or the like,
-                // however, since this API is HTML-only it will normally return 200 OK even when there are
-                // errors since it is trying to let the user re-see the issue in an attempt to rectify their errors.
-                Ext.Msg.alert('Failed to save feedback.');
-            },
+            failure: callback,
             scope: scope,
             params: {
                 issueId: 0,
@@ -215,7 +210,7 @@ Ext.define('Connector.panel.Feedback', {
                 },{
                     itemId: 'done-button',
                     xtype: 'button',
-                    text: 'Done',
+                    text: 'Submit',
                     handler: function(btn) {
                         var form = this.getForm();
 
@@ -227,23 +222,29 @@ Ext.define('Connector.panel.Feedback', {
                             var values = form.getValues();
                             this.postFeedback(values.title, values.comment, values.url, values.assignedTo, function(response) {
                                 btn.setText('Done');
-                                var html = response.responseText;
 
-                                // The issues API only returns HTML views. In the case of a successful creation
-                                // of an issue the server responds with a different title than if it fails to save.
-                                // This check is to attempt to inspect that the issue was actually created
-                                if (html.indexOf('<title>Issue') > -1) {
-                                    this.hide();
+                                if (response) {
+                                    var html = response.responseText;
 
-                                    var viewManager = Connector.getApplication().getController('Connector');
-                                    if (viewManager) {
-                                        var fsview = viewManager.getViewInstance('filterstatus');
-                                        if (fsview) {
-                                            fsview.showMessage('Thanks for your feedback!', true);
+                                    // The issues API only returns HTML views. In the case of a successful creation
+                                    // of an issue the server responds with a different title than if it fails to save.
+                                    // This check is to attempt to inspect that the issue was actually created
+                                    if (response.status === 403 || html.indexOf('<title>Issue') > -1) {
+                                        this.hide();
+
+                                        var viewManager = Connector.getApplication().getController('Connector');
+                                        if (viewManager) {
+                                            var fsview = viewManager.getViewInstance('filterstatus');
+                                            if (fsview) {
+                                                fsview.showMessage('Thanks for your feedback!', true);
+                                            }
+                                            else {
+                                                console.warn('no filterstatus view available');
+                                            }
                                         }
-                                        else {
-                                            console.warn('no filterstatus view available');
-                                        }
+                                    }
+                                    else {
+                                        Ext.Msg.alert('Oops! Looks like something went wrong in gathering your feedback.');
                                     }
                                 }
 

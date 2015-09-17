@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -163,22 +163,22 @@ Ext.define('Connector.view.Selection', {
                         }
                     }
 
-                    return Ext.htmlEncode(type + ": " + LABKEY.app.model.Filter.getGridLabel(values));
+                    return Ext.htmlEncode(type) + ': ' + LABKEY.app.model.Filter.getGridLabel(values);
                 },
-                renderSelectionMeasure : function(measure, filters, id, idx) {
+                renderSelectionMeasure : function(measure, filters) {
                     var domString = '', filterValString = '', sep = '';
 
                     if (measure && filters && filters.length > 0) {
 
                         Ext.each(filters, function(filter) {
-                            var val = filter.getValue();
-                            var fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
+                            var val = filter.getValue(),
+                                fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
 
-                            if (filter.getFilterType().getURLSuffix() === 'dategte') {
-                                var d = new Date(val);
-                                var year = (d.getFullYear()%1000);
-                                year = year.toString().length == 1 ? "0" + year : year;
-                                val = (d.getMonth()+1) + "/" + d.getDate() + "/" + year;
+                            if (filter.getFilterType().getURLSuffix() === 'dategte' || filter.getFilterType().getURLSuffix() === 'datelte') {
+                                val = ChartUtils.tickFormat.date(val);
+                            }
+                            else if (filter.getFilterType() == LABKEY.Filter.Types.EQUALS_ONE_OF) {
+                                val = Connector.model.Filter.getFilterValuesAsArray(filter).join(';');
                             }
 
                             filterValString += sep + fil + ' ' + val;

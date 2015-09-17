@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015 LabKey Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 -- Drop Original Tables
 DROP TABLE IF EXISTS cds.assaypublications CASCADE;
 DROP TABLE IF EXISTS cds.citableauthors CASCADE;
@@ -266,14 +281,12 @@ CREATE TABLE cds.import_StudySubject (
   subject_bmi_enrollment NUMERIC(15,4),
   subject_circumcised_enrollment VARCHAR(250),
 
-  -- TODO: Bunch more to come 5.14.2015
-
   CONSTRAINT PK_import_StudySubject PRIMARY KEY (prot, subject_id)
 );
 
 CREATE TABLE cds.import_StudyPartGroupArmSubject (
   prot VARCHAR(250) NOT NULL REFERENCES cds.import_Study (prot),
-  subject_id VARCHAR(250) NOT NULL, -- Reference import_StudySubject?
+  subject_id VARCHAR(250) NOT NULL,
   study_part VARCHAR(250) NOT NULL,
   study_group VARCHAR(250) NOT NULL,
   study_arm VARCHAR(250) NOT NULL,

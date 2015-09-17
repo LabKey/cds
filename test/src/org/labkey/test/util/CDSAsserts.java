@@ -20,6 +20,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
+import org.openqa.selenium.SearchContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,16 +166,23 @@ public class CDSAsserts
         cds.closeInfoPage();
     }
 
+    public void verifyLearnAboutPage(List<String> axisItems, boolean validateItemCount)
+    {
+        if(validateItemCount)
+        {
+            _test.waitForElement(Locator.tagWithClass("div", "detail-container").append("/div/div/h2"));
+            int elemCount = _test.getElementCount(Locator.xpath("//div[not(contains(@style, 'display: none'))]/div[contains(@class, 'detail-container')]/div/div/h2"));
+            assertEquals("Unexpected number of items on the Learn About page.", axisItems.size(), elemCount);
+        }
+        verifyLearnAboutPage(axisItems);
+    }
+
     public void verifyLearnAboutPage(List<String> axisItems)
     {
         for (String item : axisItems)
         {
             _test.waitForElement(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(item));
-
-            if(CDSHelper.validateCounts)
-            {
-                _test.assertElementVisible(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").withText(item));
-            }
+            _test.assertElementVisible(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").withText(item));
         }
 
     }
@@ -191,7 +199,7 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8373, 53, -1); // TODO Test data dependent.
+        assertFilterStatusCounts(8469, 53, -1); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)

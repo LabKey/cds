@@ -29,8 +29,11 @@ Ext.define('Connector.model.Source', {
         {name: 'variableType', defaultValue: undefined},
         {name: 'category', defaultValue: undefined},
         {name: 'subjectCount', type: 'int', defaultValue: -1},
+        {name: 'subjectCountQueryName', defaultValue: undefined}, // alternate queryName to use for subject counts for this source
 
         // Array of configs for what options to display in the Advanced panel on the Variable Selector.
-        {name: 'dimensions', defaultValue: undefined}
+        {name: 'dimensions', defaultValue: undefined},
+        // Array of measure alias to use for DEFINED_MEASURES study dataset sources
+        {name: 'measures', defaultValue: undefined}
     ]
 });

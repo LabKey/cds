@@ -6,7 +6,7 @@
 Ext.define('Connector.controller.State', {
     extend: 'LABKEY.app.controller.State',
 
-    defaultTitle: 'HIV Vaccine Collaborative Dataspace',
+    defaultTitle: 'CAVD DataSpace',
 
     subjectName: 'Subject',
 
@@ -46,7 +46,7 @@ Ext.define('Connector.controller.State', {
                     selected = [selected];
                 }
 
-                Ext.each(selected, function (selection) {
+                Ext.each(selected, function(selection) {
                     if (selection.$className == 'Connector.model.Measure') {
                         this.addSessionColumn(selection.raw);
                     }

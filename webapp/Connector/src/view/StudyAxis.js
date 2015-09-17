@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -11,11 +11,12 @@ Connector.view.StudyAxis = function() {
     // This function returns <study name> for studies and <study name>-<group name> for groups in an attempt to
     // provide a unique name for each value in yScale
     var studyGroupName = function(el) {
-        var name = "";
-        if(el && el.name &&  Ext.isString(el.name)) {
-            if(el.study && Ext.isString(el.study)) {
+        var name = '';
+        if (el && el.name &&  Ext.isString(el.name)) {
+            if (el.study && Ext.isString(el.study)) {
                 name = el.study + "-" + el.name;
-            } else {
+            }
+            else {
                 name = el.name;
             }
         }
@@ -41,10 +42,11 @@ Connector.view.StudyAxis = function() {
         x = xScale(xScale.domain()[0]);
 
         preenrollment = selection.selectAll('rect.preenrollment').data(function(d) {
-            if(collapsed || (!collapsed && d.study))
+            if (collapsed || (!collapsed && d.study)) {
                 return [d];
-            else
-                return [];});
+            }
+            return [];
+        });
         preenrollment.exit().remove();
         preenrollment.enter().append('rect').attr('class', 'preenrollment');
         preenrollment.attr('y', function(d) { return yScale(studyGroupName(d)) + 4; })
@@ -57,27 +59,42 @@ Connector.view.StudyAxis = function() {
     var renderVisitTags = function(selection) {
         var visitTags, defaultImgSize = 8;
 
-        visitTags = selection.selectAll('image.visit-tag').data(function (d) {
-            if(collapsed || (!collapsed && d.study))
+        visitTags = selection.selectAll('image.visit-tag').data(function(d) {
+            if (collapsed || (!collapsed && d.study)) {
                 return d.visits;
-            else
-                return [];
+            }
+            return [];
         });
         visitTags.exit().remove();
-        visitTags.enter().append("image").attr('class', 'visit-tag')
-            .attr('xlink:href', function(d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/' + (d.imgSrc || 'nonvaccination_normal.svg');
-            })
-            .attr("x", function(d) {return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
-            .attr("y", function(d) {
+        visitTags.enter().append("image")
+                .attr('class', 'visit-tag')
+                .attr('xlink:href', function(d) {
+                    var imgPath = Connector.resourceContext.imgPath + '/';
+
+                    if (d.isVaccination) {
+                        imgPath += 'vaccination_normal.svg';
+                    }
+                    else if (d.isChallenge) {
+                        imgPath += 'challenge_normal.svg';
+                    }
+                    else {
+                        imgPath += 'nonvaccination_normal.svg';
+                    }
+
+                    return imgPath;
+                })
+                .attr("x", function(d) {return xScale(d.alignedDay) - (d.imgSize || defaultImgSize)/2; })
+                .attr("y", function(d) {
                     var scale = yScale(d.studyLabel);
-                    if(!collapsed)
-                        if(d.groupLabel)
+                    if (!collapsed) {
+                        if (d.groupLabel) {
                             scale = yScale(d.studyLabel + "-" + d.groupLabel);
+                        }
+                    }
 
                     return scale + perStudyHeight/2 - (d.imgSize || defaultImgSize)/2; })
-            .attr("width", function(d) { return d.imgSize || defaultImgSize; })
-            .attr("height", function(d) { return d.imgSize || defaultImgSize; });
+                .attr("width", function(d) { return d.imgSize || defaultImgSize; })
+                .attr("height", function(d) { return d.imgSize || defaultImgSize; });
 
         // add visit tag mouseover/mouseout functions.
         visitTags.on('mouseover', function(d) {
@@ -134,30 +151,34 @@ Connector.view.StudyAxis = function() {
             return ret;
         });
         labels.attr('y', function(d) {
-            return yScale(studyGroupName(d)) + perStudyHeight/2 + 4;})
-            .attr('x', function(d) {
-                    if(d.study)  // groups have a parent study defined
-                        return groupLabelOffset + leftIndent;
-                    return studyLabelOffset + leftIndent;
+            return yScale(studyGroupName(d)) + perStudyHeight/2 + 4;
+        })
+                .attr('x', function(d) {
+                    // groups have a parent study defined
+                    return (d.study ? groupLabelOffset : studyLabelOffset) + leftIndent;
                 })
-            .attr('fill', ChartUtils.colors.PRIMARYTEXT)
-            .style('font', '11px Arial, serif')
-            .attr('test-data-value', function(d) {
-                    var txt = ''
-                    if(d.study)
-                        txt += d.study.replace(/ /g, '_') + '-'
-                    txt += d.name.replace(/ /g, '_').replace(/,/g, '')
+                .attr('fill', ChartUtils.colors.PRIMARYTEXT)
+                .style('font', '11px Arial, serif')
+                .attr('test-data-value', function(d) {
+                    var txt = '';
+                    if (d.study)
+                        txt += d.study.replace(/ /g, '_') + '-';
+                    txt += d.name.replace(/ /g, '_').replace(/,/g, '');
                     return txt;
                 });
     };
 
     var renderExpandCollapseButton = function(canvas) {
-        var button;
+        var button,
+            collapsedImg = 'icon_general_collapse_normal.svg',
+            collapsedHoverImg = 'icon_general_collapse_hover.svg',
+            expandedImg = 'icon_general_expand_normal.svg',
+            expandedHoverImg = 'icon_general_expand_hover.svg';
 
         canvas.append('g').append("image")
                 .attr('xlink:href', function(d) {
-                    return LABKEY.contextPath + '/production/Connector/resources/images/'
-                        + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg'); })
+                    return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedImg : collapsedImg);
+                })
                 .attr('class', 'img-expand')
                 .attr('x', 20)
                 .attr('width', 22)
@@ -166,30 +187,26 @@ Connector.view.StudyAxis = function() {
         button = canvas.select('image.img-expand');
 
         button.on('mouseover', function(d) {
-            button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
-                    + (collapsed?'icon_general_expand_hover.svg':'icon_general_collapse_hover.svg');
+            button.attr('xlink:href', function(d) {
+                return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedHoverImg : collapsedHoverImg);
             });
         });
 
         button.on('mouseout', function(d) {
-            button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
-                        + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg');
+            button.attr('xlink:href', function(d) {
+                return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedImg : collapsedImg);
             });
         });
 
         button.on('mousedown', function(d) {
-            button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
-                        + (collapsed?'icon_general_expand_normal.svg':'icon_general_collapse_normal.svg');
+            button.attr('xlink:href', function(d) {
+                return Connector.resourceContext.imgPath + '/' + (collapsed ? expandedImg : collapsedImg);
             });
         });
 
         button.on('mouseup', function(d) {
-            button.attr('xlink:href', function (d) {
-                return LABKEY.contextPath + '/production/Connector/resources/images/'
-                        + (collapsed?'icon_general_collapse_hover.svg':'icon_general_expand_hover.svg');
+            button.attr('xlink:href', function(d) {
+                return Connector.resourceContext.imgPath + '/' + (collapsed ? collapsedHoverImg : expandedHoverImg);
             });
             collapsed = !collapsed;
             studyAxis();
@@ -202,9 +219,9 @@ Connector.view.StudyAxis = function() {
 
         for (i = 0; i < studyData.length; i++) {
             yDomain.push(studyData[i].name);
-            if(!collapsed) {
+            if (!collapsed) {
                 groupData.push(studyData[i]);
-                if(studyData[i].groups) {
+                if (studyData[i].groups) {
                     for (var j = 0; j < studyData[i].groups.length; j++) {
                         yDomain.push(studyGroupName(studyData[i].groups[j]));
                         groupData.push(studyData[i].groups[j]);
@@ -213,7 +230,7 @@ Connector.view.StudyAxis = function() {
             }
         }
 
-        if(collapsed)
+        if (collapsed)
             height = studyData.length * perStudyHeight;
         else
             height = groupData.length * perStudyHeight;
@@ -226,7 +243,7 @@ Connector.view.StudyAxis = function() {
         canvas.attr('width', width).attr('height', height);
         renderExpandCollapseButton(canvas);
 
-        if(collapsed)
+        if (collapsed)
             studies = canvas.selectAll('g.study').data(studyData);
         else
             studies = canvas.selectAll('g.study').data(groupData);

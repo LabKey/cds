@@ -115,3 +115,11 @@ div.noplotmsg, div.emptyplotmsg {
     color: $placeholder-text-color;
   }
 }
+
+div.plotmodeon {
+  cursor: pointer;
+  margin: 8px 2px;
+  padding: 4px 16px;
+  background-color: $heat-scale-6;
+  color: $secondary-text-color;
+}

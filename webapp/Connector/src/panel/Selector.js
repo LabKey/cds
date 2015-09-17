@@ -32,8 +32,6 @@ Ext.define('Connector.panel.Selector', {
     multiSelect: false,
     lockedMeasures: undefined,
     selectedMeasures: undefined,
-    supportSelectionGroup: false,
-    supportSessionGroup: false,
 
     testCls: undefined,
 
@@ -139,34 +137,17 @@ Ext.define('Connector.panel.Selector', {
 
     loadSourcesAndMeasures : function() {
 
-        var data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
-        if (this.supportSelectionGroup && this.multiSelect) {
-            data.sources.push({
-                sortOrder: -100,
-                schemaName: '_current',
-                name: '',
-                queryName: null,
-                queryLabel: 'Current columns',
-                variableType: 'SELECTION'
-            });
-        }
-
-        if (this.supportSessionGroup && this.multiSelect) {
-            data.sources.push({
-                sortOrder: -99,
-                schemaName: '_session',
-                name: '',
-                queryName: null,
-                queryLabel: 'All variables from this session',
-                variableType: 'SESSION'
-            });
-        }
+        var selectedSourceKey, data = this.queryService.getMeasuresStoreData(this.sourceMeasureFilter);
 
         this.sourcesStore.loadRawData(data.sources);
         this.measureStore.loadRawData(data.measures);
 
         if (this.activeMeasure) {
-            this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('alias'));
+            // keep track of the selectedSourceKey, if present, so we can reselect it correctly on reshow
+            selectedSourceKey = this.activeMeasure.get('selectedSourceKey');
+
+            this.activeMeasure = this.measureStore.getById(this.activeMeasure.get('lowerAlias'));
+            this.activeMeasure.set('selectedSourceKey', selectedSourceKey);
         }
 
         this.updateSelectorPane();
@@ -207,7 +188,7 @@ Ext.define('Connector.panel.Selector', {
         this.updateSelectorPane();
     },
 
-    clearSelection : function () {
+    clearSelection : function() {
         this.setActiveMeasure(null);
     },
 
@@ -215,7 +196,9 @@ Ext.define('Connector.panel.Selector', {
         var source = null;
         if (measure)
         {
-            var sourceKey = measure.get('schemaName') + '|' + measure.get('queryName');
+            var sourceKey = measure.get('selectedSourceKey')
+                                ? measure.get('selectedSourceKey')
+                                : measure.get('schemaName') + '|' + measure.get('queryName');
             source = this.sourcesStore.getById(sourceKey);
 
             if (source == null) {
@@ -229,14 +212,15 @@ Ext.define('Connector.panel.Selector', {
     loadSourceCounts : function() {
         this.fireEvent('beforeSourceCountsLoad', this);
 
-        // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
         var sources = this.sourcesStore.queryBy(function(record) {
-            return record.get('queryName') != null && record.get('queryName') != 'SubjectGroupMap';
+            return (Ext.isString(record.get('queryName')) || Ext.isString(record.get('subjectCountQueryName')))
+                    // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
+                    && record.get('queryName') != 'SubjectGroupMap';
         }).items;
 
         this.queryService.getSourceCounts(sources, function(s, counts) {
             Ext.each(sources, function(source) {
-                var count = counts[source.get('queryName')];
+                var count = counts[source.get('subjectCountQueryName') || source.get('queryName')];
                 if (Ext.isDefined(count)) {
                     source.set('subjectCount', count);
                 }
@@ -424,7 +408,7 @@ Ext.define('Connector.panel.Selector', {
                             else if (value === '1') {
                                 hdr = 'Assay required columns';
                             }
-                            else if(value === '2') {
+                            else if (value === '2') {
                                 hdr = 'Additional';
                             }
                             return hdr;
@@ -475,7 +459,7 @@ Ext.define('Connector.panel.Selector', {
                     calloutMgr.createCallout({
                         id: _id,
                         bubbleWidth: 160,
-                        yOffset: -15,
+                        yOffset: item.scrollHeight - 37, //Issue 24196 - tooltips for rows immediately following a grouping heading were out of alignment.
                         xOffset: 50,
                         showCloseButton: false,
                         target: item,
@@ -503,38 +487,64 @@ Ext.define('Connector.panel.Selector', {
 
         var key = source.get('key'),
             variableType = source.get('variableType'),
-            filter, aliases = {},
+            filter, aliases = {}, toInclude, index, alias,
             selModel = this.getMeasurePane().getSelectionModel(),
+            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap(),
             me = this;
 
         // collect the aliases for all locked measures
         Ext.each(this.getLockedRecords(), function(measure) {
-            if (Ext.isDefined(measure.get('alias'))) {
-                aliases[measure.get('alias')] = true;
+            alias = measure.get('alias');
+            if (Ext.isDefined(alias)) {
+                aliases[alias] = true;
             }
         }, this);
 
         // collect the aliases for all selected measures
         Ext.each(this.getSelectedRecords(), function(measure) {
-            if (Ext.isDefined(measure.get('alias'))) {
-                aliases[measure.get('alias')] = true;
+            alias = measure.get('alias');
+            if (Ext.isDefined(alias)) {
+                aliases[alias] = true;
             }
         }, this);
 
 
         // setup the measures store filter based on the selected source
-        if (variableType === 'SELECTION' || variableType === 'SESSION') {
+        if (variableType === 'VIRTUAL') {
             filter = function(measure) {
+                alias = measure.get('alias');
+
                 // include all measures from the locked and selected sets
-                var toInclude = measure.get('alias') in aliases;
+                toInclude = alias in aliases;
 
                 // if Session source, also check to see if the measures is in that set
-                if (variableType === 'SESSION' && !toInclude) {
-                    toInclude = measure.get('alias') in Connector.getState().getSessionColumns();
+                if (source.get('schemaName') === '_session' && !toInclude) {
+                    toInclude = alias in Connector.getState().getSessionColumns();
+                }
+
+                // for those measures being included, set the sourceTitle if the measure is part of a DEFINED_MEASURES source
+                if (toInclude && Ext.isDefined(definedMeasureSourceMap[alias])) {
+                    measure.set('sourceTitle', definedMeasureSourceMap[alias]);
                 }
 
                 return toInclude;
             };
+        }
+        else if (variableType == 'DEFINED_MEASURES') {
+            filter = function(measure) {
+                alias = measure.get('alias');
+
+                if (source.get('measures').indexOf(alias) > -1) {
+                    measure.set({
+                        selectedSourceKey: source.get('key'),
+                        sourceTitle: source.get('queryLabel')
+                    });
+
+                    return true;
+                }
+
+                return false;
+            }
         }
         else {
             // for all other sources, filter based on the schemaName/queryName source key
@@ -597,7 +607,7 @@ Ext.define('Connector.panel.Selector', {
             selModel.deselectAll(true);
             Ext.defer(function() {
                 Ext.iterate(aliases, function(alias){
-                    var index = this.measureStore.findExact('alias', alias);
+                    index = this.measureStore.findExact('alias', alias);
                     if (index > -1) {
                         selModel.select(index, true/* keepExisting */, true/* surpressEvents */);
                     }
@@ -608,7 +618,7 @@ Ext.define('Connector.panel.Selector', {
         // for the 'Current Columns' source, we group the measures by the query source
         // otherwise, we group measures into the Recommended or Additional groupings
         if (Ext.isDefined(this.groupingFeature)) {
-            if (variableType == 'SELECTION' || variableType == 'SESSION') {
+            if (variableType == 'VIRTUAL') {
                 this.groupingFeature.enable();
                 this.measureStore.groupers.first().property = 'sourceTitle';
                 this.measureStore.group();
@@ -799,15 +809,15 @@ Ext.define('Connector.panel.Selector', {
         if (measureSet.length > 0) {
             // query for the distinct set of values across all of the measures involved in the dimension set
             this.queryService.getMeasureSetDistinctValues(measureSet, function(data) {
-                this.processMeasureSetDistintValues(advancedOptionCmps, measureSet, data);
+                this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, data);
             }, this);
         }
         else {
-            this.processMeasureSetDistintValues(advancedOptionCmps, measureSet, []);
+            this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, []);
         }
     },
 
-    processMeasureSetDistintValues : function(advancedOptionCmps, measureSet, data) {
+    processMeasureSetDistinctValues : function(advancedOptionCmps, measureSet, data) {
         var store = this.createMeasureSetStore(measureSet, data);
 
         this.insertDimensionHeader();
@@ -986,8 +996,10 @@ Ext.define('Connector.panel.Selector', {
 
     getDimensionsForMeasure : function(measure) {
         // check if a white-list of dimensions was declared for the measure or its source
-        var dimensions = measure.get('dimensions');
-        var source = this.getSourceForMeasure(measure);
+        var dimensions = measure.get('dimensions'),
+            source = this.getSourceForMeasure(measure),
+            measureIsDimension = false;
+
         if (dimensions == undefined && source) {
             dimensions = source.get('dimensions');
         }
@@ -1002,10 +1014,19 @@ Ext.define('Connector.panel.Selector', {
                     var _dim = this.queryService.getMeasureRecordByAlias(dim);
                     if (_dim) {
                         newDimensions.push(_dim);
+
+                        if (measure.get('alias') == dim) {
+                            measureIsDimension = true;
+                        }
                     }
                 }
             }, this);
             dimensions = newDimensions;
+        }
+
+        // Issue 24211: Do not display dimension in advanced options if it is the currently selected axis
+        if (measureIsDimension) {
+            return [];
         }
 
         return dimensions;

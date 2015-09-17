@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -240,13 +240,13 @@ Ext.define('Connector.view.Learn', {
                     data = store.data.items,
                     ret = [];
 
-            for(var i = 0; i < data.length; i++) {
-                if(ret.length < 2 && data[i].get(prop) === val) {
+            for (var i = 0; i < data.length; i++) {
+                if (ret.length < 2 && data[i].get(prop) === val) {
                     ret.push(data[i]);
                 }
             }
 
-            if(ret.length === 1) {
+            if (ret.length === 1) {
                 return ret[0];
             }
         }
