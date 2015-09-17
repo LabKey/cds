@@ -25,7 +25,7 @@ Ext.define('Connector.view.Grid', {
 
     constructor : function(config) {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter');
     },
 
     initComponent : function() {
@@ -84,9 +84,9 @@ Ext.define('Connector.view.Grid', {
         // bind view to model
         model.on('filterchange', this.onFilterChange, this, {buffer: 500});
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
-        model.on('gridFilter', function(filters) {
-            this.fireEvent('gridFilter', filters);
-        }, this);
+
+        // propagate event from model
+        this.relayEvents(model, ['usergridfilter']);
 
         // bind view to view
         this.on('resize', this.onViewResize, this);

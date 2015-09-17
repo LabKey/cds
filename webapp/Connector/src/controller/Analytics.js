@@ -79,7 +79,7 @@ Ext.define('Connector.controller.Analytics', {
         });
 
         this.control('groupdatagrid', {
-            gridFilter: this.filterEvent
+            usergridfilter: this.filterEvent
         });
 
         this.control('signinform', {
@@ -136,7 +136,7 @@ Ext.define('Connector.controller.Analytics', {
             queryService = Connector.getService('Query'),
             f, i;
 
-        // normally, this is one event
+        // normally, this is one filter
         for (f = 0; f < filters.length; f++) {
             filter = filters[f];
             if (filter.isGrid() || filter.isPlot()) {

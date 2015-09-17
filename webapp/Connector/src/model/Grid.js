@@ -542,7 +542,7 @@ Ext.define('Connector.model.Grid', {
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
                 this.bindFilters(state.getFilters());
 
-                this.fireEvent('gridFilter', newFilters);
+                this.fireEvent('usergridfilter', newFilters);
             }
         }
     },
