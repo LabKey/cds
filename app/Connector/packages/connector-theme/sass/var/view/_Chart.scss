@@ -58,6 +58,9 @@
 }
 
 svg g {
+  &.brush .extent{
+    opacity: 0.4 !important;
+  }
 
   &.layer {
     cursor: crosshair;
