@@ -130,6 +130,12 @@ Ext.define('Connector.utility.Chart', {
                 .attr('style', assocColorFn)
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
+
+        //move brush layer to front
+        canvas.select('svg g.brush').each(function() {
+            this.parentNode.appendChild(this);
+
+        });
     },
 
     brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties) {
@@ -205,6 +211,12 @@ Ext.define('Connector.utility.Chart', {
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
+        });
+
+        //move brush layer to front
+        canvas.select('svg g.brush').each(function() {
+            this.parentNode.appendChild(this);
+
         });
     },
 
