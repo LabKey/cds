@@ -67,7 +67,7 @@ public class CDSHelper
     public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
     public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
-    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
+    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1", "NEF: NEF 1", "GAG: GAG 1", "Combined: NA"};
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
@@ -350,7 +350,7 @@ public class CDSHelper
     public static final String GRID_TITLE_DEMO = "Subject characteristics";
     public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
     public static final String GRID_TITLE_ICS = TITLE_ICS;
-    public static final String GRID_TITLE_NAB = "Neutralizing antibody";
+    public static final String GRID_TITLE_NAB = "NAb";
     public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
@@ -442,6 +442,8 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
             return null;
         });
 
@@ -572,6 +574,9 @@ public class CDSHelper
     public void goToSummary()
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
+        _test.sleep(1000);
+        _test._ext4Helper.waitForMaskToDisappear();
+        _test.sleep(500);
     }
 
     public void clearFilter(int index)
@@ -599,6 +604,8 @@ public class CDSHelper
 
         applyAndMaybeWaitForBars(aVoid -> {
             clearButton.click();
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
             return null;
         });
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
@@ -629,6 +636,8 @@ public class CDSHelper
     {
         _test.click(Locators.cdsButtonLocator("Filter"));
         waitForClearSelection(); // wait for animation
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void clearSelection()
@@ -670,6 +679,8 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             link.click();
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });

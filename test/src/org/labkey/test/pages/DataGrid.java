@@ -160,6 +160,8 @@ public class DataGrid
             public Void apply(Void aVoid)
             {
                 button.click();
+                _test.sleep(500);
+                _test._ext4Helper.waitForMaskToDisappear();
                 return null;
             }
         });
@@ -224,6 +226,8 @@ public class DataGrid
             public Void apply(Void aVoid)
             {
                 _test.click(Locators.columnHeaderLocator(columnName));
+                _test.sleep(500);
+                _test._ext4Helper.waitForMaskToDisappear();
                 return null;
             }
         });
@@ -262,6 +266,8 @@ public class DataGrid
 
     public void goToLastPage() {
         _test.click(Locators.lastPage);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void goToFirstPage() {
@@ -270,18 +276,26 @@ public class DataGrid
 
     public void clickPreviousBtn() {
         _test.click(Locators.previousBtn);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void clickNextBtn() {
         _test.click(Locators.nextBtn);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void goToPreviousPage() {
         _test.click(Locators.previousPage);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void goToNextPage() {
         _test.click(Locators.nextPage);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public static class Locators
