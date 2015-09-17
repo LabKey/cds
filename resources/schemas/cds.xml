@@ -543,6 +543,7 @@
     <table tableName="nabantigen" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
+            <column columnName="container"/>
             <column columnName="antigen_name"/>
             <column columnName="target_cell"/>
             <column columnName="antigen_type"/>
@@ -558,6 +559,7 @@
     <table tableName="icsantigen" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
+            <column columnName="container"/>
             <column columnName="antigen_name"/>
             <column columnName="antigen_type"/>
             <column columnName="protein_panel"/>
@@ -571,6 +573,7 @@
     <table tableName="elispotantigen" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
+            <column columnName="container"/>
             <column columnName="antigen_name"/>
             <column columnName="antigen_type"/>
             <column columnName="protein_panel"/>
@@ -584,6 +587,7 @@
     <table tableName="bamaantigen" tableDbType="TABLE">
         <columns>
             <column columnName="assay_identifier"/>
+            <column columnName="container"/>
             <column columnName="antigen_name"/>
             <column columnName="antigen_type"/>
             <column columnName="protein_panel"/>

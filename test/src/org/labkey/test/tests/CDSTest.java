@@ -566,6 +566,7 @@ public class CDSTest extends CDSReadOnlyTest
         DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+//        sleep(1000); // I have no idea why, but w/o this wait the automation will trigger the mask and it won't go away.
 
         waitForText("View data grid"); // grid warning
 
