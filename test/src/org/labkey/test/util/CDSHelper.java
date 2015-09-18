@@ -447,6 +447,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
     }
 
@@ -595,6 +597,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
 
@@ -609,6 +613,8 @@ public class CDSHelper
             return null;
         });
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void ensureNoFilter()
@@ -684,7 +690,8 @@ public class CDSHelper
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });
-
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void hideEmpty()
@@ -694,6 +701,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Show empty"));
     }
@@ -705,6 +714,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
 
@@ -751,13 +762,15 @@ public class CDSHelper
         _test.click(Locator.linkContainingText("Delete"));
         _test.waitForText("Welcome to the CAVD DataSpace");
         _test.waitForElementToDisappear(groupListing);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void toggleExplorerBar(String largeBarText)
     {
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
         _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void openStatusInfoPane(String label)
