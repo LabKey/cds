@@ -44,7 +44,16 @@ Ext.define('Connector.controller.Analytics', {
         // "Save"
         // "Save: Boolean for was there a plot?" // TODO how do I determine that there is a plot
         Connector.getApplication().on('groupsaved', function(group, filters) {
-            this.trackEvent('Group', 'Save');
+
+            var savedPlot = false;
+            Ext.each(filters, function(filter) {
+                if (filter.isPlot === true) {
+                    savedPlot = true;
+                    return false;
+                }
+            });
+
+            this.trackEvent('Group', 'Save', 'Contains Plot', savedPlot);
         }, this);
     },
 
@@ -144,11 +153,12 @@ Ext.define('Connector.controller.Analytics', {
                 values = {};
 
                 for (i = 0; i < members.length; i++) {
-                    measure = queryService.getMeasure(members[i].getColumnName());
-                    if (measure) {
-                        value = (Ext.isDefined(measure.sourceTitle) ? measure.sourceTitle : measure.queryName);
-                        value += '.' + (Ext.isDefined(measure.label) ? measure.label : measure.name);
-                        values[value] = true;
+                    if (members[i] && members[i] != '_null') {
+                        measure = queryService.getMeasure(members[i].getColumnName());
+                        if (measure) {
+                            value = measure.alias;
+                            values[value] = true;
+                        }
                     }
                 }
 
