@@ -71,13 +71,23 @@ Ext.define('Connector.utility.Chart', {
 
         // convert extent x/y values into aes scale as bins don't really have x/y values
         if (extent[0][0] !== null && extent[1][0] !== null) {
-            extent[0][0] = plot.scales.x.scale(extent[0][0]);
-            extent[1][0] = plot.scales.x.scale(extent[1][0]);
+            if(plot.scales.xTop) {
+                extent[0][0] = plot.scales.xTop.scale(extent[0][0]);
+                extent[1][0] = plot.scales.xTop.scale(extent[1][0]);
+            } else {
+                extent[0][0] = plot.scales.x.scale(extent[0][0]);
+                extent[1][0] = plot.scales.x.scale(extent[1][0]);
+            }
         }
         if (extent[0][1] !== null && extent[1][1] !== null) {
             // TODO: the min/max y values are flipped for bins vs points, why?
-            max = plot.scales.yLeft.scale(extent[0][1]);
-            min = plot.scales.yLeft.scale(extent[1][1]);
+            if(plot.scales.yRight) {
+                max = plot.scales.yRight.scale(extent[0][1]);
+                min = plot.scales.yRight.scale(extent[1][1]);
+            } else {
+                max = plot.scales.yLeft.scale(extent[0][1]);
+                min = plot.scales.yLeft.scale(extent[1][1]);
+            }
             extent[0][1] = min;
             extent[1][1] = max;
         }

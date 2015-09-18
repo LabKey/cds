@@ -1026,6 +1026,7 @@ Ext.define('Connector.view.Chart', {
 
     mainPlotBrushing : function(layerScope, properties, xGutterPlot, yGutterPlot) {
         var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
+        var brushingExtent;
 
         return {
             dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
@@ -1039,17 +1040,19 @@ Ext.define('Connector.view.Chart', {
                 if(this.initiatedBrushing != 'main')
                     return;
 
+                brushingExtent = Ext.clone(extent);
+
                 onBrush.call(this, event, layerData, extent, plot);
 
                 var xIsNull = extent[0][0] === null && extent[1][0] === null,
                     yIsNull = extent[0][1] === null && extent[1][1] === null;
 
                 if(yIsNull && !xIsNull && xGutterPlot) {
-                    xGutterPlot.setBrushExtent(extent);
+                    xGutterPlot.setBrushExtent(brushingExtent);
                     if(yGutterPlot)
                         yGutterPlot.clearBrush();
                 } else if(xIsNull && !yIsNull && yGutterPlot) {
-                    yGutterPlot.setBrushExtent(extent);
+                    yGutterPlot.setBrushExtent(brushingExtent);
                     if(xGutterPlot)
                         xGutterPlot.clearBrush();
                 } else if(!xIsNull && !yIsNull) {
@@ -1065,8 +1068,7 @@ Ext.define('Connector.view.Chart', {
                     this.initiatedBrushing = '';
                 }
             }, this),
-            brushclear: Ext.bind(function()
-            {
+            brushclear: Ext.bind(function() {
                 if(this.initiatedBrushing == 'main') {
                     this.initiatedBrushing = '';
                     layerScope.isBrushed = false;
@@ -1080,6 +1082,7 @@ Ext.define('Connector.view.Chart', {
 
     gutterBrushing : function(layerScope, properties, dimension, xGutterPlot, yGutterPlot) {
         var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
+        var brushingExtent;
 
         return {
             dimension: dimension,
@@ -1093,8 +1096,11 @@ Ext.define('Connector.view.Chart', {
                 if(this.initiatedBrushing != dimension)
                     return;
 
+                brushingExtent = Ext.clone(extent);
+
                 onBrush.call(this, event, layerData, extent, plot);
-                this.plot.setBrushExtent(extent);
+                this.plot.setBrushExtent(brushingExtent);
+
                 if((dimension == 'xTop' || dimension == 'x') && yGutterPlot)
                     yGutterPlot.clearBrush();
                 if((dimension == 'yRight' || dimension == 'y') && xGutterPlot)
@@ -1106,8 +1112,7 @@ Ext.define('Connector.view.Chart', {
                     this.initiatedBrushing = '';
                 }
             }, this),
-            brushclear: Ext.bind(function()
-            {
+            brushclear: Ext.bind(function() {
                 if(this.initiatedBrushing == dimension) {
                     this.initiatedBrushing = '';
                     layerScope.isBrushed = false;
