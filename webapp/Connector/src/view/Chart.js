@@ -2644,7 +2644,7 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidevisittagmsg', this);
 
         // show the hover icon for this glyph
-        this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
+        //this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
     },
 
     removeVisitTagHover : function(data, visitTagEl) {

@@ -47,14 +47,14 @@
 /* Connector.window.SystemMessage */
 .sysmsg .x-window-body-swmsg {
   padding: 6px 10px;
-  border: 1px solid $info-color;
+  border: 1px solid $data-green;
   font-weight: bold;
   background-color: $gray-7;
-  color: $info-color;
+  color: $data-green;
   border-radius: 2px;
   text-align: center;
   a {
-    color: $info-color;
+    color: $data-green;
     text-decoration: underline;
 
     &:hover {

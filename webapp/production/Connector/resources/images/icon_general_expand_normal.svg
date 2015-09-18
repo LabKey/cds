@@ -19,7 +19,7 @@
 	</g>
 	<g id="small_help">
 	</g>
-	<rect x="40" y="60" fill="#98239A" width="48" height="8"/>
+	<rect x="40" y="60" fill="#FB2E5C" width="48" height="8"/>
 	<g>
 		<defs>
 			<rect id="SVGID_43_" width="128" height="128"/>
@@ -31,7 +31,7 @@
 			<path fill="#E6E6E6" d="M64,119.5C33.4,119.5,8.5,94.6,8.5,64S33.4,8.5,64,8.5s55.5,24.9,55.5,55.5S94.6,119.5,64,119.5z
 				 M64,11.5c-28.9,0-52.5,23.6-52.5,52.5s23.6,52.5,52.5,52.5s52.5-23.6,52.5-52.5S92.9,11.5,64,11.5z"/>
 		</g>
-		<rect x="60" y="40" clip-path="url(#SVGID_2_)" fill="#98239A" width="8" height="48"/>
+		<rect x="60" y="40" clip-path="url(#SVGID_2_)" fill="#FB2E5C" width="8" height="48"/>
 	</g>
 	<g id="plot_icon">
 	</g>

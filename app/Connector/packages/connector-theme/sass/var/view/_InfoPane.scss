@@ -105,14 +105,14 @@ a.expando {
   visibility: hidden;
   float: right;
   border-radius: 2px;
-  border: 2px solid $info-color;
+  border: 2px solid $interactive-color;
   width: 17px;
   height: 17px;
   padding: 0px 0px 0px 8px;
 
   .icontext {
     display: none;
-    color: $info-color;
+    color: $interactive-color;
   }
 
   .iconone {
@@ -126,7 +126,7 @@ a.expando {
   }
 
   &:hover {
-    background-color: $info-color;
+    background-color: $interactive-color;
     cursor: pointer;
 
     width: 105px;

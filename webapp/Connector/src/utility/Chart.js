@@ -23,7 +23,7 @@ Ext.define('Connector.utility.Chart', {
         UNSELECTED: '#E6E6E6',
         BOXSHADOW: '#CCCCCC',
         PRIMARYTEXT: '#222222',
-        PREENROLLMENT: 'rgba(255,165,0,0.3)'
+        PREENROLLMENT: 'rgba(251,46,92,0.3)'
     },
 
     emptyTxt: 'undefined',
