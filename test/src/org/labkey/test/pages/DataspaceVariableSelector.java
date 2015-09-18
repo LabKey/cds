@@ -536,7 +536,19 @@ public abstract class DataspaceVariableSelector
 
     public static enum Scale
     {
-        Log,
-        Linear
+        Log("Log (values ≤ 0 will be dropped)"),
+        Linear("Linear");
+
+        private final String scaleLabel;
+
+        private Scale(String label)
+        {
+           this.scaleLabel = label;
+        }
+
+        public String getScaleLabel()
+        {
+            return this.scaleLabel;
+        }
     }
 }
