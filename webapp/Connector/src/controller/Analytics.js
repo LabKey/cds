@@ -16,6 +16,8 @@ Ext.define('Connector.controller.Analytics', {
             this.debugMode = false;
         }
 
+        this._enabled = this.debugMode || (Connector.user.isAnalyticsUser && (this.isGAClassicEnabled() || this.isGAUniversalEnabled()));
+
         if (this.isEnabled()) {
             if (this.debugMode) {
                 console.log('Analytics -> debug mode enabled');
@@ -78,10 +80,6 @@ Ext.define('Connector.controller.Analytics', {
             }
         });
 
-        this.control('groupdatagrid', {
-            usergridfilter: this.filterEvent
-        });
-
         this.control('signinform', {
             userSignedIn: function() {
                 if (this.isInspectletEnabled()) {
@@ -110,6 +108,7 @@ Ext.define('Connector.controller.Analytics', {
         // "Export: list of source names"
         // "Export: # of columns"
         this.control('groupdatagrid', {
+            usergridfilter: this.filterEvent,
             requestexport: function(view, exportParams) {
                 this.trackEvent('Grid', 'Export', 'Column count', exportParams.columnNames.length);
                 var sources = this.getSourcesArray(exportParams.columnNames);
@@ -184,7 +183,7 @@ Ext.define('Connector.controller.Analytics', {
     },
 
     isEnabled : function() {
-        return this.debugMode || this.isGAClassicEnabled() || this.isGAUniversalEnabled();
+        return this._enabled;
     },
 
     trackPageview : function(path) {
