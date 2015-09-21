@@ -52,7 +52,7 @@
     <meta charset="utf-8">
     <title>HIV CDS</title>
 
-    <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/logo_02.png">
+    <link rel="icon" type="image/png" href="<%=text(appPath)%>/images/headerlogo.png">
 
     <!-- stylesheets -->
     <link type="text/css" href="<%=text(contextPath)%>/hopscotch/css/hopscotch.min.css" rel="stylesheet">

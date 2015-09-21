@@ -26,7 +26,7 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        this.control('filterpanel > container > #savegroup', {
+        this.control('filterstatus > container > #savegroup', {
             click : this.onGroupSave
         });
 

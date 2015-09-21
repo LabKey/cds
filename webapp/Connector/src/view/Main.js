@@ -9,7 +9,7 @@ Ext.define('Connector.view.Main', {
         'Ext.tab.Panel',
         'Ext.layout.container.Border'
     ],
-    
+
     xtype: 'app-main',
 
     layout: {
@@ -34,7 +34,7 @@ Ext.define('Connector.view.Main', {
         itemId: 'eastview',
         region: 'east',
         ui: 'east-view',
-        width : 270,
+        width : 244,
         plain : true,
         hideCollapseTool : true,
         defaults: {
@@ -58,7 +58,7 @@ Ext.define('Connector.view.Main', {
                         label: 'Home',
                         controller: 'home'
                     },{
-                        label: 'Learn about studies, assays, ...',
+                        label: 'Learn about',
                         controller: 'learn'
                     },{
                         label: 'Find subjects',
@@ -81,4 +81,4 @@ Ext.define('Connector.view.Main', {
 
         this.eastPanel = this.getComponent('eastview');
     }
-});
+});   

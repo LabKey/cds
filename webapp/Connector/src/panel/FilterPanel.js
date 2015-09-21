@@ -17,6 +17,8 @@ Ext.define('Connector.panel.FilterPanel', {
 
     hideOnEmpty: false,
 
+    includeHeader: false,
+
     constructor: function(config) {
         Ext.applyIf(config, {
             headerButtons: [],
@@ -27,16 +29,13 @@ Ext.define('Connector.panel.FilterPanel', {
 
     initComponent : function() {
 
-        this.items = [
-            this.initHeader(),
-            this.initContent()
-        ];
+        this.items = [];
 
-        var emptyText = this.getEmptyTextPanel();
-
-        if (emptyText) {
-            this.items.push(emptyText);
+        if (this.includeHeader) {
+            this.items.push(this.initHeader());
         }
+
+        this.items.push(this.initContent());
 
         if (this.tbarButtons) {
             this.dockedItems = [{
@@ -55,33 +54,7 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     initHeader : function() {
-
-        // title
-        var items = [{
-            xtype: 'box',
-            cls: 'filterpanel-header',
-            tpl: new Ext.XTemplate(
-                '<h2 class="section-title">{title:htmlEncode}</h2>'
-            ),
-            data: {
-                title: this.title
-            },
-            flex: 1
-        }];
-
-        for (var i=0; i < this.headerButtons.length; i++) {
-            items.push(this.headerButtons[i]);
-        }
-
-        return {
-            xtype: 'container',
-            ui: 'custom',
-            cls: 'bottom-spacer-lg',
-            layout: {
-                type: 'hbox'
-            },
-            items: items
-        };
+        throw 'Base class ' + this.$className + ' does not support initHeader()';
     },
 
     initContent : function() {
@@ -90,17 +63,6 @@ Ext.define('Connector.panel.FilterPanel', {
         }
 
         return this.content;
-    },
-
-    getEmptyTextPanel : function() {
-        if (!this.emptyText) {
-            this.emptyText = Ext.create('Ext.container.Container', {
-                itemId: 'emptypanel',
-                cls: 'filterpanel-header',
-                html : '<div class="emptytext">All subjects</div>'
-            });
-        }
-        return this.emptyText;
     },
 
     createHierarchyFilter : function(filterset) {
@@ -124,16 +86,10 @@ Ext.define('Connector.panel.FilterPanel', {
 
     displayFilters : function(filters) {
 
-        var emptyTextPane = this.getEmptyTextPanel();
-
         if (filters.length === 0) {
             this.clear();
         }
         else {
-            if (emptyTextPane) {
-                emptyTextPane.hide();
-            }
-
             var length = this.content.items.items.length;
             Ext.each(filters, function(filter, idx) {
                 filter.data.id = filter.id;
@@ -156,11 +112,6 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     clear : function() {
-        var emptyTextPane = this.getEmptyTextPanel();
-
-        if (emptyTextPane) {
-            emptyTextPane.show();
-        }
 
         if (this.hideOnEmpty) {
             this.hide();
@@ -173,17 +124,8 @@ Ext.define('Connector.panel.FilterPanel', {
     },
 
     onSelectionChange : function(selections) {
-        var empty = this.filters.length == 0 && selections.length == 0;
-
-        if (empty) {
+        if (this.filters.length == 0 && selections.length == 0) {
             this.clear();
-        }
-        else {
-            var emptyTextPane = this.getEmptyTextPanel();
-
-            if (emptyTextPane) {
-                emptyTextPane.hide();
-            }
         }
     }
 });

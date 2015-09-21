@@ -14,7 +14,7 @@ Ext.define('Connector.view.HomeHeader', {
         align: 'stretch'
     },
 
-    height: 160,
+    height: 180,
 
     cls: 'dimensionview',
 

@@ -16,8 +16,9 @@ Ext.define('Connector.view.FilterStatus', {
 
     initComponent : function() {
         this.items = [
-            this.getFilterPanel(),
-            this.getSelectionPanel()
+            this.getFilterHeader(),
+            this.getEmptyText(),
+            this.getFilterContent()
         ];
 
         this.callParent();
@@ -36,24 +37,69 @@ Ext.define('Connector.view.FilterStatus', {
         }, this);
     },
 
-    getFilterPanel : function() {
-
-        if (this.filterpanel) {
-            return this.filterpanel;
-        }
+    getFilterHeader : function() {
 
         //
         // If filters or selections are present then we show the buttons (== !hidden)
         //
         var hidden = !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0);
 
+        return {
+            xtype: 'container',
+            itemId: 'filterheader',
+            ui: 'custom',
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'box',
+                cls: 'filterpanel-header',
+                tpl: new Ext.XTemplate(
+                    '<h2 class="filterheader-text section-title">{title:htmlEncode}</h2>'
+                ),
+                data: {
+                    title: 'Active filters'
+                }
+            },{
+                xtype: 'button', text: 'clear', ui: 'linked', cls: 'filter-hdr-btn filterclear' /* for tests */, itemId: 'clear', hidden: hidden
+            },{
+                xtype: 'button', text: 'save', ui: 'linked', cls: 'filter-hdr-btn filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden
+            }]
+        };
+    },
+
+    getEmptyText : function() {
+        if (!this.emptyText) {
+            this.emptyText = Ext.create('Ext.Component', {
+                tpl: new Ext.XTemplate('<div class="emptytext">All subjects</div>'),
+                data: {}
+            });
+        }
+        return this.emptyText;
+    },
+
+    getFilterContent : function() {
+        if (!this.filterContent) {
+            this.filterContent = Ext.create('Ext.Container', {
+                cls: 'filterstatus-content',
+                hidden: !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0),
+                items: [
+                    this.getFilterPanel(),
+                    this.getSelectionPanel()
+                ]
+            });
+        }
+
+        return this.filterContent;
+    },
+
+    getFilterPanel : function() {
+        if (this.filterpanel) {
+            return this.filterpanel;
+        }
+
         this.filterpanel = Ext.create('Connector.panel.FilterPanel', {
-            title: 'Active filters',
             id: 'filter-panel',
-            headerButtons: [
-                { xtype: 'button', text: 'clear', ui: 'linked', cls: 'filter-hdr-btn filterclear' /* for tests */, itemId: 'clear', hidden: hidden},
-                { xtype: 'button', text: 'save', ui: 'linked', cls: 'filter-hdr-btn filtersave' /* for tests */, itemId: 'savegroup', hidden: hidden}
-            ],
             filters: this.filters
         });
 
@@ -61,8 +107,9 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     getSelectionPanel : function() {
-        if (this.selectionpanel)
+        if (this.selectionpanel) {
             return this.selectionpanel;
+        }
 
         this.selectionpanel = Ext.create('Connector.panel.Selection', {
             id: 'selection-panel',
@@ -123,14 +170,26 @@ Ext.define('Connector.view.FilterStatus', {
         var filters = Connector.getState().getFilters();
         var selections = Connector.getState().getSelections();
 
-        var saveBtn = this.filterpanel.query('container > #savegroup')[0];
-        var clrBtn = this.filterpanel.query('container > #clear')[0];
+        var filterHeader = this.getComponent('filterheader');
+        var headerText = Ext.get(Ext.DomQuery.select('.filterheader-text')[0]);
+
+        var saveBtn = filterHeader.query('#savegroup')[0];
+        var clrBtn = filterHeader.query('#clear')[0];
+
+        var filterContent = this.getFilterContent();
+        var emptyText = this.getEmptyText();
 
         if (filters.length == 0 && selections.length == 0) {
+            headerText.replaceCls('section-title-filtered', 'section-title');
+            emptyText.show();
+            filterContent.hide();
             saveBtn.hide();
             clrBtn.hide();
         }
         else {
+            headerText.replaceCls('section-title', 'section-title-filtered');
+            emptyText.hide();
+            filterContent.show();
             saveBtn.show();
             clrBtn.show();
         }

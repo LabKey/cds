@@ -62,7 +62,7 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
-        this.control('filterpanel > container > #clear', {
+        this.control('filterstatus > container > #clear', {
             click : this.onFilterClear
         });
 

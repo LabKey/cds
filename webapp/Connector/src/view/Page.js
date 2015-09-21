@@ -14,12 +14,12 @@ Ext.define('Connector.view.Page', {
     },
 
     cls: 'auto-scroll-y',
-    
+
 	//plugins: ['headerlock'],
 
 	selectedView: 0,
 
-	headerHeight: 160,
+	headerHeight: 180,
 
     initialSelectedTab: 0,
 

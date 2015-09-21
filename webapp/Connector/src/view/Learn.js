@@ -40,6 +40,7 @@ Ext.define('Connector.view.Learn', {
             this.headerViews.main = Ext.create('Connector.view.LearnHeader', {
                 dimensions: this.getDimensions(),
                 hidden: true,
+                cls: 'learnheader',
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
                     scope: this
@@ -329,9 +330,9 @@ Ext.define('Connector.view.LearnHeader', {
 
     alias: 'widget.learnheader',
 
-    height: 160,
+    height: 180,
 
-    cls: 'header-container',
+    cls: 'header-container learnaboutheader',
 
     defaults: {
         ui: 'custom',

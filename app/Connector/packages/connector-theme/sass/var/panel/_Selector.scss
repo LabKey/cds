@@ -1,41 +1,70 @@
 /* Connector.view.Selector */
+
+.x-window-body-axiswindow {
+  border: 0!important;
+  background: $white!important;
+}
+
+.x-window-axiswindow {
+  border: 0!important;
+  @include prefixer(box-shadow, 0 1px 0 0 $black!important);
+}
+
 .variable-selector {
   .header {
-    background-color: $heat-scale-6;
-    padding: 18px 48px;
+    background-color: $white;
+    padding: 24px;
+    border-top: 4px solid $action-red;
+
 
     .main-title {
       @include dialogheader;
-      font-size: 16px;
+      font-size: 12px;
+      text-transform: uppercase;
     }
 
     .sub-title {
-      margin-top: 3px;
+      margin-top: 24px;
+      height: 28px;
+      line-height: 28px;
+
+      span {
+        display: block;
+        float: left;
+      }
 
       .subject-count {
         position: absolute;
-        right: 48px;
-        bottom: 19px;
+        right: 28px;
+        bottom: 24px;
         color: $heat-scale-2;
         font-weight: bold;
       }
 
       .nav-text {
-        color: $black;
-        font-size: 14px;
-        font-weight: bold;
+        height: 28px;
+        line-height: 28px;
+        color: $gray-3;
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 400;
         font-family: $info-font;
       }
 
       .back-action {
-        color: $interactive-color;
+        color: $gray-3;
+        font-size: 12px;
+        text-transform: uppercase;
+        padding: 0 0 0 24px;
 
         .arrow {
           background-image: url(images/navigatebackward.svg);
-          width: 16px;
+          width: 56px;
+          height: 56px;
+          display: block;
           position: absolute;
-          left: 32px;
-          bottom: 20px;
+          top: 48px;
+          left: 12px;
         }
 
         &:hover {
@@ -43,27 +72,30 @@
         }
       }
 
-      .section-title {
+      .section-title,
+      .section-title-filtered {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-
-        padding-left: 24px;
+        padding-left: 20px;
         color: $black;
-        font-size: 20px;
+        font-size: 24px;
+        height: 28px;
+        line-height: 28px;
+        width: 80%!important;
         @include header;
       }
     }
   }
 
   .footer {
-    background-color: $heat-scale-6;
-    padding: 18px 48px;
+    background-color: $black!important;
+    padding: 8px;
   }
 
   .content {
-    background-color: $light-color;
-    padding: 10px 40px;
+    background-color: $white;
+    padding: 24px;
 
     .look-disabled {
       color: $heat-scale-3;
@@ -112,12 +144,12 @@
 
     .content-selected, .content-selected:hover {
       background-color: $select-color;
-      color: $light-color;
+      color: $gray-7;
     }
   }
 
   .content-multiselect {
-    background-color: $light-color;
+    background-color: $white;
     padding-top: 10px;
     padding-left: 40px;
 
@@ -142,14 +174,11 @@
     .x-grid-row .x-grid-cell {
       border-color: transparent !important;
       font-family: $info-font;
+      background: $white;
     }
 
     .x-grid-view {
-      background-color: $light-color;
-    }
-
-    .x-grid-row-over .x-grid-td {
-      background-color: $select-hover-color !important;
+      background-color: $white;
     }
 
     .checker-disabled {
@@ -182,8 +211,8 @@
   }
 
   .advanced {
-    background-color: $heat-scale-5;
-    border-top: solid rgba(0,0,0,0.2) 2px;
+    background-color: $gray-7;
+    border-top: solid $gray-6 2px;
 
     .x-panel-body {
       background-color: transparent;
@@ -204,8 +233,9 @@
         display: inline-block;
         background-color: #FFFFFF;
         width: 65%;
-        padding: 8px 16px 7px 16px;
-        border-radius: 15px;
+        padding: 8px 8px 7px 8px;
+        @include prefixer(border-radius, 2px);
+        border: 1px solid $gray-5;
         cursor: pointer;
 
         .main-label {
@@ -242,6 +272,13 @@
 
       .hierarchical .field-display .icon {
         background-image: url(images/navigateforward.svg);
+        height: 56px;
+        width: 56px;
+        position: absolute;
+        top: -12px;
+        right: -12px;
+        background-size: 100%;
+        display: block;
       }
 
       .display-option-only .field-display {
@@ -358,7 +395,15 @@
   }
 }
 
+.x-grid-row-over .x-grid-td,
+.x-grid-row-selected .x-grid-td {
+  background-color: $white !important;
+}
+
+.x-grid-td {
+  background-color: $gray-7;
+}
+
 .checkbox2 .x-form-checkbox {
   background-image: url(images/form/checkbox2.gif);
 }
-

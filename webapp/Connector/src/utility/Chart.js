@@ -19,11 +19,12 @@ Ext.define('Connector.utility.Chart', {
         HEATSCALE1: '#666363',
         HEATSCALE2: '#A09C9C',
         HEATSCALE3: '#CCC8C8',
-        SELECTED: '#01BFC2',
+        SELECTED: '#41C49F', // $data-green
+        SELECTEDBG: '#D9F3EC', // 0.2 opacity of $data-green
         UNSELECTED: '#E6E6E6',
         BOXSHADOW: '#CCCCCC',
         PRIMARYTEXT: '#222222',
-        PREENROLLMENT: 'rgba(255,165,0,0.3)'
+        PREENROLLMENT: 'rgba(251,46,92,0.3)'
     },
 
     emptyTxt: 'undefined',
@@ -110,7 +111,7 @@ Ext.define('Connector.utility.Chart', {
             // keep original color of the bin (note: uses style instead of fill attribute)
             d.origStyle = d.origStyle || this.getAttribute('style');
 
-            return d.isSelected ? 'fill: #01BFC2;' : 'fill: #E6E6E6;';
+            return 'fill: ' + (d.isSelected ? ChartUtils.colors.SELECTED : ChartUtils.colors.UNSELECTED) + ';';
         };
 
         // set color, via style attribute, for the unselected bins
@@ -118,7 +119,7 @@ Ext.define('Connector.utility.Chart', {
             if (!d.isSelected && d.length > 0 && d[0].data) {
                 for (var i = 0; i < d.length; i++) {
                     if (subjects[d[i].data.subjectId] === true)
-                        return 'fill: #01BFC2;';
+                        return 'fill: ' + ChartUtils.colors.SELECTED + ';';
                 }
             }
 
