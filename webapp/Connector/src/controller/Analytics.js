@@ -7,7 +7,7 @@ Ext.define('Connector.controller.Analytics', {
 
     extend: 'Ext.app.Controller',
 
-    debugMode: true,
+    debugMode: false,
 
     statics: {
         onMailRequest : function() {
