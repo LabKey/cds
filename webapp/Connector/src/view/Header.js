@@ -22,25 +22,10 @@ Ext.define("Connector.view.Header", {
 
     initComponent : function() {
 
-        this.items = [{
-            xtype: 'box',
-            itemId: 'logo',
-            cls: 'logo',
-            flex: 4,
-            tpl: [
-                '<img src="{imgSrc}" width="56" height="56">',
-                '<h2>CAVD <span>Collaborative DataSpace</span></h2>'
-            ],
-            data: {
-                imgSrc: LABKEY.contextPath + '/Connector/images/logo.png'
-            }
-        },{
-            xtype: 'panel',
-            layout: 'hbox',
-            itemId: 'search',
-            margin: '18 28 0 0',
-            width: 250,
-            items: [{
+        var toolBarItems = [];
+
+        if (LABKEY.user.isSignedIn) {
+            toolBarItems = [{
                 xtype: 'box',
                 itemId: 'feedback',
                 margin: '2 50 0 0',
@@ -94,7 +79,28 @@ Ext.define("Connector.view.Header", {
                     element: 'el',
                     scope: this
                 }
-            }]
+            }];
+        }
+
+        this.items = [{
+            xtype: 'box',
+            itemId: 'logo',
+            cls: 'logo',
+            flex: 4,
+            tpl: [
+                '<img src="{imgSrc}" width="56" height="56">',
+                '<h2>CAVD <span>DataSpace</span></h2>'
+            ],
+            data: {
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo.png'
+            }
+        },{
+            xtype: 'panel',
+            layout: 'hbox',
+            itemId: 'search',
+            margin: '18 28 0 0',
+            width: 250,
+            items: toolBarItems
         }];
 
         this.callParent();
