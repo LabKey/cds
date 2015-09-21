@@ -916,6 +916,8 @@ Ext.define('Connector.view.Chart', {
             var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
 
             plotConfig.brushing = {
+                fillColor: ChartUtils.colors.SELECTEDBG,
+                strokeColor: ChartUtils.colors.SELECTED,
                 dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : Ext.bind(function() {
                     this.clearHighlightLabels(layerScope.plot);
