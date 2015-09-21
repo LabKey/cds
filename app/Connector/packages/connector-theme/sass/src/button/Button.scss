@@ -402,8 +402,40 @@ a.x-btn {
   $glyph-color : $white
 );
 
+@include extjs-button-ui (
+$ui: 'rounded-inverted-accent-text-2-small',
+
+$border-radius : 2px,
+
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-disabled: transparent,
+
+$border-width : 0px,
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-disabled: transparent,
+
+$color: $interactive-color,
+$color-over : $white,
+$color-disabled: $heat-scale-2,
+
+$font-size : 12px,
+$font-family: $info-font,
+$font-family-over: $info-font,
+$font-family-focus: $info-font,
+$font-family-pressed: $info-font,
+$font-family-disabled: $info-font,
+
+$icon-size : 12px,
+$glyph-color : $white
+);
+
 .x-btn-rounded-inverted-accent-small,
-.x-btn-rounded-inverted-accent-text-small {
+.x-btn-rounded-inverted-accent-text-small,
+.x-btn-rounded-inverted-accent-text-2-small {
   padding: 6px 12px 4px 12px!important;
   background-image: none;
   height: 24px;

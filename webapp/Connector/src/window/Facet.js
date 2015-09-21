@@ -9,7 +9,7 @@ Ext.define('Connector.window.Facet', {
 
     alias: 'widget.columnfacetwin',
 
-    bodyStyle: 'margin: 8px; overflow-y: auto; padding: 10px 2px;',
+    bodyStyle: 'overflow-y: auto; padding: 10px;',
 
     width: 290,
 
