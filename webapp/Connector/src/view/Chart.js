@@ -851,7 +851,7 @@ Ext.define('Connector.view.Chart', {
 
         var allDataRows, properties, yAxisMargin = 60,
             layerScope = {plot: null, isBrushed: false},
-            scaleConfig = {}, aesConfig = {},
+            scaleConfig, aesConfig,
             plotConfig, gutterXPlotConfig, gutterYPlotConfig;
 
         noplot = Ext.isBoolean(noplot) ? noplot : false;
@@ -923,7 +923,7 @@ Ext.define('Connector.view.Chart', {
                 }, this),
                 brush: Ext.bind(onBrush, this),
                 brushend : Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties], true),
-                brushclear : Ext.bind(function(event, allData, plot, selections) {
+                brushclear : Ext.bind(function(/* event, allData, plot, selections */) {
                     layerScope.isBrushed = false;
                     Connector.getState().clearSelections(true);
                     this.clearHighlightedData();
@@ -1015,6 +1015,10 @@ Ext.define('Connector.view.Chart', {
             if (!this.renderGutter('xGutterPlot', gutterXPlotConfig, layerScope)) {
                 return;
             }
+        }
+
+        if (Ext.isDefined(studyAxisInfo)) {
+            this.initStudyAxis(studyAxisInfo);
         }
 
         this.fireEvent('hideload', this);
@@ -2146,7 +2150,7 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, null, true, showEmptyMsg);
+        this.initPlot(map, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
@@ -2558,7 +2562,6 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             this.initPlot(chartData, studyAxisData);
-            this.initStudyAxis(studyAxisData);
         }
     },
 

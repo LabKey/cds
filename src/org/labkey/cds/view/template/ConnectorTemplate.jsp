@@ -15,20 +15,22 @@
  * limitations under the License.
  */
 %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
+<%@ page import="org.labkey.api.analytics.AnalyticsService" %>
+<%@ page import="org.labkey.api.data.ContainerManager" %>
+<%@ page import="org.labkey.api.security.User" %>
 <%@ page import="org.labkey.api.settings.AppProps" %>
 <%@ page import="org.labkey.api.util.PageFlowUtil" %>
-<%@ page import="org.labkey.api.view.HttpView" %>
-<%@ page import="org.labkey.api.view.template.PrintTemplate" %>
-<%@ page import="java.util.LinkedHashSet" %>
-<%@ page import="org.labkey.api.view.template.PageConfig" %>
-<%@ page import="org.labkey.api.analytics.AnalyticsService" %>
 <%@ page import="org.labkey.api.view.ActionURL" %>
-<%@ page import="org.labkey.api.data.ContainerManager" %>
-<%@ page import="org.apache.commons.lang3.StringUtils" %>
-<%@ page import="org.labkey.api.security.User" %>
+<%@ page import="org.labkey.api.view.HttpView" %>
+<%@ page import="org.labkey.api.view.template.PageConfig" %>
+<%@ page import="org.labkey.cds.view.template.ConnectorTemplate" %>
+<%@ page import="java.util.LinkedHashSet" %>
+<%@ page import="org.labkey.cds.CDSController" %>
 <%@ page extends="org.labkey.api.jsp.JspBase" %>
 <%
-    PrintTemplate me   = (PrintTemplate) HttpView.currentView();
+    ConnectorTemplate me = (ConnectorTemplate) HttpView.currentView();
+    CDSController.AppModel model = (CDSController.AppModel) me.getConnectorModel();
     PageConfig pageConfigBean = me.getModelBean(); // TODO make sure we pass in the page config when we create this template.
     String contextPath = request.getContextPath();
     String serverHash = PageFlowUtil.getServerSessionHash();
@@ -71,6 +73,9 @@
             resourceContext: {
                 path: <%=PageFlowUtil.jsString(resourcePath)%>,
                 imgPath: <%=PageFlowUtil.jsString(imageResourcePath)%>
+            },
+            user: {
+                isAnalyticsUser: <%=model.isAnalyticsUser()%>
             }
         };
 

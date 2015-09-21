@@ -48,7 +48,8 @@ public abstract class DataspaceVariableSelector
         String xpathToCancel = "//div[contains(@class, '" + selector + "')]//a[not(contains(@style, 'display: none'))]//span[(contains(@class, 'x-btn-inner'))][text()='Cancel']";
 
         WebElement openButton = _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(getOpenButton().toBy()));
-        _test.sleep(750); // Don't know why, but more reliable with the wait.
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         openButton.click();
         _test.longWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.divByInnerText(selectorTitle).toBy()));
 

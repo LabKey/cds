@@ -67,7 +67,7 @@ public class CDSHelper
     public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
     public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
-    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
+    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1", "NEF: NEF 1", "GAG: GAG 1", "Combined: NA"};
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
@@ -350,7 +350,7 @@ public class CDSHelper
     public static final String GRID_TITLE_DEMO = "Subject characteristics";
     public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
     public static final String GRID_TITLE_ICS = TITLE_ICS;
-    public static final String GRID_TITLE_NAB = "Neutralizing antibody";
+    public static final String GRID_TITLE_NAB = "NAb";
     public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
@@ -445,6 +445,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
     }
 
@@ -572,6 +574,9 @@ public class CDSHelper
     public void goToSummary()
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
+        _test.sleep(1000);
+        _test._ext4Helper.waitForMaskToDisappear();
+        _test.sleep(500);
     }
 
     public void clearFilter(int index)
@@ -590,6 +595,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
 
@@ -602,6 +609,8 @@ public class CDSHelper
             return null;
         });
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void ensureNoFilter()
@@ -629,6 +638,8 @@ public class CDSHelper
     {
         _test.click(Locators.cdsButtonLocator("Filter"));
         waitForClearSelection(); // wait for animation
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void clearSelection()
@@ -673,7 +684,8 @@ public class CDSHelper
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });
-
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void hideEmpty()
@@ -683,6 +695,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Show empty"));
     }
@@ -694,6 +708,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
 
@@ -740,13 +756,15 @@ public class CDSHelper
         _test.click(Locator.linkContainingText("Delete"));
         _test.waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
         _test.waitForElementToDisappear(groupListing);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void toggleExplorerBar(String largeBarText)
     {
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
         _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void openStatusInfoPane(String label)
