@@ -39,6 +39,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_NAb_target_cell',
                         'study_NAb_summary_level',
                         'study_NAb_virus',
+                        'study_NAb_initial_dilution',
                         'study_NAb_specimen_type',
                         'study_NAb_lab_code'
                     ]

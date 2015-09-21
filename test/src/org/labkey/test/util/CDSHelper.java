@@ -365,6 +365,8 @@ public class CDSHelper
     public static final String TIME_POINTS_ALIGN_ENROLL = "Enrollment";
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
 
+    public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
+
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
     {
@@ -429,7 +431,7 @@ public class CDSHelper
         _test.addUrlParameter("_showPlotData=true&_disableAutoMsg=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
-        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));
+        _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
@@ -570,7 +572,7 @@ public class CDSHelper
     public void goToAppHome()
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));
+        _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
     }
 
     public void goToSummary()
@@ -743,6 +745,8 @@ public class CDSHelper
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void closeInfoPage()
@@ -760,7 +764,7 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("delete"));
         _test.waitForText("Are you sure you want to delete");
         _test.click(Locator.linkContainingText("Delete"));
-        _test.waitForText("Welcome to the CAVD DataSpace");
+        _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
@@ -893,8 +897,8 @@ public class CDSHelper
 
     public enum NavigationLink
     {
-        HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
+        HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
+        LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);

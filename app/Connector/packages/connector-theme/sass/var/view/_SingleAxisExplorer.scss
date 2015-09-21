@@ -15,7 +15,11 @@ span.animator {
 }
 
 .dim-selector {
-  margin-top: 19px;
+  margin: 0 28px 0 28px;
+  clear: both;
+  height: 56px;
+  line-height: 56px;
+  border-bottom: 1px solid $gray-6;
 }
 
 .explorer-box {
@@ -36,13 +40,18 @@ span.animator {
 }
 
 .bar.large {
-  height: 40px;
+  height: 36px;
+  line-height: 36px;
   margin: 12px 0 0 32px;
+  font-size: 16px;
+  font-family: $info-font;
 }
 
 .bar.small {
   height: $pageLeftPadding;
   margin: 12px 0 4px 32px;
+  height: 24px;
+  line-height: 24px;
   .x-btn {
     display: none;
   }
@@ -63,14 +72,22 @@ span.animator {
 }
 
 .bar.large .barlabel {
-  font: $body-one-font;
+//  font: $body-one-font;
   z-index: 5002;
-  padding: 14px 8px;
+  line-height: 36px;
+  font-size: 16px;
+  padding: 0 8px;
+  font-family: $data-font;
+  font-color: $black;
 }
 
 .bar.small .barlabel {
-  font: $body-one-font;
-  padding: 5px 8px;
+  font-family: $data-font;
+  font-color: $black;
+  height: 24px;
+  padding: 0 8px;
+  line-height: 24px;
+  font-size: 16px;
   z-index: 5002;
 }
 
@@ -101,15 +118,15 @@ span.info {
 
   .index {
     z-index: 5001;
-    background-color: $select-color;
+    background-color: $data-green;
   }
 }
 
 .bar .count {
-  color: $legend-color;
+  color: $black;
   font: bold $body-one-font;
   position: absolute;
-  right: -60px;
+  right: -80px;
   @include unselectable;
 }
 
@@ -127,7 +144,7 @@ span.info {
   top: 0;
   left: 0;
   height: 100%;
-  background: $primary-color;
+  background: $gray-6;
   text-indent: -9999px;
   overflow: hidden;
 }
@@ -144,11 +161,11 @@ span.info {
 }
 
 .bar .index-selected.inactive {
-  background-color: $select-hover-color;
+  background-color: $data-green;
 }
 
-.bar.bar-selected span.index-selected.inactive {
-  background-color: $select-color;
+.bar.x-item-selected span.index-selected.inactive {
+  background-color: $data-green;
 }
 
 .bar .count.inactive {
@@ -156,7 +173,7 @@ span.info {
 }
 
 .bar .count.active {
-  color: $select-color;
+  color: $data-green;
 }
 
 div.singleaxis {
@@ -164,12 +181,16 @@ div.singleaxis {
 }
 
 div.saecollapse {
-  color : $interactive-color;
-  border: 1px solid $primary-color;
+  color : $black;
+  border: 1px solid $gray-5;
+  @include prefixer(border-radius, 2px);
   float : left;
-  font-size: 22pt;
-  height: 38px;
-  width : 23px;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 10px;
+  height: 12px;
+  width : 12px;
+  margin: 12px 0;
 }
 
 div.saecollapse p {
@@ -179,7 +200,7 @@ div.saecollapse p {
 
 div.saecollapse:hover {
   cursor: pointer;
-  color : $light-color;
+  color : $gray-7;
   background-color: $select-color;
   border-color: $select-color;
 }

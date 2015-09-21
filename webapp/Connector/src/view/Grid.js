@@ -15,7 +15,7 @@ Ext.define('Connector.view.Grid', {
 
     columnWidth: 125,
 
-    headerHeight: 160,
+    headerHeight: 180,
 
     titleHeight: 93,
 
@@ -25,7 +25,7 @@ Ext.define('Connector.view.Grid', {
 
     constructor : function(config) {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter');
     },
 
     initComponent : function() {
@@ -46,23 +46,16 @@ Ext.define('Connector.view.Grid', {
             layout: {
                 type: 'hbox'
             },
-            items: [
-                {
-                    xtype: 'actiontitle',
-                    text: 'View data grid'
-                },
-                {
-                    // This allows for the following items to be right aligned
-                    xtype: 'box',
-                    flex: 1,
-                    autoEl: {
-                        tag: 'div'
-                    }
-                },
-                this.getExportButton(),
-                this.getCitationsButton(),
-                this.getSelectColumnsButton()
-            ]
+            items: [{
+                xtype: 'actiontitle',
+                flex: 1,
+                text: 'View data grid',
+                buttons: [
+                    this.getExportButton(),
+                    this.getCitationsButton(),
+                    this.getSelectColumnsButton()
+                ]
+            }]
         },{
             // This provides a row count on the screen for testing purposes
             id: 'gridrowcountcmp',
@@ -84,6 +77,9 @@ Ext.define('Connector.view.Grid', {
         // bind view to model
         model.on('filterchange', this.onFilterChange, this, {buffer: 500});
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
+
+        // propagate event from model
+        this.relayEvents(model, ['usergridfilter']);
 
         // bind view to view
         this.on('resize', this.onViewResize, this);
@@ -110,7 +106,7 @@ Ext.define('Connector.view.Grid', {
             ptype: 'messaging'
         });
 
-        this.footer = Ext.create('Connector.component.GridPager', {
+            this.footer = Ext.create('Connector.component.GridPager', {
             listeners: {
                 updatepage: this.showAlignFooter,
                 scope: this

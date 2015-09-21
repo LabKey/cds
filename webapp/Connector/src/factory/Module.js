@@ -25,7 +25,7 @@ Ext.define('Connector.factory.Module', {
 							// straight object dereference
 							o = (!i && Ext.isFunction(o.get)) ? o.get(prop) : o[prop];
 						});
-						data[key] = Ext.htmlEncode(o);
+						data[key] = o;
 					}
 				})
 			}
@@ -38,7 +38,7 @@ Ext.define('Connector.factory.Module', {
 					console.error('Invalid module spec. The model property is reserved, don\'t add it as a model spec property');
 				}
 				else {
-					data[key] = Ext.htmlEncode(value);
+					data[key] = value;
 				}
 			});
 

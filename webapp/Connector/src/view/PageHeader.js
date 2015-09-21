@@ -29,7 +29,7 @@ Ext.define('Connector.view.PageHeader', {
 
     alias: 'widget.learnpageheader',
 
-    cls: 'learnheader header-container-slim',
+    cls: 'pageheader learnheader header-container-slim',
 
     title: 'PageHeader!',
 
@@ -56,7 +56,6 @@ Ext.define('Connector.view.PageHeader', {
     },
 
     initComponent : function() {
-
         if (Ext.isDefined(this.dimension)) {
             if (!Ext.isDefined(this.upLink)) {
                 this.upLink = {
@@ -79,10 +78,9 @@ Ext.define('Connector.view.PageHeader', {
         this.renderTpl = new Ext.XTemplate(
             '<div>',
                 '<div class="learn-up titlepanel interactive inline">',
-                    '<span class="iarrow">&nbsp;</span>{upText:htmlEncode}',
+                    '<span class="iarrow">&nbsp;</span><span class="breadcrumb">{upText:htmlEncode} / </span><span class="studyname">{title:htmlEncode}</span>',
                 '</div>',
-                '<h1 class="inline">{title:htmlEncode}</h1>',
-                '<div class="dim-selector">',
+                '<div class="dim-selector learnabouttab">',
                     '<tpl for="tabs">',
                         '<h1 class="lhdv">{label:htmlEncode}</h1>',
                     '</tpl>',

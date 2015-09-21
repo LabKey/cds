@@ -869,7 +869,7 @@ Ext.define('Connector.view.Chart', {
 
         var allDataRows, properties, yAxisMargin = 60,
             layerScope = {plot: null, isBrushed: false},
-            scaleConfig = {}, aesConfig = {},
+            scaleConfig, aesConfig,
             plotConfig, gutterXPlotConfig, gutterYPlotConfig;
 
         noplot = Ext.isBoolean(noplot) ? noplot : false;
@@ -934,6 +934,8 @@ Ext.define('Connector.view.Chart', {
             var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
 
             plotConfig.brushing = {
+                fillColor: ChartUtils.colors.SELECTEDBG,
+                strokeColor: ChartUtils.colors.SELECTED,
                 dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : Ext.bind(function() {
                     this.clearHighlightLabels(layerScope.plot);
@@ -941,7 +943,7 @@ Ext.define('Connector.view.Chart', {
                 }, this),
                 brush: Ext.bind(onBrush, this),
                 brushend : Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties], true),
-                brushclear : Ext.bind(function(event, allData, plot, selections) {
+                brushclear : Ext.bind(function(/* event, allData, plot, selections */) {
                     layerScope.isBrushed = false;
                     Connector.getState().clearSelections(true);
                     this.clearHighlightedData();
@@ -1040,6 +1042,10 @@ Ext.define('Connector.view.Chart', {
             if (!this.renderGutter('xGutterPlot', gutterXPlotConfig, layerScope)) {
                 return;
             }
+        }
+
+        if (Ext.isDefined(studyAxisInfo)) {
+            this.initStudyAxis(studyAxisInfo);
         }
 
         this.handleDensePlotBrushEvent();
@@ -2191,7 +2197,7 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, null, true, showEmptyMsg);
+        this.initPlot(map, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
@@ -2603,7 +2609,6 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             this.initPlot(chartData, studyAxisData);
-            this.initStudyAxis(studyAxisData);
         }
     },
 
@@ -2689,12 +2694,14 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidevisittagmsg', this);
 
         // show the hover icon for this glyph
-        this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
+        // TODO: Re-enable when filtering by tag is implemented
+        //this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
     },
 
     removeVisitTagHover : function(data, visitTagEl) {
         // change hover icon back to normal glyph state
-        this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
+        // TODO: Re-enable when filtering by tag is implemented
+        //this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
 
         this.fireEvent('hidevisittagmsg', this);
     },

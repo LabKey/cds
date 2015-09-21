@@ -17,9 +17,9 @@ Ext.define('Connector.view.InfoPane', {
         pack: 'start'
     },
 
-    margin: 15,
+    margin: 0,
 
-    padding: 15,
+    padding: 0,
 
     flex: 1,
 
