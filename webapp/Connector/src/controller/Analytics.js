@@ -7,7 +7,13 @@ Ext.define('Connector.controller.Analytics', {
 
     extend: 'Ext.app.Controller',
 
-    debugMode: false,
+    debugMode: true,
+
+    statics: {
+        onMailRequest : function() {
+            Connector.getApplication().getController('Analytics').onMailTo();
+        }
+    },
 
     init: function() {
 
@@ -40,11 +46,7 @@ Ext.define('Connector.controller.Analytics', {
             this.trackPageview(document.URL.replace(window.location.origin, ''));
         }, this);
 
-        // Scenarios
-        // "Save"
-        // "Save: Boolean for was there a plot?" // TODO how do I determine that there is a plot
-        Connector.getApplication().on('groupsaved', function(group, filters) {
-
+        var containsPlotCheck = function(filters) {
             var savedPlot = false;
             Ext.each(filters, function(filter) {
                 if (filter.isPlot === true) {
@@ -52,8 +54,21 @@ Ext.define('Connector.controller.Analytics', {
                     return false;
                 }
             });
+            return savedPlot;
+        };
 
-            this.trackEvent('Group', 'Save', 'Contains Plot', savedPlot);
+        // Scenarios
+        // "Save"
+        // "Save: Boolean for was there a plot?"
+        Connector.getApplication().on('groupsaved', function(group, filters) {
+            // TODO: Add event for mailto request
+            this.trackEvent('Group', 'Save', 'Contains plot (' + containsPlotCheck(filters) + ')');
+        }, this);
+
+        // Scenarios
+        // "Access saved group"
+        Connector.getApplication().on('grouploaded', function(group, filters) {
+            this.trackEvent('Group', 'Load', 'Contains plot (' + containsPlotCheck(filters) + ')');
         }, this);
     },
 
@@ -63,30 +78,7 @@ Ext.define('Connector.controller.Analytics', {
         // "Plot button: source"
         // "Plot button: variable"
         this.control('plot', {
-            userplotchange: function(window, axis) {
-                if (axis.targetId == 'xvarselector') {
-                    if (Ext.isDefined(axis.x)) {
-                        this.trackEvent('Plot', 'Change X source', axis.x.queryName);
-                        this.trackEvent('Plot', 'Change X', axis.x.name);
-                    }
-                    else {
-                        this.trackEvent('Plot', 'Removed X');
-                    }
-                }
-                else if (axis.targetId == 'yvarselector') {
-                    this.trackEvent('Plot', 'Change Y source', axis.y.queryName);
-                    this.trackEvent('Plot', 'Change Y', axis.y.alias);
-                }
-                else if (axis.targetId == 'colorvarselector') {
-                    if (Ext.isDefined(axis.color)) {
-                        this.trackEvent('Plot', 'Change color source', axis.color.queryName);
-                        this.trackEvent('Plot', 'Change color', axis.color.alias);
-                    }
-                    else {
-                        this.trackEvent('Plot', 'Removed color');
-                    }
-                }
-            }
+            userplotchange: this.onPlotMeasureSelected
         });
 
         this.control('signinform', {
@@ -117,14 +109,22 @@ Ext.define('Connector.controller.Analytics', {
         // "Export: list of source names"
         // "Export: # of columns"
         this.control('groupdatagrid', {
-            usergridfilter: this.filterEvent,
+            measureselected: this.onGridMeasureSelected,
             requestexport: function(view, exportParams) {
-                this.trackEvent('Grid', 'Export', 'Column count', exportParams.columnNames.length);
-                var sources = this.getSourcesArray(exportParams.columnNames);
+                var columns = exportParams.columnNames,
+                    sources = this.getSourcesArray(columns);
+
+                this.trackEvent('Grid', 'Export', 'Column count', columns.length);
+
                 for (var i = 0; i < sources.length; i++) {
                     this.trackEvent('Grid', 'Export source', sources[i]);
                 }
-            }
+
+                for (i = 0; i < columns.length; i++) {
+                    this.trackEvent('Grid', 'Export column', columns[i]);
+                }
+            },
+            usergridfilter: this.filterEvent
         });
     },
 
@@ -133,6 +133,57 @@ Ext.define('Connector.controller.Analytics', {
         // "Add filter"
         // "Add filter: filter noun"
         Connector.getState().on('selectionToFilter', this.filterEvent, this);
+    },
+
+    onGridMeasureSelected : function(selectedMeasures) {
+        var sources = {};
+
+        Ext.each(selectedMeasures, function(measure) {
+            if (measure) {
+                if (measure.get('queryName')) {
+                    sources[measure.get('queryName')] = true;
+                }
+                this.trackEvent('Grid', 'Change column', measure.get('alias'));
+                this.trackEvent('Grid', 'Chose recommended', measure.get('isRecommendedVariable') === true);
+            }
+        }, this);
+
+        Ext.iterate(sources, function(source) {
+            this.trackEvent('Grid', 'Change column source', source);
+        }, this);
+    },
+
+    onPlotMeasureSelected : function(window, axis) {
+        if (axis.targetId == 'xvarselector') {
+            if (Ext.isDefined(axis.x)) {
+                this.trackEvent('Plot', 'Change X source', axis.x.queryName);
+                this.trackEvent('Plot', 'Change X', axis.x.name);
+                this.trackEvent('Plot', 'Chose recommended', axis.x.isRecommendedVariable === true);
+            }
+            else {
+                this.trackEvent('Plot', 'Removed X');
+            }
+        }
+        else if (axis.targetId == 'yvarselector') {
+            if (Ext.isDefined(axis.y)) {
+                this.trackEvent('Plot', 'Change Y source', axis.y.queryName);
+                this.trackEvent('Plot', 'Change Y', axis.y.alias);
+                this.trackEvent('Plot', 'Chose recommended', axis.y.isRecommendedVariable === true);
+            }
+            else {
+                this.trackEvent('Plot', 'Removed Y');
+            }
+        }
+        else if (axis.targetId == 'colorvarselector') {
+            if (Ext.isDefined(axis.color)) {
+                this.trackEvent('Plot', 'Change color source', axis.color.queryName);
+                this.trackEvent('Plot', 'Change color', axis.color.alias);
+                this.trackEvent('Plot', 'Chose recommended', axis.color.isRecommendedVariable === true);
+            }
+            else {
+                this.trackEvent('Plot', 'Removed color');
+            }
+        }
     },
 
     filterEvent : function(filters) {
@@ -157,21 +208,24 @@ Ext.define('Connector.controller.Analytics', {
                         measure = queryService.getMeasure(members[i].getColumnName());
                         if (measure) {
                             value = measure.alias;
-                            values[value] = true;
+                            values[value] = measure.isRecommendedVariable === true;
                         }
                     }
                 }
 
                 var keys = Object.keys(values);
                 for (i = 0; i < keys.length; i++) {
-                    this.trackEvent('Filter', 'Add', filter.isPlot() ? 'Plot' : 'Grid', keys[i]);
+                    value = (filter.isPlot() ? 'Plot' : 'Grid') + ': ' + keys[i];
+                    this.trackEvent('Filter', 'Add', value);
+                    this.trackEvent('Filter', 'Filter recommended', values[keys[i]]);
                 }
             }
             else {
                 // olap
                 members = filter.get('members');
                 for (i = 0; i < members.length; i++) {
-                    this.trackEvent('Filter', 'Add', 'Find Subjects', members[i].uniqueName);
+                    value = 'Find Subjects: ' + members[i].uniqueName;
+                    this.trackEvent('Filter', 'Add', value);
                 }
             }
         }
@@ -198,7 +252,7 @@ Ext.define('Connector.controller.Analytics', {
 
     trackPageview : function(path) {
         if (this.debugMode) {
-            console.log('Analytics -> trackPageview:', path);
+            console.log('Analytics -> trackPageview\npath:', path);
         }
         if (this.isGAClassicEnabled()) {
             _gaq.push(['_trackPageview', path]);
@@ -230,7 +284,7 @@ Ext.define('Connector.controller.Analytics', {
 
     trackEvent : function(category, action, label, value) {
         if (this.debugMode) {
-            console.log('Analytics -> trackEvent (' + category + ':' + action + ')', label, value);
+            console.log('Analytics -> trackEvent\ncategory: ' + category + '\naction: ' + action + '\nlabel: ' + label + '\nvalue: ' + value);
         }
         if (this.isGAClassicEnabled()) {
             _gaq.push(['_trackEvent', category, action, label, value]);
@@ -252,5 +306,11 @@ Ext.define('Connector.controller.Analytics', {
         });
 
         return Ext.Object.getKeys(sources);
+    },
+
+    onMailTo : function() {
+        if (this.isEnabled()) {
+            this.trackEvent('Support', 'Contact team', 'MailTo');
+        }
     }
 });
