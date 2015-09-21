@@ -1162,10 +1162,10 @@ Ext.define('Connector.view.Chart', {
 
     generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin, properties, layerScope) {
         var gutterXMargins = {
-            top: 1,
+            top: 0,
             left: this.requireYGutter ? this.yGutterWidth + yAxisMargin : yAxisMargin + 24,
             right: plotConfig.margins.right,
-            bottom: 1
+            bottom: 0
         };
 
         var me = this;
