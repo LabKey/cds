@@ -483,7 +483,13 @@
     <table tableName="studygroupvisitmap" tableDbType="TABLE">
         <columns>
             <column columnName="group_id"/>
-            <column columnName="visit_row_id"/>
+            <column columnName="visit_row_id">
+                <fk>
+                    <fkDbSchema>study</fkDbSchema>
+                    <fkTable>visit</fkTable>
+                    <fkColumnName>rowid</fkColumnName>
+                </fk>
+            </column>
             <column columnName="container"/>
         </columns>
     </table>
@@ -512,7 +518,13 @@
         <columns>
             <column columnName="visit_tag"/>
             <column columnName="visit_tag_label"/>
-            <column columnName="visit_row_id"/>
+            <column columnName="visit_row_id">
+                <fk>
+                    <fkDbSchema>study</fkDbSchema>
+                    <fkTable>visit</fkTable>
+                    <fkColumnName>rowid</fkColumnName>
+                </fk>
+            </column>
             <column columnName="container"/>
             <column columnName="study_group_id"/>
             <column columnName="single_use"/>
