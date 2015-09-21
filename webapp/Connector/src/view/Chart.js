@@ -2649,12 +2649,14 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidevisittagmsg', this);
 
         // show the hover icon for this glyph
+        // TODO: Re-enable when filtering by tag is implemented
         //this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
     },
 
     removeVisitTagHover : function(data, visitTagEl) {
         // change hover icon back to normal glyph state
-        this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
+        // TODO: Re-enable when filtering by tag is implemented
+        //this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
 
         this.fireEvent('hidevisittagmsg', this);
     },
