@@ -110,6 +110,8 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(sourceColumnTitle));
             // confirm column header
             _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(measure));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
         }
     }
 
@@ -152,6 +154,8 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             confirmSelection();
             // confirm column removal
             _test.waitForElementToDisappear(Locator.tagWithClass("span", "x-column-header-text").withText(measure));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
         }
     }
 
