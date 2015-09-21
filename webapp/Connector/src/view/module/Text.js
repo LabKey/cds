@@ -24,3 +24,22 @@ Ext.define('Connector.view.module.Text', {
 		return data.text || data.allowNullText;
 	}
 });
+
+Ext.define('Connector.view.module.HTML', {
+
+	xtype : 'module.html',
+
+	extend : 'Connector.view.module.BaseModule',
+
+	tpl : new Ext.XTemplate(
+		'<tpl if="text || allowNullText">',
+			Connector.constant.Templates.module.title,
+			'<p>{text}</p>',
+		'</tpl>'
+	),
+
+	hasContent : function() {
+		var data = this.data || this.initalConfig.data || {};
+		return data.text || data.allowNullText;
+	}
+});
