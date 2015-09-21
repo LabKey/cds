@@ -166,7 +166,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(dataPoints);
 
         click(Locator.tagWithText("a", "About"));
-        waitForText("About the HIV Collaborative DataSpace");
+        waitForText("About the CAVD DataSpace");
         getDriver().navigate().back();
         waitForElement(dataPoints.notHidden());
 
@@ -481,7 +481,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the HIV Vaccine Collaborative Dataspace.");
+        waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
