@@ -8,8 +8,8 @@
   }
 
   h2.section-title-filtered {
-    padding: 0 42px 24px 8px;
-    font-size: 18px!important;
+    padding: 0 0 24px 8px;
+    font-size: 18px;
   }
 
   .emptytext {
@@ -72,8 +72,6 @@ div.activefilter {
   background-color: $white;
   @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
   @include prefixer(border-radius, 2px);
-  display: block;
-  width: 219px;
   padding: 4px 8px;
   margin: 6px 0 0 0;
 
@@ -118,11 +116,11 @@ div.selectionpanel {
 
   .header {
     font-family: $info-font;
-    font-color: $black;
+    color: $black;
     font-size: 11px;
     line-height:15px;
     opacity: 0.7;
-    padding: 0 8px 0 8px;
+    padding: 0 8px;
   }
 
   .instruction {
