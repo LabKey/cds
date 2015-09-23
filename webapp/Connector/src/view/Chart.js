@@ -23,9 +23,9 @@ Ext.define('Connector.view.Chart', {
 
     showPointsAsBin: false,
 
-    xGutterHeight: 125,
+    xGutterHeight: 90,
 
-    yGutterWidth: 150,
+    yGutterWidth: 125,
 
     studyAxisWidthOffset: 150,
 
@@ -689,6 +689,7 @@ Ext.define('Connector.view.Chart', {
             clipRect: false,
             legendPos : 'none',
             gridLineWidth: 1.25,
+            gridLinesVisible: 'both',
             borderWidth: 2,
             gridColor : ChartUtils.colors.WHITE,
             bgColor: ChartUtils.colors.WHITE,
@@ -705,7 +706,7 @@ Ext.define('Connector.view.Chart', {
                 top: 25,
                 left: yAxisMargin + (this.requireYGutter ? 0 : 24),
                 right: 50,
-                bottom: 43
+                bottom: 53
             },
             width : size.width,
             height : size.height,
@@ -1096,7 +1097,7 @@ Ext.define('Connector.view.Chart', {
         var brushingExtent;
 
         return {
-            dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
+            dimension: properties && !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
             brushstart: Ext.bind(function () {
                 this.clearHighlightLabels(layerScope.plot);
                 layerScope.isBrushed = true;
@@ -1227,7 +1228,7 @@ Ext.define('Connector.view.Chart', {
         return success;
     },
 
-    generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin, properties, layerScope) {
+    generateXGutter : function(plotConfig, chartData, allDataRows, yAxisMargin) {
         var gutterXMargins = {
             top: 0,
             left: this.requireYGutter ? this.yGutterWidth + yAxisMargin : yAxisMargin + 24,
@@ -1240,8 +1241,13 @@ Ext.define('Connector.view.Chart', {
             y: {
                 value: 'Undefined y value',
                 fontSize: 12,
-                position: 10,
+                position: 5,
+                rotate: 0,
+                maxCharPerLine: 9,
+                lineWrapAlign: 'end',
                 cls: 'xGutter-label',
+                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdWidth: 70,
                 listeners: {
                     mouseover: function() {
                         me._showWhyXGutter(chartData.getDataRows());
@@ -1269,14 +1275,15 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return this.getGutterPlotConfig(gutterXMargins, this.xGutterHeight, gutterXWidth, allDataRows.undefinedY, gutterXAes, gutterXScales, gutterXLabels);
+        return Ext.apply(this.getGutterPlotConfig(gutterXMargins, this.xGutterHeight, gutterXWidth, allDataRows.undefinedY, gutterXAes, gutterXScales, gutterXLabels),
+                {gridLinesVisible: 'y'});
     },
 
     generateYGutter : function(plotConfig, chartData, allDataRows) {
         var gutterYMargins = {
             top: plotConfig.margins.top,
             left: 24,
-            right: 15,
+            right: 20,
             bottom: plotConfig.margins.bottom
         };
 
@@ -1285,8 +1292,12 @@ Ext.define('Connector.view.Chart', {
             x: {
                 value: 'Undefined x value',
                 fontSize: 12,
-                position: 10,
+                position: 45,
                 cls: 'yGutter-label',
+                maxCharPerLine: 10,
+                lineWrapAlign: 'start',
+                bkgdColor: ChartUtils.colors.GRIDBKGD,
+                bkgdHeight: 100,
                 listeners: {
                     mouseover: function() {
                         me._showWhyYGutter(chartData.getDataRows());
@@ -1315,7 +1326,9 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return this.getGutterPlotConfig(gutterYMargins, plotConfig.height, this.yGutterWidth, allDataRows.undefinedX, gutterYAes, gutterYScales, gutterYLabels);
+        return Ext.apply(this.getGutterPlotConfig(gutterYMargins, plotConfig.height, this.yGutterWidth, allDataRows.undefinedX, gutterYAes, gutterYScales, gutterYLabels),
+                {gridLinesVisible: 'x'});
+
     },
 
     logRowCount : function(allDataRows) {
