@@ -444,6 +444,8 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
             return null;
         });
 
@@ -610,9 +612,9 @@ public class CDSHelper
             clearButton.click();
             return null;
         });
-        _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
+        _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
 
     public void ensureNoFilter()
@@ -683,6 +685,8 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             link.click();
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });

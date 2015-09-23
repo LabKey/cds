@@ -1979,6 +1979,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
         xaxis.setCellType("All");
         xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
@@ -1993,6 +1994,161 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         waitForText("Heatmap on");
 
         cds.ensureNoFilter();
+    }
+
+    @Test
+    public void verifyDensePlotBrushing()
+    {
+        // This test will only validate that a "Filter" button shows up, but will not validate that the
+        // range of the filter is as expected.
+
+        int pointCount, pointToClick;
+        CDSHelper cds = new CDSHelper(this);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        log("Brush a single axis plot.");
+        // set the y-axis
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        yaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350);
+
+        // Clear the filter.
+        cds.clearFilter(1);
+
+        log("Brush a scattered plot.");
+        // set the x-axis
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(" + pointToClick + ")", 250, -250);
+
+        // Clear the plot.
+        cds.clearFilters();
+        sleep(500);
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+        log("Brush a binned plot.");
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_DATA);
+        xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
+        xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
+        xaxis.setCellType("All");
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        // set the y-axis
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.setCellType("All");
+        yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
+        yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
+        yaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", -50, -100);
+
+        cds.clearFilters();
+        sleep(500);
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+        log("Brush binned plot single axis.");
+        // set the y-axis
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50);
+
+        // Clear the filter.
+        cds.clearFilter(1);
+
+        log("Brush binned with categorical.");
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        xaxis.pickVariable(CDSHelper.DEMO_COUNTRY);
+        xaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/3;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50);
+
+        // Clear the filter.
+        cds.clearFilters();
+        sleep(500);
+
+        log("Brush categorical with color.");
+        // set the y-axis
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
+        xaxis.confirmSelection();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_RACE);
+        coloraxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        int boxGroup;
+        boxGroup = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group"))/2;
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point"))/4;
+        brushPlot("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point:nth-of-type(" + pointToClick + ")", 0, -50);
+
+        // Clear the filter.
+        cds.clearFilters();
+
+    }
+
+    private void brushPlot(String cssPathToPoint, int xOffSet, int yOffSet)
+    {
+        int subjectCountBefore, subjectCountAfter;
+        String tempStr;
+        final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
+
+        assertElementVisible(Locator.linkContainingText("Filter"));
+        click(Locator.linkContainingText("Filter"));
+        sleep(250); // Wait briefly for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        assertTrue("The subject count after applying filter was not less than or equal to before. Before: " + subjectCountBefore + " After: " + subjectCountAfter, subjectCountBefore >= subjectCountAfter);
+        sleep(500);
     }
 
     private String getPointProperty(String property, WebElement point)
