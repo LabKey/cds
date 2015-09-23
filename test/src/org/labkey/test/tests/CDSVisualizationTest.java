@@ -1979,6 +1979,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
         xaxis.setCellType("All");
         xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
@@ -1993,6 +1994,95 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         waitForText("Heatmap on");
 
         cds.ensureNoFilter();
+    }
+
+    @Test
+    public void verifyDensePlotBrushing()
+    {
+        // This test will only validate that a "Filter" button shows up, but will not validate that the
+        // range of the filter is as expected.
+
+        CDSHelper cds = new CDSHelper(this);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        // set the y-axis
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        yaxis.confirmSelection();
+
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(1000)", 50, -350);
+
+        // Clear the filter.
+        cds.clearFilter(1);
+        _ext4Helper.waitForMaskToDisappear();
+//        mouseOver(Locator.xpath("//span[@class='sel-label'][text() = 'In the plot:']")); // Need to do this to get the clear img to show up.
+//        click(Locator.xpath("//div[contains(@class, ' activefilter ')]//img[contains(@src, 'icon_general_clearsearch_normal')]"));
+
+        // set the x-axis
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.confirmSelection();
+
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(1000)", 250, -250);
+
+        // Clear the plot.
+        cds.clearFilters();
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+        _ext4Helper.waitForMaskToDisappear();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_DATA);
+        xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
+        xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
+        xaxis.setCellType("All");
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+
+        // set the y-axis
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.setCellType("All");
+        yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
+        yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
+        yaxis.confirmSelection();
+
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(100)", -50, -100);
+
+        cds.clearFilters();
+        waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+    }
+
+    private void brushPlot(String cssPathToPoint, int xOffSet, int yOffSet)
+    {
+        int subjectCountBefore, subjectCountAfter;
+        String tempStr;
+        final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
+
+        assertElementVisible(Locator.linkContainingText("Filter"));
+        click(Locator.linkContainingText("Filter"));
+        sleep(250); // Wait briefly for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        assertTrue("The subject count after applying filter was not less than or equal to before. Before: " + subjectCountBefore + " After: " + subjectCountAfter, subjectCountBefore >= subjectCountAfter);
+
     }
 
     private String getPointProperty(String property, WebElement point)
