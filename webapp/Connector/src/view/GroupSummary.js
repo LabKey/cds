@@ -176,7 +176,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 
     cls: 'header-container',
 
-    height: 160,
+    height: 180,
 
     defaults: {
         ui: 'custom'

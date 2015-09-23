@@ -3,6 +3,16 @@
   .x-grid-data-row {
     line-height: 28px;
     height: 28px;
+    background: $gray-8!important;
+
+    td {
+      background: transparent!important;
+    }
+
+    &:hover {
+      background: $white;
+      border-color: $white;
+    }
   }
 
   .x-column-header-text {
@@ -40,7 +50,6 @@
     text-align: left;
 
     .x-column-header-inner {
-      background-color: $light-color;
       border-bottom: 2px solid $interactive-color;
       height: 50px;
     }
@@ -128,3 +137,21 @@ div.filterpanel .x-panel-body-default {
   background: transparent;
 }
 /* END Connector.window.Filter */
+
+.x-panel-body-default {
+  background: transparent!important;
+}
+
+.x-panel-body-primary-view {
+  .chartview {
+    .x-box-item{
+      background-color : $white;
+    .x-btn {
+      background: $action-red!important;
+    }
+    }
+  }
+  .x-border-layout-ct {
+    background: transparent!important;
+  }
+}

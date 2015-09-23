@@ -7,33 +7,36 @@ span.statme {
 span.status-label {
   float: left;
   text-transform: capitalize;
-  background-color: #ebebeb;
+  background-color: $white;
   position: relative;
   padding-right: 4px;
-  font-size: 13px;
+  font-size: 12px;
+  opacity: 0.9;
 }
 
 span.status-count {
-  background-color: $secondary-color;
+  background-color: $white;
+  font-weight: 700;
   position: relative;
   padding-left: 4px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 span.hl-status-label {
   float: left;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: normal;
   text-transform: capitalize;
-  background-color: #ebebeb;
+  background-color: $white;
   position: relative;
   padding-right: 4px;
+  opacity: 0.9;
 }
 
 span.hl-status-count {
-  font-size: 13px;
-  font-weight: normal;
-  background-color: $secondary-color;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: $white;
   position: relative;
   padding-left: 4px;
 }
@@ -50,39 +53,52 @@ span.status-of {
   color: #ccc;
 }
 
+.detailstatuslist {
+  background: $white;
+  border-bottom: 4px solid $gray-6;
+}
+
 ul.detailstatus {
   font-family: $bodycaps-font;
-  padding: 0;
+  padding: 0 0 36px 0;
 
   li {
     text-align: right;
-    margin: -6px 4px 0 4px; /* note if this changes, modify marign on div.status-row */
+    margin: 0px; /* note if this changes, modify marign on div.status-row */
   }
 }
 
 div.status-row {
   li {
-    border: 1px solid transparent;
-    border-radius: 15px;
-    padding: 4px 8px;
-    margin: 0 0 0 0px; /* note if this changes, modify margin on ul.detailstatus li */
-    line-height: 16px;
-    clear: both;
+    @include prefixer(border-radius, 2px);
+    padding: 0 14px 0 12px;
+    margin: 2px 6px 2px 10px; /* note if this changes, modify margin on ul.detailstatus li */
+    line-height: 24px;
+    height: 24px;
+    overflow: auto;
+
+    span {
+      color: $black;
+    }
   }
 }
 
 div.hl-status-row {
-  border-top: 1px solid #DDDCDC;
   border-radius: 0;
-  margin-top: 12px;
-  padding-top: 12px;
+  border-top: 1px solid $gray-6;
+  padding-top: 24px;
+  margin-top: 24px;
+}
+
+div.hl-status-row:first-child {
+  margin-top: 0!important;
 }
 
 div.status-over {
   li {
-    @include border-radius(15px);
-    background-color: $light-color;
-    border: 1px solid #DDDCDC;
+    @include prefixer(border-radius, 2px);
+    @include prefixer(transition, background 0.3s linear);
+    background-color: $gray-7;
     cursor: pointer;
 
     span {
@@ -90,7 +106,7 @@ div.status-over {
       &.status-count,
       &.hl-status-label,
       &.hl-status-count {
-        background-color: $light-color;
+        background-color: transparent;
       }
     }
   }
@@ -98,13 +114,12 @@ div.status-over {
 
 div.nolink.status-over {
   li {
-    background-color: transparent;
-    border: 1px solid transparent;
     cursor: default;
-    border-radius: 0;
+    @include prefixer(border-radius, 2px);
+    background-color: $white;
 
     span {
-      background-color: #ebebeb;
+      background-color: $white;
     }
   }
 }

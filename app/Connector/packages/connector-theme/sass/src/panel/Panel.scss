@@ -1,13 +1,13 @@
 @include extjs-panel-ui(
   $ui-label: 'primary-view',
-  $ui-body-background-color: $light-color,
+  $ui-body-background-color: $gray-8,
   $ui-border-width: 0,
   $ui-body-border-width: 0
 );
 
 @include extjs-panel-ui(
   $ui-label: 'east-view',
-  $ui-body-background-color: $primary-color,
+  $ui-body-background-color: $gray-7,
   $ui-border-width: 0,
   $ui-body-border-width: 0
 );
@@ -16,15 +16,19 @@
   z-index: 10000;
 }
 
+.x-grid-body {
+  background: transparent!important;
+}
+
 .x-panel-body-east-view {
-  background: linear-gradient(90deg, #ebebeb, #f0f0f0) !important;
+  border-left: 1px solid $gray-6;
 }
 
 @include extjs-panel-ui(
   $ui-label: 'navigation',
   $ui-body-border-width: 0px,
-  $ui-body-background-color: $select-color,
-  $ui-body-font-size: 13.5pt
+  $ui-body-background-color: $gray-7,
+  $ui-body-font-size: 12px
 );
 
 div.xaxispicker div.x-panel-body,
@@ -35,12 +39,13 @@ div.yaxispicker div.x-panel-body {
 div.sourcegrid .x-grid-row .x-grid-cell,
 div.measuresgrid .x-grid-row .x-grid-cell {
   border-color: transparent !important;
+  background-color: transparent!important;
   font-family: $info-font;
 }
 
 div.sourcegrid .x-grid-view,
 div.measuresgrid .x-grid-view {
-  background-color: $light-color;
+  background-color: $white;
 }
 
 div.variableoptionsgrid {
@@ -49,7 +54,7 @@ div.variableoptionsgrid {
   .x-column-header, .x-column-header-sort-ASC .x-column-header-text,
   .x-grid-cell, .x-grid-cell-special,
   .x-grid-empty {
-    background-color: transparent;
+    background-color: transparent!important;
     background-image: none;
   }
 
@@ -58,7 +63,7 @@ div.variableoptionsgrid {
   }
 
   .x-grid-table, .x-grid-body .x-grid-table-focused-first {
-    border-top: none;
+    border: none!important;
   }
 
   .x-grid-empty {
@@ -69,17 +74,17 @@ div.variableoptionsgrid {
 
 .x-grid-cell-special,
 .x-grid-row-selected .x-grid-cell-special {
-  background-color: #FFFFFF;
+  background-color: $white;
   background-image: none;
 }
 
 .x-grid-row-over .x-grid-cell-special {
-  background-color: #FFFFFF;
+  background-color: $white;
   background-image: none;
 }
 
 .highlight .x-grid-cell-last {
-  background-color: #14C9CC;
+  background-color: $white;
 }
 
 .highlight .x-grid-cell-inner {
@@ -123,10 +128,10 @@ div.definition-overflow {
 
 /* Ext.Grid*/
 .x-column-header-text {
-  font-size: 11px;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: $heat-scale-2;
+  font-size: 12px;
+  text-transform: capitalize;
+  font-weight: 400;
+  color: $black;
 }
 
 .x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
@@ -137,11 +142,14 @@ div.definition-overflow {
 
 /* Connector.view.InfoPane */
 .x-grid-body .x-grid-table-focused-first {
-  border-top: 1px solid transparent;
+  border: 0px solid transparent;
 }
 
-.x-grid-with-row-lines .x-grid-table-over-first {
-  border-top-color: transparent;
+.x-grid-with-row-lines .x-grid-table-over-first,
+.x-grid-with-row-lines .x-grid-table-selected-first,
+.x-grid-with-row-lines .x-grid-table {
+  border: 0px solid transparent!important;
+
 }
 
 .filterpanegrid {
@@ -161,14 +169,14 @@ div.definition-overflow {
   .x-column-header-over,
   .x-column-header-sort-ASC, .x-column-header-sort-DESC {
     background-image: none !important;
-    background-color: $light-color;
+    background-color: $white;
     border: none;
     color: $interactive-color!important;
   }
 
   .x-column-header-trigger {
-    border-left: 1px solid $primary-color;
-    background-color: $heat-scale-4;
+    border-left: 1px solid $gray-7;
+    background-color: $white;
 
     &:hover {
       background-color: #F4F4F4 !important;
@@ -181,13 +189,18 @@ div.definition-overflow {
 
   .x-grid-group-hd {
     margin-top: 20px;
+    padding: 0!important;
     border-width: 0;
     background-color: transparent;
   }
 
   .x-grid-group-title {
-    @include smallStandout;
-    color: $heat-scale-2;
+    font-size: 12px;
+    text-transform: none;
+    display: block;
+    color: $gray-25;
+    padding: 0 0 4px 0;
+    font-weight: 400;
   }
 
   .x-grid-with-row-lines .x-grid-table-over-first {
@@ -205,8 +218,6 @@ div.definition-overflow {
 }
 
 .infopanegrid {
-
-  margin-top: 30px;
 
   .x-grid-body {
     border-top-color: transparent;
@@ -228,8 +239,8 @@ div.definition-overflow {
   }
 
   .x-column-header-trigger {
-    border-left: 1px solid $primary-color;
-    background-color: $heat-scale-4;
+    border-left: 1px solid $gray-7;
+    background-color: $white;
 
     &:hover {
       background-color: #F4F4F4 !important;
@@ -237,7 +248,10 @@ div.definition-overflow {
   }
 
   .x-grid-header-ct {
-    border-color: transparent;
+    padding-bottom: 20px;
+    margin-bottom: 16px;
+    width: 198px;
+    border-bottom: 1px solid $gray-7!important;
   }
 
   .x-grid-group-hd {
@@ -246,8 +260,12 @@ div.definition-overflow {
   }
 
   .x-grid-group-title {
-    @include smallStandout;
-    color: $heat-scale-2;
+    font-size: 12px;
+    text-transform: none;
+    display: block;
+    color: $gray-25;
+    padding: 0 0 4px 0;
+    font-weight: 400;
   }
 
   .x-grid-with-row-lines .x-grid-table-over-first {
