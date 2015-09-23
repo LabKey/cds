@@ -615,8 +615,6 @@ public class CDSHelper
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
-        _test.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void ensureNoFilter()

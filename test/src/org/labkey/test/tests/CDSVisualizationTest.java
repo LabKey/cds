@@ -2040,6 +2040,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Clear the plot.
         cds.clearFilters();
+        sleep(500);
         waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
 
         log("Brush a binned plot.");
@@ -2065,6 +2066,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", -50, -100);
 
         cds.clearFilters();
+        sleep(500);
         waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
 
         log("Brush binned plot single axis.");
@@ -2095,6 +2097,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Clear the filter.
         cds.clearFilters();
+        sleep(500);
 
         log("Brush categorical with color.");
         // set the y-axis
@@ -2145,7 +2148,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         assertTrue("The subject count after applying filter was not less than or equal to before. Before: " + subjectCountBefore + " After: " + subjectCountAfter, subjectCountBefore >= subjectCountAfter);
-
+        sleep(500);
     }
 
     private String getPointProperty(String property, WebElement point)
