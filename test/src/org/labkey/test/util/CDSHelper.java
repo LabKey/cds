@@ -610,10 +610,10 @@ public class CDSHelper
 
         applyAndMaybeWaitForBars(aVoid -> {
             clearButton.click();
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
             return null;
         });
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();

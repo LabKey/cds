@@ -2002,13 +2002,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // This test will only validate that a "Filter" button shows up, but will not validate that the
         // range of the filter is as expected.
 
+        int pointCount, pointToClick;
         CDSHelper cds = new CDSHelper(this);
 
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
         YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
 
+        log("Brush a single axis plot.");
         // set the y-axis
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
@@ -2016,14 +2019,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         yaxis.confirmSelection();
 
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(1000)", 50, -350);
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350);
 
         // Clear the filter.
         cds.clearFilter(1);
-        _ext4Helper.waitForMaskToDisappear();
-//        mouseOver(Locator.xpath("//span[@class='sel-label'][text() = 'In the plot:']")); // Need to do this to get the clear img to show up.
-//        click(Locator.xpath("//div[contains(@class, ' activefilter ')]//img[contains(@src, 'icon_general_clearsearch_normal')]"));
 
+        log("Brush a scattered plot.");
         // set the x-axis
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
@@ -2031,13 +2034,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         xaxis.confirmSelection();
 
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(1000)", 250, -250);
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(" + pointToClick + ")", 250, -250);
 
         // Clear the plot.
         cds.clearFilters();
         waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
-        _ext4Helper.waitForMaskToDisappear();
 
+        log("Brush a binned plot.");
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_DATA);
@@ -2055,10 +2060,68 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
         yaxis.confirmSelection();
 
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(100)", -50, -100);
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", -50, -100);
 
         cds.clearFilters();
         waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+        log("Brush binned plot single axis.");
+        // set the y-axis
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50);
+
+        // Clear the filter.
+        cds.clearFilter(1);
+
+        log("Brush binned with categorical.");
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        xaxis.pickVariable(CDSHelper.DEMO_COUNTRY);
+        xaxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/3;
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50);
+
+        // Clear the filter.
+        cds.clearFilters();
+
+        log("Brush categorical with color.");
+        // set the y-axis
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
+        xaxis.confirmSelection();
+
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_RACE);
+        coloraxis.confirmSelection();
+
+        // Try to protect from getting an index out of range error.
+        int boxGroup;
+        boxGroup = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group"))/2;
+        pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point"))/4;
+        brushPlot("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point:nth-of-type(" + pointToClick + ")", 0, -50);
+
+        // Clear the filter.
+        cds.clearFilters();
 
     }
 
