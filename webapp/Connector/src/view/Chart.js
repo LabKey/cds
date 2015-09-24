@@ -750,7 +750,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     getScaleConfigs : function(noplot, properties, chartData, studyAxisInfo, layerScope) {
-        var scales = {};
+        var scales = {}, domain;
 
         if (noplot) {
             scales.x = {
@@ -767,9 +767,16 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
+
+                // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
+                if(this.requireYGutter && chartData.getXDomain()[0]==null && chartData.getXDomain()[1]==null)
+                    domain = [0,1];
+                else
+                    domain = chartData.getXDomain();
+
                 scales.x = {
                     scaleType: 'continuous',
-                    domain: chartData.getXDomain(studyAxisInfo)
+                    domain: domain
                 };
 
                 if (properties.xaxis.isNumeric) {
@@ -803,11 +810,17 @@ Ext.define('Connector.view.Chart', {
                 };
             }
 
+            // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
+            if(this.requireXGutter && chartData.getYDomain()[0]==null && chartData.getYDomain()[1]==null)
+                domain = [0,1];
+            else
+                domain = chartData.getYDomain();
+
             scales.yLeft = {
                 scaleType: 'continuous',
                 tickFormat: ChartUtils.tickFormat.numeric,
                 tickDigits: 7,
-                domain: chartData.getYDomain()
+                domain: domain
             };
 
             if (this.measures[2]) {
@@ -897,8 +910,8 @@ Ext.define('Connector.view.Chart', {
             };
         }
 
-        this.requireXGutter = allDataRows && allDataRows.undefinedY;
-        this.requireYGutter = allDataRows && allDataRows.undefinedX;
+        this.requireXGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedY) && (allDataRows.undefinedY.length>0);
+        this.requireYGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedX) && (allDataRows.undefinedX.length>0);
 
         this.plotEl.update('');
         this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
@@ -1190,8 +1203,8 @@ Ext.define('Connector.view.Chart', {
         var gutterXLabels = {
             y: {
                 value: 'Undefined y value',
-                fontSize: 12,
-                position: 5,
+                fontSize: 11,
+                position: 8,
                 rotate: 0,
                 maxCharPerLine: 9,
                 lineWrapAlign: 'end',
@@ -1241,7 +1254,7 @@ Ext.define('Connector.view.Chart', {
         var gutterYLabels = {
             x: {
                 value: 'Undefined x value',
-                fontSize: 12,
+                fontSize: 11,
                 position: 45,
                 cls: 'yGutter-label',
                 maxCharPerLine: 10,
