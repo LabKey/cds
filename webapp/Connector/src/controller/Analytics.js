@@ -24,6 +24,11 @@ Ext.define('Connector.controller.Analytics', {
 
         this._enabled = this.debugMode || (Connector.user.isAnalyticsUser && this.isGAUniversalEnabled());
 
+        // setup inspectlet session
+        if (Connector.user.isAnalyticsUser && this.isInspectletEnabled()) {
+            __insp.push(['identify', LABKEY.user.email]);
+        }
+
         if (this.isEnabled()) {
             if (this.debugMode) {
                 console.log('Analytics -> debug mode enabled');
@@ -83,10 +88,6 @@ Ext.define('Connector.controller.Analytics', {
 
         this.control('signinform', {
             userSignedIn: function() {
-                if (this.isInspectletEnabled()) {
-                    __insp.push(['identify', LABKEY.user.email]);
-                }
-
                 this.setVariable('userId', LABKEY.user.userId);
                 this.trackEvent('User', 'Login', LABKEY.user.userId);
             }
