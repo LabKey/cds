@@ -1149,7 +1149,7 @@ Ext.define('Connector.view.Chart', {
             strokeColor: ChartUtils.colors.SELECTED,
             dimension: _dimension,
             brushstart: Ext.bind(ChartUtils.brushStart, this, [layerScope, dimension]),
-            bursh: Ext.bind(brushFn, this),
+            brush: Ext.bind(brushFn, this),
             brushend: Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties, dimension], true),
             brushclear: Ext.bind(ChartUtils.brushClear, this, [layerScope, dimension])
         };
