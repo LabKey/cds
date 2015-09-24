@@ -911,6 +911,7 @@ Ext.define('Connector.view.Chart', {
         this.logRowCount(allDataRows);
 
         this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
+        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : (allDataRows.totalCount > 2500 ? 20 : 0);
         this.toggleHeatmapMode();
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
@@ -1035,12 +1036,12 @@ Ext.define('Connector.view.Chart', {
         };
 
         if (!noplot) {
-            this.plot.setBrushing(this.mainPlotBrushing(layerScope, properties, this.xGutterPlot, this.yGutterPlot));
+            this.plot.setBrushing(this.bindBrushing(layerScope, properties, 'main', this.xGutterPlot, this.yGutterPlot));
             if (this.xGutterPlot) {
-                this.xGutterPlot.setBrushing(this.gutterBrushing(layerScope, properties, 'xTop', this.xGutterPlot, this.yGutterPlot));
+                this.xGutterPlot.setBrushing(this.bindBrushing(layerScope, properties, 'xTop', this.xGutterPlot, this.yGutterPlot));
             }
             if (this.yGutterPlot) {
-                this.yGutterPlot.setBrushing(this.gutterBrushing(layerScope, properties, 'yRight', this.xGutterPlot, this.yGutterPlot));
+                this.yGutterPlot.setBrushing(this.bindBrushing(layerScope, properties, 'yRight', this.xGutterPlot, this.yGutterPlot));
             }
         }
 
@@ -1071,23 +1072,19 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    mainPlotBrushing : function(layerScope, properties, xGutterPlot, yGutterPlot) {
-        var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
-        var brushingExtent;
+    bindBrushing : function(layerScope, properties, dimension, xGutterPlot, yGutterPlot) {
+        var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints,
+            brushFn,
+            brushingExtent,
+            _dimension = dimension;
 
-        return {
-            fillColor: ChartUtils.colors.SELECTEDBG,
-            strokeColor: ChartUtils.colors.SELECTED,
-            dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
-            brushstart: Ext.bind(function() {
-                this.clearHighlightLabels(layerScope.plot);
-                layerScope.isBrushed = true;
-                if (this.initiatedBrushing == '')
-                    this.initiatedBrushing = 'main';
-            }, this),
-            brush: Ext.bind(function(event, layerData, extent, plot) {
-                if (this.initiatedBrushing != 'main')
+        // determine brush handling based on dimension
+        if (dimension === 'main') {
+            _dimension = !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y';
+            brushFn = function(event, layerData, extent, plot) {
+                if (this.initiatedBrushing != 'main') {
                     return;
+                }
 
                 brushingExtent = Ext.clone(extent);
 
@@ -1112,43 +1109,11 @@ Ext.define('Connector.view.Chart', {
                     if (yGutterPlot)
                         yGutterPlot.clearBrush();
                 }
-            }, this),
-            brushend: Ext.bind(function(event, layerData, extent, plot, layerSelections) {
-                if (this.initiatedBrushing == 'main') {
-                    ChartUtils.brushEnd.call(this, event, layerData, extent, plot, layerSelections, this.measures, properties);
-                    this.initiatedBrushing = '';
-                }
-            }, this),
-            brushclear: Ext.bind(function() {
-                if (this.initiatedBrushing == 'main') {
-                    this.initiatedBrushing = '';
-                    layerScope.isBrushed = false;
-                    Connector.getState().clearSelections(true);
-                    this.clearHighlightedData();
-                    this.highlightSelected();
-
-                    //move data layer to front
-                    this.plot.renderer.canvas.select('svg g.layer').each(function() {
-                        this.parentNode.appendChild(this);
-                    });
-                }
-            }, this)
-        };
-    },
-
-    gutterBrushing : function(layerScope, properties, dimension, xGutterPlot, yGutterPlot) {
-        var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
-        var brushingExtent;
-
-        return {
-            dimension: dimension,
-            brushstart: Ext.bind(function() {
-                this.clearHighlightLabels(layerScope.plot);
-                layerScope.isBrushed = true;
-                if (this.initiatedBrushing == '')
-                    this.initiatedBrushing = dimension;
-            }, this),
-            brush: Ext.bind(function(event, layerData, extent, plot) {
+            };
+        }
+        else {
+            // gutter brushing
+            brushFn = function(event, layerData, extent, plot) {
                 if (this.initiatedBrushing != dimension)
                     return;
 
@@ -1157,26 +1122,23 @@ Ext.define('Connector.view.Chart', {
                 onBrush.call(this, event, layerData, extent, plot);
                 this.plot.setBrushExtent(brushingExtent);
 
-                if ((dimension == 'xTop' || dimension == 'x') && yGutterPlot)
+                if ((dimension == 'xTop' || dimension == 'x') && yGutterPlot) {
                     yGutterPlot.clearBrush();
-                if ((dimension == 'yRight' || dimension == 'y') && xGutterPlot)
+                }
+                if ((dimension == 'yRight' || dimension == 'y') && xGutterPlot) {
                     xGutterPlot.clearBrush();
-            }, this),
-            brushend: Ext.bind(function(event, layerData, extent, plot, layerSelections) {
-                if (this.initiatedBrushing == dimension) {
-                    ChartUtils.brushEnd.call(this, event, layerData, extent, plot, layerSelections, this.measures, properties);
-                    this.initiatedBrushing = '';
                 }
-            }, this),
-            brushclear: Ext.bind(function() {
-                if (this.initiatedBrushing == dimension) {
-                    this.initiatedBrushing = '';
-                    layerScope.isBrushed = false;
-                    Connector.getState().clearSelections(true);
-                    this.clearHighlightedData();
-                    this.highlightSelected();
-                }
-            }, this)
+            };
+        }
+
+        return {
+            fillColor: ChartUtils.colors.SELECTEDBG,
+            strokeColor: ChartUtils.colors.SELECTED,
+            dimension: _dimension,
+            brushstart: Ext.bind(ChartUtils.brushStart, this, [layerScope, dimension]),
+            bursh: Ext.bind(brushFn, this),
+            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties, dimension], true),
+            brushclear: Ext.bind(ChartUtils.brushClear, this, [layerScope, dimension])
         };
     },
 
@@ -2532,6 +2494,7 @@ Ext.define('Connector.view.Chart', {
     variableSelectionMade : function(win, targetEl) {
         if (Ext.isDefined(this.activeYSelection)) {
             this.initialized = true;
+            Connector.getState().clearSelections(true);
             this.showTask.delay(10);
             win.hide(targetEl);
 
