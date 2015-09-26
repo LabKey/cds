@@ -142,6 +142,24 @@ Ext.define('Connector.view.Chart', {
         });
 
         this.on('beforehide', this.hideVisibleWindow);
+
+        this.applyIEPolyfills();
+    },
+
+    applyIEPolyfills: function() {
+        if (!Ext.isFunction(CustomEvent)) {
+            // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+            var CustomEvent = function(event, options) {
+                options = options || { bubbles: false, cancelable: false, detail: undefined };
+                var e = document.createEvent('CustomEvent');
+                e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail);
+                return e;
+            };
+
+            CustomEvent.prototype = window.Event.prototype;
+
+            window.CustomEvent = CustomEvent;
+        }
     },
 
     getNoPlotMsg : function() {
@@ -930,6 +948,13 @@ Ext.define('Connector.view.Chart', {
                     Connector.getState().clearSelections(true);
                     this.clearHighlightedData();
                     this.highlightSelected();
+
+                    //move data layer to front
+                    this.plot.renderer.canvas.select('svg g.layer').each(function() {
+                        this.parentNode.appendChild(this);
+
+                    });
+
                 }, this)
             };
 
@@ -1023,7 +1048,27 @@ Ext.define('Connector.view.Chart', {
             this.initStudyAxis(studyAxisInfo);
         }
 
+        this.handleDensePlotBrushEvent();
+
         this.fireEvent('hideload', this);
+    },
+
+    handleDensePlotBrushEvent : function() {
+        var selector;
+
+        // Allow brushing in dense plot by creating and passing a new click event to the brush layer
+        if (Ext.isDefined(this.plot.renderer)) {
+            selector = this.showPointsAsBin ? '.vis-bin' : '.point';
+            this.plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
+                var brushNode = d3.select(".brush").node();
+                var newClickEvent = new CustomEvent('mousedown');
+                newClickEvent.pageX = d3.event.pageX;
+                newClickEvent.clientX = d3.event.clientX;
+                newClickEvent.pageY = d3.event.pageY;
+                newClickEvent.clientY = d3.event.clientY;
+                brushNode.dispatchEvent(newClickEvent);
+            });
+        }
     },
 
     renderGutter : function(plotName, gutterPlotConfig, layerScope) {

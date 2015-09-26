@@ -103,10 +103,14 @@ public class CDSManager
             DbSchema dbSchema = CDSSchema.getInstance().getSchema();
 
             for (String s : new String[] {
+                    "nabantigen",
+                    "icsantigen",
+                    "elispotantigen",
+                    "bamaantigen",
+                    "GridBase",
                     "Sites",
                     "Feedback",
                     "Properties",
-                    // New Tables
                     "VisitTagAlignment",
                     "VisitTagMap",
                     "StudyGroupVisitMap",
