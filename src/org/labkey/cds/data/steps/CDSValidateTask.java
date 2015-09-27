@@ -48,7 +48,7 @@ public class CDSValidateTask extends AbstractPopulateTask
         if (rows.length > 0)
         {
             StringBuilder error = new StringBuilder("Validation Failed!");
-            for(Map<String, Object> row : rows)
+            for (Map<String, Object> row : rows)
             {
                 error.append("\n\tSubject ").append(row.get("id")).append(" in study ").append(row.get("study")).append(" was not found in the StudySubject table.");
             }
@@ -62,7 +62,7 @@ public class CDSValidateTask extends AbstractPopulateTask
         if (rows.length > 0)
         {
             StringBuilder error = new StringBuilder("Validation Failed!");
-            for(Map<String, Object> row : rows)
+            for (Map<String, Object> row : rows)
             {
                 error.append("\n\tStudy arm ")
                         .append(row.get("study_group")).append("|").append(row.get("study_arm"))
@@ -72,6 +72,26 @@ public class CDSValidateTask extends AbstractPopulateTask
                         .append(" (").append(row.get("assignment_count")).append(")");
             }
             logger.error(error);
+        }
+
+        logger.info("Validating Visits In Datasets");
+        validationTable = sourceSchema.getTable("ds_validateDatasetVisits");
+        sql = new SQLFragment("SELECT * FROM ").append(validationTable, "Validator");
+        rows = new SqlSelector(validationTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            StringBuilder error = new StringBuilder("Validation Failed!");
+            for (Map<String, Object> row : rows)
+            {
+                error.append("\n\tStudy day ")
+                        .append(row.get("study_day"))
+                        .append(" is not on the schedule for Subject ")
+                        .append(row.get("subject_id"))
+                        .append(" in assay ")
+                        .append(row.get("assay_type"));
+
+            }
+            logger.warn(error);
         }
     }
 }
