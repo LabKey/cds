@@ -1105,7 +1105,7 @@ Ext.define('Connector.panel.Selector', {
                 items: [{
                     itemId: 'remove-link',
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent-text',
+                    ui: 'rounded-inverted-accent-text-2',
                     hidden: true,
                     text: 'Remove variable',
                     handler: function() {
@@ -1115,7 +1115,7 @@ Ext.define('Connector.panel.Selector', {
                 },{
                     itemId: 'cancel-link',
                     xtype: 'button',
-                    ui: 'rounded-inverted-accent-text',
+                    ui: 'rounded-inverted-accent-text-2',
                     hidden: true,
                     text: 'Cancel',
                     handler: function() {

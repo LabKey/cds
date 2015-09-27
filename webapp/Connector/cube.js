@@ -188,7 +188,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'title'
                         }
                     },{
-                        type: 'text',
+                        type: 'html',
                         staticData: {
                             title: 'Description'
                         },
@@ -196,7 +196,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'description'
                         }
                     },{
-                        type: 'text',
+                        type: 'html',
                         staticData: {
                             title: 'CDS editorial'
                         },
@@ -204,7 +204,7 @@ Ext4.define('Connector.cube.Configuration', {
                             text: 'context'
                         }
                     },{
-                        type: 'text',
+                        type: 'html',
                         staticData: {
                             title: 'Study objectives'
                         },
@@ -288,7 +288,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Product information'
                         }
                     },{
-                        type: 'text',
+                        type: 'html',
                         staticData: {
                             title: 'Description'
                         },
@@ -366,7 +366,7 @@ Ext4.define('Connector.cube.Configuration', {
                             title: 'Assay analytes'
                         }
                     },{
-                        type: 'text',
+                        type: 'html',
                         staticData: {
                             title: 'Description'
                         },

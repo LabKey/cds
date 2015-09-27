@@ -115,5 +115,11 @@ Ext.define('Connector.controller.State', {
 
             this.addSelection(filter, true, false, true);
         }
+    },
+
+    moveSelectionToFilter : function() {
+        var selections = this.selections;
+        this.callParent();
+        this.fireEvent('selectionToFilter', selections);
     }
 });

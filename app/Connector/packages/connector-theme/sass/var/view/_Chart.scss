@@ -1,5 +1,5 @@
 .stdcolor {
-  background-color: $primary-color;
+  background-color: $gray-7;
 }
 
 #scatterloader {
@@ -13,7 +13,7 @@
 }
 
 .timeview, .compareview, .rawdataview {
-  background-color : $primary-color;
+  background-color : $gray-7;
   padding: 15px 0 0 0;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .scatterplot {
-  background-color: $light-color;
+  background-color: $gray-7;
 
   svg, .info {
     margin-left: auto;
@@ -58,6 +58,13 @@
 }
 
 svg g {
+  &.brush .extent{
+    opacity: 0.4 !important;
+  }
+
+  &.layer {
+    cursor: crosshair;
+  }
 
   &.study .visit-tag {
     cursor: pointer;

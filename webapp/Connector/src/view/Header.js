@@ -10,7 +10,7 @@ Ext.define("Connector.view.Header", {
 
     layout: 'hbox',
 
-    height: 48,
+    height: 56,
 
     cls: 'connectorheader',
 
@@ -22,10 +22,10 @@ Ext.define("Connector.view.Header", {
 
     initComponent : function() {
 
-        var toolbarItems = [];
+        var toolBarItems = [];
 
         if (LABKEY.user.isSignedIn) {
-            toolbarItems.push({
+            toolBarItems = [{
                 xtype: 'box',
                 itemId: 'feedback',
                 margin: '2 50 0 0',
@@ -41,24 +41,20 @@ Ext.define("Connector.view.Header", {
                     element: 'el',
                     scope: this
                 }
-            });
-
-            toolbarItems.push({
+            },{
                 xtype: 'box',
                 itemId: 'about',
-                margin: '2 15 0 0',
+                margin: '2 36 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
                     html: 'About',
                     href: '#home/about'
                 }
-            });
-
-            toolbarItems.push({
+            },{
                 xtype: 'box',
                 itemId: 'logout',
-                margin: '2 15 0 0',
+                margin: '2 0 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -75,7 +71,6 @@ Ext.define("Connector.view.Header", {
                                     LABKEY.user.isSignedIn = false;
                                     window.location.reload();
                                 }
-
                             },
                             failure: Ext.emptyFn,
                             scope: this
@@ -84,7 +79,7 @@ Ext.define("Connector.view.Header", {
                     element: 'el',
                     scope: this
                 }
-            });
+            }];
         }
 
         this.items = [{
@@ -93,19 +88,19 @@ Ext.define("Connector.view.Header", {
             cls: 'logo',
             flex: 4,
             tpl: [
-                '<img src="{imgSrc}">',
+                '<img src="{imgSrc}" width="56" height="56">',
                 '<h2>CAVD <span>DataSpace</span></h2>'
             ],
             data: {
-                imgSrc: LABKEY.contextPath + '/Connector/images/logo_0' + (Math.floor(Math.random()*5)+1) + '.png'
+                imgSrc: LABKEY.contextPath + '/Connector/images/logo.png'
             }
         },{
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '18 14 0 0',
+            margin: '18 28 0 0',
             width: 250,
-            items: toolbarItems
+            items: toolBarItems
         }];
 
         this.callParent();

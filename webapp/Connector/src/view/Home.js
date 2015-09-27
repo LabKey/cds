@@ -8,7 +8,7 @@ Ext.define('Connector.view.Home', {
 
     alias: 'widget.home',
 
-    homeHeaderHeight: 160,
+    homeHeaderHeight: 180,
 
     initComponent : function() {
 

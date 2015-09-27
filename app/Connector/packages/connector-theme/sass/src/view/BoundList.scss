@@ -1,15 +1,22 @@
 .x-boundlist {
-  border-color: $heat-scale-3;
+  border-color: $gray-6;
+  @include prefixer(border-radius, 2px);
+}
+
+x-boundlist-item {
+  display: block;
+  height: 34px!important;
+  line-height: 34px!important;
 }
 
 .x-boundlist-selected {
   background: $select-color;
   border-color: $select-color;
-  color: $light-color;
+  color: $gray-7;
 }
 
 .x-boundlist-item-over {
   background: $select-color;
   border-color: $select-color;
-  color: $light-color;
+  color: $gray-7;
 }

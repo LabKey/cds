@@ -481,7 +481,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the CAVD DataSpace.");
+        waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
@@ -1265,7 +1265,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Study Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -1273,9 +1273,9 @@ public class CDSTest extends CDSReadOnlyTest
         // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')][text()='Studies']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
 
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'titlepanel')][text()='Learn about...']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
 
     @Test
@@ -1366,7 +1366,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Product Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -1377,9 +1377,9 @@ public class CDSTest extends CDSReadOnlyTest
         // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')][text()='Study products']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
 
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'titlepanel')][text()='Learn about...']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
 
     @Test
@@ -1462,7 +1462,7 @@ public class CDSTest extends CDSReadOnlyTest
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
-        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/h2").containing(assays.get(0)));
+        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
@@ -1485,7 +1485,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         //testing ICS antigens page
         waitAndClick(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
-        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/h2").containing(assays.get(1)));
+        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(1)));
         waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
 
         refresh();

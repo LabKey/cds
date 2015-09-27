@@ -541,6 +541,8 @@ Ext.define('Connector.model.Grid', {
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
                 this.bindFilters(state.getFilters());
+
+                this.fireEvent('usergridfilter', newFilters);
             }
         }
     },

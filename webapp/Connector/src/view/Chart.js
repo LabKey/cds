@@ -142,6 +142,24 @@ Ext.define('Connector.view.Chart', {
         });
 
         this.on('beforehide', this.hideVisibleWindow);
+
+        this.applyIEPolyfills();
+    },
+
+    applyIEPolyfills: function() {
+        if (!Ext.isFunction(CustomEvent)) {
+            // Code from: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+            var CustomEvent = function(event, options) {
+                options = options || { bubbles: false, cancelable: false, detail: undefined };
+                var e = document.createEvent('CustomEvent');
+                e.initCustomEvent(event, options.bubbles, options.cancelable, options.detail);
+                return e;
+            };
+
+            CustomEvent.prototype = window.Event.prototype;
+
+            window.CustomEvent = CustomEvent;
+        }
     },
 
     getNoPlotMsg : function() {
@@ -851,7 +869,7 @@ Ext.define('Connector.view.Chart', {
 
         var allDataRows, properties, yAxisMargin = 60,
             layerScope = {plot: null, isBrushed: false},
-            scaleConfig = {}, aesConfig = {},
+            scaleConfig, aesConfig,
             plotConfig, gutterXPlotConfig, gutterYPlotConfig;
 
         noplot = Ext.isBoolean(noplot) ? noplot : false;
@@ -916,6 +934,8 @@ Ext.define('Connector.view.Chart', {
             var onBrush = this.showPointsAsBin ? ChartUtils.brushBins : ChartUtils.brushPoints;
 
             plotConfig.brushing = {
+                fillColor: ChartUtils.colors.SELECTEDBG,
+                strokeColor: ChartUtils.colors.SELECTED,
                 dimension: !properties.xaxis.isDimension && properties.xaxis.isContinuous ? 'both' : 'y',
                 brushstart : Ext.bind(function() {
                     this.clearHighlightLabels(layerScope.plot);
@@ -923,11 +943,18 @@ Ext.define('Connector.view.Chart', {
                 }, this),
                 brush: Ext.bind(onBrush, this),
                 brushend : Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties], true),
-                brushclear : Ext.bind(function(event, allData, plot, selections) {
+                brushclear : Ext.bind(function(/* event, allData, plot, selections */) {
                     layerScope.isBrushed = false;
                     Connector.getState().clearSelections(true);
                     this.clearHighlightedData();
                     this.highlightSelected();
+
+                    //move data layer to front
+                    this.plot.renderer.canvas.select('svg g.layer').each(function() {
+                        this.parentNode.appendChild(this);
+
+                    });
+
                 }, this)
             };
 
@@ -1017,7 +1044,31 @@ Ext.define('Connector.view.Chart', {
             }
         }
 
+        if (Ext.isDefined(studyAxisInfo)) {
+            this.initStudyAxis(studyAxisInfo);
+        }
+
+        this.handleDensePlotBrushEvent();
+
         this.fireEvent('hideload', this);
+    },
+
+    handleDensePlotBrushEvent : function() {
+        var selector;
+
+        // Allow brushing in dense plot by creating and passing a new click event to the brush layer
+        if (Ext.isDefined(this.plot.renderer)) {
+            selector = this.showPointsAsBin ? '.vis-bin' : '.point';
+            this.plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
+                var brushNode = d3.select(".brush").node();
+                var newClickEvent = new CustomEvent('mousedown');
+                newClickEvent.pageX = d3.event.pageX;
+                newClickEvent.clientX = d3.event.clientX;
+                newClickEvent.pageY = d3.event.pageY;
+                newClickEvent.clientY = d3.event.clientY;
+                brushNode.dispatchEvent(newClickEvent);
+            });
+        }
     },
 
     renderGutter : function(plotName, gutterPlotConfig, layerScope) {
@@ -2146,7 +2197,7 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, null, true, showEmptyMsg);
+        this.initPlot(map, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
@@ -2558,7 +2609,6 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             this.initPlot(chartData, studyAxisData);
-            this.initStudyAxis(studyAxisData);
         }
     },
 
@@ -2644,12 +2694,14 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidevisittagmsg', this);
 
         // show the hover icon for this glyph
-        this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
+        // TODO: Re-enable when filtering by tag is implemented
+        //this.updateVisitTagIcon(visitTagEl, 'normal', 'hover');
     },
 
     removeVisitTagHover : function(data, visitTagEl) {
         // change hover icon back to normal glyph state
-        this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
+        // TODO: Re-enable when filtering by tag is implemented
+        //this.updateVisitTagIcon(visitTagEl, 'hover', 'normal');
 
         this.fireEvent('hidevisittagmsg', this);
     },

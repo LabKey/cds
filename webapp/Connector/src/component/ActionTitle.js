@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.component.ActionTitle', {
-    extend: 'Ext.Component',
+    extend: 'Ext.container.Container',
 
     alias: 'widget.actiontitle',
 
@@ -12,26 +12,48 @@ Ext.define('Connector.component.ActionTitle', {
 
     cls: 'titlepanel',
 
+    layout: {
+        type: 'hbox'
+    },
+
     colorCls: 'secondary',
 
     back: false,
 
     initComponent : function() {
 
-        var template = '{text:htmlEncode}';
-
-        if (this.back) {
-            template = '<span class="iarrow">&nbsp;</span>' + template;
-            this.colorCls = 'interactive';
-        }
-
-        this.tpl = new Ext.XTemplate(template);
-        this.data = {
-            text: this.text
-        };
+        this.items = [{
+            xtype: 'box',
+            cls: 'title',
+            autoEl: {
+                tag: 'div',
+                html: this.text
+            }
+        },{
+            // This allows for the following items to be right aligned
+            xtype: 'box',
+            flex: 1,
+            autoEl: {
+                tag: 'div'
+            }
+        }, this.includeButtons()
+        ];
 
         this.addCls(this.colorCls);
 
         this.callParent();
+    },
+
+    includeButtons : function() {
+        if (Ext.isDefined(this.buttons)) {
+            return {
+                xtype: 'container',
+                cls: 'buttons',
+                layout: {
+                    type: 'hbox'
+                },
+                items : this.buttons
+            };
+        }
     }
 });
