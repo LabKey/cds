@@ -66,7 +66,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
 
-    protected static final String MOUSEOVER_FILL = "#01BFC2";
+    protected static final String MOUSEOVER_FILL = "#41C49F";
     protected static final String MOUSEOVER_STROKE = "#00EAFF";
     protected static final String BRUSHED_FILL = "#14C9CC";
     protected static final String BRUSHED_STROKE = "#00393A";
@@ -1710,20 +1710,20 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // but that is more effort that I have time for now.
         expectedToolTipText = new ArrayList<>();
         expectedToolTipText.add("HVTN 060 - Day 379");
-        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 2 Arm Ca Placebo: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 3 Arm Ca Placebo: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 4 Arm Ca Placebo: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 5 Arm Cb Placebo: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 6 Arm Cb Placebo: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Follow-Up, Follow-Up");
-        expectedToolTipText.add("Group 7 Arm Cb Placebo: Follow-Up, Follow-Up");
+        expectedToolTipText.add("Group 1 Arm T1 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
+        expectedToolTipText.add("Group 2 Arm Ca Placebo: Follow-Up");
+        expectedToolTipText.add("Group 2 Arm T2 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 3 Arm Ca Placebo: Follow-Up");
+        expectedToolTipText.add("Group 3 Arm T3 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 4 Arm Ca Placebo: Follow-Up");
+        expectedToolTipText.add("Group 4 Arm T4 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 5 Arm T5 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 5 Arm Cb Placebo: Follow-Up");
+        expectedToolTipText.add("Group 6 Arm T6 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 6 Arm Cb Placebo: Follow-Up");
+        expectedToolTipText.add("Group 7 Arm T7 Vaccine: Follow-Up");
+        expectedToolTipText.add("Group 7 Arm Cb Placebo: Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(2)  > image:nth-of-type(1)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
@@ -1761,7 +1761,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         expectedToolTipText.clear();
         expectedToolTipText.add("HVTN 063 - Day 546");
-        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up, Follow-Up");
+        expectedToolTipText.add("Group 1 Arm Ca Placebo: Follow-Up");
         cssPath = "#study-axis > svg > g:nth-child(18) > image:nth-of-type(10)";
         timeAxisToolTipsTester(cssPath, expectedToolTipText);
 
