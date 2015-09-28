@@ -39,7 +39,7 @@
       </column>
       <column columnName="sexatbirth">
         <datatype>varchar</datatype>
-        <columnTitle>Sexatbirth</columnTitle>
+        <columnTitle>Sex at birth</columnTitle>
         <description>Subject classification by self report for sex/gender. Defined as sex at birth.</description>
         <rangeURI>http://www.w3.org/2001/XMLSchema#string</rangeURI>
         <dimension>true</dimension>
