@@ -599,7 +599,7 @@ public class CDSHelper
             return null;
         });
 
-        _test.sleep(500);
+        _test.sleep(100);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
