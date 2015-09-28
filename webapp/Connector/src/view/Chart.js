@@ -25,7 +25,7 @@ Ext.define('Connector.view.Chart', {
 
     xGutterHeight: 90,
 
-    yGutterWidth: 125,
+    yGutterWidth: 130,
 
     studyAxisWidthOffset: 150,
 
@@ -1048,6 +1048,10 @@ Ext.define('Connector.view.Chart', {
             this.highlightSelected();
         };
 
+        this.isBrushed = function() {
+            return layerScope.isBrushed;
+        };
+
         if (!noplot) {
             this.plot.setBrushing(this.bindBrushing(layerScope, properties, 'main', this.xGutterPlot, this.yGutterPlot));
             if (this.xGutterPlot) {
@@ -1261,6 +1265,7 @@ Ext.define('Connector.view.Chart', {
                 lineWrapAlign: 'start',
                 bkgdColor: ChartUtils.colors.GRIDBKGD,
                 bkgdHeight: 100,
+                bkgdWidth: this.yGutterWidth - 35,
                 listeners: {
                     mouseover: function() {
                         me._showWhyYGutter(chartData.getDataRows());
