@@ -2199,6 +2199,29 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(1000);
         _ext4Helper.waitForMaskToDisappear();
 
+        log("Test plot with y gutter only and data in main plot as well.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        yaxis.pickVariable(CDSHelper.DEMO_AGE);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.confirmSelection();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        gutterPlotBrushingTestHelper(false, true, true, subjectCountBefore);
+
+        // Clean up.
+        cds.clearFilters();
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
         log("Test plot with x & y gutter only and no data in main plot as well.");
 
         yaxis.openSelectorWindow();
@@ -2285,7 +2308,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
             gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
             tempStr = gutterBrushWindow.getAttribute("height");
             heightWidth = Integer.parseInt(tempStr);
-//        assertTrue("'undefined x value' gutter has a brush window and it should not.", heightWidth == 0);
+            assertTrue("'undefined x value' gutter has a brush window and it should not.", heightWidth == 0);
         }
 
         if(hasXGutter)
