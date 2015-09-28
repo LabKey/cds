@@ -25,7 +25,7 @@ Ext.define('Connector.view.Chart', {
 
     xGutterHeight: 90,
 
-    yGutterWidth: 130,
+    yGutterWidth: 125,
 
     studyAxisWidthOffset: 150,
 
@@ -1078,7 +1078,7 @@ Ext.define('Connector.view.Chart', {
         if (Ext.isDefined(this.plot.renderer)) {
             selector = this.showPointsAsBin ? '.vis-bin' : '.point';
             this.plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
-                var brushNode = d3.select(".brush").node();
+                var brushNode = d3.select(this.parentElement.parentElement.getElementsByClassName('brush')[0]).node();
                 var newClickEvent = new CustomEvent('mousedown');
                 newClickEvent.pageX = d3.event.pageX;
                 newClickEvent.clientX = d3.event.clientX;
@@ -1250,7 +1250,7 @@ Ext.define('Connector.view.Chart', {
         var gutterYMargins = {
             top: plotConfig.margins.top,
             left: 24,
-            right: 20,
+            right: 0,
             bottom: plotConfig.margins.bottom
         };
 
@@ -1265,7 +1265,7 @@ Ext.define('Connector.view.Chart', {
                 lineWrapAlign: 'start',
                 bkgdColor: ChartUtils.colors.GRIDBKGD,
                 bkgdHeight: 100,
-                bkgdWidth: this.yGutterWidth - 35,
+                bkgdWidth: this.yGutterWidth - 15,
                 listeners: {
                     mouseover: function() {
                         me._showWhyYGutter(chartData.getDataRows());
