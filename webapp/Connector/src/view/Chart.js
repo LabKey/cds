@@ -27,6 +27,10 @@ Ext.define('Connector.view.Chart', {
 
     yGutterWidth: 125,
 
+    xGutterName: 'xGutterPlot',
+
+    yGutterName: 'yGutterPlot',
+
     studyAxisWidthOffset: 150,
 
     minStudyAxisHeight: 75,
@@ -549,10 +553,10 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    mouseOverPoints : function(event, data, layerSel, point, layerScope) {
+    mouseOverPoints : function(event, data, layerSel, point, layerScope, plotName) {
         if (!layerScope.isBrushed) {
             this.highlightPlotData(null, [data.subjectId]);
-            this.pointHoverText(point, data);
+            this.pointHoverText(point, data, plotName);
         }
     },
 
@@ -565,7 +569,7 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hidepointmsg');
     },
 
-    mouseOverBins : function(event, data, layerSel, bin, layerScope) {
+    mouseOverBins : function(event, data, layerSel, bin, layerScope, plotName) {
         if (!layerScope.isBrushed) {
             var subjectIds = [];
             data.forEach(function(b) {
@@ -583,7 +587,7 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    pointHoverText : function(point, data) {
+    pointHoverText : function(point, data, plotName) {
         var config, val, content = '', colon = ': ', linebreak = ',<br/>';
 
         if (data.xname) {
@@ -598,9 +602,10 @@ Ext.define('Connector.view.Chart', {
         config = {
             bubbleWidth: 250,
             target: point,
-            placement: 'top',
-            xOffset: -125,
-            arrowOffset: 110,
+            placement: plotName===this.yGutterName?'right':'top',
+            xOffset: plotName===this.yGutterName?0:-125,
+            yOffset: plotName===this.yGutterName?-25:0,
+            arrowOffset: plotName===this.yGutterName?0:110,
             title: 'Subject: ' + data.subjectId,
             content: content
         };
@@ -608,18 +613,18 @@ Ext.define('Connector.view.Chart', {
         ChartUtils.showCallout(config, 'hidepointmsg', this);
     },
 
-    getLayerAes : function(layerScope) {
+    getLayerAes : function(layerScope, plotName) {
 
         var mouseOver = this.showPointsAsBin ? this.mouseOverBins : this.mouseOverPoints,
             mouseOut = this.showPointsAsBin ? this.mouseOutBins : this.mouseOutPoints;
 
         return {
-            mouseOverFn: Ext.bind(mouseOver, this, [layerScope], true),
+            mouseOverFn: Ext.bind(mouseOver, this, [layerScope, plotName], true),
             mouseOutFn: Ext.bind(mouseOut, this, [layerScope], true)
         };
     },
 
-    getBinLayer : function(layerScope, plotNullPoints) {
+    getBinLayer : function(layerScope, plotNullPoints, plotName) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Bin({
                 shape: 'square',
@@ -628,11 +633,11 @@ Ext.define('Connector.view.Chart', {
                 size: 10, // for squares you want a bigger size
                 plotNullPoints: plotNullPoints
             }),
-            aes: this.getLayerAes.call(this, layerScope)
+            aes: this.getLayerAes.call(this, layerScope, plotName)
         });
     },
 
-    getPointLayer : function(layerScope, plotNullPoints) {
+    getPointLayer : function(layerScope, plotNullPoints, plotName) {
         return new LABKEY.vis.Layer({
             geom: new LABKEY.vis.Geom.Point({
                 size: 3,
@@ -640,7 +645,7 @@ Ext.define('Connector.view.Chart', {
                 position: plotNullPoints ? 'jitter' : undefined,
                 opacity: 0.5
             }),
-            aes: this.getLayerAes.call(this, layerScope)
+            aes: this.getLayerAes.call(this, layerScope, plotName)
         });
     },
 
@@ -976,7 +981,7 @@ Ext.define('Connector.view.Chart', {
         if (!noplot && this.requireYGutter) {
 
             // render the gutter
-            if (!this.renderGutter('yGutterPlot', gutterYPlotConfig, layerScope)) {
+            if (!this.renderGutter(this.yGutterName, gutterYPlotConfig, layerScope)) {
                 return;
             }
 
@@ -1031,7 +1036,7 @@ Ext.define('Connector.view.Chart', {
             }
 
             // render the gutter
-            if (!this.renderGutter('xGutterPlot', gutterXPlotConfig, layerScope)) {
+            if (!this.renderGutter(this.xGutterName, gutterXPlotConfig, layerScope)) {
                 return;
             }
         }
@@ -1168,10 +1173,10 @@ Ext.define('Connector.view.Chart', {
 
         if (gutterPlot) {
             if (this.showPointsAsBin) {
-                gutterPlot.addLayer(this.getBinLayer(layerScope, true));
+                gutterPlot.addLayer(this.getBinLayer(layerScope, true, plotName));
             }
             else {
-                gutterPlot.addLayer(this.getPointLayer(layerScope, true));
+                gutterPlot.addLayer(this.getPointLayer(layerScope, true, plotName));
             }
 
             try {
