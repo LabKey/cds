@@ -175,6 +175,18 @@ Ext.define('Connector.utility.Chart', {
             this.plot.renderer.canvas.select('svg g.layer').each(function() {
                 this.parentNode.appendChild(this);
             });
+
+            if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+                this.xGutterPlot.renderer.canvas.select('svg g.layer').each(function() {
+                    this.parentNode.appendChild(this);
+                });
+            }
+
+            if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+                this.yGutterPlot.renderer.canvas.select('svg g.layer').each(function() {
+                    this.parentNode.appendChild(this);
+                });
+            }
         }
     },
 
