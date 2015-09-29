@@ -2233,6 +2233,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.BAMA);
         xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
         xaxis.confirmSelection();
+        sleep(500);
+        _ext4Helper.waitForMaskToDisappear();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
