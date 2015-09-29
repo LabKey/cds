@@ -3,6 +3,54 @@
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
+
+(function(){
+
+// private variables/constants
+
+var SUBJECTVISIT_TABLE = "study.gridbase";
+var DATASET_ALIAS = "http://cpas.labkey.com/Study#Dataset";
+var SUBJECT_ALIAS = "http://cpas.labkey.com/Study#ParticipantId";
+var SEQUENCENUM_ALIAS = "http://cpas.labkey.com/Study#SequenceNum";
+var CONTAINER_ALIAS = "http://cpas.labkey.com/Study#Container";
+
+function _toSqlNumber(v)
+{
+    if (!Ext4.isDefined(v) || null === v)
+        return "NULL";
+    if (Ext4.isNumber(v))
+        return "" + v;
+    if (Ext4.isNumeric(v))
+    {
+        var number = new Number(v);
+        if (!isNaN(number))
+            return number.toString();
+    }
+    if (Ext4.isString(v))
+        return LABKEY.Query.sqlStringLiteral(v);
+    if (Ext4.isDate(v))
+        return LABKEY.Query.sqlDatetimeLiteral(v);
+    throw "unsupported constant: " + v;
+};
+
+var _toSqlString = LABKEY.Query.sqlStringLiteral;
+
+var _toSqlDateTime = LABKEY.Query.sqlDatetimeLiteral;
+
+function _toSqlLiteral(v)
+{
+    if (!Ext4.isDefined(v) || null === v)
+        return "NULL";
+    if (Ext4.isNumber(v))
+        return "" + v;
+    if (Ext4.isString(v))
+        return _toSqlString(v);
+    if (Ext4.isDate(v))
+        return _toSqlDateTime(v);
+    throw "unsupported constant: " + v;
+}
+
+
 Ext.define('Connector.controller.Query', {
 
     extend: 'Ext.app.Controller',
@@ -424,7 +472,7 @@ Ext.define('Connector.controller.Query', {
                     }
                 }, this);
 
-                LABKEY.Query.Visualization.getData({
+                this._LABKEY_Query_Visualization_getData({
                     measures: wrappedMeasureSet,
                     metaDataOnly: true,
                     endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
@@ -617,7 +665,7 @@ Ext.define('Connector.controller.Query', {
 
     getData : function(measures, success, failure, scope) {
 
-        LABKEY.Query.Visualization.getData({
+        this._LABKEY_Query_Visualization_getData({
             endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
             sorts: this.getDataSorts(),
@@ -1055,8 +1103,312 @@ Ext.define('Connector.controller.Query', {
 
     encodeURLFilter : function(filter) {
         return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
-    }
+    },
+
+
+
+    /**
+     *  Private wrapper for LABKEY.Query.Visualization.getData()
+     *
+     *  only supports config.metaDataOnly=true,
+     *
+     *  TODO: make these underscore methods really private
+     */
+
+    _LABKEY_Query_Visualization_getData : function(config)
+    {
+        if (config.metaDataOnly!==true)
+            throw "metaDataOnly must be set equal to true";
+        try
+        {
+            this._generateSql(config.measures);
+        }
+        catch (error)
+        {
+            console.log(error);
+        }
+        LABKEY.Query.Visualization.getData(config);
+    },
+
+
+    _getTables : function()
+    {
+        var table = function(s,q,k,isAssayDataset)
+        {
+            this.displayName = q;
+            this.queryName = q.toLowerCase();
+            this.fullQueryName = s + "." + this.queryName;
+            this.tableAlias = s + "_" + this.queryName;
+            this.schemaName = s;
+            this.isAssayDataset = isAssayDataset === true;
+            this.joinKeys = k;
+        };
+        var tables =
+        {
+            "study.gridbase" :    new table("study","GridBase",["container","participantsequencenum"],false),
+            "study.demographics": new table("study","Demographics",["container","subjectid"],false),
+            "study.ics":          new table("study","ICS",["container","participantsequencenum"],true),
+            "study.bama":         new table("study","BAMA",["container","participantsequencenum"],true),
+            "study.elispot":      new table("study","Elispot",["container","participantsequencenum"],true),
+            "study.nab":          new table("study","NAb",["container","participantsequencenum"],true)
+        };
+        return tables;
+    },
+
+    _acceptMeasureFn : function(datasetName, tables)
+    {
+        return function(m)
+        {
+            if (m.fullQueryName === datasetName)
+                return true;
+            var t = tables[m.fullQueryName];
+            return t && !t.isAssayDataset;
+        };
+    },
+
+    _sqlLiteralFn : function(type)
+    {
+        if (type == "VARCHAR" || type.startsWith("Text"))
+            return LABKEY.Query.sqlStringLiteral;
+        else if (type == "DOUBLE")
+            return _toSqlNumber;
+        else
+            return _toSqlLiteral;
+    },
+
+    _generateSql : function(measuresIN)
+    {
+        var tables = this._getTables();
+
+        // I want to modify these measures for internal bookkeeping, but I don't own this config, so clone here;
+        // add .fullQueryName and .table to measure
+        var measures = measuresIN.map(function(m)
+        {
+            var ret = Ext.apply({},m);
+            if (ret.measure)
+            {
+                ret.measure = Ext.apply({}, ret.measure);
+            }
+            return ret;
+        });
+        measures.forEach(function(m)
+        {
+            var queryName = (m.measure.schemaName + "." + m.measure.queryName).toLowerCase();
+            var axisQueryName = queryName + (m.measure.axisName ? "." + m.measure.axisName : "");
+            var table = tables[axisQueryName];
+            if (!table)
+            {
+                table = tables.get(queryName);
+                if (null == table)
+                    throw "table not found: " + queryName;
+                var axisTable = Ext4.apply({},table);
+                axisTable.tableAlias += "_" + m.measure.axisName;
+                axisTable.displayName = m.measure.axisName;
+                tables[axisQueryName] = axisTable;
+                table = axisTable;
+            }
+            m.fullQueryName = axisQueryName;
+            m.table = table;
+        });
+
+        // find the list of datasets
+        var datasets = {};
+        var hasAssayDataset = false;
+        measures.forEach(function(m)
+        {
+            if (m.table && m.table.isAssayDataset)
+            {
+                hasAssayDataset = true;
+                datasets[m.table.fullQueryName] = m.table;
+            }
+        });
+        if (!hasAssayDataset)
+            datasets[SUBJECTVISIT_TABLE] = tables[SUBJECTVISIT_TABLE];
+
+        var unionSQL = "";
+        var union = "";
+        for (var name in datasets)
+        {
+            if (!datasets.hasOwnProperty(name)) continue;
+            var term = this._generateSql1(measures, name, tables);
+            unionSQL += union + term.sql;
+            union = "\nUNION ALL\n";
+        }
+
+        console.log(unionSQL);
+        return unionSQL;
+    },
+
+    /**
+     * Generate SQL for a set of measures with 0-1 dataset
+     * returns {sql:{sql}, aliases:['alias1',...]}
+     *
+     */
+    _generateSql1 : function(allMeasures, datasetName, tables)
+    {
+        datasetName = datasetName || SUBJECTVISIT_TABLE;
+        var rootTable = tables[datasetName];
+
+        var acceptMeasure = this._acceptMeasureFn(datasetName, tables);
+        var queryMeasures = allMeasures.filter(acceptMeasure);
+
+        var gridBaseAliasableColumns = {"subjectid":true, "sequencenum":true};
+        // look for aliases, e.g. study.gridbase.subjectid -> study.{dataset}.subjectid
+        allMeasures
+                .map(function (m) { m.sourceTable = m.table; return m;})
+                .filter(function(m) { return m.table.fullQueryName === SUBJECTVISIT_TABLE &&  gridBaseAliasableColumns[m.measure.name.toLowerCase()];})
+                .forEach(function(m) { m.sourceTable = rootTable;});
+
+        //
+        // SELECT
+        //
+
+        var seenAlias = {};
+        var SELECT = "SELECT ";
+        SELECT += LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + DATASET_ALIAS + "\"";
+        var comma = ", ";
+        allMeasures.forEach(function(m)
+        {
+            if (seenAlias[m.measure.alias])
+                return;
+            seenAlias[m.measure.alias] = true;
+
+            if (!acceptMeasure(m))
+            {
+                SELECT += comma + "NULL AS " + m.measure.alias;
+            }
+            else
+            {
+                SELECT += comma + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + m.measure.alias;
+            }
+            comma = ", ";
+        });
+        SELECT += "\n";
+
+        //
+        // FROM
+        //
+
+        var fromTables = {};
+        queryMeasures.forEach(function(m)
+        {
+            if (m.sourceTable && m.sourceTable.fullQueryName !== datasetName)
+                fromTables[m.sourceTable.fullQueryName] = m.sourceTable;
+        });
+        var FROM = "FROM " + rootTable.fullQueryName + " " + rootTable.tableAlias;
+        for (var name in fromTables)
+        {
+            if (!fromTables.hasOwnProperty(name)) continue;
+            var t = fromTables[name];
+            var keys = t.joinKeys;
+            FROM += " INNER JOIN " + t.fullQueryName + " " + t.tableAlias + " ON ";
+            var and = "";
+            keys.forEach(function (k) {
+                FROM += and + rootTable.tableAlias + "." + k + "=" + t.tableAlias + "." + k;
+                and = " AND ";
+            });
+            FROM += "\n";
+        }
+
+        //
+        // WHERE
+        //
+        var operatorMap = {eq:"=",lt:"<",lte:"<=",gt:">",gte:">=",neq:"<>"};
+        var WHERE = "WHERE ";
+        and = "";
+        var me = this;
+        queryMeasures.forEach(function(mdef)
+        {
+            if (mdef.filterArray && mdef.filterArray.length > 0)
+            {
+                var columnName = mdef.table.tableAlias + "." + mdef.measure.name;
+                var literalFn = me._sqlLiteralFn(mdef.measure.type);
+
+                mdef.filterArray.forEach(function(f)
+                {
+                    var v, arr;
+                    var operator = f.getFilterType().getURLSuffix();
+                    switch (operator)
+                    {
+                        case 'eq':
+                        case 'lt':
+                        case 'lte':
+                        case 'gt':
+                        case 'gte':
+                        case 'neq':
+                            v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                            WHERE += and + columnName + operatorMap[operator] + literalFn(v);
+                            break;
+                        case 'in':
+                        case 'notin':
+                            WHERE += and + columnName + (operator==='in' ? " IN (" : " NOT IN (");
+                            v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                            var arr = v.split(';');
+                            var comma = "";
+                            arr.forEach(function(v){
+                                WHERE += comma + literalFn(v);
+                                comma = ",";
+                            });
+                            WHERE += ")";
+                            break;
+                        case 'isblank':
+                            WHERE += and + columnName + " IS NULL";
+                            break;
+                        case 'isnonblank':
+                            WHERE += and + columnName + " IS NOT NULL";
+                            break;
+                        case 'between':
+                        case 'notbetween':
+                            v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                            if (!Ext.isString(v))
+                                throw "invalid value for between: " + v;
+                            arr = v.split(",");
+                            if (arr.length != 2)
+                                throw "invalid value for between: " + v;
+                            WHERE += and + columnName + (operator==='between'?" BETWEEN ":" NOT BETWEEN ") +
+                                    literalFn(arr[0]) + " AND " + literalFn(arr[1]);
+                            break;
+                        case 'startswith':
+                        case 'doesnotstartwith':
+                            v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                            v = v.replace(/([%_!])/g, "!$1") + '%';
+                            WHERE += and + columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
+                                    literalFn(v) + " ESCAPE '!'";
+                            break;
+                        case 'contains':
+                        case 'doesnotcontain':
+                            v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
+                            v = '%' + v.replace(/([%_!])/g, "!$1") + '%';
+                            WHERE += and + columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
+                                    literalFn(v) + " ESCAPE '!'";
+                            break;
+                        case 'hasmvvalue':
+                        case 'nomvvalue':
+                        case 'dateeq':
+                        case 'dateneq':
+                        case 'datelt':
+                        case 'datelte':
+                        case 'dategt':
+                        case 'dategte':
+                        default:
+                            throw "operator is not supported: " + operator;
+                    }
+                    and = " AND ";
+                });
+            }
+        });
+        if (WHERE === "WHERE ")
+            WHERE = "";
+        else
+            WHERE += "\n";
+
+        var sql = SELECT + FROM + WHERE;
+        return {sql:sql, aliases:['one','two'], json:JSON.stringify(queryMeasures)};
+    },
 });
+
+
+})();   // private scope function
 
 Ext.define('Connector.controller.HttpInterceptor', {
     extend: 'LABKEY.app.controller.HttpInterceptor'
