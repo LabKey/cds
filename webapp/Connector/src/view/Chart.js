@@ -1071,18 +1071,26 @@ Ext.define('Connector.view.Chart', {
             this.initStudyAxis(studyAxisInfo);
         }
 
-        this.handleDensePlotBrushEvent();
+        if (!noplot) {
+            this.handleDensePlotBrushEvent(this.plot);
+        }
+        if (this.yGutterPlot) {
+            this.handleDensePlotBrushEvent(this.yGutterPlot);
+        }
+        if (this.xGutterPlot) {
+            this.handleDensePlotBrushEvent(this.xGutterPlot);
+        }
 
         this.fireEvent('hideload', this);
     },
 
-    handleDensePlotBrushEvent : function() {
+    handleDensePlotBrushEvent : function(plot) {
         var selector;
 
         // Allow brushing in dense plot by creating and passing a new click event to the brush layer
-        if (Ext.isDefined(this.plot.renderer)) {
+        if (Ext.isDefined(plot.renderer)) {
             selector = this.showPointsAsBin ? '.vis-bin' : '.point';
-            this.plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
+            plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
                 var el = this;
                 while(el.tagName !== 'svg') {
                     el = el.parentElement;
