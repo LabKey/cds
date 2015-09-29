@@ -1264,9 +1264,15 @@ Ext.define('Connector.controller.Query', {
         //
 
         var seenAlias = {};
-        var SELECT = "SELECT ";
-        SELECT += LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + DATASET_ALIAS + "\"";
-        var comma = ", ";
+        var SELECT = ["SELECT "];
+        SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + DATASET_ALIAS + "\"");
+        SELECT.push(",");
+        SELECT.push(rootTable.tableAlias + '.container AS "' + CONTAINER_ALIAS +'"');
+        SELECT.push(",");
+        SELECT.push(rootTable.tableAlias + '.subjectid AS "' + SUBJECT_ALIAS +'"');
+        SELECT.push(",");
+        SELECT.push(rootTable.tableAlias + '.sequencenum AS "' + SEQUENCENUM_ALIAS +'"');
+
         allMeasures.forEach(function(m)
         {
             if (seenAlias[m.measure.alias])
@@ -1275,15 +1281,13 @@ Ext.define('Connector.controller.Query', {
 
             if (!acceptMeasure(m))
             {
-                SELECT += comma + "NULL AS " + m.measure.alias;
+                SELECT.push(", NULL AS " + m.measure.alias);
             }
             else
             {
-                SELECT += comma + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + m.measure.alias;
+                SELECT.push(", " + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + m.measure.alias);
             }
-            comma = ", ";
         });
-        SELECT += "\n";
 
         //
         // FROM
@@ -1307,14 +1311,13 @@ Ext.define('Connector.controller.Query', {
                 FROM += and + rootTable.tableAlias + "." + k + "=" + t.tableAlias + "." + k;
                 and = " AND ";
             });
-            FROM += "\n";
         }
 
         //
         // WHERE
         //
         var operatorMap = {eq:"=",lt:"<",lte:"<=",gt:">",gte:">=",neq:"<>"};
-        var WHERE = "WHERE ";
+        var WHERE = [];
         and = "";
         var me = this;
         queryMeasures.forEach(function(mdef)
@@ -1337,25 +1340,25 @@ Ext.define('Connector.controller.Query', {
                         case 'gte':
                         case 'neq':
                             v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
-                            WHERE += and + columnName + operatorMap[operator] + literalFn(v);
+                            WHERE.push(and + columnName + operatorMap[operator] + literalFn(v));
                             break;
                         case 'in':
                         case 'notin':
-                            WHERE += and + columnName + (operator==='in' ? " IN (" : " NOT IN (");
+                            WHERE.push(and + columnName + (operator==='in' ? " IN (" : " NOT IN ("));
                             v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
                             var arr = v.split(';');
                             var comma = "";
                             arr.forEach(function(v){
-                                WHERE += comma + literalFn(v);
+                                WHERE.push(comma + literalFn(v));
                                 comma = ",";
                             });
-                            WHERE += ")";
+                            WHERE.push(")");
                             break;
                         case 'isblank':
-                            WHERE += and + columnName + " IS NULL";
+                            WHERE.push(and + columnName + " IS NULL");
                             break;
                         case 'isnonblank':
-                            WHERE += and + columnName + " IS NOT NULL";
+                            WHERE.push(and + columnName + " IS NOT NULL");
                             break;
                         case 'between':
                         case 'notbetween':
@@ -1365,22 +1368,22 @@ Ext.define('Connector.controller.Query', {
                             arr = v.split(",");
                             if (arr.length != 2)
                                 throw "invalid value for between: " + v;
-                            WHERE += and + columnName + (operator==='between'?" BETWEEN ":" NOT BETWEEN ") +
-                                    literalFn(arr[0]) + " AND " + literalFn(arr[1]);
+                            WHERE.push(and + columnName + (operator==='between'?" BETWEEN ":" NOT BETWEEN ") +
+                                    literalFn(arr[0]) + " AND " + literalFn(arr[1]));
                             break;
                         case 'startswith':
                         case 'doesnotstartwith':
                             v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
                             v = v.replace(/([%_!])/g, "!$1") + '%';
-                            WHERE += and + columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
-                                    literalFn(v) + " ESCAPE '!'";
+                            WHER.push(and + columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
+                                    literalFn(v) + " ESCAPE '!'");
                             break;
                         case 'contains':
                         case 'doesnotcontain':
                             v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
                             v = '%' + v.replace(/([%_!])/g, "!$1") + '%';
-                            WHERE += and + columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
-                                    literalFn(v) + " ESCAPE '!'";
+                            WHERE.push(and + columnName + (operator==='like'?" LIKE ":" NOT LIKE ") +
+                                    literalFn(v) + " ESCAPE '!'");
                             break;
                         case 'hasmvvalue':
                         case 'nomvvalue':
@@ -1397,12 +1400,12 @@ Ext.define('Connector.controller.Query', {
                 });
             }
         });
-        if (WHERE === "WHERE ")
-            WHERE = "";
-        else
-            WHERE += "\n";
 
-        var sql = SELECT + FROM + WHERE;
+        var sql =
+            SELECT.join('') + "\n" +
+            FROM + "\n" +
+            (WHERE.length==0?"":"WHERE ") + WHERE.join('');
+
         return {sql:sql, aliases:['one','two'], json:JSON.stringify(queryMeasures)};
     },
 });
