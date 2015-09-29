@@ -1083,7 +1083,11 @@ Ext.define('Connector.view.Chart', {
         if (Ext.isDefined(this.plot.renderer)) {
             selector = this.showPointsAsBin ? '.vis-bin' : '.point';
             this.plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
-                var brushNode = d3.select(this.parentElement.parentElement.getElementsByClassName('brush')[0]).node();
+                var el = this;
+                while(el.tagName !== 'svg') {
+                    el = el.parentElement;
+                }
+                var brushNode = d3.select(el.getElementsByClassName('brush')[0]).node();
                 var newClickEvent = new CustomEvent('mousedown');
                 newClickEvent.pageX = d3.event.pageX;
                 newClickEvent.clientX = d3.event.clientX;
