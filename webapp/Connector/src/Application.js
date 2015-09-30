@@ -32,6 +32,7 @@ Ext.define('Connector.Application', {
         'Messaging',
         'State',
         'Query',
+        'Filter',
         'Analytics',
         'Group',
         'Main',
@@ -68,11 +69,25 @@ Ext.define('Connector.Application', {
             ns.getState = function() {
                 return this.getState.apply(me, arguments);
             };
+            ns.getFilterService = function() {
+                return this.getFilterService.apply(me, arguments);
+            };
+            ns.getQueryService = function() {
+                return this.getQueryService.apply(me, arguments);
+            };
         }
     },
 
     getState : function() {
         return this.getService('State');
+    },
+
+    getFilterService : function() {
+        return this.getService('Filter');
+    },
+
+    getQueryService : function() {
+        return this.getService('Query');
     },
 
     setDataSource : function(datasource) {
