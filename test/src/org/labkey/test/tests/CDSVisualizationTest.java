@@ -2451,14 +2451,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertElementVisible(Locator.linkContainingText("Filter"));
 
         click(Locator.linkContainingText("Filter"));
-        sleep(250); // Wait briefly for the mask to show up.
+        sleep(1000); // Wait briefly for the mask to show up.
         _ext4Helper.waitForMaskToDisappear();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         assertTrue("The subject count after applying filter was not less than or equal to before. Before: " + subjectCountBefore + " After: " + subjectCountAfter, subjectCountBefore >= subjectCountAfter);
-        sleep(500);
+        sleep(1000); // Wait briefly for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
 
     }
 
