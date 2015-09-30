@@ -774,10 +774,10 @@ Ext.define('Connector.view.Chart', {
             if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
 
                 // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
-                if(this.requireYGutter && chartData.getXDomain()[0]==null && chartData.getXDomain()[1]==null)
+                if(this.requireYGutter && chartData.getXDomain(studyAxisInfo)[0]==null && chartData.getXDomain(studyAxisInfo)[1]==null)
                     domain = [0,1];
                 else
-                    domain = chartData.getXDomain();
+                    domain = chartData.getXDomain(studyAxisInfo);
 
                 scales.x = {
                     scaleType: 'continuous',
