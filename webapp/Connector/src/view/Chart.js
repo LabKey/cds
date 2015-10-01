@@ -1947,7 +1947,7 @@ Ext.define('Connector.view.Chart', {
      * @param activeMeasures
      */
     requestChartData : function(activeMeasures) {
-        ChartUtils.getSubjectsIn(function(subjectList) {
+        Connector.getFilterService().getSubjects(function(subjectFilter) {
             // issue 23885: Do not include the color measure in request if it's noe from the x, y, or demographic datasets
             if (activeMeasures.color) {
                 var demographicSource = activeMeasures.color.isDemographic,
@@ -1961,7 +1961,7 @@ Ext.define('Connector.view.Chart', {
 
             var measures = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */).measures;
 
-            this.applyFiltersToMeasure(measures, subjectList);
+            this.applyFiltersToMeasure(measures, subjectFilter);
 
             // Request Chart MeasureStore Data
             Connector.getService('Query').getMeasureStore(measures, this.onChartDataSuccess, this.onFailure, this);
@@ -2260,8 +2260,6 @@ Ext.define('Connector.view.Chart', {
                     includeDefinedMeasureSources: true,
                     measuresOnly: true
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
@@ -2306,8 +2304,6 @@ Ext.define('Connector.view.Chart', {
                     includeDefinedMeasureSources: true,
                     includeTimpointMeasures: true
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
@@ -2364,8 +2360,6 @@ Ext.define('Connector.view.Chart', {
                         return row.type === 'BOOLEAN' || row.type === 'VARCHAR';
                     }
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 listeners: {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
@@ -2524,16 +2518,16 @@ Ext.define('Connector.view.Chart', {
         this.hideVisibleWindow();
     },
 
-    applyFiltersToMeasure : function(measureSet, ptids) {
+    applyFiltersToMeasure : function(measureSet, subjectFilter) {
         // find the subject column(s) in the measure set to apply the values filter (issue 24123)
-        if (Ext.isArray(ptids)) {
+        if (subjectFilter.hasFilters) {
             Ext.each(measureSet, function(m) {
                 if (m.measure && m.measure.name == Connector.studyContext.subjectColumn) {
                     if (Ext.isArray(m.measure.values)) {
                         console.error('There is a potentially unknown values array on the applied subject measure.');
                     }
 
-                    m.measure.values = ptids;
+                    m.measure.values = subjectFilter.subjects;
                 }
             }, this);
         }

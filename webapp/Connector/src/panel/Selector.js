@@ -26,9 +26,6 @@ Ext.define('Connector.panel.Selector', {
 
     sourceMeasureFilter: undefined,
 
-    memberCountsFn: undefined,
-    memberCountsFnScope: undefined,
-
     multiSelect: false,
     lockedMeasures: undefined,
     selectedMeasures: undefined,
@@ -227,7 +224,7 @@ Ext.define('Connector.panel.Selector', {
             });
 
             this.fireEvent('afterSourceCountsLoad', this);
-        }, this, this.memberCountsFn, this.memberCountsFnScope);
+        }, this);
     },
 
     getSourcePane : function() {

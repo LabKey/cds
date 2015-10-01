@@ -321,8 +321,6 @@ Ext.define('Connector.view.Grid', {
                     includeVirtualSources: true,
                     includeDefinedMeasureSources: true
                 },
-                memberCountsFn: ChartUtils.getSubjectsIn,
-                memberCountsFnScope: this,
                 disableAdvancedOptions: true,
                 listeners: {
                     selectionmade: function(selected) {

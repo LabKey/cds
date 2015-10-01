@@ -121,5 +121,9 @@ Ext.define('Connector.controller.State', {
         var selections = this.selections;
         this.callParent();
         this.fireEvent('selectionToFilter', selections);
+    },
+
+    onFilterChangeReady : function(mdx, filters, callback, scope) {
+        Connector.getFilterService().updateSubjects(mdx, filters, callback, scope);
     }
 });

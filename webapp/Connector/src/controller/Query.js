@@ -429,13 +429,16 @@ Ext.define('Connector.controller.Query', {
             }
 
             // get the cube subjectList so that we can filter the advanced option values accordingly
-            ChartUtils.getSubjectsIn(function(subjectList) {
+            Connector.getFilterService().getSubjects(function(subjectFilter) {
                 subjectMeasure = new LABKEY.Query.Visualization.Measure({
                     schemaName: dimension.get('schemaName'),
                     queryName: dimension.get('queryName'),
-                    name: Connector.studyContext.subjectColumn,
-                    values: subjectList
+                    name: Connector.studyContext.subjectColumn
                 });
+
+                if (subjectFilter.hasFilters) {
+                    subjectMeasure.values = subjectFilter.subjects;
+                }
 
                 aliases.push(Connector.studyContext.subjectColumn);
                 wrappedMeasureSet.push({measure: subjectMeasure});
@@ -979,11 +982,12 @@ Ext.define('Connector.controller.Query', {
         this.SOURCE_COUNTS = undefined;
     },
 
-    getSourceCounts : function(sourceModels, callback, scope, membersFn, membersFnScope) {
+    getSourceCounts : function(sourceModels, callback, scope) {
 
         if (Ext.isFunction(callback)) {
 
-            var makeRequest = function(members) {
+            Connector.getFilterService().getSubjects(function(subjectFilter) {
+
                 // we cache the source count results so they can share between variable sectors
                 if (Ext.isDefined(this.SOURCE_COUNTS)) {
                     callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
@@ -992,7 +996,7 @@ Ext.define('Connector.controller.Query', {
 
                 var json = {
                     schema: Connector.studyContext.schemaName,
-                    members: Ext.isArray(members) ? members : undefined,
+                    members: subjectFilter.hasFilters ? subjectFilter.subjects : undefined,
                     sources: []
                 };
 
@@ -1013,14 +1017,7 @@ Ext.define('Connector.controller.Query', {
                     },
                     scope: this
                 });
-            };
-
-            if (Ext.isFunction(membersFn)) {
-                membersFn.call(membersFnScope, makeRequest, this);
-            }
-            else {
-                makeRequest();
-            }
+            }, this);
         }
     },
 

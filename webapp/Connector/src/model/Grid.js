@@ -18,10 +18,6 @@ Ext.define('Connector.model.Grid', {
 
         {name: 'filterArray', defaultValue: []},
         {name: 'baseFilterArray', defaultValue: []},
-        {name: 'filterState', defaultValue: {
-            hasFilters: false,
-            subjects: []
-        }},
 
         {name: 'defaultMeasures', defaultValue: []},
         {name: 'measures', defaultValue: []},
@@ -47,7 +43,7 @@ Ext.define('Connector.model.Grid', {
             });
         },
 
-        createSubjectFilter : function(gridModel, filterState) {
+        createSubjectFilter : function(filterState) {
             var filter = undefined;
 
             if (filterState.hasFilters) {
@@ -90,58 +86,6 @@ Ext.define('Connector.model.Grid', {
             });
 
             return Ext.Array.unique(columns);
-        },
-
-        getSubjectFilterState : function(model, callback, scope) {
-
-            var state = Connector.getState();
-
-            var filterState = {
-                hasFilters: state.hasFilters(),
-                subjects: []
-            };
-
-            if (Ext.isFunction(callback)) {
-                if (filterState.hasFilters) {
-                    var filters = state.getFilters(), nonGridFilters = [];
-
-                    Ext.each(filters, function(filter) {
-                        if (!filter.get('isGrid')) {
-                            nonGridFilters.push(filter);
-                        }
-                    }, this);
-
-                    if (Ext.isEmpty(nonGridFilters)) {
-                        filterState.hasFilters = false;
-                        callback.call(scope || this, filterState);
-                    }
-                    else {
-                        state.onMDXReady(function(mdx) {
-                            state.addPrivateSelection(nonGridFilters, 'gridselection');
-
-                            mdx.queryParticipantList({
-                                useNamedFilters : ['gridselection'],
-                                success : function(cs) {
-                                    var ptids = [];
-                                    var pos = cs.axes[1].positions;
-                                    for (var a=0; a < pos.length; a++) {
-                                        ptids.push(pos[a][0].name);
-                                    }
-                                    state.removePrivateSelection('gridselection');
-
-                                    filterState.subjects = ptids;
-
-                                    callback.call(scope || this, filterState);
-                                },
-                                scope: this
-                            });
-                        }, this);
-                    }
-                }
-                else {
-                    callback.call(scope || this, filterState);
-                }
-            }
         },
 
         getMaxRows : function() {
@@ -391,15 +335,15 @@ Ext.define('Connector.model.Grid', {
         //
         // calculate the subject filter
         //
-        Connector.model.Grid.getSubjectFilterState(this, function(filterState) {
-            var subjectFilter = Connector.model.Grid.createSubjectFilter(this, filterState);
-            var baseFilterArray = [];
+        Connector.getFilterService().getSubjects(function(filterState) {
+            var subjectFilter = Connector.model.Grid.createSubjectFilter(filterState),
+                baseFilterArray = [];
+
             if (subjectFilter) {
                 baseFilterArray = [subjectFilter];
             }
 
             this.set({
-                filterState: filterState,
                 baseFilterArray: baseFilterArray,
                 filterArray: filterArray
             });
