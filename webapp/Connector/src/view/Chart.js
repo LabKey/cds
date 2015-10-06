@@ -1888,7 +1888,26 @@ Ext.define('Connector.view.Chart', {
             wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
         }
 
+        if (options && options.scale === 'LOG') {
+            var logFilter = this.getLogTransformFilter(measure);
+            if (logFilter) {
+                if (Ext.isArray(wrappedMeasure.filterArray)) {
+                    wrappedMeasure.filterArray.push(logFilter);
+                }
+                else {
+                    wrappedMeasure.filterArray = [logFilter];
+                }
+            }
+        }
+
         return wrappedMeasure;
+    },
+
+    getLogTransformFilter : function(measure, ignoreLogTransform) {
+        if (ignoreLogTransform || !measure || !measure.options || !measure.options.scale || measure.options.scale !== 'LOG')
+            return null;
+
+        return LABKEY.Filter.create(measure.alias, 0, LABKEY.Filter.Types.GREATER_THAN);
     },
 
     /**
