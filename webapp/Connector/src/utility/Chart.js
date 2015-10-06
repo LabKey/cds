@@ -165,6 +165,7 @@ Ext.define('Connector.utility.Chart', {
 
     brushClear : function(layerScope, dimension) {
         if (this.initiatedBrushing === dimension) {
+            ChartUtils.brushDelayTask.cancel();
             this.initiatedBrushing = '';
             layerScope.isBrushed = false;
             Connector.getState().clearSelections(true);
