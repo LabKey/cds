@@ -28,6 +28,7 @@ import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataGrid;
 import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
@@ -187,6 +188,7 @@ public class CDSTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -741,6 +743,7 @@ public class CDSTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setCellType("All");
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
@@ -865,6 +868,7 @@ public class CDSTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
