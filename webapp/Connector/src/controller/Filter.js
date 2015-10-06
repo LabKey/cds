@@ -15,8 +15,6 @@ Ext.define('Connector.controller.Filter', {
         }
 
         this.callParent();
-
-        Connector.getState().on('filterchange', this.onFilterChange, this);
     },
 
     updateSubjects : function(mdx, filters, callback, scope) {

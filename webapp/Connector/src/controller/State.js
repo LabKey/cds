@@ -125,5 +125,9 @@ Ext.define('Connector.controller.State', {
 
     onFilterChangeReady : function(mdx, filters, callback, scope) {
         Connector.getFilterService().updateSubjects(mdx, filters, callback, scope);
+    },
+
+    onAfterFilterChange : function(mdx, filters) {
+        Connector.getFilterService().onFilterChange();
     }
 });
