@@ -253,7 +253,7 @@ public class CDSHelper
     public static final String DEMO_COUNTRY = "Country at Enrollment";
     public static final String DEMO_HISPANIC = "Hispanic";
     public static final String DEMO_RACE = "Race";
-    public static final String DEMO_SEX = "Sexatbirth";
+    public static final String DEMO_SEX = "Sex at birth";
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
     public static final String DEMO_STUDY_NAME = "Study Name";
@@ -444,11 +444,10 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
             return null;
         });
 
+        _test.refresh(); // TODO this is a temporary hack. There are some strange behaviors with the mask that only show up in automation.
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
@@ -599,7 +598,7 @@ public class CDSHelper
             return null;
         });
 
-        _test.sleep(500);
+        _test.sleep(100);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
@@ -685,8 +684,6 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             link.click();
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });
