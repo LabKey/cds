@@ -582,7 +582,21 @@ Ext.define('Connector.panel.Selector', {
             showCount: false
         });
 
-        if (!this.multiSelect) {
+        if (this.multiSelect) {
+            // for the multiSelect case, we want to clear all selections and reselect each time so that
+            // the 'select all columns' checkbox works as expected (issue 24077)
+            // Issue 24116: re-selecting records needs to wait until the store filter is done and re-rendering complete (HACK...defer)
+            selModel.deselectAll(true /* suppressEvents */);
+            Ext.defer(function() {
+                Ext.iterate(aliases, function(alias){
+                    index = this.measureStore.findExact('alias', alias);
+                    if (index > -1) {
+                        selModel.select(index, true /* keepExisting */, true /* suppressEvents */);
+                    }
+                }, this);
+            }, 100, this);
+        }
+        else {
             if (activeMeasure) {
                 if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
                     // already have selected measure, just need to show the advanced options pane
@@ -597,20 +611,6 @@ Ext.define('Connector.panel.Selector', {
                 Ext.defer(function() { selModel.select(0); }, 100, this);
             }
         }
-        else {
-            // for the multiSelect case, we want to clear all selections and reselect each time so that
-            // the 'select all columns' checkbox works as expected (issue 24077)
-            // Issue 24116: re-selecting records needs to wait until the store filter is done and re-rendering complete (HACK...defer)
-            selModel.deselectAll(true);
-            Ext.defer(function() {
-                Ext.iterate(aliases, function(alias){
-                    index = this.measureStore.findExact('alias', alias);
-                    if (index > -1) {
-                        selModel.select(index, true/* keepExisting */, true/* surpressEvents */);
-                    }
-                }, this);
-            }, 100, this);
-        }
 
         // for the 'Current Columns' source, we group the measures by the query source
         // otherwise, we group measures into the Recommended or Additional groupings
@@ -622,8 +622,10 @@ Ext.define('Connector.panel.Selector', {
                 this.measureStore.sort('sourceTitle', 'ASC');
             }
             else {
-                // enable or disable the measure grid grouping feature based on the presence of a 'recommended' or 'assay required columns' variable
-                if (this.measureStore.findExact('recommendedVariableGrouper', '0') > -1 || this.measureStore.findExact('recommendedVariableGrouper', '1') > -1) {
+                // enable or disable the measure grid grouping feature based on the
+                // presence of a 'recommended' or 'assay required columns' variable
+                if (this.measureStore.findExact('recommendedVariableGrouper', '0') > -1 ||
+                    this.measureStore.findExact('recommendedVariableGrouper', '1') > -1) {
                     this.groupingFeature.enable();
                 }
                 else {
@@ -673,23 +675,22 @@ Ext.define('Connector.panel.Selector', {
 
         this.toggleDisplay('hierarchy');
 
-        var me = this;
         this.setHeaderData({
             title: this.headerTitle,
             navText: source.get('queryName'),
             sectionTitle: this.activeMeasure.get('label'),
-            action: function() { me.hierarchicalSelectionDone(); },
+            action: this.hierarchicalSelectionDone,
             showCount: false
         });
     },
 
     hierarchicalSelectionDone : function() {
-        var me = this;
         this.getHierarchySelectionPane().getEl().slideOut('r', {
             duration: 250,
             callback: function() {
-                me.updateSelectorPane();
-            }
+                this.updateSelectorPane();
+            },
+            scope: this
         });
     },
 
@@ -932,17 +933,7 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindTimeOptions : function() {
-        if (this.activeMeasure.get('variableType') == 'TIME')
-        {
-            //this.getAdvancedPane().add(
-            //    Ext.create('Connector.component.AdvancedOptionTime', {
-            //        measure: this.activeMeasure,
-            //        fieldName: 'visitType',
-            //        fieldLabel: 'Visit type',
-            //        singleUseOnly: false
-            //    })
-            //);
-
+        if (this.activeMeasure.get('variableType') == 'TIME') {
             this.getAdvancedPane().add(
                 Ext.create('Connector.component.AdvancedOptionTime', {
                     measure: this.activeMeasure,
@@ -1131,9 +1122,7 @@ Ext.define('Connector.panel.Selector', {
                     itemId: 'done-button',
                     xtype: 'button',
                     text: 'Done',
-                    handler: function() {
-                        this.hierarchicalSelectionDone();
-                    },
+                    handler: this.hierarchicalSelectionDone,
                     scope: this
                 },{
                     itemId: 'select-button',
@@ -1174,8 +1163,55 @@ Ext.define('Connector.panel.Selector', {
         }
     },
 
-    onMeasureSelect : function(selectionCmp, measure) {
-        if (!this.multiSelect) {
+    /**
+     * This is used onSelect/Deselect to determine what measures are required to be
+     * selected based on the currently selected measures.
+     * @param selModel
+     * @returns {Array}
+     */
+    manageRequiredMeasures : function(selModel) {
+
+        var selectedNonRequired = false,
+            selections = selModel.getSelection();
+
+        for (var i=0; i < selections.length; i++) {
+            if (selections[i].get('recommendedVariableGrouper') !== '1') {
+                selectedNonRequired = true;
+                break;
+            }
+        }
+
+        // sadly, store.query() does not respect filters
+        var requiredMeasures = [];
+        Ext.each(this.measureStore.getRange(), function(record) {
+            if (record.get('recommendedVariableGrouper') === '1') {
+                requiredMeasures.push(record);
+            }
+        });
+
+        if (selectedNonRequired) {
+            selModel.select(requiredMeasures, true /* keepExisting */, true /* suppressEvents */);
+        }
+        else {
+            selModel.deselect(requiredMeasures, true /* suppressEvents */);
+        }
+
+        return requiredMeasures;
+    },
+
+    onMeasureSelect : function(selModel, measure) {
+
+        if (this.multiSelect) {
+
+            var requiredRecords = this.manageRequiredMeasures(selModel);
+
+            Ext.each([measure].concat(requiredRecords), function(record) {
+                if (this.getRecordIndex(this.getSelectedRecords(), record) == -1) {
+                    this.selectedMeasures.push(record);
+                }
+            }, this);
+        }
+        else {
             // issue 23866: Persisted advanced option selections when changing variables within the same source
             if (this.initialized) {
                 this.initOptions = this.getAdvancedOptionValues();
@@ -1185,19 +1221,18 @@ Ext.define('Connector.panel.Selector', {
             this.configureAdvancedOptions();
             this.getButton('select-button').enable();
         }
-        else {
-            if (this.getRecordIndex(this.getSelectedRecords(), measure) == -1) {
-                this.selectedMeasures.push(measure);
-            }
-        }
     },
 
-    deselectMeasure : function(selectionCmp, measure) {
+    deselectMeasure : function(selModel, measure) {
         if (this.multiSelect) {
-            var index = this.getRecordIndex(this.getSelectedRecords(), measure);
-            if (index > -1) {
-                this.selectedMeasures.splice(index, 1);
-            }
+            var requiredRecords = this.manageRequiredMeasures(selModel);
+
+            Ext.each([measure].concat(requiredRecords), function(record) {
+                var index = this.getRecordIndex(this.getSelectedRecords(), record);
+                if (index > -1) {
+                    this.selectedMeasures.splice(index, 1);
+                }
+            }, this);
         }
     },
 

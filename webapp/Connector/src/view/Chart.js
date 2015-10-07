@@ -2498,7 +2498,7 @@ Ext.define('Connector.view.Chart', {
         Connector.getService('Query').clearSourceCountsCache();
     },
 
-    onActivate: function() {
+    onActivate : function() {
         this.isActiveView = true;
         if (this.refreshRequired) {
             this.onReady(function() {
