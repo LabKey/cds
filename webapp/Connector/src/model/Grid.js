@@ -272,7 +272,8 @@ Ext.define('Connector.model.Grid', {
         var SQLMeasures = [],
             plotMeasures = [],
             queryService = Connector.getService('Query'),
-            measureMap = {};
+            measureMap = {},
+            sourceMap = {};
 
         Ext.each(filterSet, function(filter) {
             // respect plotted measures
@@ -285,6 +286,7 @@ Ext.define('Connector.model.Grid', {
                             measure: Ext.clone(pm.measure),
                             time: 'date'
                         });
+                        sourceMap[pm.measure.schemaName + '|' + pm.measure.queryName] = true;
                     }
                 }, this);
             }
@@ -300,7 +302,8 @@ Ext.define('Connector.model.Grid', {
                                 measure: Ext.clone(measure),
                                 time: 'date',
                                 filterArray: []
-                            }
+                            };
+                            sourceMap[measure.schemaName + '|' + measure.queryName] = true;
                         }
 
                         measureMap[measure.alias].filterArray.push(gf);
@@ -309,6 +312,22 @@ Ext.define('Connector.model.Grid', {
                 }, this);
             }
         }, this);
+
+        // gather required columns from each source
+        Ext.iterate(sourceMap, function(sourceKey, v) {
+            var dimensions = queryService.getDimensions.apply(queryService, sourceKey.split('|'));
+            if (!Ext.isEmpty(dimensions)) {
+                Ext.each(dimensions, function(dim) {
+                    if (!measureMap[dim.alias]) {
+                        measureMap[dim.alias] = {
+                            measure: dim,
+                            time: 'date',
+                            filterArray: []
+                        }
+                    }
+                });
+            }
+        });
 
         Ext.iterate(measureMap, function(alias, measureConfig) {
             SQLMeasures.push(measureConfig);
