@@ -105,7 +105,7 @@ public class XAxisVariableSelector extends DataspaceVariableSelector
     public void setScale(Scale scale)
     {
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']/following-sibling::div"));
-        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale.getScaleLabel() + "']"));
+        _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "-option-scale-dropdown')][not(contains(@style, 'display: none'))]//table[contains(@class, 'x-form-type-radio')]//tbody//tr//td//label[.='" + scale.getScaleLabel() + "']"));
         // Do the next click to close the drop down.
         _test.click(Locator.xpath("//div[contains(@class, '" + XPATHID + "')]//div[text()='Scale:']"));
 
