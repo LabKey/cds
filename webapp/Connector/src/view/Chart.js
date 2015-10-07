@@ -2164,13 +2164,14 @@ Ext.define('Connector.view.Chart', {
 
         if (inPlotFilter) {
             // update
-            inPlotFilter.set('gridFilter', sqlFilters);
-            inPlotFilter.set('plotMeasures', wrapped);
-            state.updateFilterMembersComplete(false);
+            state.modifyFilter(inPlotFilter, {
+                gridFilter: sqlFilters,
+                plotMeasures: wrapped
+            });
         }
         else {
             // create
-            inPlotFilter = Ext.create('Connector.model.Filter', {
+            state.prependFilter({
                 gridFilter: sqlFilters,
                 isPlot: true,
                 isGrid: false,
@@ -2179,7 +2180,6 @@ Ext.define('Connector.view.Chart', {
                 filterSource: 'GETDATA',
                 isWhereFilter: false
             });
-            state.prependFilter(inPlotFilter);
         }
 
         this.plotLock = false;

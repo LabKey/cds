@@ -476,6 +476,7 @@ Ext.define('Connector.model.Grid', {
 
             var state = Connector.getState(),
                 appFilters = state.getFilters(),
+                modified = [],
                 newFilters = [], matched = false;
 
             // For each config do one of the following:
@@ -484,15 +485,15 @@ Ext.define('Connector.model.Grid', {
             Ext.each(configs, function(config) {
                 var match = this._generateMatch(config.filterArray, appFilters);
                 if (match) {
-                    matched = true;
+                    modified.push(match);
                 }
                 else {
                     newFilters.push(this.buildFilter(filterArray));
                 }
             }, this);
 
-            if (matched) {
-                state.updateFilterMembersComplete(true);
+            if (modified.length > 0) {
+                state.modifyFilter(modified);
             }
 
             if (!Ext.isEmpty(newFilters) || matched) {
@@ -545,8 +546,12 @@ Ext.define('Connector.model.Grid', {
                         while (faIdx < filterArray.length) {
                             newGridFilter.push(filterArray[faIdx]); faIdx++;
                         }
-                        match = filter;
-                        match.set('gridFilter', newGridFilter);
+                        match = {
+                            filter: filter,
+                            modifications: {
+                                gridFilter: newGridFilter
+                            }
+                        };
                         return false; // break from Ext.each
                     }
                 }

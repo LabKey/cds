@@ -76,6 +76,33 @@ Ext.define('Connector.model.Filter', {
         return this.get('dataFilter');
     },
 
+    /**
+     * Do not call this directly from within this model's implementation. Use this._set() instead.
+     * @param fieldName
+     * @param newValue
+     */
+    'set': function(fieldName, newValue) {
+        this.callParent(arguments);
+
+        if (!this.SET_LOCK) {
+            Connector.getQueryService().onQueryReady(function() {
+                this._generateDataFilters();
+            }, this);
+        }
+    },
+
+    /**
+     * An internal 'set' function that can be used to safely set values
+     * @param fieldName
+     * @param newValue
+     * @private
+     */
+    _set : function(fieldName, newValue) {
+        this.SET_LOCK = true;
+        this.set(fieldName, newValue);
+        this.SET_LOCK = false;
+    },
+
     modify : function(datas) {
         // TODO: Need to switch real-time updates to use this modify method, so data filters can be updated
     },
@@ -172,7 +199,7 @@ Ext.define('Connector.model.Filter', {
             // olap filter -- nothing to do
         }
 
-        this.set('dataFilter', dataFilterMap);
+        this._set('dataFilter', dataFilterMap);
     },
 
     /**
