@@ -72,8 +72,12 @@ Ext.define('Connector.model.Filter', {
         }, this);
     },
 
-    modify : function(datas) {
+    getDataFilters : function() {
+        return this.get('dataFilter');
+    },
 
+    modify : function(datas) {
+        // TODO: Need to switch real-time updates to use this modify method, so data filters can be updated
     },
 
     _dataFilterHelper : function(filterMap, alias, filter) {
@@ -127,7 +131,9 @@ Ext.define('Connector.model.Filter', {
         else if (this.isPlot()) {
             // in the plot filter
 
-            // "In the Plot filters, including the axis filters, are applied as a data filter globally."
+            /**
+             * "In the Plot filters, including the axis filters, are applied as a data filter globally."
+             */
             Ext.each(this.get('plotMeasures'), function(plotMeasure) {
                 if (plotMeasure && plotMeasure.measure) {
 
@@ -152,6 +158,10 @@ Ext.define('Connector.model.Filter', {
         }
         else if (this.isGrid()) {
             // grid filter
+
+            /**
+             * "Grid filters are global data filters."
+             */
             Ext.each(this.get('gridFilter'), function(gridFilter) {
                 if (gridFilter) {
                     this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);

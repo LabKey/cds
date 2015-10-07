@@ -18,6 +18,7 @@ Ext.define('Connector.model.Grid', {
 
         {name: 'filterArray', defaultValue: []},
         {name: 'baseFilterArray', defaultValue: []},
+        {name: 'subjectFilter', defaultValue: undefined},
 
         {name: 'defaultMeasures', defaultValue: []},
         {name: 'measures', defaultValue: []},
@@ -30,24 +31,12 @@ Ext.define('Connector.model.Grid', {
     ],
 
     statics: {
-        addLookupColumns : function(gridModel, keyColumn, columns) {
-            var foreignColumns = gridModel.get('foreignColumns');
-
-            if (!foreignColumns[keyColumn.fieldKeyPath]) {
-                return;
-            }
-
-            var names = foreignColumns[keyColumn.name];
-            Ext.iterate(names, function(column, val) {
-                columns.push(keyColumn.name + '/' + val.fieldKeyPath);
-            });
-        },
 
         createSubjectFilter : function(filterState) {
             var filter = undefined;
 
             if (filterState.hasFilters) {
-                var subjectColumn = Connector.getService('Query').getSubjectColumnAlias(),
+                var subjectColumn = Connector.getQueryService().getSubjectColumnAlias(),
                     subjects = filterState.subjects;
                 filter = LABKEY.Filter.create(subjectColumn, subjects.join(';'), LABKEY.Filter.Types.IN);
             }
@@ -69,23 +58,6 @@ Ext.define('Connector.model.Grid', {
                     });
                 }
             });
-        },
-
-        /**
-         * These columns can be used to populate a models 'columnSet'
-         * @param gridModel
-         * @returns {Array}
-         */
-        generateColumnSet : function(gridModel) {
-
-            var columns = Connector.getService('Query').getDefaultGridAliases(true /* asArray */),
-                measures = gridModel.getMeasures();
-
-            Ext.each(measures, function(measure) {
-                columns.push(measure.alias);
-            });
-
-            return Ext.Array.unique(columns);
         },
 
         getMaxRows : function() {
@@ -115,46 +87,37 @@ Ext.define('Connector.model.Grid', {
         this._ready = false;
 
         this.metadataTask = new Ext.util.DelayedTask(function() {
-            Connector.getService('Query').getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this);
+            Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this);
         }, this);
 
-        Connector.getState().onReady(function(state) {
+        Connector.getState().onReady(function() {
             this.stateReady = true;
-            this.applyFilters(this.bindFilters(state.getFilters()));
-            this._init();
+            this.applyFilters(this.getDataFilters(), this._init, this);
         }, this);
 
         this.addEvents('filterchange', 'updatecolumns');
     },
 
     _init : function() {
-        if (this.viewReady && this.stateReady) {
-            Connector.getService('Query').onQueryReady(function(service) {
+        if (!this._ready && this.viewReady && this.stateReady) {
+            Connector.getQueryService().onQueryReady(function(service) {
                 service.getDefaultGridMeasures(function(defaultMeasures) {
+
+                    this._ready = true;
 
                     this.bindDefaultMeasures(defaultMeasures);
 
-                    if (this._ready === false) {
-                        this._ready = true;
+                    // hook listeners
+                    Connector.getState().on('filterchange', this.onAppFilterChange, this);
+                    Connector.getApplication().on('plotmeasures', this.bindApplicationMeasures, this);
 
-                        // hook listeners
-                        var state = Connector.getState();
-                        state.on('filterchange', this.onAppFilterChange, this);
-                        Connector.getApplication().on('plotmeasures', this.onPlotMeasureChange, this);
-
-                        this.bindMeasures([], [], [], true);
-                        this.bindApplicationMeasures(state.getFilters());
-                    }
-
+                    this.bindMeasures([], [], [], true);
+                    this.bindApplicationMeasures();
                     this.requestMetaData();
 
                 }, this);
             }, this);
         }
-    },
-
-    onPlotMeasureChange : function() {
-        this.bindApplicationMeasures(Connector.getState().getFilters());
     },
 
     bindDefaultMeasures : function(defaultMeasures) {
@@ -166,7 +129,31 @@ Ext.define('Connector.model.Grid', {
                 time: 'date'
             });
         });
+
         this.set('defaultMeasures', wrapped);
+        this._updateDefaultSubjectMeasure(this.get('subjectFilter'));
+    },
+
+    _updateDefaultSubjectMeasure : function(subjectFilter) {
+        var subjectMeasure,
+            subjectAlias = Connector.getQueryService().getSubjectColumnAlias().toLowerCase();
+
+        // find the subjectMeasure
+        Ext.each(this.get('defaultMeasures'), function(defaultMeasure) {
+            if (defaultMeasure.measure.alias.toLowerCase() === subjectAlias) {
+                subjectMeasure = defaultMeasure;
+                return false;
+            }
+        });
+
+        if (subjectMeasure) {
+            if (subjectFilter) {
+                subjectMeasure.filterArray = [subjectFilter];
+            }
+            else {
+                subjectMeasure.filterArray = [];
+            }
+        }
     },
 
     bindMeasures : function(measures, allMeasures, foreignColumns, silent) {
@@ -236,7 +223,7 @@ Ext.define('Connector.model.Grid', {
     /**
      * The 'raw' measures the grid receives are wrapped during processing so they can
      * be consumed by LABKEY.Query.Visualization.getData.
-     * @param {String} measureType
+     * @param {String} [measureType=undefined]
      * @returns {Array}
      */
     getMeasures : function(measureType) {
@@ -265,18 +252,20 @@ Ext.define('Connector.model.Grid', {
                 .concat(this.get('measures'));
     },
 
-    bindApplicationMeasures : function(filterSet) {
+    bindApplicationMeasures : function() {
         //
         // Cross-reference application measures
         //
-        var SQLMeasures = [],
+        var filterSet = Connector.getState().getFilters(),
+            SQLMeasures = [],
             plotMeasures = [],
             queryService = Connector.getService('Query'),
             measureMap = {},
             sourceMap = {};
 
         Ext.each(filterSet, function(filter) {
-            // respect plotted measures
+            // in the plot -- explicitly include the measure columns
+            // TODO: Do we still need the plotMeasures property on this model? Does it differ from SQLMeasures?
             if (filter.isPlot() && !filter.isGrid()) {
                 var plotMeasureSet = filter.get('plotMeasures');
                 Ext.each(plotMeasureSet, function(pm) {
@@ -290,27 +279,28 @@ Ext.define('Connector.model.Grid', {
                     }
                 }, this);
             }
-            else if (filter.isGrid()) {
-                // For each grid filter find the associated measure
-                var gridFilters = filter.get('gridFilter');
-                Ext.each(gridFilters, function(gf) {
 
-                    if (gf && gf != '_null') {
-                        var measure = queryService.getMeasure(gf.getColumnName());
-                        if (!measureMap[measure.alias]) {
-                            measureMap[measure.alias] = {
-                                measure: Ext.clone(measure),
-                                time: 'date',
-                                filterArray: []
-                            };
-                            sourceMap[measure.schemaName + '|' + measure.queryName] = true;
-                        }
+            // Get the data filters from each filter to ensure all filtered measures are
+            // included in the grid
+            Ext.iterate(filter.getDataFilters(), function(alias, filters) {
+                var measure = queryService.getMeasure(alias);
 
-                        measureMap[measure.alias].filterArray.push(gf);
-                    }
+                // ensure this filtered measure is included in the grid
+                if (!measureMap[measure.alias]) {
+                    measureMap[measure.alias] = {
+                        measure: Ext.clone(measure),
+                        time: 'date',
+                        filterArray: []
+                    };
+                    sourceMap[measure.schemaName + '|' + measure.queryName] = true;
+                }
 
-                }, this);
-            }
+                // apply the filters to the base request
+                for (var i=0; i < filters.length; i++) {
+                    measureMap[measure.alias].filterArray.push(filters[i]);
+                }
+            });
+
         }, this);
 
         // gather required columns from each source
@@ -355,25 +345,31 @@ Ext.define('Connector.model.Grid', {
         // calculate the subject filter
         //
         Connector.getFilterService().getSubjects(function(filterState) {
+
             var subjectFilter = Connector.model.Grid.createSubjectFilter(filterState),
                 baseFilterArray = [];
 
             if (subjectFilter) {
-                baseFilterArray = [subjectFilter];
+                baseFilterArray.push(subjectFilter);
             }
 
             this.set({
+                subjectFilter: subjectFilter,
                 baseFilterArray: baseFilterArray,
                 filterArray: filterArray
             });
+
+            // update the default measure if available
+            this._updateDefaultSubjectMeasure(subjectFilter);
 
             if (this.isActive()) {
                 this.activeFilter = false;
                 this.activeColumn = false;
                 this.activeMeasure = false;
 
-                if (!silent)
+                if (!silent) {
                     this.fireEvent('filterchange', this, this.getFilterArray());
+                }
             }
             else {
                 this.activeFilter = true;
@@ -389,13 +385,11 @@ Ext.define('Connector.model.Grid', {
     /**
      * Called when the set of application filters update. Note: This will fire even when
      * the bound view might not be active
-     * @param appFilters
      */
-    onAppFilterChange : function(appFilters) {
+    onAppFilterChange : function() {
         if (this._ready === true) {
-            var filterArray = this.bindFilters(appFilters);
-            this.applyFilters(filterArray, function() {
-                this.bindApplicationMeasures(appFilters);
+            this.applyFilters(this.getDataFilters(), function() {
+                this.bindApplicationMeasures();
 
                 if (this.isActive()) {
                     this.requestMetaData();
@@ -404,19 +398,20 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    bindFilters : function(appFilters) {
+    getDataFilters : function() {
         var filterArray = [];
-        Ext.each(appFilters, function(filter) {
-            if (filter.isGrid()) {
-                var gridFilters = filter.get('gridFilter');
-                Ext.each(gridFilters, function(gf) {
-                    if (gf !== null) {
-                        filterArray.push(gf);
-                        this.addToFilters(gf, filter.id);
-                    }
-                }, this);
-            }
+
+        Ext.each(Connector.getState().getFilters(), function(appFilter) {
+
+            Ext.iterate(appFilter.getDataFilters(), function(alias, filters) {
+                for (var i=0; i < filters.length; i++) {
+                    filterArray.push(filters[i]);
+                    this.addToFilters(filters[i], appFilter.id);
+                }
+            }, this);
+
         }, this);
+
         return filterArray;
     },
 
@@ -424,6 +419,10 @@ Ext.define('Connector.model.Grid', {
         return this.get('baseFilterArray');
     },
 
+    /**
+     * @param {boolean} [includeBaseFilters=false]
+     * @returns {Array}
+     */
     getFilterArray : function(includeBaseFilters) {
 
         var _array = this.get('filterArray');
@@ -503,7 +502,7 @@ Ext.define('Connector.model.Grid', {
 
                 // filters are tracked
                 // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                this.bindFilters(state.getFilters());
+                this.getDataFilters();
 
                 this.fireEvent('usergridfilter', newFilters);
             }
@@ -643,6 +642,21 @@ Ext.define('Connector.model.Grid', {
         this.updateColumnModel();
     },
 
+    /**
+     * These columns are used to populate 'columnSet'
+     * @returns {Array}
+     */
+    generateColumnSet : function() {
+        var columns = Connector.getService('Query').getDefaultGridAliases(true /* asArray */),
+            measures = this.getMeasures();
+
+        Ext.each(measures, function(measure) {
+            columns.push(measure.alias);
+        });
+
+        return Ext.Array.unique(columns);
+    },
+
     updateColumnModel : function() {
         var metadata = this.get('metadata');
 
@@ -650,7 +664,7 @@ Ext.define('Connector.model.Grid', {
         this.set({
             schemaName: metadata.schemaName,
             queryName: metadata.queryName,
-            columnSet: Connector.model.Grid.generateColumnSet(this)
+            columnSet: this.generateColumnSet()
         });
 
         this.applyFilters(this.get('filterArray'), function() {
