@@ -406,8 +406,6 @@ public abstract class DataspaceVariableSelector
 
                 locDimField = Locator.xpath(xpathDimField);
 
-                locDimField = Locator.xpath(xpathDimField);
-
                 if(_test.isElementPresent(locDimField))
                 {
                     _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
@@ -433,6 +431,7 @@ public abstract class DataspaceVariableSelector
                 locDimField = Locator.xpath(xpathDimField);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(locDimField));
                 _test.click(locDimField);
+                _test.sleep(CDSHelper.CDS_WAIT);
                 _test.waitForElement(Locator.xpath(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"), CDSHelper.CDS_WAIT_ANIMATION);
 
                 // Since a protein has multiple columns the allTag will point to the all tag in the far left column.
