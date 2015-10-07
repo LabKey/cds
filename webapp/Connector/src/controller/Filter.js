@@ -8,13 +8,21 @@ Ext.define('Connector.controller.Filter', {
 
     init : function() {
 
-        this._resetCache(true /* valid */);
+        this._resetCache(false /* valid */);
 
         if (LABKEY.devMode) {
             FILTER = this;
         }
 
         this.callParent();
+
+        // Start by initializing the cache on state ready
+        // This requires executing the updateSubjects/onFilterChange chain
+        Connector.getState().onReady(function(state) {
+            state.onMDXReady(function(mdx) {
+                this.updateSubjects(mdx, state.getFilters(), this.onFilterChange, this);
+            }, this);
+        }, this);
     },
 
     updateSubjects : function(mdx, filters, callback, scope) {
@@ -24,7 +32,10 @@ Ext.define('Connector.controller.Filter', {
         // if there are not any filters present, forgo requesting
         if (Ext.isEmpty(filters)) {
             this._loadCache(false, undefined);
-            callback.call(scope);
+
+            if (Ext.isFunction(callback)) {
+                callback.call(scope);
+            }
         }
         else {
             // TODO: Get the subject filter specifically from each filter
@@ -42,7 +53,9 @@ Ext.define('Connector.controller.Filter', {
 
                         this._loadCache(true, subjects);
 
-                        callback.call(scope);
+                        if (Ext.isFunction(callback)) {
+                            callback.call(scope);
+                        }
                     },
                     scope: this
                 });
@@ -94,11 +107,13 @@ Ext.define('Connector.controller.Filter', {
     },
 
     _resetCache : function(valid) {
+        var currentResults = this.subjectFilterCache ? this.subjectFilterCache.results : undefined;
+
         this.subjectFilterCache = {
             valid: valid,
             hasFilters: false,
             subjects: undefined,
-            results: undefined
+            results: currentResults
         };
     }
 });
