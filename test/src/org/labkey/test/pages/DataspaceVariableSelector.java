@@ -327,6 +327,7 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
+                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[text()='All']"))
@@ -356,6 +357,7 @@ public abstract class DataspaceVariableSelector
 
                     // Let the drop down render.
                     _test.longWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath(xpathDimDropDown)));
+                    _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
 
                     // Clear the current selection.
                     if(!cds.isCheckboxChecked(xpathDimDropDown + "//label[text()='All']"))
@@ -438,6 +440,7 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
+                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
 
                 // Clear the current selection.
                 if(!cds.isCheckboxChecked(xpathPanelSelector + "//label[@test-data-value='protein_panel-all']"))
@@ -491,6 +494,7 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
+                _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
 
                 _test.waitForElement(allTag, 10000);
 
