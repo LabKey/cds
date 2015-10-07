@@ -1167,9 +1167,14 @@ Ext.define('Connector.panel.Selector', {
      * This is used onSelect/Deselect to determine what measures are required to be
      * selected based on the currently selected measures.
      * @param selModel
+     * @param measure
      * @returns {Array}
      */
-    manageRequiredMeasures : function(selModel) {
+    manageRequiredMeasures : function(selModel, measure) {
+
+        if (measure.get('isDimension')) {
+            return [];
+        }
 
         var selectedNonRequired = false,
             selections = selModel.getSelection();
@@ -1203,7 +1208,7 @@ Ext.define('Connector.panel.Selector', {
 
         if (this.multiSelect) {
 
-            var requiredRecords = this.manageRequiredMeasures(selModel);
+            var requiredRecords = this.manageRequiredMeasures(selModel, measure);
 
             Ext.each([measure].concat(requiredRecords), function(record) {
                 if (this.getRecordIndex(this.getSelectedRecords(), record) == -1) {
@@ -1225,7 +1230,7 @@ Ext.define('Connector.panel.Selector', {
 
     deselectMeasure : function(selModel, measure) {
         if (this.multiSelect) {
-            var requiredRecords = this.manageRequiredMeasures(selModel);
+            var requiredRecords = this.manageRequiredMeasures(selModel, measure);
 
             Ext.each([measure].concat(requiredRecords), function(record) {
                 var index = this.getRecordIndex(this.getSelectedRecords(), record);
