@@ -723,7 +723,7 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    getGutterPlotConfig : function(margins, height, width, data, aes, scales, labels) {
+    getGutterPlotConfig : function(aes, scales) {
 
         if (this.measures[2]) {
             aes.color = function(row) {return row.color};
@@ -740,13 +740,8 @@ Ext.define('Connector.view.Chart', {
         }
 
         return Ext.apply(this.getBasePlotConfig(), {
-            margins : margins,
-            width : width,
-            height : height,
-            data : data,
             aes : aes,
             scales : scales,
-            labels : labels,
             tickLength : 0,
             gridColor : ChartUtils.colors.GRIDBKGD,
             gridLineColor : ChartUtils.colors.GRIDLINE,
@@ -1054,10 +1049,6 @@ Ext.define('Connector.view.Chart', {
             this.highlightSelected();
         };
 
-        this.isBrushed = function() {
-            return layerScope.isBrushed;
-        };
-
         if (!noplot) {
             this.plot.setBrushing(this.bindBrushing(layerScope, properties, 'main', this.xGutterPlot, this.yGutterPlot));
             if (this.xGutterPlot) {
@@ -1169,6 +1160,7 @@ Ext.define('Connector.view.Chart', {
         return {
             fillColor: ChartUtils.colors.SELECTEDBG,
             strokeColor: ChartUtils.colors.SELECTED,
+            handleLen: 70,
             dimension: _dimension,
             brushstart: Ext.bind(ChartUtils.brushStart, this, [layerScope, dimension]),
             brush: Ext.bind(brushFn, this),
@@ -1260,8 +1252,13 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return Ext.apply(this.getGutterPlotConfig(gutterXMargins, this.xGutterHeight, gutterXWidth, allDataRows.undefinedY, gutterXAes, gutterXScales, gutterXLabels),
-                {gridLinesVisible: 'y'});
+        return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales),
+                {gridLinesVisible: 'y',
+                    margins : gutterXMargins,
+                    width : gutterXWidth,
+                    height : this.xGutterHeight,
+                    data : allDataRows.undefinedY,
+                    labels : gutterXLabels});
     },
 
     generateYGutter : function(plotConfig, chartData, allDataRows) {
@@ -1312,8 +1309,13 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return Ext.apply(this.getGutterPlotConfig(gutterYMargins, plotConfig.height, this.yGutterWidth, allDataRows.undefinedX, gutterYAes, gutterYScales, gutterYLabels),
-                {gridLinesVisible: 'x'});
+        return Ext.apply(this.getGutterPlotConfig(gutterYAes, gutterYScales),
+                {gridLinesVisible: 'x',
+                margins : gutterYMargins,
+                width : this.yGutterWidth,
+                height : plotConfig.height,
+                data : allDataRows.undefinedX,
+                labels : gutterYLabels});
 
     },
 

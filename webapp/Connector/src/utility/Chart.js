@@ -194,7 +194,7 @@ Ext.define('Connector.utility.Chart', {
     brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties, dimension) {
 
         // this brushing method can be used across different dimensions (main vs. xTop vs. yRight)
-        // The plot will
+        // only the plot that originated the brushing can end the brushing
         if (this.initiatedBrushing !== dimension) {
             return;
         }
