@@ -100,15 +100,6 @@ Ext.define('Connector.grid.Panel', {
             var plotMeasures = this.model.getMeasures('plotMeasures');
             Ext.each(columns, function(column) {
 
-                var lowerIndex = column.dataIndex.toLowerCase();
-
-                column.plotted = false;
-                for (var a=0; a < plotMeasures.length; a++) {
-                    if (LABKEY.MeasureUtil.getAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
-                        column.plotted = true;
-                    }
-                }
-
                 if (measureNameToQueryMap[column.dataIndex]) {
                     column.queryLabel = measureNameToQueryMap[column.dataIndex];
                 }
@@ -166,16 +157,12 @@ Ext.define('Connector.grid.Panel', {
             groups = [],
             groupMap = {},
             studyTime = [],
-            remainder = [],
-            plotted = [];
+            remainder = [];
 
         // Split columns into groups
         Ext.each(columns, function(col) {
             if (defaultColumns[col.dataIndex]) {
                 studyTime.push(col);
-            }
-            else if (col.plotted === true) {
-                plotted.push(col);
             }
             else {
                 remainder.push(col);
@@ -187,13 +174,6 @@ Ext.define('Connector.grid.Panel', {
             text: 'Study and time',
             columns: studyTime
         });
-
-        if (plotted.length > 0) {
-            groups.push({
-                text: 'Plot Data Results',
-                columns: plotted
-            });
-        }
 
         // All other groups based on query label
         Ext.each(remainder, function(col) {
