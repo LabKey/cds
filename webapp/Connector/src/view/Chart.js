@@ -755,7 +755,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     getScaleConfigs : function(noplot, properties, chartData, studyAxisInfo, layerScope) {
-        var scales = {}, domain;
+        var scales = {}, domain, xDomain;
 
         if (noplot) {
             scales.x = {
@@ -772,12 +772,11 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
-
                 // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
-                if(this.requireYGutter && chartData.getXDomain(studyAxisInfo)[0]==null && chartData.getXDomain(studyAxisInfo)[1]==null)
+                domain = chartData.getXDomain(studyAxisInfo);
+                if(this.requireYGutter && domain[0] == null && domain[1] == null) {
                     domain = [0,1];
-                else
-                    domain = chartData.getXDomain(studyAxisInfo);
+                }
 
                 scales.x = {
                     scaleType: 'continuous',
@@ -816,10 +815,10 @@ Ext.define('Connector.view.Chart', {
             }
 
             // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
-            if(this.requireXGutter && chartData.getYDomain()[0]==null && chartData.getYDomain()[1]==null)
+            domain = chartData.getYDomain();
+            if(this.requireXGutter && domain[0] == null && domain[1] == null) {
                 domain = [0,1];
-            else
-                domain = chartData.getYDomain();
+            }
 
             scales.yLeft = {
                 scaleType: 'continuous',
@@ -915,8 +914,8 @@ Ext.define('Connector.view.Chart', {
             };
         }
 
-        this.requireXGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedY) && (allDataRows.undefinedY.length>0);
-        this.requireYGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedX) && (allDataRows.undefinedX.length>0);
+        this.requireXGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedY) && allDataRows.undefinedY.length > 0;
+        this.requireYGutter = Ext.isDefined(allDataRows) && Ext.isDefined(allDataRows.undefinedX) && allDataRows.undefinedX.length > 0;
 
         this.plotEl.update('');
         this.resizePlotContainers(studyAxisInfo ? studyAxisInfo.getData().length : 0);
@@ -1043,10 +1042,12 @@ Ext.define('Connector.view.Chart', {
 
         this.clearAllBrushing = function() {
             this.plot.clearBrush();
-            if (this.xGutterPlot)
+            if (this.xGutterPlot) {
                 this.xGutterPlot.clearBrush();
-            if (this.yGutterPlot)
+            }
+            if (this.yGutterPlot) {
                 this.yGutterPlot.clearBrush();
+            }
 
             layerScope.isBrushed = false;
             this.clearHighlightedData();
@@ -1329,27 +1330,26 @@ Ext.define('Connector.view.Chart', {
     },
 
     xAxisClick : function(e, selection, target, index, y, layerScope) {
+        var multi = e.ctrlKey||e.shiftKey||e.metaKey, nodes, node = null;
+
         // selectionInProgress keeps label highlighted while selection created
         this.selectionInProgress = target;
 
-        var multi = e.ctrlKey||e.shiftKey||(e.metaKey),
-            nodes,
-            node = null;
-
         // node is needed for animation
-        if (layerScope.plot.renderer)
-        {
+        if (layerScope.plot.renderer) {
             nodes = layerScope.plot.renderer.canvas.selectAll('.tick-text text');
-            nodes[0].forEach(function(n)
-            {
-                if (n.innerHTML === target)
+            nodes[0].forEach(function(n) {
+                if (n.innerHTML === target) {
                     node = n;
+                }
             });
 
-            if (node)
+            if (node) {
                 this.clickTask.delay(150, null, null, [node, this, this.measures[0].alias, target, multi]);
-            else
+            }
+            else {
                 this.clickTask.delay(150, null, null, [e.target, this, this.measures[0].alias, target, multi]);
+            }
 
             this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         }
