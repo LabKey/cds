@@ -653,19 +653,6 @@ Ext.define('Connector.controller.Query', {
         return this._dataSorts;
     },
 
-    getDefaultMeasure : function(callback, scope) {
-        if (Ext.isFunction(callback)) {
-            this.onQueryReady(function() {
-                this.getDefaultGridMeasures(function(measures) {
-                    callback.call(scope || this, measures[0]);
-                }, this);
-            }, this);
-        }
-        else {
-            console.error('ERROR: ' + this.$className + '.getDefaultMeasure() requires a callback be provided.');
-        }
-    },
-
     getData : function(measures, success, failure, scope) {
 
         this._LABKEY_Query_Visualization_getData({
@@ -730,7 +717,7 @@ Ext.define('Connector.controller.Query', {
      * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
      * in all whereFilters with the appropriate configuration.
      * @param filters
-     * @param includeDemographic true to include all fitlers from demographic queries
+     * @param includeDemographic true to include all filters from demographic queries
      * @param relevantQueryKeys array of relevant query keys (schema|query) for which filters to be included from
      */
     getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys) {
@@ -838,108 +825,56 @@ Ext.define('Connector.controller.Query', {
 
         // look at the grid filters to determine measure set
         if (!Ext.isEmpty(filterConfig.gridFilter)) {
-            var gridFilters = filterConfig.gridFilter, columnName, measure, encodedFilter;
+            var gridFilters = filterConfig.gridFilter,
+                measure, encodedFilter,
+                g=0, gf;
 
-            for (var g=0; g < gridFilters.length; g++) {
-                var gf = gridFilters[g];
+            for (; g < gridFilters.length; g++) {
+                gf = gridFilters[g];
                 // At times the filter can be null/undefined (e.g. when the plot specifies x-axis filters only)
-                if (gf && gf !== "_null") {
+                if (gf && gf !== '_null') {
 
                     if (Ext.isString(gf)) {
                         gf = LABKEY.Filter.getFiltersFromUrl(gf, 'query')[0];
                     }
 
-                    columnName = gf.getColumnName();
-                    measure = this.getMeasure(columnName);
+                    measure = this.getMeasure(gf.getColumnName());
                     if (measure) {
+                        var isTimeBased = measure.alias in this.getTimeAliases();
 
-                        var filterOnLookup = columnName.indexOf('/') > -1;
+                        if (!measureMap[measure.alias]) {
 
-                        // process the filter itself, if it is a lookup then we just include it directly
-                        if (filterOnLookup) {
-                            // here we fake up a measure. The getData API accepts filters of the form
-                            // "study_Nab_Lab/PI" as "Lab.PI"
-                            var schema = measure.schemaName,
-                                query = measure.queryName,
-                                alias = columnName.replace(/\//g, '_');
-
-                            // This avoids schemas/queries that have '_' in them
-                            var columnNamePortion = columnName.replace([schema, query].join('_'), '');
-                            if (columnNamePortion.indexOf('_') === 0) {
-                                columnNamePortion = columnNamePortion.substring(1);
+                            // we still respect the value if it is set explicitly on the measure
+                            if (!Ext.isDefined(measure.inNotNullSet)) {
+                                measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
                             }
 
-                            var parts = columnNamePortion.replace(/\//g, '.').split('_'),
-                                safeColName;
+                            measureMap[measure.alias] = {
+                                measure: measure,
+                                filterArray: []
+                            };
 
-                            // ["study", "SubjectVisit", "SubjectId", "Study/Label"] --> "SubjectId/Study/Label"
-                            if (parts.length > 1) {
-                                safeColName = parts.join('/');
-                            }
-                            else {
-                                safeColName = parts[parts.length-1];
-                            }
-
-                            var nf = LABKEY.Filter.create(safeColName.replace(/\./g, '/'), gf.getValue(), gf.getFilterType());
-
-                            if (!measureMap[alias]) {
-                                measureMap[alias] = {
-                                    measure: {
-                                        alias: alias,
-                                        schemaName: schema,
-                                        queryName: query,
-                                        name: safeColName,
-                                        inNotNullSet: true // unfortunately, we don't know much about the lookup type
-                                    },
-                                    filterArray: []
+                            if (isTimeBased) {
+                                measureMap[measure.alias].dateOptions = {
+                                    interval: measure.alias,
+                                    zeroDayVisitTag: null
                                 };
                             }
+                        }
 
-                            if (nf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
-                                measureMap[alias].measure.inNotNullSet = false;
-                            }
+                        if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
+                            measureMap[measure.alias].measure.inNotNullSet = false;
+                        }
 
-                            encodedFilter = this.encodeURLFilter(nf);
-                            measureMap[alias].filterArray.push(filtersAreInstances ? nf : encodedFilter);
+                        if (gf.getColumnName() === measure.name || isTimeBased) {
+                            encodedFilter = this.encodeURLFilter(gf);
+                            measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : encodedFilter);
                         }
                         else {
-
-                            var isTimeBased = measure.alias in this.getTimeAliases();
-
-                            if (!measureMap[measure.alias]) {
-
-                                // we still respect the value if it is set explicitly on the measure
-                                if (!Ext.isDefined(measure.inNotNullSet)) {
-                                    measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-                                }
-
-                                measureMap[measure.alias] = {
-                                    measure: measure,
-                                    filterArray: []
-                                };
-
-                                if (isTimeBased) {
-                                    measureMap[measure.alias].dateOptions = {
-                                        interval: measure.alias,
-                                        zeroDayVisitTag: null
-                                    };
-                                }
-                            }
-
-                            if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
-                                measureMap[measure.alias].measure.inNotNullSet = false;
-                            }
-
-                            if (columnName === measure.name || isTimeBased) {
-                                encodedFilter = this.encodeURLFilter(gf);
-                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : encodedFilter);
-                            }
-                            else {
-                                // create a filter with the measure 'name' rather than the 'alias' as the column
-                                var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
-                                encodedFilter = this.encodeURLFilter(_gf);
-                                measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : encodedFilter);
-                            }
+                            // create a filter with the measure 'name' rather than the 'alias' as the column
+                            var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
+                            encodedFilter = this.encodeURLFilter(_gf);
+                            measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : encodedFilter);
                         }
                     }
                     else {
@@ -984,41 +919,38 @@ Ext.define('Connector.controller.Query', {
 
     getSourceCounts : function(sourceModels, callback, scope) {
 
-        if (Ext.isFunction(callback)) {
+        Connector.getFilterService().getSubjects(function(subjectFilter) {
 
-            Connector.getFilterService().getSubjects(function(subjectFilter) {
+            // we cache the source count results so they can share between variable sectors
+            if (Ext.isDefined(this.SOURCE_COUNTS)) {
+                callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
+                return;
+            }
 
-                // we cache the source count results so they can share between variable sectors
-                if (Ext.isDefined(this.SOURCE_COUNTS)) {
-                    callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
-                    return;
+            var json = {
+                schema: Connector.studyContext.schemaName,
+                members: subjectFilter.hasFilters ? subjectFilter.subjects : undefined,
+                sources: []
+            };
+
+            Ext.each(sourceModels, function(source) {
+                var queryName = source.get('subjectCountQueryName') || source.get('queryName');
+                if (json.sources.indexOf(queryName) == -1) {
+                    json.sources.push(queryName);
                 }
+            });
 
-                var json = {
-                    schema: Connector.studyContext.schemaName,
-                    members: subjectFilter.hasFilters ? subjectFilter.subjects : undefined,
-                    sources: []
-                };
-
-                Ext.each(sourceModels, function(source) {
-                    var queryName = source.get('subjectCountQueryName') || source.get('queryName');
-                    if (json.sources.indexOf(queryName) == -1) {
-                        json.sources.push(queryName);
-                    }
-                });
-
-                Ext.Ajax.request({
-                    url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
-                    method: 'POST',
-                    jsonData: json,
-                    success: function(response) {
-                        this.SOURCE_COUNTS = Ext.decode(response.responseText).counts;
-                        callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
-                    },
-                    scope: this
-                });
-            }, this);
-        }
+            Ext.Ajax.request({
+                url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
+                method: 'POST',
+                jsonData: json,
+                success: function(response) {
+                    this.SOURCE_COUNTS = Ext.decode(response.responseText).counts;
+                    callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
+                },
+                scope: this
+            });
+        }, this);
     },
 
     /**
