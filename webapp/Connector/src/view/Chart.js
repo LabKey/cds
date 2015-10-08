@@ -1009,6 +1009,12 @@ Ext.define('Connector.view.Chart', {
             try {
                 this.hidePlotMsg();
                 this.plot.render();
+
+                // use title for xaxis label tooltip to avoid conflict with highlight and selection functionality
+                this.plot.renderer.canvas.selectAll('.tick-text text').each(function () {
+                    var tick = d3.select(this);
+                    tick.append("title").text(tick.text());
+                });
                 if (!noplot && this.measures[2]) {
                     this.getColorSelector().setLegend(this.plot.getLegendData());
                 }
