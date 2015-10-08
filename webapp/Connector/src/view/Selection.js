@@ -25,30 +25,31 @@ Ext.define('Connector.view.Selection', {
                     '<span class="closeitem" data-id="{id}" member-index="0">',
                         '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
                     '</span>',
-                '</tpl>',
-                '<tpl if="this.isGrid(values) === true">',
+                '<tpl elseif="this.isGrid(values) === true || this.isAggregated(values) === true">',
                     // Grid Filter
                     '<div class="filter-item">',
                         '<div class="selitem status-over memberloc">',
+                            '<tpl if="this.isAggregated(values) === true">',
+                                '<span class="sel-label">Aggregated:</span> ',
+                            '</tpl>',
                             '{[this.renderGridFilterLabel(values)]}',
                         '</div>',
                     '</div>',
                     '<span class="closeitem" data-id="{id}" member-index="0">',
                         '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
                     '</span>',
-                '</tpl>',
-                '<tpl if="this.isPlot(values) === true">',
+                '<tpl elseif="this.isPlot(values) === true">',
                     // "In the plot" Filter
                     '<div class="filter-item">',
                         '<div class="selitem status-over memberloc">',
+                            '<span class="sel-label">In the plot:</span> ',
                             '{[this.renderInThePlot(values)]}',
                         '</div>',
                     '</div>',
                     '<span class="closeitem" data-id="{id}"  member-index="0">',
                         '<img src="' + LABKEY.contextPath + '/Connector/images/icon_general_clearsearch_normal.svg">',
                     '</span>',
-                '</tpl>',
-                '<tpl if="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
+                '<tpl elseif="this.isPlot(values) === false && this.isGrid(values) === false && this.isPlotSelection(values) === false">',
                     // Normal Filter (and Group Filters)
                     '<div class="filter-item">',
                         '<tpl if="members.length &gt; 0">',
@@ -72,6 +73,9 @@ Ext.define('Connector.view.Selection', {
                     var isPlot = values.hasOwnProperty('isPlot') ? values.isPlot : false;
                     var isGrid = values.hasOwnProperty('isGrid') ? values.isGrid : false;
                     return { isGrid: isGrid, isPlot: isPlot };
+                },
+                isAggregated : function(values) {
+                    return values.hasOwnProperty('isAggregated') ? values.isAggregated : false;
                 },
                 isGrid : function(values) {
                     var check = this._plotGridCheck(values);
@@ -144,7 +148,7 @@ Ext.define('Connector.view.Selection', {
                             measureLabels.push(measures[i].measure.label);
                         }
                     }
-                    return '<span class="sel-label">In the plot:</span> ' + Ext.htmlEncode(measureLabels.join(', '));
+                    return Ext.htmlEncode(measureLabels.join(', '));
                 },
                 renderGridFilterLabel : function(values) {
                     var type = LABKEY.app.model.Filter.getGridHierarchy(values);

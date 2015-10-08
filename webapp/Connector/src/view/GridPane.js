@@ -13,7 +13,7 @@ Ext.define('Connector.view.GridPane', {
 
     isShowOperator: false,
 
-    maxHeight: 400,
+    maxHeight: 415,
 
     displayTitle: 'Filter details',
 
@@ -23,9 +23,17 @@ Ext.define('Connector.view.GridPane', {
 
         var content = [{
             xtype: 'box',
-            autoEl: {
-                tag: 'div',
-                html: 'This filter includes only ' + (filter.get('isWhereFilter') ? '' : 'subjects with') + ' data for the following variables.'
+            tpl: new Ext.XTemplate(
+                '<div>',
+                    'This filter includes only ',
+                    '<tpl if="isAggregated">',
+                        '<b>subjects with aggregated</b> ',
+                    '</tpl>',
+                    'data for the following variables.',
+                '</div>'
+            ),
+            data: {
+                isAggregated: filter.isAggregated()
             }
         }];
 

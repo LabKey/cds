@@ -692,20 +692,25 @@ Ext.define('Connector.controller.Query', {
 
         var getDataConfig = {
             joinToFirst: true,
-            measures: [{
-                measure: this.cleanMeasure(this._gridMeasures[0]),
-                time: 'date'
-            }],
+            measures: [],
             sorts: this.getDataSorts()
         };
 
-        // for each gridFilter, match it to a measure that will be used in the getData configuration
-        var dataConfig = Ext.isDefined(appFilter.data) ? appFilter.data : appFilter;
-        var measures = this._getMeasures(dataConfig, false /* measure.filterArray is an array of query strings */);
-
-        Ext.each(measures, function(measure) {
+        // apply each measure to the request, encoding filters if present
+        Ext.each(appFilter.getMeasureSet(), function(measure) {
+            if (!Ext.isEmpty(measure.filterArray)) {
+                var fa = [];
+                for (var f = 0; f < measure.filterArray.length; f++) {
+                    fa.push(this.encodeURLFilter(measure.filterArray[f]));
+                }
+                measure.filterArray = fa;
+            }
             getDataConfig.measures.push(measure);
-        });
+        }, this);
+
+        if (Ext.isEmpty(getDataConfig.measures)) {
+            throw 'Invalid getData configuration. At least one measure is required.';
+        }
 
         filterConfig.getDataCDS = getDataConfig;
         filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
@@ -724,9 +729,8 @@ Ext.define('Connector.controller.Query', {
         var measures = [], queryKey, include;
 
         Ext.each(filters, function(filter) {
-            if (filter.get('isWhereFilter') === true) {
-                var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
-                Ext.each(ms, function(m) {
+            if (filter.isWhereFilter()) {
+                Ext.each(filter.getMeasureSet(), function(m) {
                     queryKey = m.measure.schemaName + '|' + m.measure.queryName;
 
                     include = !Ext.isArray(relevantQueryKeys) || relevantQueryKeys.indexOf(queryKey) > -1;
@@ -753,152 +757,15 @@ Ext.define('Connector.controller.Query', {
         var measures = [], filters = Connector.getState().getFilters();
 
         Ext.each(filters, function(filter) {
-            if (filter.get('isPlot') === true && filter.get('isWhereFilter') === true) {
-                var ms = this._getMeasures(filter.data, true /* measure.filterArray is array of LABKEY.Filter */);
-                Ext.each(ms, function(m) {
+            // TODO: This might be able to go away if the scenario can be supported with filter changes
+            // during fb_refinement
+            if (filter.isPlot() && filter.isWhereFilter()) {
+                Ext.each(filter.getMeasureSet(), function(m) {
                     if (includeAxisFilters || Ext.isArray(m.filterArray)) {
                         measures.push(m);
                     }
                 });
             }
-        }, this);
-
-        return measures;
-    },
-
-    /**
-     * Returns a set of measures based on an array of gridFilters (a.k.a. LABKEY.Filter objects)
-     * @param filterConfig
-     * @param filtersAreInstances
-     * @returns {Array}
-     * @private
-     */
-    _getMeasures : function(filterConfig, filtersAreInstances) {
-        var measures = [], measureMap = {}, alias;
-
-        if (filterConfig.isPlot === true) {
-            // use the plotMeasures to determine the measure set
-            Ext.each(filterConfig.plotMeasures, function(plotMeasure) {
-                if (plotMeasure) {
-                    var measure = this.getMeasure(plotMeasure.measure.alias);
-                    if (measure) {
-
-                        // we still respect the value if it is set explicitly on the measure
-                        if (!Ext.isDefined(measure.inNotNullSet)) {
-                            measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-                        }
-
-                        measureMap[measure.alias] = {
-                            measure: measure,
-                            filterArray: []
-                        };
-
-                        if (plotMeasure.time) {
-                            measureMap[measure.alias].time = plotMeasure.time;
-                        }
-                        if (plotMeasure.dimension) {
-                            measureMap[measure.alias].dimension = plotMeasure.dimension;
-                        }
-                        if (plotMeasure.dateOptions) {
-                            measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
-                        }
-
-                        // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
-                        Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
-                            alias = LABKEY.MeasureUtil.getAlias(axisFilterRecord);
-
-                            // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
-                            if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
-                                measureMap[alias].measure.values = Ext.Array.unique(measureMap[alias].measure.values.concat(axisFilterRecord.values));
-                            }
-                            else {
-                                measureMap[alias] = {
-                                    measure: axisFilterRecord,
-                                    filterArray: []
-                                };
-                            }
-                        }, this);
-                    }
-                }
-            }, this);
-        }
-
-        // look at the grid filters to determine measure set
-        if (!Ext.isEmpty(filterConfig.gridFilter)) {
-            var gridFilters = filterConfig.gridFilter,
-                measure, encodedFilter,
-                g=0, gf;
-
-            for (; g < gridFilters.length; g++) {
-                gf = gridFilters[g];
-                // At times the filter can be null/undefined (e.g. when the plot specifies x-axis filters only)
-                if (gf && gf !== '_null') {
-
-                    if (Ext.isString(gf)) {
-                        gf = LABKEY.Filter.getFiltersFromUrl(gf, 'query')[0];
-                    }
-
-                    measure = this.getMeasure(gf.getColumnName());
-                    if (measure) {
-                        var isTimeBased = measure.alias in this.getTimeAliases();
-
-                        if (!measureMap[measure.alias]) {
-
-                            // we still respect the value if it is set explicitly on the measure
-                            if (!Ext.isDefined(measure.inNotNullSet)) {
-                                measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-                            }
-
-                            measureMap[measure.alias] = {
-                                measure: measure,
-                                filterArray: []
-                            };
-
-                            if (isTimeBased) {
-                                measureMap[measure.alias].dateOptions = {
-                                    interval: measure.alias,
-                                    zeroDayVisitTag: null
-                                };
-                            }
-                        }
-
-                        if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
-                            measureMap[measure.alias].measure.inNotNullSet = false;
-                        }
-
-                        if (gf.getColumnName() === measure.name || isTimeBased) {
-                            encodedFilter = this.encodeURLFilter(gf);
-                            measureMap[measure.alias].filterArray.push(filtersAreInstances ? gf : encodedFilter);
-                        }
-                        else {
-                            // create a filter with the measure 'name' rather than the 'alias' as the column
-                            var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
-                            encodedFilter = this.encodeURLFilter(_gf);
-                            measureMap[measure.alias].filterArray.push(filtersAreInstances ? _gf : encodedFilter);
-                        }
-                    }
-                    else {
-                        console.warn('Unable to find measure for query parameter:', gf.getURLParameterName() + '=' + gf.getURLParameterValue());
-                    }
-                }
-            }
-        }
-
-        Ext.iterate(measureMap, function(alias, config) {
-            var mc = {
-                measure: this.cleanMeasure(config.measure)
-            };
-            if (config.dimension) {
-                mc.dimension = config.dimension;
-            }
-            if (config.dateOptions) {
-                mc.dateOptions = config.dateOptions;
-            }
-            if (config.filterArray.length > 0) {
-                mc.filterArray = config.filterArray;
-            }
-
-            measures.push(mc);
         }, this);
 
         return measures;

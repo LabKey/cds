@@ -1611,25 +1611,41 @@ Ext.define('Connector.view.Chart', {
 
     /**
      * @param {Array} sqlFilters
+     * @param {Boolean} [fromBrush=false]
      * @param {Boolean} [allowInverseFilter=false]
      */
-    createSelectionFilter : function(sqlFilters, allowInverseFilter) {
-        var xMeasure = this.measures[0], yMeasure = this.measures[1];
-        var wrapped = [ this._getAxisWrappedMeasure(xMeasure), this._getAxisWrappedMeasure(yMeasure) ];
+    createSelectionFilter : function(sqlFilters, fromBrush, allowInverseFilter) {
+        var wrapped = [
+                this._getAxisWrappedMeasure(this.measures[0] /* xMeasure */),
+                this._getAxisWrappedMeasure(this.measures[1] /* yMeasure */)
+            ],
+            selection;
 
-        // TODO: Categorical filters need to only include their measures. This means modify wrapped
-        var filter = Ext.create('Connector.model.Filter', {
-            gridFilter: sqlFilters,
-            plotMeasures: wrapped,
-            isPlot: true,
-            isGrid: true,
-            operator: LABKEY.app.model.Filter.OperatorTypes.OR,
-            filterSource: 'GETDATA',
-            isWhereFilter: true,
-            showInverseFilter: allowInverseFilter === true
-        });
+        // construct an 'aggregated' filter
+        if (fromBrush && this.showAsMedian) {
+            selection = {
+                gridFilter: sqlFilters,
+                members: Ext.Object.getKeys(this.brushedSubjects),
+                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                filterSource: 'GETDATA',
+                isAggregated: true
+            };
+        }
+        else {
+            // TODO: Categorical filters need to only include their measures. This means modify wrapped
+            selection = {
+                gridFilter: sqlFilters,
+                plotMeasures: wrapped,
+                isPlot: true,
+                isGrid: true,
+                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                filterSource: 'GETDATA',
+                isWhereFilter: true,
+                showInverseFilter: allowInverseFilter === true
+            };
+        }
 
-        Connector.getState().addSelection(filter, true, false, true);
+        Connector.getState().addSelection(selection, true, false, true);
     },
 
     afterSelectionAnimation : function(node, view, name, target, multi) {
@@ -1660,7 +1676,7 @@ Ext.define('Connector.view.Chart', {
 
         sqlFilters[0] = LABKEY.Filter.create(name, values, type);
 
-        this.createSelectionFilter(sqlFilters, allowInverseFilter);
+        this.createSelectionFilter(sqlFilters, false /* fromBrush */, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 

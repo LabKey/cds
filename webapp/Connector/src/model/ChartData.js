@@ -283,7 +283,7 @@ Ext.define('Connector.model.ChartData', {
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
 
         // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
-        Ext.each(Connector.getService('Query').getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
+        Ext.each(Connector.getQueryService().getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
             brushFilterAliases.push(LABKEY.MeasureUtil.getAlias(brushFilterMeasure.measure));
         });
 

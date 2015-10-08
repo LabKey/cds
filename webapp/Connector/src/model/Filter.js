@@ -7,7 +7,9 @@ Ext.define('Connector.model.Filter', {
     extend: 'LABKEY.app.model.Filter',
 
     fields: [
-        {name : 'dataFilter', defaultValue: {}}
+        {name : 'dataFilter', defaultValue: {}},
+        {name : 'measureSet', defaultValue: []},
+        {name : 'isAggregated', defaultValue: false}
     ],
 
     statics: {
@@ -35,8 +37,9 @@ Ext.define('Connector.model.Filter', {
                         console.error(msg);
                     }
                     else {
-                        var uniqueName = member.uniqueName.split('].');
-                        var containerID = uniqueName[1].replace('[', '');
+                        var uniqueName = member.uniqueName.split('].'),
+                            containerID = uniqueName[1].replace('[', '');
+
                         Connector.model.Filter.subjectMap[member.name] = containerID;
                     }
                 });
@@ -68,12 +71,17 @@ Ext.define('Connector.model.Filter', {
         this.callParent([config]);
 
         Connector.getQueryService().onQueryReady(function() {
+            this._generateMeasures();
             this._generateDataFilters();
         }, this);
     },
 
     getDataFilters : function() {
         return this.get('dataFilter');
+    },
+
+    getMeasureSet : function() {
+        return Ext.clone(this.get('measureSet'));
     },
 
     /**
@@ -86,6 +94,7 @@ Ext.define('Connector.model.Filter', {
 
         if (!this.SET_LOCK) {
             Connector.getQueryService().onQueryReady(function() {
+                this._generateMeasures();
                 this._generateDataFilters();
             }, this);
         }
@@ -103,8 +112,198 @@ Ext.define('Connector.model.Filter', {
         this.SET_LOCK = false;
     },
 
-    modify : function(datas) {
-        // TODO: Need to switch real-time updates to use this modify method, so data filters can be updated
+    isAggregated : function() {
+        return this.get('isAggregated') === true;
+    },
+
+    /**
+     * Generates the set of measures that can be used to express this filter as a count filter.
+     * These measures are persisted in 'measureSet' property.
+     * @private
+     */
+    _generateMeasures : function() {
+
+        var queryService = Connector.getQueryService(),
+            subjectMeasure = queryService.getMeasure(queryService.getSubjectColumnAlias()),
+            measureMap = {};
+
+        // add any default measures
+        measureMap[subjectMeasure.alias] = {
+            measure: queryService.cleanMeasure(subjectMeasure),
+            filterArray: []
+        };
+
+        if (this.isAggregated()) {
+            // aggregation filter
+
+            /**
+             * "Apply aggregate filters as subject filters from the brushed set of points."
+             */
+            var filter = this._generateFilter(subjectMeasure, subjectMeasure.name, this.get('members'));
+            measureMap[subjectMeasure.alias].filterArray.push(filter);
+        }
+        else if (this.isPlot() && this.isGrid()) {
+            // plot selection filter
+
+            this._processPlotMeasures(measureMap);
+            this._processGridMeasures(measureMap);
+        }
+        else if (this.isPlot()) {
+            // in the plot filter
+
+            this._processPlotMeasures(measureMap);
+        }
+        else if (this.isGrid()) {
+            // grid filter
+
+            this._processGridMeasures(measureMap);
+        }
+        else {
+            // olap filter -- nothing to do
+        }
+
+        // convert the map into an array of 'wrapped' measures
+        this._set('measureSet', this._mapToMeasures(measureMap));
+    },
+
+    /**
+     * Used to process the 'plotMeasures' property to determine the set of measures to include
+     * @param measureMap
+     * @private
+     */
+    _processPlotMeasures : function(measureMap) {
+        var queryService = Connector.getQueryService();
+
+        Ext.each(this.get('plotMeasures'), function(plotMeasure) {
+            if (plotMeasure) {
+
+                var measure = queryService.getMeasure(plotMeasure.measure.alias),
+                    alias;
+
+                if (measure) {
+
+                    // we still respect the value if it is set explicitly on the measure
+                    if (!Ext.isDefined(measure.inNotNullSet)) {
+                        measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+                    }
+
+                    measureMap[measure.alias] = {
+                        measure: queryService.cleanMeasure(measure),
+                        filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
+                    };
+
+                    if (plotMeasure.time) {
+                        measureMap[measure.alias].time = plotMeasure.time;
+                    }
+                    if (plotMeasure.dimension) {
+                        measureMap[measure.alias].dimension = plotMeasure.dimension;
+                    }
+                    if (plotMeasure.dateOptions) {
+                        measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
+                    }
+
+                    // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
+                    Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
+                        alias = LABKEY.MeasureUtil.getAlias(axisFilterRecord);
+
+                        // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
+                        if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
+                            measureMap[alias].measure.values = Ext.Array.unique(measureMap[alias].measure.values.concat(axisFilterRecord.values));
+                        }
+                        else {
+                            measureMap[alias] = {
+                                measure: queryService.cleanMeasure(axisFilterRecord),
+                                filterArray: []
+                            };
+                        }
+                    }, this);
+                }
+            }
+        }, this);
+    },
+
+    /**
+     * Used to process the 'gridFilter' property to determine the set of measures to include
+     * @param measureMap
+     * @private
+     */
+    _processGridMeasures : function(measureMap) {
+        var queryService = Connector.getQueryService();
+
+        Ext.each(this.get('gridFilter'), function(gf) {
+            if (gf && gf !== '_null') {
+
+                if (Ext.isString(gf)) {
+                    gf = LABKEY.Filter.getFiltersFromUrl(gf, 'query')[0];
+                }
+
+                var measure = queryService.getMeasure(gf.getColumnName());
+                if (measure) {
+
+                    var isTimeBased = measure.alias in queryService.getTimeAliases();
+
+                    if (!measureMap[measure.alias]) {
+
+                        // we still respect the value if it is set explicitly on the measure
+                        if (!Ext.isDefined(measure.inNotNullSet)) {
+                            measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
+                        }
+
+                        measureMap[measure.alias] = {
+                            measure: queryService.cleanMeasure(measure),
+                            filterArray: []
+                        };
+
+                        if (isTimeBased) {
+                            measureMap[measure.alias].dateOptions = {
+                                interval: measure.alias,
+                                zeroDayVisitTag: null
+                            };
+                        }
+                    }
+
+                    if (gf.getFilterType().getURLSuffix() === LABKEY.Filter.Types.ISBLANK.getURLSuffix()) {
+                        measureMap[measure.alias].measure.inNotNullSet = false;
+                    }
+
+                    if (gf.getColumnName() === measure.name || isTimeBased) {
+                        measureMap[measure.alias].filterArray.push(gf);
+                    }
+                    else {
+                        // create a filter with the measure 'name' rather than the 'alias' as the column
+                        var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
+                        measureMap[measure.alias].filterArray.push(_gf);
+                    }
+                }
+                else {
+                    console.warn('Unable to find measure for query parameter', gf.getURLParameterName() + '=' + gf.getURLParameterValue());
+                }
+            }
+        }, this);
+    },
+
+    _mapToMeasures : function(measureMap) {
+        var queryService = Connector.getQueryService(),
+            measures = [];
+
+        Ext.iterate(measureMap, function(alias, config) {
+            var mc = {
+                measure: queryService.cleanMeasure(config.measure)
+            };
+            if (config.dimension) {
+                mc.dimension = config.dimension;
+            }
+            if (config.dateOptions) {
+                mc.dateOptions = config.dateOptions;
+            }
+            if (config.filterArray.length > 0) {
+                mc.filterArray = config.filterArray;
+            }
+
+            measures.push(mc);
+        }, this);
+
+        return measures;
     },
 
     _dataFilterHelper : function(filterMap, alias, filter) {
@@ -118,7 +317,10 @@ Ext.define('Connector.model.Filter', {
 
         var dataFilterMap = {};
 
-        if (this.isPlot() && this.isGrid()) {
+        if (this.isAggregated()) {
+            // aggregation filter -- do nothing
+        }
+        else if (this.isPlot() && this.isGrid()) {
             // plot selection filter
 
             /**
@@ -144,7 +346,6 @@ Ext.define('Connector.model.Filter', {
                         Ext.iterate(measure.options.dimensions, function(columnName, values) {
                             if (Ext.isArray(values) && !Ext.isEmpty(values)) {
                                 // TODO: Switch axis filters to using alias rather than column name.
-                                // TODO: Once done, the dependency on QueryService can be removed
                                 var genFilter = this._generateFilter(measure, columnName, values);
                                 if (genFilter) {
                                     this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
@@ -170,7 +371,6 @@ Ext.define('Connector.model.Filter', {
                         Ext.iterate(measure.options.dimensions, function(columnName, values) {
                             if (Ext.isArray(values) && !Ext.isEmpty(values)) {
                                 // TODO: Switch axis filters to using alias rather than column name.
-                                // TODO: Once done, the dependency on QueryService can be removed
                                 var genFilter = this._generateFilter(measure, columnName, values);
                                 if (genFilter) {
                                     this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
@@ -219,10 +419,13 @@ Ext.define('Connector.model.Filter', {
         }
 
         if (values.length > 1) {
-            filter = LABKEY.Filter.create(queryMeasure.alias, values, LABKEY.Filter.Types.EQUALS_ONE_OF);
+            filter = LABKEY.Filter.create(queryMeasure.alias, values.join(';'), LABKEY.Filter.Types.IN);
+        }
+        else if (values.length == 1) {
+            filter = LABKEY.Filter.create(queryMeasure.alias, values[0]);
         }
         else {
-            filter = LABKEY.Filter.create(queryMeasure.alias, values[0]);
+            filter = LABKEY.Filter.create(queryMeasure.alias, undefined, LABKEY.Filter.Types.ISBLANK);
         }
 
         return filter;

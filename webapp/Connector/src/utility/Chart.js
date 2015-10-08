@@ -92,6 +92,8 @@ Ext.define('Connector.utility.Chart', {
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
             ChartUtils._brushBinsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
+
+        this.brushedSubjects = subjects;
     },
 
     _brushBinsByCanvas : function(canvas, extent, subjects) {
@@ -135,19 +137,18 @@ Ext.define('Connector.utility.Chart', {
         //move brush layer to front
         canvas.select('svg g.brush').each(function() {
             this.parentNode.appendChild(this);
-
         });
     },
 
     brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties) {
 
-        var xExtent = [extent[0][0], extent[1][0]], yExtent = [extent[0][1], extent[1][1]],
-            xMeasure, yMeasure,
+        var xExtent = [extent[0][0], extent[1][0]],
+            yExtent = [extent[0][1], extent[1][1]],
+            xMeasure = measures[0],
+            yMeasure = measures[1],
             sqlFilters = [null, null, null, null],
             yMin, yMax, xMin, xMax;
 
-        xMeasure = measures[0];
-        yMeasure = measures[1];
         yMeasure.colName = properties.yaxis.colName;
 
         if (xMeasure) {
@@ -182,7 +183,7 @@ Ext.define('Connector.utility.Chart', {
             sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
         }
 
-        this.createSelectionFilter(sqlFilters);
+        this.createSelectionFilter(sqlFilters, true /* fromBrush */);
     },
 
     brushPoints : function(event, layerData, extent, plot, layerSelections) {
@@ -197,6 +198,8 @@ Ext.define('Connector.utility.Chart', {
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
             ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
+
+        this.brushedSubjects = subjects;
     },
 
     _brushPointsByCanvas : function(canvas, extent, subjects) {
@@ -217,7 +220,6 @@ Ext.define('Connector.utility.Chart', {
         //move brush layer to front
         canvas.select('svg g.brush').each(function() {
             this.parentNode.appendChild(this);
-
         });
     },
 

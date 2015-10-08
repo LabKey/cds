@@ -52,7 +52,7 @@ Ext.define('Connector.model.InfoPane', {
             // Connector.model.Filter
             var filter = this.get('filter');
 
-            if (!filter.isGrid() && !filter.isPlot()) {
+            if (!filter.isGrid() && !filter.isPlot() && !filter.isAggregated()) {
                 this.configure(null, filter.get('hierarchy'), filter.get('level'), false);
             }
         }
@@ -180,11 +180,11 @@ Ext.define('Connector.model.InfoPane', {
         this._ready = false;
 
         var filters = Connector.getState().getFilters(),
-                hierarchy = hierName,
-                activeFilter;
+            hierarchy = hierName,
+            activeFilter;
 
         Ext.each(filters, function(f) {
-            if (f && !f.isPlot() && !f.isGrid() && f.get('hierarchy') === hierarchy) {
+            if (f && !f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hierarchy) {
                 activeFilter = f;
                 return false;
             }
@@ -245,7 +245,7 @@ Ext.define('Connector.model.InfoPane', {
 
 
             Ext.each(filters, function(f) {
-                if (!f.isPlot() && !f.isGrid() && f.get('hierarchy') === hier.getUniqueName()) {
+                if (!f.isPlot() && !f.isGrid() && !f.isAggregated() && f.get('hierarchy') === hier.getUniqueName()) {
                     innerFilters.push(f);
                 }
                 else {

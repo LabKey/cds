@@ -9,6 +9,7 @@ Ext.override(Ext.button.Button, {
 
 LABKEY.app.view.Selection.supportMemberClose = false;
 LABKEY.app.model.Filter.dynamicOperatorTypes = true;
+LABKEY.app.model.Filter.USE_MODEL = true;
 
 Ext.application({
     name: 'Connector',

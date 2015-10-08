@@ -301,7 +301,7 @@ Ext.define('Connector.view.Grid', {
         var grid = this.getGrid(),
             store = grid.getStore();
 
-        store.filterArray = model.getFilterArray();
+        //store.filterArray = model.getFilterArray();
         store.loadPage(1);
 
         Connector.getService('Query').clearSourceCountsCache();
@@ -462,7 +462,7 @@ Ext.define('Connector.view.Grid', {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
             columns: columns,
-            filterArray: model.getFilterArray(),
+            //filterArray: model.getFilterArray(),
             maxRows: maxRows,
             pageSize: maxRows,
             remoteSort: true,
