@@ -4,7 +4,6 @@
 <%
     String contextPath = request.getContextPath();
     String appPath = contextPath + "/Connector";
-    String sdkPath = contextPath + "/ext-4.2.1";
     String frontPagePath = appPath + "/frontPage";
 %>
 <!DOCTYPE html>
@@ -18,32 +17,18 @@
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/fullpage.js/jquery.fullPage.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/magnific-popup/dist/magnific-popup.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/video.js/dist/video-js/video-js.min.css">
+    <style type="text/css">
+        /* Context-sensitive url */
+        .section.intro-section .video-container .video-placeholder {
+            background-image: url(<%=text(frontPagePath)%>/img/intro.png);
+        }
+    </style>
 
     <link rel="icon" type="image/png" href="<%=text(frontPagePath)%>/img/icon.png">
 
-    <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
-    <script type="text/javascript">
-        Ext = {}; Ext4 = Ext;
-    </script>
-
-    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-all-debug.js"></script>
-    <script type="text/javascript" src="<%=text(sdkPath)%>/ext-patches.js"></script>
-
-    <%--<!-- Client API Dependencies -->--%>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
-    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/ext4/Util.js"></script>
-
-    <script type="text/javascript" src="<%=text(frontPagePath)%>/js/signin.js"></script>
-
-    <script type="text/javascript">
-        var frontPageContext = LABKEY.moduleContext.cds.getEmailAndTerms();
-    </script>
-
+    <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
 </head>
 <body>
     <div id="navigation">
@@ -76,24 +61,15 @@
                 <form class="form">
                     <div class="credentials">
                         <input placeholder="Email" type="email" id="email" name="email" value="" required>
-                        <script type="text/javascript">
-                            document.getElementById('email').value = frontPageContext.remember ? frontPageContext.email : '';
-                        </script>
                         <input placeholder="Password" name="password" id="password" type="password" value="" required>
                         <div class="checkbox">
                             <input type="checkbox" id="remember-me-checkbox">
-                            <script type="text/javascript">
-                                document.getElementById('remember-me-checkbox').checked = frontPageContext.remember;
-                            </script>
                             <label for="remember-me-checkbox">Remember Me</label>
                         </div>
                     </div>
                     <div class="tos">
                         <div class="checkbox">
                             <input type="checkbox" id="tos-checkbox" required>
-                            <script type="text/javascript">
-                                document.getElementById('tos-checkbox').checked = frontPageContext.remember ? frontPageContext.agreeToTerms : false;
-                            </script>
                             <label for="tos-checkbox">I will protect restricted data, credit others, and obtain approval to publish.</label>
                         </div>
                         <a href="#" data-click="terms-of-service" class="expand-tos">
@@ -176,7 +152,7 @@
                         <span class="agree"></span>
                     </div>
                     <div class="links">
-                        <input type="button" value="Submit" class="confirm" onclick="LABKEY.moduleContext.cds.signin()">
+                        <input type="button" value="Submit" data-click="confirm" class="confirm">
                     </div>
                 </form>
             </div>

@@ -126,7 +126,23 @@ define(['jquery', 'magnific'], function($, magnific) {
      */
     self.confirm = function() {
       self.action('confirm', function($click) {
+        var $sign_in_container = self.$modal.find('[data-form=sign-in]');
+        var $sign_in_email = $sign_in_container.find('input[type=email]');
+        var $sign_in_pw = $sign_in_container.find('input[type=password]');
 
+        // TODO: This is just a test impl, needs to be made real
+        $.ajax({
+          url: 'http://localhost:8080/labkey/login/CDSTest%20Project/loginAPI.api',
+          method: 'POST',
+          data: {
+            email: $sign_in_email.val(),
+            password: $sign_in_pw.val()
+          }
+        }).success(function() {
+          window.location = 'http://localhost:8080/labkey/cds/CDSTest%20Project/app.view';
+        }).failure(function() {
+          $('.signin-modal .notifications p').html('Login Failed');
+        });
       });
     };
 

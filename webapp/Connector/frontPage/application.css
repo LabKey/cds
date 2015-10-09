@@ -1032,7 +1032,7 @@ div.video-header {
       margin: -1.33em auto;
       border: 1.33em solid white;
       background-color: #F2F2F2;
-      background-image: url("/img/intro.png");
+      /*background-image: url("/img/intro.png");*/
       background-size: contain;
       outline: none; }
       @media only screen and (max-width: 480px) {
