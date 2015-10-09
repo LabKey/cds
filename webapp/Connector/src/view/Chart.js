@@ -1077,18 +1077,16 @@ Ext.define('Connector.view.Chart', {
     },
 
     handleDensePlotBrushEvent : function(plot) {
-        var selector;
+        var selector, svgEl, brushNode, newClickEvent;
 
         // Allow brushing in dense plot by creating and passing a new click event to the brush layer
         if (Ext.isDefined(plot.renderer)) {
             selector = this.showPointsAsBin ? '.vis-bin' : '.point';
             plot.renderer.canvas.selectAll(selector).on('mousedown', function() {
-                var el = this;
-                while(el.tagName !== 'svg') {
-                    el = el.parentElement;
-                }
-                var brushNode = d3.select(el.getElementsByClassName('brush')[0]).node();
-                var newClickEvent = new CustomEvent('mousedown');
+                svgEl = plot.renderer.canvas[0][0];
+                brushNode = d3.select(svgEl.getElementsByClassName('brush')[0]).node();
+
+                newClickEvent = new CustomEvent('mousedown');
                 newClickEvent.pageX = d3.event.pageX;
                 newClickEvent.clientX = d3.event.clientX;
                 newClickEvent.pageY = d3.event.pageY;
