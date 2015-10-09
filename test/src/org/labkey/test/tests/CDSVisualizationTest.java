@@ -38,7 +38,6 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.server.handler.FindElements;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -145,7 +144,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         xaxis.confirmSelection();
 
         assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", hasXGutter());
@@ -159,14 +158,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that a gutter plot is generated for both the x and y axis.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
 
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
@@ -551,7 +550,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.confirmSelection();
 
         waitForElement(plotBox);
@@ -582,7 +581,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.backToSource();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         xaxis.confirmSelection();
 
         waitForElementToDisappear(plotBox);
@@ -641,8 +640,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW); // Work around for issue 23845.
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND); // Work around for issue 23845.
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.confirmSelection();
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
@@ -730,7 +729,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_MAGNITUDE_BACKGROUND},
                         {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}
                 };
         final String[][] X_AXIS_SOURCES =
@@ -740,7 +739,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
                         {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}
                 };
         final String[][] COLOR_AXIS_SOURCES =
@@ -1984,7 +1983,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
@@ -2056,7 +2055,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
