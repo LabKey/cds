@@ -126,6 +126,11 @@ define(['jquery', 'magnific'], function($, magnific) {
      */
     self.confirm = function() {
       self.action('confirm', function($click) {
+         $('#submit_hidden').click(); //click a hidden submit to do form validation
+
+        if (!document.getElementById('tos-checkbox').checked) //check if term of use is checked.
+          return false;
+
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
         var $sign_in_email = $sign_in_container.find('input[type=email]');
         var $sign_in_pw = $sign_in_container.find('input[type=password]');
@@ -140,7 +145,7 @@ define(['jquery', 'magnific'], function($, magnific) {
           }
         }).success(function() {
           window.location = 'http://localhost:8080/labkey/cds/CDSTest%20Project/app.view';
-        }).failure(function() {
+        }).error(function() {
           $('.signin-modal .notifications p').html('Login Failed');
         });
       });

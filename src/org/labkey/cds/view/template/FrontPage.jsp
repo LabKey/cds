@@ -153,6 +153,7 @@
                     </div>
                     <div class="links">
                         <input type="button" value="Submit" data-click="confirm" class="confirm">
+                        <input id="submit_hidden" type="submit" style="display: none">
                     </div>
                 </form>
             </div>
