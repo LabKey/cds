@@ -128,7 +128,11 @@ define(['jquery', 'magnific'], function($, magnific) {
       self.action('confirm', function($click) {
          $('#submit_hidden').click(); //click a hidden submit to do form validation
 
-        if (!document.getElementById('tos-checkbox').checked) //check if term of use is checked.
+        var email = document.getElementById('email');
+        var password = document.getElementById('password');
+        var tos = document.getElementById('tos-checkbox');
+
+        if (!email.checkValidity() || !password.checkValidity() || !tos.checkValidity())
           return false;
 
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
