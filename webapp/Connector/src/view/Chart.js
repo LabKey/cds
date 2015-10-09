@@ -805,6 +805,7 @@ Ext.define('Connector.view.Chart', {
                     tickMouseOut: Ext.bind(this.xAxisMouseOut, this, [layerScope], true),
                     tickRectWidthOffset: 30,
                     tickRectHeightOffset: 30,
+                    tickHoverText: function(value) { return value; },
                     fontSize: 9
                 };
             }
@@ -1001,11 +1002,6 @@ Ext.define('Connector.view.Chart', {
                 this.hidePlotMsg();
                 this.plot.render();
 
-                // use title for xaxis label tooltip to avoid conflict with highlight and selection functionality
-                this.plot.renderer.canvas.selectAll('.tick-text text').each(function () {
-                    var tick = d3.select(this);
-                    tick.append("title").text(tick.text());
-                });
                 if (!noplot && this.measures[2]) {
                     this.getColorSelector().setLegend(this.plot.getLegendData());
                 }
