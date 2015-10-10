@@ -143,7 +143,7 @@ Ext.define('Connector.utility.Chart', {
             if (!d.isSelected && d.length > 0 && d[0].data) {
                 for (var i = 0; i < d.length; i++) {
                     if (subjects[d[i].data.subjectId] === true)
-                        return 'fill: ' + ChartUtils.colors.SELECTED + ';';
+                        return 'fill: ' + ChartUtils.colors.BLACK + ';';
                 }
             }
 
@@ -284,6 +284,11 @@ Ext.define('Connector.utility.Chart', {
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
 
+
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
             var node = this.parentNode;
@@ -310,7 +315,7 @@ Ext.define('Connector.utility.Chart', {
 
     _brushPointPostFill : function(d, i, unknown, extent, subjects) {
         if (!d.isSelected && subjects[d.subjectId] === true) {
-            return ChartUtils.colors.SELECTED;
+            return ChartUtils.colors.BLACK;
         }
         return this.getAttribute('fill');
     },
@@ -326,7 +331,7 @@ Ext.define('Connector.utility.Chart', {
 
     _brushPointPostStroke : function(d, i, unknown, extent, subjects) {
         if (!d.isSelected && subjects[d.subjectId] === true) {
-            return ChartUtils.colors.SELECTED;
+            return ChartUtils.colors.BLACK;
         }
         return this.getAttribute('stroke');
     },

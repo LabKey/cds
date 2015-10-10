@@ -211,12 +211,6 @@ Ext.define('Connector.view.GroupSummaryHeader', {
                 scope: this
             }, {
                 xtype: 'button',
-                text: 'apply filters',
-                margin: '0 0 0 10',
-                handler: this.applyFilters,
-                scope: this
-            }, {
-                xtype: 'button',
                 text: 'delete',
                 margin: '0 0 0 10',
                 handler: this.deleteGroup,

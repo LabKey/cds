@@ -212,10 +212,6 @@ Ext.define('Connector.grid.Panel', {
                 queryName = col.dataIndex.split('_')[1];
             }
 
-            // HACK: special case to map SubjectGroupMap -> User groups
-            if (queryName == "SubjectGroupMap")
-                queryName = "User groups";
-
             if (Ext.isDefined(queryName)) {
                 if (!groupMap[queryName]) {
                     groupMap[queryName] = [];
