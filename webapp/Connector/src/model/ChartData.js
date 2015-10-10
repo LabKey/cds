@@ -249,12 +249,11 @@ Ext.define('Connector.model.ChartData', {
             xMeasureFilter = {};
 
             // keep track of which dimensions have different filter values between the x and y axis
-            Ext.each(Object.keys(y.options.dimensions), function(key) {
-                var yDimValue = y.options.dimensions[key];
-                var xDimValue = x.options.dimensions[key];
+            Ext.each(Object.keys(y.options.dimensions), function(alias) {
+                var yDimValue = y.options.dimensions[alias];
+                var xDimValue = x.options.dimensions[alias];
 
                 if (!this.arraysEqual(xDimValue, yDimValue)) {
-                    var alias = this.getAliasFromMeasure(key);
                     if (yDimValue) {
                         yMeasureFilter[alias] = yDimValue;
                     }

@@ -1893,11 +1893,6 @@ Ext.define('Connector.view.Chart', {
         else {
             if (this.activeXSelection) {
                 measures.x = this.activeXSelection;
-
-                // special case to look for userGroups as a variable option to use as filter values for the x measure
-                if (Ext.isObject(measures.x.options) && measures.x.options.userGroups) {
-                    measures.x.values = measures.x.options.userGroups;
-                }
             }
             if (this.activeYSelection) {
                 measures.y = this.activeYSelection;
@@ -2228,7 +2223,7 @@ Ext.define('Connector.view.Chart', {
         var measuresMap = {}, additionalMeasuresArr = [];
 
         Ext.each(['x', 'y'], function(axis) {
-            var schema, query;
+            var schema, query, name;
             if (activeMeasures[axis])
             {
                 schema = activeMeasures[axis].schemaName;
@@ -2244,15 +2239,15 @@ Ext.define('Connector.view.Chart', {
                 }
 
                 // add selection information from the advanced options panel of the variable selector
-                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions)
-                {
-                    Ext.iterate(activeMeasures[axis].options.dimensions, function(key, values) {
+                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions) {
+                    Ext.iterate(activeMeasures[axis].options.dimensions, function(alias, values) {
                         // null or undefined mean "select all" so don't apply a filter
                         if (!Ext.isDefined(values) || values == null) {
                             values = [];
                         }
 
-                        this.addValuesToMeasureMap(measuresMap, schema, query, key, values);
+                        name = Connector.getQueryService().getMeasureNameFromAlias(alias);
+                        this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
                     }, this);
                 }
             }

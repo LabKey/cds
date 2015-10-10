@@ -99,14 +99,14 @@ Ext.define('Connector.model.Measure', {
 
     statics : {
         getPlotAxisFilterMeasureRecords : function(measure) {
-            var records = [];
+            var records = [], record;
 
             if (Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions)) {
-                Ext.iterate(measure.options.dimensions, function(key, values) {
-                    var record = Connector.model.Measure.createMeasureRecord({
+                Ext.iterate(measure.options.dimensions, function(alias, values) {
+                    record = Connector.model.Measure.createMeasureRecord({
                         schemaName: measure.schemaName,
                         queryName: measure.queryName,
-                        name: key,
+                        name: Connector.getQueryService().getMeasureNameFromAlias(alias),
                         values: values
                     });
 

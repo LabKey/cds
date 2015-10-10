@@ -139,7 +139,7 @@ Ext.define('Connector.model.Filter', {
             /**
              * "Apply aggregate filters as subject filters from the brushed set of points."
              */
-            var filter = this._generateFilter(subjectMeasure, subjectMeasure.name, this.get('members'));
+            var filter = this._generateFilter(subjectMeasure.alias, this.get('members'));
             measureMap[subjectMeasure.alias].filterArray.push(filter);
         }
         else if (this.isPlot() && this.isGrid()) {
@@ -343,10 +343,9 @@ Ext.define('Connector.model.Filter', {
                     // axis filters -> data filters
                     var measure = plotMeasure.measure;
                     if (measure.options && measure.options.dimensions) {
-                        Ext.iterate(measure.options.dimensions, function(columnName, values) {
+                        Ext.iterate(measure.options.dimensions, function(alias, values) {
                             if (Ext.isArray(values) && !Ext.isEmpty(values)) {
-                                // TODO: Switch axis filters to using alias rather than column name.
-                                var genFilter = this._generateFilter(measure, columnName, values);
+                                var genFilter = this._generateFilter(alias, values);
                                 if (genFilter) {
                                     this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
                                 }
@@ -368,10 +367,9 @@ Ext.define('Connector.model.Filter', {
                     // axis filters -> data filters
                     var measure = plotMeasure.measure;
                     if (measure.options && measure.options.dimensions) {
-                        Ext.iterate(measure.options.dimensions, function(columnName, values) {
+                        Ext.iterate(measure.options.dimensions, function(alias, values) {
                             if (Ext.isArray(values) && !Ext.isEmpty(values)) {
-                                // TODO: Switch axis filters to using alias rather than column name.
-                                var genFilter = this._generateFilter(measure, columnName, values);
+                                var genFilter = this._generateFilter(alias, values);
                                 if (genFilter) {
                                     this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
                                 }
@@ -404,28 +402,21 @@ Ext.define('Connector.model.Filter', {
 
     /**
      * Attempts to generate a filter from the specified
-     * @param measure
-     * @param columnName
+     * @param alias
      * @param values
      * @private
      */
-    _generateFilter : function(measure, columnName, values) {
-        var alias = [measure.schemaName, measure.queryName, columnName].join('_'),
-            queryMeasure = Connector.getQueryService().getMeasure(alias),
-            filter;
-
-        if (!queryMeasure) {
-            throw 'Unable to resolve filter alias: ' + alias;
-        }
+    _generateFilter : function(alias, values) {
+        var filter;
 
         if (values.length > 1) {
-            filter = LABKEY.Filter.create(queryMeasure.alias, values.join(';'), LABKEY.Filter.Types.IN);
+            filter = LABKEY.Filter.create(alias, values.join(';'), LABKEY.Filter.Types.IN);
         }
         else if (values.length == 1) {
-            filter = LABKEY.Filter.create(queryMeasure.alias, values[0]);
+            filter = LABKEY.Filter.create(alias, values[0]);
         }
         else {
-            filter = LABKEY.Filter.create(queryMeasure.alias, undefined, LABKEY.Filter.Types.ISBLANK);
+            filter = LABKEY.Filter.create(alias, undefined, LABKEY.Filter.Types.ISBLANK);
         }
 
         return filter;

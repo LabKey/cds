@@ -45,7 +45,7 @@ Ext.define('Connector.model.Variable', {
                     sep = '; ';
                 }
                 if (Ext.isObject(variable.options.dimensions)) {
-                    Ext.Object.each(variable.options.dimensions, function(key, value) {
+                    Ext.Object.each(variable.options.dimensions, function(alias, value) {
                         if (Ext.isArray(value) && value.length > 0) {
                             optionsTxt += sep + value.join(', ').replace(/\|/g, ' ').replace(/null/g, '[Blank]');
                             sep = '; ';

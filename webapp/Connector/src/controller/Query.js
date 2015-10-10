@@ -293,6 +293,11 @@ Ext.define('Connector.controller.Query', {
         return this.MEASURE_STORE.getById(alias.toLowerCase());
     },
 
+    getMeasureNameFromAlias : function(alias) {
+        var record = this.getMeasureRecordByAlias(alias);
+        return record ? record.get('name') : null;
+    },
+
     /**
      * Returns the raw measure data for the specified measureAlias. If not found, returns undefined.
      * @param measureAlias

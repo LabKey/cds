@@ -33,7 +33,7 @@ Ext.define('Connector.panel.Selector', {
     testCls: undefined,
 
     disableAdvancedOptions: false,
-    boundDimensionNames: undefined,
+    boundDimensionAliases: undefined,
     measureSetStore: null,
 
     // track the first time that the selector is initialized so we can use initOptions properly
@@ -60,7 +60,7 @@ Ext.define('Connector.panel.Selector', {
 
     initComponent : function() {
         this.queryService = Connector.getService('Query');
-        this.boundDimensionNames = [];
+        this.boundDimensionAliases = [];
         this.selectedMeasures = [];
         this.lockedMeasures = [];
 
@@ -746,13 +746,13 @@ Ext.define('Connector.panel.Selector', {
 
         // move the dimension selections into a separate map to keep them separate
         values.dimensions = {};
-        Ext.iterate(values, function(key, val) {
-            if (this.boundDimensionNames.indexOf(key) != -1) {
-                values.dimensions[key] = val;
+        Ext.iterate(values, function(alias, val) {
+            if (this.boundDimensionAliases.indexOf(alias) != -1) {
+                values.dimensions[alias] = val;
 
-                // remove the dimension key/value from the parent object so we just leave
+                // remove the dimension alias/value from the parent object so we just leave
                 // the non-dimension properties (i.e. visit tag alignment and scale info)
-                delete values[key];
+                delete values[alias];
             }
         }, this);
 
@@ -763,8 +763,7 @@ Ext.define('Connector.panel.Selector', {
         var optionMap = {}, alias, filterOptionValues = this.getAdvancedOptionValues();
 
         if (Ext.isObject(filterOptionValues) && Ext.isObject(filterOptionValues.dimensions)) {
-            Ext.iterate(filterOptionValues.dimensions, function(key, val) {
-                alias = selectedDimension.get('schemaName') + '_' + selectedDimension.get('queryName') + '_' + key;
+            Ext.iterate(filterOptionValues.dimensions, function(alias, val) {
                 if (alias != selectedDimension.getFilterMeasure().get('alias') && val != null) {
                     optionMap[alias] = val;
                 }
@@ -775,14 +774,15 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindDimensions : function() {
-        var advancedOptionCmps = [], measureSetAliases = [], measureSet = [];
+        var advancedOptionCmps = [], measureSetAliases = [], measureSet = [],
+                alias, advancedOptionCmp;
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
 
-            var dimensionName = dimension.getFilterMeasure().get('name');
-            this.boundDimensionNames.push(dimensionName);
+            alias = dimension.getFilterMeasure().get('alias');
+            this.boundDimensionAliases.push(alias);
 
-            var advancedOptionCmp = this.createAdvancedOptionCmp(dimensionName, dimension);
+            advancedOptionCmp = this.createAdvancedOptionCmp(alias, dimension);
             advancedOptionCmps.push(advancedOptionCmp);
 
             // keep track of the distinct set of measures used for all advanced options in this source
@@ -844,7 +844,7 @@ Ext.define('Connector.panel.Selector', {
         this.getAdvancedPane().insert(0, {
             xtype: 'box',
             cls: 'dimension-header',
-            html: this.boundDimensionNames.length > 0 ? 'Assay Dimensions' : 'Advanced Options'
+            html: this.boundDimensionAliases.length > 0 ? 'Assay Dimensions' : 'Advanced Options'
         });
     },
 
@@ -875,11 +875,11 @@ Ext.define('Connector.panel.Selector', {
         this.slideAdvancedOptionsPane();
     },
 
-    createAdvancedOptionCmp : function(dimensionName, dimension) {
+    createAdvancedOptionCmp : function(alias, dimension) {
         return Ext.create('Connector.component.AdvancedOptionDimension', {
             testCls: this.testCls + '-option-' + dimension.get('name'),
             dimension: dimension,
-            value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[dimensionName] : undefined,
+            value: this.initOptions && this.initOptions.dimensions ? this.initOptions.dimensions[alias] : undefined,
             listeners: {
                 scope: this,
                 click: function(cmp, isHierarchical) {
