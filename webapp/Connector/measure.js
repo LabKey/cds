@@ -14,9 +14,6 @@ Ext.define('Connector.measure.Configuration', {
                 'study|SubjectVisit': {
                     queryLabel: 'Time points'
                 },
-                //'study|SubjectGroupMap': {
-                //    queryLabel: 'User groups'
-                //},
                 'study|Ad5': {
                     category: 'Assays'
                 },
@@ -284,17 +281,6 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                //'study_SubjectGroupMap_GroupId_Label': {
-                //    sortOrder: -1,
-                //    schemaName: Connector.studyContext.schemaName,
-                //    queryName: 'SubjectGroupMap',
-                //    inNotNullSet: false,
-                //    name: 'GroupId/Label',
-                //    label: 'My saved groups',
-                //    type: 'VARCHAR',
-                //    isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
-                //    variableType: 'USER_GROUPS'
-                //},
 
                 // recommended variables
                 'study_ICS_pctpos_adj': {
