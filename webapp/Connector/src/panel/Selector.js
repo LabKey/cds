@@ -484,8 +484,7 @@ Ext.define('Connector.panel.Selector', {
             variableType = source.get('variableType'),
             filter, aliases = {}, toInclude, index, alias,
             selModel = this.getMeasurePane().getSelectionModel(),
-            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap(),
-            me = this;
+            definedMeasureSourceMap = this.queryService.getDefinedMeasuresSourceTitleMap();
 
         // collect the aliases for all locked measures
         Ext.each(this.getLockedRecords(), function(measure) {
@@ -559,11 +558,12 @@ Ext.define('Connector.panel.Selector', {
             navText: 'Sources',
             sectionTitle: source.get('title'),
             action: function() {
-                if (me.advancedPane) {
-                    me.advancedPane.hide();
+                if (this.advancedPane) {
+                    this.advancedPane.hide();
                 }
 
-                me.measurePane.getEl().slideOut('r', {
+                var me = this;
+                this.measurePane.getEl().slideOut('r', {
                     duration: 250,
                     callback: function() {
                         // clear the initOptions and deselect (issue 23845) any measure for the source we are leaving
@@ -1067,7 +1067,7 @@ Ext.define('Connector.panel.Selector', {
             if (Ext.isFunction(data.action)) {
                 var backActionEl = Ext.DomQuery.select('.back-action', header.getEl().id);
                 if (backActionEl.length > 0) {
-                    Ext.get(backActionEl[0]).on('click', data.action);
+                    Ext.get(backActionEl[0]).on('click', data.action, this);
                 }
             }
         }
