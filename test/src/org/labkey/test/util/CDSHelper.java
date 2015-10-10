@@ -253,7 +253,7 @@ public class CDSHelper
     public static final String DEMO_COUNTRY = "Country at Enrollment";
     public static final String DEMO_HISPANIC = "Hispanic";
     public static final String DEMO_RACE = "Race";
-    public static final String DEMO_SEX = "Sexatbirth";
+    public static final String DEMO_SEX = "Sex at birth";
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
     public static final String DEMO_STUDY_NAME = "Study Name";
@@ -307,9 +307,9 @@ public class CDSHelper
     public static final String ICS_MARKER_TYPE = "Functional marker type";
     public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
     public static final String ICS_LAB = "Lab ID";
-    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ICS_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
     public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
-    public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
+    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
     public static final String ICS_PEPTIDE_POOL = "Peptide pool";
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_CLADE = "Protein Clade";
@@ -444,8 +444,6 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             _test.waitAndClick(Locator.xpath("//li[text()='" + sortBy + "' and contains(@class, 'x-boundlist-item')]"));
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
             return null;
         });
 
@@ -599,7 +597,7 @@ public class CDSHelper
             return null;
         });
 
-        _test.sleep(500);
+        _test.sleep(100);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
@@ -685,8 +683,6 @@ public class CDSHelper
 
         applyAndWaitForBars(aVoid -> {
             link.click();
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });

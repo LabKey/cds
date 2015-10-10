@@ -10,6 +10,13 @@ Ext.define('Connector.utility.Chart', {
 
     singleton: true,
 
+    /**
+     * This brush delay is used to improve page rendering performance when brushing.
+     * It is left up to the Chart to set this delay according to whatever metrics
+     * (e.g. number of points, cursor velocity, etc)
+     */
+    BRUSH_DELAY: 0,
+
     colors: {
         WHITE: '#FFFFFF',
         BLACK: '#000000',
@@ -54,6 +61,11 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
+    constructor : function(config) {
+        this.callParent([config]);
+        this.brushDelayTask = new Ext.util.DelayedTask(this._onBrush, this);
+    },
+
     // modeled after Ext.bind but allows scope to be passed through
     // so access to things like this.getAttribute() work
     d3Bind : function(fn, args) {
@@ -66,19 +78,31 @@ Ext.define('Connector.utility.Chart', {
         };
     },
 
-    brushBins : function(event, layerData, extent, plot, layerSelections) {
+    brushBins : function(event, layerData, extent, plot) {
         var min, max,
             subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
         // convert extent x/y values into aes scale as bins don't really have x/y values
         if (extent[0][0] !== null && extent[1][0] !== null) {
-            extent[0][0] = plot.scales.x.scale(extent[0][0]);
-            extent[1][0] = plot.scales.x.scale(extent[1][0]);
+            if (plot.scales.xTop) {
+                extent[0][0] = plot.scales.xTop.scale(extent[0][0]);
+                extent[1][0] = plot.scales.xTop.scale(extent[1][0]);
+            }
+            else {
+                extent[0][0] = plot.scales.x.scale(extent[0][0]);
+                extent[1][0] = plot.scales.x.scale(extent[1][0]);
+            }
         }
         if (extent[0][1] !== null && extent[1][1] !== null) {
             // TODO: the min/max y values are flipped for bins vs points, why?
-            max = plot.scales.yLeft.scale(extent[0][1]);
-            min = plot.scales.yLeft.scale(extent[1][1]);
+            if (plot.scales.yRight) {
+                max = plot.scales.yRight.scale(extent[0][1]);
+                min = plot.scales.yRight.scale(extent[1][1]);
+            }
+            else {
+                max = plot.scales.yLeft.scale(extent[0][1]);
+                min = plot.scales.yLeft.scale(extent[1][1]);
+            }
             extent[0][1] = min;
             extent[1][1] = max;
         }
@@ -121,7 +145,7 @@ Ext.define('Connector.utility.Chart', {
             if (!d.isSelected && d.length > 0 && d[0].data) {
                 for (var i = 0; i < d.length; i++) {
                     if (subjects[d[i].data.subjectId] === true)
-                        return 'fill: ' + ChartUtils.colors.SELECTED + ';';
+                        return 'fill: ' + ChartUtils.colors.BLACK + ';';
                 }
             }
 
@@ -140,7 +164,42 @@ Ext.define('Connector.utility.Chart', {
         });
     },
 
-    brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties) {
+    brushClear : function(layerScope, dimension) {
+        if (this.initiatedBrushing === dimension) {
+            ChartUtils.brushDelayTask.cancel();
+            this.initiatedBrushing = '';
+            layerScope.isBrushed = false;
+            Connector.getState().clearSelections(true);
+            this.clearHighlightedData();
+            this.highlightSelected();
+
+            //move data layer to front
+            this.plot.renderer.canvas.select('svg g.layer').each(function() {
+                this.parentNode.appendChild(this);
+            });
+
+            if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+                this.xGutterPlot.renderer.canvas.select('svg g.layer').each(function() {
+                    this.parentNode.appendChild(this);
+                });
+            }
+
+            if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+                this.yGutterPlot.renderer.canvas.select('svg g.layer').each(function() {
+                    this.parentNode.appendChild(this);
+                });
+            }
+        }
+    },
+
+    brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties, dimension) {
+
+        // this brushing method can be used across different dimensions (main vs. xTop vs. yRight)
+        // only the plot that originated the brushing can end the brushing
+        if (this.initiatedBrushing !== dimension) {
+            return;
+        }
+        this.initiatedBrushing = '';
 
         var xExtent = [extent[0][0], extent[1][0]],
             yExtent = [extent[0][1], extent[1][1]],
@@ -186,7 +245,7 @@ Ext.define('Connector.utility.Chart', {
         this.createSelectionFilter(sqlFilters, true /* fromBrush */);
     },
 
-    brushPoints : function(event, layerData, extent, plot, layerSelections) {
+    _onBrush : function(extent) {
         var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
         ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
@@ -202,6 +261,23 @@ Ext.define('Connector.utility.Chart', {
         this.brushedSubjects = subjects;
     },
 
+    brushPoints : function(event, layerData, extent) {
+        if (ChartUtils.BRUSH_DELAY) {
+            ChartUtils.brushDelayTask.delay(ChartUtils.BRUSH_DELAY, undefined /* newFn */, this, [extent]);
+        }
+        else {
+            ChartUtils._onBrush.call(this, extent);
+        }
+    },
+
+    brushStart : function(layerScope, dimension) {
+        this.clearHighlightLabels(layerScope.plot);
+        layerScope.isBrushed = true;
+        if (this.initiatedBrushing == '') {
+            this.initiatedBrushing = dimension;
+        }
+    },
+
     _brushPointsByCanvas : function(canvas, extent, subjects) {
         canvas.selectAll('.point path')
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
@@ -211,6 +287,11 @@ Ext.define('Connector.utility.Chart', {
                 .attr('fill-opacity', 1)
                 .attr('stroke-opacity', 1);
 
+
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
             var node = this.parentNode;
@@ -237,7 +318,7 @@ Ext.define('Connector.utility.Chart', {
 
     _brushPointPostFill : function(d, i, unknown, extent, subjects) {
         if (!d.isSelected && subjects[d.subjectId] === true) {
-            return ChartUtils.colors.SELECTED;
+            return ChartUtils.colors.BLACK;
         }
         return this.getAttribute('fill');
     },
@@ -253,7 +334,7 @@ Ext.define('Connector.utility.Chart', {
 
     _brushPointPostStroke : function(d, i, unknown, extent, subjects) {
         if (!d.isSelected && subjects[d.subjectId] === true) {
-            return ChartUtils.colors.SELECTED;
+            return ChartUtils.colors.BLACK;
         }
         return this.getAttribute('stroke');
     },

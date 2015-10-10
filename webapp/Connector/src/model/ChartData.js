@@ -190,7 +190,7 @@ Ext.define('Connector.model.ChartData', {
             subjectNoun = Connector.studyContext.subjectColumn,
             subjectCol = this.getAliasFromMeasure(subjectNoun),
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
-            dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [],
+            dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
             negX = false, negY = false,
@@ -335,7 +335,11 @@ Ext.define('Connector.model.ChartData', {
             };
 
             // split the data entry based on undefined x and y values for gutter plotting
-            if (xVal == null) {
+            if (xVal == null && yVal == null) {
+                // note: we don't currently do anything with these null/null points
+                undefinedBothRows.push(entry);
+            }
+            else if (xVal == null) {
                 if (brushFilterAliases.indexOf(_xid) == -1) { // issue 24021
                     undefinedXRows.push(entry);
                 }

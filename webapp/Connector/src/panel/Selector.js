@@ -210,9 +210,7 @@ Ext.define('Connector.panel.Selector', {
         this.fireEvent('beforeSourceCountsLoad', this);
 
         var sources = this.sourcesStore.queryBy(function(record) {
-            return (Ext.isString(record.get('queryName')) || Ext.isString(record.get('subjectCountQueryName')))
-                    // TODO: add subject counts for 'User groups' (see DataspaceVisualizationProvider.getSourceCountSql)
-                    && record.get('queryName') != 'SubjectGroupMap';
+            return Ext.isString(record.get('queryName')) || Ext.isString(record.get('subjectCountQueryName'));
         }).items;
 
         this.queryService.getSourceCounts(sources, function(s, counts) {
