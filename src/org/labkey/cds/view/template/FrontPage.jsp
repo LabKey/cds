@@ -29,6 +29,10 @@
     <!-- Include base labkey.js -->
     <%=PageFlowUtil.getLabkeyJS(getViewContext(), new LinkedHashSet<>())%>
     <script data-main="<%=text(frontPagePath)%>/js/config" src="<%=text(frontPagePath)%>/components/requirejs/require.js"></script>
+
+    <%--<!-- Client API Dependencies -->--%>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
 </head>
 <body>
     <div id="navigation">

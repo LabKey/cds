@@ -126,14 +126,14 @@ define(['jquery', 'magnific'], function($, magnific) {
      */
     self.confirm = function() {
       self.action('confirm', function($click) {
-         $('#submit_hidden').click(); //click a hidden submit to do form validation
-
         var email = document.getElementById('email');
         var password = document.getElementById('password');
         var tos = document.getElementById('tos-checkbox');
 
-        if (!email.checkValidity() || !password.checkValidity() || !tos.checkValidity())
+        if (!email.checkValidity() || !password.checkValidity() || !tos.checkValidity()) {
+          $('#submit_hidden').click(); //click a hidden submit to do form validation
           return false;
+        }
 
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
         var $sign_in_email = $sign_in_container.find('input[type=email]');
@@ -141,14 +141,14 @@ define(['jquery', 'magnific'], function($, magnific) {
 
         // TODO: This is just a test impl, needs to be made real
         $.ajax({
-          url: 'http://localhost:8080/labkey/login/CDSTest%20Project/loginAPI.api',
+          url: LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
           method: 'POST',
           data: {
             email: $sign_in_email.val(),
             password: $sign_in_pw.val()
           }
         }).success(function() {
-          window.location = 'http://localhost:8080/labkey/cds/CDSTest%20Project/app.view';
+          window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
         }).error(function() {
           $('.signin-modal .notifications p').html('Login Failed');
         });
