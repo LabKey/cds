@@ -6,7 +6,6 @@
 (function($) {
 
     // set to undefined to use default getData
-    //var ENDPOINT = undefined;
     var ENDPOINT = LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api');
 
     // Document Ready

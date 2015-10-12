@@ -124,6 +124,7 @@ Ext.define('Connector.model.Measure', {
                 schemaName: obj.schemaName,
                 queryName: obj.queryName,
                 name: obj.name,
+                type: obj.type,
                 isMeasure: false,
                 isDimension: true,
                 values: Ext.isArray(obj.values) && obj.values.length > 0 ? obj.values : undefined

@@ -2223,19 +2223,19 @@ Ext.define('Connector.view.Chart', {
         var measuresMap = {}, additionalMeasuresArr = [];
 
         Ext.each(['x', 'y'], function(axis) {
-            var schema, query, name;
+            var schema, query, measureRecord;
             if (activeMeasures[axis])
             {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
                 // always add in the Container and SubjectId columns for a selected measure on the X or Y axis
-                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', []);
-                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, []);
+                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', 'VARCHAR', []);
+                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR', []);
 
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') {
-                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', []);
+                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', 'DOUBLE', []);
                 }
 
                 // add selection information from the advanced options panel of the variable selector
@@ -2246,8 +2246,8 @@ Ext.define('Connector.view.Chart', {
                             values = [];
                         }
 
-                        name = Connector.getQueryService().getMeasureNameFromAlias(alias);
-                        this.addValuesToMeasureMap(measuresMap, schema, query, name, values);
+                        measureRecord = Connector.getQueryService().getMeasureRecordByAlias(alias);
+                        this.addValuesToMeasureMap(measuresMap, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
                     }, this);
                 }
             }
@@ -2261,11 +2261,16 @@ Ext.define('Connector.view.Chart', {
         return additionalMeasuresArr;
     },
 
-    addValuesToMeasureMap : function(measureMap, schema, query, name, values) {
+    addValuesToMeasureMap : function(measureMap, schema, query, name, type, values) {
         var key = schema + "|" + query + "|" + name;
 
         if (!measureMap[key]) {
-            measureMap[key] = { schemaName: schema, queryName: query, name: name, values: [] };
+            measureMap[key] = {
+                schemaName: schema,
+                queryName: query,
+                name: name,
+                type: type,
+                values: [] };
         }
 
         measureMap[key].values = measureMap[key].values.concat(values);
