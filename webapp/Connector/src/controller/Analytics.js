@@ -47,7 +47,7 @@ Ext.define('Connector.controller.Analytics', {
     _bindApplication : function() {
         // tracking page views
         Connector.getApplication().on('route', function(/* controller, view, viewContext */) {
-            this.setVariable('userId', LABKEY.user.userId);
+            this.setVariable('userId', LABKEY.user.id);
             this.trackPageview(document.URL.replace(window.location.origin, ''));
         }, this);
 
@@ -88,14 +88,14 @@ Ext.define('Connector.controller.Analytics', {
 
         this.control('signinform', {
             userSignedIn: function() {
-                this.setVariable('userId', LABKEY.user.userId);
-                this.trackEvent('User', 'Login', LABKEY.user.userId);
+                this.setVariable('userId', LABKEY.user.id);
+                this.trackEvent('User', 'Login', LABKEY.user.id);
             }
         });
 
         this.control('connectorheader', {
             userLogout: function() {
-                this.trackEvent('User', 'Logout', LABKEY.user.userId);
+                this.trackEvent('User', 'Logout', LABKEY.user.id);
             }
         });
 
