@@ -2060,7 +2060,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCount = 1690;
 
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
-/*
+
         log("Validate a plot with a values on both y and x axis.");
 
         yaxis.openSelectorWindow();
@@ -2139,7 +2139,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         scaleValues = "0\n1000\n2000\n3000\n4000\n5000\n6000\n7000\n8000";
         expectedCount = 856;
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
-*/
+
         cds.clearFilters();
 
         log("Validate with a categorical on x-axis.");
@@ -2164,9 +2164,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
-        originalScale = "20-29\n30-39\n40-49\n10\n100";
+        originalScale = "20-29\n30-39\n40-49\n1\n10\n100";
         originalCount = 18;
-        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+        verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
 
     }
 
