@@ -468,7 +468,7 @@ Ext.define('Connector.controller.Query', {
             var alias = dimension.getFilterMeasure().get('alias'), sql;
 
             // SQL to get the subject count for each value of the filter measure
-            sql = 'SELECT COUNT(DISTINCT ' + dimension.get('schemaName') + '_' + dimension.get('queryName') + '_SubjectId) AS SubjectCount, '
+            sql = 'SELECT COUNT(DISTINCT "' + QueryUtils.SUBJECT_ALIAS + '") AS SubjectCount, '
                     + alias + ' FROM ' + response.queryName
                     + dimension.getDistinctValueWhereClause()
                     + ' GROUP BY ' + alias;
@@ -634,7 +634,7 @@ Ext.define('Connector.controller.Query', {
             success: success,
             failure: failure,
             scope: scope
-        }, QueryUtils.getData, this);
+        }, QueryUtils.getData, QueryUtils);
     },
 
     /**

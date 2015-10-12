@@ -34,7 +34,6 @@ Ext.define('Connector.view.Grid', {
         // maintain the sorts that appeared on the previous store instance. They are temporarily stored
         // on this property.
         this.sorters = undefined;
-        this.DATA_SOURCE_COLUMN = 'http://cpas.labkey.com/Study#Dataset';
 
         this.columnMap = {};
 
@@ -456,7 +455,7 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             maxRows = Connector.model.Grid.getMaxRows();
 
-        var columns = model.get('columnSet').concat('http://cpas.labkey.com/Study#Dataset');
+        var columns = model.get('columnSet').concat(QueryUtils.DATASET_ALIAS);
 
         var config = {
             schemaName: model.get('schemaName'),
@@ -583,7 +582,7 @@ Ext.define('Connector.view.Grid', {
             modelMap[model.dataIndex] = model;
         }, this);
 
-        if (this.DATA_SOURCE_COLUMN in modelMap) {
+        if (QueryUtils.DATASET_ALIAS in modelMap) {
             applyChecker = true;
         }
 
@@ -611,7 +610,7 @@ Ext.define('Connector.view.Grid', {
     },
 
     cellRenderer : function(v, meta, record, measure) {
-        if (Ext.isEmpty(v) && record.get(this.DATA_SOURCE_COLUMN) !== measure.queryName) {
+        if (Ext.isEmpty(v) && record.get(QueryUtils.DATASET_ALIAS) !== measure.queryName) {
             meta.style = "text-align: center;"; // Ext will inject this as 'right' if we don't
             meta.tdCls += " no-value";
             return null;

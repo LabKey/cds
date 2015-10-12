@@ -51,8 +51,8 @@ Ext.define('Connector.model.ChartData', {
         return this.get('plotScales');
     },
 
-    getColumnAliases : function() {
-        return this.get('measureStore').getResponseMetadata().columnAliases;
+    getColumnAliasMap : function() {
+        return this.get('measureStore').getResponseMetadata().columnAliasMap;
     },
 
     getSchemaName : function() {
@@ -116,23 +116,22 @@ Ext.define('Connector.model.ChartData', {
     },
 
     getAliasFromMeasure : function(measure) {
-        var columnAliases = this.getColumnAliases();
-
         // if the param comes in as a string, make it an object for consistency
         if (Ext.isString(measure)) {
             measure = {alias: null, name: measure};
         }
 
         if (!Ext.isDefined(measure.alias) || measure.alias == null) {
-            for (var i = 0; i < columnAliases.length; i++) {
-                if ((measure.alias && measure.alias == columnAliases[i].columnName)
-                        || (measure.name && measure.name == columnAliases[i].measureName))
+            var columnAliasMap = this.getColumnAliasMap();
+            Ext.Object.each(columnAliasMap, function(alias, obj) {
+                if ((measure.alias && measure.alias == alias)
+                    || (measure.name && measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName))
                 {
                     // stash the alias in the measure object to make it faster to find next time
-                    measure.alias = columnAliases[i].columnName;
-                    break;
+                    measure.alias = alias;
+                    return false;
                 }
-            }
+            });
         }
 
         return measure.alias;
@@ -158,7 +157,7 @@ Ext.define('Connector.model.ChartData', {
                 }
 
                 // TODO: remove sharedKeys hack
-                if (alias.indexOf('http://cpas.labkey.com/Study#') == 0) {
+                if (alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
                     sharedKeys.push(alias);
                 }
             }
@@ -185,10 +184,7 @@ Ext.define('Connector.model.ChartData', {
             y = this.getPlotMeasure(1),
             color = this.getPlotMeasure(2),
             xa, ya, ca, _xid, _yid, _cid,
-            containerColName = this.getAliasFromMeasure('Container'),
             containerAlignmentDayMap = {},
-            subjectNoun = Connector.studyContext.subjectColumn,
-            subjectCol = this.getAliasFromMeasure(subjectNoun),
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
             xDomain = [null,null], yDomain = [null,null],
@@ -291,8 +287,8 @@ Ext.define('Connector.model.ChartData', {
             _row = dataRows[r];
 
             // build study container alignment day map
-            if (containerColName && _row[containerColName]) {
-                containerAlignmentDayMap[_row[containerColName]] = 0;
+            if (_row[QueryUtils.CONTAINER_ALIAS]) {
+                containerAlignmentDayMap[_row[QueryUtils.CONTAINER_ALIAS]] = 0;
             }
 
             if (color) {
@@ -327,7 +323,7 @@ Ext.define('Connector.model.ChartData', {
                 x: xVal,
                 y: yVal,
                 color: colorVal,
-                subjectId: _row[subjectCol],
+                subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,
                 yname: ya.label,
                 colorname: ca.label

@@ -7,25 +7,37 @@ Ext.define('Connector.utility.Query', {
     singleton: true,
 
     SUBJECTVISIT_TABLE: "study.gridbase",
-    DATASET_ALIAS: "http://cpas.labkey.com/Study#Dataset",
-    SUBJECT_ALIAS: "http://cpas.labkey.com/Study#ParticipantId",
-    SEQUENCENUM_ALIAS: "http://cpas.labkey.com/Study#SequenceNum",
-    CONTAINER_ALIAS: "http://cpas.labkey.com/Study#Container",
 
-    useClientGetData: LABKEY.ActionURL.getParameter('_newGetData'),
+    STUDY_ALIAS_PREFIX: 'http://cpas.labkey.com/Study#',
+
+    USE_NEW_GETDATA: LABKEY.ActionURL.getParameter('_newGetData'),
+
+    constructor : function(config) {
+        this.callParent([config]);
+
+        this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
+        this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
+        this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
+        this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
+    },
 
     /**
      *  Wrapper for generating the cdsGetData SQL instead of calling LABKEY.Query.Visualization.getData()
      */
     getData : function(config) {
-        if (Ext.isDefined(this.useClientGetData)) {
+        if (Ext.isDefined(this.USE_NEW_GETDATA)) {
+            var result = this._generateVisGetDataSql(config.measures);
+
             LABKEY.Query.executeSql({
                 schemaName: 'study',
-                sql: this._generateVisGetDataSql(config.measures),
+                sql: result.sql,
                 requiredVersion: '9.1',
                 saveInSession: true,
                 maxRows: config.metaDataOnly ? 0 : undefined,
-                success: config.success,
+                success: function(response) {
+                    response.columnAliasMap = result.columnAliasMap;
+                    config.success.call(config.scope, response);
+                },
                 failure: config.failure,
                 scope: config.scope
             });
@@ -120,7 +132,8 @@ Ext.define('Connector.utility.Query', {
 
     _generateVisGetDataSql : function(measuresIN)
     {
-        var tables = this._getTables();
+        var tables = this._getTables(),
+            columnAliasMap = {};
 
         // I want to modify these measures for internal bookkeeping, but I don't own this config, so clone here;
         // add .fullQueryName and .table to measure
@@ -175,12 +188,13 @@ Ext.define('Connector.utility.Query', {
             }
 
             term = this._generateVisDatasetSql(measures, name, tables);
-            unionSQL += union + term;
+            unionSQL += union + term.sql;
             union = "\nUNION ALL\n";
+
+            Ext.applyIf(columnAliasMap, term.columnAliasMap);
         }
 
-        //console.log(unionSQL);
-        return unionSQL;
+        return {sql: unionSQL, columnAliasMap: columnAliasMap};
     },
 
     _generateVisDatasetSql : function(allMeasures, datasetName, tables)
@@ -200,11 +214,15 @@ Ext.define('Connector.utility.Query', {
         //
         // SELECT
         //
-        var seenAlias = {}, SELECT = ["SELECT "];
+        var columnAliasMap = {}, SELECT = ["SELECT "];
         SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\"");
         SELECT.push(",\n\t" + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS +'"');
         SELECT.push(",\n\t" + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS +'"');
         SELECT.push(",\n\t" + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS +'"');
+
+        columnAliasMap[this.CONTAINER_ALIAS] = {name: 'Container', queryName: rootTable.displayName, schemaName: rootTable.schemaName};
+        columnAliasMap[this.SUBJECT_ALIAS] = {name: 'SubjectId', queryName: rootTable.displayName, schemaName: rootTable.schemaName};
+        columnAliasMap[this.SEQUENCENUM_ALIAS] = {name: 'SequenceNum', queryName: rootTable.displayName, schemaName: rootTable.schemaName};
 
         allMeasures.forEach(function(m) {
             var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
@@ -212,10 +230,10 @@ Ext.define('Connector.utility.Query', {
                     || m.measure.name.toLowerCase() == 'sequencenum',
                 alias = m.measure.alias || LABKEY.MeasureUtil.getAlias(m.measure);
 
-            if (seenAlias[alias] || isKeyCol) {
+            if (columnAliasMap[alias] || isKeyCol) {
                 return;
             }
-            seenAlias[alias] = true;
+            columnAliasMap[alias] = {name: m.measure.name, queryName: m.measure.queryName, schemaName: m.measure.schemaName};
 
             if (!acceptMeasure(m)) {
                 SELECT.push(",\n\tNULL AS " + alias);
@@ -268,7 +286,10 @@ Ext.define('Connector.utility.Query', {
             }
         }, this);
 
-        return SELECT.join('') + "\n" + FROM + "\n" + (WHERE.length == 0 ? "" : "WHERE ") + WHERE.join("\n\tAND ");
+        return {
+            sql: SELECT.join('') + "\n" + FROM + "\n" + (WHERE.length == 0 ? "" : "WHERE ") + WHERE.join("\n\tAND "),
+            columnAliasMap: columnAliasMap
+        };
     },
 
     _getWhereClauseFromFilter : function(f, columnName, literalFn) {
