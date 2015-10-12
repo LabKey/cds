@@ -2026,6 +2026,151 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     }
 
     @Test
+    public void verifyLogAndLinearScales()
+    {
+        String scaleValues, originalScale;
+        int expectedCount, originalCount;
+        CDSHelper cds = new CDSHelper(this);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Validate default scale is Log");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10";
+        expectedCount = 1563;
+
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+
+        log("Change scale to Linear and validate that values change.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14";
+        expectedCount = 1690;
+
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+
+        log("Validate a plot with a values on both y and x axis.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.confirmSelection();
+
+        originalScale = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0.0002\n0.002\n0.02\n0.2\n2";
+        originalCount = 1563;
+        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+
+        log("Change x-axis to be linear.");
+
+        xaxis.openSelectorWindow();
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        xaxis.confirmSelection();
+
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0.0002\n0.002\n0.02\n0.2\n2";
+        expectedCount = 1563;  // Is this right?
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+
+        log("Change y-axis to be linear.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        expectedCount = 1690;
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
+
+        log("Change x-axis back to log.");
+
+        xaxis.openSelectorWindow();
+        xaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        xaxis.confirmSelection();
+
+        scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        expectedCount = 1690;
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+
+        log("Change y-axis back to log, all values should return to original.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        yaxis.confirmSelection();
+
+        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+
+        cds.clearFilters();
+
+        log("Validate log and linear with large scale values.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.confirmSelection();
+
+        scaleValues = "1\n10\n100\n1000";
+        expectedCount = 856;
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+
+        log("Change y-axis to be linear.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+
+        scaleValues = "0\n1000\n2000\n3000\n4000\n5000\n6000\n7000\n8000";
+        expectedCount = 856;
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+
+    }
+
+    private void verifyLogAndLinearHelper(String scaleValues, int svgIndex, int expectedCount, boolean msgVisable)
+    {
+        final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
+        final String XPATH_PLOT_MOD_MSG = "//div[contains(@class, 'plotmodeon')][text()='Log Scale']";
+        String tempStr, styleValue;
+        int subjectCount;
+
+        assertSVG(scaleValues, svgIndex);
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCount = Integer.parseInt(tempStr.replaceAll(",", ""));
+        assertEquals("Subject count not as expected.", expectedCount, subjectCount);
+
+        assertElementPresent("Could not find 'Log Scale' message control.", Locator.xpath(XPATH_PLOT_MOD_MSG), 1);
+
+        styleValue = getAttribute(Locator.xpath(XPATH_PLOT_MOD_MSG), "style");
+
+        if (msgVisable)
+        {
+            assertFalse("'Log Scale' message not visible at top of page.", styleValue.contains("display: none;"));
+        }
+        else
+        {
+            assertTrue("'Log Scale' message is visible at top of page, and it should not be.", styleValue.contains("display: none;"));
+        }
+
+    }
+
+    @Test
     public void verifyDensePlotBrushing()
     {
         // This test will only validate that a "Filter" button shows up, but will not validate that the
