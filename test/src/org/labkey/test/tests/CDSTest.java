@@ -225,7 +225,7 @@ public class CDSTest extends CDSReadOnlyTest
         getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_RAW + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(538, 14, -1); // TODO Test data dependent.
 
         // remove just the plot filter
@@ -741,7 +741,7 @@ public class CDSTest extends CDSReadOnlyTest
         // That is why this test is here.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setCellType("All");
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
@@ -752,7 +752,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText("View data grid"); // grid warning
 
         log("Validate expected columns are present.");
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_RAW);
 
         log("Validating gid counts");
         _asserts.assertFilterStatusCounts(28, 12, -1);
@@ -760,11 +760,11 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertRowCount(543);
 
         log("Applying a column filter.");
-        grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Is Greater Than or Equal To", "1");
+        grid.setFilter(CDSHelper.ICS_MAGNITUDE_RAW, "Is Greater Than or Equal To", "1");
 
         _asserts.assertFilterStatusCounts(3, 3, -1);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_RAW);
         grid.assertRowCount(14);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
@@ -806,7 +806,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertPageTotal(2);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
+                CDSHelper.ICS_MAGNITUDE_RAW, "Study ELISPOT Antigen");
         grid.assertRowCount(28);
 
         log("Validate checkerboarding.");
@@ -838,7 +838,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertPageTotal(4);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
+                CDSHelper.ICS_MAGNITUDE_RAW, "Study ELISPOT Antigen");
         grid.assertRowCount(92);
 
         cds.goToAppHome();

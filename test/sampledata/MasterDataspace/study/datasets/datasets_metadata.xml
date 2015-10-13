@@ -374,9 +374,9 @@
       </column>
       <column columnName="pctpos">
         <datatype>double</datatype>
-        <columnTitle>Magnitude (% cells) - Background</columnTitle>
+        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>Percent of cells expressing the functional marker of interest in the absence of antigen stimulation.</description>
+        <description>Percent of cells expressing the functional marker of interest in response to antigen stimulation.</description>
         <measure>true</measure>
       </column>
       <column columnName="pctpos_adj">
@@ -388,9 +388,9 @@
       </column>
       <column columnName="pctpos_neg">
         <datatype>double</datatype>
-        <columnTitle>Magnitude (% cells) - Raw</columnTitle>
+        <columnTitle>Magnitude (% cells) - Background</columnTitle>
         <rangeURI>http://www.w3.org/2001/XMLSchema#double</rangeURI>
-        <description>Percent of cells expressing the functional marker of interest in response to antigen stimulation.</description>
+        <description>Percent of cells expressing the functional marker of interest in the absence of antigen stimulation.</description>
         <measure>true</measure>
       </column>
       <column columnName="lab_code">

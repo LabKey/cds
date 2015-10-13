@@ -234,7 +234,6 @@
         background-color: #FFFFFF;
         width: 65%;
         padding: 8px 8px 7px 8px;
-        @include prefixer(border-radius, 2px);
         border: 1px solid $gray-5;
         cursor: pointer;
 
@@ -353,7 +352,6 @@
 }
 
 .advanced-dropdown {
-//  border-radius: 15px;
   border-width: 1px;
   border-style: solid;
   border-color: $heat-scale-3 !important;
@@ -364,7 +362,6 @@
     .field-display {
       width: 100%;
       padding: 8px 16px 7px 16px;
-      border-radius: 15px;
       cursor: pointer;
     }
 

@@ -65,6 +65,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private final String PGROUP2 = "visgroup 2";
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
+    private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
     protected static final String MOUSEOVER_FILL = "#41C49F";
     protected static final String MOUSEOVER_STROKE = "#00EAFF";
@@ -147,7 +148,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
@@ -162,7 +163,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that a gutter plot is generated for both the x and y axis.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
@@ -170,7 +171,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
@@ -318,7 +319,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
         xaxis.confirmSelection();
-        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
         assertEquals("Expected 60 tick marks on the x-axis. Found: " + actualTickCount, 60, actualTickCount);
 
@@ -658,7 +659,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW); // Work around for issue 23845.
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW); // Work around for issue 23845.
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
@@ -748,7 +749,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW},
                         {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}
                 };
         final String[][] X_AXIS_SOURCES =
@@ -758,7 +759,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
                         {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}
                 };
         final String[][] COLOR_AXIS_SOURCES =
@@ -2011,7 +2012,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
@@ -2232,7 +2233,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -2248,7 +2249,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(2) a.point"))/4;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(" + pointToClick + ")", 250, -250);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(2) a.point:nth-of-type(" + pointToClick + ")", 250, -250, true);
 
         // Clear the plot.
         cds.clearFilters();
@@ -2267,7 +2268,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
@@ -2276,7 +2277,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", -50, -100);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", -50, -100, true);
 
         cds.clearFilters();
         sleep(500);
@@ -2293,7 +2294,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/2;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50, true);
 
         // Clear the filter.
         cds.clearFilter(1);
@@ -2307,7 +2308,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square"))/3;
-        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50);
+        brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.vis-bin-square:nth-of-type(" + pointToClick + ")", 0, -50, true);
 
         // Clear the filter.
         cds.clearFilters();
@@ -2336,34 +2337,345 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int boxGroup;
         boxGroup = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group"))/2;
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point"))/4;
-        brushPlot("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point:nth-of-type(" + pointToClick + ")", 0, -50);
+        brushPlot("div:not(.thumbnail) > svg g.dataspace-box-group:nth-of-type(" + boxGroup + ") a.point:nth-of-type(" + pointToClick + ")", 0, -50, true);
 
         // Clear the filter.
         cds.clearFilters();
 
     }
 
-    private void brushPlot(String cssPathToPoint, int xOffSet, int yOffSet)
+    @Test
+    public void verifyGutterPlotBrushing()
     {
-        int subjectCountBefore, subjectCountAfter;
+        // This test will only validate that a "Filter" button shows up, but will not validate that the
+        // range of the filter is as expected.
+
+        int pointCount, pointToClick;
+        CDSHelper cds = new CDSHelper(this);
+        int subjectCountBefore;
+        String tempStr, cssPathBrushWindow;
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+
+        log("Test plot with both gutter plots and data in main plot as well.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.confirmSelection();
+
+        // Adding color just to make it more interesting.
+        coloraxis.openSelectorWindow();
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        coloraxis.pickVariable(CDSHelper.DEMO_COUNTRY);
+        coloraxis.confirmSelection();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        gutterPlotBrushingTestHelper(true, true, true, subjectCountBefore);
+
+        // Clean up.
+        cds.clearFilters();
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Test plot with x gutter only and data in main plot as well.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        xaxis.pickVariable(CDSHelper.DEMO_AGE);
+        xaxis.confirmSelection();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        gutterPlotBrushingTestHelper(true, false, true, subjectCountBefore);
+
+        // Clean up.
+        cds.clearFilters();
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Test plot with y gutter only and data in main plot as well.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        yaxis.pickVariable(CDSHelper.DEMO_AGE);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.confirmSelection();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        gutterPlotBrushingTestHelper(false, true, true, subjectCountBefore);
+
+        // Clean up.
+        cds.clearFilters();
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
+        log("Test plot with x & y gutter only and no data in main plot as well.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.BAMA);
+        xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        xaxis.confirmSelection();
+        sleep(500);
+        _ext4Helper.waitForMaskToDisappear();
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
+
+        gutterPlotBrushingTestHelper(true, true, false, subjectCountBefore);
+
+        // Clean up.
+        cds.clearFilters();
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
+    }
+
+    private void gutterPlotBrushingTestHelper(boolean hasXGutter, boolean hasYGutter, boolean hasMainPlotDataPoints, int subjectCountBefore)
+    {
+        WebElement gutterBrushWindow;
+        String dataPointType;
+        int heightWidth, pointToClick;
+        int yGutterIndex, xGutterIndex, mainPlotIndex;
+        String tempStr, cssPathBrushWindow;
+
+        if(hasYGutter)
+        {
+            yGutterIndex = 1;
+            xGutterIndex = 3;
+            mainPlotIndex = 2;
+
+            manipulateGutterPlotBrushing(yGutterIndex, mainPlotIndex, subjectCountBefore, false);
+
+        }
+        else
+        {
+            yGutterIndex = 0;
+            xGutterIndex = 2;
+            mainPlotIndex = 1;
+        }
+
+        if (hasXGutter)
+        {
+            manipulateGutterPlotBrushing(xGutterIndex, mainPlotIndex, subjectCountBefore, true);
+        }
+
+        log("Brush in main plot area and verify that we don't get a brush window in the gutters.");
+
+        if(hasMainPlotDataPoints)
+        {
+
+            // See what kind of data points we have in the main plot.
+            if (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") a.point")) != 0)
+            {
+                dataPointType = "a.point";
+            }
+            else
+            {
+                dataPointType = "a.vis-bin-square";
+            }
+
+            // Try to protect from getting an index out of range error. Add one just to make sure that if there is a
+            // very small number of points we don't end up with 0 as pointToClick;
+            pointToClick = (getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType)) / 4) + 1;
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") " + dataPointType + ":nth-of-type(" + pointToClick + ")", 250, -250, false);
+
+        }
+        else
+        {
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ")", 250, -250, false);
+        }
+
+        if (hasYGutter)
+        {
+            log("Verify no brush in 'undefined x value' gutter.");
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + yGutterIndex + ") > g.brush > rect.extent";
+            gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
+            tempStr = gutterBrushWindow.getAttribute("height");
+            heightWidth = Integer.parseInt(tempStr);
+            assertTrue("'undefined x value' gutter has a brush window and it should not.", heightWidth == 0);
+        }
+
+        if(hasXGutter)
+        {
+            log("Verify no brush in 'undefined y value' gutter.");
+            cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + xGutterIndex + ") > g.brush > rect.extent";
+            gutterBrushWindow = getElement(Locator.css(cssPathBrushWindow));
+            tempStr = gutterBrushWindow.getAttribute("width");
+            heightWidth = Integer.parseInt(tempStr);
+            assertTrue("'undefined y value' gutter has a brush window and it should not.", heightWidth == 0);
+        }
+
+    }
+
+    private void manipulateGutterPlotBrushing(int gutterIndex, int mainPlotIndex, int subjectCountBefore, boolean isXGutter)
+    {
+        CDSHelper cds = new CDSHelper(this);
+        String cssPathBrushWindow;
+
+        if(isXGutter)
+        {
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(3) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
+        }
+        else
+        {
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
+        }
+
+        log("Move the brush window in the 'undefined y value' gutter.");
+
+        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > rect.extent";
+        if(isXGutter)
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), -100, 0);
+        }
+        else
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 0, -100);
+        }
+
+
+        sleep(500);
+
+        log("Move the brush window in the main plot.");
+
+        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + mainPlotIndex + ") > g.brush > rect.extent";
+        if(isXGutter)
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 100, 0);
+        }
+        else
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 0, 100);
+        }
+
+        sleep(500);
+
+        log("Change the brush window size using the 'handles'.");
+
+        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > g:nth-of-type(1)";
+        if(isXGutter)
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), -100, 0);
+        }
+        else
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 0, -100);
+        }
+
+        sleep(500);
+
+        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > g:nth-of-type(2)";
+        if(isXGutter)
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), -100, 0);
+        }
+        else
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 0, -100);
+        }
+
+        log("Move the brush window back to starting point.");
+
+        cssPathBrushWindow = "div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g.brush > rect.extent";
+        if(isXGutter)
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 100, 0);
+        }
+        else
+        {
+            dragAndDrop(Locator.css(cssPathBrushWindow), 0, 100);
+        }
+
+        log("Apply the brushing as a filter.");
+        applyBrushAsFilter(subjectCountBefore);
+
+        // A filter created in one gutter should exclude all points in the other gutter (and make that gutter go away).
+        if(isXGutter)
+        {
+            assertFalse("There is an y gutter and there should not be.", hasYGutter());
+        }
+        else
+        {
+            assertFalse("There is an x gutter and there should not be.", hasXGutter());
+        }
+
+        cds.clearFilter(1);
+        sleep(1000);
+        _ext4Helper.waitForMaskToDisappear();
+
+    }
+
+    private void brushPlot(String cssPathToPoint, int xOffSet, int yOffSet, boolean applyFilter)
+    {
+        int subjectCountBefore;
         String tempStr;
-        final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
+        sleep(250);
 
         assertElementVisible(Locator.linkContainingText("Filter"));
+
+        if(applyFilter)
+        {
+            applyBrushAsFilter(subjectCountBefore);
+        }
+
+    }
+
+    private void applyBrushAsFilter(int subjectCountBefore)
+    {
+        int subjectCountAfter;
+        String tempStr;
+
+        assertElementVisible(Locator.linkContainingText("Filter"));
+
         click(Locator.linkContainingText("Filter"));
-        sleep(250); // Wait briefly for the mask to show up.
+        sleep(1000); // Wait briefly for the mask to show up.
         _ext4Helper.waitForMaskToDisappear();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountAfter = Integer.parseInt(tempStr.replaceAll(",", ""));
 
         assertTrue("The subject count after applying filter was not less than or equal to before. Before: " + subjectCountBefore + " After: " + subjectCountAfter, subjectCountBefore >= subjectCountAfter);
-        sleep(500);
+        sleep(1000); // Wait briefly for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
     }
 
     private String getPointProperty(String property, WebElement point)
@@ -2782,7 +3094,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         public static Locator plotSelectionFilter = Locator.css(".activefilter .plot-selection");
         public static Locator plotSelectionCloseBtn = Locator.css("div.plot-selection div.closeitem");
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
-        public static Locator plotTick = Locator.css("g.tick-text > g > text");
+        public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
         public static Locator removeButton = Locator.xpath("//span[text()='Remove']");

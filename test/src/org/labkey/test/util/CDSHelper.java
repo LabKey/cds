@@ -307,9 +307,9 @@ public class CDSHelper
     public static final String ICS_MARKER_TYPE = "Functional marker type";
     public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
     public static final String ICS_LAB = "Lab ID";
-    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ICS_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
     public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
-    public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
+    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
     public static final String ICS_PEPTIDE_POOL = "Peptide pool";
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_CLADE = "Protein Clade";
