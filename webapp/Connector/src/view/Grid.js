@@ -105,7 +105,7 @@ Ext.define('Connector.view.Grid', {
             ptype: 'messaging'
         });
 
-            this.footer = Ext.create('Connector.component.GridPager', {
+        this.footer = Ext.create('Connector.component.GridPager', {
             listeners: {
                 updatepage: this.showAlignFooter,
                 scope: this
@@ -455,12 +455,14 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(),
             maxRows = Connector.model.Grid.getMaxRows();
 
-        var columns = model.get('columnSet').concat(QueryUtils.DATASET_ALIAS);
+        // explicitly ask for just the columns in the model columnSet plus some hardcoded ones (i.e. the dataset (checkboard) column,
+        // the generated cdsGetData subject column, and the 'Folder' column that will only exist for multi table join queries)
+        var columns = [QueryUtils.DATASET_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.FOLDER_ALIAS];
 
         var config = {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
-            columns: columns,
+            columns: columns.concat(model.get('columnSet')),
             //filterArray: model.getFilterArray(),
             maxRows: maxRows,
             pageSize: maxRows,
@@ -592,13 +594,13 @@ Ext.define('Connector.view.Grid', {
 
                 var model = modelMap[column.dataIndex];
                 if (model) {
-                    column.hidden = model.hidden;
+                    column.hidden = model.hidden || (model.dataIndex == QueryUtils.DATASET_ALIAS);
                     column.header = Ext.htmlEncode(model.header);
                 }
 
                 if (applyChecker) {
-                    var measure = queryService.getMeasure(column.dataIndex);
-                    if (measure && (measure.isMeasure || measure.isDimension)) {
+                    var measure = !QueryUtils.isGeneratedColumnAlias(column.dataIndex) ? queryService.getMeasure(column.dataIndex) : undefined;
+                    if (Ext.isObject(measure) && (measure.isMeasure || measure.isDimension)) {
                         column.renderer = Ext.bind(this.cellRenderer, this, [measure], 3);
                     }
                 }
@@ -786,7 +788,7 @@ Ext.define('Connector.view.Grid', {
                 size = this.getWidthHeight(),
                 up = this.up(),
                 position = 'c-tl',
-                offsets = [size.width / 2, (size.height + 11)];
+                offsets = [size.width / 2, (size.height + 40)];
 
             if (!footer.isVisible()) {
                 footer.show();

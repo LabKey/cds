@@ -652,10 +652,8 @@ Ext.define('Connector.model.Grid', {
      * @returns {Array}
      */
     generateColumnSet : function() {
-        var columns = Connector.getService('Query').getDefaultGridAliases(true /* asArray */),
-            measures = this.getMeasures();
-
-        Ext.each(measures, function(measure) {
+        var columns = Connector.getQueryService().getDefaultGridAliases(true /* asArray */);
+        Ext.each(this.getMeasures(), function(measure) {
             columns.push(measure.alias);
         });
 

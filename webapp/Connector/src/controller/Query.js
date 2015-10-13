@@ -100,7 +100,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     getSubjectColumnAlias : function() {
-        return this.getGridBaseColumnAlias('SubjectId');
+        return this.getGridBaseColumnAlias(Connector.studyContext.subjectColumn);
     },
 
     getGridBaseColumnAlias : function(colName) {

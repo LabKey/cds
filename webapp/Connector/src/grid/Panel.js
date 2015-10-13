@@ -161,7 +161,7 @@ Ext.define('Connector.grid.Panel', {
 
         // Split columns into groups
         Ext.each(columns, function(col) {
-            if (defaultColumns[col.dataIndex]) {
+            if (defaultColumns[col.dataIndex] || col.dataIndex.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
                 studyTime.push(col);
             }
             else {
@@ -177,10 +177,10 @@ Ext.define('Connector.grid.Panel', {
 
         // All other groups based on query label
         Ext.each(remainder, function(col) {
-            var measure = queryService.getMeasure(col.dataIndex),
+            var measure = !QueryUtils.isGeneratedColumnAlias(col.dataIndex) ? queryService.getMeasure(col.dataIndex) : undefined,
                 queryName;
 
-            if (measure) {
+            if (Ext.isObject(measure)) {
                 if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
                     queryName = definedMeasureSourceMap[measure.alias];
                 }

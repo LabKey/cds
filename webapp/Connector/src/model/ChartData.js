@@ -155,7 +155,8 @@ Ext.define('Connector.model.ChartData', {
 
     getDimensionKeys : function(x, y, excludeAliases) {
         var measureSet = this.getMeasureSet(),
-            dimensionKeys = [], sharedKeys = [];
+            dimensionKeys = [], sharedKeys = [],
+            useSharedKeys = QueryUtils.USE_NEW_GETDATA && Ext.isDefined(this.getColumnAliasMap()[QueryUtils.DATASET_ALIAS]);
 
         // Note: we don't exclude the color measure from the dimension keys
         // and we only exclude the x measure if it is continuous
@@ -172,14 +173,18 @@ Ext.define('Connector.model.ChartData', {
                     dimensionKeys.push(alias);
                 }
 
-                // TODO: remove sharedKeys hack
                 if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
                     sharedKeys.push(alias);
                 }
             }
         }, this);
 
-        return sharedKeys.length > 0 ? sharedKeys : dimensionKeys;
+        if (QueryUtils.USE_NEW_GETDATA) {
+            return useSharedKeys ? sharedKeys : dimensionKeys;
+        }
+        else {
+            return sharedKeys.length > 0 ? sharedKeys : dimensionKeys;
+        }
     },
 
     getBaseMeasureConfig : function() {
