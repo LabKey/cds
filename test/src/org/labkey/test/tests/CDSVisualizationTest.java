@@ -55,6 +55,7 @@ import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
+import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
 
 @Category({CDS.class, Git.class})
 public class CDSVisualizationTest extends CDSReadOnlyTest
@@ -65,7 +66,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private final String PGROUP2 = "visgroup 2";
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
-    private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
+    private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subject')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
     protected static final String MOUSEOVER_FILL = "#41C49F";
     protected static final String MOUSEOVER_STROKE = "#00EAFF";
@@ -426,7 +427,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
         xaxis.confirmSelection();
-        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
         assertEquals("Expected 28 tick marks on the x-axis. Found: " + actualTickCount, 28, actualTickCount);
 
@@ -999,6 +1000,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         cds.goToSummary();
         cds.clickBy("Assays");
+        refresh(); // TODO working around an issue where reference is loss to element.
         cds.selectBars(CDSHelper.ASSAYS[0]); // Select BAMA
 
         // Populate expected counts for some of the antigens.
@@ -1955,7 +1957,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setVirusName(y1VirusId);
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText("5000"));
+        waitForElement(plotTickLinear.withText("5000"));
         assertElementPresent(plotPoint, 1321);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
@@ -1975,7 +1977,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText("40"));
+        waitForElement(plotTickLinear.withText("40"));
         assertElementPresent(plotPoint, 60);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
@@ -2167,6 +2169,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Add a filter and make sure that the log scale changes appropriately.");
 
         cds.openStatusInfoPane("Races");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
@@ -2397,6 +2400,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
@@ -2425,6 +2429,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -2442,11 +2447,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.BAMA);
         xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
         sleep(500);
         _ext4Helper.waitForMaskToDisappear();
@@ -2547,11 +2554,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if(isXGutter)
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(3) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
         }
         else
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(5) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
         }
 
         log("Move the brush window in the 'undefined y value' gutter.");
@@ -3094,6 +3101,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         public static Locator plotSelectionFilter = Locator.css(".activefilter .plot-selection");
         public static Locator plotSelectionCloseBtn = Locator.css("div.plot-selection div.closeitem");
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
+        public static Locator plotTickLinear = Locator.css("g.tick-text > g > text");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
