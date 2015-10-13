@@ -69,7 +69,7 @@ Ext.define('Connector.model.Grid', {
                         name: sourceMeasure.name.substring(0, sourceMeasure.name.indexOf("/")), //Don't want the lookup
                         hidden: true,
                         isSourceURI: true,
-                        alias: LABKEY.MeasureUtil.getAlias(sourceMeasure, true) //Can't change the name without changing the alias
+                        alias: LABKEY.Utils.getMeasureAlias(sourceMeasure, true) //Can't change the name without changing the alias
                     });
                 }
             });
@@ -245,7 +245,7 @@ Ext.define('Connector.model.Grid', {
 
                 if (Ext.isDefined(item.alias)) {
                     item.name = item.name.substring(0, item.name.indexOf("/"));
-                    item.alias = LABKEY.MeasureUtil.getAlias(item, true); //Since we changed the name need to recompute the alias
+                    item.alias = LABKEY.Utils.getMeasureAlias(item, true); //Since we changed the name need to recompute the alias
                 }
             }
 

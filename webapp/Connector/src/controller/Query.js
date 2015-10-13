@@ -161,7 +161,7 @@ Ext.define('Connector.controller.Query', {
                         });
 
                         // Add these into the MEASURE_STORE
-                        measure.alias = LABKEY.MeasureUtil.getAlias(measure);
+                        measure.alias = LABKEY.Utils.getMeasureAlias(measure);
                         measure.variableType = 'GRID_DEFAULT';
 
                         if (measure.alias in defaultAliases) {
@@ -406,7 +406,7 @@ Ext.define('Connector.controller.Query', {
                 // (i.e. if it is from the same query or is from a demographic dataset)
                 filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters(), true, [dimQueryKey]);
                 Ext.each(filterMeasures, function(filterMeasure) {
-                    alias = LABKEY.MeasureUtil.getAlias(filterMeasure.measure);
+                    alias = LABKEY.Utils.getMeasureAlias(filterMeasure.measure);
                     index = aliases.indexOf(alias);
 
                     // if we already have this measure in our set, then just tack on the filterArray
@@ -767,7 +767,7 @@ Ext.define('Connector.controller.Query', {
 
                         // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
                         Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
-                            alias = LABKEY.MeasureUtil.getAlias(axisFilterRecord);
+                            alias = LABKEY.Utils.getMeasureAlias(axisFilterRecord);
 
                             // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
                             if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
@@ -1028,7 +1028,7 @@ Ext.define('Connector.controller.Query', {
         var merged = [], keyOrder = [], aliases = {}, alias;
 
         Ext.each(measures, function(measure) {
-            alias = measure.measure.alias || LABKEY.MeasureUtil.getAlias(measure.measure);
+            alias = measure.measure.alias || LABKEY.Utils.getMeasureAlias(measure.measure);
             if (!aliases[alias]) {
                 aliases[alias] = measure;
                 keyOrder.push(alias);
