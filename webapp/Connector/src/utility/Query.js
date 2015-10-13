@@ -48,7 +48,7 @@ Ext.define('Connector.utility.Query', {
     },
 
     _getTables : function() {
-        var table = function(s,q,k,isAssayDataset) {
+        var table = function(s, q, k, isAssayDataset) {
             this.displayName = q;
             this.queryName = q.toLowerCase();
             this.fullQueryName = s + "." + this.queryName;
@@ -59,12 +59,12 @@ Ext.define('Connector.utility.Query', {
         };
 
         return {
-            "study.gridbase" :    new table("study","GridBase",["container","participantsequencenum"],false),
-            "study.demographics": new table("study","Demographics",["container","subjectid"],false),
-            "study.ics":          new table("study","ICS",["container","participantsequencenum"],true),
-            "study.bama":         new table("study","BAMA",["container","participantsequencenum"],true),
-            "study.elispot":      new table("study","Elispot",["container","participantsequencenum"],true),
-            "study.nab":          new table("study","NAb",["container","participantsequencenum"],true)
+            "study.gridbase":     new table("study", "GridBase", ["container","participantsequencenum"], false),
+            "study.demographics": new table("study", "Demographics", ["container","subjectid"], false),
+            "study.ics":          new table("study", "ICS", ["container","participantsequencenum"], true),
+            "study.bama":         new table("study", "BAMA", ["container","participantsequencenum"], true),
+            "study.elispot":      new table("study", "Elispot", ["container","participantsequencenum"], true),
+            "study.nab":          new table("study", "NAb", ["container","participantsequencenum"], true)
         };
     },
 
@@ -86,9 +86,8 @@ Ext.define('Connector.utility.Query', {
         else if (type == "DOUBLE") {
             return this._toSqlNumber;
         }
-        else {
-            return this._toSqlLiteral;
-        }
+
+        return this._toSqlLiteral;
     },
 
     _toSqlNumber : function(v) {
@@ -113,7 +112,7 @@ Ext.define('Connector.utility.Query', {
         throw "unsupported constant: " + v;
     },
 
-    _toSqlLiteral : function() {
+    _toSqlLiteral : function(v) {
         if (!Ext.isDefined(v) || null === v) {
             return "NULL";
         }
@@ -138,7 +137,7 @@ Ext.define('Connector.utility.Query', {
         // I want to modify these measures for internal bookkeeping, but I don't own this config, so clone here;
         // add .fullQueryName and .table to measure
         var measures = measuresIN.map(function(m) {
-            var ret = Ext.apply({},m);
+            var ret = Ext.apply({}, m);
             if (ret.measure) {
                 ret.measure = Ext.apply({}, ret.measure);
             }
@@ -181,20 +180,19 @@ Ext.define('Connector.utility.Query', {
         }
 
         // generate the UNION ALL (checkerboard) sql for the set of datasets
-        var unionSQL = '', union = '', name, term;
-        for (name in datasets) {
-            if (!datasets.hasOwnProperty(name)) {
-                continue;
-            }
-
+        var unionSQL = '', union = '', term;
+        Ext.iterate(datasets, function(name) {
             term = this._generateVisDatasetSql(measures, name, tables);
             unionSQL += union + term.sql;
             union = "\nUNION ALL\n";
 
             Ext.applyIf(columnAliasMap, term.columnAliasMap);
-        }
+        }, this);
 
-        return {sql: unionSQL, columnAliasMap: columnAliasMap};
+        return {
+            sql: unionSQL,
+            columnAliasMap: columnAliasMap
+        };
     },
 
     _generateVisDatasetSql : function(allMeasures, datasetName, tables)
@@ -204,21 +202,24 @@ Ext.define('Connector.utility.Query', {
         var rootTable = tables[datasetName],
             acceptMeasure = this._acceptMeasureFn(datasetName, tables),
             queryMeasures = allMeasures.filter(acceptMeasure),
-            gridBaseAliasableColumns = {subjectid: true, sequencenum: true};
+            gridBaseAliasableColumns = {subjectid: true, sequencenum: true},
+            columnAliasMap = {};
 
         // look for aliases, e.g. study.gridbase.subjectid -> study.{dataset}.subjectid
-        allMeasures.map(function (m) { m.sourceTable = m.table; return m;})
+        allMeasures.map(function(m) { m.sourceTable = m.table; return m;})
             .filter(function(m) { return m.table.fullQueryName === this.SUBJECTVISIT_TABLE &&  gridBaseAliasableColumns[m.measure.name.toLowerCase()];})
             .forEach(function(m) { m.sourceTable = rootTable;});
 
         //
         // SELECT
         //
-        var columnAliasMap = {}, SELECT = ["SELECT "];
-        SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\"");
-        SELECT.push(",\n\t" + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS +'"');
-        SELECT.push(",\n\t" + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS +'"');
-        SELECT.push(",\n\t" + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS +'"');
+        var SELECT = [
+            "SELECT ",
+            LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\"",
+            ",\n\t" + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS +'"',
+            ",\n\t" + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS +'"',
+            ",\n\t" + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS +'"'
+        ];
 
         columnAliasMap[this.CONTAINER_ALIAS] = {name: 'Container', queryName: rootTable.displayName, schemaName: rootTable.schemaName};
         columnAliasMap[this.SUBJECT_ALIAS] = {name: 'SubjectId', queryName: rootTable.displayName, schemaName: rootTable.schemaName};
@@ -233,7 +234,12 @@ Ext.define('Connector.utility.Query', {
             if (columnAliasMap[alias] || isKeyCol) {
                 return;
             }
-            columnAliasMap[alias] = {name: m.measure.name, queryName: m.measure.queryName, schemaName: m.measure.schemaName};
+
+            columnAliasMap[alias] = {
+                name: m.measure.name,
+                schemaName: m.measure.schemaName,
+                queryName: m.measure.queryName
+            };
 
             if (!acceptMeasure(m)) {
                 SELECT.push(",\n\tNULL AS " + alias);
@@ -252,19 +258,17 @@ Ext.define('Connector.utility.Query', {
                 fromTables[m.sourceTable.fullQueryName] = m.sourceTable;
             }
         });
-        var FROM = "FROM " + rootTable.fullQueryName + " " + rootTable.tableAlias;
-        for (var name in fromTables) {
-            if (!fromTables.hasOwnProperty(name)) {
-                continue;
-            }
 
-            var t = fromTables[name], sep = "\n\tON ";
+        var FROM = "FROM " + rootTable.fullQueryName + " " + rootTable.tableAlias,
+            sep = "\n\tON ";
+        Ext.iterate(fromTables, function(name, t) {
+
             FROM += "\nINNER JOIN " + t.fullQueryName + " " + t.tableAlias;
-            t.joinKeys.forEach(function (k) {
+            t.joinKeys.forEach(function(k) {
                 FROM += sep + rootTable.tableAlias + "." + k + "=" + t.tableAlias + "." + k;
                 sep = "\n\tAND ";
             });
-        }
+        });
 
         //
         // WHERE
