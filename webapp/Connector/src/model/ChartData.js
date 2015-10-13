@@ -51,6 +51,11 @@ Ext.define('Connector.model.ChartData', {
         return this.get('plotScales');
     },
 
+    // TODO: Remove this and usages before merging fb_refinement
+    getColumnAliases : function() {
+        return this.get('measureStore').getResponseMetadata().columnAliases;
+    },
+
     getColumnAliasMap : function() {
         return this.get('measureStore').getResponseMetadata().columnAliasMap;
     },
@@ -122,16 +127,27 @@ Ext.define('Connector.model.ChartData', {
         }
 
         if (!Ext.isDefined(measure.alias) || measure.alias == null) {
-            var columnAliasMap = this.getColumnAliasMap();
-            Ext.Object.each(columnAliasMap, function(alias, obj) {
-                if ((measure.alias && measure.alias == alias)
-                    || (measure.name && measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName))
-                {
-                    // stash the alias in the measure object to make it faster to find next time
-                    measure.alias = alias;
-                    return false;
-                }
-            });
+            if (QueryUtils.USE_NEW_GETDATA) {
+                Ext.iterate(this.getColumnAliasMap(), function(alias, obj) {
+                    if ((measure.alias && measure.alias == alias)
+                            || (measure.name && measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName))
+                    {
+                        // stash the alias in the measure object to make it faster to find next time
+                        measure.alias = alias;
+                        return false;
+                    }
+                });
+            }
+            else {
+                Ext.each(this.getColumnAliases(), function(columnAlias) {
+                    if ((measure.alias && measure.alias === columnAlias.columnName) ||
+                        (measure.name && measure.name === columnAlias.measureName)) {
+                        // stash the alias in the measure object to make it faster to find next time
+                        measure.alias = columnAlias.columnName;
+                        return false;
+                    }
+                });
+            }
         }
 
         return measure.alias;
@@ -157,7 +173,7 @@ Ext.define('Connector.model.ChartData', {
                 }
 
                 // TODO: remove sharedKeys hack
-                if (alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
+                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
                     sharedKeys.push(alias);
                 }
             }

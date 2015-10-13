@@ -10,7 +10,7 @@ Ext.define('Connector.utility.Query', {
 
     STUDY_ALIAS_PREFIX: 'http://cpas.labkey.com/Study#',
 
-    USE_NEW_GETDATA: LABKEY.ActionURL.getParameter('_newGetData'),
+    USE_NEW_GETDATA: Ext.isDefined(LABKEY.ActionURL.getParameter('_newGetData')),
 
     constructor : function(config) {
         this.callParent([config]);
@@ -25,7 +25,7 @@ Ext.define('Connector.utility.Query', {
      *  Wrapper for generating the cdsGetData SQL instead of calling LABKEY.Query.Visualization.getData()
      */
     getData : function(config) {
-        if (Ext.isDefined(this.USE_NEW_GETDATA)) {
+        if (this.USE_NEW_GETDATA) {
             var result = this._generateVisGetDataSql(config.measures);
 
             LABKEY.Query.executeSql({
