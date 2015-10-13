@@ -422,3 +422,76 @@ Ext.define('Connector.model.Filter', {
         return filter;
     }
 });
+
+Ext.define('Connector.Filter', {
+
+    statics: {
+        Types: (function() {
+            var types = LABKEY.Filter.Types;
+            types.COMPOUND = {
+                // duck-typing LABKEY.Filter.FilterDefinition
+                getDisplayText: function() {
+                    return 'Compound Filter';
+                }
+            };
+            return types;
+        })(),
+        create : function(columnName, value, filterType, operator) {
+            return new Connector.Filter(columnName, value, filterType, operator);
+        },
+        compound : function(filters, operator) {
+            return new Connector.Filter(undefined, filters, Connector.Filter.Types.COMPOUND, operator);
+        }
+    },
+
+    _filters: undefined,
+
+    _isCompound: false,
+
+    operator: 'AND',
+
+    constructor : function(columnName, value, filterType, operator) {
+        if (filterType === Connector.Filter.Types.COMPOUND) {
+            if (Ext.isArray(value)) {
+                this._filters = value;
+            }
+            else {
+                this._filters = [value];
+            }
+            this._isCompound = true;
+
+            if (operator === 'OR') {
+                this.operator = operator;
+            }
+        }
+        else {
+            this._filters = [ LABKEY.Filter.create(columnName, value, filterType) ];
+        }
+    },
+
+    toJSON : function() {
+        var value = [];
+
+        if (this._isCompound) {
+            Ext.each(this._filters, function(filter) {
+                if (Ext.isDefined(filter.$className)) {
+                    value.push(filter.toJSON());
+                }
+                else {
+                    // LABKEY Filter
+                    value.push(filter.getValue());
+                }
+            });
+        }
+        else {
+            value.push(this._filters[0].getValue());
+        }
+
+        return {
+            type: this._isCompound ? 'com' : this._filters[0].getFilterType().getURLSuffix(),
+            op: this.operator,
+            col: this._isCompound ? undefined : this._filters[0].getColumnName(),
+            value: value
+        };
+    }
+});
