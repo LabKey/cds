@@ -176,7 +176,7 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 
     cls: 'header-container',
 
-    height: 160,
+    height: 180,
 
     defaults: {
         ui: 'custom'
@@ -208,12 +208,6 @@ Ext.define('Connector.view.GroupSummaryHeader', {
                 xtype: 'button',
                 text: '&#9668;&nbsp;back',
                 handler: this.back,
-                scope: this
-            }, {
-                xtype: 'button',
-                text: 'apply filters',
-                margin: '0 0 0 10',
-                handler: this.applyFilters,
                 scope: this
             }, {
                 xtype: 'button',

@@ -70,7 +70,10 @@ public class YAxisVariableSelector extends DataspaceVariableSelector
     public void confirmSelection()
     {
         _test.click(CDSHelper.Locators.cdsButtonLocator("Set y-axis"));
+        // This code should wait for the plot to draw and if there is a 'Median values' pop-up wait for it to go away as well.
+        _test.sleep(1500);
         _test._ext4Helper.waitForMaskToDisappear();
+        _test.waitForElementToDisappear(Locator.css("div.hopscotch-bubble.animated.hopscotch-callout.no-number"));
     }
 
     public void pickSource(String source)

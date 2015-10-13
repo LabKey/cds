@@ -26,7 +26,7 @@ Ext.define('Connector.controller.Group', {
             }
         });
 
-        this.control('filterpanel > container > #savegroup', {
+        this.control('filterstatus > container > #savegroup', {
             click : this.onGroupSave
         });
 
@@ -111,9 +111,6 @@ Ext.define('Connector.controller.Group', {
     },
 
     updateView : function(xtype, context) {
-        // Check if xtype is groupsummary
-        // use viewManager to get viewinstance of 'groupsummary'
-        // call update view method (need to create this).
         if (xtype == 'groupsummary') {
             var v = this.getViewManager().getViewInstance('groupsummary');
             v.updateView(context.groupId);
@@ -165,6 +162,8 @@ Ext.define('Connector.controller.Group', {
         }
 
         Connector.getState().setFilters(filters);
+
+        this.getApplication().fireEvent('grouploaded', Ext.clone(rec.data), filters);
     },
 
     doGroupSave : function() {

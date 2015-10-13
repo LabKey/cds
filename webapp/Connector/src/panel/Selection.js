@@ -20,15 +20,21 @@ Ext.define('Connector.panel.Selection', {
         { text: 'Remove', itemId: 'inverse' }
     ],
 
+    bodyCls: 'selection-panel-wrapper',
+
+    includeHeader: true,
+
     initHeader : function() {
 
         return {
             xtype: 'box',
             tpl: new Ext.XTemplate(
-                '<div class="header">{title:htmlEncode}</div>'
+                '<div class="header">{title:htmlEncode}</div>',
+                '<div class="instruction">{instruction:htmlEncode}</div>'
             ),
             data: {
-                title: this.title
+                title: this.title,
+                instruction: 'CTRL, CMD, and SHIFT select multiple values.'
             }
         };
     },
@@ -56,9 +62,5 @@ Ext.define('Connector.panel.Selection', {
         }
 
         this.displayFilters(filters);
-    },
-
-    getEmptyTextPanel : function() {
-        return undefined;
     }
 });

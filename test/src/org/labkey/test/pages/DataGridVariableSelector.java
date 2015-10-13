@@ -15,18 +15,17 @@
  */
 package org.labkey.test.pages;
 
+import com.google.common.base.Function;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.Ext4Helper;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import com.google.common.base.Function;
 
 public class DataGridVariableSelector extends DataspaceVariableSelector
 {
     private DataGrid _dataGrid;
-    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "titlepanel").withText("View data grid");
+    public static Locator.XPathLocator titleLocator = Locator.tagWithClass("div", "title").withText("View data grid");
     private final String XPATH = "column-axis-selector";
 
     public DataGridVariableSelector(BaseWebDriverTest test, DataGrid grid)
@@ -49,7 +48,7 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
     @Override
     public Locator getOpenButton()
     {
-        return CDSHelper.Locators.cdsButtonLocator("select columns", "gridcolumnsbtn");
+        return CDSHelper.Locators.cdsButtonLocator("Select columns", "gridcolumnsbtn");
     }
 
     @Override
@@ -111,6 +110,8 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(sourceColumnTitle));
             // confirm column header
             _test.waitForElement(Locator.tagWithClass("span", "x-column-header-text").withText(measure));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
         }
     }
 
@@ -153,6 +154,8 @@ public class DataGridVariableSelector extends DataspaceVariableSelector
             confirmSelection();
             // confirm column removal
             _test.waitForElementToDisappear(Locator.tagWithClass("span", "x-column-header-text").withText(measure));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
         }
     }
 

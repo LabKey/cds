@@ -15,7 +15,7 @@ Ext.define('Connector.view.Grid', {
 
     columnWidth: 125,
 
-    headerHeight: 160,
+    headerHeight: 180,
 
     titleHeight: 93,
 
@@ -25,7 +25,7 @@ Ext.define('Connector.view.Grid', {
 
     constructor : function(config) {
         this.callParent([config]);
-        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected');
+        this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter');
     },
 
     initComponent : function() {
@@ -46,23 +46,16 @@ Ext.define('Connector.view.Grid', {
             layout: {
                 type: 'hbox'
             },
-            items: [
-                {
-                    xtype: 'actiontitle',
-                    text: 'View data grid'
-                },
-                {
-                    // This allows for the following items to be right aligned
-                    xtype: 'box',
-                    flex: 1,
-                    autoEl: {
-                        tag: 'div'
-                    }
-                },
-                this.getExportButton(),
-                this.getCitationsButton(),
-                this.getSelectColumnsButton()
-            ]
+            items: [{
+                xtype: 'actiontitle',
+                flex: 1,
+                text: 'View data grid',
+                buttons: [
+                    this.getExportButton(),
+                    this.getCitationsButton(),
+                    this.getSelectColumnsButton()
+                ]
+            }]
         },{
             // This provides a row count on the screen for testing purposes
             id: 'gridrowcountcmp',
@@ -84,6 +77,9 @@ Ext.define('Connector.view.Grid', {
         // bind view to model
         model.on('filterchange', this.onFilterChange, this, {buffer: 500});
         model.on('updatecolumns', this.onColumnUpdate, this, {buffer: 200});
+
+        // propagate event from model
+        this.relayEvents(model, ['usergridfilter']);
 
         // bind view to view
         this.on('resize', this.onViewResize, this);
@@ -110,7 +106,7 @@ Ext.define('Connector.view.Grid', {
             ptype: 'messaging'
         });
 
-        this.footer = Ext.create('Connector.component.GridPager', {
+            this.footer = Ext.create('Connector.component.GridPager', {
             listeners: {
                 updatepage: this.showAlignFooter,
                 scope: this
@@ -155,7 +151,7 @@ Ext.define('Connector.view.Grid', {
         if (!this.selectColumnsButton) {
             this.selectColumnsButton = Ext.create('Ext.button.Button', {
                 cls: 'gridcolumnsbtn',
-                text: 'select columns',
+                text: 'Select columns',
                 handler: this.showMeasureSelection,
                 scope: this
             });
@@ -205,10 +201,10 @@ Ext.define('Connector.view.Grid', {
                         style: 'position: absolute; left: 600px; top: 47%;',
                         children: [{
                             tag: 'h1',
-                            html: 'Add columns about your filtered subjects.'
+                            html: 'Choose columns of subject data.'
                         },{
                             tag: 'h1',
-                            html: 'Sort, filter, and make subgroups.',
+                            html: 'Sort, filter, and label subjects.',
                             style: 'color: #7a7a7a;'
                         },{
                             tag: 'h1',
@@ -321,12 +317,12 @@ Ext.define('Connector.view.Grid', {
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeTimpointMeasures: true,
-                    includeHidden: this.canShowHidden
+                    includeHidden: this.canShowHidden,
+                    includeVirtualSources: true,
+                    includeDefinedMeasureSources: true
                 },
                 memberCountsFn: ChartUtils.getSubjectsIn,
                 memberCountsFnScope: this,
-                supportSelectionGroup: true,
-                supportSessionGroup: true,
                 disableAdvancedOptions: true,
                 listeners: {
                     selectionmade: function(selected) {
@@ -687,7 +683,7 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel(), aliases;
         aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
         aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
-        return Ext4.Array.unique(aliases);
+        return Ext.Array.unique(aliases);
     },
 
     getSelectedMeasureAliases : function() {

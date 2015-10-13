@@ -186,7 +186,7 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // Not sure why I need this but test is more reliable with it.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.confirmSelection();
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -197,12 +197,12 @@ public class CDSTest extends CDSReadOnlyTest
 
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
         coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
         coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
-        cds.clickBy(CDSHelper.DEMOGRAPHICS);
+        cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
@@ -223,7 +223,7 @@ public class CDSTest extends CDSReadOnlyTest
         getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_RAW + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(538, 14, -1); // TODO Test data dependent.
 
         // remove just the plot filter
@@ -481,7 +481,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         // Verify back button works
         click(CDSHelper.Locators.cdsButtonLocatorContainingText("back"));
-        waitForText("Welcome to the CAVD DataSpace.");
+        waitForText(CDSHelper.HOME_PAGE_HEADER);
         waitForText(STUDY_GROUP);
 
         // Verify delete works.
@@ -566,6 +566,7 @@ public class CDSTest extends CDSReadOnlyTest
         DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+//        sleep(1000); // I have no idea why, but w/o this wait the automation will trigger the mask and it won't go away.
 
         waitForText("View data grid"); // grid warning
 
@@ -641,8 +642,8 @@ public class CDSTest extends CDSReadOnlyTest
             assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
         }
 
-        gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.DEMO_SEX, true, true);
-        gridColumnSelector.addGridColumn(CDSHelper.DEMOGRAPHICS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
+        gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.GRID_TITLE_DEMO, CDSHelper.DEMO_RACE, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB, CDSHelper.DEMO_SEX, CDSHelper.DEMO_RACE);
 
         if (CDSHelper.validateCounts)
@@ -726,7 +727,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Filter on race.");
         cds.goToSummary();
-        cds.clickBy(CDSHelper.DEMOGRAPHICS);
+        cds.clickBy(CDSHelper.SUBJECT_CHARS);
         cds.selectBars(false, CDSHelper.RACE_ASIAN);
 
         log("Create a plot that will filter.");
@@ -738,7 +739,7 @@ public class CDSTest extends CDSReadOnlyTest
         // That is why this test is here.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
         yaxis.setCellType("All");
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
@@ -748,7 +749,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText("View data grid"); // grid warning
 
         log("Validate expected columns are present.");
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_RAW);
 
         log("Validating gid counts");
         _asserts.assertFilterStatusCounts(28, 12, -1);
@@ -756,11 +757,11 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertRowCount(543);
 
         log("Applying a column filter.");
-        grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Is Greater Than or Equal To", "1");
+        grid.setFilter(CDSHelper.ICS_MAGNITUDE_RAW, "Is Greater Than or Equal To", "1");
 
         _asserts.assertFilterStatusCounts(3, 3, -1);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_RAW);
         grid.assertRowCount(14);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
@@ -772,7 +773,7 @@ public class CDSTest extends CDSReadOnlyTest
         ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
 
         coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
         coloraxis.pickVariable(CDSHelper.DEMO_SEX);
         coloraxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
@@ -802,7 +803,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertPageTotal(2);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
+                CDSHelper.ICS_MAGNITUDE_RAW, "Study ELISPOT Antigen");
         grid.assertRowCount(28);
 
         log("Validate checkerboarding.");
@@ -834,7 +835,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertPageTotal(4);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND, "Study ELISPOT Antigen");
+                CDSHelper.ICS_MAGNITUDE_RAW, "Study ELISPOT Antigen");
         grid.assertRowCount(92);
 
         cds.goToAppHome();
@@ -876,7 +877,7 @@ public class CDSTest extends CDSReadOnlyTest
         _ext4Helper.waitForMaskToDisappear();
 
         coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.DEMOGRAPHICS);
+        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
         coloraxis.pickVariable(CDSHelper.DEMO_RACE);
         coloraxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
@@ -905,7 +906,7 @@ public class CDSTest extends CDSReadOnlyTest
         log("Validate that column selectors are as expected in their specific variable selector.");
         Map<String, Boolean> oneColumn = new HashMap<>();
         oneColumn.put(CDSHelper.DEMO_RACE, false);
-        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.DEMOGRAPHICS, oneColumn);
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.SUBJECT_CHARS, oneColumn);
         oneColumn.clear();
         oneColumn.put(CDSHelper.ICS_ANTIGEN, false);
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, oneColumn);
@@ -1000,6 +1001,39 @@ public class CDSTest extends CDSReadOnlyTest
         assertTrue("Expected no text in Current columns. Found: '" + selectorText + "'.", selectorText.length() == 0);
 
         gridColumnSelector.confirmSelection();
+
+        log("Validating treatment and study variables");
+        gridColumnSelector.openSelectorWindow();
+        gridColumnSelector.pickSource(CDSHelper.STUDY_TREATMENT_VARS);
+        click(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, 'x-column-header-checkbox')]"));
+        gridColumnSelector.confirmSelection();
+        sleep(500); //Wait for mask to appear.
+        _ext4Helper.waitForMaskToDisappear();
+
+        grid.ensureColumnsPresent(CDSHelper.DEMO_STUDY_NAME, CDSHelper.DEMO_TREAT_SUMM, CDSHelper.DEMO_DATE_SUBJ_ENR,
+                CDSHelper.DEMO_DATE_FUP_COMP, CDSHelper.DEMO_DATE_PUB, CDSHelper.DEMO_DATE_START, CDSHelper.DEMO_NETWORK,
+                CDSHelper.DEMO_PROD_CLASS, CDSHelper.DEMO_PROD_COMB, CDSHelper.DEMO_STUDY_TYPE, CDSHelper.DEMO_TREAT_ARM,
+                CDSHelper.DEMO_TREAT_CODED, CDSHelper.DEMO_VACC_PLAC);
+
+        columns.clear();
+        columns.put(CDSHelper.DEMO_STUDY_NAME, true);
+        columns.put(CDSHelper.DEMO_TREAT_SUMM, true);
+        columns.put(CDSHelper.DEMO_DATE_SUBJ_ENR, true);
+        columns.put(CDSHelper.DEMO_DATE_FUP_COMP, true);
+        columns.put(CDSHelper.DEMO_DATE_PUB, true);
+        columns.put(CDSHelper.DEMO_DATE_START, true);
+        columns.put(CDSHelper.DEMO_NETWORK, true);
+        columns.put(CDSHelper.DEMO_PROD_CLASS, true);
+        columns.put(CDSHelper.DEMO_PROD_COMB, true);
+        columns.put(CDSHelper.DEMO_STUDY_TYPE, true);
+        columns.put(CDSHelper.DEMO_TREAT_ARM, true);
+        columns.put(CDSHelper.DEMO_TREAT_CODED, true);
+        columns.put(CDSHelper.DEMO_VACC_PLAC, true);
+
+        gridColumnSelector.openSelectorWindow();
+        log("Validate that Current columns are as expected and selectable.");
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_CUR_COL, columns);
+        gridColumnSelector.cancelSelection();
 
         cds.goToAppHome();
 
@@ -1231,7 +1265,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Study Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -1239,9 +1273,9 @@ public class CDSTest extends CDSReadOnlyTest
         // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')][text()='Studies']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')]/span[contains(@class, 'breadcrumb')][text()='Studies / ']"));
 
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'titlepanel')][text()='Learn about...']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
 
     @Test
@@ -1332,7 +1366,7 @@ public class CDSTest extends CDSReadOnlyTest
         returnedItems.get(index).click();
 
         log("Validating title is " + itemParts[0]);
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//h1[text()='" + itemParts[0] + "']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//span[text()='" + itemParts[0] + "']").toBy()));
 
         log("Validating Product Type is: " + itemParts[1]);
         assert(Locator.xpath("//table[contains(@class, 'learn-study-info')]//tbody//tr//td[contains(@class, 'item-value')][text()='" + itemParts[1] + "']").findElement(getDriver()).isDisplayed());
@@ -1343,9 +1377,9 @@ public class CDSTest extends CDSReadOnlyTest
         // TODO could add more code here to validate other fields, but in the interest of time leaving it at this for now.
 
         log("Validating return link works.");
-        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')][text()='Study products']"));
+        click(Locator.xpath("//div[contains(@class, 'learn-up')][contains(@class, 'titlepanel')]/span[contains(@class, 'breadcrumb')][text()='Study products / ']"));
 
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'titlepanel')][text()='Learn about...']").toBy()));
+        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'title')][text()='Learn about...']").toBy()));
     }
 
     @Test
@@ -1421,18 +1455,18 @@ public class CDSTest extends CDSReadOnlyTest
 
     }
 
-    // TODO Putting this test on hold. "Learn about Assays" is a future feature.
-    @Test @Ignore
+    @Test
     public void testLearnAboutAssays()
     {
         cds.viewLearnAboutPage("Assays");
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
-        _asserts.verifyLearnAboutPage(assays);
+        _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
-        waitAndClick(Locator.tagWithClass("div", "detail-wrapper").append("/div/div/h2").containing(assays.get(0)));
+        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(0)));
         waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
-        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANALYTE_DATA);
 
+        //testing variables page
         waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Variables"));
         waitForElement(Locator.tagWithClass("div", "list-entry-container"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
@@ -1441,6 +1475,25 @@ public class CDSTest extends CDSReadOnlyTest
 
         waitForElement(Locator.tagWithClass("div", "list-entry-container"));
         assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_VARIABLES_DATA);
+
+        //testing BAMA antigens page
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Antigen"));
+        assertTextPresent(CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA);
+
+        refresh(); //refreshes are necessary to clear previously viewed tabs from the DOM.
+
+        //testing ICS antigens page
+        waitAndClick(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+        waitAndClick(Locator.tagWithClass("div", "detail-container").append("/div/div/h2").containing(assays.get(1)));
+        waitForElement(Locator.tagWithClass("div", "learn-up titlepanel interactive inline").containing("Assays"));
+
+        refresh();
+
+        waitAndClick(Locator.tagWithClass("h1", "lhdv").withText("Antigens"));
+        waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
+        waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
+        assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
     }
 
     // TODO Putting this test on hold. "Learn about Sites " is a future feature.

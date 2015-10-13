@@ -18,7 +18,7 @@ Ext.define('Connector.view.SingleAxisExplorer', {
 
     width : '100%',
 
-    dimViewHeight: 156,
+    dimViewHeight: 180,
 
     lowerBufferHeight: 200,
 
@@ -78,20 +78,26 @@ Ext.define('Connector.view.SingleAxisExplorer', {
                             flex: 1
                         },
                         {
-                            xtype: 'button',
-                            margin: '9px 15px 0 0',
-                            text: (this.showEmpty ? 'Hide empty' : 'Show empty'),
-                            handler: this.onEmptySelection,
-                            scope: this
-                        },
-                        {
-                            xtype: 'box',
-                            margin: '15px 30px 0 0',
-                            autoEl: {
-                                tag: 'div',
-                                cls: 'label',
-                                html: 'Number of Subjects'
-                            }
+                            xtype: 'container',
+                            margin: '15px 28px 0 0',
+                            layout: {
+                                type: 'vbox'
+                            },
+                            items :[{
+                                xtype: 'button',
+                                margin: '0 0 0 20px',
+                                text: (this.showEmpty ? 'Hide empty' : 'Show empty'),
+                                handler: this.onEmptySelection,
+                                scope: this
+                            },{
+                                xtype: 'box',
+                                margin: '9px 0 0 0',
+                                autoEl: {
+                                    tag: 'div',
+                                    cls: 'label',
+                                    html: 'Number of Subjects'
+                                }
+                            }]
                         }
                     ]
                 }]
@@ -343,7 +349,7 @@ Ext.define('Connector.view.SingleAxisExplorerView', {
         },
         resolveDetail : function(model, success, scope) {
             if (model && model.data && model.data.levelUniqueName && Ext.isFunction(success)) {
-                Connector.getState().onMDXReady(function (mdx) {
+                Connector.getState().onMDXReady(function(mdx) {
                     var lvl = mdx.getLevel(model.data.levelUniqueName);
                     if (lvl && lvl.hierarchy.dimension.supportsDetails === true) {
                         success.call(scope);

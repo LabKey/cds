@@ -14,14 +14,11 @@ Ext.define('Connector.measure.Configuration', {
                 'study|SubjectVisit': {
                     queryLabel: 'Time points'
                 },
-                'study|SubjectGroupMap': {
-                    queryLabel: 'User groups'
-                },
+                //'study|SubjectGroupMap': {
+                //    queryLabel: 'User groups'
+                //},
                 'study|Ad5': {
                     category: 'Assays'
-                },
-                'study|Demographics': {
-                    queryLabel: 'Subject characteristics'
                 },
                 'study|ICS': {
                     category: 'Assays',
@@ -42,6 +39,7 @@ Ext.define('Connector.measure.Configuration', {
                         'study_NAb_target_cell',
                         'study_NAb_summary_level',
                         'study_NAb_virus',
+                        'study_NAb_initial_dilution',
                         'study_NAb_specimen_type',
                         'study_NAb_lab_code'
                     ]
@@ -69,6 +67,64 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ELISPOT_protein_panel',
                         'study_ELISPOT_specimen_type',
                         'study_ELISPOT_lab_code'
+                    ]
+                },
+
+                // New/virtual sources
+                'CurrentColumns': {
+                    sortOrder: -100,
+                    schemaName: '_current',
+                    queryName: null,
+                    queryLabel: 'Current columns',
+                    variableType: 'VIRTUAL'
+                },
+                'SessionColumns': {
+                    sortOrder: -99,
+                    schemaName: '_session',
+                    queryName: null,
+                    queryLabel: 'All variables from this session',
+                    variableType: 'VIRTUAL'
+                },
+                'SubjectCharacteristics': {
+                    schemaName: 'study',
+                    queryName: null,
+                    queryLabel: 'Subject characteristics',
+                    subjectCountQueryName: 'Demographics',
+                    variableType: 'DEFINED_MEASURES',
+                    measures: [
+                        'study_Demographics_species',
+                        'study_Demographics_subspecies',
+                        'study_Demographics_sexatbirth',
+                        'study_Demographics_race',
+                        'study_Demographics_ethnicity',
+                        'study_Demographics_country_enrollment',
+                        'study_Demographics_circumcised_enrollment',
+                        'study_Demographics_bmi_enrollment',
+                        'study_Demographics_agegroup_range',
+                        'study_Demographics_age_enrollment'
+                    ]
+                },
+                'StudyTreatmentVariables': {
+                    schemaName: 'study',
+                    queryName: null,
+                    queryLabel: 'Study and treatment variables',
+                    subjectCountQueryName: 'Demographics',
+                    variableType: 'DEFINED_MEASURES',
+                    measures: [
+                        'study_Demographics_study_label',
+                        'study_Demographics_study_start_date',
+                        'study_Demographics_study_first_enr_date',
+                        'study_Demographics_study_fu_complete_date',
+                        'study_Demographics_study_public_date',
+                        'study_Demographics_study_network',
+                        //'study_Demographics_study_last_vaccination_day',
+                        'study_Demographics_study_type',
+                        'study_Demographics_study_arm',
+                        'study_Demographics_study_arm_summary',
+                        'study_Demographics_study_arm_coded_label',
+                        'study_Demographics_study_randomization',
+                        'study_Demographics_study_product_class_combination',
+                        'study_Demographics_study_product_combination'
                     ]
                 }
             },
@@ -228,17 +284,17 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'study_SubjectGroupMap_GroupId_Label': {
-                    sortOrder: -1,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: 'SubjectGroupMap',
-                    inNotNullSet: false,
-                    name: 'GroupId/Label',
-                    label: 'My saved groups',
-                    type: 'VARCHAR',
-                    isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
-                    variableType: 'USER_GROUPS'
-                },
+                //'study_SubjectGroupMap_GroupId_Label': {
+                //    sortOrder: -1,
+                //    schemaName: Connector.studyContext.schemaName,
+                //    queryName: 'SubjectGroupMap',
+                //    inNotNullSet: false,
+                //    name: 'GroupId/Label',
+                //    label: 'My saved groups',
+                //    type: 'VARCHAR',
+                //    isDemographic: true, // use this to tell the visualization provider to only join on Subject (not Subject and Visit)
+                //    variableType: 'USER_GROUPS'
+                //},
 
                 // recommended variables
                 'study_ICS_pctpos_adj': {
@@ -274,11 +330,14 @@ Ext.define('Connector.measure.Configuration', {
                 'study_Demographics_age_enrollment': {
                     isRecommendedVariable: true
                 },
+                'study_Demographics_study_label': {
+                    isRecommendedVariable: true
+                },
+                'study_Demographics_study_arm_summary': {
+                    isRecommendedVariable: true
+                },
 
                 // hidden variables
-                'study_ICS_summary_level': {
-                    hidden: true
-                },
                 'study_ICS_protein_panel_protein_peptide_pool': {
                     hidden: true
                 },
@@ -286,9 +345,6 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ICS_SubjectVisit_Visit': {
-                    hidden: true
-                },
-                'study_NAb_summary_level': {
                     hidden: true
                 },
                 'study_NAb_tier_clade_virus': {
@@ -300,16 +356,10 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_visit_day': {
                     hidden: true
                 },
-                'study_BAMA_summary_level': {
-                    hidden: true
-                },
                 'study_BAMA_SubjectVisit_Visit': {
                     hidden: true
                 },
                 'study_BAMA_visit_day': {
-                    hidden: true
-                },
-                'study_ELISPOT_summary_level': {
                     hidden: true
                 },
                 'study_ELISPOT_protein_panel_protein_peptide_pool': {

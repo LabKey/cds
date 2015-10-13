@@ -2,19 +2,43 @@
   padding: 16px 0 20px 0;
   color: $primary-text-color;
   font: $nav-font;
+  background: $white;
+  border-top: 4px solid $action-red;
+  border-bottom: 1px solid $gray-6;
 }
 
 div.nav-label, div.dis-label {
-  padding-top: 4px;
+  padding: 0 0;
+  margin: 12px 12px 12px 16px;
+  color: $gray-3;
+  height: 24px;
+  line-height: 24px;
+  width: 220px;
 
+  span {
+    &.left-arrow {
+      position: relative;
+      float: left;
+      background: $white;
+      left: 0;
+      top: 0;
+      width:6px;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-right: 0px solid $white;
+    }
+  }
   span.right-label {
-    width: 240px;
-    float: right;
+    padding-left: 12px;
+    float: left;
+    width: 204px;
+    @include prefixer(border-radius, 2px);
     @include unselectable;
   }
 
   span.left-label {
-    padding-left: 23px;
+    float: left;
+    padding-left: 0px;
     @include unselectable;
   }
 }
@@ -34,6 +58,11 @@ div.dis-label {
 
 div.nav-label-over {
   cursor : pointer;
+
+  span.right-label {
+    @include prefixer(transition, background 0.3s linear);
+    background: $gray-7;
+  }
 }
 
 div.emptytext span.left-label {
@@ -42,18 +71,22 @@ div.emptytext span.left-label {
 
 div.grouplist-label-selected,
 div.nav-label-selected {
-  span {
-    font-weight: normal;
-    color: $light-color;
+  span.right-label {
+    color: $black;
+    background: $gray-7;
 
+  }
+  span {
     &.left-arrow {
+      @include prefixer(transition, border-right 0.3s linear);
       position: relative;
       float: left;
-      left: 0;
-      top: 5px;
-      border-top: 4px solid transparent;
-      border-bottom: 4px solid transparent;
-      border-left: 6px solid $light-color;
+      background: $white;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-right: 6px solid $gray-7;
+      width:6px;
+
     }
   }
 }

@@ -1,24 +1,54 @@
 /* Site wide coloring scheme */
-$select-color: #14C9CC;            // Bright Blue
-$select-hover-color: #BEEFEF;      // Light Blue
-$primary-color: #DCD8D8;           // Main Gray
-$secondary-color: #F0F0F0;         // Light Gray
+$select-color: #fb2e5c;            // Bright Blue
+$select-hover-color: #ffffff;      // Light Blue
+
 $legend-color: #BAB4B4;            // 10% darker than $secondary-color
-$light-color: #FFFFFF;             // White
+$gray-7: #ebebeb;             // Light Text
+$gray-7-hover: #ffffff;      //  Light Text Hover
 $dark-color: #333333;              // Dark Gray
 $middle-gray: #6D6E70;             // Middle Gray
-$interactive-color: #9B0D96;       // Interactive
+$interactive-color: #fb2e5c;       // Interactive
 $info-color: #F5A73A;              // Info
+$secondary-color: #F0F0F0;         // Light Gray
+
+$border-color: #BABABA;
+$box-shadow-color: #e1e1e1;
+
+/* NEW COLORS */
+$action-red: #fb2e5c;              // Red full Saturated
+$action-red-hover: #dc2850;         // Red Hover
+$action-red-hover-outline:  #82192d; //  Red hover outline
+
+$data-green: #41c49f;
+$data-green-hover: #3ab08f;
+$data-green-hover-outline: #2d876e;
+
+/* GRAY (DARKEST TO LIGHTEST) */
+
+$gray-1: #1e1e1e;           // Main Gray
+$gray-2: #323232;           // Main Gray
+$gray-25: #646464;           // Main Gray
+$gray-3: #828282;           // Main Gray
+$gray-4: #969696;           // Main Gray
+$gray-5: #bebebe;           // Main Gray
+$gray-6: #e1e1e1;           // Main Gray
+$gray-7: #ebebeb;           // Main Gray
+$gray-8: #f5f5f5;           // Main Gray
+
+/* WHITES */
+
+$white: #fff;
+$off-white: #fefefe;
+$black: #303030;
+$unselect-black: rgba(0, 0, 0, 0.4);
+
+/* TEXT COLORS */
 
 $primary-text-color: #222222;
 $secondary-text-color: #777777;
 $placeholder-text-color: #AFAFAF;
 
-$black: #303030;
-$unselect-black: rgba(0, 0, 0, 0.4);
 
-$border-color: #BABABA;
-$box-shadow-color: #CCCCCC;
 
 /* these could be an actual scale using a function -- stick with Artefact colors for now */
 $heat-scale-1: #666363;
@@ -30,8 +60,8 @@ $heat-scale-6: #EEEEEE;
 
 $title: 26px;
 $headline: 16px;
-$pageLeftPadding: 24px;
-$sectionTopPadding: 24px;
+$pageLeftPadding: 28px;
+$sectionTopPadding: 28px;
 
 $bodycaps-font : Arial;
 $info-font : Arial, sans-serif;
@@ -45,7 +75,10 @@ $subhead-font: bold 11px $info-font;
 $body-two-font: 13px/16px $info-font;
 $body-one-font: 12px/15px $info-font;
 $caption-font: 11px/14px $info-font;
-$nav-font: 16px $data-font;
+$nav-font: 14px $data-font;
+$infopane-font: 18px/24px $data-font;
+$active-filter-font: 11px/17px $info-font;
+
 
 // General
 $connector-prefix: 'x-'; /* Used to mimic Ext's $prefix which is not defined yet when this file is compiled */
@@ -69,9 +102,9 @@ $loadmask-background-color: $dark-color;
 $loadmask-opacity: 0.35;
 
 // Calendar
-$datepicker-base-color: $light-color;
+$datepicker-base-color: $gray-7;
 
-$window-body-background-color: $primary-color;
+$window-body-background-color: $gray-7;
 $window-header-color: $secondary-color;
 
 // Grid
@@ -79,12 +112,12 @@ $grid-row-cell-over-background-color: $select-hover-color;
 $grid-row-cell-over-color: $black;
 $grid-row-cell-font-size: 14px/15px;
 
-$grid-cell-selected-background-color: $light-color; //$select-color;
-$grid-row-cell-selected-background-color: $light-color; //$select-color;
-$grid-row-cell-selected-color: $black; //$light-color;
-$grid-row-cell-selected-border-color: $light-color; //$select-color;
-$grid-row-cell-alt-background-color: $light-color;
-$grid-row-cell-background-color: $light-color;
+$grid-cell-selected-background-color: $gray-7; //$select-color;
+$grid-row-cell-selected-background-color: $gray-7; //$select-color;
+$grid-row-cell-selected-color: $black; //$gray-7;
+$grid-row-cell-selected-border-color: $gray-7; //$select-color;
+$grid-row-cell-alt-background-color: $gray-7;
+$grid-row-cell-background-color: $gray-7;
 
 /* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
@@ -93,7 +126,7 @@ $grid-header-background-color: transparent;
 $grid-header-over-background-color: $select-hover-color;
 
 // Tips
-$tip-background-color: $light-color;
+$tip-background-color: $gray-7;
 $tip-border-color: $info-color;
 $tip-body-color: $info-color;
 
@@ -107,8 +140,9 @@ $tip-body-color: $info-color;
 }
 
 @mixin dialogheader {
-  font-family: $data-font;
-  color: $heat-scale-2;
+  font-family: $info-font;
+  color: $black;
+  font-weight: 700;
 };
 
 @mixin bodycaps {
@@ -148,11 +182,19 @@ $tip-body-color: $info-color;
   user-select: none;
 }
 
+@mixin prefixer($property, $value) {
+  -webkit-#{$property}: $value;
+  -moz-#{$property}: $value;
+  -ms-#{$property}: $value;
+  -o-#{$property}: $value;
+  #{$property}: $value;
+}
+
 @mixin rightFade {
   // needs latest Compass, add '@import "compass"' to your scss
   background-color: $secondary-color; // Old browsers
-  @include filter-gradient($secondary-color, $light-color, horizontal); // IE6-9
-  @include background-image(linear-gradient(left,  $secondary-color 85%,$light-color 95%));
+  @include filter-gradient($secondary-color, $gray-7, horizontal); // IE6-9
+  @include background-image(linear-gradient(left,  $secondary-color 85%,$gray-7 95%));
 }
 
 // --- END DEFINE MIXINS ----
@@ -208,8 +250,15 @@ a {
   text-decoration: none;
 
   &.logout {
-    color: $light-color;
+    color: $gray-7;
     cursor: pointer;
+    transition: all 0.3s ease;
+
+
+    &:hover {
+      color: $gray-7-hover;
+      text-decoration: none;
+    }
   }
 
   &.survey {
@@ -220,6 +269,10 @@ a {
   &:hover, &:active {
     text-decoration: underline;
   }
+}
+
+svg {
+  vertical-align:top;
 }
 
 .interactive {
@@ -279,28 +332,87 @@ a {
   height: 30px !important;
 }
 
+.x-grid-view {
+  padding-bottom: 70px;
+}
+
 .inline {
   display: inline-block;
 }
 
-.titlepanel {
-  font: $title-font;
-  margin-right: 10px;
+.learnheader {
+
+  .titlepanel {
+    font: $title-font;
+    background: $gray-7;
+    display: block;
+    width:100%;
+    height: 56px;
+    line-height: 56px;
+    padding-left: 16px;
+    clear: all;
+  }
+
+  .breadcrumb {
+    font-weight: 400;
+    color: $gray-25;
+    text-transform: uppercase;
+    display: block;
+    float: left;
+    padding-right:4px;
+  }
+
+  .studyname {
+    font-weight: 100;
+    font-size: 22px;
+    font-family: $data-font;
+    color: $black;
+    display: block;
+    float: left;
+  }
+
+  .iarrow {
+    background-image: url(images/navigatebackward.svg);
+    background-repeat: no-repeat;
+    background-color: $gray-8;
+    width: 56px;
+    height: 56px;
+    margin: 0 16px 0 -16px;
+    vertical-align: bottom;
+    display: block;
+    float: left;
+  }
+
 }
 
-.iarrow {
-  background-image: url(images/navigatebackward.svg);
-  background-repeat: no-repeat;
-  width: 14px;
-  vertical-align: bottom;
-  display: inline-block;
-}
+
+
 
 .header-container {
-  margin: $pageLeftPadding $pageLeftPadding 0 $pageLeftPadding;
 
+  .titlepanel {
+    background: $gray-7;
+    display: block;
+    width:100%;
+    height: 56px;
+    padding-left: 16px;
+    clear: all;
+
+    .title {
+      font: $title-font;
+      line-height: 56px;
+    }
+
+    .buttons {
+      padding-top: 16px;
+      padding-right: 24px;
+    }
+  }
+
+  margin: 0;
+  padding: 0!important;
   &-slim {
-    margin: 14px $pageLeftPadding 0 $pageLeftPadding;
+    margin: 0;
   }
 }
 
@@ -374,7 +486,7 @@ div.emptytext {
 }
 
 .#{$connector-prefix}border-layout-ct {
-  background-color: $light-color;
+  background-color: $gray-7;
 }
 
 .#{$connector-prefix}form-item {
@@ -410,23 +522,23 @@ div.emptytext {
 
 .#{$connector-prefix}tip-anchor {
   border-width: 12px;
-  border-left-color: darken($primary-color, 10%);
+  border-left-color: darken($gray-7, 10%);
 }
 
 .#{$connector-prefix}tip-anchor-left {
   border-left-color: transparent !important;
-  border-right-color: darken($primary-color, 10%);
+  border-right-color: darken($gray-7, 10%);
 }
 
 .#{$connector-prefix}mask {
-  background-color: $light-color !important;
+  background-color: $black !important;
   opacity: .8 !important;
 }
 
 /* Ext Message Box */
 .#{$connector-prefix}window-default,
 .#{$connector-prefix}window-header-default-top {
-  background-color: $light-color;
+  background-color: $gray-7;
 }
 
 .#{$connector-prefix}toolbar .#{$connector-prefix}toolbar-separator-horizontal {
@@ -491,7 +603,9 @@ div.emptytext {
 }
 
 .x-css-shadow {
-  border-radius: 5px!important;
+  @include prefixer(border-radius, 2px!important);
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6!important);
+
 }
 
 /* Visualization Library */
@@ -510,18 +624,31 @@ div.emptytext {
 /* For the dropdowns, move to own scss */
 .dropdown-container {
   border: 1px solid #D0D2D3;
-  border-radius: 5px;
-  padding: 12px 10px;
+  @include prefixer(border-radius, 2px);
+  padding: 0 12px;
+  height: 34px!important;
+  line-height: 34px;
+  margin: 28px;
+  background-color: $white;
 
   &:hover { cursor: pointer; }
+
+  label {
+    display: block;
+    line-height: 32px;
+    height: 32px;
+    margin-top: 0!important;
+    font-size: 12px;
+  }
 
   .dropdown-input {
     border: 0!important;
     background: none!important;
     font-family: $info-font;
+    font-size: 12px;
     padding: 0 5px;
-    line-height: 18px;
-    height: 18px;
+    line-height: 32px;
+    height: 32px;
     color: $interactive-color;
     vertical-align: -webkit-baseline-middle;
 
@@ -529,20 +656,26 @@ div.emptytext {
   }
 
   span.parrow {
-    width: 0;
-    height: 0;
-    border-left: 3px solid transparent;
-    border-right: 3px solid transparent;
-    border-top: 3px solid $interactive-color;
+    width: 16px!important;
+    height: 16px!important;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    background-image: url(images/dropdown_normal.svg);
     float: right;
     position: absolute;
     right: 0;
     top: 8px;
+
+    &:hover {
+      background-image: url(images/dropdown_hover.svg);
+    }
   }
 }
 
 .feedback-panel {
-
+  background-color: $heat-scale-6;
   .header {
     padding: 18px 48px 18px 9px;
 
@@ -576,7 +709,7 @@ div.emptytext {
 
 div.hopscotch-bubble {
   border: 1px solid $border-color;
-  box-shadow: 2px 2px 0 $box-shadow-color;
+  @include prefixer(box-shadow, 0 1px 0 0 $gray-6);
 
   .hopscotch-title {
     font-size: 13px;

@@ -61,11 +61,14 @@ public class CDSHelper
     public static final String[] I_TYPES = {"Cellular", "Humoral"};
     public static final String[] H_TYPES = {"HIV Immunogenicity"};
     public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
-    public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody): Luminex Mutiplex Assay",
-            "ICS (Intracellular Cytokine Staining): Flow Cytometry Fluorescence-Activated Cell Sorting (FACS)",
-            "IFNg ELISpot (IFNg ELISpot): ELISpot", "NAB (HIV Neutralizing Antibody): Fluorimeter"};
-    public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
-    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Visit Day", "Target study day defined for a study visit. "};
+    public static final String[] ASSAYS_FULL_TITLES = {"BAMA (HIV Binding Antibody)",
+            "ICS (Intracellular Cytokine Staining)",
+            "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
+    public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
+    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
+    public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
+    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1", "NEF: NEF 1", "GAG: GAG 1", "Combined: NA"};
+//    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
     public static final String EMPTY_ASSAY = "HIV-1 RT-PCR";
     public static final String TEST_FEED = WebTestHelper.getBaseURL() + "/Connector/test/testfeed.xml";
     public final static int CDS_WAIT = 2000;
@@ -241,7 +244,8 @@ public class CDSHelper
     public static final String BAMA_SPECIMEN = "Specimen type";
     public static final String BAMA_VACCINE = "Vaccine matched indicator";
 
-    public static final String DEMOGRAPHICS = "Subject characteristics";
+    public static final String SUBJECT_CHARS = "Subject characteristics";
+    public static final String STUDY_TREATMENT_VARS = "Study and treatment variables";
     public static final String DEMO_AGEGROUP = "Age Group at Enrollment";
     public static final String DEMO_AGE = "Age at Enrollment";
     public static final String DEMO_BMI = "BMI at Enrollment";
@@ -249,9 +253,22 @@ public class CDSHelper
     public static final String DEMO_COUNTRY = "Country at Enrollment";
     public static final String DEMO_HISPANIC = "Hispanic";
     public static final String DEMO_RACE = "Race";
-    public static final String DEMO_SEX = "Sexatbirth";
+    public static final String DEMO_SEX = "Sex at birth";
     public static final String DEMO_SPECIES = "Species";
     public static final String DEMO_SUBSPECIES = "Subspecies";
+    public static final String DEMO_STUDY_NAME = "Study Name";
+    public static final String DEMO_TREAT_SUMM = "Treatment Summary";
+    public static final String DEMO_DATE_SUBJ_ENR = "Date First Subject Enrolled";
+    public static final String DEMO_DATE_FUP_COMP = "Date Follow-up Complete";
+    public static final String DEMO_DATE_PUB = "Date Study Made Public";
+    public static final String DEMO_DATE_START = "Date of Study Start";
+    public static final String DEMO_NETWORK = "Network";
+    public static final String DEMO_PROD_CLASS = "Product Class Combination";
+    public static final String DEMO_PROD_COMB = "Product Combination";
+    public static final String DEMO_STUDY_TYPE = "Study Type";
+    public static final String DEMO_TREAT_ARM = "Treatment Arm";
+    public static final String DEMO_TREAT_CODED = "Treatment Arm Coded Label";
+    public static final String DEMO_VACC_PLAC = "Vaccine or Placebo";
 
     public static final String ELISPOT = "ELISPOT (Enzyme-Linked ImmunoSpot)";
     public static final String ELISPOT_ANTIGEN = "Antigen Panel";
@@ -266,9 +283,9 @@ public class CDSHelper
     public static final String ELISPOT_MARKER_NAME = "Functional marker name";
     public static final String ELISPOT_MARKER_TYPE = "Functional marker type";
     public static final String ELISPOT_LAB = "Lab ID";
-    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
-    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
-    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND = "Magnitude (SFC) - Background";
+    public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (SFC) - Background subtracted";
+    public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (SFC) - Raw";
     public static final String ELISPOT_PEPTIDE_POOL = "Peptide Pool";
     public static final String ELISPOT_PROTEIN =  "Protein";
     public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
@@ -290,9 +307,9 @@ public class CDSHelper
     public static final String ICS_MARKER_TYPE = "Functional marker type";
     public static final String ICS_LAB_SRC_KEY = "Ics Lab Source Key";
     public static final String ICS_LAB = "Lab ID";
-    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
+    public static final String ICS_MAGNITUDE_RAW = "Magnitude (% cells) - Raw";
     public static final String ICS_MAGNITUDE_BACKGROUND_SUB = "Magnitude (% cells) - Background subtracted";
-    public static final String ICS_MAGNITUDE_BACKGROUND_RAW = "Magnitude (% cells) - Raw";
+    public static final String ICS_MAGNITUDE_BACKGROUND = "Magnitude (% cells) - Background";
     public static final String ICS_PEPTIDE_POOL = "Peptide pool";
     public static final String ICS_PROTEIN = "Protein";
     public static final String ICS_PROTEIN_CLADE = "Protein Clade";
@@ -333,7 +350,7 @@ public class CDSHelper
     public static final String GRID_TITLE_DEMO = "Subject characteristics";
     public static final String GRID_TITLE_ELISPOT = TITLE_ELISPOT;
     public static final String GRID_TITLE_ICS = TITLE_ICS;
-    public static final String GRID_TITLE_NAB = "Neutralizing antibody";
+    public static final String GRID_TITLE_NAB = "NAb";
     public static final String GRID_TITLE_PLOT = "Plot Data Results";
     public static final String GRID_COL_SUBJECT_ID = "Subject Id";
     public static final String GRID_COL_STUDY = "Study";
@@ -347,6 +364,8 @@ public class CDSHelper
     public static final String TIME_POINTS_ALIGN_DAY0 = "Aligned by Day 0";
     public static final String TIME_POINTS_ALIGN_ENROLL = "Enrollment";
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
+
+    public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
 
     // This function is used to build id for elements found on the tree panel.
     public String buildIdentifier(String firstId, String... elements)
@@ -409,10 +428,10 @@ public class CDSHelper
     {
         _test.goToProjectHome();
         _test.clickAndWait(Locator.linkWithText("Application"));
-        _test.addUrlParameter("_showPlotData=true");
+        _test.addUrlParameter("_showPlotData=true&_disableAutoMsg=true");
 
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
-        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));
+        _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
@@ -428,6 +447,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
     }
 
@@ -549,12 +570,15 @@ public class CDSHelper
     public void goToAppHome()
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        _test.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace"));
+        _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
     }
 
     public void goToSummary()
     {
         NavigationLink.SUMMARY.makeNavigationSelection(_test);
+        _test.sleep(1000);
+        _test._ext4Helper.waitForMaskToDisappear();
+        _test.sleep(500);
     }
 
     public void clearFilter(int index)
@@ -573,6 +597,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(100);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForText("Filter removed.");
     }
 
@@ -584,6 +610,8 @@ public class CDSHelper
             clearButton.click();
             return null;
         });
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
 
@@ -612,6 +640,8 @@ public class CDSHelper
     {
         _test.click(Locators.cdsButtonLocator("Filter"));
         waitForClearSelection(); // wait for animation
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void clearSelection()
@@ -656,7 +686,8 @@ public class CDSHelper
             _test.waitForElement(Locators.activeDimensionHeaderLocator(byNoun));
             return null;
         });
-
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void hideEmpty()
@@ -666,6 +697,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElementToDisappear(Locator.tagWithClass("div", "barchart").append(Locator.tagWithClass("span", "count").withText("0")));
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Show empty"));
     }
@@ -677,6 +710,8 @@ public class CDSHelper
             return null;
         });
 
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(CDSHelper.Locators.cdsButtonLocator("Hide empty"));
     }
 
@@ -704,6 +739,8 @@ public class CDSHelper
             WebElement activeLearnAboutHeader = Locator.tag("h1").withClass("lhdv").withClass("active").withText(learnAxis).waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test.shortWait().until(ExpectedConditions.visibilityOf(activeLearnAboutHeader));
         }
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void closeInfoPage()
@@ -721,15 +758,17 @@ public class CDSHelper
         _test.click(Locators.cdsButtonLocator("delete"));
         _test.waitForText("Are you sure you want to delete");
         _test.click(Locator.linkContainingText("Delete"));
-        _test.waitForText("Welcome to the CAVD DataSpace");
+        _test.waitForText(HOME_PAGE_HEADER);
         _test.waitForElementToDisappear(groupListing);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void toggleExplorerBar(String largeBarText)
     {
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
         _test.click(Locator.xpath("//div[@class='bar large']//span[contains(@class, 'barlabel') and text()='" + largeBarText + "']//..//..//div[contains(@class, 'saecollapse')]//p"));
-        _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        _test.sleep(500);
+        _test._ext4Helper.waitForMaskToDisappear();
     }
 
     public void openStatusInfoPane(String label)
@@ -852,8 +891,8 @@ public class CDSHelper
 
     public enum NavigationLink
     {
-        HOME("Home", Locator.tagContainingText("h1", "Welcome to the")),
-        LEARN("Learn about studies, assays, ...", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
+        HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
+        LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest.")),
         PLOT("Plot data", Locator.tagWithClass("a", "yaxisbtn")),
         GRID("View data grid", DataGridVariableSelector.titleLocator);

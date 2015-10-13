@@ -56,21 +56,6 @@ Ext.define('Connector.view.PageHeader', {
     },
 
     initComponent : function() {
-
-        this.renderTpl = new Ext.XTemplate(
-            '<div>',
-                '<div class="learn-up titlepanel interactive inline">',
-                    '<span class="iarrow">&nbsp;</span>{upText:htmlEncode}',
-                '</div>',
-                '<h1 class="inline">{title:htmlEncode}</h1>',
-                '<div class="dim-selector">',
-                    '<tpl for="tabs">',
-                        '<h1 class="lhdv">{label:htmlEncode}</h1>',
-                    '</tpl>',
-                '</div>',
-            '</div>'
-        );
-
         if (Ext.isDefined(this.dimension)) {
             if (!Ext.isDefined(this.upLink)) {
                 this.upLink = {
@@ -87,6 +72,21 @@ Ext.define('Connector.view.PageHeader', {
         else {
             this.tabs = undefined;
         }
+
+        this.setTabHeader();
+
+        this.renderTpl = new Ext.XTemplate(
+            '<div>',
+                '<div class="learn-up titlepanel interactive inline">',
+                    '<span class="iarrow">&nbsp;</span><span class="breadcrumb">{upText:htmlEncode} / </span><span class="studyname">{title:htmlEncode}</span>',
+                '</div>',
+                '<div class="dim-selector learnabouttab">',
+                    '<tpl for="tabs">',
+                        '<h1 class="lhdv">{label:htmlEncode}</h1>',
+                    '</tpl>',
+                '</div>',
+            '</div>'
+        );
 
         this.renderData = {
             title: this.title,
@@ -127,6 +127,14 @@ Ext.define('Connector.view.PageHeader', {
                 this.fireEvent('upclick', this.upLink);
             }, this);
         }, this);
+    },
+
+    setTabHeader : function() {
+        //rare case so deal with on a case by case basis
+        if (!Ext.isDefined(this.tabs) || this.tabs[this.activeTab].url != 'antigens') {
+            //default behavior
+            this.cls = this.cls + ' pageheader';
+        }
     },
 
     selectTab : function(tabIndex) {

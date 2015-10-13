@@ -43,7 +43,7 @@ Ext.define('Connector.app.store.Dataset', {
                 extend: 'Connector.app.store.DatasetData',
                 tableName: label
             });
-            store = Ext.create(storeName);
+            var store = Ext.create(storeName);
             store.on('load', function() {
                 this.endLoad();
             }, this, {

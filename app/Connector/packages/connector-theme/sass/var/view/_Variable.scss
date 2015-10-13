@@ -59,7 +59,7 @@ button.ddbutton {
 
 .arrow-window {
   position: absolute;
-  background-color: $light-color;
+  background-color: $gray-7;
   border: 1px solid $heat-scale-3;
 
   &:after, &:before {
@@ -75,7 +75,7 @@ button.ddbutton {
 
   &:after {
     border-color: rgba(0, 0, 0, 0); // Make the border invisible except for the bottom.
-    border-bottom-color: $light-color;
+    border-bottom-color: $gray-7;
     border-width: 15px;
     margin-left: -15px;
   }

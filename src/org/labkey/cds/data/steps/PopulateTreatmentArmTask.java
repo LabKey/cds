@@ -42,6 +42,7 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
         BatchValidationException errors = new BatchValidationException();
 
         QuerySchema cdsSchema;
+        QuerySchema studySchema;
 
         TableInfo sourceTable;
         TableInfo targetTable;
@@ -145,6 +146,99 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
                 }
                 return;
             }
+        }
+        long finish = System.currentTimeMillis();
+
+        logger.info("Populate treatment arms took " + DateUtil.formatDuration(finish - start) + ".");
+
+        //
+        // Populate Visit Tags (Project level only)
+        //
+        start = System.currentTimeMillis();
+        studySchema = DefaultSchema.get(user, project).getSchema("study");
+
+        if (studySchema == null)
+            throw new PipelineJobException("Unable to find study schema for project " + project.getPath());
+
+        cdsSchema = DefaultSchema.get(user, project).getSchema("cds");
+
+        if (cdsSchema == null)
+            throw new PipelineJobException("Unable to find cds schema for project " + project.getPath());
+
+        sourceTable = cdsSchema.getTable("ds_visittag");
+        targetTable = studySchema.getTable("visittag");
+        targetService = targetTable.getUpdateService();
+
+        if (targetService == null)
+            throw new PipelineJobException("Unable to find update service for study.visittag in project " + project.getPath());
+
+        sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
+
+        Map<String, Object>[] rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+        if (rows.length > 0)
+        {
+            try
+            {
+                targetService.insertRows(user, project, Arrays.asList(rows), errors, null, null);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        if (errors.hasErrors())
+        {
+            for (ValidationException error : errors.getRowErrors())
+            {
+                logger.error(error.getMessage());
+            }
+            return;
+        }
+
+        //
+        // Populate Visit Tag Map
+        //
+        for (Container container : project.getChildren())
+        {
+            cdsSchema = DefaultSchema.get(user, container).getSchema("cds");
+
+            if (cdsSchema == null)
+                throw new PipelineJobException("Unable to find cds schema for folder " + container.getPath());
+
+            sourceTable = cdsSchema.getTable("ds_visittagmap");
+            ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
+
+            targetTable = cdsSchema.getTable("visittagmap");
+            targetService = targetTable.getUpdateService();
+
+            if (targetService == null)
+                throw new PipelineJobException("Unable to find update service for cds.visittagmap in folder " + container.getPath());
+
+            sql = new SQLFragment("SELECT * FROM ").append(sourceTable).append(" WHERE prot = ?");
+            sql.add(container.getName());
+
+            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (rows.length > 0)
+            {
+                try
+                {
+                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
+                }
+                catch (Exception e)
+                {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+
+            if (errors.hasErrors())
+            {
+                for (ValidationException error : errors.getRowErrors())
+                {
+                    logger.error(error.getMessage());
+                }
+                return;
+            }
 
             // Insert Visit Tag Alignment
             targetTable = cdsSchema.getTable("visittagalignment");
@@ -156,12 +250,12 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
             ((ContainerFilterable) sourceTable).setContainerFilter(new ContainerFilter.CurrentAndSubfolders(user));
             sql = new SQLFragment("SELECT * FROM ").append(sourceTable);
 
-            insertRows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
-            if (insertRows.length > 0)
+            rows = new SqlSelector(sourceTable.getSchema(), sql).getMapArray();
+            if (rows.length > 0)
             {
                 try
                 {
-                    targetService.insertRows(user, container, Arrays.asList(insertRows), errors, null, null);
+                    targetService.insertRows(user, container, Arrays.asList(rows), errors, null, null);
                 }
                 catch (Exception e)
                 {
@@ -178,9 +272,9 @@ public class PopulateTreatmentArmTask extends AbstractPopulateTask
                 return;
             }
         }
-        long finish = System.currentTimeMillis();
+        finish = System.currentTimeMillis();
 
-        logger.info("Populate treatment arms took " + DateUtil.formatDuration(finish - start) + ".");
+        logger.info("Populate visit tags took " + DateUtil.formatDuration(finish - start) + ".");
 
         start = System.currentTimeMillis();
         for (Container container : project.getChildren())

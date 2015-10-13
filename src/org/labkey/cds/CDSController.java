@@ -47,10 +47,8 @@ import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
 import org.labkey.api.rss.RSSService;
-import org.labkey.api.security.IgnoresTermsOfUse;
-import org.labkey.api.security.RequiresLogin;
-import org.labkey.api.security.RequiresNoPermission;
-import org.labkey.api.security.RequiresPermission;
+import org.labkey.api.security.*;
+import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
 import org.labkey.api.util.Path;
 import org.labkey.api.view.HtmlView;
@@ -132,6 +130,23 @@ public class CDSController extends SpringActionController
         }
     }
 
+    public class AppModel
+    {
+        private boolean isAnalyticsUser = false;
+
+        public boolean isAnalyticsUser()
+        {
+            return isAnalyticsUser;
+        }
+
+        public void setIsAnalyticsUser(boolean isAnalyticsUser)
+        {
+            this.isAnalyticsUser = isAnalyticsUser;
+        }
+    }
+
+    private static final String ANALYTICS_USER_GROUP = "Beta Users";
+
     @RequiresNoPermission
     @IgnoresTermsOfUse
     public class AppAction extends SimpleViewAction
@@ -146,8 +161,20 @@ public class CDSController extends SpringActionController
             }
             else
             {
-                JspView view = new JspView("/org/labkey/cds/view/app.jsp");
-                template = new ConnectorTemplate(getViewContext(), getContainer(), view, defaultPageConfig(), new NavTree[0]);
+                AppModel model = new AppModel();
+
+                // Support analytics for white-list users (i.e. if they are in the ANALYTICS_USER_GROUP)
+                List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
+                for (Group group : groups)
+                {
+                    if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
+                    {
+                        model.setIsAnalyticsUser(true);
+                        break;
+                    }
+                }
+
+                template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
             }
             getPageConfig().setTemplate(PageConfig.Template.None);
             return template;

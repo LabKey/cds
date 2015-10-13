@@ -46,7 +46,7 @@ Ext.define('Connector.controller.State', {
                     selected = [selected];
                 }
 
-                Ext.each(selected, function (selection) {
+                Ext.each(selected, function(selection) {
                     if (selection.$className == 'Connector.model.Measure') {
                         this.addSessionColumn(selection.raw);
                     }
@@ -115,5 +115,11 @@ Ext.define('Connector.controller.State', {
 
             this.addSelection(filter, true, false, true);
         }
+    },
+
+    moveSelectionToFilter : function() {
+        var selections = this.selections;
+        this.callParent();
+        this.fireEvent('selectionToFilter', selections);
     }
 });

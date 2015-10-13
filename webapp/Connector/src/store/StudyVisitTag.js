@@ -13,7 +13,7 @@ Ext.define('Connector.store.StudyVisitTag', {
 
     loading: true,
 
-    loadStudyVisitTags : function (data) {
+    loadStudyVisitTags : function(data) {
         if (data && data.rows) {
             var rows = [];
             for (var i = 0; i < data.rows.length; i++) {

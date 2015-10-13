@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 LabKey Corporation
+ * Copyright (c) 2014-2015 LabKey Corporation
  *
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -39,6 +39,24 @@ Ext.define('Connector.model.Filter', {
 
                 Connector.model.Filter.loaded = true;
             }
+        },
+
+        getGridLabel : function(gf) {
+            if (gf.getFilterType().getURLSuffix() === 'dategte' || gf.getFilterType().getURLSuffix() === 'datelte') {
+                return LABKEY.app.model.Filter.getShortFilter(gf.getFilterType().getDisplayText()) + ' ' + ChartUtils.tickFormat.date(gf.getValue());
+            }
+            return LABKEY.app.model.Filter.getGridLabel(gf);
+        },
+
+        getFilterValuesAsArray : function(gf) {
+            var values = [];
+            Ext.each(gf.getValue(), function(value) {
+                Ext.each(value.split(';'), function(v) {
+                    values.push(Ext.htmlEncode(v == '' ? ChartUtils.emptyTxt : v));
+                });
+            });
+
+            return values;
         }
     }
 });

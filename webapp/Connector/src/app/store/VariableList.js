@@ -26,14 +26,14 @@ Ext.define('Connector.app.store.VariableList', {
 
     },
 
-    getByAssayName : function (assayName) {
+    getByAssayName : function(assayName) {
         if (this.getCount() == 0) {
             this.loadSlice();
         }
         if (this.isFiltered) {
             this.clearFilter();
         }
-        this.filterBy(function (record) {
+        this.filterBy(function(record) {
             return record.get('queryName') === assayName;
         });
 

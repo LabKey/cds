@@ -14,14 +14,16 @@ Ext.define('Connector.view.module.VariableList', {
                 '<tpl for=".">',
                     '<div class="list-container">',
                         '<div class="list-entry-container">',
-                            '<div class="list-category-container">',
-                                '<div class="list-category-detail">{[values.isRecommendedVariable ? "Recommended" : ""]}</div>',
-                            '</div>',
-                                '<div class="list-entry-title">',
-                                '<h2>{label:htmlEncode}</h2>',
-                            '</div>',
-                            '<div class="list-entry-description">',
-                                '<div>{description:htmlEncode}</div>',
+                            '<div class="detail-left-column">',
+                                '<div class="list-category-container">',
+                                    '<div class="list-category-detail">{[values.isRecommendedVariable ? "Recommended" : ""]}</div>',
+                                '</div>',
+                                    '<div class="list-entry-title">',
+                                    '<h2>{label:htmlEncode}</h2>',
+                                '</div>',
+                                '<div class="list-entry-description">',
+                                    '<div>{description:htmlEncode}</div>',
+                                '</div>',
                             '</div>',
                         '</div>',
                     '</div>',
@@ -33,5 +35,7 @@ Ext.define('Connector.view.module.VariableList', {
         var assayName = this.data.model.data.assay_type,
             store = StoreCache.getStore('Connector.app.store.VariableList');
         this.data = Ext.Array.pluck(store.getByAssayName(assayName), 'data');
+
+        this.callParent();
     }
 });

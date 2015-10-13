@@ -40,6 +40,7 @@ Ext.define('Connector.view.Learn', {
             this.headerViews.main = Ext.create('Connector.view.LearnHeader', {
                 dimensions: this.getDimensions(),
                 hidden: true,
+                cls: 'learnheader',
                 listeners: {
                     searchchanged: this.onSearchFilterChange,
                     scope: this
@@ -239,13 +240,13 @@ Ext.define('Connector.view.Learn', {
                     data = store.data.items,
                     ret = [];
 
-            for(var i = 0; i < data.length; i++) {
-                if(ret.length < 2 && data[i].get(prop) === val) {
+            for (var i = 0; i < data.length; i++) {
+                if (ret.length < 2 && data[i].get(prop) === val) {
                     ret.push(data[i]);
                 }
             }
 
-            if(ret.length === 1) {
+            if (ret.length === 1) {
                 return ret[0];
             }
         }
@@ -329,9 +330,9 @@ Ext.define('Connector.view.LearnHeader', {
 
     alias: 'widget.learnheader',
 
-    height: 160,
+    height: 180,
 
-    cls: 'header-container',
+    cls: 'header-container learnaboutheader',
 
     defaults: {
         ui: 'custom',

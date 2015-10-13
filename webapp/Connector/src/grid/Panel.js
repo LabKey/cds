@@ -104,7 +104,7 @@ Ext.define('Connector.grid.Panel', {
 
                 column.plotted = false;
                 for (var a=0; a < plotMeasures.length; a++) {
-                    if (LABKEY.MeasureUtil.getAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
+                    if (LABKEY.Utils.getMeasureAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
                         column.plotted = true;
                     }
                 }
@@ -162,6 +162,7 @@ Ext.define('Connector.grid.Panel', {
     groupColumns : function(columns) {
         var queryService = Connector.getService('Query'),
             defaultColumns = queryService.getDefaultGridAliases(),
+            definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
             groups = [],
             groupMap = {},
             studyTime = [],
@@ -200,15 +201,16 @@ Ext.define('Connector.grid.Panel', {
                 queryName;
 
             if (measure) {
-                queryName = measure.queryLabel || measure.queryName;
+                if (Ext.isDefined(definedMeasureSourceMap[measure.alias])) {
+                    queryName = definedMeasureSourceMap[measure.alias];
+                }
+                else {
+                    queryName = measure.queryName;
+                }
             }
             else {
                 queryName = col.dataIndex.split('_')[1];
             }
-
-            // HACK: special case to map SubjectGroupMap -> User groups
-            if (queryName == "SubjectGroupMap")
-                queryName = "User groups";
 
             if (Ext.isDefined(queryName)) {
                 if (!groupMap[queryName]) {
@@ -219,9 +221,10 @@ Ext.define('Connector.grid.Panel', {
             }
         }, this);
 
+        var columnCharacterWidth = 14;
         Ext.iterate(groupMap, function(key, value) {
             groups.push({
-                text: key,
+                text: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
                 columns: value
             });
         }, this);
