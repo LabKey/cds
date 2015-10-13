@@ -229,7 +229,7 @@ Ext.define('Connector.utility.Query', {
             var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
                     || m.measure.name.toLowerCase() == 'container'
                     || m.measure.name.toLowerCase() == 'sequencenum',
-                alias = m.measure.alias || LABKEY.MeasureUtil.getAlias(m.measure);
+                alias = m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure);
 
             if (columnAliasMap[alias] || isKeyCol) {
                 return;

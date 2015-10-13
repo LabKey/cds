@@ -162,7 +162,7 @@ Ext.define('Connector.controller.Query', {
                         });
 
                         // Add these into the MEASURE_STORE
-                        measure.alias = LABKEY.MeasureUtil.getAlias(measure);
+                        measure.alias = LABKEY.Utils.getMeasureAlias(measure);
                         measure.variableType = 'GRID_DEFAULT';
 
                         if (measure.alias in defaultAliases) {
@@ -395,7 +395,7 @@ Ext.define('Connector.controller.Query', {
                     type: 'VARCHAR'
                 });
 
-                subjectMeasure.alias = LABKEY.MeasureUtil.getAlias(subjectMeasure);
+                subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
                 if (subjectFilter.hasFilters) {
                     subjectMeasure.values = subjectFilter.subjects;
                 }
@@ -417,7 +417,7 @@ Ext.define('Connector.controller.Query', {
                 // (i.e. if it is from the same query or is from a demographic dataset)
                 filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters(), true, [dimQueryKey]);
                 Ext.each(filterMeasures, function(filterMeasure) {
-                    alias = LABKEY.MeasureUtil.getAlias(filterMeasure.measure);
+                    alias = LABKEY.Utils.getMeasureAlias(filterMeasure.measure);
                     index = aliases.indexOf(alias);
 
                     // if we already have this measure in our set, then just tack on the filterArray
@@ -465,10 +465,11 @@ Ext.define('Connector.controller.Query', {
 
         // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
         this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
-            var alias = dimension.getFilterMeasure().get('alias'), sql;
+            var alias = dimension.getFilterMeasure().get('alias'), sql,
+                subjectAlias = QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : dimension.get('schemaName') + '_' + dimension.get('queryName') + '_SubjectId';
 
             // SQL to get the subject count for each value of the filter measure
-            sql = 'SELECT COUNT(DISTINCT "' + QueryUtils.SUBJECT_ALIAS + '") AS SubjectCount, '
+            sql = 'SELECT COUNT(DISTINCT "' + subjectAlias + '") AS SubjectCount, '
                     + alias + ' FROM ' + response.queryName
                     + dimension.getDistinctValueWhereClause()
                     + ' GROUP BY ' + alias;
@@ -831,7 +832,7 @@ Ext.define('Connector.controller.Query', {
         var merged = [], keyOrder = [], aliases = {}, alias;
 
         Ext.each(measures, function(measure) {
-            alias = measure.measure.alias || LABKEY.MeasureUtil.getAlias(measure.measure);
+            alias = measure.measure.alias || LABKEY.Utils.getMeasureAlias(measure.measure);
             if (!aliases[alias]) {
                 aliases[alias] = measure;
                 keyOrder.push(alias);

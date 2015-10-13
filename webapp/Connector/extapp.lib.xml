@@ -24,9 +24,6 @@
         <script path="../../../internal/explodedModule/web/dataregion/filter/Model.js"/>
         <script path="../../../internal/explodedModule/web/dataregion/filter/Faceted.js"/>
 
-        <!-- Study Dependencies -->
-        <script path="../../../study/explodedModule/web/study/MeasurePicker.js"/>
-
         <!-- App API Dependencies -->
         <script path="../../../internal/explodedModule/web/app/Application.js"/>
         <script path="../../../internal/explodedModule/web/app/State.js"/>

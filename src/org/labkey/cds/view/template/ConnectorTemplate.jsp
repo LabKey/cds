@@ -128,9 +128,6 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Model.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/dataregion/filter/Faceted.js"></script>
 
-    <!-- Study Dependencies -->
-    <script type="text/javascript" src="<%=text(contextPath)%>/study/MeasurePicker.js"></script>
-
     <!-- App API Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/app/Application.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/app/State.js"></script>

@@ -295,7 +295,7 @@ Ext.define('Connector.model.ChartData', {
 
         // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
         Ext.each(Connector.getQueryService().getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
-            brushFilterAliases.push(LABKEY.MeasureUtil.getAlias(brushFilterMeasure.measure));
+            brushFilterAliases.push(LABKEY.Utils.getMeasureAlias(brushFilterMeasure.measure));
         });
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)

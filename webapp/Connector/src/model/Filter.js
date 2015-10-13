@@ -204,7 +204,7 @@ Ext.define('Connector.model.Filter', {
 
                     // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
                     Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
-                        alias = LABKEY.MeasureUtil.getAlias(axisFilterRecord);
+                        alias = LABKEY.Utils.getMeasureAlias(axisFilterRecord);
 
                         // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
                         if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
