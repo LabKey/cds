@@ -151,21 +151,23 @@ Ext.define('Connector.view.Selection', {
                     return Ext.htmlEncode(measureLabels.join(', '));
                 },
                 renderGridFilterLabel : function(values) {
-                    var type = LABKEY.app.model.Filter.getGridHierarchy(values);
+                    var type = LABKEY.app.model.Filter.emptyLabelText;
 
-                    if (values.gridFilter && values.gridFilter.length > 0) {
-                        // 21881: since this is presumed to be a grid filter then all
-                        // the applied filters should be the same measure/column
-                        var gf = values.gridFilter[0];
-
-                        // the query service can lookup a measure, but only the base of a lookup
-                        if (gf.getColumnName().indexOf('/') == -1) {
-                            var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                            if (Ext.isDefined(measure) && Ext.isString(measure.label)) {
+                    Ext.each(values.gridFilter, function(gf) {
+                        if (gf && gf != '_null') {
+                            // 21881: since this is presumed to be a grid filter then all
+                            // the applied filters should be the same measure/column
+                            var measure = Connector.getQueryService().getMeasure(gf.getColumnName());
+                            if (measure && Ext.isString(measure.label)) {
                                 type = measure.label;
                             }
+                            else {
+                                type = LABKEY.app.model.Filter.getGridFilterLabel(gf);
+                            }
+
+                            return false;
                         }
-                    }
+                    });
 
                     return Ext.htmlEncode(type) + ': ' + LABKEY.app.model.Filter.getGridLabel(values);
                 },
