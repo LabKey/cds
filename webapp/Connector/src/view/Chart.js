@@ -555,6 +555,7 @@ Ext.define('Connector.view.Chart', {
 
     mouseOverPoints : function(event, data, layerSel, point, layerScope, plotName) {
         if (!layerScope.isBrushed) {
+            data.isMouseOver = true;
             this.highlightPlotData(null, [data.subjectId]);
             this.pointHoverText(point, data, plotName);
         }
@@ -562,6 +563,7 @@ Ext.define('Connector.view.Chart', {
 
     mouseOutPoints : function(event, data, layerSel, point, layerScope) {
         if (!layerScope.isBrushed) {
+            data.isMouseOver = false;
             this.clearHighlightedData();
             this.highlightSelected();
         }
@@ -573,6 +575,7 @@ Ext.define('Connector.view.Chart', {
         if (!layerScope.isBrushed) {
             var subjectIds = [];
             data.forEach(function(b) {
+                b.isMouseOver = true;
                 subjectIds.push(b.data.subjectId);
             });
 
@@ -582,6 +585,9 @@ Ext.define('Connector.view.Chart', {
 
     mouseOutBins : function(event, data, layerSel, bin, layerScope) {
         if (!layerScope.isBrushed) {
+            data.forEach(function(b) {
+                b.isMouseOver = false;
+            });
             this.clearHighlightedData();
             this.highlightSelected();
         }
@@ -1427,11 +1433,14 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.plot.renderer) {
-            var isSubjectInMouseBin = function(d, yesVal, noVal) {
+            var isSubjectInMouseBin = function(d, yesVal, noVal, sameSubjectVal) {
                 if (d.length > 0 && d[0].data) {
                     for (var i = 0; i < d.length; i++) {
-                        if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
+                        if (d[i].isMouseOver) {
                             return yesVal;
+                        }
+                        else if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
+                            return sameSubjectVal;
                         }
                     }
                 }
@@ -1444,12 +1453,12 @@ Ext.define('Connector.view.Chart', {
                 // keep original color of the bin (note: uses style instead of fill attribute)
                 d.origStyle = d.origStyle || this.getAttribute('style');
 
-                return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle);
+                return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle, 'fill: ' + ChartUtils.colors.BLACK);
             };
 
             var opacityFn = function(d)
             {
-                return isSubjectInMouseBin(d, 1, 0.15);
+                return isSubjectInMouseBin(d, 1, 0.15, 1);
             };
 
             this.highlightBinsByCanvas(this.plot.renderer.canvas, colorFn, opacityFn);
@@ -1542,8 +1551,11 @@ Ext.define('Connector.view.Chart', {
         var subjectIds = this.retrievePointSubjectIds(target, subjects);
 
         var fillColorFn = function(d) {
-            if (subjectIds.indexOf(d.subjectId) != -1) {
+            if (d.isMouseOver) {
                 return ChartUtils.colors.SELECTED;
+            }
+            else if (subjectIds.indexOf(d.subjectId) != -1) {
+                return ChartUtils.colors.BLACK;
             }
             return ChartUtils.colors.UNSELECTED;
         };
@@ -1567,6 +1579,10 @@ Ext.define('Connector.view.Chart', {
             .attr('stroke', fillColorFn).attr('stroke-opacity', 1);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
