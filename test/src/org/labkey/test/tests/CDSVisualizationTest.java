@@ -2061,6 +2061,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
 
+        // Clear the plot.
+        cds.clearFilters();
+
         log("Validate a plot with a values on both y and x axis.");
 
         yaxis.openSelectorWindow();
@@ -2117,6 +2120,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
 
+        // Clear the plot.
         cds.clearFilters();
 
         log("Validate log and linear with large scale values.");
@@ -2140,6 +2144,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         expectedCount = 856;
         verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
 
+        // Clear the plot.
         cds.clearFilters();
 
         log("Validate with a categorical on x-axis.");
@@ -2167,6 +2172,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         originalScale = "20-29\n30-39\n40-49\n1\n10\n100";
         originalCount = 18;
         verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
+
+        // Clear the plot.
+        cds.clearFilters();
 
     }
 
