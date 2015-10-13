@@ -104,7 +104,7 @@ Ext.define('Connector.grid.Panel', {
 
                 column.plotted = false;
                 for (var a=0; a < plotMeasures.length; a++) {
-                    if (LABKEY.MeasureUtil.getAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
+                    if (LABKEY.Utils.getMeasureAlias(plotMeasures[a], true).toLowerCase() === lowerIndex) {
                         column.plotted = true;
                     }
                 }
