@@ -1408,6 +1408,9 @@ Ext.define('Connector.view.Chart', {
                 for (var i = 0; i < d.length; i++)
                 {
                     var data = d[i].data;
+                    if (data.x === target) {
+                        d[i].isMouseOver = true;
+                    }
                     if (data.x === target && subjectIds.indexOf(data.subjectId) === -1)
                     {
                         subjectIds.push(data.subjectId);
@@ -1481,6 +1484,13 @@ Ext.define('Connector.view.Chart', {
 
     clearHighlightBins : function() {
         if (this.plot.renderer) {
+            var bins = this.plot.renderer.canvas.selectAll('.vis-bin path');
+            bins.each(function(d) {
+                for (var i = 0; i < d.length; i++) {
+                    d[i].isMouseOver = false;
+                }
+            });
+
             this.clearBinsByCanvas(this.plot.renderer.canvas);
 
             if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
@@ -1521,6 +1531,10 @@ Ext.define('Connector.view.Chart', {
                 subject;
 
             points.each(function(d) {
+                if (d.x === target) {
+                    d.isMouseOver = true;
+                }
+
                 subject = d.subjectId;
 
                 // Check if value matches target or another selection
@@ -1607,6 +1621,11 @@ Ext.define('Connector.view.Chart', {
     },
 
     clearHighlightPoints : function() {
+        var points = this.plot.renderer.canvas.selectAll('.point path');
+        points.each(function(d) {
+            d.isMouseOver = false;
+        });
+
         if (this.plot.renderer) {
             this.clearPointsByCanvas(this.plot.renderer.canvas, this.clearHighlightColorFn());
 
