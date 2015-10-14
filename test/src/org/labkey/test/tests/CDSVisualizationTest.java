@@ -2714,6 +2714,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                 multiSelectKey = Keys.CONTROL;
 
             click(Locators.plotTick.withText(axes[0]));
+            waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[0] + "')]"));
 
             if (axes.length > 1)
             {
@@ -2723,6 +2724,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                 for (int i = 1; i < axes.length; i++)
                 {
                     click(Locators.plotTick.withText(axes[i]));
+                    waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[i] + "')]"));
                 }
                 builder.keyUp(multiSelectKey).build().perform();
             }
