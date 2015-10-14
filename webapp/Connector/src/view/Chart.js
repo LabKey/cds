@@ -1408,10 +1408,10 @@ Ext.define('Connector.view.Chart', {
                 for (var i = 0; i < d.length; i++)
                 {
                     var data = d[i].data;
-                    if (data.x === target) {
+                    if (data.x.toString() === target) { // use toString for boolean value
                         d[i].isMouseOver = true;
                     }
-                    if (data.x === target && subjectIds.indexOf(data.subjectId) === -1)
+                    if (data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
                     {
                         subjectIds.push(data.subjectId);
                     }
@@ -1531,7 +1531,7 @@ Ext.define('Connector.view.Chart', {
                 subject;
 
             points.each(function(d) {
-                if (d.x === target) {
+                if (d.x.toString() === target) { // use toString for boolean value
                     d.isMouseOver = true;
                 }
 
@@ -1539,7 +1539,7 @@ Ext.define('Connector.view.Chart', {
 
                 // Check if value matches target or another selection
                 if (subjectIds.indexOf(subject) === -1) {
-                    if (d.x == target) {
+                    if (d.x.toString() === target) {
                         subjectIds.push(subject);
                     }
                     else if (selections.indexOf(d.x) != -1) {
