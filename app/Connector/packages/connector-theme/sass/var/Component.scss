@@ -118,6 +118,8 @@ $grid-row-cell-selected-color: $black; //$gray-7;
 $grid-row-cell-selected-border-color: $gray-7; //$select-color;
 $grid-row-cell-alt-background-color: $gray-7;
 $grid-row-cell-background-color: $gray-7;
+$grid-row-cell-focus-border-style: solid;
+$grid-row-cell-focus-border-color: #ddd;
 
 /* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
