@@ -49,23 +49,44 @@ Ext.define('Connector.controller.Query', {
             }
         };
 
+        var filters = [];
+        if (QueryUtils.USE_NEW_GETDATA)
+        {
+            // include only cds.gridbase and study datasets
+            filters.push(LABKEY.Query.Visualization.Filter.create({
+                schemaName: 'cds',
+                queryName: 'gridbase'
+            }));
+            filters.push(LABKEY.Query.Visualization.Filter.create({
+                schemaName: 'study',
+                queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
+            }));
+        }
+        else
+        {
+            // include all the study queries
+            filters.push(LABKEY.Query.Visualization.Filter.create({
+                schemaName: Connector.studyContext.schemaName,
+                queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
+            }));
+        }
+
         // Get all the study columns (including non-measures, weird, I know. Right?)
         LABKEY.Query.Visualization.getMeasures({
             allColumns: true,
             showHidden: true,
-            filters: [LABKEY.Query.Visualization.Filter.create({
-                schemaName: Connector.studyContext.schemaName,
-                queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
-            })],
-            success: function(measures) {
+            filters: filters,
+            success: function(measures)
+            {
                 // add all of the response measures to the cached store
-                Ext.each(measures, function(measure) {
+                Ext.each(measures, function(measure)
+                {
                     this.addMeasure(measure);
                 }, this);
 
                 // bootstrap client-defined measures
-                var measureContext = Connector.measure.Configuration.context.measures;
-                Ext.iterate(measureContext, function(alias, measure) {
+                Ext.iterate(Connector.measure.Configuration.context.measures, function(alias, measure)
+                {
                     measure.alias = alias;
                     this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                 }, this);
@@ -203,16 +224,18 @@ Ext.define('Connector.controller.Query', {
     },
 
     addMeasure : function(measure) {
-        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase()))) {
-            var sourceKey = measure.schemaName + '|' + measure.queryName;
-            var datas = this.getModelClone(measure, Connector.model.Measure.getFields());
+        if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase())))
+        {
+            var sourceKey = measure.schemaName + '|' + measure.queryName,
+                datas = this.getModelClone(measure, Connector.model.Measure.getFields()),
+                context = Connector.measure.Configuration.context;
 
             // overlay any source metadata
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[sourceKey]);
+            datas = Ext.apply(datas, context.sources[sourceKey]);
             // overlay any measure metadata
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.measures[measure.alias]);
+            datas = Ext.apply(datas, context.measures[measure.alias]);
             // overlay any dimension metadata (used for Advanced Options panel of Variable Selector)
-            datas = Ext.apply(datas, Connector.measure.Configuration.context.dimensions[measure.alias]);
+            datas = Ext.apply(datas, context.dimensions[measure.alias]);
 
             this.MEASURE_STORE.add(datas);
             this.addSource(datas);
@@ -221,7 +244,8 @@ Ext.define('Connector.controller.Query', {
 
     addSource : function(measure) {
         var key = measure.schemaName + '|' + measure.queryName;
-        if (!Ext.isObject(this.SOURCE_STORE.getById(key))) {
+        if (!Ext.isObject(this.SOURCE_STORE.getById(key)))
+        {
             // overlay any source metadata
             var datas = this.getModelClone(measure, Connector.model.Source.getFields());
             datas = Ext.apply(datas, Connector.measure.Configuration.context.sources[key]);
@@ -236,7 +260,7 @@ Ext.define('Connector.controller.Query', {
 
     getModelClone : function(record, fields) {
         // TODO: Consider using model.copy() instead
-        return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'))
+        return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'));
     },
 
     getMeasureRecordByAlias : function(alias) {
@@ -619,13 +643,18 @@ Ext.define('Connector.controller.Query', {
         var config = {
             endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
-            sorts: this.getDataSorts(),
             metaDataOnly: true,
             joinToFirst: true,
             success: success,
             failure: failure,
             scope: scope
         };
+
+        // data sorts are no longer needed
+        if (!QueryUtils.USE_NEW_GETDATA)
+        {
+            config.sorts = this.getDataSorts();
+        }
 
         // include any compound filters defined in the application filters.
         // If they are included the measures which each compound filter relies on must also
@@ -670,7 +699,14 @@ Ext.define('Connector.controller.Query', {
             if (!Ext.isEmpty(measure.filterArray)) {
                 var fa = [];
                 for (var f = 0; f < measure.filterArray.length; f++) {
-                    fa.push(this.encodeURLFilter(measure.filterArray[f]));
+                    if (QueryUtils.USE_NEW_GETDATA)
+                    {
+                        fa.push(measure.filterArray[f]);
+                    }
+                    else
+                    {
+                        fa.push(this.encodeURLFilter(measure.filterArray[f]));
+                    }
                 }
                 measure.filterArray = fa;
             }
@@ -681,7 +717,15 @@ Ext.define('Connector.controller.Query', {
             throw 'Invalid getData configuration. At least one measure is required.';
         }
 
-        filterConfig.getDataCDS = getDataConfig;
+        if (QueryUtils.USE_NEW_GETDATA)
+        {
+            filterConfig.sql = QueryUtils.getDataSQL(getDataConfig);
+        }
+        else
+        {
+            filterConfig.getDataCDS = getDataConfig;
+        }
+
         filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
 
         return filterConfig;

@@ -56,6 +56,10 @@ Ext.define('Connector.utility.Query', {
         }
     },
 
+    getDataSQL : function(config) {
+        return this._generateVisGetDataSql(config.measures, config.extraFilters).sql;
+    },
+
     _getTables : function() {
         var table = function(s, q, k, isAssayDataset) {
             this.displayName = q;
@@ -159,8 +163,8 @@ Ext.define('Connector.utility.Query', {
 
             if (!table)
             {
-                table = tables.get(queryName);
-                if (null == table)
+                table = tables[queryName];
+                if (!table)
                 {
                     throw "table not found: " + queryName;
                 }
