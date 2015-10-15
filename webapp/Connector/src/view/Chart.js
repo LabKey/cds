@@ -945,6 +945,7 @@ Ext.define('Connector.view.Chart', {
         };
 
         this.selectionInProgress = null;
+        this.mouseOverInProgress = null;
 
         scaleConfig = this.getScaleConfigs(noplot, properties, chartData, studyAxisInfo, layerScope);
         aesConfig = this.getAesConfigs();
@@ -1340,7 +1341,10 @@ Ext.define('Connector.view.Chart', {
     xAxisClick : function(e, selection, target, index, y, layerScope) {
         var multi = e.ctrlKey||e.shiftKey||e.metaKey, nodes, node = null;
 
-        // selectionInProgress keeps label highlighted while selection created
+        // If a selection in progress have to wait until done
+        if(this.selectionInProgress != null)
+            return;
+
         this.selectionInProgress = target;
 
         // node is needed for animation
@@ -1365,7 +1369,7 @@ Ext.define('Connector.view.Chart', {
 
     xAxisMouseOut : function(target, index, y, layerScope) {
         // Do not do mouse over/out for selected labels or labels in process of selection
-        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
+        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress == null) {
             // Clear plot highlights
             this.clearHighlightedData();
             this.highlightSelected();
@@ -1375,17 +1379,21 @@ Ext.define('Connector.view.Chart', {
             targets.push(target);
             this.highlightLabels.call(this, this.plot, targets, this.labelTextColor, this.labelBkgdColor, false);
         }
+        this.mouseOverInProgress = null;
     },
 
     xAxisMouseOver : function(target, index, y, layerScope) {
         // Do not do mouse over/out for selected labels or labels in process of selection
-        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
+        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress == null) {
             this.highlightPlotData(target);
 
             // Highlight label
             var targets = [];
             targets.push(target);
             this.highlightLabels.call(this, this.plot, targets, this.labelTextColor, this.labelBkgdHltColor, false);
+        }
+        else if (this.selectionInProgress != null && this.selectionInProgress != target) {
+            this.mouseOverInProgress = target;
         }
     },
 
@@ -1649,9 +1657,7 @@ Ext.define('Connector.view.Chart', {
 
     highlightSelected : function() {
         var targets = this.getCategoricalSelectionValues(), me = this;
-        if (targets.length < 1) {
-            me.clearHighlightedData();
-        }
+        me.clearHighlightedData();
 
         targets.forEach(function(t) {
             me.highlightPlotData(t);
@@ -1820,6 +1826,12 @@ Ext.define('Connector.view.Chart', {
         this.createSelectionFilter(sqlFilters, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
+
+        if(this.mouseOverInProgress != null) {
+            this.highlightLabels(this.plot, [this.mouseOverInProgress], this.labelTextColor, this.labelBkgdHltColor, false);
+            this.highlightPlotData(this.mouseOverInProgress);
+            this.mouseOverInProgress = null;
+        }
 
     },
 
