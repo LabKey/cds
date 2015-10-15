@@ -205,6 +205,8 @@ Ext.define('Connector.model.ChartData', {
             y = this.getPlotMeasure(1),
             color = this.getPlotMeasure(2),
             xa, ya, ca, _xid, _yid, _cid,
+            containerColAlias = QueryUtils.USE_NEW_GETDATA ? QueryUtils.CONTAINER_ALIAS : this.getAliasFromMeasure('Container'),
+            subjectColAlias = QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : this.getAliasFromMeasure(Connector.studyContext.subjectColumn),
             containerAlignmentDayMap = {},
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
@@ -308,8 +310,8 @@ Ext.define('Connector.model.ChartData', {
             _row = dataRows[r];
 
             // build study container alignment day map
-            if (_row[QueryUtils.CONTAINER_ALIAS]) {
-                containerAlignmentDayMap[_row[QueryUtils.CONTAINER_ALIAS]] = 0;
+            if (_row[containerColAlias]) {
+                containerAlignmentDayMap[_row[containerColAlias]] = 0;
             }
 
             if (color) {
@@ -344,7 +346,7 @@ Ext.define('Connector.model.ChartData', {
                 x: xVal,
                 y: yVal,
                 color: colorVal,
-                subjectId: _row[QueryUtils.SUBJECT_ALIAS],
+                subjectId: _row[subjectColAlias],
                 xname: xa.label,
                 yname: ya.label,
                 colorname: ca.label
