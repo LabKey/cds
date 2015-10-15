@@ -272,7 +272,7 @@ Ext.define('Connector.view.Chart', {
             this.logScaleIndicator = Ext.create('Ext.Component', {
                 hidden: true,
                 cls: 'plotmodeon',
-                html: 'Log Scale',
+                html: 'Log filter on',
                 width: 110,
                 listeners: {
                     scope: this,
@@ -2220,10 +2220,10 @@ Ext.define('Connector.view.Chart', {
             var config = {
                 target: this.getLogScaleModeIndicator().getEl().dom,
                 placement: 'bottom',
-                title: 'Log Scale',
+                title: 'Log filter on',
                 xOffset: -115,
                 arrowOffset: 145,
-                content: 'Values <=0 are dropped for Log scale.'
+                content: 'Values ≤ 0 have no log and were filtered out. Use a linear scale to see all values.'
             };
 
             ChartUtils.showCallout(config, 'hidelogscalemsg', this);

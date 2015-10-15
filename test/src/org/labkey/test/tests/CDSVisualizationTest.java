@@ -2185,7 +2185,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private void verifyLogAndLinearHelper(String scaleValues, int svgIndex, int expectedCount, boolean msgVisable)
     {
         final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
-        final String XPATH_PLOT_MOD_MSG = "//div[contains(@class, 'plotmodeon')][text()='Log Scale']";
+        final String XPATH_PLOT_MOD_MSG = "//div[contains(@class, 'plotmodeon')][text()='Log filter on']";
         String tempStr, styleValue;
         int subjectCount;
 
@@ -2195,17 +2195,17 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         subjectCount = Integer.parseInt(tempStr.replaceAll(",", ""));
         assertEquals("Subject count not as expected.", expectedCount, subjectCount);
 
-        assertElementPresent("Could not find 'Log Scale' message control.", Locator.xpath(XPATH_PLOT_MOD_MSG), 1);
+        assertElementPresent("Could not find 'Log filter on' message control.", Locator.xpath(XPATH_PLOT_MOD_MSG), 1);
 
         styleValue = getAttribute(Locator.xpath(XPATH_PLOT_MOD_MSG), "style");
 
         if (msgVisable)
         {
-            assertFalse("'Log Scale' message not visible at top of page.", styleValue.contains("display: none;"));
+            assertFalse("'Log filter on' message not visible at top of page.", styleValue.contains("display: none;"));
         }
         else
         {
-            assertTrue("'Log Scale' message is visible at top of page, and it should not be.", styleValue.contains("display: none;"));
+            assertTrue("'Log filter on' message is visible at top of page, and it should not be.", styleValue.contains("display: none;"));
         }
 
     }
