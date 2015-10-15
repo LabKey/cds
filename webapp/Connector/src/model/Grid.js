@@ -86,8 +86,9 @@ Ext.define('Connector.model.Grid', {
         this.viewReady = false;
         this._ready = false;
 
-        this.metadataTask = new Ext.util.DelayedTask(function() {
-            Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this);
+        this.metadataTask = new Ext.util.DelayedTask(function()
+        {
+            Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this, true /* apply compound filters */);
         }, this);
 
         Connector.getState().onReady(function() {
@@ -283,6 +284,10 @@ Ext.define('Connector.model.Grid', {
             // Get the data filters from each filter to ensure all filtered measures are
             // included in the grid
             Ext.iterate(filter.getDataFilters(), function(alias, filters) {
+
+                if (alias === Connector.Filter.COMPOUND_ALIAS)
+                    return;
+
                 var measure = queryService.getMeasure(alias);
 
                 // ensure this filtered measure is included in the grid
@@ -398,18 +403,23 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    getDataFilters : function() {
+    getDataFilters : function()
+    {
         var filterArray = [];
 
-        Ext.each(Connector.getState().getFilters(), function(appFilter) {
-
-            Ext.iterate(appFilter.getDataFilters(), function(alias, filters) {
-                for (var i=0; i < filters.length; i++) {
-                    filterArray.push(filters[i]);
-                    this.addToFilters(filters[i], appFilter.id);
+        Ext.each(Connector.getState().getFilters(), function(appFilter)
+        {
+            Ext.iterate(appFilter.getDataFilters(), function(alias, filters)
+            {
+                if (alias !== Connector.Filter.COMPOUND_ALIAS)
+                {
+                    for (var i=0; i < filters.length; i++)
+                    {
+                        filterArray.push(filters[i]);
+                        this.addToFilters(filters[i], appFilter.id);
+                    }
                 }
             }, this);
-
         }, this);
 
         return filterArray;

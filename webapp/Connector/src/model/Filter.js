@@ -117,6 +117,16 @@ Ext.define('Connector.model.Filter', {
     },
 
     /**
+     * Returns true iff the x and y plotMeasures are the same source (e.g. NAb and NAb)
+     * @returns {*|boolean}
+     */
+    samePlotMeasureSources : function() {
+        var plotMeasures = this.get('plotMeasures');
+        return plotMeasures[0] && plotMeasures[1] &&
+            plotMeasures[0].measure.queryName.toLowerCase() === plotMeasures[1].measure.queryName.toLowerCase();
+    },
+
+    /**
      * Generates the set of measures that can be used to express this filter as a count filter.
      * These measures are persisted in 'measureSet' property.
      * @private
@@ -317,11 +327,15 @@ Ext.define('Connector.model.Filter', {
 
         var dataFilterMap = {};
 
-        if (this.isAggregated()) {
+        if (this.isAggregated())
+        {
             // aggregation filter -- do nothing
         }
-        else if (this.isPlot() && this.isGrid()) {
-            // plot selection filter
+        else if (this.isPlot())
+        {
+            /**
+             * "In the Plot filters, including the axis filters, are applied as a data filter globally."
+             */
 
             /**
              * "Plot selection filters, including axis filters, are global data filters on the dragged measure
@@ -329,57 +343,50 @@ Ext.define('Connector.model.Filter', {
              * including axis filters, are applied as a compound global data filter."
              */
 
-            // TODO: Compare the axes to determine if they meet the "unless" condition stated above
-
-            Ext.each(this.get('gridFilter'), function(gridFilter) {
-                if (gridFilter) {
-                    this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
+            if (this.samePlotMeasureSources())
+            {
+                this._generateCompoundFilter(dataFilterMap);
+            }
+            else
+            {
+                // plot selection filter
+                if (this.isGrid())
+                {
+                    Ext.each(this.get('gridFilter'), function(gridFilter)
+                    {
+                        if (gridFilter)
+                        {
+                            this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
+                        }
+                    }, this);
                 }
-            }, this);
 
-            Ext.each(this.get('plotMeasures'), function(plotMeasure) {
-                if (plotMeasure && plotMeasure.measure) {
-
-                    // axis filters -> data filters
-                    var measure = plotMeasure.measure;
-                    if (measure.options && measure.options.dimensions) {
-                        Ext.iterate(measure.options.dimensions, function(alias, values) {
-                            if (Ext.isArray(values) && !Ext.isEmpty(values)) {
-                                var genFilter = this._generateFilter(alias, values);
-                                if (genFilter) {
-                                    this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
+                // in the plot filter
+                Ext.each(this.get('plotMeasures'), function(plotMeasure, i)
+                {
+                    if (i < 2 /* do not include color */ && plotMeasure && plotMeasure.measure)
+                    {
+                        // axis filters -> data filters
+                        var measure = plotMeasure.measure;
+                        if (measure.options && measure.options.dimensions)
+                        {
+                            Ext.iterate(measure.options.dimensions, function(alias, values)
+                            {
+                                if (Ext.isArray(values) && !Ext.isEmpty(values))
+                                {
+                                    var genFilter = this._generateFilter(alias, values);
+                                    if (genFilter)
+                                    {
+                                        this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
+                                    }
                                 }
-                            }
-                        }, this);
+                            }, this);
+                        }
+
+                        // TODO: Deal with situational filters (e.g. log plots use "measure > 0" filter)
                     }
-                }
-            }, this);
-        }
-        else if (this.isPlot()) {
-            // in the plot filter
-
-            /**
-             * "In the Plot filters, including the axis filters, are applied as a data filter globally."
-             */
-            Ext.each(this.get('plotMeasures'), function(plotMeasure) {
-                if (plotMeasure && plotMeasure.measure) {
-
-                    // axis filters -> data filters
-                    var measure = plotMeasure.measure;
-                    if (measure.options && measure.options.dimensions) {
-                        Ext.iterate(measure.options.dimensions, function(alias, values) {
-                            if (Ext.isArray(values) && !Ext.isEmpty(values)) {
-                                var genFilter = this._generateFilter(alias, values);
-                                if (genFilter) {
-                                    this._dataFilterHelper(dataFilterMap, genFilter.getColumnName(), genFilter);
-                                }
-                            }
-                        }, this);
-                    }
-
-                    // TODO: Deal with situational filters (e.g. log plots use "measure > 0" filter)
-                }
-            }, this);
+                }, this);
+            }
         }
         else if (this.isGrid()) {
             // grid filter
@@ -420,12 +427,89 @@ Ext.define('Connector.model.Filter', {
         }
 
         return filter;
+    },
+
+    /**
+     * Generates a compound filter based on the current plot measures. Applies it to the filterMap.
+     * @param filterMap
+     * @private
+     */
+    _generateCompoundFilter : function(filterMap)
+    {
+        // create a compound filter
+        var gridFilter = this.get('gridFilter'),
+            plotMeasures = this.get('plotMeasures'),
+            xGridFilter = [gridFilter[0], gridFilter[1]],
+            yGridFilter = [gridFilter[2], gridFilter[3]],
+            xMeasure = plotMeasures[0],
+            yMeasure = plotMeasures[1],
+            measure,
+            xfilterSet = [],
+            yfilterSet = [];
+
+        // process grid filter(s)
+        Ext.each(xGridFilter, function(gridFilter)
+        {
+            if (gridFilter)
+            {
+                xfilterSet.push(gridFilter);
+            }
+        }, this);
+
+        Ext.each(yGridFilter, function(gridFilter)
+        {
+            if (gridFilter)
+            {
+                yfilterSet.push(gridFilter);
+            }
+        }, this);
+
+        // axis filters -> data filters
+        measure = xMeasure.measure;
+        if (measure.options && measure.options.dimensions)
+        {
+            Ext.iterate(measure.options.dimensions, function(alias, values)
+            {
+                if (Ext.isArray(values) && !Ext.isEmpty(values))
+                {
+                    var genFilter = this._generateFilter(alias, values);
+                    if (genFilter)
+                    {
+                        xfilterSet.push(genFilter);
+                    }
+                }
+            }, this);
+        }
+
+        measure = yMeasure.measure;
+        if (measure.options && measure.options.dimensions)
+        {
+            Ext.iterate(measure.options.dimensions, function(alias, values)
+            {
+                if (Ext.isArray(values) && !Ext.isEmpty(values))
+                {
+                    var genFilter = this._generateFilter(alias, values);
+                    if (genFilter)
+                    {
+                        yfilterSet.push(genFilter);
+                    }
+                }
+            }, this);
+        }
+
+        // create a compound filter
+        var xFilter = Connector.Filter.compound(xfilterSet, 'AND'),
+            yFilter = Connector.Filter.compound(yfilterSet, 'AND');
+
+        filterMap[Connector.Filter.COMPOUND_ALIAS] = [Connector.Filter.compound([xFilter, yFilter], 'OR')];
     }
 });
 
 Ext.define('Connector.Filter', {
 
     statics: {
+        COMPOUND_ALIAS: '_COMPOUND',
+
         Types: (function() {
             var types = LABKEY.Filter.Types;
             types.COMPOUND = {
@@ -436,11 +520,24 @@ Ext.define('Connector.Filter', {
             };
             return types;
         })(),
+
         create : function(columnName, value, filterType, operator) {
             return new Connector.Filter(columnName, value, filterType, operator);
         },
+
         compound : function(filters, operator) {
             return new Connector.Filter(undefined, filters, Connector.Filter.Types.COMPOUND, operator);
+        },
+
+        _initAliasMap : function(aliasMap, filter) {
+            if (filter.$className) {
+                for (var i=0; i < filter._filters.length; i++) {
+                    Connector.Filter._initAliasMap(aliasMap, filter._filters[i]);
+                }
+            }
+            else {
+                aliasMap[filter.getColumnName()] = true;
+            }
         }
     },
 
@@ -448,9 +545,10 @@ Ext.define('Connector.Filter', {
 
     _isCompound: false,
 
-    operator: 'AND',
-
     constructor : function(columnName, value, filterType, operator) {
+
+        this.operator = operator || 'AND';
+
         if (filterType === Connector.Filter.Types.COMPOUND) {
             if (Ext.isArray(value)) {
                 this._filters = value;
@@ -459,14 +557,13 @@ Ext.define('Connector.Filter', {
                 this._filters = [value];
             }
             this._isCompound = true;
-
-            if (operator === 'OR') {
-                this.operator = operator;
-            }
         }
         else {
             this._filters = [ LABKEY.Filter.create(columnName, value, filterType) ];
         }
+
+        this.aliasMap = {};
+        Connector.Filter._initAliasMap(this.aliasMap, this);
     },
 
     toJSON : function() {
@@ -479,19 +576,34 @@ Ext.define('Connector.Filter', {
                 }
                 else {
                     // LABKEY Filter
-                    value.push(filter.getValue());
+                    value.push(this.encodeFilter(filter));
                 }
-            });
+            }, this);
         }
         else {
-            value.push(this._filters[0].getValue());
+            value.push(this.encodeFilter(this._filters[0]));
         }
 
         return {
-            type: this._isCompound ? 'com' : this._filters[0].getFilterType().getURLSuffix(),
+            type: this._isCompound ? 'compound' : 'singular',
             op: this.operator,
-            col: this._isCompound ? undefined : this._filters[0].getColumnName(),
             value: value
         };
+    },
+
+    isCompound : function() {
+        return this._isCompound === true;
+    },
+
+    getAliases : function() {
+        return Ext.clone(this.aliasMap);
+    },
+
+    encodeFilter : function(filter) {
+        return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
+    },
+
+    getColumnName : function() {
+        return this._filters[0].getColumnName();
     }
 });

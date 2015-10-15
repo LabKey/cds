@@ -614,8 +614,9 @@ Ext.define('Connector.controller.Query', {
         return this._dataSorts;
     },
 
-    getData : function(measures, success, failure, scope) {
-        QueryUtils.getData({
+    getData : function(measures, success, failure, scope, applyCompound) {
+
+        var config = {
             endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
             sorts: this.getDataSorts(),
@@ -624,8 +625,16 @@ Ext.define('Connector.controller.Query', {
             success: success,
             failure: failure,
             scope: scope
-        });
+        };
 
+        // include any compound filters defined in the application filters.
+        // If they are included the measures which each compound filter relies on must also
+        // be included in the request
+        if (applyCompound) {
+            config = this._includeFilterMeasures(config);
+        }
+
+        QueryUtils.getData(config);
     },
 
     getMeasureStore : function(measures, success, failure, scope) {
@@ -859,6 +868,64 @@ Ext.define('Connector.controller.Query', {
 
     encodeURLFilter : function(filter) {
         return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
+    },
+
+    /**
+     * Appends any measures that are declared by compound filters to the getDataConfig.
+     * This is used so that each caller of getData doesn't need to account for compound filters on their
+     * own.
+     * @param getDataConfig
+     * @returns {*}
+     * @private
+     */
+    _includeFilterMeasures : function(getDataConfig) {
+
+        // build a map of aliases
+        var aliasMap = {},
+            extraFilters = [];
+
+        Ext.each(getDataConfig.measures, function(measure) {
+            aliasMap[measure.measure.alias] = true;
+        });
+
+        // add any additional measures to the configuration that come from the compound filters
+        Ext.each(Connector.getState().getFilters(), function(appFilter) {
+            Ext.iterate(appFilter.getDataFilters(), function(alias, filters) {
+                if (alias === Connector.Filter.COMPOUND_ALIAS) {
+                    Ext.each(filters, function(compound) {
+
+                        // process each measure alias from this compound filter
+                        Ext.iterate(compound.getAliases(), function(cAlias) {
+                            if (!aliasMap[cAlias]) {
+
+                                // clear to append this measure result
+                                var m = Connector.getQueryService().getMeasure(cAlias);
+                                if (m) {
+                                    getDataConfig.measures.push({
+                                        measure: Ext.clone(m),
+                                        time: 'date',
+                                        filterArray: []
+                                    });
+
+                                    aliasMap[cAlias] = true;
+                                }
+                                else {
+                                    throw 'Unable to find measure "' + cAlias + '" included in compound filter.';
+                                }
+                            }
+                        });
+
+                        extraFilters.push(compound);
+                    });
+                }
+            });
+        });
+
+        if (!Ext.isEmpty(extraFilters)) {
+            getDataConfig.extraFilters = extraFilters;
+        }
+
+        return getDataConfig;
     }
 });
 
