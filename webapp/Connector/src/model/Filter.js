@@ -139,7 +139,7 @@ Ext.define('Connector.model.Filter', {
 
         // add any default measures
         measureMap[subjectMeasure.alias] = {
-            measure: queryService.cleanMeasure(subjectMeasure),
+            measure: Ext.clone(subjectMeasure),
             filterArray: []
         };
 
@@ -198,7 +198,7 @@ Ext.define('Connector.model.Filter', {
                     }
 
                     measureMap[measure.alias] = {
-                        measure: queryService.cleanMeasure(measure),
+                        measure: Ext.clone(measure),
                         filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
                     };
 
@@ -222,7 +222,7 @@ Ext.define('Connector.model.Filter', {
                         }
                         else {
                             measureMap[alias] = {
-                                measure: queryService.cleanMeasure(axisFilterRecord),
+                                measure: Ext.clone(measure),
                                 filterArray: []
                             };
                         }
@@ -260,7 +260,7 @@ Ext.define('Connector.model.Filter', {
                         }
 
                         measureMap[measure.alias] = {
-                            measure: queryService.cleanMeasure(measure),
+                            measure: Ext.clone(measure),
                             filterArray: []
                         };
 
@@ -292,21 +292,25 @@ Ext.define('Connector.model.Filter', {
         }, this);
     },
 
-    _mapToMeasures : function(measureMap) {
-        var queryService = Connector.getQueryService(),
-            measures = [];
+    _mapToMeasures : function(measureMap)
+    {
+        var measures = [];
 
-        Ext.iterate(measureMap, function(alias, config) {
+        Ext.iterate(measureMap, function(alias, config)
+        {
             var mc = {
-                measure: queryService.cleanMeasure(config.measure)
+                measure: config.measure
             };
-            if (config.dimension) {
+            if (config.dimension)
+            {
                 mc.dimension = config.dimension;
             }
-            if (config.dateOptions) {
+            if (config.dateOptions)
+            {
                 mc.dateOptions = config.dateOptions;
             }
-            if (config.filterArray.length > 0) {
+            if (config.filterArray.length > 0)
+            {
                 mc.filterArray = config.filterArray;
             }
 
@@ -316,14 +320,17 @@ Ext.define('Connector.model.Filter', {
         return measures;
     },
 
-    _dataFilterHelper : function(filterMap, alias, filter) {
-        if (!Ext.isArray(filterMap[alias])) {
+    _dataFilterHelper : function(filterMap, alias, filter)
+    {
+        if (!Ext.isArray(filterMap[alias]))
+        {
             filterMap[alias] = [];
         }
         filterMap[alias].push(filter);
     },
 
-    _generateDataFilters : function() {
+    _generateDataFilters : function()
+    {
 
         var dataFilterMap = {};
 
@@ -388,19 +395,23 @@ Ext.define('Connector.model.Filter', {
                 }, this);
             }
         }
-        else if (this.isGrid()) {
+        else if (this.isGrid())
+        {
             // grid filter
 
             /**
              * "Grid filters are global data filters."
              */
-            Ext.each(this.get('gridFilter'), function(gridFilter) {
-                if (gridFilter) {
+            Ext.each(this.get('gridFilter'), function(gridFilter)
+            {
+                if (gridFilter)
+                {
                     this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
                 }
             }, this);
         }
-        else {
+        else
+        {
             // olap filter -- nothing to do
         }
 
