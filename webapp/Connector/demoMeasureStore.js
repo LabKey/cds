@@ -471,9 +471,13 @@
                 ],
                 endpoint: ENDPOINT,
                 success: function(measureStore) {
-                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
-                    axisMeasureStore.setXMeasure(measureStore, 'study_ICS_pctpos', {'http://cpas.labkey.com/Study#Dataset': 'x'});
-                    axisMeasureStore.setYMeasure(measureStore, 'study_ICS_pctpos', {'http://cpas.labkey.com/Study#Dataset': 'y'});
+                    var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
+                        filters = {};
+
+                    filters[QueryUtils.DATASET_ALIAS] = 'x';
+                    axisMeasureStore.setXMeasure(measureStore, 'study_ICS_pctpos', filters);
+                    filters[QueryUtils.DATASET_ALIAS] = 'y';
+                    axisMeasureStore.setYMeasure(measureStore, 'study_ICS_pctpos', filters);
                     axisMeasureStore.setZMeasure(measureStore, 'study_Demographics_race');
 
                     var data = axisMeasureStore.select([
@@ -714,8 +718,9 @@
         function plotYMeasureXWeeksUnaligned()
         {
             $('#plot').html('');
+            var interval = 'Weeks';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
-            var xMeasure = getTimeMeasure();
+            var xMeasure = QueryUtils.USE_NEW_GETDATA ? getTimeMeasure(interval) : getTimeMeasureOld();
 
             var config = {
                 measures: [
@@ -729,13 +734,12 @@
                     { measure: getVisMeasure('NAb', 'specimen_type')},
                     { measure: getVisMeasure('NAb', 'lab_code')},
                     { measure: yMeasure},
-                    { measure: xMeasure, dateOptions: {interval: 'Weeks', zeroDayVisitTag: null}}
+                    { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: null}}
                 ],
                 endpoint: ENDPOINT,
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
-
-                    axisMeasureStore.setXMeasure(measureStore, 'Weeks');
+                    axisMeasureStore.setXMeasure(measureStore, interval);
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
@@ -750,14 +754,14 @@
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Unaligned)'},
                         y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
-                        x: {value: 'Time Points Weeks (Aligned by Day 0)'}
+                        x: {value: 'Time Points ' + interval + ' (Aligned by Day 0)'}
                     };
                     config.aes = {
                         y: function(row) {
                             return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.value : null;
+                            return row.x ? (row.x.getMean ? row.x.getMean() : row.x.value) : null;
                         }
                     };
 
@@ -775,8 +779,9 @@
         function plotYMeasureXMonthsAligned()
         {
             $('#plot').html('');
+            var interval = 'Months';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
-            var xMeasure = getTimeMeasure();
+            var xMeasure = QueryUtils.USE_NEW_GETDATA ? getTimeMeasure(interval) : getTimeMeasureOld();
 
             var config = {
                 measures: [
@@ -790,13 +795,13 @@
                     { measure: getVisMeasure('NAb', 'specimen_type')},
                     { measure: getVisMeasure('NAb', 'lab_code')},
                     { measure: yMeasure},
-                    { measure: xMeasure, dateOptions: {interval: 'Months', zeroDayVisitTag: 'Last Vaccination', altQueryName: 'cds.VisitTagAlignment'}}
+                    { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: 'Last Vaccination', altQueryName: 'cds.VisitTagAlignment'}}
                 ],
                 endpoint: ENDPOINT,
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
 
-                    axisMeasureStore.setXMeasure(measureStore, 'Months');
+                    axisMeasureStore.setXMeasure(measureStore, interval);
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
@@ -811,14 +816,14 @@
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Aligned)'},
                         y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
-                        x: {value: 'Time Points Months (Last Vaccination)'}
+                        x: {value: 'Time Points ' + interval + ' (Last Vaccination)'}
                     };
                     config.aes = {
                         y: function(row) {
                             return row.y ? row.y.getMedian() : null;
                         },
                         x: function(row) {
-                            return row.x ? row.x.value : null;
+                            return row.x ? (row.x.getMean ? row.x.getMean() : row.x.value) : null;
                         }
                     };
 
@@ -1181,12 +1186,25 @@
             });
         }
 
-        function getTimeMeasure()
+        function getTimeMeasureOld()
         {
             return new LABKEY.Query.Visualization.Measure({
                 schemaName:'study',
                 queryName: 'SubjectVisit',
                 name: 'Visit/ProtocolDay',
+                isMeasure: true,
+                allowNullResults: false
+            });
+        }
+
+        function getTimeMeasure(interval)
+        {
+            return new LABKEY.Query.Visualization.Measure({
+                alias: interval,
+                schemaName:'study',
+                queryName: 'GridBase',
+                name: 'ProtocolDay',
+                type: 'INTEGER',
                 isMeasure: true,
                 allowNullResults: false
             });

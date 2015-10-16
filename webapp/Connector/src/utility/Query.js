@@ -7,14 +7,13 @@ Ext.define('Connector.utility.Query', {
 
     SUBJECTVISIT_TABLE: "study.gridbase",
 
-    STUDY_ALIAS_PREFIX: 'cds_Study_',
-
     USE_NEW_GETDATA: Ext.isDefined(LABKEY.ActionURL.getParameter('_newGetData')),
 
     constructor : function(config)
     {
         this.callParent([config]);
 
+        this.STUDY_ALIAS_PREFIX = this.USE_NEW_GETDATA ? 'cds_Study_' : 'http://cpas.labkey.com/Study#';
         this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
         this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
