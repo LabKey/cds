@@ -564,7 +564,6 @@ Ext.define('Connector.controller.Query', {
             endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
             metaDataOnly: true,
-            joinToFirst: true,
             success: success,
             failure: failure,
             scope: scope
@@ -606,7 +605,6 @@ Ext.define('Connector.controller.Query', {
         }
 
         var getDataConfig = {
-            joinToFirst: true,
             measures: []
         };
 
