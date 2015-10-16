@@ -5,14 +5,13 @@ Ext.define('Connector.utility.Query', {
 
     singleton: true,
 
-    SUBJECTVISIT_TABLE: "study.gridbase",
-
     STUDY_ALIAS_PREFIX: 'cds_Study_',
 
     constructor : function(config)
     {
         this.callParent([config]);
 
+        this.SUBJECTVISIT_TABLE = (Connector.studyContext.gridBaseSchema + '.' + Connector.studyContext.gridBase).toLowerCase();
         this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
         this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
@@ -61,14 +60,16 @@ Ext.define('Connector.utility.Query', {
             this.joinKeys = joinKeys;
         };
 
-        return {
-            'study.gridbase':     new table('study', 'GridBase', ['container', 'participantsequencenum']),
+        var tables = {
             'study.demographics': new table('study', 'Demographics', ['container', 'subjectid']),
             'study.ics':          new table('study', 'ICS', ['container', 'participantsequencenum'], true),
             'study.bama':         new table('study', 'BAMA', ['container', 'participantsequencenum'], true),
             'study.elispot':      new table('study', 'Elispot', ['container', 'participantsequencenum'], true),
             'study.nab':          new table('study', 'NAb', ['container', 'participantsequencenum'], true)
         };
+        tables[this.SUBJECTVISIT_TABLE] = new table(Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, ['container', 'participantsequencenum']);
+
+        return tables;
     },
 
     _acceptMeasureFn : function(datasetName, tables) {
@@ -274,7 +275,7 @@ Ext.define('Connector.utility.Query', {
             columnAliasMap = {},
             visitAlignmentTag = null;
 
-        // look for aliases, e.g. study.gridbase.subjectid -> study.{dataset}.subjectid
+        // look for aliases, e.g. cds.gridbase.subjectid -> cds.{dataset}.subjectid
         allMeasures.map(function(m) { m.sourceTable = m.table; return m;})
             .filter(function(m) { return m.table.fullQueryName === this.SUBJECTVISIT_TABLE &&  gridBaseAliasableColumns[m.measure.name.toLowerCase()];})
             .forEach(function(m) { m.sourceTable = rootTable;});
@@ -377,10 +378,11 @@ Ext.define('Connector.utility.Query', {
         //
         if (visitAlignmentTag != null)
         {
+            var gridBaseAlias = this.SUBJECTVISIT_TABLE.replace('.', '_');
             FROM += "\nINNER JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay FROM cds.visittagalignment  "
                 + "\n\t\tWHERE visittagname='" + visitAlignmentTag + "' GROUP BY Container, ParticipantId) AS visittagalignment"
-                + "\n\tON study_gridbase.container=visittagalignment.container"
-                + "\n\tAND study_gridbase.subjectid=visittagalignment.participantid";
+                + "\n\tON " + gridBaseAlias + ".container=visittagalignment.container"
+                + "\n\tAND " + gridBaseAlias + ".subjectid=visittagalignment.participantid";
         }
 
         //

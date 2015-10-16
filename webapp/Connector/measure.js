@@ -11,7 +11,7 @@ Ext.define('Connector.measure.Configuration', {
             // The key for this map is schemaName|queryName, which is the key used in the Query service SOURCE_STORE.
             // See Connector.model.Source for the set of properties and default values.
             sources: {
-                'study|GridBase': {
+                'cds|GridBase': {
                     queryLabel: 'Time points'
                 },
                 //'study|SubjectGroupMap': {

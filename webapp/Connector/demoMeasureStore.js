@@ -6,11 +6,18 @@
 (function($) {
 
     // used by utility/Query.js
-    Connector = {studyContext: {subjectColumn: 'SubjectId'}};
+    Connector = {
+        studyContext: {
+            subjectColumn: 'SubjectId',
+            gridBaseSchema: 'cds',
+            gridBase: 'GridBase',
+            protocolDayColumn: 'ProtocolDay'
+        }
+    };
     Ext = Ext4;
 
     // set to undefined to use default getData
-    var ENDPOINT = LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api');
+    var ENDPOINT = LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api');   // TODO can enpoint now be removed?
 
     // Document Ready
     $(function() {
@@ -788,7 +795,7 @@
                     { measure: getVisMeasure('NAb', 'specimen_type')},
                     { measure: getVisMeasure('NAb', 'lab_code')},
                     { measure: yMeasure},
-                    { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: 'Last Vaccination', altQueryName: 'cds.VisitTagAlignment'}}
+                    { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: 'Last Vaccination'}}
                 ],
                 endpoint: ENDPOINT,
                 success: function(measureStore) {
@@ -1183,9 +1190,9 @@
         {
             return new LABKEY.Query.Visualization.Measure({
                 alias: interval,
-                schemaName:'study',
-                queryName: 'GridBase',
-                name: 'ProtocolDay',
+                schemaName: Connector.studyContext.gridBaseSchema,
+                queryName: Connector.studyContext.gridBase,
+                name: Connector.studyContext.protocolDayColumn,
                 type: 'INTEGER',
                 isMeasure: true,
                 allowNullResults: false

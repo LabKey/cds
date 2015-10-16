@@ -64,10 +64,10 @@
         var Connector = {
             studyContext: {
                 schemaName: 'study',
-                gridBaseSchema: 'study',
-                gridBase: 'GridBase',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
+                gridBaseSchema: 'cds',
+                gridBase: 'GridBase',
                 protocolDayColumn: 'ProtocolDay'
             },
             resourceContext: {
