@@ -152,10 +152,16 @@ Ext.define('Connector.controller.Query', {
         return this.GRID_MEASURES;
     },
 
-    getTimeAliases : function() {
-        if (!this.timeAliases) {
-            this.timeAliases = {'Days': 1, 'Weeks': 1, 'Months': 1}
+    getTimeAliases : function()
+    {
+        if (!this.timeAliases)
+        {
+            this.timeAliases = {};
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Days'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks'] = 1;
+            this.timeAliases[QueryUtils.STUDY_ALIAS_PREFIX + 'Months'] = 1;
         }
+
         return this.timeAliases;
     },
 

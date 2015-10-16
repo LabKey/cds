@@ -104,7 +104,7 @@ Ext.define('Connector.model.StudyAxisData', {
                 groupKeys, groupVisit, groupVisits, group, groups, groupLabel, groupDesc;
 
         if (Ext.isDefined(measure.interval)) {
-            interval = measure.interval.toLowerCase();
+            interval = measure.interval;
         }
 
         // first we have to loop through the study axis visit information to find the alignment visit for each container
@@ -248,18 +248,22 @@ Ext.define('Connector.model.StudyAxisData', {
         });
     },
 
-    convertInterval : function(d, interval) {
+    convertInterval : function(d, interval)
+    {
         // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
-        if (interval == 'days') {
+        if (interval == QueryUtils.STUDY_ALIAS_PREFIX + 'Days')
+        {
             return d;
         }
-        else if (interval == 'weeks') {
+        else if (interval == QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks')
+        {
             return Math.floor(d / 7);
         }
-        else if (interval == 'months') {
+        else if (interval == QueryUtils.STUDY_ALIAS_PREFIX + 'Months')
+        {
             return Math.floor(d / (365.25/12));
         }
 
-        throw 'Invalid interval supplied! Expected "days", "weeks", or "months"';
+        throw 'Invalid interval supplied: ' + interval;
     }
 });

@@ -254,7 +254,7 @@ Ext.define('Connector.measure.Configuration', {
             // The key for this map is the column alias, which is the key used for the Query service MEASURE_STORE.
             // See Connector.model.Measure for the set of properties and default values.
             measures: {
-                'Days': {
+                'cds_Study_Days': {
                     sortOrder: -4,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
@@ -266,7 +266,7 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'INTEGER',
                     variableType: 'TIME'
                 },
-                'Weeks': {
+                'cds_Study_Weeks': {
                     sortOrder: -3,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
@@ -277,7 +277,7 @@ Ext.define('Connector.measure.Configuration', {
                     type: 'DOUBLE',
                     variableType: 'TIME'
                 },
-                'Months': {
+                'cds_Study_Months': {
                     sortOrder: -2,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,

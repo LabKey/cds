@@ -60,6 +60,7 @@ Ext.define('Connector.utility.Query', {
             this.joinKeys = joinKeys;
         };
 
+        // TODO get the datasets from the query service instead of hardcoded
         var tables = {
             'study.demographics': new table('study', 'Demographics', ['container', 'subjectid']),
             'study.ics':          new table('study', 'ICS', ['container', 'participantsequencenum'], true),
@@ -361,11 +362,12 @@ Ext.define('Connector.utility.Query', {
             }
         });
 
-        var FROM = "FROM " + rootTable.fullQueryName + " " + rootTable.tableAlias,
-            sep = "\n\tON ";
+        var FROM = "FROM " + rootTable.fullQueryName + " " + rootTable.tableAlias;
         Ext.iterate(fromTables, function(name, t)
         {
             FROM += "\nINNER JOIN " + t.fullQueryName + " " + t.tableAlias;
+
+            sep = "\n\tON ";
             t.joinKeys.forEach(function(k)
             {
                 FROM += sep + rootTable.tableAlias + "." + k + "=" + t.tableAlias + "." + k;
@@ -431,13 +433,13 @@ Ext.define('Connector.utility.Query', {
         var protDayCol = m.sourceTable.tableAlias + "." + m.measure.name,
             startDayCol = hasAlignment ? 'visittagalignment.ProtocolDay' : '0';
 
-        if (m.dateOptions.interval == 'Weeks') {
+        if (m.dateOptions.interval == this.STUDY_ALIAS_PREFIX + 'Weeks') {
             return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/7) AS Integer)';
         }
-        else if (m.dateOptions.interval == 'Months') {
+        else if (m.dateOptions.interval == this.STUDY_ALIAS_PREFIX + 'Months') {
             return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/(365.25/12)) AS Integer)';
         }
-        else if (m.dateOptions.interval == 'Years') {
+        else if (m.dateOptions.interval == this.STUDY_ALIAS_PREFIX + 'Years') {
             return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/365.25) AS Integer)';
         }
 

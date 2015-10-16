@@ -150,9 +150,10 @@ Ext.define('Connector.grid.Panel', {
         return this.groupColumns(columns);
     },
 
-    groupColumns : function(columns) {
+    groupColumns : function(columns)
+    {
         var queryService = Connector.getService('Query'),
-            defaultColumns = queryService.getDefaultGridAliases(),
+            defaultColumns = queryService.getDefaultGridAliases(false, true),
             definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
             groups = [],
             groupMap = {},
@@ -160,14 +161,16 @@ Ext.define('Connector.grid.Panel', {
             remainder = [];
 
         // Split columns into groups
-        Ext.each(columns, function(col) {
-            if (defaultColumns[col.dataIndex] || col.dataIndex.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
+        Ext.each(columns, function(col)
+        {
+            if (defaultColumns[col.dataIndex.toLowerCase()] || col.dataIndex.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0)
+            {
                 studyTime.push(col);
             }
-            else {
+            else
+            {
                 remainder.push(col);
             }
-
         }, this);
 
         groups.push({
