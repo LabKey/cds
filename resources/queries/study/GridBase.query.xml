@@ -6,13 +6,16 @@
                     <column columnName="SubjectVisit">
                         <columnTitle>Study Day</columnTitle>
                     </column>
-                    <column columnName="participantsequencenum">
+                    <column columnName="ParticipantSequenceNum">
                         <isHidden>true</isHidden>
                     </column>
-                    <column columnName="sequencenum">
+                    <column columnName="SequenceNum">
                         <isHidden>true</isHidden>
                     </column>
-                    <column columnName="container">
+                    <column columnName="ProtocolDay">
+                        <isHidden>true</isHidden>
+                    </column>
+                    <column columnName="Container">
                         <isHidden>true</isHidden>
                     </column>
                     <column columnName="sourcecontainer">

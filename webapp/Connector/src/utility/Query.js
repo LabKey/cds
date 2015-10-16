@@ -284,7 +284,8 @@ Ext.define('Connector.utility.Query', {
                 subjectid: true,
                 sequencenum: true
             },
-            columnAliasMap = {};
+            columnAliasMap = {},
+            visitAlignmentTag = null;
 
         // look for aliases, e.g. study.gridbase.subjectid -> study.{dataset}.subjectid
         allMeasures.map(function(m) { m.sourceTable = m.table; return m;})
@@ -324,7 +325,7 @@ Ext.define('Connector.utility.Query', {
             schemaName: rootTable.schemaName
         };
 
-        allMeasures.forEach(function(m)
+        Ext.each(allMeasures, function(m)
         {
             var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
                     || m.measure.name.toLowerCase() == 'container'
@@ -346,13 +347,19 @@ Ext.define('Connector.utility.Query', {
 
             if (acceptMeasure(m))
             {
-                SELECT.push(",\n\t" + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + alias + title);
+                if (Ext.isObject(m.dateOptions)) {
+                    visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
+                    SELECT.push(",\n\t" + this._getIntervalSelectClause(m, visitAlignmentTag != null) + " AS " + alias + title);
+                }
+                else {
+                    SELECT.push(",\n\t" + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + alias + title);
+                }
             }
             else
             {
                 SELECT.push(",\n\tNULL AS " + alias + title);
             }
-        });
+        }, this);
 
         //
         // FROM
@@ -377,6 +384,17 @@ Ext.define('Connector.utility.Query', {
                 sep = "\n\tAND ";
             });
         });
+
+        //
+        // Visit Tag alignment INNER JOIN
+        //
+        if (visitAlignmentTag != null)
+        {
+            FROM += "\nINNER JOIN (SELECT Container, ParticipantId, MIN(ProtocolDay) AS ProtocolDay FROM cds.visittagalignment  "
+                + "\n\t\tWHERE visittagname='" + visitAlignmentTag + "' GROUP BY Container, ParticipantId) AS visittagalignment"
+                + "\n\tON study_gridbase.container=visittagalignment.container"
+                + "\n\tAND study_gridbase.subjectid=visittagalignment.participantid";
+        }
 
         //
         // WHERE
@@ -417,6 +435,24 @@ Ext.define('Connector.utility.Query', {
             sql: SELECT.join('') + "\n" + FROM + (WHERE.length == 0 ? "" : "\nWHERE ") + WHERE.join("\n\tAND "),
             columnAliasMap: columnAliasMap
         };
+    },
+
+    _getIntervalSelectClause : function(m, hasAlignment)
+    {
+        var protDayCol = m.sourceTable.tableAlias + "." + m.measure.name,
+            startDayCol = hasAlignment ? 'visittagalignment.ProtocolDay' : '0';
+
+        if (m.dateOptions.interval == 'Weeks') {
+            return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/7) AS Integer)';
+        }
+        else if (m.dateOptions.interval == 'Months') {
+            return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/(365.25/12)) AS Integer)';
+        }
+        else if (m.dateOptions.interval == 'Years') {
+            return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/365.25) AS Integer)';
+        }
+
+        return '(' + protDayCol + ' - ' + startDayCol + ')';
     },
 
     _getWhereClauseFromFilter : function(_f, measure, recursed)

@@ -21,5 +21,6 @@ TreatmentSummary,
 SubjectVisit,
 ParticipantSequenceNum,
 SequenceNum,
+ProtocolDay,
 Container
 FROM cds.GridBase

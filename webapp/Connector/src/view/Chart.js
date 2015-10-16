@@ -2038,10 +2038,18 @@ Ext.define('Connector.view.Chart', {
             if (options && options.alignmentVisitTag !== undefined) {
                 wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
             }
+
+            if (QueryUtils.USE_NEW_GETDATA)
+            {
+                // TODO: this should be defined in measure.js
+                wrappedMeasure.measure.name = 'ProtocolDay';
+                wrappedMeasure.measure.queryName = 'GridBase';
+                wrappedMeasure.measure.schemaName = 'study';
+            }
         }
         else if (this.requireStudyAxis) {
             // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
-            wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.name, null, LABKEY.Filter.Types.NOT_MISSING)];
+            wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.alias, null, LABKEY.Filter.Types.NOT_MISSING)];
         }
 
         // we still respect the value if it is set explicitly on the measure
