@@ -250,20 +250,7 @@ Ext.define('Connector.model.StudyAxisData', {
 
     convertInterval : function(d, interval)
     {
-        // Conversion methods here taken from VisualizationIntervalColumn.java line ~30
-        if (interval == QueryUtils.STUDY_ALIAS_PREFIX + 'Days')
-        {
-            return d;
-        }
-        else if (interval == QueryUtils.STUDY_ALIAS_PREFIX + 'Weeks')
-        {
-            return Math.floor(d / 7);
-        }
-        else if (interval == QueryUtils.STUDY_ALIAS_PREFIX + 'Months')
-        {
-            return Math.floor(d / (365.25/12));
-        }
-
-        throw 'Invalid interval supplied: ' + interval;
+        var denom = QueryUtils.getIntervalDenominator(interval);
+        return denom > 1 ? Math.floor(d / denom) : d;
     }
 });

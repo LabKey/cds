@@ -431,19 +431,27 @@ Ext.define('Connector.utility.Query', {
     _getIntervalSelectClause : function(m, hasAlignment)
     {
         var protDayCol = m.sourceTable.tableAlias + "." + m.measure.name,
-            startDayCol = hasAlignment ? 'visittagalignment.ProtocolDay' : '0';
+            startDayCol = hasAlignment ? 'visittagalignment.ProtocolDay' : '0',
+            denom = this.getIntervalDenominator(m.dateOptions.interval),
+            clause = '(' + protDayCol + ' - ' + startDayCol + ')';
 
-        if (m.dateOptions.interval == this.STUDY_ALIAS_PREFIX + 'Weeks') {
-            return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/7) AS Integer)';
-        }
-        else if (m.dateOptions.interval == this.STUDY_ALIAS_PREFIX + 'Months') {
-            return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/(365.25/12)) AS Integer)';
-        }
-        else if (m.dateOptions.interval == this.STUDY_ALIAS_PREFIX + 'Years') {
-            return 'CAST(FLOOR((' + protDayCol + ' - ' + startDayCol + ')/365.25) AS Integer)';
+        if (denom > 1)
+        {
+            clause = 'CAST(FLOOR(' + clause + '/' + denom + ') AS Integer)';
         }
 
-        return '(' + protDayCol + ' - ' + startDayCol + ')';
+        return clause;
+    },
+
+    getIntervalDenominator : function(interval)
+    {
+        if (interval == this.STUDY_ALIAS_PREFIX + 'Weeks')
+            return 7;
+        else if (interval == this.STUDY_ALIAS_PREFIX + 'Months')
+            return 365.25/12;
+        else if (interval == this.STUDY_ALIAS_PREFIX + 'Years')
+            return 365.25;
+        return 1;
     },
 
     _getWhereClauseFromFilter : function(_f, measure, recursed)
