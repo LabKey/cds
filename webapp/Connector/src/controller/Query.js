@@ -594,8 +594,8 @@ Ext.define('Connector.controller.Query', {
     /**
      * Get a LABKEY.Query.Visualization.getData configuration back based on the LABKEY.app.model.Filter given.
      * @param filterConfig The object which will be added as a COUNT/WHERE filter.
-     * @param appFilter {LABKEY.app.model.Filter} or an appFilterData
-     * @returns LABKEY.Query.Visualization.getData configuration
+     * @param appFilter {Connector.model.Filter} or an appFilterData
+     * @returns {{level: string, sql: *}}
      */
     getDataFilter : function(filterConfig, appFilter)
     {
@@ -604,33 +604,17 @@ Ext.define('Connector.controller.Query', {
             console.error('called getDataFilter() too early. Unable to determine grid measures');
         }
 
-        var getDataConfig = {
-            measures: []
-        };
-
-        // apply each measure to the request, encoding filters if present
-        Ext.each(appFilter.getMeasureSet(), function(measure)
+        if (Ext.isEmpty(appFilter.getMeasureSet()))
         {
-            if (!Ext.isEmpty(measure.filterArray)) {
-                var fa = [];
-                for (var f = 0; f < measure.filterArray.length; f++)
-                {
-                    fa.push(measure.filterArray[f]);
-                }
-                measure.filterArray = fa;
-            }
-            getDataConfig.measures.push(measure);
-        }, this);
-
-        if (Ext.isEmpty(getDataConfig.measures)) {
             throw 'Invalid getData configuration. At least one measure is required.';
         }
 
-        filterConfig.sql = QueryUtils.getDataSQL(getDataConfig);
-
-        filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
-
-        return filterConfig;
+        return {
+            level: '[Subject].[Subject]', // TODO: Retrieve from application metadata (cube.js)
+            sql: QueryUtils.getDataSQL({
+                measures: appFilter.getMeasureSet()
+            })
+        };
     },
 
     /**
@@ -684,15 +668,6 @@ Ext.define('Connector.controller.Query', {
         }, this);
 
         return measures;
-    },
-
-    /**
-     * The exclusive set of measure properties that will be sent across the wire
-     */
-    MEASURE_PROPERTIES: 'aggregate,alias,allowNullResults,defaultScale,inNotNullSet,isDemographic,name,queryName,requireLeftJoin,schemaName,values',
-
-    cleanMeasure : function(measure) {
-        return Ext.copyTo({}, measure, this.MEASURE_PROPERTIES)
     },
 
     clearSourceCountsCache : function() {
