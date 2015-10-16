@@ -617,9 +617,9 @@ Ext.define('Connector.controller.Query', {
         return this.DEFINED_MEASURE_SOURCE_MAP;
     },
 
+    // TODO: This can be removed once "newGetData" is the only one
     getDataSorts : function() {
         if (!this._dataSorts) {
-            // TODO: Source these differently? This is requiring us to split these out
             this._dataSorts = [{
                 schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase,
@@ -650,7 +650,6 @@ Ext.define('Connector.controller.Query', {
             scope: scope
         };
 
-        // data sorts are no longer needed
         if (!QueryUtils.USE_NEW_GETDATA)
         {
             config.sorts = this.getDataSorts();
@@ -659,14 +658,16 @@ Ext.define('Connector.controller.Query', {
         // include any compound filters defined in the application filters.
         // If they are included the measures which each compound filter relies on must also
         // be included in the request
-        if (applyCompound) {
+        if (applyCompound)
+        {
             config = this._includeFilterMeasures(config);
         }
 
         QueryUtils.getData(config);
     },
 
-    getMeasureStore : function(measures, success, failure, scope) {
+    getMeasureStore : function(measures, success, failure, scope)
+    {
         LABKEY.Query.experimental.MeasureStore.getData({
             endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
@@ -682,23 +683,29 @@ Ext.define('Connector.controller.Query', {
      * @param appFilter {LABKEY.app.model.Filter} or an appFilterData
      * @returns LABKEY.Query.Visualization.getData configuration
      */
-    getDataFilter : function(filterConfig, appFilter) {
-
+    getDataFilter : function(filterConfig, appFilter)
+    {
         if (!Ext.isDefined(this._gridMeasures)) {
             console.error('called getDataFilter() too early. Unable to determine base measure');
         }
 
         var getDataConfig = {
             joinToFirst: true,
-            measures: [],
-            sorts: this.getDataSorts()
+            measures: []
         };
 
+        if (!QueryUtils.USE_NEW_GETDATA)
+        {
+            getDataConfig.sorts = this.getDataSorts();
+        }
+
         // apply each measure to the request, encoding filters if present
-        Ext.each(appFilter.getMeasureSet(), function(measure) {
+        Ext.each(appFilter.getMeasureSet(), function(measure)
+        {
             if (!Ext.isEmpty(measure.filterArray)) {
                 var fa = [];
-                for (var f = 0; f < measure.filterArray.length; f++) {
+                for (var f = 0; f < measure.filterArray.length; f++)
+                {
                     if (QueryUtils.USE_NEW_GETDATA)
                     {
                         fa.push(measure.filterArray[f]);

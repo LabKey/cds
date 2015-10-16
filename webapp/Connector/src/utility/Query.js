@@ -56,28 +56,31 @@ Ext.define('Connector.utility.Query', {
         }
     },
 
-    getDataSQL : function(config) {
+    getDataSQL : function(config)
+    {
         return this._generateVisGetDataSql(config.measures, config.extraFilters).sql;
     },
 
-    _getTables : function() {
-        var table = function(s, q, k, isAssayDataset) {
-            this.displayName = q;
-            this.queryName = q.toLowerCase();
-            this.fullQueryName = s + "." + this.queryName;
-            this.tableAlias = s + "_" + this.queryName;
-            this.schemaName = s;
+    _getTables : function()
+    {
+        var table = function(schema, query, joinKeys, isAssayDataset)
+        {
+            this.displayName = query;
+            this.queryName = query.toLowerCase();
+            this.fullQueryName = schema + '.' + this.queryName;
+            this.tableAlias = schema + '_' + this.queryName;
+            this.schemaName = schema;
             this.isAssayDataset = isAssayDataset === true;
-            this.joinKeys = k;
+            this.joinKeys = joinKeys;
         };
 
         return {
-            "study.gridbase":     new table("study", "GridBase", ["container","participantsequencenum"], false),
-            "study.demographics": new table("study", "Demographics", ["container","subjectid"], false),
-            "study.ics":          new table("study", "ICS", ["container","participantsequencenum"], true),
-            "study.bama":         new table("study", "BAMA", ["container","participantsequencenum"], true),
-            "study.elispot":      new table("study", "Elispot", ["container","participantsequencenum"], true),
-            "study.nab":          new table("study", "NAb", ["container","participantsequencenum"], true)
+            'study.gridbase':     new table('study', 'GridBase', ['container', 'participantsequencenum']),
+            'study.demographics': new table('study', 'Demographics', ['container', 'subjectid']),
+            'study.ics':          new table('study', 'ICS', ['container', 'participantsequencenum'], true),
+            'study.bama':         new table('study', 'BAMA', ['container', 'participantsequencenum'], true),
+            'study.elispot':      new table('study', 'Elispot', ['container', 'participantsequencenum'], true),
+            'study.nab':          new table('study', 'NAb', ['container', 'participantsequencenum'], true)
         };
     },
 
