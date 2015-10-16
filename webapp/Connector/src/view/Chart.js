@@ -1754,15 +1754,13 @@ Ext.define('Connector.view.Chart', {
      * @param {Boolean} [fromBrush=false]
      * @param {Boolean} [allowInverseFilter=false]
      */
-    createSelectionFilter : function(sqlFilters, fromBrush, allowInverseFilter) {
-        var wrapped = [
-                this._getAxisWrappedMeasure(this.measures[0] /* xMeasure */),
-                this._getAxisWrappedMeasure(this.measures[1] /* yMeasure */)
-            ],
-            selection;
+    createSelectionFilter : function(sqlFilters, fromBrush, allowInverseFilter)
+    {
+        var selection;
 
         // construct an 'aggregated' filter
-        if (fromBrush && this.showAsMedian) {
+        if (fromBrush && this.showAsMedian)
+        {
             selection = {
                 gridFilter: sqlFilters,
                 members: Ext.Object.getKeys(this.brushedSubjects),
@@ -1771,11 +1769,34 @@ Ext.define('Connector.view.Chart', {
                 isAggregated: true
             };
         }
-        else {
-            // TODO: Categorical filters need to only include their measures. This means modify wrapped
+        else
+        {
+            // examine the sqlFilters to determine which measures to include
+            var plotMeasures = [null, null],
+                hasAnyFilters = false;
+
+            // has X
+            if (sqlFilters[0] || sqlFilters[1])
+            {
+                plotMeasures[0] = this._getAxisWrappedMeasure(this.activeXSelection);
+                hasAnyFilters = true;
+            }
+
+            // has Y
+            if (sqlFilters[2] || sqlFilters[3])
+            {
+                plotMeasures[1] = this._getAxisWrappedMeasure(this.activeYSelection);
+                hasAnyFilters = true;
+            }
+
+            if (!hasAnyFilters)
+            {
+                throw 'Improperly constructed selection filter. At least one sqlFilter is required for a valid filter.';
+            }
+
             selection = {
                 gridFilter: sqlFilters,
-                plotMeasures: wrapped,
+                plotMeasures: plotMeasures,
                 isPlot: true,
                 isGrid: true,
                 operator: LABKEY.app.model.Filter.OperatorTypes.OR,
