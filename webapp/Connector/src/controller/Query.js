@@ -39,24 +39,21 @@ Ext.define('Connector.controller.Query', {
             this.MEASURE_DISTINCT_VALUES = {};
         }
 
-        var cacheReady = false;
-        var gridMeasuresReady = false;
+        if (!this.GRID_MEASURES)
+        {
+            this.GRID_MEASURES = [];
+        }
 
-        var doReady = function() {
-            if (cacheReady && gridMeasuresReady) {
-                this._ready = true;
-                this.application.fireEvent('queryready', this);
-            }
-        };
+        var filters = [
+            LABKEY.Query.Visualization.Filter.create({
+                schemaName: Connector.studyContext.gridBaseSchema,
+                queryName: Connector.studyContext.gridBase
+            })
+        ];
 
-        var filters = [];
         if (QueryUtils.USE_NEW_GETDATA)
         {
-            // include only cds.gridbase and study datasets
-            filters.push(LABKEY.Query.Visualization.Filter.create({
-                schemaName: 'cds',
-                queryName: 'gridbase'
-            }));
+            // include only study datasets
             filters.push(LABKEY.Query.Visualization.Filter.create({
                 schemaName: 'study',
                 queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
@@ -66,22 +63,29 @@ Ext.define('Connector.controller.Query', {
         {
             // include all the study queries
             filters.push(LABKEY.Query.Visualization.Filter.create({
-                schemaName: Connector.studyContext.schemaName,
+                schemaName: 'study',
                 queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
             }));
         }
 
-        // Get all the study columns (including non-measures, weird, I know. Right?)
         LABKEY.Query.Visualization.getMeasures({
             allColumns: true,
             showHidden: true,
             filters: filters,
             success: function(measures)
             {
+                var defaultGridAliases = this.getDefaultGridAliases(false, true);
+
                 // add all of the response measures to the cached store
                 Ext.each(measures, function(measure)
                 {
                     this.addMeasure(measure);
+
+                    // separate the set of default grid measures
+                    if (defaultGridAliases[measure.alias.toLowerCase()])
+                    {
+                        this.GRID_MEASURES.push(Ext.clone(measure));
+                    }
                 }, this);
 
                 // bootstrap client-defined measures
@@ -91,21 +95,13 @@ Ext.define('Connector.controller.Query', {
                     this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
                 }, this);
 
-                cacheReady = true;
-                doReady.call(this);
+                this._ready = true;
+                this.application.fireEvent('queryready', this);
             },
-            endpoint : LABKEY.ActionURL.buildURL("visualization", "getMeasuresStatic"),
+            endpoint : LABKEY.ActionURL.buildURL('visualization', 'getMeasuresStatic'),
             scope: this
         });
-
-        // Get the default set of grid columns ready
-        this.getDefaultGridMeasures(function() {
-            gridMeasuresReady = true;
-            doReady.call(this);
-        }, this);
     },
-
-    _gridMeasures : undefined,
 
     onQueryReady : function(callback, scope) {
         if (Ext.isFunction(callback)) {
@@ -129,91 +125,43 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     *
      * @param {boolean} [asArray=false]
+     * @param {boolean} [lowerCase=false]
      */
-    getDefaultGridAliases : function(asArray) {
+    getDefaultGridAliases : function(asArray, lowerCase)
+    {
+        var _getAlias = function(alias)
+        {
+            return lowerCase === true ? alias.toLowerCase() : alias;
+        };
 
         var keys = [
-            this.getSubjectColumnAlias(),
-            this.getGridBaseColumnAlias('Study'),
-            this.getGridBaseColumnAlias('TreatmentSummary'),
-            this.getGridBaseColumnAlias('SubjectVisit')
+            _getAlias(this.getSubjectColumnAlias()),
+            _getAlias(this.getGridBaseColumnAlias('Study')),
+            _getAlias(this.getGridBaseColumnAlias('TreatmentSummary')),
+            _getAlias(this.getGridBaseColumnAlias('SubjectVisit'))
         ];
 
         var result;
-        if (asArray === true) {
+        if (asArray === true)
+        {
             result = keys;
         }
-        else {
+        else
+        {
             result = {};
-            for (var i=0; i < keys.length; i++) {
-                result[keys[i]] = i+1; // position 1-based for truthy
+            for (var i=0; i < keys.length; i++)
+            {
+                result[keys[i]] = i + 1; // position 1-based for truthy
             }
         }
 
         return result;
     },
 
-    // This supplies the set of default columns available in the grid
-    // to the provided callback as an array of Measure descriptors
-    getDefaultGridMeasures : function(callback, scope) {
-        if (!Ext.isDefined(this._gridMeasures)) {
-
-            this._gridMeasures = [];
-
-            var schema = Connector.studyContext.gridBaseSchema,
-                query = Connector.studyContext.gridBase,
-                defaultAliases = this.getDefaultGridAliases();
-
-            //
-            // request the appropriate query details
-            //
-            LABKEY.Query.getQueryDetails({
-                schemaName: schema,
-                queryName: query,
-                success : function(queryDetails) {
-                    var columns = queryDetails.defaultView.columns,
-                        me = this;
-
-                    function mockUpMeasure(measure) {
-                        Ext.apply(measure, {
-                            schemaName: schema,
-                            queryName: query
-                        });
-
-                        // Add these into the MEASURE_STORE
-                        measure.alias = LABKEY.Utils.getMeasureAlias(measure);
-                        measure.variableType = 'GRID_DEFAULT';
-
-                        if (measure.alias in defaultAliases) {
-                            var m = new LABKEY.Query.Visualization.Measure(measure);
-                            me.addMeasure(m);
-                            return m;
-                        }
-                    }
-
-                    Ext.each(columns, function(col) {
-                        var visMeasure = mockUpMeasure.call(this, col);
-
-                        if (visMeasure && visMeasure.hidden !== true) {
-                            this._gridMeasures.push(col);
-                        }
-
-                    }, this);
-
-                    if (Ext.isFunction(callback)) {
-                        callback.call(scope, me._gridMeasures);
-                    }
-                },
-                scope: this
-            });
-        }
-        else {
-            if (Ext.isFunction(callback)) {
-                callback.call(scope, this._gridMeasures);
-            }
-        }
+    getDefaultGridMeasures : function()
+    {
+        return this.GRID_MEASURES;
     },
 
     getTimeAliases : function() {
@@ -685,8 +633,9 @@ Ext.define('Connector.controller.Query', {
      */
     getDataFilter : function(filterConfig, appFilter)
     {
-        if (!Ext.isDefined(this._gridMeasures)) {
-            console.error('called getDataFilter() too early. Unable to determine base measure');
+        if (Ext.isEmpty(this.GRID_MEASURES))
+        {
+            console.error('called getDataFilter() too early. Unable to determine grid measures');
         }
 
         var getDataConfig = {
@@ -815,7 +764,7 @@ Ext.define('Connector.controller.Query', {
             }
 
             var json = {
-                schema: Connector.studyContext.schemaName,
+                schema: 'study',
                 members: subjectFilter.hasFilters ? subjectFilter.subjects : undefined,
                 sources: []
             };

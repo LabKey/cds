@@ -99,24 +99,23 @@ Ext.define('Connector.model.Grid', {
         this.addEvents('filterchange', 'updatecolumns');
     },
 
-    _init : function() {
-        if (!this._ready && this.viewReady && this.stateReady) {
-            Connector.getQueryService().onQueryReady(function(service) {
-                service.getDefaultGridMeasures(function(defaultMeasures) {
+    _init : function()
+    {
+        if (!this._ready && this.viewReady && this.stateReady)
+        {
+            Connector.getQueryService().onQueryReady(function(service)
+            {
+                this._ready = true;
 
-                    this._ready = true;
+                this.bindDefaultMeasures(service.getDefaultGridMeasures());
 
-                    this.bindDefaultMeasures(defaultMeasures);
+                // hook listeners
+                Connector.getState().on('filterchange', this.onAppFilterChange, this);
+                Connector.getApplication().on('plotmeasures', this.bindApplicationMeasures, this);
 
-                    // hook listeners
-                    Connector.getState().on('filterchange', this.onAppFilterChange, this);
-                    Connector.getApplication().on('plotmeasures', this.bindApplicationMeasures, this);
-
-                    this.bindMeasures([], [], [], true);
-                    this.bindApplicationMeasures();
-                    this.requestMetaData();
-
-                }, this);
+                this.bindMeasures([], [], [], true);
+                this.bindApplicationMeasures();
+                this.requestMetaData();
             }, this);
         }
     },
