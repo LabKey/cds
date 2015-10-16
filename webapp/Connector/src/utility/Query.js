@@ -7,13 +7,12 @@ Ext.define('Connector.utility.Query', {
 
     SUBJECTVISIT_TABLE: "study.gridbase",
 
-    USE_NEW_GETDATA: Ext.isDefined(LABKEY.ActionURL.getParameter('_newGetData')),
+    STUDY_ALIAS_PREFIX: 'cds_Study_',
 
     constructor : function(config)
     {
         this.callParent([config]);
 
-        this.STUDY_ALIAS_PREFIX = this.USE_NEW_GETDATA ? 'cds_Study_' : 'http://cpas.labkey.com/Study#';
         this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
         this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
@@ -26,33 +25,22 @@ Ext.define('Connector.utility.Query', {
      */
     getData : function(config)
     {
-        if (this.USE_NEW_GETDATA)
-        {
-            var result = this._generateVisGetDataSql(config.measures, config.extraFilters);
+        var result = this._generateVisGetDataSql(config.measures, config.extraFilters);
 
-            LABKEY.Query.executeSql({
-                schemaName: 'study',
-                sql: result.sql,
-                requiredVersion: '9.1',
-                saveInSession: true,
-                maxRows: config.metaDataOnly ? 0 : undefined,
-                success: function(response)
-                {
-                    response.columnAliasMap = result.columnAliasMap;
-                    config.success.call(config.scope, response);
-                },
-                failure: config.failure,
-                scope: config.scope
-            });
-        }
-        else
-        {
-            if (Ext.isArray(config.extraFilters))
+        LABKEY.Query.executeSql({
+            schemaName: 'study',
+            sql: result.sql,
+            requiredVersion: '9.1',
+            saveInSession: true,
+            maxRows: config.metaDataOnly ? 0 : undefined,
+            success: function(response)
             {
-                console.warn('extraFilters property not respected in "oldGetData". The results might differ drastically due to this.');
-            }
-            LABKEY.Query.Visualization.getData(config);
-        }
+                response.columnAliasMap = result.columnAliasMap;
+                config.success.call(config.scope, response);
+            },
+            failure: config.failure,
+            scope: config.scope
+        });
     },
 
     getDataSQL : function(config)

@@ -44,29 +44,17 @@ Ext.define('Connector.controller.Query', {
             this.GRID_MEASURES = [];
         }
 
+        // include only GridBase and study datasets
         var filters = [
             LABKEY.Query.Visualization.Filter.create({
                 schemaName: Connector.studyContext.gridBaseSchema,
                 queryName: Connector.studyContext.gridBase
-            })
-        ];
-
-        if (QueryUtils.USE_NEW_GETDATA)
-        {
-            // include only study datasets
-            filters.push(LABKEY.Query.Visualization.Filter.create({
+            }),
+            LABKEY.Query.Visualization.Filter.create({
                 schemaName: 'study',
                 queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS
-            }));
-        }
-        else
-        {
-            // include all the study queries
-            filters.push(LABKEY.Query.Visualization.Filter.create({
-                schemaName: 'study',
-                queryType: LABKEY.Query.Visualization.Filter.QueryType.ALL
-            }));
-        }
+            })
+        ];
 
         LABKEY.Query.Visualization.getMeasures({
             allColumns: true,
@@ -437,11 +425,10 @@ Ext.define('Connector.controller.Query', {
 
         // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
         this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
-            var alias = dimension.getFilterMeasure().get('alias'), sql,
-                subjectAlias = QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : dimension.get('schemaName') + '_' + dimension.get('queryName') + '_SubjectId';
+            var alias = dimension.getFilterMeasure().get('alias'), sql;
 
             // SQL to get the subject count for each value of the filter measure
-            sql = 'SELECT COUNT(DISTINCT "' + subjectAlias + '") AS SubjectCount, '
+            sql = 'SELECT COUNT(DISTINCT "' + QueryUtils.SUBJECT_ALIAS + '") AS SubjectCount, '
                     + alias + ' FROM ' + response.queryName
                     + dimension.getDistinctValueWhereClause()
                     + ' GROUP BY ' + alias;
@@ -565,27 +552,6 @@ Ext.define('Connector.controller.Query', {
         return this.DEFINED_MEASURE_SOURCE_MAP;
     },
 
-    // TODO: This can be removed once "newGetData" is the only one
-    getDataSorts : function() {
-        if (!this._dataSorts) {
-            this._dataSorts = [{
-                schemaName: Connector.studyContext.gridBaseSchema,
-                queryName: Connector.studyContext.gridBase,
-                name: 'Container'
-            },{
-                schemaName: Connector.studyContext.gridBaseSchema,
-                queryName: Connector.studyContext.gridBase,
-                name: 'SubjectId'
-            },{
-                schemaName: Connector.studyContext.gridBaseSchema,
-                queryName: Connector.studyContext.gridBase,
-                name: 'SubjectVisit'
-            }];
-        }
-
-        return this._dataSorts;
-    },
-
     getData : function(measures, success, failure, scope, applyCompound) {
 
         var config = {
@@ -597,11 +563,6 @@ Ext.define('Connector.controller.Query', {
             failure: failure,
             scope: scope
         };
-
-        if (!QueryUtils.USE_NEW_GETDATA)
-        {
-            config.sorts = this.getDataSorts();
-        }
 
         // include any compound filters defined in the application filters.
         // If they are included the measures which each compound filter relies on must also
@@ -643,11 +604,6 @@ Ext.define('Connector.controller.Query', {
             measures: []
         };
 
-        if (!QueryUtils.USE_NEW_GETDATA)
-        {
-            getDataConfig.sorts = this.getDataSorts();
-        }
-
         // apply each measure to the request, encoding filters if present
         Ext.each(appFilter.getMeasureSet(), function(measure)
         {
@@ -655,14 +611,7 @@ Ext.define('Connector.controller.Query', {
                 var fa = [];
                 for (var f = 0; f < measure.filterArray.length; f++)
                 {
-                    if (QueryUtils.USE_NEW_GETDATA)
-                    {
-                        fa.push(measure.filterArray[f]);
-                    }
-                    else
-                    {
-                        fa.push(this.encodeURLFilter(measure.filterArray[f]));
-                    }
+                    fa.push(measure.filterArray[f]);
                 }
                 measure.filterArray = fa;
             }
@@ -673,14 +622,7 @@ Ext.define('Connector.controller.Query', {
             throw 'Invalid getData configuration. At least one measure is required.';
         }
 
-        if (QueryUtils.USE_NEW_GETDATA)
-        {
-            filterConfig.sql = QueryUtils.getDataSQL(getDataConfig);
-        }
-        else
-        {
-            filterConfig.getDataCDS = getDataConfig;
-        }
+        filterConfig.sql = QueryUtils.getDataSQL(getDataConfig);
 
         filterConfig.level = '[Subject].[Subject]'; // TODO: Retrieve from application metadata (cube.js)
 

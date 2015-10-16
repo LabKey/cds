@@ -51,11 +51,6 @@ Ext.define('Connector.model.ChartData', {
         return this.get('plotScales');
     },
 
-    // TODO: Remove this and usages before merging fb_refinement
-    getColumnAliases : function() {
-        return this.get('measureStore').getResponseMetadata().columnAliases;
-    },
-
     getColumnAliasMap : function() {
         return this.get('measureStore').getResponseMetadata().columnAliasMap;
     },
@@ -127,27 +122,15 @@ Ext.define('Connector.model.ChartData', {
         }
 
         if (!Ext.isDefined(measure.alias) || measure.alias == null) {
-            if (QueryUtils.USE_NEW_GETDATA) {
-                Ext.iterate(this.getColumnAliasMap(), function(alias, obj) {
-                    if ((measure.alias && measure.alias == alias)
-                            || (measure.name && measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName))
-                    {
-                        // stash the alias in the measure object to make it faster to find next time
-                        measure.alias = alias;
-                        return false;
-                    }
-                });
-            }
-            else {
-                Ext.each(this.getColumnAliases(), function(columnAlias) {
-                    if ((measure.alias && measure.alias === columnAlias.columnName) ||
-                        (measure.name && measure.name === columnAlias.measureName)) {
-                        // stash the alias in the measure object to make it faster to find next time
-                        measure.alias = columnAlias.columnName;
-                        return false;
-                    }
-                });
-            }
+            Ext.iterate(this.getColumnAliasMap(), function(alias, obj) {
+                if ((measure.alias && measure.alias == alias)
+                        || (measure.name && measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName))
+                {
+                    // stash the alias in the measure object to make it faster to find next time
+                    measure.alias = alias;
+                    return false;
+                }
+            });
         }
 
         return measure.alias;
@@ -156,7 +139,7 @@ Ext.define('Connector.model.ChartData', {
     getDimensionKeys : function(x, y, excludeAliases) {
         var measureSet = this.getMeasureSet(),
             dimensionKeys = [], sharedKeys = [],
-            useSharedKeys = QueryUtils.USE_NEW_GETDATA && Ext.isDefined(this.getColumnAliasMap()[QueryUtils.DATASET_ALIAS]);
+            useSharedKeys = Ext.isDefined(this.getColumnAliasMap()[QueryUtils.DATASET_ALIAS]);
 
         // Note: we don't exclude the color measure from the dimension keys
         // and we only exclude the x measure if it is continuous
@@ -179,12 +162,7 @@ Ext.define('Connector.model.ChartData', {
             }
         }, this);
 
-        if (QueryUtils.USE_NEW_GETDATA) {
-            return useSharedKeys ? sharedKeys : dimensionKeys;
-        }
-        else {
-            return sharedKeys.length > 0 ? sharedKeys : dimensionKeys;
-        }
+        return useSharedKeys ? sharedKeys : dimensionKeys;
     },
 
     getBaseMeasureConfig : function() {
@@ -205,8 +183,6 @@ Ext.define('Connector.model.ChartData', {
             y = this.getPlotMeasure(1),
             color = this.getPlotMeasure(2),
             xa, ya, ca, _xid, _yid, _cid,
-            containerColAlias = QueryUtils.USE_NEW_GETDATA ? QueryUtils.CONTAINER_ALIAS : this.getAliasFromMeasure('Container'),
-            subjectColAlias = QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : this.getAliasFromMeasure(Connector.studyContext.subjectColumn),
             containerAlignmentDayMap = {},
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
@@ -310,8 +286,8 @@ Ext.define('Connector.model.ChartData', {
             _row = dataRows[r];
 
             // build study container alignment day map
-            if (_row[containerColAlias]) {
-                containerAlignmentDayMap[_row[containerColAlias]] = 0;
+            if (_row[QueryUtils.CONTAINER_ALIAS]) {
+                containerAlignmentDayMap[_row[QueryUtils.CONTAINER_ALIAS]] = 0;
             }
 
             if (color) {
@@ -346,7 +322,7 @@ Ext.define('Connector.model.ChartData', {
                 x: xVal,
                 y: yVal,
                 color: colorVal,
-                subjectId: _row[subjectColAlias],
+                subjectId: _row[QueryUtils.SUBJECT_ALIAS],
                 xname: xa.label,
                 yname: ya.label,
                 colorname: ca.label

@@ -2030,8 +2030,7 @@ Ext.define('Connector.view.Chart', {
             var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
-                interval: interval,
-                altQueryName: 'cds.VisitTagAlignment' // TODO this can be removed after switching to new getData
+                interval: interval
             };
 
             // handle visit tag alignment for study axis

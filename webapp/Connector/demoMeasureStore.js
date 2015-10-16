@@ -99,8 +99,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_ICS_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_ICS_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -159,8 +158,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_ICS_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_ICS_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -220,8 +218,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_ICS_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_ICS_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -281,8 +278,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_ICS_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_ICS_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -342,8 +338,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_ICS_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_ICS_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -404,8 +399,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure), {'study_ICS_cell_type': 'CD4+'});
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_ICS_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_ICS_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -720,7 +714,7 @@
             $('#plot').html('');
             var interval = 'Weeks';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
-            var xMeasure = QueryUtils.USE_NEW_GETDATA ? getTimeMeasure(interval) : getTimeMeasureOld();
+            var xMeasure = getTimeMeasure(interval);
 
             var config = {
                 measures: [
@@ -743,8 +737,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_NAb_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_NAb_SequenceNum',
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_NAb_target_cell', 'study_NAb_summary_level', 'study_NAb_neutralization_tier',
                         'study_NAb_clade', 'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
                     ]);
@@ -781,7 +774,7 @@
             $('#plot').html('');
             var interval = 'Months';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
-            var xMeasure = QueryUtils.USE_NEW_GETDATA ? getTimeMeasure(interval) : getTimeMeasureOld();
+            var xMeasure = getTimeMeasure(interval);
 
             var config = {
                 measures: [
@@ -805,8 +798,8 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SUBJECT_ALIAS : 'study_NAb_SubjectId',
-                        QueryUtils.USE_NEW_GETDATA ? QueryUtils.SEQUENCENUM_ALIAS : 'study_NAb_SequenceNum',
+                            // TODO add CONTAINER_ALIAS to all
+                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_NAb_target_cell', 'study_NAb_summary_level', 'study_NAb_neutralization_tier',
                         'study_NAb_clade', 'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
                     ]);
@@ -1183,17 +1176,6 @@
                 name: colName,
                 requireLeftJoin: true,
                 type: type || 'VARCHAR'
-            });
-        }
-
-        function getTimeMeasureOld()
-        {
-            return new LABKEY.Query.Visualization.Measure({
-                schemaName:'study',
-                queryName: 'SubjectVisit',
-                name: 'Visit/ProtocolDay',
-                isMeasure: true,
-                allowNullResults: false
             });
         }
 
