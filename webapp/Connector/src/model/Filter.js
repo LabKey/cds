@@ -353,6 +353,8 @@ Ext.define('Connector.model.Filter', {
             if (this.samePlotMeasureSources())
             {
                 this._generateCompoundFilter(dataFilterMap);
+
+                // TODO: and apply situational filters
             }
             else
             {
@@ -390,7 +392,23 @@ Ext.define('Connector.model.Filter', {
                             }, this);
                         }
 
-                        // TODO: Deal with situational filters (e.g. log plots use "measure > 0" filter)
+                        if (Ext.isArray(plotMeasure.filterArray))
+                        {
+                            Ext.each(plotMeasure.filterArray, function(filter)
+                            {
+                                if (filter)
+                                {
+                                    if (filter.getColumnName().toLowerCase() !== measure.alias.toLowerCase())
+                                        throw 'A filter on "' + filter.getColumnName() + '" cannot be specified on the "' + measure.alias + '" measure.';
+
+                                    this._dataFilterHelper(dataFilterMap, filter.getColumnName(), filter);
+                                }
+                            }, this);
+                        }
+                        // TODO: Might need to calculate compound filter for situational filters. The primary example case
+                        // TODO: being if you filter log > 0, you end up inadvertently dropping "undefined" values on demographic axes
+
+                        // TODO: #2. Also, what happens to situational filters when generating compound filters?
                     }
                 }, this);
             }
