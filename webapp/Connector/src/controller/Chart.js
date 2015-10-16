@@ -58,9 +58,8 @@ Ext.define('Connector.controller.Chart', {
         this.callParent();
     },
 
-    createView : function(xtype, config, context) {
-
-        var state = Connector.getState();
+    createView : function(xtype, config, context)
+    {
         var v, plotType = 'plot';
 
         if (xtype == plotType)
@@ -69,27 +68,30 @@ Ext.define('Connector.controller.Chart', {
                 visitTagStore : this.getStore('VisitTagSingleUse')
             });
 
-            state.clearSelections();
-            state.on('filterchange', v.onFilterChange, v);
-            state.on('plotselectionremoved', v.onPlotSelectionRemoved, v);
-            state.on('selectionchange', v.onSelectionChange, v);
+            Connector.getState().clearSelections();
 
             var vm = this.getViewManager();
 
-            vm.on('beforechangeview', function(controller, view, currentContext) {
+            vm.on('beforechangeview', function(controller, view, currentContext)
+            {
                 // If a chart view is being activated, ensure it is not
                 // a view of plotType so to not deactivate the view unintentionally
-                if (controller == 'chart') {
-                    if (Ext.isDefined(view) && view != plotType) {
+                if (controller == 'chart')
+                {
+                    if (Ext.isDefined(view) && view != plotType)
+                    {
                         v.onDeactivate.call(v);
                     }
                 }
-                if (currentContext.view == plotType) {
+                if (currentContext.view == plotType)
+                {
                     v.onDeactivate.call(v);
                 }
             });
-            vm.on('afterchangeview', function(c, view) {
-                if (view == plotType) {
+            vm.on('afterchangeview', function(c, view)
+            {
+                if (view == plotType)
+                {
                     v.onActivate.call(v);
                 }
             });
