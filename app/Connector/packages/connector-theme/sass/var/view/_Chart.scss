@@ -125,8 +125,9 @@ div.noplotmsg, div.emptyplotmsg {
 
 div.plotmodeon {
   cursor: pointer;
-  margin: 8px 2px;
-  padding: 4px 16px;
+  margin: 2px 1px;
+  padding: 1px 4px;
+  text-align: center;
   background-color: $heat-scale-6;
   color: $secondary-text-color;
 }

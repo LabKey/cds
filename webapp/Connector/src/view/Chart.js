@@ -246,12 +246,14 @@ Ext.define('Connector.view.Chart', {
                 flex: 1,
                 margin: '16 0 0 0',
                 layout: {
-                    type: 'hbox',
-                    pack: 'center'
+                    type: 'vbox',
+                    pack: 'center',
+                    align: 'center'
                 },
                 items: [
                     this.getHeatmapModeIndicator(),
-                    this.getMedianModeIndicator()
+                    this.getMedianModeIndicator(),
+                    this.getLogScaleModeIndicator()
                 ]
             },{
                 xtype: 'container',
@@ -263,6 +265,26 @@ Ext.define('Connector.view.Chart', {
                 items: [this.getColorSelector()]
             }]
         };
+    },
+
+    getLogScaleModeIndicator : function() {
+        if (!this.logScaleIndicator) {
+            this.logScaleIndicator = Ext.create('Ext.Component', {
+                hidden: true,
+                cls: 'plotmodeon',
+                html: 'Log filter on',
+                width: 110,
+                listeners: {
+                    scope: this,
+                    afterrender : function(c) {
+                        c.getEl().on('mouseover', function() { this.showWhyLogScale(); }, this);
+                        c.getEl().on('mouseout', function() { this.fireEvent('hidelogscalemsg', this); }, this);
+                    }
+                }
+            });
+        }
+
+        return this.logScaleIndicator;
     },
 
     getHeatmapModeIndicator : function() {
@@ -451,6 +473,9 @@ Ext.define('Connector.view.Chart', {
         }, this);
         this.hideMedianModeTask = new Ext.util.DelayedTask(function() {
             this.fireEvent('hidemedianmsg', this);
+        }, this);
+        this.hideLogScaleModeTask = new Ext.util.DelayedTask(function() {
+            this.fireEvent('hidelogscalemsg', this);
         }, this);
 
         this.on('resize', function() {
@@ -929,6 +954,9 @@ Ext.define('Connector.view.Chart', {
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
         this.toggleMedianMode();
+
+        this.isLogScale = this.isAxisLogScale();
+        this.toggleLogScaleMode();
 
         var me = this;
         this.highlightSelectedFn = function() {
@@ -2021,7 +2049,26 @@ Ext.define('Connector.view.Chart', {
             wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
         }
 
+        if (options && options.scale === 'LOG') {
+            var logFilter = this.getLogTransformFilter(measure);
+            if (logFilter) {
+                if (Ext.isArray(wrappedMeasure.filterArray)) {
+                    wrappedMeasure.filterArray.push(logFilter);
+                }
+                else {
+                    wrappedMeasure.filterArray = [logFilter];
+                }
+            }
+        }
+
         return wrappedMeasure;
+    },
+
+    getLogTransformFilter : function(measure, ignoreLogTransform) {
+        if (ignoreLogTransform || !measure || !measure.options || !measure.options.scale || measure.options.scale !== 'LOG')
+            return null;
+
+        return LABKEY.Filter.create(measure.alias, 0, LABKEY.Filter.Types.GREATER_THAN);
     },
 
     /**
@@ -2159,6 +2206,39 @@ Ext.define('Connector.view.Chart', {
 
     _closeWhyGutter : function() {
         this.fireEvent('hideguttermsg', this);
+    },
+
+    isAxisLogScale : function() {
+        var measures = this.getActiveMeasures();
+        var xLog = measures && measures.x && measures.x.options && measures.x.options.scale === 'LOG';
+        var yLog = measures && measures.y && measures.y.options && measures.y.options.scale === 'LOG';
+        return xLog || yLog;
+    },
+
+    toggleLogScaleMode : function() {
+        this.getLogScaleModeIndicator().setVisible(this.isLogScale);
+
+        var msgKey = 'LOG_MODE';
+        if (!this.disableAutoMsg && this.isLogScale && Connector.getService('Messaging').isAllowed(msgKey)) {
+            this.showWhyLogScale();
+            this.hideLogScaleModeTask.delay(5000);
+            Connector.getService('Messaging').block(msgKey);
+        }
+    },
+
+    showWhyLogScale : function() {
+        if (this.isLogScale) {
+            var config = {
+                target: this.getLogScaleModeIndicator().getEl().dom,
+                placement: 'bottom',
+                title: 'Log filter on',
+                xOffset: -115,
+                arrowOffset: 145,
+                content: 'Values ≤ 0 have no log and were filtered out. Use a linear scale to see all values.'
+            };
+
+            ChartUtils.showCallout(config, 'hidelogscalemsg', this);
+        }
     },
 
     toggleHeatmapMode : function() {

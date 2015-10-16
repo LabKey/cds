@@ -28,6 +28,7 @@ import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
 import org.labkey.test.pages.DataGrid;
 import org.labkey.test.pages.DataGridVariableSelector;
+import org.labkey.test.pages.DataspaceVariableSelector;
 import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
@@ -160,8 +161,8 @@ public class CDSTest extends CDSReadOnlyTest
         //
         // Validate counts and about link
         //
-        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "57 studies connected together combining");
-        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "48,359 data points.");
+        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "57 studies to learn about.");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "48,359 data points collected from 57 studies.");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
 
@@ -186,7 +187,8 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // Not sure why I need this but test is more reliable with it.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
@@ -223,7 +225,7 @@ public class CDSTest extends CDSReadOnlyTest
         getDriver().navigate().refresh();
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_RAW + ", " + CDSHelper.DEMO_RACE));
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
         _asserts.assertFilterStatusCounts(538, 14, -1); // TODO Test data dependent.
 
         // remove just the plot filter
@@ -739,8 +741,9 @@ public class CDSTest extends CDSReadOnlyTest
         // That is why this test is here.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType("All");
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
@@ -749,7 +752,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForText("View data grid"); // grid warning
 
         log("Validate expected columns are present.");
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_RAW);
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Validating gid counts");
         _asserts.assertFilterStatusCounts(28, 12, -1);
@@ -757,11 +760,11 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertRowCount(543);
 
         log("Applying a column filter.");
-        grid.setFilter(CDSHelper.ICS_MAGNITUDE_RAW, "Is Greater Than or Equal To", "1");
+        grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Greater Than or Equal To", "1");
 
         _asserts.assertFilterStatusCounts(3, 3, -1);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_RAW);
+        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         grid.assertRowCount(14);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
@@ -803,7 +806,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertPageTotal(2);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_RAW, "Study ELISPOT Antigen");
+                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Study ELISPOT Antigen");
         grid.assertRowCount(28);
 
         log("Validate checkerboarding.");
@@ -835,7 +838,7 @@ public class CDSTest extends CDSReadOnlyTest
         grid.assertPageTotal(4);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_RAW, "Study ELISPOT Antigen");
+                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Study ELISPOT Antigen");
         grid.assertRowCount(92);
 
         cds.goToAppHome();
@@ -865,6 +868,7 @@ public class CDSTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
