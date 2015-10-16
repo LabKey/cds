@@ -171,19 +171,24 @@ Ext.define('Connector.view.Selection', {
 
                     return Ext.htmlEncode(type) + ': ' + LABKEY.app.model.Filter.getGridLabel(values);
                 },
-                renderSelectionMeasure : function(measure, filters) {
+                renderSelectionMeasure : function(measure, filters)
+                {
                     var domString = '', filterValString = '', sep = '';
 
-                    if (measure && filters && filters.length > 0) {
-
-                        Ext.each(filters, function(filter) {
+                    if (measure && !Ext.isEmpty(filters))
+                    {
+                        Ext.each(filters, function(filter)
+                        {
                             var val = filter.getValue(),
-                                fil = LABKEY.app.model.Filter.getShortFilter(filter.getFilterType().getDisplayText());
+                                type = filter.getFilterType(),
+                                fil = LABKEY.app.model.Filter.getShortFilter(type.getDisplayText());
 
-                            if (filter.getFilterType().getURLSuffix() === 'dategte' || filter.getFilterType().getURLSuffix() === 'datelte') {
+                            if (type.getURLSuffix() === 'dategte' || type.getURLSuffix() === 'datelte')
+                            {
                                 val = ChartUtils.tickFormat.date(val);
                             }
-                            else if (filter.getFilterType() == LABKEY.Filter.Types.EQUALS_ONE_OF) {
+                            else if (filter.getFilterType() == LABKEY.Filter.Types.EQUALS_ONE_OF)
+                            {
                                 val = Connector.model.Filter.getFilterValuesAsArray(filter).join(';');
                             }
 
@@ -191,12 +196,14 @@ Ext.define('Connector.view.Selection', {
                             sep = ', ';
                         });
 
-                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true) + ': ' + filterValString + '</div>';
+                        domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true);
+                        domString += ': ' + filterValString + '</div>';
                     }
 
                     return domString;
                 },
-                renderPlotSelection: function(values) {
+                renderPlotSelection: function(values)
+                {
                     var measures = values.plotMeasures,
                         filters = values.gridFilter,
                         xMeasure = measures[0],
@@ -206,20 +213,29 @@ Ext.define('Connector.view.Selection', {
                         domString;
 
                     // split measures into x/y based on column name
-                    Ext.each(filters, function(filter) {
-                        if (filter) {
-                            if (xMeasure && filter.getColumnName() == xMeasure.measure.alias) {
-                                xFilters.push(filter);
+                    Ext.each(filters, function(filter, i)
+                    {
+                        if (filter)
+                        {
+                            if (i < 2) // [x1, x2, y1, y2]
+                            {
+                                if (xMeasure && filter.getColumnName() == xMeasure.measure.alias)
+                                {
+                                    xFilters.push(filter);
+                                }
                             }
-
-                            if (yMeasure && filter.getColumnName() == yMeasure.measure.alias) {
-                                yFilters.push(filter);
+                            else
+                            {
+                                if (yMeasure && filter.getColumnName() == yMeasure.measure.alias)
+                                {
+                                    yFilters.push(filter);
+                                }
                             }
                         }
                     });
 
-                    domString = this.renderSelectionMeasure(xMeasure, xFilters, values.id, 0);
-                    domString = domString + this.renderSelectionMeasure(yMeasure, yFilters, values.id, 1);
+                    domString = this.renderSelectionMeasure(xMeasure, xFilters);
+                    domString = domString + this.renderSelectionMeasure(yMeasure, yFilters);
 
                     return domString;
                 }
