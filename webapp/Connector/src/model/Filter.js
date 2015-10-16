@@ -276,14 +276,7 @@ Ext.define('Connector.model.Filter', {
                         measureMap[measure.alias].measure.inNotNullSet = false;
                     }
 
-                    if (gf.getColumnName() === measure.name || isTimeBased) {
-                        measureMap[measure.alias].filterArray.push(gf);
-                    }
-                    else {
-                        // create a filter with the measure 'name' rather than the 'alias' as the column
-                        var _gf = LABKEY.Filter.create(measure.name, gf.getValue(), gf.getFilterType());
-                        measureMap[measure.alias].filterArray.push(_gf);
-                    }
+                    measureMap[measure.alias].filterArray.push(gf);
                 }
                 else {
                     console.warn('Unable to find measure for query parameter', gf.getURLParameterName() + '=' + gf.getURLParameterValue());
