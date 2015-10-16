@@ -11,7 +11,7 @@ Ext.define('Connector.measure.Configuration', {
             // The key for this map is schemaName|queryName, which is the key used in the Query service SOURCE_STORE.
             // See Connector.model.Source for the set of properties and default values.
             sources: {
-                'study|SubjectVisit': {
+                'study|GridBase': {
                     queryLabel: 'Time points'
                 },
                 //'study|SubjectGroupMap': {
@@ -256,8 +256,8 @@ Ext.define('Connector.measure.Configuration', {
             measures: {
                 'Days': {
                     sortOrder: -4,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: Connector.studyContext.subjectVisit,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
                     inNotNullSet: false,
                     isRecommendedVariable: true,
                     isMeasure: true,
@@ -268,8 +268,8 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'Weeks': {
                     sortOrder: -3,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: Connector.studyContext.subjectVisit,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
                     inNotNullSet: false,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,
@@ -279,8 +279,8 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'Months': {
                     sortOrder: -2,
-                    schemaName: Connector.studyContext.schemaName,
-                    queryName: Connector.studyContext.subjectVisit,
+                    schemaName: Connector.studyContext.gridBaseSchema,
+                    queryName: Connector.studyContext.gridBase,
                     inNotNullSet: false,
                     isMeasure: true,
                     name: Connector.studyContext.protocolDayColumn,

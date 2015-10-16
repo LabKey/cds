@@ -68,7 +68,7 @@
                 gridBase: 'GridBase',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
                 subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
-                protocolDayColumn: 'Visit/ProtocolDay'
+                protocolDayColumn: 'ProtocolDay'
             },
             resourceContext: {
                 path: <%=PageFlowUtil.jsString(resourcePath)%>,

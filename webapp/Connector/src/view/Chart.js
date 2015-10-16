@@ -2031,20 +2031,12 @@ Ext.define('Connector.view.Chart', {
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
                 interval: interval,
-                altQueryName: 'cds.VisitTagAlignment'
+                altQueryName: 'cds.VisitTagAlignment' // TODO this can be removed after switching to new getData
             };
 
             // handle visit tag alignment for study axis
             if (options && options.alignmentVisitTag !== undefined) {
                 wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
-            }
-
-            if (QueryUtils.USE_NEW_GETDATA)
-            {
-                // TODO: this should be defined in measure.js
-                wrappedMeasure.measure.name = 'ProtocolDay';
-                wrappedMeasure.measure.queryName = 'GridBase';
-                wrappedMeasure.measure.schemaName = 'study';
             }
         }
         else if (this.requireStudyAxis) {
