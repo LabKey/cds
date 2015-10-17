@@ -23,7 +23,7 @@ SV.Visit.Label AS SubjectVisit,
 -- Join columns
 SV.participantsequencenum,
 SV.sequencenum,
-SV.Visit.ProtocolDay AS ProtocolDay,
+CAST(ROUND(Floor(SV.Visit.ProtocolDay)) AS INTEGER) AS ProtocolDay,
 SV.container
 
 FROM study.ParticipantVisit AS SV
