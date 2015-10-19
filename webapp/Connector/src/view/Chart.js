@@ -2005,7 +2005,7 @@ Ext.define('Connector.view.Chart', {
             this._getAxisWrappedMeasure(activeMeasures.x),
             this._getAxisWrappedMeasure(activeMeasures.y)
         ];
-        wrappedMeasures.push(activeMeasures.color ? {measure : activeMeasures.color, time: 'date'} : null);
+        wrappedMeasures.push(activeMeasures.color ? {measure : activeMeasures.color} : null);
 
         return wrappedMeasures;
     },

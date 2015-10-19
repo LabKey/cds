@@ -65,7 +65,6 @@
             studyContext: {
                 schemaName: 'study',
                 subjectColumn: LABKEY.moduleContext.study.subject.columnName,
-                subjectVisit: LABKEY.moduleContext.study.subject.tableName + 'Visit',
                 gridBaseSchema: 'cds',
                 gridBase: 'GridBase',
                 protocolDayColumn: 'ProtocolDay'

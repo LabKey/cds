@@ -336,11 +336,18 @@ Ext.define('Connector.utility.Query', {
 
             if (acceptMeasure(m))
             {
-                if (Ext.isObject(m.dateOptions)) {
-                    visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-                    SELECT.push(",\n\t" + this._getIntervalSelectClause(m, visitAlignmentTag != null) + " AS " + alias + title);
+                if (Ext.isObject(m.dateOptions))
+                {
+                    if (m.dateOptions.zeroDayVisitTag != null)
+                    {
+                        visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
+                        title = " @title='" + colLabel + " (" + visitAlignmentTag + ")'";
+                    }
+
+                    SELECT.push(",\n\t" + this._getIntervalSelectClause(m, m.dateOptions.zeroDayVisitTag != null) + " AS " + alias + title);
                 }
-                else {
+                else
+                {
                     SELECT.push(",\n\t" + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + alias + title);
                 }
             }

@@ -824,7 +824,6 @@ Ext.define('Connector.controller.Query', {
                                 if (m) {
                                     getDataConfig.measures.push({
                                         measure: Ext.clone(m),
-                                        time: 'date',
                                         filterArray: []
                                     });
 

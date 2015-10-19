@@ -125,8 +125,7 @@ Ext.define('Connector.model.Grid', {
         var wrapped = [];
         Ext.each(defaultMeasures, function(measure) {
             wrapped.push({
-                measure: measure,
-                time: 'date'
+                measure: measure
             });
         });
 
@@ -194,8 +193,7 @@ Ext.define('Connector.model.Grid', {
         wrapped = [];
         Ext.each(measureSet, function(measure) {
             var w = {
-                measure: measure,
-                time: 'date'
+                measure: measure
             };
 
             if (w.measure.variableType === "TIME") {
@@ -272,8 +270,7 @@ Ext.define('Connector.model.Grid', {
                     if (Ext.isObject(pm)) {
                         plotMeasures.push({
                             dateOptions: Ext.clone(pm.dateOptions),
-                            measure: Ext.clone(pm.measure),
-                            time: 'date'
+                            measure: Ext.clone(pm.measure)
                         });
                         sourceMap[pm.measure.schemaName + '|' + pm.measure.queryName] = true;
                     }
@@ -293,7 +290,6 @@ Ext.define('Connector.model.Grid', {
                 if (!measureMap[measure.alias]) {
                     measureMap[measure.alias] = {
                         measure: Ext.clone(measure),
-                        time: 'date',
                         filterArray: []
                     };
                     sourceMap[measure.schemaName + '|' + measure.queryName] = true;
@@ -315,7 +311,6 @@ Ext.define('Connector.model.Grid', {
                     if (!measureMap[dim.alias]) {
                         measureMap[dim.alias] = {
                             measure: dim,
-                            time: 'date',
                             filterArray: []
                         }
                     }

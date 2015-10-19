@@ -12,7 +12,8 @@ Ext.define('Connector.measure.Configuration', {
             // See Connector.model.Source for the set of properties and default values.
             sources: {
                 'cds|GridBase': {
-                    queryLabel: 'Time points'
+                    queryLabel: 'Time points',
+                    subjectCountQueryName: 'SubjectVisit'
                 },
                 //'study|SubjectGroupMap': {
                 //    queryLabel: 'User groups'
