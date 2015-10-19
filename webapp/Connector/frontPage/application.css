@@ -133,7 +133,7 @@ div.links {
   text-overflow: ellipsis;
   padding: 0em 2em;
   margin: 2em 0em 2.67em 0em; }
-  div.links a, div.links input[type="submit"], div.links span {
+  div.links a, div.links input[type="submit"], div.links input[type="button"], div.links span {
     display: inline-block;
     width: 10.67em;
     padding: 0.42em;

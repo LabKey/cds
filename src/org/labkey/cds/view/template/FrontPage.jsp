@@ -64,6 +64,10 @@
                 </div>
                 <form class="form">
                     <div class="credentials">
+                        <!-- fake fields are a workaround for chrome autofill getting the wrong fields. They will be removed if Remember Me is checked. -->
+                        <input style="display:none" type="text" id="fakeusernameremembered"/>
+                        <input style="display:none" type="password" id="fakepasswordremembered"/>
+
                         <input placeholder="Email" type="email" id="email" name="email" value="" required>
                         <input placeholder="Password" name="password" id="password" type="password" value="" required>
                         <div class="checkbox">
@@ -156,8 +160,54 @@
                         <span class="agree"></span>
                     </div>
                     <div class="links">
+                        <a href="#" data-click="help" class="help">Sign-in Help</a>
                         <input type="button" value="Submit" data-click="confirm" class="confirm">
                         <input id="submit_hidden" type="submit" style="display: none">
+                    </div>
+                </form>
+            </div>
+            <div data-form="sign-in-help" class="sign-in-help hidden">
+                <div class="border"></div>
+                <div class="title">
+                    <h1>Sign-in Help</h1>
+                </div>
+                <div class="notifications">
+                    <p></p>
+                </div>
+                <div class="form">
+                    <div class="credentials">
+                        <span class="reset">To reset your password, type in your email address and click the submit button.</span>
+                        <input placeholder="Email" type="email" id="emailhelp">
+                    </div>
+                </div>
+                <div class="links">
+                    <a href="#" data-click="help" class="help">Cancel</a>
+                    <a href="#" data-click="confirmhelp" class="confirm">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="create-new-password-modal-popup hidden">
+        <div class="create-new-password-modal">
+            <div class="modal">
+                <div class="border"></div>
+                <div class="title">
+                    <h1>Choose a new password</h1>
+                </div>
+                <div class="notifications">
+                    <p></p>
+                </div>
+                <form action="" method="post" class="form">
+                    <div class="credentials">
+                        <span class="password-requirements">Password must be at least 8 characters, and must contain at least one letter and one number.</span>
+                        <input placeholder="Password" id="password1" name="password" type="password" value="" required>
+                        <input placeholder="Re-enter Password" id="password2" name="password2" type="password" value="" required>
+                        <div class="checkbox"></div>
+                    </div>
+                    <div class="links">
+                        <a href="#" data-click="dismiss" class="dismiss">Cancel</a>
+                        <input type="button" data-click="confirmchangepassword" class="confirm" value="Submit">
+                        <input id="submit_hidden_pw" type="submit" style="display: none">
                     </div>
                 </form>
             </div>

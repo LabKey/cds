@@ -1,6 +1,6 @@
 'use strict';
 
-define(['jquery', 'magnific'], function($, magnific) {
+define(['jquery', 'magnific', 'util'], function($, magnific, util) {
   /**
    * modal
    * @param {options} {
@@ -70,7 +70,40 @@ define(['jquery', 'magnific'], function($, magnific) {
       self.confirm();
       self.dismiss();
       self.help();
+      self.initLoginInfo();
     };
+
+    self.initLoginInfo = function() {
+      var $sign_in_container = self.$modal.find('[data-form=sign-in]');
+      if( $sign_in_container.length > 0 ) {
+        var emailAndTerms = {
+          remember: util.cookies.readCookie(util.cookies.COOKIE_REMEMBER_EMAIL) === 'yes',
+          agreeToTerms: util.cookies.readCookie(util.cookies.COOKIE_AGREE_TO_TERMS) === 'yes',
+          email: util.cookies.readCookie(util.cookies.COOKIE_EMAIL) || ''
+        };
+        var $sign_in_email = $sign_in_container.find('input[type=email]');
+        var $sign_in_rememberMe = $sign_in_container.find('input[id=remember-me-checkbox]');
+        var $sign_in_tosl = $sign_in_container.find('input[id=tos-checkbox]');
+        if (emailAndTerms.remember) {
+          // remove fake password and email elements so that they can be autofilled by browser
+          // since we cannot store password in cookie, have to rely on browser autofill.
+          var emailFake = document.getElementById("fakeusernameremembered");
+          emailFake.parentNode.removeChild(emailFake);
+          var passwordFake = document.getElementById("fakepasswordremembered");
+          passwordFake.parentNode.removeChild(passwordFake);
+
+          $sign_in_email.val(emailAndTerms.email);
+          $sign_in_rememberMe.prop('checked', true);
+          $sign_in_tosl.prop('checked', emailAndTerms.agreeToTerms ? true : false);
+        }
+        else {
+          $sign_in_email.val('');
+          $sign_in_rememberMe.prop('checked', false);
+          $sign_in_tosl.prop('checked', false);
+        }
+
+      }
+    }
 
     /**
      * help
@@ -138,14 +171,29 @@ define(['jquery', 'magnific'], function($, magnific) {
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
         var $sign_in_email = $sign_in_container.find('input[type=email]');
         var $sign_in_pw = $sign_in_container.find('input[type=password]');
+        var rememberMe = document.getElementById('remember-me-checkbox').checked;
+        var termsOfUse = tos.checked;
 
-        // TODO: This is just a test impl, needs to be made real
+
+        if (rememberMe) {
+          util.cookies.setCookie(util.cookies.COOKIE_REMEMBER_EMAIL, 'yes');
+          util.cookies.setCookie(util.cookies.COOKIE_AGREE_TO_TERMS, termsOfUse ? 'yes' : 'no');
+          util.cookies.setCookie(util.cookies.COOKIE_EMAIL, $sign_in_email.val());
+        }
+        else {
+          util.cookies.setCookie(util.cookies.COOKIE_REMEMBER_EMAIL, 'no');
+          util.cookies.setCookie(util.cookies.COOKIE_AGREE_TO_TERMS, 'no');
+          util.cookies.setCookie(util.cookies.COOKIE_EMAIL, '');
+        }
+
         $.ajax({
           url: LABKEY.ActionURL.buildURL("login", "loginAPI.api"),
           method: 'POST',
           data: {
             email: $sign_in_email.val(),
-            password: $sign_in_pw.val()
+            password: $sign_in_pw.val(),
+            remember: rememberMe,
+            approvedTermsOfUse: termsOfUse
           }
         }).success(function() {
           window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
@@ -153,6 +201,60 @@ define(['jquery', 'magnific'], function($, magnific) {
           $('.signin-modal .notifications p').html('Login Failed');
         });
       });
+
+
+      self.action('confirmhelp', function($click) {
+        var email = document.getElementById('emailhelp');
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "resetPasswordAPI.api"),
+          method: 'POST',
+          data: {
+            email: email.value,
+            provider: 'cds'
+          }
+        }).success(function() {
+
+          $('.signin-modal .notifications p').html('Reset successful. Please check your email.');
+        }).error(function() {
+          $('.signin-modal .notifications p').html('Reset password failed.');
+        });
+      });
+
+
+      self.action('confirmchangepassword', function($click) {
+        var pw1 = document.getElementById('password1');
+        var pw2 = document.getElementById('password2');
+
+        if (!pw1.checkValidity() || !pw2.checkValidity()) {
+          $('#submit_hidden_pw').click(); //click a hidden submit to do form validation
+          return false;
+        }
+
+        var emailVal = LABKEY.ActionURL.getParameter('email');
+        var verificationVal = LABKEY.ActionURL.getParameter('verification');
+        $.ajax({
+          url: LABKEY.ActionURL.buildURL("login", "setPasswordAPI.api"),
+          method: 'POST',
+          data: {
+            password: pw1.value,
+            password2: pw2.value,
+            email: emailVal,
+            verification: verificationVal
+          }
+        }).success(function() {
+          $('.create-new-password-modal .notifications p').html('Reset password successful.');
+
+          setTimeout(function(){
+            window.location = LABKEY.ActionURL.buildURL("cds", "app.view?login=true");
+          },3000);
+
+        }).error(function() {
+          $('.create-new-password-modal .notifications p').html('Change password failed.');
+        });
+
+
+      });
+
     };
 
     /**
