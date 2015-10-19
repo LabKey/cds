@@ -123,8 +123,12 @@ Ext.define('Connector.model.ChartData', {
 
         if (!Ext.isDefined(measure.alias) || measure.alias == null) {
             Ext.iterate(this.getColumnAliasMap(), function(alias, obj) {
-                if ((measure.alias && measure.alias == alias)
-                        || (measure.name && measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName))
+                var schemaQueryNameMatch = measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName,
+                    keyColumnMatch = (measure.name == 'Container' && alias == QueryUtils.CONTAINER_ALIAS)
+                            || (measure.name == 'SubjectId' && alias == QueryUtils.SUBJECT_ALIAS)
+                            || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS);
+
+                if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
                     // stash the alias in the measure object to make it faster to find next time
                     measure.alias = alias;

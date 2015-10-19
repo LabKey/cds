@@ -254,7 +254,7 @@ Ext.define('Connector.utility.Query', {
         }, this);
 
         // sort by the study, subject, and visit
-        var orderSQL = '\nORDER BY "' + this.CONTAINER_ALIAS + '","' + this.SUBJECT_ALIAS + '","' + this.SEQUENCENUM_ALIAS + '"';
+        var orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
 
         return {
             sql: 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL,
@@ -397,7 +397,7 @@ Ext.define('Connector.utility.Query', {
         //
         // WHERE
         //
-        var WHERE = [], f;
+        var WHERE = [], f, fType;
 
         // process filters on the measures
         Ext.each(queryMeasures, function(mdef)
@@ -412,7 +412,8 @@ Ext.define('Connector.utility.Query', {
             }
             else if (Ext.isArray(mdef.measure.values))
             {
-                f = LABKEY.Filter.create(mdef.measure.name, mdef.measure.values.join(';'), LABKEY.Filter.Types.IN);
+                fType = mdef.measure.values.length == 1 ? LABKEY.Filter.Types.EQUAL : LABKEY.Filter.Types.IN;
+                f = LABKEY.Filter.create(mdef.measure.name, mdef.measure.values.join(';'), fType);
                 WHERE.push(this._getWhereClauseFromFilter(f, mdef));
             }
         }, this);
