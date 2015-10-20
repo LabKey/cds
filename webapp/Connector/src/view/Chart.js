@@ -569,6 +569,7 @@ Ext.define('Connector.view.Chart', {
 
     mouseOverPoints : function(event, data, layerSel, point, layerScope, plotName) {
         if (!layerScope.isBrushed) {
+            data.isMouseOver = true;
             this.highlightPlotData(null, [data.subjectId]);
             this.pointHoverText(point, data, plotName);
         }
@@ -576,6 +577,7 @@ Ext.define('Connector.view.Chart', {
 
     mouseOutPoints : function(event, data, layerSel, point, layerScope) {
         if (!layerScope.isBrushed) {
+            data.isMouseOver = false;
             this.clearHighlightedData();
             this.highlightSelected();
         }
@@ -587,6 +589,7 @@ Ext.define('Connector.view.Chart', {
         if (!layerScope.isBrushed) {
             var subjectIds = [];
             data.forEach(function(b) {
+                b.isMouseOver = true;
                 subjectIds.push(b.data.subjectId);
             });
 
@@ -596,6 +599,9 @@ Ext.define('Connector.view.Chart', {
 
     mouseOutBins : function(event, data, layerSel, bin, layerScope) {
         if (!layerScope.isBrushed) {
+            data.forEach(function(b) {
+                b.isMouseOver = false;
+            });
             this.clearHighlightedData();
             this.highlightSelected();
         }
@@ -957,6 +963,7 @@ Ext.define('Connector.view.Chart', {
         };
 
         this.selectionInProgress = null;
+        this.mouseOverInProgress = null;
 
         scaleConfig = this.getScaleConfigs(noplot, properties, chartData, studyAxisInfo, layerScope);
         aesConfig = this.getAesConfigs();
@@ -1352,7 +1359,10 @@ Ext.define('Connector.view.Chart', {
     xAxisClick : function(e, selection, target, index, y, layerScope) {
         var multi = e.ctrlKey||e.shiftKey||e.metaKey, nodes, node = null;
 
-        // selectionInProgress keeps label highlighted while selection created
+        // If a selection in progress have to wait until done
+        if(this.selectionInProgress != null)
+            return;
+
         this.selectionInProgress = target;
 
         // node is needed for animation
@@ -1377,7 +1387,7 @@ Ext.define('Connector.view.Chart', {
 
     xAxisMouseOut : function(target, index, y, layerScope) {
         // Do not do mouse over/out for selected labels or labels in process of selection
-        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
+        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress == null) {
             // Clear plot highlights
             this.clearHighlightedData();
             this.highlightSelected();
@@ -1387,17 +1397,21 @@ Ext.define('Connector.view.Chart', {
             targets.push(target);
             this.highlightLabels.call(this, this.plot, targets, this.labelTextColor, this.labelBkgdColor, false);
         }
+        this.mouseOverInProgress = null;
     },
 
     xAxisMouseOver : function(target, index, y, layerScope) {
         // Do not do mouse over/out for selected labels or labels in process of selection
-        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress != target) {
+        if (!layerScope.isBrushed && !this.isSelection(target) && this.selectionInProgress == null) {
             this.highlightPlotData(target);
 
             // Highlight label
             var targets = [];
             targets.push(target);
             this.highlightLabels.call(this, this.plot, targets, this.labelTextColor, this.labelBkgdHltColor, false);
+        }
+        else if (this.selectionInProgress != null && this.selectionInProgress != target) {
+            this.mouseOverInProgress = target;
         }
     },
 
@@ -1420,7 +1434,10 @@ Ext.define('Connector.view.Chart', {
                 for (var i = 0; i < d.length; i++)
                 {
                     var data = d[i].data;
-                    if (data.x === target && subjectIds.indexOf(data.subjectId) === -1)
+                    if (data.x.toString() === target) { // use toString for boolean value
+                        d[i].isMouseOver = true;
+                    }
+                    if (data.x.toString() === target && subjectIds.indexOf(data.subjectId) === -1)
                     {
                         subjectIds.push(data.subjectId);
                     }
@@ -1445,11 +1462,14 @@ Ext.define('Connector.view.Chart', {
         }
 
         if (this.plot.renderer) {
-            var isSubjectInMouseBin = function(d, yesVal, noVal) {
+            var isSubjectInMouseBin = function(d, yesVal, noVal, sameSubjectVal) {
                 if (d.length > 0 && d[0].data) {
                     for (var i = 0; i < d.length; i++) {
-                        if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
+                        if (d[i].isMouseOver) {
                             return yesVal;
+                        }
+                        else if (subjectIds.indexOf(d[i].data.subjectId) != -1) {
+                            return sameSubjectVal;
                         }
                     }
                 }
@@ -1462,12 +1482,12 @@ Ext.define('Connector.view.Chart', {
                 // keep original color of the bin (note: uses style instead of fill attribute)
                 d.origStyle = d.origStyle || this.getAttribute('style');
 
-                return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle);
+                return isSubjectInMouseBin(d, 'fill: ' + ChartUtils.colors.SELECTED, d.origStyle, 'fill: ' + ChartUtils.colors.BLACK);
             };
 
             var opacityFn = function(d)
             {
-                return isSubjectInMouseBin(d, 1, 0.15);
+                return isSubjectInMouseBin(d, 1, 0.15, 1);
             };
 
             this.highlightBinsByCanvas(this.plot.renderer.canvas, colorFn, opacityFn);
@@ -1490,6 +1510,13 @@ Ext.define('Connector.view.Chart', {
 
     clearHighlightBins : function() {
         if (this.plot.renderer) {
+            var bins = this.plot.renderer.canvas.selectAll('.vis-bin path');
+            bins.each(function(d) {
+                for (var i = 0; i < d.length; i++) {
+                    d[i].isMouseOver = false;
+                }
+            });
+
             this.clearBinsByCanvas(this.plot.renderer.canvas);
 
             if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
@@ -1530,11 +1557,15 @@ Ext.define('Connector.view.Chart', {
                 subject;
 
             points.each(function(d) {
+                if (d.x.toString() === target) { // use toString for boolean value
+                    d.isMouseOver = true;
+                }
+
                 subject = d.subjectId;
 
                 // Check if value matches target or another selection
                 if (subjectIds.indexOf(subject) === -1) {
-                    if (d.x == target) {
+                    if (d.x.toString() === target) {
                         subjectIds.push(subject);
                     }
                     else if (selections.indexOf(d.x) != -1) {
@@ -1560,8 +1591,11 @@ Ext.define('Connector.view.Chart', {
         var subjectIds = this.retrievePointSubjectIds(target, subjects);
 
         var fillColorFn = function(d) {
-            if (subjectIds.indexOf(d.subjectId) != -1) {
+            if (d.isMouseOver) {
                 return ChartUtils.colors.SELECTED;
+            }
+            else if (subjectIds.indexOf(d.subjectId) != -1) {
+                return ChartUtils.colors.BLACK;
             }
             return ChartUtils.colors.UNSELECTED;
         };
@@ -1585,6 +1619,10 @@ Ext.define('Connector.view.Chart', {
             .attr('stroke', fillColorFn).attr('stroke-opacity', 1);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
+            var node = this.parentNode;
+            node.parentNode.appendChild(node);
+        });
         canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
@@ -1609,6 +1647,11 @@ Ext.define('Connector.view.Chart', {
     },
 
     clearHighlightPoints : function() {
+        var points = this.plot.renderer.canvas.selectAll('.point path');
+        points.each(function(d) {
+            d.isMouseOver = false;
+        });
+
         if (this.plot.renderer) {
             this.clearPointsByCanvas(this.plot.renderer.canvas, this.clearHighlightColorFn());
 
@@ -1632,9 +1675,7 @@ Ext.define('Connector.view.Chart', {
 
     highlightSelected : function() {
         var targets = this.getCategoricalSelectionValues(), me = this;
-        if (targets.length < 1) {
-            me.clearHighlightedData();
-        }
+        me.clearHighlightedData();
 
         targets.forEach(function(t) {
             me.highlightPlotData(t);
@@ -1875,6 +1916,12 @@ Ext.define('Connector.view.Chart', {
         this.createSelectionFilter(sqlFilters, false /* fromBrush */, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
+
+        if(this.mouseOverInProgress != null) {
+            this.highlightLabels(this.plot, [this.mouseOverInProgress], this.labelTextColor, this.labelBkgdHltColor, false);
+            this.highlightPlotData(this.mouseOverInProgress);
+            this.mouseOverInProgress = null;
+        }
 
     },
 

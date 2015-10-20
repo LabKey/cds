@@ -636,6 +636,7 @@
             <column columnName="studies"/>
             <column columnName="subjects"/>
             <column columnName="datacount"/>
+            <column columnName="subjectlevelstudies"/>
         </columns>
     </table>
     <table tableName="gridbase" tableDbType="TABLE">

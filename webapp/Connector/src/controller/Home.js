@@ -64,7 +64,8 @@ Ext.define('Connector.controller.Home', {
         Statistics.resolve(function(stats) {
             statDisplay.update({
                 nstudy: stats.studies,
-                ndatapts: stats.datacount
+                ndatapts: stats.datacount,
+                nsubjectstudy: stats.subjectlevelstudies
             });
         }, this);
     }
