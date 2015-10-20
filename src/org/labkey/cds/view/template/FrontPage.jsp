@@ -231,7 +231,7 @@
                 </a>
                 <div class="video-modal-popup hidden">
                     <div class="video-header">
-                        <button title="Close (Esc)" type="button" class="video-close mfp-close">X</button>
+                        <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
                     </div>
 
                     <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js vjs-default-skin">
