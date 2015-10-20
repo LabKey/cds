@@ -28,7 +28,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ICS_protein',
                         'study_ICS_specimen_type',
                         'study_ICS_lab_code'
-                    ]
+                    ],
+                    defaultScale: 'LOG'
                 },
                 'study|NAb': {
                     category: 'Assays',
@@ -39,7 +40,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_NAb_initial_dilution',
                         'study_NAb_specimen_type',
                         'study_NAb_lab_code'
-                    ]
+                    ],
+                    defaultScale: 'LOG'
                 },
                 'study|BAMA': {
                     category: 'Assays',
@@ -52,7 +54,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_BAMA_instrument_code',
                         'study_BAMA_specimen_type',
                         'study_BAMA_lab_code'
-                    ]
+                    ],
+                    defaultScale: 'LOG'
                 },
                 'study|ELISPOT': {
                     category: 'Assays',
@@ -64,7 +67,8 @@ Ext.define('Connector.measure.Configuration', {
                         'study_ELISPOT_protein_panel',
                         'study_ELISPOT_specimen_type',
                         'study_ELISPOT_lab_code'
-                    ]
+                    ],
+                    defaultScale: 'LOG'
                 },
 
                 // New/virtual sources

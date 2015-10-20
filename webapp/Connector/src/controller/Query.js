@@ -755,6 +755,14 @@ Ext.define('Connector.controller.Query', {
                             filterArray: []
                         };
 
+                        if (Ext.isArray(plotMeasure.filterArray)) {
+                            Ext.each(plotMeasure.filterArray, function(filter) {
+                                if (filter.getURLParameterName) {
+                                    measureMap[measure.alias].filterArray.push(this.encodeURLFilter(filter));
+                                }
+                            }, this);
+                        }
+
                         if (plotMeasure.time) {
                             measureMap[measure.alias].time = plotMeasure.time;
                         }

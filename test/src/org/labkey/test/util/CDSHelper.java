@@ -447,6 +447,7 @@ public class CDSHelper
             return null;
         });
 
+        _test.refresh(); // TODO this is a temporary hack. There are some strange behaviors with the mask that only show up in automation.
         _test.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForFormElementToEqual(Locator.input("sae-hierarchy"), sortBy);
