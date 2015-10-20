@@ -51,7 +51,6 @@ define(['jquery', 'slimScroll', 'fullPage', 'section'], function($, slimScroll, 
           navigation: true,
           paddingTop: '4.635em',
           scrollOverflow: true,
-          normalScrollElements: '.terms-of-service',
           showActiveTooltip: true,
           navigationTooltips: section_names,
         });

@@ -48,9 +48,17 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           },
           callbacks: {
             open: function() {
+              $.fn.fullpage.setMouseWheelScrolling(false);
+              $.fn.fullpage.setAllowScrolling(false);
+              $.fn.fullpage.setKeyboardScrolling(false);
               self.$modal = $(this.currItem.inlineElement);
               self.registerActions();
             },
+            close: function() {
+              $.fn.fullpage.setMouseWheelScrolling(true);
+              $.fn.fullpage.setAllowScrolling(true);
+              $.fn.fullpage.setKeyboardScrolling(true);
+            }
           }
         };
 
