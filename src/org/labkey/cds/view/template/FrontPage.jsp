@@ -390,9 +390,9 @@
                 </div>
                 <div class="copy">
                     <p>The CDS is a collaboration between
-                        <a href="http://www.scharp.org">SCHARP</a>,
-                        <a href="http://www.labkey.org">LabKey</a>, and
-                        <a href="http://www.artefactgroup.com">Artefact.
+                        <a href="http://www.scharp.org" target="_blank">SCHARP</a>,
+                        <a href="http://www.labkey.org" target="_blank">LabKey</a>, and
+                        <a href="http://www.artefactgroup.com" target="_blank">Artefact.
                             <br>
                         </a>The Bill & Melinda Gates Foundation has funded the program to date.
                         <br>
