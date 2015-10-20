@@ -106,7 +106,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -165,7 +165,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -225,7 +225,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -285,7 +285,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -345,7 +345,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_cell_type', 'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -406,7 +406,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure), {'study_ICS_cell_type': 'CD4+'});
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code'
@@ -473,16 +473,16 @@
                 endpoint: ENDPOINT,
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
-                        filters = {};
+                        filterX = {}, filterY = {};
 
-                    filters[QueryUtils.DATASET_ALIAS] = 'x';
-                    axisMeasureStore.setXMeasure(measureStore, 'study_ICS_pctpos', filters);
-                    filters[QueryUtils.DATASET_ALIAS] = 'y';
-                    axisMeasureStore.setYMeasure(measureStore, 'study_ICS_pctpos', filters);
+                    filterX[QueryUtils.DATASET_ALIAS] = 'x';
+                    axisMeasureStore.setXMeasure(measureStore, 'study_ICS_pctpos', filterX);
+                    filterY[QueryUtils.DATASET_ALIAS] = 'y';
+                    axisMeasureStore.setYMeasure(measureStore, 'study_ICS_pctpos', filterY);
                     axisMeasureStore.setZMeasure(measureStore, 'study_Demographics_race');
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_ICS_functional_marker_name', 'study_ICS_summary_level',
                         'study_ICS_protein_panel', 'study_ICS_protein', 'study_ICS_specimen_type',
                         'study_ICS_lab_code', 'study_Demographics_race'
@@ -719,7 +719,7 @@
         function plotYMeasureXWeeksUnaligned()
         {
             $('#plot').html('');
-            var interval = 'Weeks';
+            var interval = 'cds_Study_Weeks';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
             var xMeasure = getTimeMeasure(interval);
 
@@ -744,7 +744,7 @@
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_NAb_target_cell', 'study_NAb_summary_level', 'study_NAb_neutralization_tier',
                         'study_NAb_clade', 'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
                     ]);
@@ -779,7 +779,7 @@
         function plotYMeasureXMonthsAligned()
         {
             $('#plot').html('');
-            var interval = 'Months';
+            var interval = 'cds_Study_Months';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
             var xMeasure = getTimeMeasure(interval);
 
@@ -806,7 +806,7 @@
 
                     var data = axisMeasureStore.select([
                             // TODO add CONTAINER_ALIAS to all
-                        QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
+                        QueryUtils.CONTAINER_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.SEQUENCENUM_ALIAS,
                         'study_NAb_target_cell', 'study_NAb_summary_level', 'study_NAb_neutralization_tier',
                         'study_NAb_clade', 'study_NAb_antigen', 'study_NAb_specimen_type', 'study_NAb_lab_code'
                     ]);

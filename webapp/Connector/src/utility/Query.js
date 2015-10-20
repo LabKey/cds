@@ -52,13 +52,15 @@ Ext.define('Connector.utility.Query', {
     {
         var table = function(schema, query, joinKeys, isAssayDataset)
         {
-            this.displayName = query;
-            this.queryName = query.toLowerCase();
-            this.fullQueryName = schema + '.' + this.queryName;
-            this.tableAlias = schema + '_' + this.queryName;
-            this.schemaName = schema;
-            this.isAssayDataset = isAssayDataset === true;
-            this.joinKeys = joinKeys;
+            var obj = {};
+            obj.displayName = query;
+            obj.queryName = query.toLowerCase();
+            obj.fullQueryName = schema + '.' + obj.queryName;
+            obj.tableAlias = schema + '_' + obj.queryName;
+            obj.schemaName = schema;
+            obj.isAssayDataset = isAssayDataset === true;
+            obj.joinKeys = joinKeys;
+            return obj;
         };
 
         // TODO get the datasets from the query service instead of hardcoded
@@ -74,13 +76,13 @@ Ext.define('Connector.utility.Query', {
         return tables;
     },
 
-    _acceptMeasureFn : function(datasetName, tables) {
+    _acceptMeasureFn : function(datasetName, tables, queryProp) {
         return function(m) {
-            if (m.fullQueryName === datasetName) {
+            if (m[queryProp] === datasetName) {
                 return true;
             }
 
-            var t = tables[m.fullQueryName];
+            var t = tables[m.queryName];
             return t && !t.isAssayDataset;
         };
     },
@@ -163,7 +165,7 @@ Ext.define('Connector.utility.Query', {
                 }
 
                 var axisTable = Ext.clone(table);
-                axisTable.tableAlias += '_' + m.measure.axisName;
+                axisTable.tableAlias;//todo: remove: += '_' + m.measure.axisName;
                 axisTable.displayName = m.measure.axisName;
                 tables[axisQueryName] = axisTable;
                 table = axisTable;
@@ -179,7 +181,7 @@ Ext.define('Connector.utility.Query', {
             if (_m.table && _m.table.isAssayDataset)
             {
                 hasAssayDataset = true;
-                datasets[_m.table.fullQueryName] = _m.table;
+                datasets[_m.fullQueryName] = _m.table;
             }
 
             aliasMeasureMap[_m.measure.alias] = _m;
@@ -271,8 +273,8 @@ Ext.define('Connector.utility.Query', {
         datasetName = datasetName || this.SUBJECTVISIT_TABLE;
 
         var rootTable = tables[datasetName],
-            acceptMeasure = this._acceptMeasureFn(datasetName, tables),
-            queryMeasures = allMeasures.filter(acceptMeasure),
+            acceptMeasureForSelect = this._acceptMeasureFn(rootTable.fullQueryName, tables, 'queryName'),
+            filterQueryMeasures = allMeasures.filter(this._acceptMeasureFn(datasetName, tables, 'fullQueryName')),
             gridBaseAliasableColumns = {
                 subjectid: true,
                 sequencenum: true
@@ -347,14 +349,14 @@ Ext.define('Connector.utility.Query', {
                 queryName: m.measure.queryName
             };
 
-            if (acceptMeasure(m))
+            if (acceptMeasureForSelect(m))
             {
                 if (Ext.isObject(m.dateOptions))
                 {
                     if (m.dateOptions.zeroDayVisitTag != null)
                     {
                         visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-                        title = " @title='" + colLabel + " (" + visitAlignmentTag + ")'";
+                        title = " @title='" + (colLabel || alias) + " (" + visitAlignmentTag + ")'";
                     }
 
                     SELECT.push(",\n\t" + this._getIntervalSelectClause(m, m.dateOptions.zeroDayVisitTag != null) + " AS " + alias + title);
@@ -374,9 +376,9 @@ Ext.define('Connector.utility.Query', {
         // FROM
         //
         var fromTables = {};
-        queryMeasures.forEach(function(m)
+        filterQueryMeasures.forEach(function(m)
         {
-            if (m.sourceTable && m.sourceTable.fullQueryName !== datasetName)
+            if (m.sourceTable && m.sourceTable.fullQueryName !== rootTable.fullQueryName)
             {
                 fromTables[m.sourceTable.fullQueryName] = m.sourceTable;
             }
@@ -413,7 +415,7 @@ Ext.define('Connector.utility.Query', {
         var WHERE = [], f, fType;
 
         // process filters on the measures
-        Ext.each(queryMeasures, function(mdef)
+        Ext.each(filterQueryMeasures, function(mdef)
         {
             // two places to look for filters, filterArray or measure.values (i.e. IN clause)
             if (!Ext.isEmpty(mdef.filterArray))
