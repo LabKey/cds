@@ -169,8 +169,8 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         }
 
         var $sign_in_container = self.$modal.find('[data-form=sign-in]');
-        var $sign_in_email = $sign_in_container.find('input[type=email]');
-        var $sign_in_pw = $sign_in_container.find('input[type=password]');
+        var $sign_in_email = $sign_in_container.find('input[id=email]');
+        var $sign_in_pw = $sign_in_container.find('input[id=password]');
         var rememberMe = document.getElementById('remember-me-checkbox').checked;
         var termsOfUse = tos.checked;
 

@@ -161,7 +161,7 @@
                     </div>
                     <div class="links">
                         <a href="#" data-click="help" class="help">Sign-in Help</a>
-                        <input type="button" value="Submit" data-click="confirm" class="confirm">
+                        <input type="button" value="Submit" data-click="confirm" class="confirm" id="signin">
                         <input id="submit_hidden" type="submit" style="display: none">
                     </div>
                 </form>
