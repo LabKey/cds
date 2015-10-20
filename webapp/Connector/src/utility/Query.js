@@ -258,7 +258,7 @@ Ext.define('Connector.utility.Query', {
         var orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
         var sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
 
-        console.log(sql);
+        //console.log(sql);
 
         return {
             sql: sql,
