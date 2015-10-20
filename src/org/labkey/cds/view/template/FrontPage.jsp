@@ -231,14 +231,13 @@
                 </a>
                 <div class="video-modal-popup hidden">
                     <div class="video-header">
-                        <button title="Close (Esc)" type="button" class="video-close mfp-close">×</button>
+                        <button title="Close (Esc)" type="button" class="video-close mfp-close">X</button>
                     </div>
-                    <video id="intro-video" controls preload="auto" width="304" height="160" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js vjs-default-skin">
-                        <source src="<%=text(frontPagePath)%>/img/intro.mp4" type="video/mp4">
-                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that
-                            <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-                        </p>
-                    </video>
+
+                    <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js vjs-default-skin">
+                        <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+                    </div>
                 </div>
             </div>
             <div class="learn-more">
