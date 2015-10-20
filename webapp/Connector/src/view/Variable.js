@@ -209,18 +209,15 @@ Ext.define('Connector.panel.ColorSelector', {
             glyphs,
             hoverRect,
             // rendering the svg causes height to get calculated incorrectly on resize
-            iconSize = 18 - 5,
-            svgWidth,
+            iconSize = 13,
             scope = this;
 
-        Ext.get('color-legend').update(''); // Clear the current legend element.
-
-        // issue 20541
-        svgWidth = Math.min(250, legendData.length * (iconSize+2));
+        // Clear the current legend element
+        Ext.get('color-legend').update('');
 
         smallCanvas = d3.select('#color-legend').append('svg')
                 .attr('height', iconSize)
-                .attr('width', svgWidth);
+                .attr('width', 250);
         glyphs = smallCanvas.selectAll('.legend-point').data(legendData).enter().append('path');
         glyphs.attr('class', 'legend-point')
                 .attr('d', function(d) {return d.shape();})

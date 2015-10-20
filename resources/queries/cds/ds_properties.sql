@@ -18,7 +18,8 @@ CAST(SUM(assays) AS INTEGER) AS assays,
 CAST(SUM(studies) AS INTEGER) AS studies,
 CAST(SUM(subjects) AS INTEGER) AS subjects,
 CAST(SUM(products) AS INTEGER) AS products,
-CAST(SUM(datacount) AS INTEGER) AS datacount
+CAST(SUM(datacount) AS INTEGER) AS datacount,
+CAST(SUM(subjectlevelstudies) AS INTEGER) AS subjectlevelstudies
 FROM (
   -- assays
   SELECT
@@ -27,6 +28,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   0 AS datacount,
+  0 AS subjectlevelstudies,
   FROM cds.assay AS assay
 
   UNION
@@ -38,10 +40,22 @@ FROM (
   0 AS subjects,
   0 AS products,
   0 AS datacount,
+  0 AS subjectlevelstudies
   FROM cds.study AS study
 
   UNION
 
+  -- studies with subject-level data
+  SELECT
+  0 AS assays,
+  0 AS studies,
+  0 AS subjects,
+  0 AS products,
+  0 AS datacount,
+  COUNT(DISTINCT demographics.study_label) AS subjectlevelstudies,
+  FROM study.Demographics AS demographics
+
+  UNION
   -- subjects
   SELECT
   0 AS assays,
@@ -49,6 +63,7 @@ FROM (
   COUNT(*) AS subjects,
   0 AS products,
   0 AS datacount,
+  0 AS subjectlevelstudies,
   FROM study.Demographics
 
   UNION
@@ -60,6 +75,7 @@ FROM (
   0 AS subjects,
   COUNT(*) AS products,
   0 AS datacount,
+  0 AS subjectlevelstudies,
   FROM cds.Product
 
   UNION
@@ -71,6 +87,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
+  0 AS subjectlevelstudies,
   FROM study.ICS
 
   UNION
@@ -81,6 +98,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
+  0 AS subjectlevelstudies,
   FROM study.ELISPOT
 
   UNION
@@ -91,6 +109,7 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
+  0 AS subjectlevelstudies,
   FROM study.NAb
 
   UNION
@@ -101,5 +120,6 @@ FROM (
   0 AS subjects,
   0 AS products,
   COUNT(*) AS datacount,
+  0 AS subjectlevelstudies,
   FROM study.BAMA
 )

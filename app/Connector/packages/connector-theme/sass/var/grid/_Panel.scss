@@ -10,8 +10,8 @@
     }
 
     &:hover {
-      background: $white;
-      border-color: $white;
+      background: $select-hover-color!important;
+      border-color: $select-hover-color;
     }
   }
 
@@ -84,6 +84,10 @@
       position: relative;
       background-color: transparent;
       border: 0;
+
+      &:hover {
+        background-color: $select-hover-color;
+      }
     }
 
     .x-column-header-text {
@@ -99,15 +103,19 @@
   }
 
   /* Column Header Hovered */
-  .x-column-header-over,
-  .x-column-header-sort-ASC,
-  .x-column-header-sort-DESC {
+  .x-column-header-over {
     background-image: none;
-    background-color: $secondary-color;
+    background-color: $select-hover-color;
 
     .x-column-header-text {
       color: $black;
     }
+  }
+
+  .x-column-header-sort-ASC,
+  .x-column-header-sort-DESC {
+    background-image: none;
+    background-color: $secondary-color;
   }
 
   .x-grid-row {
