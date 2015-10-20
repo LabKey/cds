@@ -17,9 +17,13 @@ Ext.define('Connector.view.GridPane', {
 
     displayTitle: 'Filter details',
 
-    getMiddleContent : function(model) {
-        var filter = model.get('filter');
-        var gridFilters = filter.get('gridFilter');
+    getMiddleContent : function(model)
+    {
+        var filter = model.get('filter'),
+            gridFilters = filter.get('gridFilter'),
+            xLabel = filter.get('xLabel'),
+            yLabel = filter.get('yLabel'),
+            excludeIndexes = {};
 
         var content = [{
             xtype: 'box',
@@ -37,16 +41,56 @@ Ext.define('Connector.view.GridPane', {
             }
         }];
 
-        if (Ext.isArray(gridFilters)) {
+        if (xLabel)
+        {
+            content.push({
+                xtype: 'box',
+                padding: 'smallstandout soft spacer'
+            });
+            content.push({
+                xtype: 'box',
+                padding: '0 0 7px 0',
+                html: Ext.htmlEncode(xLabel)
+            });
+            excludeIndexes[0] = true;
+            excludeIndexes[1] = true;
+        }
+
+        if (yLabel)
+        {
+            content.push({
+                xtype: 'box',
+                padding: 'smallstandout soft spacer'
+            });
+            content.push({
+                xtype: 'box',
+                padding: '0 0 7px 0',
+                html: Ext.htmlEncode(yLabel)
+            });
+            excludeIndexes[2] = true;
+            excludeIndexes[3] = true;
+        }
+
+        if (Ext.isArray(gridFilters))
+        {
             var shown = {};
-            Ext.each(gridFilters, function(gf) {
-                if (gf != null && Ext.isDefined(gf)) {
+            Ext.each(gridFilters, function(gf, i)
+            {
+                if (excludeIndexes[i])
+                {
+                    return;
+                }
+
+                if (gf != null && Ext.isDefined(gf))
+                {
                     // get this columns measure information
-                    var measure = Connector.getService('Query').getMeasure(gf.getColumnName());
-                    if (Ext.isDefined(measure)) {
+                    var measure = Connector.getQueryService().getMeasure(gf.getColumnName());
+                    if (Ext.isDefined(measure))
+                    {
 
                         // only show the measure label/caption for the first filter
-                        if (!shown[measure.alias]) {
+                        if (!shown[measure.alias])
+                        {
                             content.push({
                                 xtype: 'box',
                                 cls: 'smallstandout soft spacer',
@@ -62,16 +106,21 @@ Ext.define('Connector.view.GridPane', {
 
                         // the query service can lookup a measure, but only the base of a lookup
                         var label = Ext.isString(measure.label) ? measure.label : '';
-                        if (gf.getColumnName().indexOf('/') > -1) {
+                        if (gf.getColumnName().indexOf('/') > -1)
+                        {
                             label = LABKEY.app.model.Filter.getGridFilterLabel(gf);
                         }
 
                         // issue 21879: split Equals One Of filter values into new lines
-                        var filterStr = Connector.model.Filter.getGridLabel(gf);
-                        var filterType = gf.getFilterType().getDisplayText();
-                        if (filterType == 'Equals One Of' || filterType == 'Does Not Equal Any Of') {
-                            var values = Connector.model.Filter.getFilterValuesAsArray(gf);
-                            filterStr = filterType + ':<br/><ul class="indent"><li>- ' + values.join('</li><li>- ') + '</li></ul>';
+                        var filterStr = Connector.model.Filter.getGridLabel(gf),
+                            filterType = gf.getFilterType();
+
+                        if (filterType === LABKEY.Filter.Types.EQUALS_ONE_OF ||
+                            filterType === LABKEY.Filter.Types.EQUALS_NONE_OF)
+                        {
+                            filterStr = filterType.getDisplayText() + ':<br/><ul class="indent"><li>- ';
+                            filterStr += Connector.model.Filter.getFilterValuesAsArray(gf).join('</li><li>- ');
+                            filterStr += '</li></ul>';
                         }
 
                         content.push({
@@ -113,9 +162,11 @@ Ext.define('Connector.view.GridPane', {
         this.hide();
     },
 
-    getSublabel : function(measure) {
+    getSublabel : function(measure)
+    {
         var sub = '';
-        if (measure.options && measure.options.alignmentVisitTag) {
+        if (measure.options && measure.options.alignmentVisitTag)
+        {
             sub = " (" + measure.options.alignmentVisitTag + ")";
         }
         else if (Ext.isString(measure.description))

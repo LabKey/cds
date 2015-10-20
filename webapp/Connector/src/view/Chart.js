@@ -1773,13 +1773,43 @@ Ext.define('Connector.view.Chart', {
         {
             // examine the sqlFilters to determine which measures to include
             var plotMeasures = [null, null],
-                hasAnyFilters = false;
+                hasAnyFilters = false,
+                xLabel;
 
             // has X
             if (sqlFilters[0] || sqlFilters[1])
             {
                 plotMeasures[0] = this._getAxisWrappedMeasure(this.activeXSelection);
                 hasAnyFilters = true;
+
+                // Create a 'time filter' based on the brushed Subject-Visits
+                if (this.activeXSelection.variableType === 'TIME')
+                {
+                    var subjectVisits = Ext.Object.getKeys(this.brushedSubjectVisits),
+                        value, type;
+
+                    if (Ext.isEmpty(subjectVisits))
+                    {
+                        type = LABKEY.Filter.Types.ISBLANK;
+                    }
+                    else
+                    {
+                        value = subjectVisits.join(';');
+                        type = LABKEY.Filter.Types.IN;
+                    }
+
+                    // create the custom label
+                    xLabel = plotMeasures[0].measure.label + ': ';
+                    xLabel += sqlFilters[0].getValue() + ' to ' + sqlFilters[1].getValue();
+
+                    if (plotMeasures[0].dateOptions && plotMeasures[0].dateOptions.zeroDayVisitTag)
+                    {
+                        xLabel += ' (' + plotMeasures[0].dateOptions.zeroDayVisitTag + ')';
+                    }
+
+                    sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, value, type);
+                    sqlFilters[1] = null;
+                }
             }
 
             // has Y
@@ -1804,6 +1834,11 @@ Ext.define('Connector.view.Chart', {
                 isWhereFilter: true,
                 showInverseFilter: allowInverseFilter === true
             };
+
+            if (xLabel)
+            {
+                selection.xLabel = xLabel;
+            }
         }
 
         Connector.getState().addSelection(selection, true, false, true);
@@ -2010,15 +2045,18 @@ Ext.define('Connector.view.Chart', {
         return wrappedMeasures;
     },
 
-    _getAxisWrappedMeasure : function(measure) {
-        if (!measure) {
+    _getAxisWrappedMeasure : function(measure)
+    {
+        if (!measure)
+        {
             return null;
         }
 
         var wrappedMeasure = {measure : measure},
             options = measure.options;
 
-        if (measure.variableType == 'TIME') {
+        if (measure.variableType == 'TIME')
+        {
             var interval = measure.alias;
             measure.interval = interval;
             wrappedMeasure.dateOptions = {
@@ -2026,27 +2064,34 @@ Ext.define('Connector.view.Chart', {
             };
 
             // handle visit tag alignment for study axis
-            if (options && options.alignmentVisitTag !== undefined) {
+            if (options && options.alignmentVisitTag !== undefined)
+            {
                 wrappedMeasure.dateOptions.zeroDayVisitTag = options.alignmentVisitTag;
             }
         }
-        else if (this.requireStudyAxis) {
+        else if (this.requireStudyAxis)
+        {
             // Issue 24002: Gutter plot for null y-values and study axis are appearing at the same time
             wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.alias, null, LABKEY.Filter.Types.NOT_MISSING)];
         }
 
         // we still respect the value if it is set explicitly on the measure
-        if (!Ext.isDefined(wrappedMeasure.measure.inNotNullSet)) {
+        if (!Ext.isDefined(wrappedMeasure.measure.inNotNullSet))
+        {
             wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
         }
 
-        if (options && options.scale === 'LOG') {
+        if (options && options.scale === 'LOG')
+        {
             var logFilter = this.getLogTransformFilter(measure);
-            if (logFilter) {
-                if (Ext.isArray(wrappedMeasure.filterArray)) {
+            if (logFilter)
+            {
+                if (Ext.isArray(wrappedMeasure.filterArray))
+                {
                     wrappedMeasure.filterArray.push(logFilter);
                 }
-                else {
+                else
+                {
                     wrappedMeasure.filterArray = [logFilter];
                 }
             }
@@ -2086,7 +2131,8 @@ Ext.define('Connector.view.Chart', {
         measures = additionalMeasures.concat(nonNullMeasures);
 
         // set of measures from data filters
-        if (includeFilterMeasures === true) {
+        if (includeFilterMeasures === true)
+        {
             filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
             if (!Ext.isEmpty(filterMeasures)) {
                 measures = measures.concat(filterMeasures);
@@ -2099,12 +2145,17 @@ Ext.define('Connector.view.Chart', {
         };
     },
 
-    getQueryKeys : function(measures) {
-        var queryKeys = [], key;
+    getQueryKeys : function(measures)
+    {
+        // always include the base table query keys
+        var queryKeys = [Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase],
+            key;
 
-        Ext.each(measures, function(m){
+        Ext.each(measures, function(m)
+        {
             key = m.measure.schemaName + '|' + m.measure.queryName;
-            if (queryKeys.indexOf(key) == -1) {
+            if (queryKeys.indexOf(key) == -1)
+            {
                 queryKeys.push(key);
             }
         });
@@ -2117,15 +2168,19 @@ Ext.define('Connector.view.Chart', {
      * we use to back the chart data (via an AxisMeasureStore).
      * @param activeMeasures
      */
-    requestChartData : function(activeMeasures) {
-        Connector.getFilterService().getSubjects(function(subjectFilter) {
-            // issue 23885: Do not include the color measure in request if it's noe from the x, y, or demographic datasets
-            if (activeMeasures.color) {
+    requestChartData : function(activeMeasures)
+    {
+        Connector.getFilterService().getSubjects(function(subjectFilter)
+        {
+            // 23885: Do not include the color measure in request if it's not from the x, y, or demographic datasets
+            if (activeMeasures.color)
+            {
                 var demographicSource = activeMeasures.color.isDemographic,
                     matchXSource = activeMeasures.x && activeMeasures.x.queryName == activeMeasures.color.queryName,
                     matchYSource = activeMeasures.y && activeMeasures.y.queryName == activeMeasures.color.queryName;
 
-                if (!demographicSource && !matchXSource && !matchYSource) {
+                if (!demographicSource && !matchXSource && !matchYSource)
+                {
                     activeMeasures.color = null;
                 }
             }
@@ -2139,12 +2194,16 @@ Ext.define('Connector.view.Chart', {
         }, this);
     },
 
-    onChartDataSuccess : function(measureStore, measureSet) {
+    onChartDataSuccess : function(measureStore, measureSet)
+    {
         var chartData = Ext.create('Connector.model.ChartData', {
             measureSet: measureSet,
             plotMeasures: this.measures,
             measureStore: measureStore,
-            plotScales: {x: this.getScale('x'), y: this.getScale('y')}
+            plotScales: {
+                x: this.getScale('x'),
+                y: this.getScale('y')
+            }
         });
 
         this.dataQWP = {
@@ -2154,45 +2213,48 @@ Ext.define('Connector.view.Chart', {
 
         this.hasStudyAxisData = false;
 
-        if (this.requireStudyAxis) {
+        if (this.requireStudyAxis)
+        {
             this.getStudyAxisData(chartData);
         }
-        else if (chartData.getDataRows().totalCount == 0) {
+        else if (chartData.getDataRows().totalCount == 0)
+        {
             // show empty plot message if we have no data in main plot or gutter plots
             this.noPlot(true);
         }
-        else {
+        else
+        {
             this.initPlot(chartData);
         }
     },
 
-    _showWhyXGutter : function(data) {
-        var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2),
-            config = {
-                bubbleWidth: 325,
-                target: document.querySelector("svg g text.xGutter-label"),
-                placement: 'top',
-                title: 'Percent with undefined y value: ' + percent + '%',
-                content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
-                xOffset: -20
-            };
+    _showWhyXGutter : function(data)
+    {
+        var percent = Ext.util.Format.round((data.undefinedY.length / data.totalCount) * 100, 2);
 
-        ChartUtils.showCallout(config, 'hideguttermsg', this);
+        ChartUtils.showCallout({
+            bubbleWidth: 325,
+            target: document.querySelector("svg g text.xGutter-label"),
+            placement: 'top',
+            title: 'Percent with undefined y value: ' + percent + '%',
+            content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
+            xOffset: -20
+        }, 'hideguttermsg', this);
     },
 
-    _showWhyYGutter : function(data) {
-        var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2),
-            config = {
-                bubbleWidth: 325,
-                target: document.querySelector("svg g text.yGutter-label"),
-                placement: 'right',
-                title: 'Percent with undefined x value: ' + percent + '%',
-                content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
-                yOffset: -40,
-                arrowOffset: 30
-            };
+    _showWhyYGutter : function(data)
+    {
+        var percent = Ext.util.Format.round((data.undefinedX.length / data.totalCount) * 100, 2);
 
-        ChartUtils.showCallout(config, 'hideguttermsg', this);
+        ChartUtils.showCallout({
+            bubbleWidth: 325,
+            target: document.querySelector("svg g text.yGutter-label"),
+            placement: 'right',
+            title: 'Percent with undefined x value: ' + percent + '%',
+            content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
+            yOffset: -40,
+            arrowOffset: 30
+        }, 'hideguttermsg', this);
     },
 
     _closeWhyGutter : function() {
@@ -2289,11 +2351,14 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getAdditionalMeasures : function(activeMeasures) {
+    getAdditionalMeasures : function(activeMeasures)
+    {
         // map key to schema, query, name, and values
-        var measuresMap = {}, additionalMeasuresArr = [];
+        var measuresMap = {},
+            additionalMeasuresArr = [];
 
-        Ext.each(['x', 'y'], function(axis) {
+        Ext.each(['x', 'y'], function(axis)
+        {
             var schema, query, measureRecord;
             if (activeMeasures[axis])
             {
@@ -2301,19 +2366,34 @@ Ext.define('Connector.view.Chart', {
                 query = activeMeasures[axis].queryName;
 
                 // always add in the Container and SubjectId columns for a selected measure on the X or Y axis
-                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', 'VARCHAR', []);
-                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR', []);
+                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', 'VARCHAR');
+                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
-                if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') {
-                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', 'DOUBLE', []);
+                if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
+                {
+                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', 'DOUBLE');
+                }
+
+                // if time is a selected axis, include the 'ParticipantSequenceNum' to allow for resolving
+                // time-based filters (a.k.a. Subject-Visit filters)
+                if (activeMeasures[axis].variableType === 'TIME')
+                {
+                    this.addValuesToMeasureMap(measuresMap,
+                            Connector.studyContext.gridBaseSchema,
+                            Connector.studyContext.gridBase,
+                            'ParticipantSequenceNum', 'VARCHAR'
+                    );
                 }
 
                 // add selection information from the advanced options panel of the variable selector
-                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions) {
-                    Ext.iterate(activeMeasures[axis].options.dimensions, function(alias, values) {
+                if (activeMeasures[axis].options && activeMeasures[axis].options.dimensions) 
+                {
+                    Ext.iterate(activeMeasures[axis].options.dimensions, function(alias, values)
+                    {
                         // null or undefined mean "select all" so don't apply a filter
-                        if (!Ext.isDefined(values) || values == null) {
+                        if (!Ext.isDefined(values) || values == null)
+                        {
                             values = [];
                         }
 
@@ -2324,61 +2404,70 @@ Ext.define('Connector.view.Chart', {
             }
         }, this);
 
-        Ext.iterate(measuresMap, function(k, m) {
-            var measureRecord = Connector.model.Measure.createMeasureRecord(m);
-            additionalMeasuresArr.push({ measure: measureRecord });
+        Ext.iterate(measuresMap, function(k, m)
+        {
+            additionalMeasuresArr.push({
+                measure: Connector.model.Measure.createMeasureRecord(m)
+            });
         });
 
         return additionalMeasuresArr;
     },
 
-    addValuesToMeasureMap : function(measureMap, schema, query, name, type, values) {
-        var key = schema + "|" + query + "|" + name;
+    addValuesToMeasureMap : function(measureMap, schema, query, name, type, values)
+    {
+        var key = schema + '|' + query + '|' + name;
 
-        if (!measureMap[key]) {
+        if (!measureMap[key]) 
+        {
             measureMap[key] = {
                 schemaName: schema,
                 queryName: query,
                 name: name,
                 type: type,
-                values: [] };
+                values: [] 
+            };
         }
 
-        measureMap[key].values = measureMap[key].values.concat(values);
+        if (!Ext.isEmpty(values))
+        {
+            measureMap[key].values = measureMap[key].values.concat(values);
+        }
     },
 
     /**
      * Update the values within the 'In the plot' filter
      * @param activeMeasures
      */
-    updatePlotBasedFilter : function(activeMeasures) {
-
-        var wrapped = this.getMeasureSet(activeMeasures).wrapped;
-
+    updatePlotBasedFilter : function(activeMeasures)
+    {
         this.plotLock = true;
 
-        var state = Connector.getState();
-        var filters = state.getFilters();
-        var inPlotFilter;
-
-        var sqlFilters = [null, null, null, null];
+        var state = Connector.getState(),
+            wrapped = this.getMeasureSet(activeMeasures).wrapped,
+            sqlFilters = [null, null, null, null],
+            inPlotFilter;
 
         // see if filter already exists
-        Ext.each(filters, function(filter) {
-            if (filter.get('isPlot') === true && filter.get('isGrid') === false) {
+        Ext.each(state.getFilters(), function(filter)
+        {
+            if (filter.isPlot() && !filter.isGrid())
+            {
                 inPlotFilter = filter;
                 return false;
             }
         });
 
-        if (inPlotFilter) {
+        if (inPlotFilter)
+        {
             // update
             state.modifyFilter(inPlotFilter, {
                 gridFilter: sqlFilters,
                 plotMeasures: wrapped
             });
         }
-        else {
+        else
+        {
             // create
             state.prependFilter({
                 gridFilter: sqlFilters,
@@ -2424,13 +2513,15 @@ Ext.define('Connector.view.Chart', {
         this.showMessage('Failed to Load', true);
     },
 
-    updateSelectorWindow : function(win) {
-        if (win) {
-            var box = this.getBox();
-            win.setHeight(box.height-100);
+    updateSelectorWindow : function(win)
+    {
+        if (win)
+        {
+            win.setHeight(this.getBox().height-100);
             win.center();
         }
-        else {
+        else
+        {
             console.warn('Failed to updated measure selection');
         }
     },

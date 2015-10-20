@@ -624,20 +624,30 @@ Ext.define('Connector.controller.Query', {
      * @param includeDemographic true to include all filters from demographic queries
      * @param relevantQueryKeys array of relevant query keys (schema|query) for which filters to be included from
      */
-    getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys) {
-        var measures = [], queryKey, include;
+    getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys)
+    {
+        var measures = [],
+            queryKeys = Ext.Array.toMap(relevantQueryKeys, function(key) {
+                return key.toLowerCase();
+            }),
+            queryKey, include;
 
-        Ext.each(filters, function(filter) {
-            if (filter.isWhereFilter()) {
-                Ext.each(filter.getMeasureSet(), function(m) {
+        Ext.each(filters, function(filter)
+        {
+            if (filter.isWhereFilter())
+            {
+                Ext.each(filter.getMeasureSet(), function(m)
+                {
                     queryKey = m.measure.schemaName + '|' + m.measure.queryName;
 
-                    include = !Ext.isArray(relevantQueryKeys) || relevantQueryKeys.indexOf(queryKey) > -1;
-                    if (m.measure.isDemographic) {
+                    include = Ext.isDefined(queryKeys[queryKey.toLowerCase()]);
+                    if (m.measure.isDemographic)
+                    {
                         include = !Ext.isBoolean(includeDemographic) || includeDemographic;
                     }
 
-                    if (include) {
+                    if (include)
+                    {
                         measures.push(m);
                     }
                 });

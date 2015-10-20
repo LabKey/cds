@@ -192,11 +192,12 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
-    brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties, dimension) {
-
+    brushEnd : function(event, layerData, extent, plot, layerSelections, measures, properties, dimension)
+    {
         // this brushing method can be used across different dimensions (main vs. xTop vs. yRight)
         // only the plot that originated the brushing can end the brushing
-        if (this.initiatedBrushing !== dimension) {
+        if (this.initiatedBrushing !== dimension)
+        {
             return;
         }
         this.initiatedBrushing = '';
@@ -210,31 +211,37 @@ Ext.define('Connector.utility.Chart', {
 
         yMeasure.colName = properties.yaxis.colName;
 
-        if (xMeasure) {
+        if (xMeasure)
+        {
             xMeasure.colName = properties.xaxis.colName;
         }
 
-        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null) {
+        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
+        {
             xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true);
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false);
 
             // Issue 24124: With time points, brushing can create a filter that is not a whole number
-            if (xMeasure.variableType == 'TIME') {
+            if (xMeasure.variableType === 'TIME')
+            {
                 xMin = Math.floor(xMin);
                 xMax = Math.ceil(xMax);
             }
 
-            if (xMeasure.type === 'TIMESTAMP') {
+            if (xMeasure.type === 'TIMESTAMP')
+            {
                 sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL);
                 sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL);
             }
-            else {
+            else
+            {
                 sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
                 sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
             }
         }
 
-        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null) {
+        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null)
+        {
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
@@ -245,20 +252,23 @@ Ext.define('Connector.utility.Chart', {
         this.createSelectionFilter(sqlFilters, true /* fromBrush */);
     },
 
-    _onBrush : function(extent) {
-        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+    _onBrush : function(extent)
+    {
+        var subjects = {}, // Stash all of the selected subjects so we can highlight associated points.
+            subjectVisits = {};
 
-        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
+        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects, subjectVisits);
 
         if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects, subjectVisits);
         }
 
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects, subjectVisits);
         }
 
         this.brushedSubjects = subjects;
+        this.brushedSubjectVisits = subjectVisits;
     },
 
     brushPoints : function(event, layerData, extent) {
@@ -278,9 +288,10 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
-    _brushPointsByCanvas : function(canvas, extent, subjects) {
+    _brushPointsByCanvas : function(canvas, extent, subjects, subjectVisits)
+    {
         canvas.selectAll('.point path')
-                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
+                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects, subjectVisits]))
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
@@ -288,28 +299,38 @@ Ext.define('Connector.utility.Chart', {
                 .attr('stroke-opacity', 1);
 
 
-        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function() {
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function()
+        {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
         });
+
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
-        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function() {
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function()
+        {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
         });
 
         //move brush layer to front
-        canvas.select('svg g.brush').each(function() {
+        canvas.select('svg g.brush').each(function()
+        {
             this.parentNode.appendChild(this);
         });
     },
 
-    _brushPointPreFill : function(d, i, unknown, extent, subjects) {
+    _brushPointPreFill : function(d, i, unknown, extent, subjects, subjectVisits)
+    {
         d.isSelected = ChartUtils.isSelectedWithBrush(extent, d.x, d.y);
         d.origFill = d.origFill || this.getAttribute('fill');
 
-        if (d.isSelected) {
+        if (d.isSelected)
+        {
             subjects[d.subjectId] = true;
+            if (d.seqNum)
+            {
+                subjectVisits[d.seqNum] = true;
+            }
             return ChartUtils.colors.SELECTED;
         }
 

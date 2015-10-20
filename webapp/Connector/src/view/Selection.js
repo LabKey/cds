@@ -171,11 +171,15 @@ Ext.define('Connector.view.Selection', {
 
                     return Ext.htmlEncode(type) + ': ' + LABKEY.app.model.Filter.getGridLabel(values);
                 },
-                renderSelectionMeasure : function(measure, filters)
+                renderSelectionMeasure : function(measure, filters, label)
                 {
                     var domString = '', filterValString = '', sep = '';
 
-                    if (measure && !Ext.isEmpty(filters))
+                    if (label)
+                    {
+                        domString = '<div class="status-over">' + Ext.String.ellipsis(label, 35) + '</div>';
+                    }
+                    else if (measure && !Ext.isEmpty(filters))
                     {
                         Ext.each(filters, function(filter)
                         {
@@ -234,8 +238,8 @@ Ext.define('Connector.view.Selection', {
                         }
                     });
 
-                    domString = this.renderSelectionMeasure(xMeasure, xFilters);
-                    domString = domString + this.renderSelectionMeasure(yMeasure, yFilters);
+                    domString = this.renderSelectionMeasure(xMeasure, xFilters, values.xLabel);
+                    domString = domString + this.renderSelectionMeasure(yMeasure, yFilters, values.yLabel);
 
                     return domString;
                 }

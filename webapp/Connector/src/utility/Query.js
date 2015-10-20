@@ -14,6 +14,7 @@ Ext.define('Connector.utility.Query', {
         this.SUBJECTVISIT_TABLE = (Connector.studyContext.gridBaseSchema + '.' + Connector.studyContext.gridBase).toLowerCase();
         this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
         this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
+        this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_'),
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
         this.FOLDER_ALIAS = 'Folder';
@@ -255,9 +256,12 @@ Ext.define('Connector.utility.Query', {
 
         // sort by the study, subject, and visit
         var orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
+        var sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
+
+        console.log(sql);
 
         return {
-            sql: 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL,
+            sql: sql,
             columnAliasMap: columnAliasMap
         };
     },
@@ -284,8 +288,9 @@ Ext.define('Connector.utility.Query', {
         //
         // SELECT
         //
-        var SELECT = ["SELECT "];
-        sep = "\n\t";
+        var SELECT = ["SELECT "],
+            sep = "\n\t";
+
         if (hasMultiple) {
             // only include the Dataset column if we have multiple assay datasets in the query
             SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\" @title=\'Dataset\'");
@@ -295,6 +300,7 @@ Ext.define('Connector.utility.Query', {
         SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS +'" @title=\'Container\''); sep = ",\n\t";
         SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS +'" @title=\'Subject Id\'');
         SELECT.push(sep + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS +'" @title=\'Sequence Num\'');
+        SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS +'" @title=\'Participant Sequence Num\'');
 
         columnAliasMap[this.CONTAINER_ALIAS] = {
             name: 'Container',
@@ -314,11 +320,18 @@ Ext.define('Connector.utility.Query', {
             schemaName: rootTable.schemaName
         };
 
+        columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
+            name: 'ParticipantSequenceNum',
+            queryName: rootTable.displayName,
+            schemaName: rootTable.schemaName
+        };
+
         Ext.each(allMeasures, function(m)
         {
             var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
                     || m.measure.name.toLowerCase() == 'container'
-                    || m.measure.name.toLowerCase() == 'sequencenum',
+                    || m.measure.name.toLowerCase() == 'sequencenum'
+                    || m.measure.name.toLowerCase() == 'participantsequencenum',
                 alias = m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure),
                 colLabel = m.measure.shortCaption || m.measure.label,
                 title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";

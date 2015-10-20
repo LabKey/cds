@@ -126,7 +126,8 @@ Ext.define('Connector.model.ChartData', {
                 var schemaQueryNameMatch = measure.name == obj.name && measure.queryName == obj.queryName && measure.schemaName == obj.schemaName,
                     keyColumnMatch = (measure.name == 'Container' && alias == QueryUtils.CONTAINER_ALIAS)
                             || (measure.name == 'SubjectId' && alias == QueryUtils.SUBJECT_ALIAS)
-                            || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS);
+                            || (measure.name == 'SequenceNum' && alias == QueryUtils.SEQUENCENUM_ALIAS)
+                            || (measure.name == 'ParticipantSequenceNum' && alias == QueryUtils.SUBJECT_SEQNUM_ALIAS);
 
                 if ((measure.alias && measure.alias == alias) || (measure.name && schemaQueryNameMatch) || keyColumnMatch)
                 {
@@ -152,7 +153,8 @@ Ext.define('Connector.model.ChartData', {
             excludeAliases.push(x.alias);
         }
 
-        // return a list of column aliases for all measureSet objects which are dimensions and not in the exclude list (i.e. plot measures)
+        // return a list of column aliases for all measureSet objects which are dimensions
+        // and not in the exclude list (i.e. plot measures)
         Ext.each(measureSet, function(m) {
             if (m.measure.isDimension) {
                 var alias = this.getAliasFromMeasure(m.measure);
@@ -332,22 +334,35 @@ Ext.define('Connector.model.ChartData', {
                 colorname: ca.label
             };
 
+            // this allows for each point to have a 'participant sequence num'
+            // which can be filtered on in 'time filters'
+            if (x && x.variableType === 'TIME')
+            {
+                entry.seqNum = _row[QueryUtils.SUBJECT_SEQNUM_ALIAS];
+            }
+
             // split the data entry based on undefined x and y values for gutter plotting
-            if (xVal == null && yVal == null) {
+            if (xVal == null && yVal == null)
+            {
                 // note: we don't currently do anything with these null/null points
                 undefinedBothRows.push(entry);
             }
-            else if (xVal == null) {
-                if (brushFilterAliases.indexOf(_xid) == -1) { // issue 24021
+            else if (xVal == null)
+            {
+                if (brushFilterAliases.indexOf(_xid) == -1) // issue 24021
+                {
                     undefinedXRows.push(entry);
                 }
             }
-            else if (xa.isContinuous && yVal == null) {
-                if (brushFilterAliases.indexOf(_yid) == -1) { // issue 24021
+            else if (xa.isContinuous && yVal == null)
+            {
+                if (brushFilterAliases.indexOf(_yid) == -1) // issue 24021
+                {
                     undefinedYRows.push(entry);
                 }
             }
-            else {
+            else
+            {
                 mainCount++;
             }
 

@@ -9,7 +9,9 @@ Ext.define('Connector.model.Filter', {
     fields: [
         {name : 'dataFilter', defaultValue: {}},
         {name : 'measureSet', defaultValue: []},
-        {name : 'isAggregated', defaultValue: false}
+        {name : 'isAggregated', defaultValue: false},
+        {name : 'xLabel', defaultValue: undefined},
+        {name : 'yLabel', defaultValue: undefined}
     ],
 
     statics: {
