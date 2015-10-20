@@ -677,17 +677,37 @@ Ext.define('Connector.view.Grid', {
         return false;
     },
 
-    getLockedMeasureAliases : function() {
-        // return an array of measure aliases for those columns added to the grid via plot selection or active filters
-        var model = this.getModel(), aliases;
-        aliases = Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias');
-        aliases = aliases.concat(Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias'));
+    /**
+     * return an array of measure aliases for those columns added to the grid via plot selection or active filters
+     * @returns {*|Array}
+     */
+    getLockedMeasureAliases : function()
+    {
+        var model = this.getModel();
+
+        var aliases = Ext.Array.push(
+            Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'),
+            Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias'),
+            Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias')
+        );
+
         return Ext.Array.unique(aliases);
     },
 
-    getSelectedMeasureAliases : function() {
-        // return an array of measure aliases for those columns added to the grid via the column chooser
-        return Ext.Array.pluck(this.getModel().getMeasures('measures'), 'alias');
+    /**
+     * return an array of measure aliases for those columns added to the grid via the column chooser
+     * @returns {*|Array}
+     */
+    getSelectedMeasureAliases : function()
+    {
+        var model = this.getModel();
+
+        var aliases = Ext.Array.push(
+            Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'),
+            Ext.Array.pluck(model.getMeasures('measures'), 'alias')
+        );
+
+        return Ext.Array.unique(aliases);
     },
 
     showMeasureSelection : function() {

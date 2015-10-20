@@ -76,7 +76,12 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    constructor : function(config) {
+    constructor : function(config)
+    {
+        if (LABKEY.devMode)
+        {
+            GRID = this;
+        }
 
         this.callParent([config]);
 
@@ -91,7 +96,8 @@ Ext.define('Connector.model.Grid', {
             Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this, true /* apply compound filters */);
         }, this);
 
-        Connector.getState().onReady(function() {
+        Connector.getState().onReady(function()
+        {
             this.stateReady = true;
             this.applyFilters(this.getDataFilters(), this._init, this);
         }, this);
@@ -120,17 +126,35 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    bindDefaultMeasures : function(defaultMeasures) {
-        // set the wrapped default measures
+    bindDefaultMeasures : function(defaultMeasures)
+    {
+        this.set('defaultMeasures', this._wrapMeasures(defaultMeasures));
+        this._updateDefaultSubjectMeasure(this.get('subjectFilter'));
+    },
+
+    _wrapMeasures : function(measures)
+    {
         var wrapped = [];
-        Ext.each(defaultMeasures, function(measure) {
-            wrapped.push({
+
+        Ext.each(measures, function(measure)
+        {
+            var w = {
                 measure: measure
-            });
+            };
+
+            if (w.measure.variableType === 'TIME')
+            {
+                w.measure.interval = w.measure.alias;
+                w.dateOptions = {
+                    interval: w.measure.alias,
+                    zeroDayVisitTag: null
+                }
+            }
+
+            wrapped.push(w);
         });
 
-        this.set('defaultMeasures', wrapped);
-        this._updateDefaultSubjectMeasure(this.get('subjectFilter'));
+        return wrapped;
     },
 
     _updateDefaultSubjectMeasure : function(subjectFilter) {
@@ -190,26 +214,8 @@ Ext.define('Connector.model.Grid', {
             }
         });
 
-        wrapped = [];
-        Ext.each(measureSet, function(measure) {
-            var w = {
-                measure: measure
-            };
-
-            if (w.measure.variableType === "TIME") {
-                w.measure.interval = w.measure.alias;
-                w.dateOptions = {
-                    interval: w.measure.alias,
-                    zeroDayVisitTag: null
-                }
-            }
-
-            wrapped.push(w);
-        });
-
-        // set the wrapped measures, foreign columns
         this.set({
-            measures: wrapped,
+            measures: this._wrapMeasures(measureSet),
             foreignColumns: Ext.isDefined(foreignColumns) ? foreignColumns : {}
         });
 

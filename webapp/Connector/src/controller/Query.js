@@ -80,7 +80,14 @@ Ext.define('Connector.controller.Query', {
                 Ext.iterate(Connector.measure.Configuration.context.measures, function(alias, measure)
                 {
                     measure.alias = alias;
-                    this.addMeasure(new LABKEY.Query.Visualization.Measure(measure));
+                    var visMeasure = new LABKEY.Query.Visualization.Measure(measure);
+                    this.addMeasure(visMeasure);
+
+                    // separate the set of default grid measures
+                    if (defaultGridAliases[measure.alias.toLowerCase()])
+                    {
+                        this.GRID_MEASURES.push(Ext.clone(visMeasure));
+                    }
                 }, this);
 
                 this._ready = true;
@@ -127,7 +134,7 @@ Ext.define('Connector.controller.Query', {
             _getAlias(this.getSubjectColumnAlias()),
             _getAlias(this.getGridBaseColumnAlias('Study')),
             _getAlias(this.getGridBaseColumnAlias('TreatmentSummary')),
-            _getAlias(this.getGridBaseColumnAlias('SubjectVisit'))
+            _getAlias(QueryUtils.STUDY_ALIAS_PREFIX + 'Days')
         ];
 
         var result;
@@ -165,7 +172,8 @@ Ext.define('Connector.controller.Query', {
         return this.timeAliases;
     },
 
-    addMeasure : function(measure) {
+    addMeasure : function(measure)
+    {
         if (!Ext.isObject(this.MEASURE_STORE.getById(measure.alias.toLowerCase())))
         {
             var sourceKey = measure.schemaName + '|' + measure.queryName,
