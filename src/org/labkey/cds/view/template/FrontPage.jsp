@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/css/application.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/fullpage.js/jquery.fullPage.css">
     <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/magnific-popup/dist/magnific-popup.css">
-    <link rel="stylesheet" href="<%=text(frontPagePath)%>/components/video.js/dist/video-js/video-js.min.css">
     <style type="text/css">
         /* Context-sensitive url */
         .section.intro-section .video-container .video-placeholder {
