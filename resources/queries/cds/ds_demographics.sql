@@ -26,7 +26,7 @@ SELECT
   dd.subject_race_nih AS race,
   dd.subject_hispanic AS ethnicity,
   dd.subject_country_enrollment AS country_enrollment,
-  dd.subject_circumcised_enrollment AS circumcisionstatusenrollment,
+  dd.subject_circumcised_enrollment AS circumcised_enrollment,
 
   -- INTEGER
   CAST(ROUND(10 * Floor(dd.subject_age_enrollment_years / 10.0)) AS VARCHAR) || '-' || CAST(ROUND((10 * Floor(dd.subject_age_enrollment_years / 10.0)) + 9) AS VARCHAR) AS agegroup_range,
