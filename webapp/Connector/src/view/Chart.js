@@ -2675,8 +2675,6 @@ Ext.define('Connector.view.Chart', {
                     remove: function() {
                         this.clearVisibleWindow();
 
-                        // Need to remove the x measure (index 0) from the plot filter or we'll pull it down again.
-                        this.removeVariableFromFilter(0);
                         this.clearAxisSelection('x');
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
                     },
@@ -2733,8 +2731,6 @@ Ext.define('Connector.view.Chart', {
                     remove: function() {
                         this.clearVisibleWindow();
 
-                        // Need to remove the color measure (index 2) from the plot filter or we'll pull it down again.
-                        this.removeVariableFromFilter(2);
                         this.clearAxisSelection('color');
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
                     },
@@ -2818,15 +2814,6 @@ Ext.define('Connector.view.Chart', {
 
         this.updateSelectorWindow(win);
         return win;
-    },
-
-    removeVariableFromFilter : function(measureIdx) {
-        var filter = this.getPlotsFilter();
-        if (filter) {
-            var m = filter.get('plotMeasures');
-            m[measureIdx] = null;
-            Connector.getState().updateFilter(filter.get('id'), {plotMeasures: m});
-        }
     },
 
     getPlotsFilter : function() {

@@ -36,6 +36,7 @@ Ext.define('Connector.utility.Query', {
             success: function(response)
             {
                 response.columnAliasMap = result.columnAliasMap;
+                //console.log(response.queryName);
                 config.success.call(config.scope, response);
             },
             failure: config.failure,
