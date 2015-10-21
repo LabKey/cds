@@ -61,7 +61,7 @@
                 <div class="notifications">
                     <p></p>
                 </div>
-                <form class="form">
+                <form class="form" id="signinform" method="post">
                     <div class="credentials">
                         <!-- fake fields are a workaround for chrome autofill getting the wrong fields. They will be removed if Remember Me is checked. -->
                         <input style="display:none" type="text" id="fakeusernameremembered"/>
@@ -181,7 +181,7 @@
                 </div>
                 <div class="links">
                     <a href="#" data-click="help" class="help">Cancel</a>
-                    <a href="#" data-click="confirmhelp" class="confirm">Submit</a>
+                    <a href="#" data-click="confirmhelp" class="confirm" id="signinhelpsubmit">Submit</a>
                 </div>
             </div>
         </div>
@@ -196,7 +196,7 @@
                 <div class="notifications">
                     <p></p>
                 </div>
-                <form action="" method="post" class="form">
+                <form action="" method="post" class="form" id="createnewpasswordform">
                     <div class="credentials">
                         <span class="password-requirements">Password must be at least 8 characters, and must contain at least one letter and one number.</span>
                         <input placeholder="Password" id="password1" name="password" type="password" value="" required>
@@ -205,7 +205,7 @@
                     </div>
                     <div class="links">
                         <a href="#" data-click="dismiss" class="dismiss">Cancel</a>
-                        <input type="button" data-click="confirmchangepassword" class="confirm" value="Submit">
+                        <input type="button" data-click="confirmchangepassword" class="confirm" value="Submit" id="createnewpasswordsubmit">
                         <input id="submit_hidden_pw" type="submit" style="display: none">
                     </div>
                 </form>

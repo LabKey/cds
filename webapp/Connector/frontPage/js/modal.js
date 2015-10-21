@@ -79,6 +79,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
       self.dismiss();
       self.help();
       self.initLoginInfo();
+      self.bindEnterKey();
     };
 
     self.initLoginInfo = function() {
@@ -111,7 +112,40 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
         }
 
       }
-    }
+    };
+
+    self.bindEnterKey = function()
+    {
+      var $sign_in_container = self.$modal.find('[data-form=sign-in]');
+      if ($sign_in_container.length > 0) {
+        $("#signinform input").keypress(function (e) {
+          if (e.keyCode == 13) {
+            e.preventDefault();
+            $('#signin').click();
+          }
+        });
+      }
+
+      var $sign_in_help_container = self.$modal.find('[data-form=sign-in-help]');
+      if ($sign_in_help_container.length > 0) {
+        $("#emailhelp").keypress(function (e) {
+          if (e.keyCode == 13) {
+            e.preventDefault();
+            $('#signinhelpsubmit').click();
+          }
+        });
+      }
+
+      var $createpasswordcontainer = self.$modal.find('[id=createnewpasswordform]');
+      if ($createpasswordcontainer.length > 0) {
+        $("#createnewpasswordform input").keypress(function (e) {
+          if (e.keyCode == 13) {
+            e.preventDefault();
+            $('#createnewpasswordsubmit').click();
+          }
+        });
+      }
+    };
 
     /**
      * help
