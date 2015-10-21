@@ -1150,7 +1150,10 @@
                 ],
                 scales: {
                     x: {
-                        scaleType: 'discrete'
+                        scaleType: 'discrete',
+                        sortFn: function(a, b) {
+                            return a < b ? -1 : 1;
+                        }
                     },
                     y: {
                         scaleType: 'continuous',

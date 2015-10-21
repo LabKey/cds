@@ -43,7 +43,7 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
             "Categorical X-Axis Measure from Demographic",
             3713,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
-            new String[]{"White", "Black", "Multiracial", "Asian", "Other", "Native American/Alas", "Native Hawaiian/Paci"}
+            new String[]{"Asian", "Black", "Multiracial", "Native American/Alas", "Native Hawaiian/Paci", "Other", "White"}
         ));
 
         verifyPlot(new Plot(
@@ -57,7 +57,7 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
             "Categorical X-Axis Measure from Same Assay",
             3713,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
-            new String[]{"Any HIV PTEg", "Any HIV PTEA", "Any v503 Vaccine Matched Antigen"}
+            new String[]{"Any HIV PTEA", "Any HIV PTEg", "Any v503 Vaccine Matched Antigen"}
         ));
 
         verifyPlot(new Plot(
