@@ -700,7 +700,7 @@ Ext.define('Connector.model.Grid', {
          * hardcoded ones (i.e. the dataset (checkboard) column the generated cdsGetData subject column,
          * and the 'Folder' column that will only exist for multi table join queries)
          */
-        var columns = [QueryUtils.DATASET_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.FOLDER_ALIAS];
+        var columns = [QueryUtils.SUBJECT_ALIAS, QueryUtils.DATASET_ALIAS];
 
         // include and default grid columns
         columns = columns.concat(Connector.getQueryService().getDefaultGridAliases(true /* asArray */));

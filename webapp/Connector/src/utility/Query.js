@@ -5,7 +5,7 @@ Ext.define('Connector.utility.Query', {
 
     singleton: true,
 
-    STUDY_ALIAS_PREFIX: 'cds_Study_',
+    STUDY_ALIAS_PREFIX: 'cds_GridBase_',
 
     constructor : function(config)
     {
@@ -17,7 +17,6 @@ Ext.define('Connector.utility.Query', {
         this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_');
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
-        this.FOLDER_ALIAS = 'Folder';
     },
 
     /**
@@ -589,8 +588,9 @@ Ext.define('Connector.utility.Query', {
         return clause;
     },
 
-    isGeneratedColumnAlias : function(alias) {
-        return alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 || alias == QueryUtils.FOLDER_ALIAS
+    isGeneratedColumnAlias : function(alias)
+    {
+        return alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0;
     },
 
     ensureAlignmentAlias : function(wrapped, defaultAlias)

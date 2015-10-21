@@ -23,13 +23,14 @@ Ext.define('Connector.view.Grid', {
 
     paging: true,
 
-    constructor : function(config) {
+    constructor : function(config)
+    {
         this.callParent([config]);
         this.addEvents('applyfilter', 'removefilter', 'requestexport', 'measureselected', 'usergridfilter');
     },
 
-    initComponent : function() {
-
+    initComponent : function()
+    {
         // At times the store can be completely replaced for a given grid. When this occurs we want to
         // maintain the sorts that appeared on the previous store instance. They are temporarily stored
         // on this property.
@@ -511,41 +512,49 @@ Ext.define('Connector.view.Grid', {
      * should show a filter being present or not on that column.
      * @param grid
      */
-    applyFilterColumnState : function(grid) {
-
+    applyFilterColumnState : function(grid)
+    {
         var columns = grid.headerCt.getGridColumns(),
             filterFieldMap = {}, colMeta;
 
         // remove all filter classes
-        Ext.each(columns, function(column) {
-            if (Ext.isDefined(column.getEl())) {
+        Ext.each(columns, function(column)
+        {
+            if (Ext.isDefined(column.getEl()))
+            {
                 column.getEl().removeCls('filtered-column');
             }
         });
 
-        Ext.iterate(this.columnMap, function(dataIndex) {
+        Ext.iterate(this.columnMap, function(dataIndex)
+        {
             colMeta = this.getColumnMetadata(dataIndex);
 
-            if (colMeta && Ext.isDefined(colMeta.filterField)) {
+            if (colMeta && Ext.isDefined(colMeta.filterField))
+            {
                 filterFieldMap[colMeta.filterField] = {
                     metdata: colMeta,
                     dataIndex: dataIndex
                 };
             }
-            else {
+            else
+            {
                 console.warn('unable to map filter column');
             }
-
         }, this);
 
-        Ext.each(this.getModel().getFilterArray(), function(filter) {
+        Ext.each(this.getModel().getFilterArray(), function(filter)
+        {
             colMeta = filterFieldMap[filter.getColumnName()];
-            if (colMeta) {
+            if (colMeta)
+            {
                 var columnIndex = this.columnMap[colMeta.dataIndex];
 
-                if (columnIndex > -1) {
+                if (columnIndex > -1)
+                {
                     var col = grid.headerCt.getHeaderAtIndex(columnIndex);
-                    if (col) {
+                    if (col)
+                    {
                         col.getEl().addCls('filtered-column');
                     }
                 }
@@ -554,10 +563,14 @@ Ext.define('Connector.view.Grid', {
         }, this);
     },
 
-    updateColumnMap : function(gridHeader /* Ext.grid.header.Container */) {
-        var columns = gridHeader.getGridColumns();
-
-        Ext.each(columns, function(gridColumn, idx) {
+    /**
+     * Updates the columnMap to ensure the correct column index
+     * @param {Ext.grid.header.Container} gridHeader
+     */
+    updateColumnMap : function(gridHeader)
+    {
+        Ext.each(gridHeader.getGridColumns(), function(gridColumn, idx)
+        {
             this.columnMap[gridColumn.dataIndex] = idx;
         }, this);
     },
@@ -602,7 +615,9 @@ Ext.define('Connector.view.Grid', {
     },
 
     cellRenderer : function(v, meta, record, measure) {
-        if (Ext.isEmpty(v) && record.get(QueryUtils.DATASET_ALIAS) !== measure.queryName) {
+        if (Ext.isEmpty(v) && Ext.isDefined(record.get(QueryUtils.DATASET_ALIAS)) &&
+            (record.get(QueryUtils.DATASET_ALIAS) !== measure.queryName))
+        {
             meta.style = "text-align: center;"; // Ext will inject this as 'right' if we don't
             meta.tdCls += " no-value";
             return null;
