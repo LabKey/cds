@@ -16,7 +16,6 @@ Ext.define('Connector.model.Grid', {
 
         {name: 'defaultMeasures', defaultValue: []},
         {name: 'measures', defaultValue: []},
-        {name: 'plotMeasures', defaultValue: []},
         {name: 'SQLMeasures', defaultValue: []},
 
         {name: 'metadata', defaultValue: undefined},
@@ -175,7 +174,6 @@ Ext.define('Connector.model.Grid', {
         {
             return Ext.Array.push(
                 Ext.Array.pluck(this.get('defaultMeasures'), 'measure'),
-                Ext.Array.pluck(this.get('plotMeasures'), 'measure'),
                 Ext.Array.pluck(this.get('SQLMeasures'), 'measure'),
                 Ext.Array.pluck(this.get('measures'), 'measure')
             );
@@ -186,7 +184,6 @@ Ext.define('Connector.model.Grid', {
     getWrappedMeasures : function()
     {
         return this.get('defaultMeasures')
-                .concat(this.get('plotMeasures'))
                 .concat(this.get('SQLMeasures'))
                 .concat(this.get('measures'));
     },
@@ -417,7 +414,8 @@ Ext.define('Connector.model.Grid', {
         return filterArray;
     },
 
-    getBaseFilters : function() {
+    getBaseFilters : function()
+    {
         return this.get('baseFilterArray');
     },
 
@@ -425,11 +423,12 @@ Ext.define('Connector.model.Grid', {
      * @param {boolean} [includeBaseFilters=false]
      * @returns {Array}
      */
-    getFilterArray : function(includeBaseFilters) {
-
+    getFilterArray : function(includeBaseFilters)
+    {
         var _array = this.get('filterArray');
 
-        if (includeBaseFilters === true) {
+        if (includeBaseFilters === true)
+        {
             _array = _array.concat(this.getBaseFilters());
         }
 
@@ -582,7 +581,8 @@ Ext.define('Connector.model.Grid', {
         return match;
     },
 
-    buildFilter : function(filterArray) {
+    buildFilter : function(filterArray)
+    {
         return Ext.create('Connector.model.Filter', {
             hierarchy: 'Subject',
             gridFilter: filterArray,
@@ -593,21 +593,26 @@ Ext.define('Connector.model.Grid', {
         });
     },
 
-    getFilterId : function(filter) {
+    getFilterId : function(filter)
+    {
         return filter.getURLParameterName() + '=' + filter.getValue();
     },
 
-    hasFilter : function(filter) {
+    hasFilter : function(filter)
+    {
         return this.filterMap[this.getFilterId(filter)];
     },
 
-    addToFilters : function(filter, id) {
+    addToFilters : function(filter, id)
+    {
         var key = this.getFilterId(filter);
         this.filterMap[key] = id;
     },
 
-    clearFilter : function(urlParam) {
-        if (urlParam in this.filterMap) {
+    clearFilter : function(urlParam)
+    {
+        if (urlParam in this.filterMap)
+        {
             delete this.filterMap[urlParam];
         }
     },
@@ -618,16 +623,20 @@ Ext.define('Connector.model.Grid', {
      * @param fieldKey
      * @param all
      */
-    onGridFilterRemove : function(view, fieldKey, all) {
+    onGridFilterRemove : function(view, fieldKey, all)
+    {
         var state = Connector.getState();
-        Ext.iterate(this.filterMap, function(urlParam, id) {
+        Ext.iterate(this.filterMap, function(urlParam, id)
+        {
             state.removeFilter(id, 'Subject');
-            if (!all && urlParam.indexOf(fieldKey) > -1) {
+            if (!all && urlParam.indexOf(fieldKey) > -1)
+            {
                 this.clearFilter(urlParam);
             }
         }, this);
 
-        if (all) {
+        if (all)
+        {
             this.filterMap = {};
         }
     },
@@ -656,7 +665,8 @@ Ext.define('Connector.model.Grid', {
      * Normally, this would bind to a 'viewready' or 'boxready' event.
      * @param view
      */
-    onViewReady : function(view) {
+    onViewReady : function(view)
+    {
         this.viewReady = true;
         this._init();
     },
@@ -664,7 +674,8 @@ Ext.define('Connector.model.Grid', {
     /**
      * retrieve new column metadata based on the model configuration
      */
-    requestMetaData : function() {
+    requestMetaData : function()
+    {
         this.metadataTask.delay(50);
     },
 
@@ -672,7 +683,8 @@ Ext.define('Connector.model.Grid', {
      * Called whenever the query metadata has been changed.
      * @param metadata
      */
-    onMetaData : function(metadata) {
+    onMetaData : function(metadata)
+    {
         this.set('metadata', metadata);
         this.updateColumnModel();
     },
@@ -705,7 +717,8 @@ Ext.define('Connector.model.Grid', {
         return Ext.Array.unique(columns);
     },
 
-    updateColumnModel : function() {
+    updateColumnModel : function()
+    {
         var metadata = this.get('metadata');
 
         // The new columns will be available on the metadata query/schema
@@ -733,25 +746,32 @@ Ext.define('Connector.model.Grid', {
         }, this, true);
     },
 
-    setActive : function(active) {
+    setActive : function(active)
+    {
         this.set('active', active);
 
-        if (active) {
-            if (this.activeColumn || this.activeMeasure) {
-                if (this.activeMeasure) {
+        if (active)
+        {
+            if (this.activeColumn || this.activeMeasure)
+            {
+                if (this.activeMeasure)
+                {
                     this.requestMetaData();
                 }
-                else {
+                else
+                {
                     this.updateColumnModel();
                 }
             }
-            else if (this.activeFilter) {
+            else if (this.activeFilter)
+            {
                 this.onAppFilterChange(Connector.getState().getFilters());
             }
         }
     },
 
-    isActive : function() {
+    isActive : function()
+    {
         return this.get('active') === true && this.initialized === true;
     }
 });

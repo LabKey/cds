@@ -677,7 +677,6 @@ Ext.define('Connector.view.Grid', {
 
         var aliases = Ext.Array.push(
             Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'),
-            Ext.Array.pluck(model.getMeasures('plotMeasures'), 'alias'),
             Ext.Array.pluck(model.getMeasures('SQLMeasures'), 'alias')
         );
 
@@ -693,7 +692,6 @@ Ext.define('Connector.view.Grid', {
         var model = this.getModel();
 
         var aliases = Ext.Array.push(
-            Ext.Array.pluck(model.getMeasures('defaultMeasures'), 'alias'),
             Ext.Array.pluck(model.getMeasures('measures'), 'alias')
         );
 
