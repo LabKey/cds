@@ -83,8 +83,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
             clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
         }
 
-        //waitForElement(Locator.css("p.errormsg").withText("Your session has timed out. Please login to continue."));
-        assertElementPresent(Locator.linkWithText("Sign In"));
+        waitForElement(Locator.css("p").withText("Your session has timed out. Please login to continue."));
     }
 
     @Override

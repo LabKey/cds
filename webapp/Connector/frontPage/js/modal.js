@@ -111,6 +111,10 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           $sign_in_tosl.prop('checked', false);
         }
 
+        if (window.location.href.indexOf("sessiontimedout=true") > -1) {
+          $('.signin-modal .notifications p').html('Your session has timed out. Please login to continue.');
+        }
+
       }
     };
 
@@ -238,7 +242,16 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             approvedTermsOfUse: termsOfUse
           }
         }).success(function() {
-          window.location = LABKEY.ActionURL.buildURL("cds", "app.view");
+          var newLocation = window.location.href.replace('?login=true', '').replace('&login=true', '').replace('login=true', '');
+          newLocation = newLocation.replace('&sessiontimedout=true', '').replace('sessiontimedout=true', '');
+          var oldLocation = window.location.href;
+          if (newLocation === oldLocation) {
+            window.location.reload();
+          }
+          else {
+            window.location = newLocation;
+          }
+
         }).error(function() {
           $('.signin-modal .notifications p').html('Login Failed');
         });
