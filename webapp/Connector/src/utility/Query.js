@@ -14,7 +14,7 @@ Ext.define('Connector.utility.Query', {
         this.SUBJECTVISIT_TABLE = (Connector.studyContext.gridBaseSchema + '.' + Connector.studyContext.gridBase).toLowerCase();
         this.DATASET_ALIAS = this.STUDY_ALIAS_PREFIX + 'Dataset';
         this.SUBJECT_ALIAS = this.STUDY_ALIAS_PREFIX + Connector.studyContext.subjectColumn;
-        this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_'),
+        this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_');
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
         this.FOLDER_ALIAS = 'Folder';
@@ -338,6 +338,11 @@ Ext.define('Connector.utility.Query', {
                 colLabel = m.measure.shortCaption || m.measure.label,
                 title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";
 
+            if (acceptMeasureForSelect(m))
+            {
+                alias = this.ensureAlignmentAlias(m, (m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure)));
+            }
+
             if (columnAliasMap[alias] || isKeyCol)
             {
                 return;
@@ -585,5 +590,17 @@ Ext.define('Connector.utility.Query', {
 
     isGeneratedColumnAlias : function(alias) {
         return alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 || alias == QueryUtils.FOLDER_ALIAS
+    },
+
+    ensureAlignmentAlias : function(wrapped, defaultAlias)
+    {
+        var alias = defaultAlias || wrapped.measure.alias;
+
+        if (Ext.isObject(wrapped.dateOptions) && wrapped.dateOptions.zeroDayVisitTag != null)
+        {
+            alias += '_' + wrapped.dateOptions.zeroDayVisitTag.replace(/ /g, '_');
+        }
+
+        return alias;
     }
 });

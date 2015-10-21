@@ -185,9 +185,12 @@ Ext.define('Connector.model.ChartData', {
     },
 
     processMeasureStore : function() {
-        var x = this.getPlotMeasure(0),
-            y = this.getPlotMeasure(1),
-            color = this.getPlotMeasure(2),
+        var wrappedX = this.getPlotMeasure(0),
+            x = (wrappedX ? wrappedX.measure : undefined),
+            wrappedY = this.getPlotMeasure(1),
+            y = (wrappedY ? wrappedY.measure : undefined),
+            wrappedColor = this.getPlotMeasure(2),
+            color = (wrappedColor ? wrappedColor.measure : undefined),
             xa, ya, ca, _xid, _yid, _cid,
             containerAlignmentDayMap = {},
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
@@ -214,8 +217,9 @@ Ext.define('Connector.model.ChartData', {
         }
 
         xa = this.getBaseMeasureConfig();
-        if (x) {
-            _xid = x.interval || this.getAliasFromMeasure(x);
+        if (x)
+        {
+            _xid = QueryUtils.ensureAlignmentAlias(wrappedX, x.interval || this.getAliasFromMeasure(x));
             xa = {
                 schema : x.schemaName,
                 query  : x.queryName,

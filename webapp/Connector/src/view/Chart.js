@@ -1815,6 +1815,8 @@ Ext.define('Connector.view.Chart', {
             // examine the sqlFilters to determine which measures to include
             var plotMeasures = [null, null],
                 hasAnyFilters = false,
+                isTime = false,
+                timeFilters = [],
                 xLabel;
 
             // has X
@@ -1828,6 +1830,10 @@ Ext.define('Connector.view.Chart', {
                 {
                     var subjectVisits = Ext.Object.getKeys(this.brushedSubjectVisits),
                         value, type;
+
+                    isTime = true;
+                    timeFilters.push(sqlFilters[0]);
+                    timeFilters.push(sqlFilters[1]);
 
                     if (Ext.isEmpty(subjectVisits))
                     {
@@ -1879,6 +1885,12 @@ Ext.define('Connector.view.Chart', {
             if (xLabel)
             {
                 selection.xLabel = xLabel;
+            }
+
+            if (isTime)
+            {
+                selection.isTime = true;
+                selection.timeFilters = timeFilters;
             }
         }
 
@@ -2081,8 +2093,8 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getWrappedMeasures : function(activeMeasures) {
-
+    getWrappedMeasures : function(activeMeasures)
+    {
         var wrappedMeasures = [
             this._getAxisWrappedMeasure(activeMeasures.x),
             this._getAxisWrappedMeasure(activeMeasures.y)
@@ -2245,7 +2257,7 @@ Ext.define('Connector.view.Chart', {
     {
         var chartData = Ext.create('Connector.model.ChartData', {
             measureSet: measureSet,
-            plotMeasures: this.measures,
+            plotMeasures: this.getWrappedMeasures(this.getActiveMeasures()),
             measureStore: measureStore,
             plotScales: {
                 x: this.getScale('x'),

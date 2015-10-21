@@ -179,19 +179,13 @@ Ext.define('Connector.view.Grid', {
         }
     },
 
-    _showOverlay : function() {
-        if (!this.NO_SHOW) {
-
-            //
+    _showOverlay : function()
+    {
+        if (!this.NO_SHOW)
+        {
             // Ensure we're in a proper state to show the overlay message
-            //
-            var valid = true;
-
-            if (this.getModel().get('columnSet').length > 4) {
-                valid = false;
-            }
-
-            if (valid) {
+            if (this.getModel().get('columnSet').length <= 7)
+            {
                 Ext.create('Ext.Component', {
                     renderTo: this.getEl(),
                     cls: 'nogridmsg',
@@ -450,19 +444,15 @@ Ext.define('Connector.view.Grid', {
         return this.model;
     },
 
-    initGridStore : function() {
-
+    initGridStore : function()
+    {
         var model = this.getModel(),
             maxRows = Connector.model.Grid.getMaxRows();
-
-        // explicitly ask for just the columns in the model columnSet plus some hardcoded ones (i.e. the dataset (checkboard) column,
-        // the generated cdsGetData subject column, and the 'Folder' column that will only exist for multi table join queries)
-        var columns = [QueryUtils.DATASET_ALIAS, QueryUtils.SUBJECT_ALIAS, QueryUtils.FOLDER_ALIAS];
 
         var config = {
             schemaName: model.get('schemaName'),
             queryName: model.get('queryName'),
-            columns: columns.concat(model.get('columnSet')),
+            columns: model.get('columnSet'),
             //filterArray: model.getFilterArray(),
             maxRows: maxRows,
             pageSize: maxRows,
@@ -710,11 +700,16 @@ Ext.define('Connector.view.Grid', {
         return Ext.Array.unique(aliases);
     },
 
-    showMeasureSelection : function() {
-        Connector.getService('Query').onQueryReady(function() {
-            this.getColumnSelector().setLockedMeasures(this.getLockedMeasureAliases());
-            this.getColumnSelector().setSelectedMeasures(this.getSelectedMeasureAliases());
-            this.getColumnSelector().loadSourceCounts();
+    showMeasureSelection : function()
+    {
+        Connector.getQueryService().onQueryReady(function()
+        {
+            var columnSelector = this.getColumnSelector();
+
+            columnSelector.setLockedMeasures(this.getLockedMeasureAliases());
+            columnSelector.setSelectedMeasures(this.getSelectedMeasureAliases());
+            columnSelector.loadSourceCounts();
+
             this.getMeasureSelectionWindow(this.getSelectColumnsButton().getEl()).show();
         }, this);
     },
