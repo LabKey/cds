@@ -2093,26 +2093,61 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getWrappedMeasures : function(activeMeasures)
+    isSameSource : function(x, y)
     {
-        var wrappedMeasures = [
-            this._getAxisWrappedMeasure(activeMeasures.x),
-            this._getAxisWrappedMeasure(activeMeasures.y)
-        ];
-        wrappedMeasures.push(activeMeasures.color ? {measure : activeMeasures.color} : null);
-
-        return wrappedMeasures;
+        return Ext.isObject(x) && Ext.isObject(y) && x.queryName == y.queryName && x.schemaName == y.schemaName;
     },
 
-    _getAxisWrappedMeasure : function(measure)
+    setAxisNameMeasureProperty : function(measure, x, y)
+    {
+        // if color source matches x or y, set the color wrapped measure axisName to match as well
+        if (x && this.isSameSource(measure, x))
+        {
+            measure.axisName = 'x';
+        }
+        else if (y && this.isSameSource(measure, y))
+        {
+            measure.axisName = 'y';
+        }
+    },
+
+    getWrappedMeasures : function(activeMeasures)
+    {
+        return [
+            this._getAxisWrappedMeasure(activeMeasures.x, 'x'),
+            this._getAxisWrappedMeasure(activeMeasures.y, 'y'),
+            this._getColorWrappedMeasure(activeMeasures)
+        ];
+    },
+
+    _getColorWrappedMeasure : function(activeMeasures)
+    {
+        if (!activeMeasures.color)
+        {
+            return null;
+        }
+
+        var wrappedMeasure = {measure : Ext.clone(activeMeasures.color)};
+        this.setAxisNameMeasureProperty(wrappedMeasure.measure, activeMeasures.x, activeMeasures.y);
+        return wrappedMeasure;
+    },
+
+    _getAxisWrappedMeasure : function(measure, axis)
     {
         if (!measure)
         {
             return null;
         }
 
-        var wrappedMeasure = {measure : measure},
+        var wrappedMeasure = {
+                measure : Ext.clone(measure)
+            },
             options = measure.options;
+
+        if (Ext.isDefined(axis))
+        {
+            wrappedMeasure.measure.axisName = axis;
+        }
 
         if (measure.variableType == 'TIME')
         {
@@ -2194,12 +2229,16 @@ Ext.define('Connector.view.Chart', {
         {
             filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
             if (!Ext.isEmpty(filterMeasures)) {
-                measures = measures.concat(filterMeasures);
+                Ext.each(filterMeasures, function(filterMeasure)
+                {
+                    this.setAxisNameMeasureProperty(filterMeasure.measure, activeMeasures.x, activeMeasures.y);
+                    measures.push(filterMeasure);
+                }, this);
             }
         }
 
         return {
-            measures: queryService.mergeMeasures(measures),
+            measures: measures,
             wrapped: wrappedMeasures
         };
     },
@@ -2425,23 +2464,26 @@ Ext.define('Connector.view.Chart', {
                 query = activeMeasures[axis].queryName;
 
                 // always add in the Container and SubjectId columns for a selected measure on the X or Y axis
-                this.addValuesToMeasureMap(measuresMap, schema, query, 'Container', 'VARCHAR');
-                this.addValuesToMeasureMap(measuresMap, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
+                this.addValuesToMeasureMap(measuresMap, axis, schema, query, 'Container', 'VARCHAR');
+                this.addValuesToMeasureMap(measuresMap, axis, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
                 {
-                    this.addValuesToMeasureMap(measuresMap, schema, query, 'SequenceNum', 'DOUBLE');
+                    this.addValuesToMeasureMap(measuresMap, axis, schema, query, 'SequenceNum', 'DOUBLE');
                 }
 
                 // if time is a selected axis, include the 'ParticipantSequenceNum' to allow for resolving
                 // time-based filters (a.k.a. Subject-Visit filters)
                 if (activeMeasures[axis].variableType === 'TIME')
                 {
-                    this.addValuesToMeasureMap(measuresMap,
-                            Connector.studyContext.gridBaseSchema,
-                            Connector.studyContext.gridBase,
-                            'ParticipantSequenceNum', 'VARCHAR'
+                    this.addValuesToMeasureMap(
+                        measuresMap,
+                        axis,
+                        Connector.studyContext.gridBaseSchema,
+                        Connector.studyContext.gridBase,
+                        'ParticipantSequenceNum',
+                        'VARCHAR'
                     );
                 }
 
@@ -2457,7 +2499,7 @@ Ext.define('Connector.view.Chart', {
                         }
 
                         measureRecord = Connector.getQueryService().getMeasureRecordByAlias(alias);
-                        this.addValuesToMeasureMap(measuresMap, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
+                        this.addValuesToMeasureMap(measuresMap, axis, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
                     }, this);
                 }
             }
@@ -2473,13 +2515,14 @@ Ext.define('Connector.view.Chart', {
         return additionalMeasuresArr;
     },
 
-    addValuesToMeasureMap : function(measureMap, schema, query, name, type, values)
+    addValuesToMeasureMap : function(measureMap, axis, schema, query, name, type, values)
     {
-        var key = schema + '|' + query + '|' + name;
+        var key = schema + '|' + query + '|' + name + '|' + axis;
 
         if (!measureMap[key]) 
         {
             measureMap[key] = {
+                axis: axis,
                 schemaName: schema,
                 queryName: query,
                 name: name,

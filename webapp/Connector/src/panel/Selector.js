@@ -738,17 +738,29 @@ Ext.define('Connector.panel.Selector', {
     },
 
     getAdvancedOptionValues : function() {
+        var dimensionFieldHidden = {},
+            values;
+
         if (this.disableAdvancedOptions) {
             return null;
         }
 
-        var values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
+        // track wich of the assay dimension advanced option fields are hidden so we don't return them as part of the values object
+        Ext.each(this.advancedOptionCmps, function(advancedOptionItem)
+        {
+            dimensionFieldHidden[advancedOptionItem.getHiddenField().name] = advancedOptionItem.hidden;
+        });
+
+        values = this.getAdvancedPane().getValues(false /*asString*/, false /*dirtyOnly*/, false /*includeEmptyText*/, true /*useDataValues*/);
 
         // move the dimension selections into a separate map to keep them separate
         values.dimensions = {};
         Ext.iterate(values, function(alias, val) {
             if (this.boundDimensionAliases.indexOf(alias) != -1) {
-                values.dimensions[alias] = val;
+                if (!dimensionFieldHidden[alias])
+                {
+                    values.dimensions[alias] = val;
+                }
 
                 // remove the dimension alias/value from the parent object so we just leave
                 // the non-dimension properties (i.e. visit tag alignment and scale info)
@@ -774,8 +786,10 @@ Ext.define('Connector.panel.Selector', {
     },
 
     bindDimensions : function() {
-        var advancedOptionCmps = [], measureSetAliases = [], measureSet = [],
+        var measureSetAliases = [], measureSet = [],
                 alias, advancedOptionCmp;
+
+        this.advancedOptionCmps = [];
 
         Ext.each(this.getDimensionsForMeasure(this.activeMeasure), function(dimension) {
 
@@ -783,7 +797,7 @@ Ext.define('Connector.panel.Selector', {
             this.boundDimensionAliases.push(alias);
 
             advancedOptionCmp = this.createAdvancedOptionCmp(alias, dimension);
-            advancedOptionCmps.push(advancedOptionCmp);
+            this.advancedOptionCmps.push(advancedOptionCmp);
 
             // keep track of the distinct set of measures used for all advanced options in this source
             Ext.each(advancedOptionCmp.getMeasureSet(), function(measure) {
@@ -805,23 +819,23 @@ Ext.define('Connector.panel.Selector', {
         if (measureSet.length > 0) {
             // query for the distinct set of values across all of the measures involved in the dimension set
             this.queryService.getMeasureSetDistinctValues(measureSet, function(data) {
-                this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, data);
+                this.processMeasureSetDistinctValues(measureSet, data);
             }, this);
         }
         else {
-            this.processMeasureSetDistinctValues(advancedOptionCmps, measureSet, []);
+            this.processMeasureSetDistinctValues(measureSet, []);
         }
     },
 
-    processMeasureSetDistinctValues : function(advancedOptionCmps, measureSet, data) {
+    processMeasureSetDistinctValues : function(measureSet, data) {
         var store = this.createMeasureSetStore(measureSet, data);
 
         this.insertDimensionHeader();
 
         // populate the store for each dimension option and add it to the panel
         // issue 23861: add them in the reverse order so that parent components can update children appropriately
-        for (var i = advancedOptionCmps.length - 1; i >= 0; i--) {
-            var advancedOption = advancedOptionCmps[i],
+        for (var i = this.advancedOptionCmps.length - 1; i >= 0; i--) {
+            var advancedOption = this.advancedOptionCmps[i],
                 dimension = advancedOption.dimension,
                 alias = dimension.getFilterMeasure().get('alias'),
                 storeFilter = dimension.getDistinctValueStoreFilter();

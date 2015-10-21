@@ -373,7 +373,7 @@ Ext.define('Connector.utility.Query', {
             }
             else
             {
-                SELECT.push(",\n\tNULL AS " + alias + title);
+                SELECT.push(",\n\tCAST(NULL AS " + m.measure.type + ") AS " + alias + title);
             }
         }, this);
 

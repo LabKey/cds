@@ -121,6 +121,7 @@ Ext.define('Connector.model.Measure', {
 
         createMeasureRecord : function(obj) {
             return new LABKEY.Query.Visualization.Measure({
+                axisName: obj.axis,
                 schemaName: obj.schemaName,
                 queryName: obj.queryName,
                 name: obj.name,

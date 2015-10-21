@@ -141,34 +141,40 @@ Ext.define('Connector.model.ChartData', {
         return measure.alias;
     },
 
-    getDimensionKeys : function(x, y, excludeAliases) {
+    getDimensionKeys : function(x, y, excludeAliases)
+    {
         var measureSet = this.getMeasureSet(),
-            dimensionKeys = [], sharedKeys = [],
-            useSharedKeys = Ext.isDefined(this.getColumnAliasMap()[QueryUtils.DATASET_ALIAS]);
+            dimensionKeys = [],
+            sharedKeys = [];
 
         // Note: we don't exclude the color measure from the dimension keys
         // and we only exclude the x measure if it is continuous
         excludeAliases.push(y.alias);
-        if (x.isContinuous) {
+        if (x.isContinuous)
+        {
             excludeAliases.push(x.alias);
         }
 
         // return a list of column aliases for all measureSet objects which are dimensions
         // and not in the exclude list (i.e. plot measures)
-        Ext.each(measureSet, function(m) {
-            if (m.measure.isDimension) {
+        Ext.each(measureSet, function(m)
+        {
+            if (m.measure.isDimension)
+            {
                 var alias = this.getAliasFromMeasure(m.measure);
-                if (alias && excludeAliases.indexOf(alias) == -1) {
+                if (alias && excludeAliases.indexOf(alias) == -1 && dimensionKeys.indexOf(alias) == -1)
+                {
                     dimensionKeys.push(alias);
                 }
 
-                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0) {
+                if (alias && alias.indexOf(QueryUtils.STUDY_ALIAS_PREFIX) == 0 && sharedKeys.indexOf(alias) == -1)
+                {
                     sharedKeys.push(alias);
                 }
             }
         }, this);
 
-        return useSharedKeys ? sharedKeys : dimensionKeys;
+        return x.query != null && !this.isSameSource(x, y) && sharedKeys.length > 0 ? sharedKeys : dimensionKeys;
     },
 
     getBaseMeasureConfig : function() {
@@ -198,7 +204,8 @@ Ext.define('Connector.model.ChartData', {
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
             negX = false, negY = false,
-            yMeasureFilter, xMeasureFilter, excludeAliases = [],
+            yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
+            excludeAliases = [],
             brushFilterAliases = [], mainCount = 0,
             _row;
 
@@ -247,31 +254,45 @@ Ext.define('Connector.model.ChartData', {
             isContinuous: Connector.model.ChartData.isContinuousMeasure(y)
         };
 
-        // if we are plotting the same continuous variable on both the x and y axis,
-        // we need to filter the AxisMeasureStore for each axis based on the dimension filters (if they differ)
-        if (xa.schema == ya.schema && xa.query == ya.query) {
-            yMeasureFilter = {};
-            xMeasureFilter = {};
-
+        // we need to keep track of which dimensions have different filter values between the x and y axis
+        if (this.isSameSource(xa, ya))
+        {
             // keep track of which dimensions have different filter values between the x and y axis
-            Ext.each(Object.keys(y.options.dimensions), function(alias) {
+            Ext.each(Object.keys(y.options.dimensions), function(alias)
+            {
                 var yDimValue = y.options.dimensions[alias];
                 var xDimValue = x.options.dimensions[alias];
 
-                if (!this.arraysEqual(xDimValue, yDimValue)) {
-                    if (yDimValue) {
-                        yMeasureFilter[alias] = yDimValue;
-                    }
-                    if (xDimValue) {
-                        xMeasureFilter[alias] = xDimValue;
-                    }
-
-                    // issue 24008: only exclude the alias if the filters are for a single value on each side
-                    if (xDimValue != null && xDimValue.length == 1 && yDimValue != null && yDimValue.length == 1) {
+                if (!this.arraysEqual(xDimValue, yDimValue))
+                {
+                    // TODO (is this still relevant?) issue 24008: only exclude the alias if the filters are for a single value on each side
+                    if (xDimValue != null && xDimValue.length == 1 && yDimValue != null && yDimValue.length == 1)
+                    {
                         excludeAliases.push(alias);
                     }
                 }
             }, this);
+        }
+
+        // if there is a DATASET_ALIAS column from the axisName property, use it to filter
+        // TODO issue with demographic color variable not applied to both gutter plots
+        if (this.hasDatasetAliasColumn())
+        {
+            xMeasureFilter[QueryUtils.DATASET_ALIAS] = 'x';
+            yMeasureFilter[QueryUtils.DATASET_ALIAS] = 'y';
+
+            // if the color variable is from the same source as either x or y, but not both, use that for the zMeasure filter
+            if (!this.isSameSource(ca, xa) || !this.isSameSource(ca, ya))
+            {
+                if (this.isSameSource(ca, xa))
+                {
+                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = 'x';
+                }
+                else if (this.isSameSource(ca, ya))
+                {
+                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = 'y';
+                }
+            }
         }
 
         // configure AxisMeasureStore based on the x, y, and color measures selections
@@ -280,7 +301,7 @@ Ext.define('Connector.model.ChartData', {
             axisMeasureStore.setXMeasure(this.getMeasureStore(), _xid, xMeasureFilter);
         }
         if (_cid) {
-            axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid);
+            axisMeasureStore.setZMeasure(this.getMeasureStore(), _cid, zMeasureFilter);
         }
 
         // select the data out of AxisMeasureStore based on the dimensions
@@ -399,6 +420,14 @@ Ext.define('Connector.model.ChartData', {
                 setYLinear: negY
             }
         });
+    },
+
+    isSameSource : function(x, y) {
+        return x.query == y.query && x.schema == y.schema;
+    },
+
+    hasDatasetAliasColumn : function() {
+        return Ext.isDefined(this.getColumnAliasMap()[QueryUtils.DATASET_ALIAS]);
     },
 
     setAxisDomain : function(axisDomain, axis, hasNegVal, type) {
