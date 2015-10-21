@@ -119,28 +119,31 @@ Ext.define('Connector.grid.Panel', {
             }, this);
         }
 
-        Ext.each(columns, function(column)
-        {
-            var meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex),
-                lookupStore;
-
-            if (meta)
-            {
-                // listen for changes to the underlying data in lookup store
-                if (this.allowLookups === true && Ext.isObject(meta.lookup) &&
-                    meta.lookups !== false && meta.lookup.isPublic === true)
-                {
-                    lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
-
-                    // this causes the whole grid to rerender, which is very expensive.  better solution?
-                    if (lookupStore)
-                    {
-                        this.mon(lookupStore, 'load', this.onLookupStoreLoad, this, {delay: 100});
-                    }
-                }
-            }
-
-        }, this);
+        // This is removed in an effort to speed-up grid rendering. If the usage of lookup
+        // columns becomes something that is needed again, comment this code back in to get
+        // column displays to resolve properly.
+        //Ext.each(columns, function(column)
+        //{
+        //    var meta = LABKEY.ext4.Util.findFieldMetadata(this.store, column.dataIndex),
+        //        lookupStore;
+        //
+        //    if (meta)
+        //    {
+        //        // listen for changes to the underlying data in lookup store
+        //        if (this.allowLookups === true && Ext.isObject(meta.lookup) &&
+        //            meta.lookups !== false && meta.lookup.isPublic === true)
+        //        {
+        //            lookupStore = LABKEY.ext4.Util.getLookupStore(meta);
+        //
+        //            // this causes the whole grid to rerender, which is very expensive.  better solution?
+        //            if (lookupStore)
+        //            {
+        //                this.mon(lookupStore, 'load', this.onLookupStoreLoad, this, {delay: 100});
+        //            }
+        //        }
+        //    }
+        //
+        //}, this);
 
         return columns;
     },
