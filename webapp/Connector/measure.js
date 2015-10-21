@@ -253,7 +253,7 @@ Ext.define('Connector.measure.Configuration', {
             // See Connector.model.Measure for the set of properties and default values.
             measures: {
                 'cds_Study_Days': {
-                    sortOrder: -4,
+                    sortOrder: 0,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     inNotNullSet: false,
@@ -265,7 +265,7 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'TIME'
                 },
                 'cds_Study_Weeks': {
-                    sortOrder: -3,
+                    sortOrder: 1,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     inNotNullSet: false,
@@ -276,7 +276,7 @@ Ext.define('Connector.measure.Configuration', {
                     variableType: 'TIME'
                 },
                 'cds_Study_Months': {
-                    sortOrder: -2,
+                    sortOrder: 2,
                     schemaName: Connector.studyContext.gridBaseSchema,
                     queryName: Connector.studyContext.gridBase,
                     inNotNullSet: false,

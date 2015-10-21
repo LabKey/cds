@@ -210,7 +210,7 @@ Ext.define('Connector.model.Grid', {
                 if (measure)
                 {
                     var mapAlias = QueryUtils.ensureAlignmentAlias(wrapped),
-                        includeDateOptions = measure.alias !== mapAlias;
+                        includeDateOptions = measure.variableType === 'TIME';
 
                     if (!measureMap[mapAlias])
                     {

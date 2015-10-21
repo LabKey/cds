@@ -754,7 +754,7 @@
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Unaligned)'},
                         y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
-                        x: {value: 'Time Points ' + interval + ' (Aligned by Day 0)'}
+                        x: {value: 'Time Points Weeks (Aligned by Day 0)'}
                     };
                     config.aes = {
                         y: function(row) {
@@ -801,7 +801,7 @@
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
 
-                    axisMeasureStore.setXMeasure(measureStore, interval);
+                    axisMeasureStore.setXMeasure(measureStore, 'cds_Study_Months_Last_Vaccination');
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
@@ -816,7 +816,7 @@
                     config.labels = {
                         main: {value: 'Time Point X-Axis Meaure (Aligned)'},
                         y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
-                        x: {value: 'Time Points ' + interval + ' (Last Vaccination)'}
+                        x: {value: 'Time Points Months (Last Vaccination)'}
                     };
                     config.aes = {
                         y: function(row) {

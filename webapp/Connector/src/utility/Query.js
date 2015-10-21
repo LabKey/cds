@@ -361,7 +361,7 @@ Ext.define('Connector.utility.Query', {
                     if (m.dateOptions.zeroDayVisitTag != null)
                     {
                         visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-                        title = " @title='" + (colLabel || alias) + " (" + visitAlignmentTag + ")'";
+                        title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
                     }
 
                     SELECT.push(",\n\t" + this._getIntervalSelectClause(m, m.dateOptions.zeroDayVisitTag != null) + " AS " + alias + title);
