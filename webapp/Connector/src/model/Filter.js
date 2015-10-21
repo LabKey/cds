@@ -7,11 +7,44 @@ Ext.define('Connector.model.Filter', {
     extend: 'LABKEY.app.model.Filter',
 
     fields: [
+        /**
+         * Calculated field that is updated whenever the filter is modified (including creation).
+         * Can be accessed using filter.getDataFilters()
+         */
         {name : 'dataFilter', defaultValue: {}},
         {name : 'measureSet', defaultValue: []},
-        {name : 'isAggregated', defaultValue: false},
+        {name : 'isAggregated', type: 'boolean', defaultValue: false},
         {name : 'xLabel', defaultValue: undefined},
-        {name : 'yLabel', defaultValue: undefined}
+        {name : 'yLabel', defaultValue: undefined},
+
+        {name : 'isTime', type: 'boolean', defaultValue: false},
+        {name : 'timeFilters', defaultValue: [], convert: function(raw)
+        {
+            var filters = [];
+            if (Ext.isArray(raw))
+            {
+                Ext.each(raw, function(r)
+                {
+                    if (Ext.isString(r))
+                    {
+                        var build = LABKEY.Filter.getFiltersFromUrl(r, 'query');
+                        if (Ext.isArray(build))
+                        {
+                            filters.push(build[0]); // assume single filters
+                        }
+                    }
+                    else if (Ext.isDefined(r))
+                    {
+                        filters.push(r);
+                    }
+                });
+            }
+            else if (Ext.isDefined(raw))
+            {
+                filters.push(raw);
+            }
+            return filters;
+        }}
     ],
 
     statics: {
@@ -69,21 +102,34 @@ Ext.define('Connector.model.Filter', {
         }
     },
 
-    constructor : function(config) {
+    constructor : function(config)
+    {
         this.callParent([config]);
+        this._initFilter();
+    },
 
-        Connector.getQueryService().onQueryReady(function() {
+    _initFilter : function()
+    {
+        Connector.getQueryService().onQueryReady(function()
+        {
             this._generateMeasures();
             this._generateDataFilters();
         }, this);
     },
 
-    getDataFilters : function() {
+    getDataFilters : function()
+    {
         return this.get('dataFilter');
     },
 
-    getMeasureSet : function() {
+    getMeasureSet : function()
+    {
         return Ext.clone(this.get('measureSet'));
+    },
+
+    getTimeFilters : function()
+    {
+        return this.get('timeFilters')
     },
 
     /**
@@ -91,14 +137,13 @@ Ext.define('Connector.model.Filter', {
      * @param fieldName
      * @param newValue
      */
-    'set': function(fieldName, newValue) {
+    'set': function(fieldName, newValue)
+    {
         this.callParent(arguments);
 
-        if (!this.SET_LOCK) {
-            Connector.getQueryService().onQueryReady(function() {
-                this._generateMeasures();
-                this._generateDataFilters();
-            }, this);
+        if (!this.SET_LOCK)
+        {
+            this._initFilter();
         }
     },
 
@@ -108,21 +153,29 @@ Ext.define('Connector.model.Filter', {
      * @param newValue
      * @private
      */
-    _set : function(fieldName, newValue) {
+    _set : function(fieldName, newValue)
+    {
         this.SET_LOCK = true;
         this.set(fieldName, newValue);
         this.SET_LOCK = false;
     },
 
-    isAggregated : function() {
+    isAggregated : function()
+    {
         return this.get('isAggregated') === true;
+    },
+
+    isTime : function()
+    {
+        return this.get('isTime') === true;
     },
 
     /**
      * Returns true iff the x and y plotMeasures are the same source (e.g. NAb and NAb)
      * @returns {*|boolean}
      */
-    samePlotMeasureSources : function() {
+    samePlotMeasureSources : function()
+    {
         var plotMeasures = this.get('plotMeasures');
         return plotMeasures[0] && plotMeasures[1] &&
             plotMeasures[0].measure.queryName.toLowerCase() === plotMeasures[1].measure.queryName.toLowerCase();
@@ -133,8 +186,8 @@ Ext.define('Connector.model.Filter', {
      * These measures are persisted in 'measureSet' property.
      * @private
      */
-    _generateMeasures : function() {
-
+    _generateMeasures : function()
+    {
         var queryService = Connector.getQueryService(),
             subjectMeasure = queryService.getMeasure(queryService.getSubjectColumnAlias()),
             measureMap = {};
@@ -145,7 +198,8 @@ Ext.define('Connector.model.Filter', {
             filterArray: []
         };
 
-        if (this.isAggregated()) {
+        if (this.isAggregated())
+        {
             // aggregation filter
 
             /**
@@ -154,23 +208,27 @@ Ext.define('Connector.model.Filter', {
             var filter = this._generateFilter(subjectMeasure.alias, this.get('members'));
             measureMap[subjectMeasure.alias].filterArray.push(filter);
         }
-        else if (this.isPlot() && this.isGrid()) {
+        else if (this.isPlot() && this.isGrid())
+        {
             // plot selection filter
 
             this._processPlotMeasures(measureMap);
             this._processGridMeasures(measureMap);
         }
-        else if (this.isPlot()) {
+        else if (this.isPlot())
+        {
             // in the plot filter
 
             this._processPlotMeasures(measureMap);
         }
-        else if (this.isGrid()) {
+        else if (this.isGrid())
+        {
             // grid filter
 
             this._processGridMeasures(measureMap);
         }
-        else {
+        else
+        {
             // olap filter -- nothing to do
         }
 
@@ -183,19 +241,21 @@ Ext.define('Connector.model.Filter', {
      * @param measureMap
      * @private
      */
-    _processPlotMeasures : function(measureMap) {
+    _processPlotMeasures : function(measureMap)
+    {
         var queryService = Connector.getQueryService();
 
-        Ext.each(this.get('plotMeasures'), function(plotMeasure) {
-            if (plotMeasure) {
+        Ext.each(this.get('plotMeasures'), function(plotMeasure)
+        {
+            if (plotMeasure)
+            {
+                var measure = queryService.getMeasure(plotMeasure.measure.alias);
 
-                var measure = queryService.getMeasure(plotMeasure.measure.alias),
-                    alias;
-
-                if (measure) {
-
+                if (measure)
+                {
                     // we still respect the value if it is set explicitly on the measure
-                    if (!Ext.isDefined(measure.inNotNullSet)) {
+                    if (!Ext.isDefined(measure.inNotNullSet))
+                    {
                         measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
                     }
 
@@ -204,29 +264,53 @@ Ext.define('Connector.model.Filter', {
                         filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
                     };
 
-                    if (plotMeasure.time) {
+                    if (plotMeasure.time)
+                    {
                         measureMap[measure.alias].time = plotMeasure.time;
                     }
-                    if (plotMeasure.dimension) {
+
+                    if (plotMeasure.dimension)
+                    {
                         measureMap[measure.alias].dimension = plotMeasure.dimension;
                     }
-                    if (plotMeasure.dateOptions) {
+
+                    if (plotMeasure.dateOptions)
+                    {
                         measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
                     }
 
                     // plotMeasures can have 'Advanced Options' (i.e. axis filters) which need to be added to the measure set
-                    Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord) {
-                        alias = LABKEY.Utils.getMeasureAlias(axisFilterRecord);
+                    Ext.each(Connector.model.Measure.getPlotAxisFilterMeasureRecords(plotMeasure.measure), function(axisFilterRecord)
+                    {
+                        var optionAlias = LABKEY.Utils.getMeasureAlias(axisFilterRecord),
+                            optionMeasure = queryService.getMeasure(optionAlias);
 
-                        // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
-                        if (Ext.isDefined(measureMap[alias]) && Ext.isArray(measureMap[alias].measure.values)) {
-                            measureMap[alias].measure.values = Ext.Array.unique(measureMap[alias].measure.values.concat(axisFilterRecord.values));
+                        if (optionMeasure)
+                        {
+                            // ensure mapping
+                            if (!measureMap[optionMeasure.alias])
+                            {
+                                measureMap[optionMeasure.alias] = {
+                                    measure: optionMeasure,
+                                    filterArray: []
+                                }
+                            }
+
+                            // ensure filters
+                            if (!Ext.isEmpty(axisFilterRecord.values))
+                            {
+                                if (Ext.isEmpty(measureMap[optionMeasure.alias].measure.values))
+                                {
+                                    measureMap[optionMeasure.alias].measure.values = [];
+                                }
+
+                                // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
+                                measureMap[optionMeasure.alias].measure.values = Ext.Array.unique(measureMap[optionMeasure.alias].measure.values.concat(axisFilterRecord.values));
+                            }
                         }
-                        else {
-                            measureMap[alias] = {
-                                measure: Ext.clone(measure),
-                                filterArray: []
-                            };
+                        else
+                        {
+                            console.warn('Unable to resolve measure from filter option:', optionAlias);
                         }
                     }, this);
                 }
@@ -526,6 +610,34 @@ Ext.define('Connector.model.Filter', {
             yFilter = Connector.Filter.compound(yfilterSet, 'AND');
 
         filterMap[Connector.Filter.COMPOUND_ALIAS] = [Connector.Filter.compound([xFilter, yFilter], 'OR')];
+    },
+
+    jsonify : function()
+    {
+        var jsonable = this.callParent();
+
+        if (Ext.isArray(this.getTimeFilters()))
+        {
+            var jsonGridFilters = [];
+            Ext.each(this.getTimeFilters(), function(filter)
+            {
+                if (filter)
+                {
+                    if (Ext.isString(filter))
+                    {
+                        jsonGridFilters.push(filter);
+                    }
+                    else
+                    {
+                        jsonGridFilters.push(filter.getURLParameterName() + '=' + filter.getURLParameterValue());
+                    }
+                }
+            });
+
+            jsonable.timeFilters = jsonGridFilters;
+        }
+
+        return jsonable;
     }
 });
 
