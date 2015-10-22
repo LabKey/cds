@@ -16,13 +16,24 @@
     };
     Ext = Ext4;
 
-    // set to undefined to use default getData
-    var ENDPOINT = LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api');   // TODO can enpoint now be removed?
-
     // Document Ready
     $(function() {
 
         console.info('Demo Measure Store! Each request will set the measure store to window.MS and data to window.DATA. Happy Plotting!');
+
+        // OVERRIDE return a static list used for this test page (since the QueryUtils relies on the QueryService to get this data
+        QueryUtils._getTables = function()
+        {
+            var tables = {
+                'study.demographics': QueryUtils._createTableObj('study', 'Demographics', ['container', 'subjectid']),
+                'study.ics':          QueryUtils._createTableObj('study', 'ICS', ['container', 'participantsequencenum'], true),
+                'study.bama':         QueryUtils._createTableObj('study', 'BAMA', ['container', 'participantsequencenum'], true),
+                'study.elispot':      QueryUtils._createTableObj('study', 'Elispot', ['container', 'participantsequencenum'], true),
+                'study.nab':          QueryUtils._createTableObj('study', 'NAb', ['container', 'participantsequencenum'], true)
+            };
+            tables[QueryUtils.SUBJECTVISIT_TABLE] = QueryUtils._createTableObj(Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, ['container', 'participantsequencenum']);
+            return tables;
+        };
 
         var PLOTS = {
             plotYMeasureXNone: plotYMeasureXNone,
@@ -99,7 +110,6 @@
                     { measure: getVisMeasure('ICS', 'lab_code')},
                     { measure: yMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -157,7 +167,6 @@
                     { measure: yMeasure},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -217,7 +226,6 @@
                     { measure: yMeasure},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -277,7 +285,6 @@
                     { measure: yMeasure},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -337,7 +344,6 @@
                     { measure: yMeasure},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -398,7 +404,6 @@
                     { measure: xMeasure},
                     { measure: getDemVisMeasure('Demographics', 'race')}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -470,7 +475,6 @@
 
                     { measure: getDemVisMeasure('Demographics', 'race')}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
                         filterX = {}, filterY = {};
@@ -548,7 +552,6 @@
                     { measure: getVisMeasure('NAb', 'lab_code')},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -613,7 +616,6 @@
                     { measure: getVisMeasure('ICS', 'lab_code')},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -680,7 +682,6 @@
                     { measure: getVisMeasure('BAMA', 'lab_code')},
                     { measure: xMeasure}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
 
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
@@ -720,7 +721,7 @@
         function plotYMeasureXWeeksUnaligned()
         {
             $('#plot').html('');
-            var interval = 'cds_Study_Weeks';
+            var interval = 'cds_GridBase_Weeks';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
             var xMeasure = getTimeMeasure(interval);
 
@@ -738,7 +739,6 @@
                     { measure: yMeasure},
                     { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: null}}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
                     axisMeasureStore.setXMeasure(measureStore, interval);
@@ -753,7 +753,7 @@
                     var config = getScatterPlotBaseConfig(data);
 
                     config.labels = {
-                        main: {value: 'Time Point X-Axis Meaure (Unaligned)'},
+                        main: {value: 'Time Point X-Axis Measure (Unaligned)'},
                         y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
                         x: {value: 'Time Points Weeks (Aligned by Day 0)'}
                     };
@@ -780,7 +780,7 @@
         function plotYMeasureXMonthsAligned()
         {
             $('#plot').html('');
-            var interval = 'cds_Study_Months';
+            var interval = 'cds_GridBase_Months';
             var yMeasure = getVisMeasure('NAb', 'titer_ic50', true);
             var xMeasure = getTimeMeasure(interval);
 
@@ -798,11 +798,10 @@
                     { measure: yMeasure},
                     { measure: xMeasure, dateOptions: {interval: interval, zeroDayVisitTag: 'Last Vaccination'}}
                 ],
-                endpoint: ENDPOINT,
                 success: function(measureStore) {
                     var axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create();
 
-                    axisMeasureStore.setXMeasure(measureStore, 'cds_Study_Months_Last_Vaccination');
+                    axisMeasureStore.setXMeasure(measureStore, 'cds_GridBase_Months_Last_Vaccination');
                     axisMeasureStore.setYMeasure(measureStore, measureToAlias(yMeasure));
 
                     var data = axisMeasureStore.select([
@@ -815,7 +814,7 @@
                     var config = getScatterPlotBaseConfig(data);
 
                     config.labels = {
-                        main: {value: 'Time Point X-Axis Meaure (Aligned)'},
+                        main: {value: 'Time Point X-Axis Measure (Aligned)'},
                         y: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'},
                         x: {value: 'Time Points Months (Last Vaccination)'}
                     };
@@ -895,7 +894,6 @@
                     { measure: antigenMeasure },
                     { measure: mifDeltaMeasure }
                 ],
-                endpoint: ENDPOINT,
                 success: onSuccessENV,
                 failure: onError
             });
@@ -908,7 +906,6 @@
                     { measure: antigenMeasure },
                     { measure: mifDeltaMeasure }
                 ],
-                endpoint: ENDPOINT,
                 success: onSuccessGAG,
                 failure: onError
             });
@@ -1030,7 +1027,6 @@
                     { measure: raceMeasure },
                     { measure: ageMeasure }
                 ],
-                endpoint: ENDPOINT,
                 success: onData,
                 failure: onError
             });

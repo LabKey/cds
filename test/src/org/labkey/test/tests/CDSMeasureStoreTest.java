@@ -103,14 +103,14 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
         ));
 
         verifyPlot(new Plot(
-            "Time Point X-Axis Meaure (Unaligned)",
+            "Time Point X-Axis Measure (Unaligned)",
             4396,
             new String[]{"200", "400", "600", "800", "1000", "1200", "1400", "1600", "1800"},
             new String[]{"0", "5", "10", "15", "20", "25", "30", "35", "40", "45"}
         ));
 
         verifyPlot(new Plot(
-            "Time Point X-Axis Meaure (Aligned)",
+            "Time Point X-Axis Measure (Aligned)",
             3920,
             new String[]{"200", "400", "600", "800", "1000", "1200", "1400", "1600", "1800"},
             new String[]{"-10", "-8", "-6", "-4", "-2", "0"}

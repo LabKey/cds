@@ -48,30 +48,36 @@ Ext.define('Connector.utility.Query', {
         return this._generateVisGetDataSql(config.measures, config.extraFilters).sql;
     },
 
+    _createTableObj : function(schema, query, joinKeys, isAssayDataset)
+    {
+        var obj = {};
+        obj.displayName = query;
+        obj.queryName = query.toLowerCase();
+        obj.fullQueryName = schema + '.' + obj.queryName;
+        obj.tableAlias = schema + '_' + obj.queryName;
+        obj.schemaName = schema;
+        obj.isAssayDataset = isAssayDataset === true;
+        obj.joinKeys = joinKeys;
+        return obj;
+    },
+
     _getTables : function()
     {
-        var table = function(schema, query, joinKeys, isAssayDataset)
+        // get the datasets from the query service and track properties for the joinKeys, isDemogrpahic, etc.
+        var datasetSources = Connector.getQueryService().getSources('queryType', 'datasets'),
+                schema, query, key, joinKeys, tables = {};
+        Ext.each(datasetSources, function(dataset)
         {
-            var obj = {};
-            obj.displayName = query;
-            obj.queryName = query.toLowerCase();
-            obj.fullQueryName = schema + '.' + obj.queryName;
-            obj.tableAlias = schema + '_' + obj.queryName;
-            obj.schemaName = schema;
-            obj.isAssayDataset = isAssayDataset === true;
-            obj.joinKeys = joinKeys;
-            return obj;
-        };
+            schema = dataset.get('schemaName');
+            query = dataset.get('queryName');
+            key = schema.toLowerCase() + '.' + query.toLowerCase();
+            joinKeys = dataset.get('isDemographic') ? ['container', 'subjectid'] : ['container', 'participantsequencenum'];
 
-        // TODO get the datasets from the query service instead of hardcoded
-        var tables = {
-            'study.demographics': new table('study', 'Demographics', ['container', 'subjectid']),
-            'study.ics':          new table('study', 'ICS', ['container', 'participantsequencenum'], true),
-            'study.bama':         new table('study', 'BAMA', ['container', 'participantsequencenum'], true),
-            'study.elispot':      new table('study', 'Elispot', ['container', 'participantsequencenum'], true),
-            'study.nab':          new table('study', 'NAb', ['container', 'participantsequencenum'], true)
-        };
-        tables[this.SUBJECTVISIT_TABLE] = new table(Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, ['container', 'participantsequencenum']);
+            tables[key] = this._createTableObj(schema, query, joinKeys, !dataset.get('isDemographic'));
+        }, this);
+
+        // add on the cds.GridBase query to the tables object
+        tables[this.SUBJECTVISIT_TABLE] = this._createTableObj(Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, ['container', 'participantsequencenum']);
 
         return tables;
     },
@@ -243,6 +249,7 @@ Ext.define('Connector.utility.Query', {
 
         // generate the UNION ALL (checkerboard) sql for the set of datasets
         var unionSQL = '',
+            debugUnionSQL = '',
             union = '',
             term,
             hasMultiple = Object.keys(datasets).length > 1;
@@ -251,6 +258,13 @@ Ext.define('Connector.utility.Query', {
         {
             term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap);
             unionSQL += union + term.sql;
+
+            if (LABKEY.devMode)
+            {
+                term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, true);
+                debugUnionSQL += union + term.sql;
+            }
+
             union = "\nUNION ALL\n";
 
             Ext.applyIf(columnAliasMap, term.columnAliasMap);
@@ -258,9 +272,14 @@ Ext.define('Connector.utility.Query', {
 
         // sort by the study, subject, and visit
         var orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
-        var sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
+        var sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL,
+            debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
 
-        //console.log(sql);
+        if (LABKEY.devMode)
+        {
+            var SHOW_TRUNCATED_IN_CLAUSES = true;
+            //console.log(SHOW_TRUNCATED_IN_CLAUSES ? debugSql : sql);
+        }
 
         return {
             sql: sql,
@@ -268,7 +287,7 @@ Ext.define('Connector.utility.Query', {
         };
     },
 
-    _generateVisDatasetSql : function(allMeasures, datasetName, tables, hasMultiple, extraFilterMap)
+    _generateVisDatasetSql : function(allMeasures, datasetName, tables, hasMultiple, extraFilterMap, forDebugging)
     {
         datasetName = datasetName || this.SUBJECTVISIT_TABLE;
 
@@ -427,14 +446,14 @@ Ext.define('Connector.utility.Query', {
             {
                 Ext.each(mdef.filterArray, function(f)
                 {
-                    WHERE.push(this._getWhereClauseFromFilter(f, mdef));
+                    WHERE.push(this._getWhereClauseFromFilter(f, mdef, false /* recursed */, forDebugging));
                 }, this);
             }
             else if (Ext.isArray(mdef.measure.values))
             {
                 fType = mdef.measure.values.length == 1 ? LABKEY.Filter.Types.EQUAL : LABKEY.Filter.Types.IN;
                 f = LABKEY.Filter.create(mdef.measure.name, mdef.measure.values.join(';'), fType);
-                WHERE.push(this._getWhereClauseFromFilter(f, mdef));
+                WHERE.push(this._getWhereClauseFromFilter(f, mdef, false /* recursed */, forDebugging));
             }
         }, this);
 
@@ -445,7 +464,7 @@ Ext.define('Connector.utility.Query', {
             {
                 Ext.each(filterDef.filterArray, function(filter)
                 {
-                    WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures));
+                    WHERE.push(this._getWhereClauseFromFilter(filter, filterDef.measures, false /* recursed */, forDebugging));
                 }, this);
             }, this);
         }
@@ -482,7 +501,7 @@ Ext.define('Connector.utility.Query', {
         return 1;
     },
 
-    _getWhereClauseFromFilter : function(_f, measure, recursed)
+    _getWhereClauseFromFilter : function(_f, measure, recursed, forDebugging)
     {
         var f = _f,
             _measure = measure,
@@ -496,7 +515,7 @@ Ext.define('Connector.utility.Query', {
                 var clauses = [];
                 for (var i=0; i < f._filters.length; i++)
                 {
-                    clauses.push(this._getWhereClauseFromFilter(f._filters[i], measure, true /* recursed */));
+                    clauses.push(this._getWhereClauseFromFilter(f._filters[i], measure, true /* recursed */, forDebugging));
                 }
                 return '(' + clauses.join(' ' + f.operator + ' ') + ')';
             }
@@ -535,11 +554,18 @@ Ext.define('Connector.utility.Query', {
                 clause = columnName + (operator==='in' ? " IN (" : " NOT IN (");
                 v = Ext.isArray(f.getValue()) ? f.getValue()[0] : f.getValue();
                 arr = v.split(';');
-                arr.forEach(function(v)
+                if (forDebugging === true && arr.length > 10)
                 {
-                    clause += sep + literalFn(v);
-                    sep = ",";
-                });
+                    clause += '{MORE THAN 10 ITEMS}';
+                }
+                else
+                {
+                    arr.forEach(function(v)
+                    {
+                        clause += sep + literalFn(v);
+                        sep = ',';
+                    });
+                }
                 clause += ')';
                 break;
             case 'isblank':

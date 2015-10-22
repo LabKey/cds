@@ -291,6 +291,16 @@ Ext.define('Connector.controller.Query', {
         return dimensionArray;
     },
 
+    /** Query the SOURCE_STORE for a given set of records
+     * @param property
+     * @param value
+     * @returns collection of matched records
+     */
+    getSources : function(property, value)
+    {
+        return this.SOURCE_STORE.query(property, value, false, true, true).items;
+    },
+
     /**
      * Returns the array of distinct rows for the measure set combination. The results are cached for the measure set using a key derived from the measure's aliases.
      * @param {Array} measureSet Array of measures to use in the SELECT DISTINCT query. It is expected that they are all from the same schema/query.
