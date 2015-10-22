@@ -24,7 +24,7 @@ Ext.define('Connector.utility.Query', {
      */
     getData : function(config)
     {
-        var result = this._generateVisGetDataSql(config.measures, config.extraFilters);
+        var result = this._generateVisGetDataSql(config.measures, config.extraFilters, {});
 
         LABKEY.Query.executeSql({
             schemaName: 'study',
@@ -45,7 +45,12 @@ Ext.define('Connector.utility.Query', {
 
     getDataSQL : function(config)
     {
-        return this._generateVisGetDataSql(config.measures, config.extraFilters).sql;
+        return this._generateVisGetDataSql(config.measures, config.extraFilters, {}).sql;
+    },
+
+    getSubjectIntersectSQL : function(config)
+    {
+        return this._generateVisGetDataSql(config.measures, config.extraFilters, {"subjectOnly":true,"intersect":true}).sql;
     },
 
     _createTableObj : function(schema, query, joinKeys, isAssayDataset)
@@ -143,7 +148,7 @@ Ext.define('Connector.utility.Query', {
         throw "unsupported constant: " + v;
     },
 
-    _generateVisGetDataSql : function(measuresIN, extraFilters)
+    _generateVisGetDataSql : function(measuresIN, extraFilters, options)
     {
         var me = this,
             tables = this._getTables(),
@@ -253,27 +258,33 @@ Ext.define('Connector.utility.Query', {
             union = '',
             term,
             hasMultiple = Object.keys(datasets).length > 1;
+        var setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n";
 
         Ext.iterate(datasets, function(name)
         {
-            term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap);
+            term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, options);
             unionSQL += union + term.sql;
 
             if (LABKEY.devMode)
             {
-                term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, true);
+                term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, options, true);
                 debugUnionSQL += union + term.sql;
             }
 
-            union = "\nUNION ALL\n";
+            union = setOperator;
 
             Ext.applyIf(columnAliasMap, term.columnAliasMap);
         }, this);
 
         // sort by the study, subject, and visit
-        var orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
+        var orderSQL;
+        if (options.subjectOnly)
+            orderSQL = "\nORDER BY 1 ASC";
+        else
+            orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
+
         var sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL,
-            debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
+                debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
 
         if (LABKEY.devMode)
         {
@@ -287,7 +298,7 @@ Ext.define('Connector.utility.Query', {
         };
     },
 
-    _generateVisDatasetSql : function(allMeasures, datasetName, tables, hasMultiple, extraFilterMap, forDebugging)
+    _generateVisDatasetSql : function(allMeasures, datasetName, tables, hasMultiple, extraFilterMap, options, forDebugging)
     {
         datasetName = datasetName || this.SUBJECTVISIT_TABLE;
 
@@ -312,89 +323,103 @@ Ext.define('Connector.utility.Query', {
         var SELECT = ["SELECT "],
             sep = "\n\t";
 
-        if (hasMultiple) {
-            // only include the Dataset column if we have multiple assay datasets in the query
-            SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\" @title=\'Dataset\'");
-            columnAliasMap[this.DATASET_ALIAS] = {name: 'Dataset'};
-            sep = ",\n\t";
-        }
-        SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS +'" @title=\'Container\''); sep = ",\n\t";
-        SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS +'" @title=\'Subject Id\'');
-        SELECT.push(sep + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS +'" @title=\'Sequence Num\'');
-        SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS +'" @title=\'Participant Sequence Num\'');
-
-        columnAliasMap[this.CONTAINER_ALIAS] = {
-            name: 'Container',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
-
-        columnAliasMap[this.SUBJECT_ALIAS] = {
-            name: 'SubjectId',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
-
-        columnAliasMap[this.SEQUENCENUM_ALIAS] = {
-            name: 'SequenceNum',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
-
-        columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
-            name: 'ParticipantSequenceNum',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
-
-        Ext.each(allMeasures, function(m)
+        if (options.subjectOnly)
         {
-            var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
-                    || m.measure.name.toLowerCase() == 'container'
-                    || m.measure.name.toLowerCase() == 'sequencenum'
-                    || m.measure.name.toLowerCase() == 'participantsequencenum',
-                alias = m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure),
-                colLabel = m.measure.shortCaption || m.measure.label,
-                title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";
-
-            if (acceptMeasureForSelect(m))
+            SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
+            columnAliasMap[this.SUBJECT_ALIAS] = {
+                name: 'SubjectId',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+        }
+        else
+        {
+            if (hasMultiple)
             {
-                alias = this.ensureAlignmentAlias(m, (m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure)));
+                // only include the Dataset column if we have multiple assay datasets in the query
+                SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\" @title=\'Dataset\'");
+                columnAliasMap[this.DATASET_ALIAS] = {name: 'Dataset'};
+                sep = ",\n\t";
             }
+            SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
+            sep = ",\n\t";
+            SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
+            SELECT.push(sep + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS + '" @title=\'Sequence Num\'');
+            SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS + '" @title=\'Participant Sequence Num\'');
 
-            if (columnAliasMap[alias] || isKeyCol)
-            {
-                return;
-            }
-
-            columnAliasMap[alias] = {
-                name: m.measure.name,
-                schemaName: m.measure.schemaName,
-                queryName: m.measure.queryName
+            columnAliasMap[this.CONTAINER_ALIAS] = {
+                name: 'Container',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
             };
 
-            if (acceptMeasureForSelect(m))
-            {
-                if (Ext.isObject(m.dateOptions))
-                {
-                    if (m.dateOptions.zeroDayVisitTag != null)
-                    {
-                        visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
-                        title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
-                    }
+            columnAliasMap[this.SUBJECT_ALIAS] = {
+                name: 'SubjectId',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
 
-                    SELECT.push(",\n\t" + this._getIntervalSelectClause(m, m.dateOptions.zeroDayVisitTag != null) + " AS " + alias + title);
+            columnAliasMap[this.SEQUENCENUM_ALIAS] = {
+                name: 'SequenceNum',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+
+            columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
+                name: 'ParticipantSequenceNum',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+
+            Ext.each(allMeasures, function (m)
+            {
+                var isKeyCol = m.measure.name.toLowerCase() == 'subjectid'
+                                || m.measure.name.toLowerCase() == 'container'
+                                || m.measure.name.toLowerCase() == 'sequencenum'
+                                || m.measure.name.toLowerCase() == 'participantsequencenum',
+                        alias = m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure),
+                        colLabel = m.measure.shortCaption || m.measure.label,
+                        title = Ext.isDefined(colLabel) ? " @title='" + colLabel + "'" : "";
+
+                if (acceptMeasureForSelect(m))
+                {
+                    alias = this.ensureAlignmentAlias(m, (m.measure.alias || LABKEY.Utils.getMeasureAlias(m.measure)));
+                }
+
+                if (columnAliasMap[alias] || isKeyCol)
+                {
+                    return;
+                }
+
+                columnAliasMap[alias] = {
+                    name: m.measure.name,
+                    schemaName: m.measure.schemaName,
+                    queryName: m.measure.queryName
+                };
+
+                if (acceptMeasureForSelect(m))
+                {
+                    if (Ext.isObject(m.dateOptions))
+                    {
+                        if (m.dateOptions.zeroDayVisitTag != null)
+                        {
+                            visitAlignmentTag = m.dateOptions.zeroDayVisitTag;
+                            title = Ext.isDefined(colLabel) ? " @title='" + colLabel + " (" + visitAlignmentTag + ")'" : "";
+                        }
+
+                        SELECT.push(",\n\t" + this._getIntervalSelectClause(m, m.dateOptions.zeroDayVisitTag != null) + " AS " + alias + title);
+                    }
+                    else
+                    {
+                        SELECT.push(",\n\t" + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + alias + title);
+                    }
                 }
                 else
                 {
-                    SELECT.push(",\n\t" + m.sourceTable.tableAlias + "." + m.measure.name + " AS " + alias + title);
+                    SELECT.push(",\n\tCAST(NULL AS " + m.measure.type + ") AS " + alias + title);
                 }
-            }
-            else
-            {
-                SELECT.push(",\n\tCAST(NULL AS " + m.measure.type + ") AS " + alias + title);
-            }
-        }, this);
+            }, this);
+        }
 
         //
         // FROM
