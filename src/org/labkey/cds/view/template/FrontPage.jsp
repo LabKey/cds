@@ -195,7 +195,7 @@
                         <button title="Close (Esc)" type="button" class="video-close mfp-close">x</button>
                     </div>
 
-                    <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js vjs-default-skin">
+                    <div id="intro-video" poster="<%=text(frontPagePath)%>/img/intro.png" class="video-js">
                         <iframe src="https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
                     </div>
