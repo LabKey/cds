@@ -1277,13 +1277,14 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales),
-                {gridLinesVisible: 'y',
-                    margins : gutterXMargins,
-                    width : gutterXWidth,
-                    height : this.xGutterHeight,
-                    data : allDataRows.undefinedY,
-                    labels : gutterXLabels});
+        return Ext.apply(this.getGutterPlotConfig(gutterXAes, gutterXScales), {
+            gridLinesVisible: 'y',
+            margins : gutterXMargins,
+            width : gutterXWidth,
+            height : this.xGutterHeight,
+            data : allDataRows.undefinedY,
+            labels : gutterXLabels
+        });
     },
 
     generateYGutter : function(plotConfig, chartData, allDataRows) {
@@ -1334,13 +1335,14 @@ Ext.define('Connector.view.Chart', {
             }
         };
 
-        return Ext.apply(this.getGutterPlotConfig(gutterYAes, gutterYScales),
-                {gridLinesVisible: 'x',
-                margins : gutterYMargins,
-                width : this.yGutterWidth,
-                height : plotConfig.height,
-                data : allDataRows.undefinedX,
-                labels : gutterYLabels});
+        return Ext.apply(this.getGutterPlotConfig(gutterYAes, gutterYScales), {
+            gridLinesVisible: 'x',
+            margins : gutterYMargins,
+            width : this.yGutterWidth,
+            height : plotConfig.height,
+            data : allDataRows.undefinedX,
+            labels : gutterYLabels
+        });
 
     },
 
@@ -2100,22 +2102,30 @@ Ext.define('Connector.view.Chart', {
 
     setAxisNameMeasureProperty : function(measure, x, y)
     {
+        var useBaseAxisNameProp = ChartUtils.getAssayDimensionsWithDifferentValues(x, y).length == 0,
+            xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
+            yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
+
         // if color source matches x or y, set the color wrapped measure axisName to match as well
         if (x && this.isSameSource(measure, x))
         {
-            measure.axisName = 'x';
+            measure.axisName = xAxisNameProp;
         }
         else if (y && this.isSameSource(measure, y))
         {
-            measure.axisName = 'y';
+            measure.axisName = yAxisNameProp;
         }
     },
 
     getWrappedMeasures : function(activeMeasures)
     {
+        var useBaseAxisNameProp = ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
+            xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
+            yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
+
         return [
-            this._getAxisWrappedMeasure(activeMeasures.x, 'x'),
-            this._getAxisWrappedMeasure(activeMeasures.y, 'y'),
+            this._getAxisWrappedMeasure(activeMeasures.x, xAxisNameProp),
+            this._getAxisWrappedMeasure(activeMeasures.y, yAxisNameProp),
             this._getColorWrappedMeasure(activeMeasures)
         ];
     },
@@ -2453,24 +2463,30 @@ Ext.define('Connector.view.Chart', {
     {
         // map key to schema, query, name, and values
         var measuresMap = {},
-            additionalMeasuresArr = [];
+            additionalMeasuresArr = [],
+            useBaseAxisNameProp = ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
+            xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
+            yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
+
 
         Ext.each(['x', 'y'], function(axis)
         {
-            var schema, query, measureRecord;
+            var schema, query, measureRecord,
+                axisName = this.getAxisNameProperty(axis, xAxisNameProp, yAxisNameProp);
+
             if (activeMeasures[axis])
             {
                 schema = activeMeasures[axis].schemaName;
                 query = activeMeasures[axis].queryName;
 
                 // always add in the Container and SubjectId columns for a selected measure on the X or Y axis
-                this.addValuesToMeasureMap(measuresMap, axis, schema, query, 'Container', 'VARCHAR');
-                this.addValuesToMeasureMap(measuresMap, axis, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
+                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'Container', 'VARCHAR');
+                this.addValuesToMeasureMap(measuresMap, axisName, schema, query, Connector.studyContext.subjectColumn, 'VARCHAR');
 
                 // only add the SequenceNum column for selected measures that are not demographic and no time point
                 if (!activeMeasures[axis].isDemographic && activeMeasures[axis].variableType != 'TIME') 
                 {
-                    this.addValuesToMeasureMap(measuresMap, axis, schema, query, 'SequenceNum', 'DOUBLE');
+                    this.addValuesToMeasureMap(measuresMap, axisName, schema, query, 'SequenceNum', 'DOUBLE');
                 }
 
                 // if time is a selected axis, include the 'ParticipantSequenceNum' to allow for resolving
@@ -2479,7 +2495,7 @@ Ext.define('Connector.view.Chart', {
                 {
                     this.addValuesToMeasureMap(
                         measuresMap,
-                        axis,
+                        axisName,
                         Connector.studyContext.gridBaseSchema,
                         Connector.studyContext.gridBase,
                         'ParticipantSequenceNum',
@@ -2499,7 +2515,7 @@ Ext.define('Connector.view.Chart', {
                         }
 
                         measureRecord = Connector.getQueryService().getMeasureRecordByAlias(alias);
-                        this.addValuesToMeasureMap(measuresMap, axis, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
+                        this.addValuesToMeasureMap(measuresMap, axisName, schema, query, measureRecord.get('name'), measureRecord.get('type'), values);
                     }, this);
                 }
             }
@@ -2535,6 +2551,10 @@ Ext.define('Connector.view.Chart', {
         {
             measureMap[key].values = measureMap[key].values.concat(values);
         }
+    },
+
+    getAxisNameProperty : function(axis, xAxisNameProp, yAxisNameProp) {
+        return (axis === 'x' ? xAxisNameProp : (axis === 'y' ? yAxisNameProp : ChartUtils.axisNameProp));
     },
 
     /**

@@ -61,6 +61,10 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
+    axisNameProp : 'plot-axis',
+    xAxisNameProp : 'plot-axis-x',
+    yAxisNameProp : 'plot-axis-y',
+
     constructor : function(config) {
         this.callParent([config]);
         this.brushDelayTask = new Ext.util.DelayedTask(this._onBrush, this);
@@ -426,5 +430,83 @@ Ext.define('Connector.utility.Chart', {
             clearTimeout(timeout);
             calloutMgr.removeCallout(_id);
         }, scope);
+    },
+
+    arraysEqual : function(arrA, arrB)
+    {
+        // first check for nulls
+        if (arrA == null && arrB == null)
+        {
+            return true;
+        }
+        else if (arrA == null || arrB == null)
+        {
+            return false;
+        }
+
+        // check if lengths are different
+        if (arrA.length !== arrB.length)
+        {
+            return false;
+        }
+
+        // slice so we do not effect the original, sort makes sure they are in order
+        var cA = arrA.slice().sort(),
+            cB = arrB.slice().sort();
+
+        for (var i=0; i < cA.length; i++)
+        {
+            if (cA[i] !== cB[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    /*
+     * Return the array of which assay dimension properties have different values arrays between the two measures.
+     * Used for plot to determine which dimension keys to use for the grouping / aggregation.
+     */
+    getAssayDimensionsWithDifferentValues : function(measure1, measure2, singleValueOnly)
+    {
+        var dimAliases = [],
+            intersectAliases;
+
+        if (measure1 == null || !Ext.isObject(measure1.options) || !Ext.isObject(measure1.options.dimensions)
+                || measure2 == null || !Ext.isObject(measure2.options) || !Ext.isObject(measure2.options.dimensions))
+        {
+            return [];
+        }
+
+        intersectAliases = Ext.Array.intersect(
+            Object.keys(measure1.options.dimensions),
+            Object.keys(measure2.options.dimensions)
+        );
+
+        Ext.each(intersectAliases, function(alias)
+        {
+            var dimValue1 = measure1.options.dimensions[alias];
+            var dimValue2 = measure2.options.dimensions[alias];
+
+            if (!this.arraysEqual(dimValue1, dimValue2))
+            {
+                if (singleValueOnly === true)
+                {
+                    // issue 24008: only exclude the alias if the filters are for a single value on each side
+                    if (dimValue1 != null && dimValue1.length == 1 && dimValue2 != null && dimValue2.length == 1)
+                    {
+                        dimAliases.push(alias);
+                    }
+                }
+                else
+                {
+                    dimAliases.push(alias);
+                }
+            }
+        }, this);
+
+        return dimAliases;
     }
 });

@@ -141,11 +141,12 @@ Ext.define('Connector.model.ChartData', {
         return measure.alias;
     },
 
-    getDimensionKeys : function(x, y, excludeAliases)
+    getDimensionKeys : function(x, y, excludeAliases, nonAggregated)
     {
         var measureSet = this.getMeasureSet(),
             dimensionKeys = [],
-            sharedKeys = [];
+            sharedKeys = [],
+            useSharedKeys;
 
         // Note: we don't exclude the color measure from the dimension keys
         // and we only exclude the x measure if it is continuous
@@ -174,7 +175,11 @@ Ext.define('Connector.model.ChartData', {
             }
         }, this);
 
-        return x.query != null && !this.isSameSource(x, y) && sharedKeys.length > 0 ? sharedKeys : dimensionKeys;
+        // use sharedKeys when we have the possibility of aggregation (see rules from nonAggregated)
+        // or the x-axis and y-axis measures are not from the same source
+        useSharedKeys = !nonAggregated && !this.isSameSource(x, y) && sharedKeys.length > 0;
+
+        return useSharedKeys ? sharedKeys : dimensionKeys;
     },
 
     getBaseMeasureConfig : function() {
@@ -257,40 +262,26 @@ Ext.define('Connector.model.ChartData', {
         // we need to keep track of which dimensions have different filter values between the x and y axis
         if (this.isSameSource(xa, ya))
         {
-            // keep track of which dimensions have different filter values between the x and y axis
-            Ext.each(Object.keys(y.options.dimensions), function(alias)
-            {
-                var yDimValue = y.options.dimensions[alias];
-                var xDimValue = x.options.dimensions[alias];
-
-                if (!this.arraysEqual(xDimValue, yDimValue))
-                {
-                    // TODO (is this still relevant?) issue 24008: only exclude the alias if the filters are for a single value on each side
-                    if (xDimValue != null && xDimValue.length == 1 && yDimValue != null && yDimValue.length == 1)
-                    {
-                        excludeAliases.push(alias);
-                    }
-                }
-            }, this);
+            excludeAliases = ChartUtils.getAssayDimensionsWithDifferentValues(y, x, true);
         }
 
         // if there is a DATASET_ALIAS column from the axisName property, use it to filter
         // TODO issue with demographic color variable not applied to both gutter plots
         if (this.hasDatasetAliasColumn())
         {
-            xMeasureFilter[QueryUtils.DATASET_ALIAS] = 'x';
-            yMeasureFilter[QueryUtils.DATASET_ALIAS] = 'y';
+            xMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.xAxisNameProp;
+            yMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.yAxisNameProp;
 
             // if the color variable is from the same source as either x or y, but not both, use that for the zMeasure filter
             if (!this.isSameSource(ca, xa) || !this.isSameSource(ca, ya))
             {
                 if (this.isSameSource(ca, xa))
                 {
-                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = 'x';
+                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.xAxisNameProp;
                 }
                 else if (this.isSameSource(ca, ya))
                 {
-                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = 'y';
+                    zMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.yAxisNameProp;
                 }
             }
         }
@@ -305,7 +296,17 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // select the data out of AxisMeasureStore based on the dimensions
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases));
+        // we use an AxisMeasureStore but do not attempt to group (aggregate) the data when:
+        //  1) the plot does not have an x-axis measure (i.e. only y-axis, or y-axis plus color)
+        //  2) the x-axis or y-axis measure is from a demographic dataset
+        //  3) the x-axis is a time point
+        //  4) the x-axis and y-axis measures are from the same source and have the exact same assay dimension filter values
+        var nonAggregated = !Ext.isDefined(x) // #1
+            || x.isDemographic === true || y.isDemographic === true // #2
+            || x.variableType === 'TIME' // #3
+            || (this.isSameSource(xa, ya) && ChartUtils.getAssayDimensionsWithDifferentValues(y, x).length == 0); //#4
+
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases, nonAggregated), nonAggregated);
 
         // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
         Ext.each(Connector.getQueryService().getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
@@ -444,34 +445,6 @@ Ext.define('Connector.model.ChartData', {
         else if (axisDomain[0] != null) {
             axisDomain[0] = Math.min(axisDomain[0], min);
         }
-    },
-
-    arraysEqual : function(arrA, arrB) {
-
-        // first check for nulls
-        if (arrA == null && arrB == null) {
-            return true;
-        }
-        else if (arrA == null || arrB == null) {
-            return false;
-        }
-
-        // check if lengths are different
-        if (arrA.length !== arrB.length) {
-            return false;
-        }
-
-        // slice so we do not effect the original, sort makes sure they are in order
-        var cA = arrA.slice().sort();
-        var cB = arrB.slice().sort();
-
-        for (var i=0; i < cA.length; i++) {
-            if (cA[i] !== cB[i]) {
-                return false;
-            }
-        }
-
-        return true;
     },
 
     _getYValue : function(measure, alias, row) {
