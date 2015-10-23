@@ -364,7 +364,7 @@
                     </p>
                 </div>
                 <div class="links">
-                    <a href="mailto:" class="contact">Contact Us</a>
+                    <a href="mailto:dataspace.support@scharp.org?Subject=CAVD%20DataSpace%20request%20for%20information" class="contact">Contact Us</a>
                 </div>
                 <div class="links sign-in">
                     <span>CAVD Members:</span>
