@@ -26,7 +26,7 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
     initializeModals: function() {
       modal.initialize({
         name: 'signin-modal',
-        query_param_regex: /login=true/i
+        query_param_regex: /login=true|returnUrl=/i
       });
 
       modal.initialize({
