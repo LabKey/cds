@@ -625,17 +625,20 @@ Ext.define('Connector.view.Grid', {
         return v;
     },
 
-    onTriggerClick : function(headerCt, column/*, evt, el */) {
-        if (Ext.isString(column)) {
-
+    onTriggerClick : function(headerCt, column)
+    {
+        if (Ext.isString(column))
+        {
             var _name = column;
             column = null;
 
             // lookup column by name
-            if (this.grid) {
-                var columns = this.getGrid().query('gridcolumn');
-                Ext.each(columns, function(col) {
-                    if (col.text.indexOf(_name) >= 0) {
+            if (this.grid)
+            {
+                Ext.each(this.getGrid().query('gridcolumn'), function(col)
+                {
+                    if (col.text.indexOf(_name) >= 0)
+                    {
                         column = col;
                         return false;
                     }
@@ -643,14 +646,15 @@ Ext.define('Connector.view.Grid', {
             }
         }
 
-        if (column) {
-
+        if (column)
+        {
             var metadata = this.getColumnMetadata(column.dataIndex);
 
-            if (Ext.isDefined(metadata)) {
-
+            if (Ext.isDefined(metadata))
+            {
                 var clzz = 'Connector.window.Filter';
-                if (metadata.jsonType === 'string') {
+                if (metadata.jsonType === 'string')
+                {
                     clzz = 'Connector.window.Facet';
                 }
 
@@ -659,13 +663,16 @@ Ext.define('Connector.view.Grid', {
                     columnMetadata: metadata,
                     dataView: this,
                     listeners: {
-                        filter: function(win, boundColumn, filterArray) {
-                            this.fireEvent('applyfilter', this, boundColumn, filterArray);
+                        filter: function(win, boundColumn, oldFilters, newFilters)
+                        {
+                            this.fireEvent('applyfilter', this, boundColumn, oldFilters, newFilters);
                         },
-                        clearfilter: function(win, fieldKeyPath) {
+                        clearfilter: function(win, fieldKeyPath)
+                        {
                             this.fireEvent('removefilter', this, fieldKeyPath, false);
                         },
-                        clearall: function() {
+                        clearall: function()
+                        {
                             this.fireEvent('removefilter', this, null, true);
                         },
                         scope: this
@@ -674,7 +681,8 @@ Ext.define('Connector.view.Grid', {
                 });
             }
         }
-        else {
+        else
+        {
             console.error('Unable to find column for filtering.');
         }
 

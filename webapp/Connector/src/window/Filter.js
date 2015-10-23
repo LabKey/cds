@@ -25,12 +25,22 @@ Ext.define('Connector.window.Filter', {
     getItems : function() {
         var model = this.dataView.getModel();
 
+        var filters = [];
+
+        Ext.each(model.getFilterArray(true), function(filter)
+        {
+            if (filter.getColumnName().toLowerCase() === this.columnMetadata.filterField.toLowerCase())
+            {
+                filters.push(filter);
+            }
+        }, this);
+
         return [{
             xtype: 'labkey-default-filterpanel',
             itemId: 'filtered',
             cls: 'filterpanel',
             boundColumn: this.columnMetadata,
-            filterArray: model.getFilterArray(),
+            filterArray: filters,
             schemaName: model.get('metadata').schemaName,
             queryName: model.get('metadata').queryName
         }];
@@ -41,7 +51,7 @@ Ext.define('Connector.window.Filter', {
         var view = this.getComponent('filtered');
 
         if (view.isValid()) {
-            this.fireEvent('filter', this, this.columnMetadata, view.getFilters());
+            this.fireEvent('filter', this, this.columnMetadata, view.getOriginalFilters(), view.getFilters());
             this.close();
         }
     }

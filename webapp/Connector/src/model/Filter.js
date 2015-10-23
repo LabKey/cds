@@ -521,16 +521,20 @@ Ext.define('Connector.model.Filter', {
      * @param values
      * @private
      */
-    _generateFilter : function(alias, values) {
+    _generateFilter : function(alias, values)
+    {
         var filter;
 
-        if (values.length > 1) {
+        if (values.length > 1)
+        {
             filter = LABKEY.Filter.create(alias, values.join(';'), LABKEY.Filter.Types.IN);
         }
-        else if (values.length == 1) {
+        else if (values.length == 1)
+        {
             filter = LABKEY.Filter.create(alias, values[0]);
         }
-        else {
+        else
+        {
             filter = LABKEY.Filter.create(alias, undefined, LABKEY.Filter.Types.ISBLANK);
         }
 
@@ -638,6 +642,173 @@ Ext.define('Connector.model.Filter', {
         }
 
         return jsonable;
+    },
+
+    /**
+     * Allows for this filter to replace any data filters
+     * @param {Array} oldFilters
+     * @param {Array} newFilters -
+     * @returns {boolean} True if this replacement resulted in the filter needing to removed.
+     */
+    replace : function(oldFilters, newFilters)
+    {
+        var remove = false;
+
+        if (Ext.isEmpty(oldFilters))
+        {
+            throw this.$className + '.replace() cannot be used to only add filters.';
+        }
+
+        // Determine the sourcing measure
+        var sourceMeasure = Connector.getQueryService().getMeasure(oldFilters[0].getColumnName());
+        if (!sourceMeasure)
+        {
+            throw 'Unable to determine source measure';
+        }
+
+        if (this.isAggregated())
+        {
+            throw 'Aggregate filters do not support replace()';
+        }
+        else if (this.isPlot() && !this.isGrid())
+        {
+            // in the plot
+            if (this.samePlotMeasureSources())
+            {
+                throw 'In the plot filter cannot replace() compound filters';
+            }
+
+            // examine plotMeasures
+            remove = this._replacePlotMeasures(sourceMeasure, oldFilters, newFilters);
+        }
+        else if (this.isPlot())
+        {
+            // plot selection
+            if (this.samePlotMeasureSources())
+            {
+                throw 'Plot selection filter cannot replace() compound filters';
+            }
+
+            // determine if the filters being replaced come from gridFilter
+            var isGridFilter = false,
+                gridFilter = [null, null, null, null];
+
+            Ext.each(this.get('gridFilter'), function(gf, i)
+            {
+                // only examine indices 0/2
+                if (i % 2 == 0)
+                {
+                    var filterA = null,
+                        filterB = null;
+
+                    if (gf && gf.getColumnName().toLowerCase() === oldFilters[0].getColumnName().toLowerCase())
+                    {
+                        isGridFilter = true;
+
+                        // old matching filters + empty new filters means this filter is being removed
+                        if (Ext.isEmpty(newFilters))
+                        {
+                            remove = true;
+                            return false;
+                        }
+                        else
+                        {
+                            filterA = newFilters[0];
+                            filterB = newFilters.length > 1 ? newFilters[1] : null;
+                        }
+                    }
+                    else
+                    {
+                        var filters = this.get('gridFilter');
+                        filterA = filters[i];
+                        filterB = filters[i+1];
+                    }
+
+                    gridFilter[i] = filterA;
+                    gridFilter[i+1] = filterB;
+                }
+            }, this);
+
+
+            if (!remove)
+            {
+                if (isGridFilter)
+                {
+                    this.set('gridFilter', gridFilter);
+                }
+                else
+                {
+                    // determine if the filters being replaced come from plotMeasures
+                    remove = this._replacePlotMeasures(sourceMeasure, oldFilters, newFilters);
+                }
+            }
+        }
+        else if (this.isGrid())
+        {
+            // grid filter
+            this.set('gridFilter', newFilters);
+
+            if (Ext.isEmpty(newFilters))
+            {
+                remove = true;
+            }
+        }
+        else
+        {
+            throw this.$className + '.replace() is not supported for OLAP filters';
+        }
+
+        // This is a bit of an optimization, but there is no need to initialize
+        // the filter if it is about to be removed
+        if (!remove)
+        {
+            this._initFilter();
+        }
+
+        return remove;
+    },
+
+    _replacePlotMeasures : function(sourceMeasure, oldFilters, newFilters)
+    {
+        var remove = false;
+
+        Ext.each(this.get('plotMeasures'), function(plotMeasure, i)
+        {
+            if (plotMeasure && i < 2) // only examine x, y
+            {
+                if (plotMeasure.measure.options.dimensions[sourceMeasure.alias])
+                {
+                    if (Ext.isEmpty(newFilters))
+                    {
+                        remove = true;
+                    }
+                    else if (newFilters.length == 1)
+                    {
+                        var value = newFilters[0].getValue();
+                        if (newFilters[0].getFilterType() === LABKEY.Filter.Types.IN)
+                        {
+                            value = value.split(';');
+                        }
+                        else
+                        {
+                            value = [value];
+                        }
+
+                        plotMeasure.measure.options.dimensions[sourceMeasure.alias] = value;
+                    }
+                    else
+                    {
+                        throw this.$className + '.replace() does not support multiple filters for a measure.option.dimension.';
+                    }
+
+                    return false;
+                }
+
+                // TODO: Support situational filters
+            }
+        }, this);
+
+        return remove;
     }
 });
 

@@ -439,146 +439,79 @@ Ext.define('Connector.model.Grid', {
      * Called when a user creates/updates a filter via the grid filtering interface.
      * @param view
      * @param boundColumn
-     * @param filterArray - only contains new filters. That is, filters applied after the user's change
+     * @param oldFilters - Contains any original filters. That is, filters that were to be modified.
+     * @param newFilters - only contains new filters. That is, filters applied after the user's change
      */
-    onGridFilterChange : function(view, boundColumn, filterArray)
+    onGridFilterChange : function(view, boundColumn, oldFilters, newFilters)
     {
-        var configs = [],
-            bins = {},
-            keys = [],
-            fa = filterArray,
-            schema = this.get('schemaName'),
-            query = this.get('queryName'),
-            queryService = Connector.getQueryService(),
-            colname, f;
-
-        for (f=0; f < fa.length; f++)
+        if (Ext.isEmpty(oldFilters))
         {
-            colname = fa[f].getColumnName();
-            if (!bins[colname])
+            // create a new grid filter
+            if (!Ext.isEmpty(newFilters))
             {
-                keys.push(colname);
-                bins[colname] = [];
+                var newAppFilter = this.buildFilter(newFilters);
+
+                // Creating a new grid filter
+                Connector.getState().addFilter(newAppFilter);
+
+                this.fireEvent('usergridfilter', [newAppFilter]);
             }
-            bins[colname].push(fa[f]);
         }
-
-        // This must be done independently for each filter
-        for (f=0; f < keys.length; f++)
+        else
         {
-            configs.push({
-                schemaName: schema,
-                queryName: query,
-                configId: bins[keys[f]][0].getURLParameterName(),
-                column: queryService.getSubjectColumnAlias(),
-                filterArray: bins[keys[f]],
-                scope: this
-            });
-        }
+            var filterId;
 
-        if (!Ext.isEmpty(configs))
-        {
-            var state = Connector.getState(),
-                appFilters = state.getFilters(),
-                modified = [],
-                newFilters = [], matched = false;
-
-            // For each config do one of the following:
-            // 1. Replacement, find the record id
-            // 2. new, create a new app filter
-            Ext.each(configs, function(config)
+            Ext.each(oldFilters, function(oldFilter)
             {
-                var match = this._generateMatch(config.filterArray, appFilters);
-                if (match)
+                var id = this.hasFilter(oldFilter);
+                if (id)
                 {
-                    modified.push(match);
-                }
-                else
-                {
-                    newFilters.push(this.buildFilter(filterArray));
+                    filterId = id;
+                    return false;
                 }
             }, this);
 
-            if (modified.length > 0)
+            if (filterId)
             {
-                state.modifyFilter(modified);
-            }
-
-            if (!Ext.isEmpty(newFilters) || matched)
-            {
-                state.setFilters(state.getFilters().concat(newFilters));
-
-                this.filterMap = {};
-
-                // filters are tracked
-                // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                this.getDataFilters();
-
-                this.fireEvent('usergridfilter', newFilters);
-            }
-        }
-    },
-
-    /**
-     * Helper method that first determines if any of the filters in the filterArray are expressed in the filter set.
-     * If not, it returns false. If so, then an updated Connector.model.Filter is returned.
-     * @param filterArray
-     * @param filterSet
-     * @returns {boolean || Connector.model.Filter}
-     * @private
-     */
-    _generateMatch : function(filterArray, filterSet)
-    {
-        var match = false;
-
-        if (!Ext.isEmpty(filterArray))
-        {
-            var columnMatch = filterArray[0].getColumnName();
-
-            Ext.each(filterSet, function(filter)
-            {
-                var newGridFilter = [],
-                    found = false,
-                    faIdx = 0;
-
-                Ext.each(filter.get('gridFilter'), function(gf)
+                var found = false;
+                Ext.each(Connector.getState().getFilters(), function(appFilter)
                 {
-                    if (gf && gf.getColumnName() == columnMatch)
+                    if (appFilter.id === filterId)
                     {
                         found = true;
-                        if (faIdx < filterArray.length)
+
+                        var remove = appFilter.replace(oldFilters, newFilters);
+                        if (remove)
                         {
-                            newGridFilter.push(filterArray[faIdx]);
-                            faIdx++;
+                            Connector.getState().removeFilter(appFilter.id);
                         }
-                    }
-                    else {
-                        newGridFilter.push(gf);
+                        else
+                        {
+                            Connector.getState().updateMDXFilter(false);
+
+                            this.filterMap = {};
+
+                            // filters are tracked
+                            // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
+                            this.getDataFilters();
+
+                            this.fireEvent('usergridfilter', [appFilter]);
+                        }
+
+                        return false;
                     }
                 });
 
-                // found a match, now mutate it and return it
-                if (found)
+                if (!found)
                 {
-                    while (faIdx < filterArray.length)
-                    {
-                        newGridFilter.push(filterArray[faIdx]);
-                        faIdx++;
-                    }
-
-                    match = {
-                        filter: filter,
-                        modifications: {
-                            gridFilter: newGridFilter
-                        }
-                    };
-
-                    return false; // break from Ext.each
+                    throw 'Unable to determine filter to modify. Possible stale filterMap?';
                 }
-            });
+            }
+            else
+            {
+                throw 'Unable to determine filter to modify. Possible stale filterMap?';
+            }
         }
-
-        return match;
     },
 
     buildFilter : function(filterArray)
