@@ -2095,23 +2095,19 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    isSameSource : function(x, y)
-    {
-        return Ext.isObject(x) && Ext.isObject(y) && x.queryName == y.queryName && x.schemaName == y.schemaName;
-    },
-
     setAxisNameMeasureProperty : function(measure, x, y)
     {
-        var useBaseAxisNameProp = ChartUtils.getAssayDimensionsWithDifferentValues(x, y).length == 0,
+        var useBaseAxisNameProp = ChartUtils.isSameSource(x, y)
+                    && ChartUtils.getAssayDimensionsWithDifferentValues(x, y).length == 0,
             xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
             yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
 
         // if color source matches x or y, set the color wrapped measure axisName to match as well
-        if (x && this.isSameSource(measure, x))
+        if (x && ChartUtils.isSameSource(measure, x))
         {
             measure.axisName = xAxisNameProp;
         }
-        else if (y && this.isSameSource(measure, y))
+        else if (y && ChartUtils.isSameSource(measure, y))
         {
             measure.axisName = yAxisNameProp;
         }
@@ -2119,7 +2115,8 @@ Ext.define('Connector.view.Chart', {
 
     getWrappedMeasures : function(activeMeasures)
     {
-        var useBaseAxisNameProp = ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
+        var useBaseAxisNameProp = ChartUtils.isSameSource(activeMeasures.x, activeMeasures.y)
+                    && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
             xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
             yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
 
@@ -2464,7 +2461,8 @@ Ext.define('Connector.view.Chart', {
         // map key to schema, query, name, and values
         var measuresMap = {},
             additionalMeasuresArr = [],
-            useBaseAxisNameProp = ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
+            useBaseAxisNameProp = ChartUtils.isSameSource(activeMeasures.x, activeMeasures.y)
+                    && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
             xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
             yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
 

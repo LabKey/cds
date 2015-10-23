@@ -432,6 +432,11 @@ Ext.define('Connector.utility.Chart', {
         }, scope);
     },
 
+    isSameSource : function(x, y)
+    {
+        return Ext.isObject(x) && Ext.isObject(y) && x.queryName == y.queryName && x.schemaName == y.schemaName;
+    },
+
     arraysEqual : function(arrA, arrB)
     {
         // first check for nulls
@@ -474,8 +479,9 @@ Ext.define('Connector.utility.Chart', {
         var dimAliases = [],
             intersectAliases;
 
-        if (measure1 == null || !Ext.isObject(measure1.options) || !Ext.isObject(measure1.options.dimensions)
-                || measure2 == null || !Ext.isObject(measure2.options) || !Ext.isObject(measure2.options.dimensions))
+        if (measure1 == null || measure2 == null
+                || !Ext.isObject(measure1.options) || !Ext.isObject(measure1.options.dimensions)
+                || !Ext.isObject(measure2.options) || !Ext.isObject(measure2.options.dimensions))
         {
             return [];
         }
