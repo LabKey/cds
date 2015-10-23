@@ -8,7 +8,6 @@ require.config({
     'slimScroll'  : '../components/jquery-slimscroll/jquery.slimscroll.min',
     'fullPage'    : '../components/fullpage.js/jquery.fullPage.min',
     'magnific'    : '../components/magnific-popup/dist/jquery.magnific-popup.min',
-    'video'       : '../components/video.js/dist/video-js/video',
 
     // Application
     'application' : './application',
