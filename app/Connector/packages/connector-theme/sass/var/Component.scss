@@ -90,7 +90,6 @@ $form-label-font: $body-one-font; //todo: this vs body 1
 $form-toolbar-field-font: $body-one-font; //todo: this vs body 1
 
 // form/field/Text.scss
-$form-field-background-image: none;
 $form-field-border-color: rgb(211, 211, 211);
 $form-field-focus-border-color: $dark-color;
 
@@ -118,6 +117,8 @@ $grid-row-cell-selected-color: $black; //$gray-7;
 $grid-row-cell-selected-border-color: $gray-7; //$select-color;
 $grid-row-cell-alt-background-color: $gray-7;
 $grid-row-cell-background-color: $gray-7;
+$grid-row-cell-focus-border-style: solid;
+$grid-row-cell-focus-border-color: #ddd;
 
 /* Grid Column - default ui */
 $grid-column-header-font-family: $info-font;
@@ -704,6 +705,19 @@ div.emptytext {
 
   .footer {
     padding-right: 20px;
+  }
+
+  .feedback-input {
+    input, textarea {
+      padding: 16px 12px !important;
+      border-radius: 2px;
+      border-color: $gray-7!important;
+    }
+
+    .x-form-focus {
+      border-color: $gray-6!important;
+      color: $black;
+    }
   }
 }
 

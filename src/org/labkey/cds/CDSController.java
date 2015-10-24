@@ -219,6 +219,7 @@ public class CDSController extends SpringActionController
         private int _assays = 0;
         private int _products = 0;
         private int _datacount = 0;
+        private int _subjectlevelstudies = 0;
 
         public int getRowId()
         {
@@ -314,6 +315,16 @@ public class CDSController extends SpringActionController
         public void setDatacount(int datacount)
         {
             _datacount = datacount;
+        }
+
+        public int getSubjectlevelstudies()
+        {
+            return _subjectlevelstudies;
+        }
+
+        public void setSubjectlevelstudies(int count)
+        {
+            _subjectlevelstudies = count;
         }
     }
 

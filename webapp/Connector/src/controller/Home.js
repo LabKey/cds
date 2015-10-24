@@ -69,7 +69,8 @@ Ext.define('Connector.controller.Home', {
             {
                 statDisplay.update({
                     nstudy: stats.studies,
-                    ndatapts: stats.datacount
+                    ndatapts: stats.datacount,
+                    nsubjectstudy: stats.subjectlevelstudies
                 });
             }, this);
         }

@@ -74,6 +74,7 @@ Ext.define('Connector.panel.Feedback', {
                 items: [{
                     xtype: 'textfield',
                     name: 'title',
+                    cls: 'feedback-input',
                     emptyText: 'Title',
                     width: '100%',
                     validateOnBlur: false,
@@ -81,6 +82,7 @@ Ext.define('Connector.panel.Feedback', {
                 },{
                     xtype: 'textareafield',
                     name: 'comment',
+                    cls: 'feedback-input',
                     width: '100%',
                     height: '400px',
                     emptyText: 'Description. For a bug, include details that will help us reproduce it.',
@@ -91,6 +93,7 @@ Ext.define('Connector.panel.Feedback', {
                     xtype: 'checkbox',
                     boxLabel: 'Check this box if the issue is on your current screen.',
                     name: 'url',
+                    cls: 'checkbox2',
                     checked: false,
                     inputValue: window.location.href
                 },{

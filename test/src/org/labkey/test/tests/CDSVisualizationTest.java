@@ -38,6 +38,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.server.handler.FindElements;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -54,6 +55,7 @@ import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
+import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
 
 @Category({CDS.class, Git.class})
 public class CDSVisualizationTest extends CDSReadOnlyTest
@@ -64,7 +66,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     private final String PGROUP2 = "visgroup 2";
     private final String PGROUP3 = "visgroup 3";
     private final String PGROUP3_COPY = "copy of visgroup 3";
-    private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
+    private final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subject')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
 
     protected static final String MOUSEOVER_FILL = "#41C49F";
     protected static final String MOUSEOVER_STROKE = "#00EAFF";
@@ -121,11 +123,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ELISPOT);
         xaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_RAW);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         assertFalse("For BAMA Magnitude vs NAB Lab x-axis gutter plot was present it should not have been.", hasXGutter());
@@ -140,11 +144,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC80);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         assertTrue("For NAB IC80 vs ICS Magnitude x-axis gutter plot was not present.", hasXGutter());
@@ -158,14 +164,16 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         log("Validate that a gutter plot is generated for both the x and y axis.");
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
 
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
@@ -181,6 +189,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
@@ -213,9 +222,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ELISPOT);
         xaxis.pickVariable(CDSHelper.ELISPOT_DATA_PROV);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         if (CDSHelper.validateCounts)
@@ -227,11 +238,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         assertTrue("For ELISPOT vs ICS x-axis gutter plot was not present.", hasXGutter());
@@ -240,6 +253,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         if (CDSHelper.validateCounts)
@@ -257,19 +271,21 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         assertTrue("For NAB vs ICS x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For NAB vs ICS y-axis gutter plot was not present.", hasYGutter());
 
-        xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        xaxis.pickVariable(CDSHelper.DEMO_AGE);
-        xaxis.setScale(DataspaceVariableSelector.Scale.Log);
-        xaxis.confirmSelection();
-
-        assertTrue("For NAB vs Demographics x-axis gutter plot was not present.", hasXGutter());
-        assertFalse("For NAB vs Demographics y-axis gutter plot was present and it should not be.", hasYGutter());
-
-        if (CDSHelper.validateCounts)
-        {
-            assertSVG(NAB_IC50);
-        }
+        // Test disabled for now as a result of side effect of log transformation story. will re-enable when
+        // filter refinement is done and compound filter is used to drop <=0 data but retain null.
+//        xaxis.openSelectorWindow();
+//        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+//        xaxis.pickVariable(CDSHelper.DEMO_AGE);
+//        xaxis.setScale(DataspaceVariableSelector.Scale.Log);
+//        xaxis.confirmSelection();
+//
+//        assertTrue("For NAB vs Demographics x-axis gutter plot was not present.", hasXGutter());
+//        assertFalse("For NAB vs Demographics y-axis gutter plot was present and it should not be.", hasYGutter());
+//
+//        if (CDSHelper.validateCounts)
+//        {
+//            assertSVG(NAB_IC50);
+//        }
     }
 
     @Test
@@ -286,6 +302,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
@@ -303,7 +320,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_SUMM);
         xaxis.confirmSelection();
-        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
         assertEquals("Expected 60 tick marks on the x-axis. Found: " + actualTickCount, 60, actualTickCount);
 
@@ -410,7 +427,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_TREAT_ARM);
         xaxis.confirmSelection();
-        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > g > rect.xaxis-tick-rect").findElements(getDriver()).size();
+        actualTickCount = Locator.css("div.plot > svg > g.axis > g.tick-text > a > rect.xaxis-tick-rect").findElements(getDriver()).size();
 
         assertEquals("Expected 28 tick marks on the x-axis. Found: " + actualTickCount, 28, actualTickCount);
 
@@ -453,6 +470,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
@@ -550,7 +568,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         // Choose the y-axis and verify that only 1 box plot shows if there is no x-axis chosen.
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         waitForElement(plotBox);
@@ -581,7 +600,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.backToSource();
         xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         waitForElementToDisappear(plotBox);
@@ -640,8 +660,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND); // Work around for issue 23845.
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW); // Work around for issue 23845.
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
@@ -729,7 +750,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_AGE, CDSHelper.DEMO_BMI},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_MAGNITUDE_BACKGROUND},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW},
                         {CDSHelper.NAB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_TITERIC80}
                 };
         final String[][] X_AXIS_SOURCES =
@@ -739,7 +760,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                         {CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_DAYS, CDSHelper.TIME_POINTS_WEEKS, CDSHelper.TIME_POINTS_MONTHS},
                         {CDSHelper.BAMA, CDSHelper.BAMA_MAGNITUDE_DELTA, CDSHelper.BAMA_RESPONSE_CALL, CDSHelper.BAMA_ANTIGEN_CLADE, CDSHelper.BAMA_ANTIGEN_NAME, CDSHelper.BAMA_ANTIGEN_TYPE, CDSHelper.BAMA_ASSAY, CDSHelper.BAMA_DETECTION, CDSHelper.BAMA_DILUTION, CDSHelper.BAMA_EXP_ASSAYD, CDSHelper.BAMA_INSTRUMENT_CODE, CDSHelper.BAMA_ISOTYPE, CDSHelper.BAMA_LAB, CDSHelper.BAMA_MAGNITUDE_BLANK, CDSHelper.BAMA_MAGNITUDE_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW, CDSHelper.BAMA_MAGNITUDE_DELTA_BASELINE, CDSHelper.BAMA_MAGNITUDE_RAW_BASELINE, CDSHelper.BAMA_PROTEIN, CDSHelper.BAMA_PROTEIN_PANEL, CDSHelper.BAMA_SPECIMEN, CDSHelper.BAMA_VACCINE},
                         {CDSHelper.ELISPOT, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ELISPOT_RESPONSE, CDSHelper.ELISPOT_ANTIGEN, CDSHelper.ELISPOT_ASSAY, CDSHelper.ELISPOT_CELL_NAME, CDSHelper.ELISPOT_CELL_TYPE, CDSHelper.ELISPOT_EXP_ASSAY, CDSHelper.ELISPOT_MARKER_NAME, CDSHelper.ELISPOT_MARKER_TYPE, CDSHelper.ELISPOT_LAB, CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND, CDSHelper.ELISPOT_MAGNITUDE_RAW, CDSHelper.ELISPOT_PROTEIN, CDSHelper.ELISPOT_PROTEIN_PANEL, CDSHelper.ELISPOT_SPECIMEN, CDSHelper.ELISPOT_VACCINE},
-                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
+                        {CDSHelper.ICS, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.ICS_RESPONSE, CDSHelper.ICS_ANTIGEN, CDSHelper.ICS_ASSAY, CDSHelper.ICS_CELL_NAME, CDSHelper.ICS_CELL_TYPE, CDSHelper.ICS_EXP_ASSAY, CDSHelper.ICS_MARKER_NAME, CDSHelper.ICS_MARKER_TYPE, CDSHelper.ICS_LAB, CDSHelper.ICS_MAGNITUDE_BACKGROUND, CDSHelper.ICS_MAGNITUDE_RAW, CDSHelper.ICS_PROTEIN, CDSHelper.ICS_SPECIMEN},
                         {CDSHelper.NAB, CDSHelper.NAB_RESPONSE, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_ANTIGEN, CDSHelper.NAB_ANTIGEN_CLADE, CDSHelper.NAB_EXP_ASSAY, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_LAB, CDSHelper.NAB_SPECIMEN, CDSHelper.NAB_TARGET_CELL, CDSHelper.NAB_TITERIC80}
                 };
         final String[][] COLOR_AXIS_SOURCES =
@@ -979,6 +1000,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         cds.goToSummary();
         cds.clickBy("Assays");
+        refresh(); // TODO working around an issue where reference is loss to element.
         cds.selectBars(CDSHelper.ASSAYS[0]); // Select BAMA
 
         // Populate expected counts for some of the antigens.
@@ -1390,11 +1412,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_DATA);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         xaxis.confirmSelection();
         // yaxis window opens automatically
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
         yaxis.confirmSelection();
         color.openSelectorWindow();
@@ -1493,6 +1517,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setTargetCell(CDSHelper.TARGET_CELL_A3R5);
         yaxis.confirmSelection();
 
@@ -1686,6 +1711,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
@@ -1863,6 +1889,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(uniqueVirusId);
         yaxis.confirmSelection();
 
@@ -1919,16 +1946,18 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.NAB);
         xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setVirusName(xVirusId);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(y1VirusId);
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText("5000"));
+        waitForElement(plotTickLinear.withText("5000"));
         assertElementPresent(plotPoint, 1321);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
@@ -1944,10 +1973,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.NAB);
         yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
         yaxis.confirmSelection();
 
-        waitForElement(plotTick.withText("40"));
+        waitForElement(plotTickLinear.withText("40"));
         assertElementPresent(plotPoint, 60);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
@@ -1977,13 +2007,15 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ICS_DATA);
         xaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         xaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "all"));
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setCellType("All");
         xaxis.confirmSelection();
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
@@ -1994,6 +2026,188 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         waitForText("Heatmap on");
 
         cds.ensureNoFilter();
+    }
+
+    @Test
+    public void verifyLogAndLinearScales()
+    {
+        String scaleValues, originalScale;
+        int expectedCount, originalCount;
+        CDSHelper cds = new CDSHelper(this);
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
+
+        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
+        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+
+        log("Validate default scale is Log");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType("All");
+        yaxis.confirmSelection();
+
+        scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10";
+        expectedCount = 1563;
+
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+
+        log("Change scale to Linear and validate that values change.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14";
+        expectedCount = 1690;
+
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+
+        // Clear the plot.
+        cds.clearFilters();
+
+        log("Validate a plot with a values on both y and x axis.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
+        xaxis.confirmSelection();
+
+        originalScale = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0.0002\n0.002\n0.02\n0.2\n2";
+        originalCount = 1563;
+        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+
+        log("Change x-axis to be linear.");
+
+        xaxis.openSelectorWindow();
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        xaxis.confirmSelection();
+
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0.0002\n0.002\n0.02\n0.2\n2";
+        expectedCount = 1563;  // Is this right?
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+
+        log("Change y-axis to be linear.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+
+        scaleValues = "0\n2\n4\n6\n8\n10\n12\n14\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        expectedCount = 1690;
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, false);
+
+        log("Change x-axis back to log.");
+
+        xaxis.openSelectorWindow();
+        xaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        xaxis.confirmSelection();
+
+        scaleValues = "0.0001\n0.001\n0.01\n0.1\n1\n10\n0\n0.5\n1\n1.5\n2\n2.5\n3\n3.5\n4\n4.5\n5";
+        expectedCount = 1690;
+        verifyLogAndLinearHelper(scaleValues, 1, expectedCount, true);
+
+        log("Change y-axis back to log, all values should return to original.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Log);
+        yaxis.confirmSelection();
+
+        verifyLogAndLinearHelper(originalScale, 1, originalCount, true);
+
+        // Clear the plot.
+        cds.clearFilters();
+
+        log("Validate log and linear with large scale values.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.NAB);
+        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yaxis.confirmSelection();
+
+        scaleValues = "1\n10\n100\n1000";
+        expectedCount = 856;
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+
+        log("Change y-axis to be linear.");
+
+        yaxis.openSelectorWindow();
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yaxis.confirmSelection();
+
+        scaleValues = "0\n1000\n2000\n3000\n4000\n5000\n6000\n7000\n8000";
+        expectedCount = 856;
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
+
+        // Clear the plot.
+        cds.clearFilters();
+
+        log("Validate with a categorical on x-axis.");
+
+        yaxis.openSelectorWindow();
+        yaxis.pickSource(CDSHelper.ELISPOT);
+        yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.confirmSelection();
+
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        xaxis.pickVariable(CDSHelper.DEMO_AGEGROUP);
+        xaxis.confirmSelection();
+
+        originalScale = "10-19\n20-29\n30-39\n40-49\n50-59\n1\n10\n100\n1000\n10000";
+        originalCount = 428;
+        verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
+
+        log("Add a filter and make sure that the log scale changes appropriately.");
+
+        cds.openStatusInfoPane("Races");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.selectInfoPaneItem(CDSHelper.RACE_ASIAN, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+
+        originalScale = "20-29\n30-39\n40-49\n1\n10\n100";
+        originalCount = 18;
+        verifyLogAndLinearHelper(originalScale, 0, originalCount, true);
+
+        // Clear the plot.
+        cds.clearFilters();
+
+    }
+
+    private void verifyLogAndLinearHelper(String scaleValues, int svgIndex, int expectedCount, boolean msgVisable)
+    {
+        final String XPATH_SUBJECT_COUNT = "//div[contains(@class, 'status-row')]//span[contains(@class, 'hl-status-label')][contains(text(), 'Subjects')]/./following-sibling::span[contains(@class, ' hl-status-count ')][not(contains(@class, 'hideit'))]";
+        final String XPATH_PLOT_MOD_MSG = "//div[contains(@class, 'plotmodeon')][text()='Log filter on']";
+        String tempStr, styleValue;
+        int subjectCount;
+
+        assertSVG(scaleValues, svgIndex);
+
+        tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
+        subjectCount = Integer.parseInt(tempStr.replaceAll(",", ""));
+        assertEquals("Subject count not as expected.", expectedCount, subjectCount);
+
+        assertElementPresent("Could not find 'Log filter on' message control.", Locator.xpath(XPATH_PLOT_MOD_MSG), 1);
+
+        styleValue = getAttribute(Locator.xpath(XPATH_PLOT_MOD_MSG), "style");
+
+        if (msgVisable)
+        {
+            assertFalse("'Log filter on' message not visible at top of page.", styleValue.contains("display: none;"));
+        }
+        else
+        {
+            assertTrue("'Log filter on' message is visible at top of page, and it should not be.", styleValue.contains("display: none;"));
+        }
+
     }
 
     @Test
@@ -2016,6 +2230,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD8);
         yaxis.confirmSelection();
 
@@ -2031,6 +2246,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         xaxis.confirmSelection();
 
@@ -2055,7 +2271,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // set the y-axis
         yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.setDataSummaryLevel(CDSHelper.DATA_SUMMARY_PROTEIN);
         yaxis.setProtein(cds.buildIdentifier(CDSHelper.DATA_SUMMARY_PROTEIN_PANEL, "All"));
@@ -2074,6 +2291,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType("All");
         yaxis.confirmSelection();
 
@@ -2104,6 +2322,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
         yaxis.confirmSelection();
 
@@ -2181,6 +2400,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
@@ -2209,6 +2429,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -2226,11 +2447,13 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
+        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.BAMA);
         xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
         sleep(500);
         _ext4Helper.waitForMaskToDisappear();
@@ -2331,11 +2554,11 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         if(isXGutter)
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(3) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", -50, 0, false);
         }
         else
         {
-            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(4) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
+            brushPlot("div:not(.thumbnail) > svg:nth-of-type(" + gutterIndex + ") > g:nth-child(5) > g.grid-line > path:nth-of-type(2)", 0, -50, false);
         }
 
         log("Move the brush window in the 'undefined y value' gutter.");
@@ -2491,6 +2714,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                 multiSelectKey = Keys.CONTROL;
 
             click(Locators.plotTick.withText(axes[0]));
+            waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[0] + "')]"));
 
             if (axes.length > 1)
             {
@@ -2500,6 +2724,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
                 for (int i = 1; i < axes.length; i++)
                 {
                     click(Locators.plotTick.withText(axes[i]));
+                    waitForElement(Locator.xpath("//div[contains(@class, 'selectionpanel')]//div[contains(@class, 'activefilter')]//div[contains(@class, 'selitem')]//div[contains(text(), '" + axes[i] + "')]"));
                 }
                 builder.keyUp(multiSelectKey).build().perform();
             }
@@ -2878,7 +3103,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         public static Locator plotSelectionFilter = Locator.css(".activefilter .plot-selection");
         public static Locator plotSelectionCloseBtn = Locator.css("div.plot-selection div.closeitem");
         public static Locator plotBox = Locator.css("svg a.dataspace-box-plot");
-        public static Locator plotTick = Locator.css("g.tick-text > g > text");
+        public static Locator plotTickLinear = Locator.css("g.tick-text > g > text");
+        public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
         public static Locator removeButton = Locator.xpath("//span[text()='Remove']");

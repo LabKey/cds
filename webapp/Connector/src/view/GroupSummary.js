@@ -169,6 +169,8 @@ Ext.define('Connector.view.GroupSummaryHeader', {
 
     alias : 'widget.groupsummaryheader',
 
+    margin: '25 0 0 25',
+
     layout: {
         type : 'vbox',
         align: 'stretch'
@@ -199,7 +201,8 @@ Ext.define('Connector.view.GroupSummaryHeader', {
         this.items = [{
             itemId: 'grouplabel',
             xtype: 'box',
-            tpl: new Ext.XTemplate('<h1 class="lhdv active">{groupLabel:htmlEncode}</h1>'),
+            margin: '0 0 20 0',
+            tpl: new Ext.XTemplate('<h2 class="lhdv active">{groupLabel:htmlEncode}</h2>'),
             data: {groupLabel: this.groupLabel}
         },{
             xtype: 'container',
