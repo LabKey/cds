@@ -630,7 +630,7 @@ Ext.define('Connector.model.Grid', {
     {
         /**
          * Explicitly ask for just the columns in the model columnSet plus some
-         * hardcoded ones (i.e. the dataset (checkboard) column the generated cdsGetData subject column,
+         * hardcoded ones (i.e. the dataset (checkboard) column the generated cds getData subject column,
          * and the 'Folder' column that will only exist for multi table join queries)
          */
         var columns = [QueryUtils.SUBJECT_ALIAS, QueryUtils.DATASET_ALIAS];

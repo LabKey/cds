@@ -1,4 +1,4 @@
-// This is a singleton for cdsGetData query utilities
+// This is a singleton for cds getData query utilities
 Ext.define('Connector.utility.Query', {
 
     alternateClassName: ['QueryUtils'],
@@ -20,7 +20,7 @@ Ext.define('Connector.utility.Query', {
     },
 
     /**
-     *  Wrapper for generating the cdsGetData SQL instead of calling LABKEY.Query.Visualization.getData()
+     *  Wrapper for generating the cds getData SQL instead of calling LABKEY.Query.Visualization.getData()
      */
     getData : function(config)
     {

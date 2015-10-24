@@ -2269,7 +2269,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     /**
-     * This creates a temp query via cdsGetData which is then used to query for unique participants, and is also what
+     * This creates a temp query via cds getData which is then used to query for unique participants, and is also what
      * we use to back the chart data (via an AxisMeasureStore).
      * @param activeMeasures
      */

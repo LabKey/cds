@@ -350,7 +350,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     * Use the cds getData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels.
      * @param {Object} dimension
      * @param {Array} measureSet
@@ -420,7 +420,6 @@ Ext.define('Connector.controller.Query', {
                 }, this);
 
                 QueryUtils.getData({
-                    endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
                     measures: wrappedMeasureSet,
                     metaDataOnly: true,
                     scope: this,
@@ -435,7 +434,7 @@ Ext.define('Connector.controller.Query', {
     },
 
     /**
-     * Use the cdsGetData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
+     * Use the cds getData API call with a set of measures and filters (SubjectIn and data filters) to create a temp query to use
      *      for showing which values are relevant in the variable selector Advanced Options panels by returning the subject
      *      count for each distinct value of a specific column in the temp query.
      * @param {Object} dimension
@@ -447,7 +446,7 @@ Ext.define('Connector.controller.Query', {
      */
     getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, callback, scope) {
 
-        // get the temp query information from the cdsGetData API call for the measureSet with the application filters added in
+        // get the temp query information from the cds getData API call for the measureSet with the application filters added in
         this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
             var alias = dimension.getFilterMeasure().get('alias'), sql;
 
@@ -579,7 +578,6 @@ Ext.define('Connector.controller.Query', {
     getData : function(measures, success, failure, scope, applyCompound) {
 
         var config = {
-            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
             metaDataOnly: true,
             success: success,
@@ -601,7 +599,6 @@ Ext.define('Connector.controller.Query', {
     getMeasureStore : function(measures, success, failure, scope)
     {
         LABKEY.Query.experimental.MeasureStore.getData({
-            endpoint: LABKEY.ActionURL.buildURL('visualization', 'cdsGetData.api'),
             measures: measures,
             success: success,
             failure: failure,

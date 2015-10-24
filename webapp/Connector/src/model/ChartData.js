@@ -8,7 +8,7 @@ Ext.define('Connector.model.ChartData', {
     extend: 'Ext.data.Model',
 
     fields: [
-        {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cdsGetData API call
+        {name: 'measureSet', defaultValue: []}, // Full set of measures passed to the cds getData API call
         {name: 'plotMeasures', defaultValue: [null, null, null]}, // Array [x, y, color]
         {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
         {name: 'plotScales', defaultValue: {}}, // {x: log/linear, y: log/linear}
