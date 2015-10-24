@@ -50,7 +50,7 @@ Ext.define('Connector.utility.Query', {
 
     getSubjectIntersectSQL : function(config)
     {
-        return this._generateVisGetDataSql(config.measures, config.extraFilters, {"subjectOnly":true,"intersect":true}).sql;
+        return this._generateVisGetDataSql(config.measures, config.extraFilters, {/*subjectOnly: true,*/intersect: true}).sql;
     },
 
     _createTableObj : function(schema, query, joinKeys, isAssayDataset)
@@ -68,7 +68,7 @@ Ext.define('Connector.utility.Query', {
 
     _getTables : function()
     {
-        // get the datasets from the query service and track properties for the joinKeys, isDemogrpahic, etc.
+        // get the datasets from the query service and track properties for the joinKeys, isDemographic, etc.
         var datasetSources = Connector.getQueryService().getSources('queryType', 'datasets'),
                 schema, query, key, joinKeys, tables = {};
         Ext.each(datasetSources, function(dataset)
@@ -257,8 +257,10 @@ Ext.define('Connector.utility.Query', {
             debugUnionSQL = '',
             union = '',
             term,
-            hasMultiple = Object.keys(datasets).length > 1;
-        var setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n";
+            hasMultiple = Object.keys(datasets).length > 1,
+            setOperator = options.intersect ? "\nINTERSECT\n" : "\nUNION ALL\n",
+            orderSQL,
+            sql;
 
         Ext.iterate(datasets, function(name)
         {
@@ -277,17 +279,16 @@ Ext.define('Connector.utility.Query', {
         }, this);
 
         // sort by the study, subject, and visit
-        var orderSQL;
         if (options.subjectOnly)
             orderSQL = "\nORDER BY 1 ASC";
         else
             orderSQL = '\nORDER BY ' + this.CONTAINER_ALIAS + ', ' + this.SUBJECT_ALIAS + ', ' + this.SEQUENCENUM_ALIAS;
 
-        var sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL,
-                debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
+        sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
 
         if (LABKEY.devMode)
         {
+            var debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
             var SHOW_TRUNCATED_IN_CLAUSES = true;
             //console.log(SHOW_TRUNCATED_IN_CLAUSES ? debugSql : sql);
         }

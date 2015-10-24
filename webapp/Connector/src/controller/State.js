@@ -129,5 +129,9 @@ Ext.define('Connector.controller.State', {
 
     onAfterFilterChange : function(mdx, filters) {
         Connector.getFilterService().onFilterChange();
+    },
+
+    generateFilterSet : function(mdx, filters, subjectName) {
+        return Connector.getQueryService().configureOlapFilters(mdx, filters, subjectName);
     }
 });

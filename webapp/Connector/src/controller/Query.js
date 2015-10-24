@@ -14,8 +14,6 @@ Ext.define('Connector.controller.Query', {
 
     init : function() {
 
-        LABKEY.app.model.Filter.registerDataFilterProvider(this.getDataFilter, this);
-
         if (LABKEY.devMode) {
             QUERY = this;
         }
@@ -608,28 +606,39 @@ Ext.define('Connector.controller.Query', {
 
     /**
      * Get a LABKEY.Query.Visualization.getData configuration back based on the LABKEY.app.model.Filter given.
-     * @param filterConfig The object which will be added as a COUNT/WHERE filter.
-     * @param appFilter {Connector.model.Filter} or an appFilterData
-     * @returns {{level: string, sql: *}}
+     * @param mdx The object which will be added as a COUNT/WHERE filter.
+     * @param filters {Connector.model.Filter} or an appFilterData
+     * @param subjectName {String} or an appFilterData
+     * @returns {Array}
      */
-    getDataFilter : function(filterConfig, appFilter)
+    configureOlapFilters : function(mdx, filters, subjectName)
     {
-        if (Ext.isEmpty(this.GRID_MEASURES))
+        var olapFilters = [],
+            measures = [];
+
+        Ext.each(filters, function(filter)
         {
-            console.error('called getDataFilter() too early. Unable to determine grid measures');
+            if (filter.get('filterSource') === 'GETDATA')
+            {
+                measures = measures.concat(filter.getMeasureSet());
+            }
+            else
+            {
+                olapFilters.push(filter.getOlapFilter(mdx, filter, subjectName));
+            }
+        });
+
+        if (measures.length > 0)
+        {
+            olapFilters.push({
+                level: '[Subject].[Subject]', // TODO: Retrieve from application metadata (cube.js)
+                sql: QueryUtils.getSubjectIntersectSQL({
+                    measures: measures
+                })
+            });
         }
 
-        if (Ext.isEmpty(appFilter.getMeasureSet()))
-        {
-            throw 'Invalid getData configuration. At least one measure is required.';
-        }
-
-        return {
-            level: '[Subject].[Subject]', // TODO: Retrieve from application metadata (cube.js)
-            sql: QueryUtils.getDataSQL({
-                measures: appFilter.getMeasureSet()
-            })
-        };
+        return olapFilters;
     },
 
     /**
