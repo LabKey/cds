@@ -26,6 +26,8 @@ import org.labkey.test.pages.CDSLoginPage;
 import org.labkey.test.util.CDSHelper;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,17 +44,19 @@ public class CDSLoginTest extends CDSReadOnlyTest
     public void preTest()
     {
         signOut();
-        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app"));
+        Map<String, String> loginParams = new HashMap<>();
+        loginParams.put("login", "true");
+        beginAt(WebTestHelper.buildURL("cds", getProjectName(), "app", loginParams));
     }
 
     @Test
     public void testLoginPage()
     {
-        assertEquals("Wrong sign in page", "HIV CDS", getDriver().getTitle());
-        assertFalse(emailField.findElement(getDriver()).isEnabled());
-        assertFalse(passwordField.findElement(getDriver()).isEnabled());
-        assertFalse(rememberMeCheckbox.findElement(getDriver()).isEnabled());
-        assertTrue(rememberMeCheckbox.findElement(getDriver()).isSelected());
+        assertEquals("Wrong sign in page", "CAVD DataSpace", getDriver().getTitle());
+//        assertFalse(emailField.findElement(getDriver()).isEnabled());
+//        assertFalse(passwordField.findElement(getDriver()).isEnabled());
+//        assertFalse(rememberMeCheckbox.findElement(getDriver()).isEnabled());
+//        assertTrue(rememberMeCheckbox.findElement(getDriver()).isSelected());
         assertElementNotPresent(Locator.linkWithText("Logout"));
 
         CDSLoginPage loginPage = new CDSLoginPage(this);
@@ -79,7 +83,7 @@ public class CDSLoginTest extends CDSReadOnlyTest
             clickAndWait(CDSHelper.NavigationLink.GRID.getLinkLocator());
         }
 
-        waitForElement(Locator.css("p.errormsg").withText("Your session has timed out. Please login to continue."));
+        waitForElement(Locator.css("p").withText("Your session has timed out. Please login to continue."));
     }
 
     @Override

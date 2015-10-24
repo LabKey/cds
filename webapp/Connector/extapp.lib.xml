@@ -148,10 +148,8 @@
         <script path="Connector/src/view/Variable.js"/>
         <script path="Connector/src/view/StudyAxis.js"/>
         <script path="Connector/src/view/Chart.js"/>
-        <script path="Connector/src/view/Signin.js"/>
         <script path="Connector/src/view/SingleAxisExplorer.js"/>
         <script path="Connector/src/view/Summary.js"/>
-        <script path="Connector/src/view/TermsOfUse.js"/>
         <script path="Connector/src/view/Viewport.js"/>
 
         <script path="Connector/src/view/module/BaseModule.js"/>
@@ -175,7 +173,6 @@
         <script path="Connector/src/controller/Navigation.js"/>
         <script path="Connector/src/controller/Data.js"/>
         <script path="Connector/src/controller/Router.js"/>
-        <script path="Connector/src/controller/Signin.js"/>
         <script path="Connector/src/controller/State.js"/>
         <script path="Connector/src/controller/Summary.js"/>
 

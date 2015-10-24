@@ -48,10 +48,10 @@ public class CDSLoginPage
 
     public static class Locators
     {
-        public static Locator emailField = Locator.id("emailField");
-        public static Locator passwordField = Locator.id("passwordField");
-        public static Locator rememberMeCheckbox = Locator.checkboxById("rememberMeCheck");
-        public static Locator termsCheckbox = Locator.checkboxById("termsCheck");
+        public static Locator emailField = Locator.id("email");
+        public static Locator passwordField = Locator.id("password");
+        public static Locator rememberMeCheckbox = Locator.checkboxById("remember-me-checkbox");
+        public static Locator termsCheckbox = Locator.checkboxById("tos-checkbox");
         public static Locator signInButton = Locator.tagWithId("input", "signin");
     }
 }
