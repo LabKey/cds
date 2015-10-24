@@ -40,6 +40,9 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.DisplayColumn;
 import org.labkey.api.data.ExcelWriter;
 import org.labkey.api.data.PropertyManager;
+import org.labkey.api.module.Module;
+import org.labkey.api.module.ModuleHtmlView;
+import org.labkey.api.module.ModuleLoader;
 import org.labkey.api.query.QueryForm;
 import org.labkey.api.query.QueryView;
 import org.labkey.api.rss.RSSFeed;
@@ -47,11 +50,14 @@ import org.labkey.api.rss.RSSService;
 import org.labkey.api.security.*;
 import org.labkey.api.security.SecurityManager;
 import org.labkey.api.security.permissions.ReadPermission;
+import org.labkey.api.util.Path;
+import org.labkey.api.view.HtmlView;
 import org.labkey.api.view.HttpView;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.NavTree;
 import org.labkey.api.view.template.PageConfig;
 import org.labkey.cds.view.template.ConnectorTemplate;
+import org.labkey.cds.view.template.FrontPageTemplate;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.validation.BindException;
@@ -148,22 +154,29 @@ public class CDSController extends SpringActionController
         @Override
         public ModelAndView getView(Object o, BindException errors) throws Exception
         {
-            AppModel model = new AppModel();
-
-            // Support analytics for white-list users (i.e. if they are in the ANALYTICS_USER_GROUP)
-            List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
-            for (Group group : groups)
+            HttpView template;
+            if (getUser().isGuest())
             {
-                if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
-                {
-                    model.setIsAnalyticsUser(true);
-                    break;
-                }
+                template = new FrontPageTemplate(defaultPageConfig());
             }
+            else
+            {
+                AppModel model = new AppModel();
 
-            HttpView template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
+                // Support analytics for white-list users (i.e. if they are in the ANALYTICS_USER_GROUP)
+                List<Group> groups = SecurityManager.getGroups(getContainer(), getUser());
+                for (Group group : groups)
+                {
+                    if (SecurityManager.getDisambiguatedGroupName(group).equalsIgnoreCase(ANALYTICS_USER_GROUP))
+                    {
+                        model.setIsAnalyticsUser(true);
+                        break;
+                    }
+                }
+
+                template = new ConnectorTemplate(new JspView("/org/labkey/cds/view/app.jsp"), defaultPageConfig(), model);
+            }
             getPageConfig().setTemplate(PageConfig.Template.None);
-
             return template;
         }
 
@@ -171,6 +184,25 @@ public class CDSController extends SpringActionController
         public NavTree appendNavTrail(NavTree root)
         {
             return root;
+        }
+    }
+
+    @RequiresNoPermission
+    @IgnoresTermsOfUse
+    public class FrontPageAction extends SimpleViewAction
+    {
+        @Override
+        public ModelAndView getView(Object o, BindException errors) throws Exception
+        {
+            HttpView template = new FrontPageTemplate(defaultPageConfig());
+            getPageConfig().setTemplate(PageConfig.Template.None);
+            return template;
+        }
+
+        @Override
+        public NavTree appendNavTrail(NavTree root)
+        {
+            return null;
         }
     }
 
