@@ -21,6 +21,7 @@ import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
 import org.labkey.api.module.DefaultModule;
 import org.labkey.api.module.ModuleContext;
+import org.labkey.api.security.AuthenticationManager;
 import org.labkey.api.view.BaseWebPartFactory;
 import org.labkey.api.view.JspView;
 import org.labkey.api.view.Portal;
@@ -73,6 +74,7 @@ public class CDSModule extends DefaultModule
     {
         addController("cds", CDSController.class);
         CDSUserSchema.register(this);
+        AuthenticationManager.registerProvider(new CDSResetPasswordProvider(), AuthenticationManager.Priority.Low);
     }
 
 

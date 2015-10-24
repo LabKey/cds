@@ -55,7 +55,6 @@ Ext.Loader.addClassPathMappings({
   "Connector.controller.Navigation": "../../../../webapp/Connector/src/controller/Navigation.js",
   "Connector.controller.Query": "../../../../webapp/Connector/src/controller/Query.js",
   "Connector.controller.Router": "../../../../webapp/Connector/src/controller/Router.js",
-  "Connector.controller.Signin": "../../../../webapp/Connector/src/controller/Signin.js",
   "Connector.controller.State": "../../../../webapp/Connector/src/controller/State.js",
   "Connector.controller.Summary": "../../../../webapp/Connector/src/controller/Summary.js",
   "Connector.factory.Module": "../../../../webapp/Connector/src/factory/Module.js",
@@ -136,13 +135,10 @@ Ext.Loader.addClassPathMappings({
   "Connector.view.PageHeader": "../../../../webapp/Connector/src/view/PageHeader.js",
   "Connector.view.PlotPane": "../../../../webapp/Connector/src/view/PlotPane.js",
   "Connector.view.Selection": "../../../../webapp/Connector/src/view/Selection.js",
-  "Connector.view.Signin": "../../../../webapp/Connector/src/view/Signin.js",
-  "Connector.view.SigninForm": "../../../../webapp/Connector/src/view/Signin.js",
   "Connector.view.SingleAxisExplorer": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.SingleAxisExplorerView": "../../../../webapp/Connector/src/view/SingleAxisExplorer.js",
   "Connector.view.Summary": "../../../../webapp/Connector/src/view/Summary.js",
   "Connector.view.SummaryDataView": "../../../../webapp/Connector/src/view/Summary.js",
-  "Connector.view.TermsOfUse": "../../../../webapp/Connector/src/view/TermsOfUse.js",
   "Connector.view.Variable": "../../../../webapp/Connector/src/view/Variable.js",
   "Connector.view.Viewport": "../../../../webapp/Connector/src/view/Viewport.js",
   "Connector.view.module.AssayAnalyteList": "../../../../webapp/Connector/src/app/view/module/AssayAnalyteList.js",
@@ -242,7 +238,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.controller.Navigation": [],
   "Connector.controller.Query": [],
   "Connector.controller.Router": [],
-  "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
@@ -325,13 +320,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.view.PageHeader": [],
   "Connector.view.PlotPane": [],
   "Connector.view.Selection": [],
-  "Connector.view.Signin": [],
-  "Connector.view.SigninForm": [],
   "Connector.view.SingleAxisExplorer": [],
   "Connector.view.SingleAxisExplorerView": [],
   "Connector.view.Summary": [],
   "Connector.view.SummaryDataView": [],
-  "Connector.view.TermsOfUse": [],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],
   "Connector.view.module.AssayAnalyteList": [],
@@ -1262,7 +1254,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.controller.Navigation": [],
   "Connector.controller.Query": [],
   "Connector.controller.Router": [],
-  "Connector.controller.Signin": [],
   "Connector.controller.State": [],
   "Connector.controller.Summary": [],
   "Connector.factory.Module": [],
@@ -1421,12 +1412,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Connector.view.Selection": [
     "widget.selectionview"
   ],
-  "Connector.view.Signin": [
-    "widget.signin"
-  ],
-  "Connector.view.SigninForm": [
-    "widget.signinform"
-  ],
   "Connector.view.SingleAxisExplorer": [
     "widget.singleaxis"
   ],
@@ -1438,9 +1423,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.view.SummaryDataView": [
     "widget.summarydataview"
-  ],
-  "Connector.view.TermsOfUse": [
-    "widget.terms"
   ],
   "Connector.view.Variable": [],
   "Connector.view.Viewport": [],

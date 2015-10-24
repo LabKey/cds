@@ -86,13 +86,6 @@ Ext.define('Connector.controller.Analytics', {
             userplotchange: this.onPlotMeasureSelected
         });
 
-        this.control('signinform', {
-            userSignedIn: function() {
-                this.setVariable('userId', LABKEY.user.id);
-                this.trackEvent('User', 'Login', LABKEY.user.id);
-            }
-        });
-
         this.control('connectorheader', {
             userLogout: function() {
                 this.trackEvent('User', 'Logout', LABKEY.user.id);
