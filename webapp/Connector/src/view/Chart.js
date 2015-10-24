@@ -539,7 +539,7 @@ Ext.define('Connector.view.Chart', {
     redrawPlot : function() {
         if (Ext.isDefined(this.lastInitPlotParams)) {
             if (this.lastInitPlotParams.noplot) {
-                this.noPlot(this.lastInitPlotParams.emptyPlot);
+                this.noPlot(this.lastInitPlotParams.emptyPlot, this.lastInitPlotParams.chartData);
             }
             else {
                 this.initPlot(this.lastInitPlotParams.chartData, this.lastInitPlotParams.studyAxisInfo);
@@ -926,8 +926,9 @@ Ext.define('Connector.view.Chart', {
         }
         else {
             allDataRows = {
-                main: chartData,
-                totalCount: chartData.length
+                main: chartData.rows,
+                totalCount: chartData.rows.length,
+                invalidLogPlotRowCount: chartData.invalidLogPlotRowCount
             };
         }
 
@@ -2305,7 +2306,7 @@ Ext.define('Connector.view.Chart', {
         else if (chartData.getDataRows().totalCount == 0)
         {
             // show empty plot message if we have no data in main plot or gutter plots
-            this.noPlot(true);
+            this.noPlot(true, chartData);
         }
         else
         {
@@ -2576,8 +2577,8 @@ Ext.define('Connector.view.Chart', {
         state.getApplication().fireEvent('plotmeasures');
     },
 
-    noPlot : function(showEmptyMsg) {
-
+    noPlot : function(showEmptyMsg, chartData)
+    {
         var map = [{
             x : null,
             xname : 'X-Axis',
@@ -2586,7 +2587,10 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
-        this.initPlot(map, undefined, true, showEmptyMsg);
+        this.initPlot({
+            rows: map,
+            invalidLogPlotRowCount: Ext.isDefined(chartData) ? chartData.getDataRows().invalidLogPlotRowCount : 0
+        }, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
         this.resizePlotMsg(this.getNoPlotMsg(), this.plotEl.getBox());
@@ -3059,7 +3063,7 @@ Ext.define('Connector.view.Chart', {
 
         if (chartData.getDataRows().totalCount == 0) {
             // show empty plot message if we have no data in main plot or gutter plots
-            this.noPlot(true);
+            this.noPlot(true, chartData);
         }
         else {
             this.initPlot(chartData, studyAxisData);
