@@ -951,7 +951,7 @@ Ext.define('Connector.view.Chart', {
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
         this.toggleMedianMode();
 
-        this.isLogScale = this.isAxisLogScale();
+        this.invalidLogPlotRowCount = Ext.isDefined(allDataRows) ? allDataRows.invalidLogPlotRowCount : 0;
         this.toggleLogScaleMode();
 
         var me = this;
@@ -970,9 +970,9 @@ Ext.define('Connector.view.Chart', {
         plotConfig = this.getMainPlotConfig(allDataRows.main, aesConfig, scaleConfig, yAxisMargin);
 
         if (!noplot) {
-            // set the scale type to linear or log, validating that we don't allow log with negative values
-            var xScaleType = this.setScaleType(plotConfig.scales.x, 'x', properties);
-            var yScaleType = this.setScaleType(plotConfig.scales.yLeft, 'y', properties);
+            // set the scale type to linear or log
+            var xScaleType = this.setScaleType(plotConfig.scales.x, 'x');
+            var yScaleType = this.setScaleType(plotConfig.scales.yLeft, 'y');
 
             this.clickTask = new Ext.util.DelayedTask(function(node, view, name, target, multi) {
                 if (layerScope.isBrushed) {
@@ -1346,14 +1346,22 @@ Ext.define('Connector.view.Chart', {
 
     },
 
-    logRowCount : function(allDataRows) {
-        if (LABKEY.devMode) {
+    logRowCount : function(allDataRows)
+    {
+        if (LABKEY.devMode)
+        {
             console.log('total plotted rows:', allDataRows.totalCount);
-            if (allDataRows && allDataRows.undefinedX) {
+            if (allDataRows && allDataRows.undefinedX)
+            {
                 console.log('plotted x gutter rows:', allDataRows.undefinedX.length);
             }
-            if (allDataRows && allDataRows.undefinedY) {
+            if (allDataRows && allDataRows.undefinedY)
+            {
                 console.log('plotted x gutter rows:', allDataRows.undefinedY.length);
+            }
+            if (allDataRows && allDataRows.invalidLogPlotRowCount > 0)
+            {
+                console.log('not plotted log rows: ', allDataRows.invalidLogPlotRowCount);
             }
         }
     },
@@ -1956,16 +1964,11 @@ Ext.define('Connector.view.Chart', {
         return (selected.options && selected.options.scale) ? selected.options.scale : selected.defaultScale;
     },
 
-    setScaleType : function(scale, axis, properties) {
-        var scaleType = this.getScale(axis), allowLog;
+    setScaleType : function(scale, axis) {
+        var scaleType = this.getScale(axis);
 
-        if (scale.scaleType !== 'discrete') {
-            allowLog = (axis == 'y') ? !properties.setYLinear : !properties.setXLinear;
-            if (!allowLog && scaleType == 'log') {
-                this.showMessage('Displaying the ' + axis.toLowerCase() + '-axis on a linear scale due to the presence of invalid log values.', true);
-                scaleType = 'linear';
-            }
-
+        if (scale.scaleType !== 'discrete')
+        {
             Ext.apply(scale, {trans : scaleType});
         }
 
@@ -2182,30 +2185,7 @@ Ext.define('Connector.view.Chart', {
             wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
         }
 
-        if (options && options.scale === 'LOG')
-        {
-            var logFilter = this.getLogTransformFilter(measure);
-            if (logFilter)
-            {
-                if (Ext.isArray(wrappedMeasure.filterArray))
-                {
-                    wrappedMeasure.filterArray.push(logFilter);
-                }
-                else
-                {
-                    wrappedMeasure.filterArray = [logFilter];
-                }
-            }
-        }
-
         return wrappedMeasure;
-    },
-
-    getLogTransformFilter : function(measure, ignoreLogTransform) {
-        if (ignoreLogTransform || !measure || !measure.options || !measure.options.scale || measure.options.scale !== 'LOG')
-            return null;
-
-        return LABKEY.Filter.create(measure.alias, 0, LABKEY.Filter.Types.GREATER_THAN);
     },
 
     /**
@@ -2366,18 +2346,11 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideguttermsg', this);
     },
 
-    isAxisLogScale : function() {
-        var measures = this.getActiveMeasures();
-        var xLog = measures && measures.x && measures.x.options && measures.x.options.scale === 'LOG';
-        var yLog = measures && measures.y && measures.y.options && measures.y.options.scale === 'LOG';
-        return xLog || yLog;
-    },
-
     toggleLogScaleMode : function() {
-        this.getLogScaleModeIndicator().setVisible(this.isLogScale);
+        this.getLogScaleModeIndicator().setVisible(this.invalidLogPlotRowCount > 0);
 
         var msgKey = 'LOG_MODE';
-        if (!this.disableAutoMsg && this.isLogScale && Connector.getService('Messaging').isAllowed(msgKey)) {
+        if (!this.disableAutoMsg && this.invalidLogPlotRowCount > 0 && Connector.getService('Messaging').isAllowed(msgKey)) {
             this.showWhyLogScale();
             this.hideLogScaleModeTask.delay(5000);
             Connector.getService('Messaging').block(msgKey);
@@ -2385,14 +2358,14 @@ Ext.define('Connector.view.Chart', {
     },
 
     showWhyLogScale : function() {
-        if (this.isLogScale) {
+        if (this.invalidLogPlotRowCount > 0) {
             var config = {
                 target: this.getLogScaleModeIndicator().getEl().dom,
                 placement: 'bottom',
                 title: 'Log filter on',
                 xOffset: -115,
                 arrowOffset: 145,
-                content: 'Values ≤ 0 have no log and were filtered out. Use a linear scale to see all values.'
+                content: 'Values ≤ 0 have no log and were dropped from the plot. Use a linear scale to see all values.'
             };
 
             ChartUtils.showCallout(config, 'hidelogscalemsg', this);

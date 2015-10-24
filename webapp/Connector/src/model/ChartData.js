@@ -115,6 +115,11 @@ Ext.define('Connector.model.ChartData', {
         return this.get('usesMedian');
     },
 
+    isLogScale : function(axis)
+    {
+        return this.getPlotScales()[axis] == 'log';
+    },
+
     getAliasFromMeasure : function(measure) {
         // if the param comes in as a string, make it an object for consistency
         if (Ext.isString(measure)) {
@@ -206,9 +211,10 @@ Ext.define('Connector.model.ChartData', {
             containerAlignmentDayMap = {},
             axisMeasureStore = LABKEY.Query.experimental.AxisMeasureStore.create(),
             dataRows, mainPlotRows = [], undefinedXRows = [], undefinedYRows = [], undefinedBothRows = [],
+            invalidLogPlotRowCount = 0,
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
-            negX = false, negY = false,
+            hasNegOrZeroX = false, hasNegOrZeroY = false,
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
             excludeAliases = [],
             brushFilterAliases = [], mainCount = 0,
@@ -314,28 +320,38 @@ Ext.define('Connector.model.ChartData', {
         });
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
-        for (var r = 0; r < dataRows.length; r++) {
+        for (var r = 0; r < dataRows.length; r++)
+        {
             _row = dataRows[r];
 
             // build study container alignment day map
-            if (_row[QueryUtils.CONTAINER_ALIAS]) {
+            if (_row[QueryUtils.CONTAINER_ALIAS])
+            {
                 containerAlignmentDayMap[_row[QueryUtils.CONTAINER_ALIAS]] = 0;
             }
 
-            if (color) {
-                colorVal = this._getColorValue(color, _cid, _row);
+            yVal = this._getYValue(y, _yid, _row);
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
+            colorVal = color ? this._getColorValue(color, _cid, _row) : undefined;
+
+            // check that the plot value are valid on a log scale
+            if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
+            {
+                invalidLogPlotRowCount++;
+                continue;
             }
 
-            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
-            if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date") {
+            // update x-axis and y-axis domain min and max values
+            if (Ext.typeOf(xVal) === "number" || Ext.typeOf(xVal) === "date")
+            {
                 if (xDomain[0] == null || xVal < xDomain[0])
                     xDomain[0] = xVal;
                 if (xDomain[1] == null || xVal > xDomain[1])
                     xDomain[1] = xVal;
             }
 
-            yVal = this._getYValue(y, _yid, _row);
-            if (Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date") {
+            if (Ext.typeOf(yVal) === "number" || Ext.typeOf(yVal) === "date")
+            {
                 if (yDomain[0] == null || yVal < yDomain[0])
                     yDomain[0] = yVal;
                 if (yDomain[1] == null || yVal > yDomain[1])
@@ -343,11 +359,13 @@ Ext.define('Connector.model.ChartData', {
             }
 
             // allow any pair that does not contain a negative value. NaN, null, and undefined are non-negative values.
-            if (xa && xa.isNumeric && Ext.isNumber(xVal) && xVal <= 0) {
-                negX = true;
+            if (xa && xa.isNumeric && Ext.isNumber(xVal) && xVal <= 0)
+            {
+                hasNegOrZeroX = true;
             }
-            if (ya.isNumeric && Ext.isNumber(yVal) && yVal <= 0) {
-                negY = true;
+            if (ya.isNumeric && Ext.isNumber(yVal) && yVal <= 0)
+            {
+                hasNegOrZeroY = true;
             }
 
             var entry = {
@@ -398,9 +416,10 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
-        this.setAxisDomain(yDomain, 'y', negY, y.type);
-        if (x) {
-            this.setAxisDomain(xDomain, 'x', negX, x.type);
+        this.setAxisDomain(yDomain, 'y', hasNegOrZeroY, y.type);
+        if (x)
+        {
+            this.setAxisDomain(xDomain, 'x', hasNegOrZeroX, x.type);
         }
 
         this.set({
@@ -411,14 +430,13 @@ Ext.define('Connector.model.ChartData', {
                 main: mainPlotRows,
                 undefinedX: undefinedXRows.length > 0 ? undefinedXRows : undefined,
                 undefinedY: undefinedYRows.length > 0 ? undefinedYRows : undefined,
-                totalCount: mainCount + undefinedXRows.length + undefinedYRows.length
+                totalCount: mainCount + undefinedXRows.length + undefinedYRows.length,
+                invalidLogPlotRowCount: invalidLogPlotRowCount
             },
             properties: {
                 xaxis: xa,
                 yaxis: ya,
-                color: ca,
-                setXLinear: negX,
-                setYLinear: negY
+                color: ca
             }
         });
     },
@@ -433,7 +451,7 @@ Ext.define('Connector.model.ChartData', {
 
     setAxisDomain : function(axisDomain, axis, hasNegVal, type) {
         // issue 24074: set the min to 1 instead of 0 if log scale
-        var min  = this.get('plotScales')[axis] == 'log' && !hasNegVal ? 1 : 0;
+        var min = this.isLogScale(axis) && !hasNegVal ? 1 : 0;
 
         if (type == 'TIMESTAMP') {
             // if the min and max dates are the same, +/- 3
@@ -517,5 +535,10 @@ Ext.define('Connector.model.ChartData', {
         }
 
         return !(value === undefined || value === null);
+    },
+
+    isValidPlotValue : function(axis, props, value)
+    {
+        return value == null || !props.isContinuous || !this.isLogScale(axis) || value > 0;
     }
 });
