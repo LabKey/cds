@@ -624,7 +624,7 @@ Ext.define('Connector.controller.Query', {
             }
             else
             {
-                olapFilters.push(filter.getOlapFilter(mdx, filter, subjectName));
+                olapFilters.push(filter.getOlapFilter(mdx, subjectName));
             }
         });
 
