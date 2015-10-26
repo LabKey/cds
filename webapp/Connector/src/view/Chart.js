@@ -1995,7 +1995,7 @@ Ext.define('Connector.view.Chart', {
     },
 
     /**
-     * This allows the active
+     * This allows the active measures to be set from the 'In the plot' filter
      * @param filter
      * @returns {{x: null, y: null, color: null}}
      */
@@ -2018,8 +2018,13 @@ Ext.define('Connector.view.Chart', {
             hasMeasures = true;
 
             this.activeXSelection = activeMeasures.x;
-            this.getXAxisSelector().setActiveMeasure(this.activeXSelection);
             this.getXSelector().getModel().updateVariable([this.activeXSelection]);
+
+            // Issue 24580: only update the variable selector if it has already been initialized
+            if (this.getAxisSelectorIfInitialized('x') != null)
+            {
+                this.getXAxisSelector().setActiveMeasure(this.activeXSelection);
+            }
         }
 
         if (y)
@@ -2028,8 +2033,13 @@ Ext.define('Connector.view.Chart', {
             hasMeasures = true;
 
             this.activeYSelection = activeMeasures.y;
-            this.getYAxisSelector().setActiveMeasure(this.activeYSelection);
             this.getYSelector().getModel().updateVariable([this.activeYSelection]);
+
+            // Issue 24580: only update the variable selector if it has already been initialized
+            if (this.getAxisSelectorIfInitialized('y') != null)
+            {
+                this.getYAxisSelector().setActiveMeasure(this.activeYSelection);
+            }
         }
 
         if (color)
@@ -2038,8 +2048,13 @@ Ext.define('Connector.view.Chart', {
             hasMeasures = true;
 
             this.activeColorSelection = activeMeasures.color;
-            this.getColorAxisSelector().setActiveMeasure(this.activeColorSelection);
             this.getColorSelector().getModel().updateVariable([this.activeColorSelection]);
+
+            // Issue 24580: only update the variable selector if it has already been initialized
+            if (this.getAxisSelectorIfInitialized('color') != null)
+            {
+                this.getColorAxisSelector().setActiveMeasure(this.activeColorSelection);
+            }
         }
 
         return hasMeasures;
@@ -2060,21 +2075,29 @@ Ext.define('Connector.view.Chart', {
         this.clearAxisSelection('color');
     },
 
-    clearAxisSelection : function(axis) {
-        if (axis == 'y') {
-            this.getYAxisSelector().clearSelection();
+    clearAxisSelection : function(axis)
+    {
+        if (axis == 'y')
+        {
             this.activeYSelection = undefined;
             this.getYSelector().clearModel();
         }
-        else if (axis == 'x') {
-            this.getXAxisSelector().clearSelection();
+        else if (axis == 'x')
+        {
             this.activeXSelection = undefined;
             this.getXSelector().clearModel();
         }
-        else if (axis == 'color') {
-            this.getColorAxisSelector().clearSelection();
+        else if (axis == 'color')
+        {
             this.activeColorSelection = undefined;
             this.getColorSelector().clearModel();
+        }
+
+        // Issue 24580: only update the variable selector if it has already been initialized
+        var axisSelector = this.getAxisSelectorIfInitialized(axis);
+        if (axisSelector != null)
+        {
+            axisSelector.clearSelection();
         }
     },
 
@@ -2671,6 +2694,24 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
+    getAxisSelectorIfInitialized : function(axis)
+    {
+        if (axis == 'y')
+        {
+            return Ext.isDefined(this.yAxisSelector) ? this.getYAxisSelector() : null;
+        }
+        else if (axis == 'x')
+        {
+            return Ext.isDefined(this.xAxisSelector) ? this.getXAxisSelector() : null;
+        }
+        else if (axis == 'color')
+        {
+            return Ext.isDefined(this.colorAxisSelector) ? this.getColorAxisSelector() : null;
+        }
+
+        return null;
+    },
+
     getYAxisSelector : function() {
         if (!this.yAxisSelector) {
             this.yAxisSelector = Ext.create('Connector.panel.Selector', {
@@ -2696,7 +2737,7 @@ Ext.define('Connector.view.Chart', {
                         this.clearVisibleWindow();
 
                         this.ywin.hide(this.getYSelector().getEl());
-                        // reset the selection back to this.activeYSelection
+                        // reset the selection back to previous active selection
                         this.yAxisSelector.setActiveMeasure(this.activeYSelection);
                     },
                     scope: this
@@ -2748,7 +2789,7 @@ Ext.define('Connector.view.Chart', {
                         this.clearVisibleWindow();
 
                         this.xwin.hide(this.getXSelector().getEl());
-                        // reset the selection back to this.activeYSelection
+                        // reset the selection back to previous active selection
                         this.xAxisSelector.setActiveMeasure(this.activeXSelection);
                     },
                     scope: this
@@ -2804,7 +2845,7 @@ Ext.define('Connector.view.Chart', {
                         this.clearVisibleWindow();
 
                         this.colorwin.hide(this.getColorSelector().getEl());
-                        // reset the selection back to this.activeYSelection
+                        // reset the selection back to previous active selection
                         this.colorAxisSelector.setActiveMeasure(this.activeColorSelection);
                     },
                     scope: this
