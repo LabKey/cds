@@ -14,10 +14,9 @@ Ext.define('Connector.model.Filter', {
         {name : 'dataFilter', defaultValue: {}},
         {name : 'measureSet', defaultValue: []},
         {name : 'isAggregated', type: 'boolean', defaultValue: false},
-        {name : 'xLabel', defaultValue: undefined},
-        {name : 'yLabel', defaultValue: undefined},
 
         {name : 'isTime', type: 'boolean', defaultValue: false},
+        {name : 'timeMeasure', defaultValue: undefined},
         {name : 'timeFilters', defaultValue: [], convert: function(raw)
         {
             var filters = [];
@@ -647,16 +646,38 @@ Ext.define('Connector.model.Filter', {
     /**
      * Allows for this filter to replace any data filters
      * @param {Array} oldFilters
-     * @param {Array} newFilters -
-     * @returns {boolean} True if this replacement resulted in the filter needing to removed.
+     * @param {Array} newFilters
+     * @param {Function} callback
+     * @param {Object} [scope=undefined]
      */
-    replace : function(oldFilters, newFilters)
+    replace : function(oldFilters, newFilters, callback, scope)
     {
         var remove = false;
 
         if (Ext.isEmpty(oldFilters))
         {
             throw this.$className + '.replace() cannot be used to only add filters.';
+        }
+
+        if (this.isTime())
+        {
+            if (newFilters.length == 0)
+            {
+                remove = true;
+                callback.call(scope, this, remove);
+            }
+            else
+            {
+                Connector.getFilterService().getTimeFilter(this.get('timeMeasure'), newFilters, function(_filter)
+                {
+                    this.data.gridFilter[0] = _filter;
+
+                    this.set('timeFilters', newFilters);
+
+                    callback.call(scope, this, remove);
+                }, this);
+            }
+            return;
         }
 
         // Determine the sourcing measure
@@ -765,7 +786,7 @@ Ext.define('Connector.model.Filter', {
             this._initFilter();
         }
 
-        return remove;
+        callback.call(scope, this, remove);
     },
 
     _replacePlotMeasures : function(sourceMeasure, oldFilters, newFilters)

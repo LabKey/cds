@@ -449,12 +449,13 @@ Ext.define('Connector.model.Grid', {
             // create a new grid filter
             if (!Ext.isEmpty(newFilters))
             {
-                var newAppFilter = this.buildFilter(newFilters);
+                this.buildFilter(newFilters, function(newAppFilter)
+                {
+                    // Creating a new grid filter
+                    Connector.getState().addFilter(newAppFilter);
 
-                // Creating a new grid filter
-                Connector.getState().addFilter(newAppFilter);
-
-                this.fireEvent('usergridfilter', [newAppFilter]);
+                    this.fireEvent('usergridfilter', [newAppFilter]);
+                }, this);
             }
         }
         else
@@ -480,23 +481,25 @@ Ext.define('Connector.model.Grid', {
                     {
                         found = true;
 
-                        var remove = appFilter.replace(oldFilters, newFilters);
-                        if (remove)
+                        appFilter.replace(oldFilters, newFilters, function(filter, remove)
                         {
-                            Connector.getState().removeFilter(appFilter.id);
-                        }
-                        else
-                        {
-                            Connector.getState().updateMDXFilter(false);
+                            if (remove)
+                            {
+                                Connector.getState().removeFilter(appFilter.id);
+                            }
+                            else
+                            {
+                                Connector.getState().updateMDXFilter(false);
 
-                            this.filterMap = {};
+                                this.filterMap = {};
 
-                            // filters are tracked
-                            // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
-                            this.getDataFilters();
+                                // filters are tracked
+                                // retrieve the ID of the last filter so we can track it for removal -- addFilter should possibly return this
+                                this.getDataFilters();
 
-                            this.fireEvent('usergridfilter', [appFilter]);
-                        }
+                                this.fireEvent('usergridfilter', [appFilter]);
+                            }
+                        }, this);
 
                         return false;
                     }
@@ -514,16 +517,68 @@ Ext.define('Connector.model.Grid', {
         }
     },
 
-    buildFilter : function(filterArray)
+    buildFilter : function(filterArray, callback, scope)
     {
-        return Ext.create('Connector.model.Filter', {
-            hierarchy: 'Subject',
-            gridFilter: filterArray,
-            operator: LABKEY.app.model.Filter.OperatorTypes.OR,
-            isGrid: true,
-            filterSource: 'GETDATA',
-            isWhereFilter: true
+        var alias = filterArray[0].getColumnName(),
+            queryService = Connector.getQueryService(),
+            timeAliases = queryService.getTimeAliases(),
+            visitTag,
+            filter,
+            timeMeasure;
+
+        Ext.iterate(timeAliases, function(timeAlias)
+        {
+            // search for time aliases (possibly aligned)
+            if (alias.toLowerCase().indexOf(timeAlias.toLowerCase()) === 0)
+            {
+                timeMeasure = queryService.getMeasure(timeAlias);
+                if (alias !== timeAlias)
+                {
+                    visitTag = alias.replace(timeAlias + '_', '').replace(/_/g, ' ');
+                }
+                return false;
+            }
         });
+
+        if (timeMeasure)
+        {
+            var wrappedTimeMeasure = {
+                measure: timeMeasure,
+                dateOptions: {
+                    interval: timeMeasure.alias,
+                    zeroDayVisitTag: visitTag ? visitTag : null
+                }
+            };
+
+            Connector.getFilterService().getTimeFilter(wrappedTimeMeasure, filterArray, function(timeFilter)
+            {
+                filter = Ext.create('Connector.model.Filter', {
+                    operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                    isTime: true,
+                    isGrid: true,
+                    isWhereFilter: true,
+                    timeMeasure: wrappedTimeMeasure,
+                    filterSource: 'GETDATA',
+                    gridFilter: [timeFilter],
+                    timeFilters: filterArray
+                });
+
+                callback.call(scope, filter);
+            });
+        }
+        else
+        {
+            filter = Ext.create('Connector.model.Filter', {
+                hierarchy: 'Subject',
+                gridFilter: filterArray,
+                operator: LABKEY.app.model.Filter.OperatorTypes.OR,
+                isGrid: true,
+                filterSource: 'GETDATA',
+                isWhereFilter: true
+            });
+
+            callback.call(scope, filter);
+        }
     },
 
     getFilterId : function(filter)

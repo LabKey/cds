@@ -17,7 +17,7 @@ Ext.define('Connector.view.Selection', {
 
     tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<tpl if="this.isPlotSelection(values) === true">',
+                '<tpl if="this.isPlotSelection(values) === true || this.isTime(values) === true">',
                     // Plot Selection Filter
                     '<div class="filter-item">',
                         '<div class="selitem">{[this.renderPlotSelection(values)]}</div>',
@@ -88,6 +88,9 @@ Ext.define('Connector.view.Selection', {
                 isPlotSelection : function(values) {
                     var check = this._plotGridCheck(values);
                     return check.isPlot && check.isGrid;
+                },
+                isTime : function(values) {
+                    return values.hasOwnProperty('isTime') ? values.isTime : false;
                 },
                 selectIntersect : function(op) {
                     var markup = op.indexOf('AND') > -1 ? 'selected="selected"' : '';
@@ -171,15 +174,11 @@ Ext.define('Connector.view.Selection', {
 
                     return Ext.htmlEncode(type) + ': ' + LABKEY.app.model.Filter.getGridLabel(values);
                 },
-                renderSelectionMeasure : function(measure, filters, label)
+                renderSelectionMeasure : function(measure, filters, isTime)
                 {
                     var domString = '', filterValString = '', sep = '';
 
-                    if (label)
-                    {
-                        domString = '<div class="status-over">' + Ext.String.ellipsis(label, 35) + '</div>';
-                    }
-                    else if (measure && !Ext.isEmpty(filters))
+                    if (measure && !Ext.isEmpty(filters))
                     {
                         Ext.each(filters, function(filter)
                         {
@@ -200,6 +199,11 @@ Ext.define('Connector.view.Selection', {
                             sep = ', ';
                         });
 
+                        if (isTime && measure.dateOptions && measure.dateOptions.zeroDayVisitTag != null)
+                        {
+                            filterValString += ' (' + measure.dateOptions.zeroDayVisitTag + ')';
+                        }
+
                         domString = '<div class="status-over">' + Ext.String.ellipsis(measure.measure.label, 17, true);
                         domString += ': ' + filterValString + '</div>';
                     }
@@ -210,15 +214,26 @@ Ext.define('Connector.view.Selection', {
                 {
                     var measures = values.plotMeasures,
                         filters = values.gridFilter,
+                        filter,
                         xMeasure = measures[0],
                         yMeasure = measures[1],
+                        xIsTime = false,
                         xFilters = [],
                         yFilters = [],
-                        domString;
+                        domString, i=0;
+
+                    if (values.isTime)
+                    {
+                        i = 2;
+                        xIsTime = true;
+                        xMeasure = values.timeMeasure;
+                        xFilters = xFilters.concat(values.timeFilters);
+                    }
 
                     // split measures into x/y based on column name
-                    Ext.each(filters, function(filter, i)
+                    for (; i < filters.length; i++)
                     {
+                        filter = filters[i];
                         if (filter)
                         {
                             if (i < 2) // [x1, x2, y1, y2]
@@ -236,10 +251,10 @@ Ext.define('Connector.view.Selection', {
                                 }
                             }
                         }
-                    });
+                    }
 
-                    domString = this.renderSelectionMeasure(xMeasure, xFilters, values.xLabel);
-                    domString = domString + this.renderSelectionMeasure(yMeasure, yFilters, values.yLabel);
+                    domString = this.renderSelectionMeasure(xMeasure, xFilters, xIsTime);
+                    domString += this.renderSelectionMeasure(yMeasure, yFilters);
 
                     return domString;
                 }

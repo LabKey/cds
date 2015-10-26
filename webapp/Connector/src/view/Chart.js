@@ -1861,41 +1861,17 @@ Ext.define('Connector.view.Chart', {
             if (selection.gridFilter[0] || selection.gridFilter[1])
             {
                 selection.plotMeasures[0] = this._getAxisWrappedMeasure(this.activeXSelection);
+                var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
 
                 // Create a 'time filter'
                 if (this.activeXSelection.variableType === 'TIME')
                 {
-                    var alignedAlias = QueryUtils.ensureAlignmentAlias(selection.plotMeasures[0]),
-                        rangeMin = parseInt(selection.gridFilter[0].getValue()),
-                        rangeMax = parseInt(selection.gridFilter[1].getValue());
-
-                    Connector.getFilterService().getSubjectVisits(alignedAlias, rangeMin, rangeMax, function(subjectVisits)
+                    Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
                     {
-                        var xLabel, type, value;
-
-                        if (Ext.isEmpty(subjectVisits))
-                        {
-                            type = LABKEY.Filter.Types.ISBLANK;
-                        }
-                        else
-                        {
-                            value = subjectVisits.join(';');
-                            type = LABKEY.Filter.Types.IN;
-                        }
-
-                        // create the custom label
-                        xLabel = selection.plotMeasures[0].measure.label + ': ';
-                        xLabel += '' + rangeMin + ' to ' + rangeMax;
-
-                        if (selection.plotMeasures[0].dateOptions && selection.plotMeasures[0].dateOptions.zeroDayVisitTag)
-                        {
-                            xLabel += ' (' + selection.plotMeasures[0].dateOptions.zeroDayVisitTag + ')';
-                        }
-
                         selection.isTime = true;
-                        selection.xLabel = xLabel;
-                        selection.timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
-                        selection.gridFilter[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, value, type);
+                        selection.timeMeasure = Ext.clone(selection.plotMeasures[0]);
+                        selection.timeFilters = timeFilters;
+                        selection.gridFilter[0] = _filter;
                         selection.gridFilter[1] = null;
 
                         callback.call(scope, selection);
