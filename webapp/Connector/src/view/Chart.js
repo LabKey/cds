@@ -2587,9 +2587,19 @@ Ext.define('Connector.view.Chart', {
             subjectId: null
         }];
 
+        var invalidLogPlotRowCount = 0;
+
+        if (Ext.isDefined(chartData))
+        {
+            if (Ext.isFunction(chartData.getDataRows))
+            {
+                invalidLogPlotRowCount = chartData.getDataRows().invalidLogPlotRowCount;
+            }
+        }
+
         this.initPlot({
             rows: map,
-            invalidLogPlotRowCount: Ext.isDefined(chartData) ? chartData.getDataRows().invalidLogPlotRowCount : 0
+            invalidLogPlotRowCount: invalidLogPlotRowCount
         }, undefined, true, showEmptyMsg);
 
         this.getNoPlotMsg().setVisible(!showEmptyMsg);
