@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class CDSResetPasswordProvider implements ResetPasswordProvider
 {
-    private static final String NAME = "cds";
+    private static final String NAME        = "cds";
+    private static final String DESCRIPTION = "CDS Reset Password Provider";
     @Override
     public ActionURL getAPIVerificationURL(Container c)
     {
@@ -39,7 +40,7 @@ public class CDSResetPasswordProvider implements ResetPasswordProvider
     @Override
     public String getDescription()
     {
-        return null;
+        return DESCRIPTION;
     }
 
     @Override
