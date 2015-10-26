@@ -28,7 +28,7 @@ Ext.define("Connector.view.Header", {
             toolBarItems = [{
                 xtype: 'box',
                 itemId: 'feedback',
-                margin: '2 50 0 0',
+                margin: '2 40 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -44,7 +44,7 @@ Ext.define("Connector.view.Header", {
             },{
                 xtype: 'box',
                 itemId: 'about',
-                margin: '2 36 0 0',
+                margin: '2 40 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -54,7 +54,7 @@ Ext.define("Connector.view.Header", {
             },{
                 xtype: 'box',
                 itemId: 'logout',
-                margin: '2 0 0 0',
+                margin: '2 40 0 0',
                 autoEl: {
                     tag: 'a',
                     cls: 'logout',
@@ -98,8 +98,7 @@ Ext.define("Connector.view.Header", {
             xtype: 'panel',
             layout: 'hbox',
             itemId: 'search',
-            margin: '18 28 0 0',
-            width: 250,
+            margin: '18 5 0 0',
             items: toolBarItems
         }];
 
