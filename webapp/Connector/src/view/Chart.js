@@ -1814,13 +1814,13 @@ Ext.define('Connector.view.Chart', {
 
     /**
      * @param {Array} sqlFilters
-     * @param {Boolean} [fromBrush=false]
+     * @param {Boolean} [from2DBrush=false]
      * @param {Boolean} [allowInverseFilter=false]
      */
-    createSelectionFilter : function(sqlFilters, fromBrush, allowInverseFilter)
+    createSelectionFilter : function(sqlFilters, from2DBrush, allowInverseFilter)
     {
         // construct an 'aggregated' filter
-        if (fromBrush && this.showAsMedian)
+        if (from2DBrush && this.showAsMedian)
         {
             Connector.getState().addSelection({
                 gridFilter: sqlFilters,
@@ -1930,7 +1930,7 @@ Ext.define('Connector.view.Chart', {
 
         sqlFilters[0] = LABKEY.Filter.create(name, values, type);
 
-        this.createSelectionFilter(sqlFilters, false /* fromBrush */, allowInverseFilter);
+        this.createSelectionFilter(sqlFilters, false /* from2DBrush */, allowInverseFilter);
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 

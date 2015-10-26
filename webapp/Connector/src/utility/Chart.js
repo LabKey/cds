@@ -211,6 +211,7 @@ Ext.define('Connector.utility.Chart', {
             xMeasure = measures[0],
             yMeasure = measures[1],
             sqlFilters = [null, null, null, null],
+            hasXBrush = false, hasYBrush = false,
             yMin, yMax, xMin, xMax;
 
         yMeasure.colName = properties.yaxis.colName;
@@ -222,6 +223,8 @@ Ext.define('Connector.utility.Chart', {
 
         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
         {
+            hasXBrush = true;
+
             xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true);
             xMax = ChartUtils.transformVal(xExtent[1], xMeasure.type, false);
 
@@ -246,6 +249,8 @@ Ext.define('Connector.utility.Chart', {
 
         if (yMeasure && yExtent[0] !== null && yExtent[1] !== null)
         {
+            hasYBrush = true;
+
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
@@ -253,7 +258,7 @@ Ext.define('Connector.utility.Chart', {
             sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
         }
 
-        this.createSelectionFilter(sqlFilters, true /* fromBrush */);
+        this.createSelectionFilter(sqlFilters, hasXBrush && hasYBrush);
     },
 
     _onBrush : function(extent)
