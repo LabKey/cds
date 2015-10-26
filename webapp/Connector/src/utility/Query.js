@@ -50,7 +50,7 @@ Ext.define('Connector.utility.Query', {
 
     getSubjectIntersectSQL : function(config)
     {
-        return this._generateVisGetDataSql(config.measures, config.extraFilters, {/*subjectOnly: true,*/intersect: true}).sql;
+        return this._generateVisGetDataSql(config.measures, config.extraFilters, {subjectOnly: true, intersect: true}).sql;
     },
 
     _createTableObj : function(schema, query, joinKeys, isAssayDataset)
@@ -326,7 +326,16 @@ Ext.define('Connector.utility.Query', {
 
         if (options.subjectOnly)
         {
+            SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
+            sep = ",\n\t";
             SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
+
+            columnAliasMap[this.CONTAINER_ALIAS] = {
+                name: 'Container',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+
             columnAliasMap[this.SUBJECT_ALIAS] = {
                 name: 'SubjectId',
                 queryName: rootTable.displayName,
