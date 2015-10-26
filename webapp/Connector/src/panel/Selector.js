@@ -596,12 +596,13 @@ Ext.define('Connector.panel.Selector', {
         }
         else {
             if (activeMeasure) {
-                if (selModel.hasSelection() && selModel.getLastSelected().id === activeMeasure.id) {
+                if (selModel.hasSelection() && selModel.getLastSelected().getId() === activeMeasure.getId()) {
                     // already have selected measure, just need to show the advanced options pane
                     this.slideAdvancedOptionsPane();
                 }
                 else {
-                    Ext.defer(function() { selModel.select(activeMeasure); }, 500, this);
+                    index = this.measureStore.findExact('lowerAlias', activeMeasure.getId());
+                    Ext.defer(function() { selModel.select(index); }, 500, this);
                 }
             }
             else {

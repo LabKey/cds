@@ -676,8 +676,19 @@ Ext.define('Connector.view.Chart', {
         aes.boxMouseOverFn = function(event, box, data) {
             var content = '', config;
 
+            var roundQValue = function (value) {
+                if (Math.abs(value) < 0.00001) {
+                    // show the 1st significant digit, we don't want to show 0
+                    return value.toPrecision(1);
+                }
+                else {
+                    return parseFloat(value.toFixed(5));
+
+                };
+            };
+
             Ext.each(['Q1', 'Q2', 'Q3'], function(type) {
-                content += '<p><span style="font-weight: bold;">' + type + '</span> ' + data.summary[type] + '</p>';
+                content += '<p><span style="font-weight: bold;">' + type + '</span> ' + roundQValue(data.summary[type]) + '</p>';
             });
 
             config = {
