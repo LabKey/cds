@@ -378,13 +378,6 @@ Ext.define('Connector.model.ChartData', {
                 colorname: ca.label
             };
 
-            // this allows for each point to have a 'participant sequence num'
-            // which can be filtered on in 'time filters'
-            if (x && x.variableType === 'TIME')
-            {
-                entry.seqNum = _row[QueryUtils.SUBJECT_SEQNUM_ALIAS];
-            }
-
             // split the data entry based on undefined x and y values for gutter plotting
             if (xVal == null && yVal == null)
             {

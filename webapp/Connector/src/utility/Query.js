@@ -324,36 +324,31 @@ Ext.define('Connector.utility.Query', {
         var SELECT = ["SELECT "],
             sep = "\n\t";
 
-        if (options.subjectOnly)
-        {
-            SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
-            sep = ",\n\t";
-            SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
+        SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
+        sep = ",\n\t";
+        SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
 
-            columnAliasMap[this.CONTAINER_ALIAS] = {
-                name: 'Container',
-                queryName: rootTable.displayName,
-                schemaName: rootTable.schemaName
-            };
+        columnAliasMap[this.CONTAINER_ALIAS] = {
+            name: 'Container',
+            queryName: rootTable.displayName,
+            schemaName: rootTable.schemaName
+        };
 
-            columnAliasMap[this.SUBJECT_ALIAS] = {
-                name: 'SubjectId',
-                queryName: rootTable.displayName,
-                schemaName: rootTable.schemaName
-            };
-        }
-        else
+        columnAliasMap[this.SUBJECT_ALIAS] = {
+            name: 'SubjectId',
+            queryName: rootTable.displayName,
+            schemaName: rootTable.schemaName
+        };
+
+        if (!options.subjectOnly)
         {
             if (hasMultiple)
             {
                 // only include the Dataset column if we have multiple assay datasets in the query
-                SELECT.push(LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\" @title=\'Dataset\'");
+                SELECT.push(sep + LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\" @title=\'Dataset\'");
                 columnAliasMap[this.DATASET_ALIAS] = {name: 'Dataset'};
                 sep = ",\n\t";
             }
-            SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
-            sep = ",\n\t";
-            SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
             SELECT.push(sep + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS + '" @title=\'Sequence Num\'');
             SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS + '" @title=\'Participant Sequence Num\'');
 

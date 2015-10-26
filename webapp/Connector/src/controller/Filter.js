@@ -240,6 +240,8 @@ Ext.define('Connector.controller.Filter', {
                             {
                                 this._querySubjectVisits(cached.alias, cached.min, cached.max, cached.callback, cached.scope);
                             }, this);
+
+                            this._visitCache = [];
                         },
                         scope: this
                     });

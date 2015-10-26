@@ -1808,83 +1808,23 @@ Ext.define('Connector.view.Chart', {
      */
     createSelectionFilter : function(sqlFilters, fromBrush, allowInverseFilter)
     {
-        var selection;
-
         // construct an 'aggregated' filter
         if (fromBrush && this.showAsMedian)
         {
-            selection = {
+            Connector.getState().addSelection({
                 gridFilter: sqlFilters,
                 members: Ext.Object.getKeys(this.brushedSubjects),
                 operator: LABKEY.app.model.Filter.OperatorTypes.OR,
                 filterSource: 'GETDATA',
                 isAggregated: true
-            };
+            }, true, false, true);
         }
         else
         {
             // examine the sqlFilters to determine which measures to include
-            var plotMeasures = [null, null],
-                hasAnyFilters = false,
-                isTime = false,
-                timeFilters = [],
-                xLabel;
-
-            // has X
-            if (sqlFilters[0] || sqlFilters[1])
-            {
-                plotMeasures[0] = this._getAxisWrappedMeasure(this.activeXSelection);
-                hasAnyFilters = true;
-
-                // Create a 'time filter' based on the brushed Subject-Visits
-                if (this.activeXSelection.variableType === 'TIME')
-                {
-                    var subjectVisits = Ext.Object.getKeys(this.brushedSubjectVisits),
-                        value, type;
-
-                    isTime = true;
-                    timeFilters.push(sqlFilters[0]);
-                    timeFilters.push(sqlFilters[1]);
-
-                    if (Ext.isEmpty(subjectVisits))
-                    {
-                        type = LABKEY.Filter.Types.ISBLANK;
-                    }
-                    else
-                    {
-                        value = subjectVisits.join(';');
-                        type = LABKEY.Filter.Types.IN;
-                    }
-
-                    // create the custom label
-                    xLabel = plotMeasures[0].measure.label + ': ';
-                    xLabel += sqlFilters[0].getValue() + ' to ' + sqlFilters[1].getValue();
-
-                    if (plotMeasures[0].dateOptions && plotMeasures[0].dateOptions.zeroDayVisitTag)
-                    {
-                        xLabel += ' (' + plotMeasures[0].dateOptions.zeroDayVisitTag + ')';
-                    }
-
-                    sqlFilters[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, value, type);
-                    sqlFilters[1] = null;
-                }
-            }
-
-            // has Y
-            if (sqlFilters[2] || sqlFilters[3])
-            {
-                plotMeasures[1] = this._getAxisWrappedMeasure(this.activeYSelection);
-                hasAnyFilters = true;
-            }
-
-            if (!hasAnyFilters)
-            {
-                throw 'Improperly constructed selection filter. At least one sqlFilter is required for a valid filter.';
-            }
-
-            selection = {
+            var selection = {
                 gridFilter: sqlFilters,
-                plotMeasures: plotMeasures,
+                plotMeasures: [null, null],
                 isPlot: true,
                 isGrid: true,
                 operator: LABKEY.app.model.Filter.OperatorTypes.OR,
@@ -1893,19 +1833,86 @@ Ext.define('Connector.view.Chart', {
                 showInverseFilter: allowInverseFilter === true
             };
 
-            if (xLabel)
+            this.buildSelection('x', selection, function(sel)
             {
-                selection.xLabel = xLabel;
-            }
+                this.buildSelection('y', sel, function(s)
+                {
+                    Connector.getState().addSelection(s, true, false, true);
+                }, this);
+            }, this);
+        }
+    },
 
-            if (isTime)
+    buildSelection : function(axis, selection, callback, scope)
+    {
+        if (axis === 'x')
+        {
+            if (selection.gridFilter[0] || selection.gridFilter[1])
             {
-                selection.isTime = true;
-                selection.timeFilters = timeFilters;
+                selection.plotMeasures[0] = this._getAxisWrappedMeasure(this.activeXSelection);
+
+                // Create a 'time filter'
+                if (this.activeXSelection.variableType === 'TIME')
+                {
+                    var alignedAlias = QueryUtils.ensureAlignmentAlias(selection.plotMeasures[0]),
+                        rangeMin = parseInt(selection.gridFilter[0].getValue()),
+                        rangeMax = parseInt(selection.gridFilter[1].getValue());
+
+                    Connector.getFilterService().getSubjectVisits(alignedAlias, rangeMin, rangeMax, function(subjectVisits)
+                    {
+                        var xLabel, type, value;
+
+                        if (Ext.isEmpty(subjectVisits))
+                        {
+                            type = LABKEY.Filter.Types.ISBLANK;
+                        }
+                        else
+                        {
+                            value = subjectVisits.join(';');
+                            type = LABKEY.Filter.Types.IN;
+                        }
+
+                        // create the custom label
+                        xLabel = selection.plotMeasures[0].measure.label + ': ';
+                        xLabel += '' + rangeMin + ' to ' + rangeMax;
+
+                        if (selection.plotMeasures[0].dateOptions && selection.plotMeasures[0].dateOptions.zeroDayVisitTag)
+                        {
+                            xLabel += ' (' + selection.plotMeasures[0].dateOptions.zeroDayVisitTag + ')';
+                        }
+
+                        selection.isTime = true;
+                        selection.xLabel = xLabel;
+                        selection.timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
+                        selection.gridFilter[0] = LABKEY.Filter.create(QueryUtils.SUBJECT_SEQNUM_ALIAS, value, type);
+                        selection.gridFilter[1] = null;
+
+                        callback.call(scope, selection);
+                    }, this);
+                }
+                else
+                {
+                    callback.call(scope, selection);
+                }
+            }
+            else
+            {
+                callback.call(scope, selection);
             }
         }
+        else if (axis === 'y')
+        {
+            if (selection.gridFilter[2] || selection.gridFilter[3])
+            {
+                selection.plotMeasures[1] = this._getAxisWrappedMeasure(this.activeYSelection);
+            }
 
-        Connector.getState().addSelection(selection, true, false, true);
+            callback.call(scope, selection);
+        }
+        else
+        {
+            throw 'Unsupported axis "' + axis + '" requested to buildSelection()';
+        }
     },
 
     afterSelectionAnimation : function(node, view, name, target, multi) {

@@ -258,21 +258,19 @@ Ext.define('Connector.utility.Chart', {
 
     _onBrush : function(extent)
     {
-        var subjects = {}, // Stash all of the selected subjects so we can highlight associated points.
-            subjectVisits = {};
+        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
-        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects, subjectVisits);
+        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
 
         if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects, subjectVisits);
+            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
         }
 
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects, subjectVisits);
+            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
 
         this.brushedSubjects = subjects;
-        this.brushedSubjectVisits = subjectVisits;
     },
 
     brushPoints : function(event, layerData, extent) {
@@ -292,10 +290,10 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
-    _brushPointsByCanvas : function(canvas, extent, subjects, subjectVisits)
+    _brushPointsByCanvas : function(canvas, extent, subjects)
     {
         canvas.selectAll('.point path')
-                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects, subjectVisits]))
+                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke))
                 .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
@@ -323,7 +321,7 @@ Ext.define('Connector.utility.Chart', {
         });
     },
 
-    _brushPointPreFill : function(d, i, unknown, extent, subjects, subjectVisits)
+    _brushPointPreFill : function(d, i, unknown, extent, subjects)
     {
         d.isSelected = ChartUtils.isSelectedWithBrush(extent, d.x, d.y);
         d.origFill = d.origFill || this.getAttribute('fill');
@@ -331,10 +329,6 @@ Ext.define('Connector.utility.Chart', {
         if (d.isSelected)
         {
             subjects[d.subjectId] = true;
-            if (d.seqNum)
-            {
-                subjectVisits[d.seqNum] = true;
-            }
             return ChartUtils.colors.SELECTED;
         }
 
