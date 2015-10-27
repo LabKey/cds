@@ -2156,14 +2156,31 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    setAxisNameMeasureProperty : function(measure, x, y)
+    getAxisNameProperty : function(axis, xAxisNameProp, yAxisNameProp) {
+        return (axis === 'x' ? xAxisNameProp : (axis === 'y' ? yAxisNameProp : ChartUtils.axisNameProp));
+    },
+
+    getAxisNameMeasureProperty : function(axis, x, y)
     {
         var useBaseAxisNameProp = ChartUtils.isSameSource(x, y)
-                    && ChartUtils.getAssayDimensionsWithDifferentValues(x, y).length == 0,
-            xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
-            yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
+                && ChartUtils.getAssayDimensionsWithDifferentValues(x, y).length == 0;
 
-        // if color source matches x or y, set the color wrapped measure axisName to match as well
+        if (useBaseAxisNameProp || (axis != 'x' && axis != 'y'))
+        {
+            return ChartUtils.axisNameProp;
+        }
+        else
+        {
+            return axis == 'x' ? ChartUtils.xAxisNameProp : ChartUtils.yAxisNameProp;
+        }
+    },
+
+    setAxisNameMeasureProperty : function(measure, x, y)
+    {
+        var xAxisNameProp = this.getAxisNameMeasureProperty('x', x, y),
+            yAxisNameProp = this.getAxisNameMeasureProperty('y', x, y);
+
+        // if measure source matches x or y, set the wrapped measure axisName to match as well
         if (x && ChartUtils.isSameSource(measure, x))
         {
             measure.axisName = xAxisNameProp;
@@ -2176,10 +2193,8 @@ Ext.define('Connector.view.Chart', {
 
     getWrappedMeasures : function(activeMeasures)
     {
-        var useBaseAxisNameProp = ChartUtils.isSameSource(activeMeasures.x, activeMeasures.y)
-                    && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, activeMeasures.y).length == 0,
-            xAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.xAxisNameProp,
-            yAxisNameProp = useBaseAxisNameProp ? ChartUtils.axisNameProp : ChartUtils.yAxisNameProp;
+        var xAxisNameProp = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
+            yAxisNameProp = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
 
         return [
             this._getAxisWrappedMeasure(activeMeasures.x, xAxisNameProp),
@@ -2276,8 +2291,26 @@ Ext.define('Connector.view.Chart', {
             if (!Ext.isEmpty(filterMeasures)) {
                 Ext.each(filterMeasures, function(filterMeasure)
                 {
-                    this.setAxisNameMeasureProperty(filterMeasure.measure, activeMeasures.x, activeMeasures.y);
-                    measures.push(filterMeasure);
+                    // see if the "plot selection" filter matches all dimension values for either the x-axis or y-axis
+                    // otherwise don't don't include that filter measure in the plot data request
+                    if (Ext.isDefined(filterMeasure.dimensions))
+                    {
+                        if (activeMeasures.x != null && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, {options: filterMeasure}).length == 0)
+                        {
+                            filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y);
+                            measures.push(filterMeasure);
+                        }
+                        else if (ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.y, {options: filterMeasure}).length == 0)
+                        {
+                            filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
+                            measures.push(filterMeasure);
+                        }
+                    }
+                    else
+                    {
+                        this.setAxisNameMeasureProperty(filterMeasure.measure, activeMeasures.x, activeMeasures.y);
+                        measures.push(filterMeasure);
+                    }
                 }, this);
             }
         }
@@ -2580,10 +2613,6 @@ Ext.define('Connector.view.Chart', {
         {
             measureMap[key].values = measureMap[key].values.concat(values);
         }
-    },
-
-    getAxisNameProperty : function(axis, xAxisNameProp, yAxisNameProp) {
-        return (axis === 'x' ? xAxisNameProp : (axis === 'y' ? yAxisNameProp : ChartUtils.axisNameProp));
     },
 
     /**

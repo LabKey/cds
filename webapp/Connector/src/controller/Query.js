@@ -650,7 +650,9 @@ Ext.define('Connector.controller.Query', {
      */
     getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys)
     {
-        var measures = [],
+        var allMeasures = [],
+            perFilterMeasures,
+            dimensionFilterValues,
             queryKeys = Ext.Array.toMap(relevantQueryKeys, function(key) {
                 return key.toLowerCase();
             }),
@@ -660,6 +662,9 @@ Ext.define('Connector.controller.Query', {
         {
             if (filter.isWhereFilter())
             {
+                perFilterMeasures = [];
+                dimensionFilterValues = {};
+
                 Ext.each(filter.getMeasureSet(), function(m)
                 {
                     queryKey = m.measure.schemaName + '|' + m.measure.queryName;
@@ -672,13 +677,30 @@ Ext.define('Connector.controller.Query', {
 
                     if (include)
                     {
-                        measures.push(m);
+                        if (Ext.isArray(m.filterArray))
+                        {
+                            perFilterMeasures.push(m);
+                        }
+                        else if (Ext.isDefined(m.measure.values))
+                        {
+                            dimensionFilterValues[m.measure.alias] = m.measure.values;
+                        }
                     }
+                });
+
+                Ext.each(perFilterMeasures, function(filterMeasure)
+                {
+                    if (Object.keys(dimensionFilterValues).length > 0)
+                    {
+                        filterMeasure.dimensions = dimensionFilterValues;
+                    }
+
+                    allMeasures.push(filterMeasure);
                 });
             }
         }, this);
 
-        return measures;
+        return allMeasures;
     },
 
     /**
