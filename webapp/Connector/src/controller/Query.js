@@ -618,9 +618,16 @@ Ext.define('Connector.controller.Query', {
 
         Ext.each(filters, function(filter)
         {
+            // we want to INTERSECT application filters, this is accomplished
+            // by specifying a different axisName property per filter
+            var axisId = Ext.id(undefined, 'axis-');
             if (filter.get('filterSource') === 'GETDATA')
             {
-                measures = measures.concat(filter.getMeasureSet());
+                Ext.each(filter.getMeasureSet(), function(filter)
+                {
+                    filter.measure.axisName = axisId;
+                    measures.push(filter);
+                });
             }
             else
             {
