@@ -116,6 +116,206 @@ Ext.define('Connector.model.Filter', {
         }, this);
     },
 
+    _canMergeGridFilters : function(data, fdata)
+    {
+        var merge = true,
+            pm, fpm, i=0;
+
+        for (; i < data.gridFilter.length; i++)
+        {
+            pm = data.gridFilter[i];
+            fpm = fdata.gridFilter[i];
+
+            if (pm === null)
+            {
+                if (fpm !== null)
+                {
+                    merge = false;
+                    break;
+                }
+
+                // they are both null, OK
+            }
+            else
+            {
+                // equivalent if they have the same URL prefix -- value can change
+                if (fpm && pm.getURLParameterName().toLowerCase() !== fpm.getURLParameterName().toLowerCase())
+                {
+                    merge = false;
+                    break;
+                }
+            }
+        }
+
+        return merge;
+    },
+
+    _canMergePlotMeasures : function(data, fdata)
+    {
+        var _merge = true, pm, fpm, i=0;
+
+        for (; i < data.plotMeasures.length; i++)
+        {
+            pm = data.plotMeasures[i];
+            fpm = fdata.plotMeasures[i];
+
+            if (pm === null)
+            {
+                if (fpm !== null)
+                {
+                    _merge = false;
+                    break;
+                }
+
+                // they are both null, OK
+            }
+            else if (fpm === null)
+            {
+                _merge = false;
+                break;
+            }
+            else
+            {
+                // equivalent if they have the same alias
+                if (pm.measure && fpm.measure)
+                {
+                    if (pm.measure.alias !== fpm.measure.alias)
+                    {
+                        _merge = false;
+                        break;
+                    }
+                    else if (ChartUtils.getAssayDimensionsWithDifferentValues(pm.measure, fpm.measure).length > 0)
+                    {
+                        // compare the options to determine if the axis values are different
+                        _merge = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    console.warn('Unknown plot measure configuration. Expected to have \'measure\' property on each \'plotMeasure\'. Unable to determine merge strategy.');
+                    _merge = false;
+                    break;
+                }
+            }
+        }
+
+        return _merge;
+    },
+
+    /**
+     * Assumes both filters being inspected are time filters
+     * @param data
+     * @param fdata
+     * @returns {boolean}
+     * @private
+     */
+    _canMergeTimeFilters : function(data, fdata)
+    {
+        var _merge = false,
+            dTimeMeasure = data.timeMeasure,
+            fTimeMeasure = fdata.timeMeasure;
+
+        if (dTimeMeasure.measure.alias === fTimeMeasure.measure.alias)
+        {
+            if (dTimeMeasure.dateOptions.interval === fTimeMeasure.dateOptions.interval)
+            {
+                if (dTimeMeasure.dateOptions.zeroDayVisitTag === fTimeMeasure.dateOptions.zeroDayVisitTag)
+                {
+                    _merge = true;
+                }
+            }
+        }
+
+        return _merge;
+    },
+
+    /**
+     * Complex comparator that says two filters can be merged. This should always be called
+     * in advance of calling merge() to be safe.
+     * @param f
+     */
+    canMerge : function(f)
+    {
+        var data = this.data,
+            fdata = f.data,
+            _merge = false;
+
+        if (data.isAggregated && fdata.isAggregated)
+        {
+            _merge = this._canMergeGridFilters(data, fdata);
+        }
+        else if (data.isTime || fdata.isTime)
+        {
+            if (data.isTime && fdata.isTime)
+            {
+                _merge = this._canMergeTimeFilters(data, fdata);
+            }
+        }
+        else if (data.isPlot || fdata.isPlot || data.isGrid || fdata.isGrid)
+        {
+            if (data.isPlot === fdata.isPlot && data.isGrid === fdata.isGrid)
+            {
+                var _mergeMeasures = true;
+
+                if (data.isPlot)
+                {
+                    _mergeMeasures = this._canMergePlotMeasures(data, fdata);
+                    if (_mergeMeasures)
+                    {
+                        _mergeMeasures = this._canMergeGridFilters(data, fdata);
+                    }
+                }
+                else
+                {
+                    // isGrid
+                    _mergeMeasures = this._canMergeGridFilters(data, fdata);
+                }
+
+                _merge = _mergeMeasures;
+            }
+            // else they don't match
+        }
+        else if (data.hierarchy && fdata.hierarchy && data.hierarchy === fdata.hierarchy)
+        {
+            _merge = true;
+        }
+
+        return _merge;
+    },
+
+    merge : function(f)
+    {
+
+        var update = {
+            members: this._mergeMembers(this.get('members'), f.get('members'))
+        };
+
+        if (this.isAggregated() || this.isPlot() || this.isTime())
+        {
+            update.gridFilter = this._mergeGridFilters(this.get('gridFilter'), f.get('gridFilter'));
+        }
+
+        if (this.isTime())
+        {
+            update.timeFilters = this._mergeGridFilters(this.get('timeFilters'), f.get('timeFilters'));
+        }
+
+        this.set(update);
+
+        return this;
+    },
+
+    _mergeMembers : function(aMembers, bMembers)
+    {
+        if (this.isAggregated())
+        {
+            return bMembers;
+        }
+
+        return this.callParent(arguments);
+    },
+
     getDataFilters : function()
     {
         return this.get('dataFilter');
