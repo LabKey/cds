@@ -108,6 +108,7 @@
         <script path="Connector/src/panel/Selection.js"/>
         <script path="Connector/src/panel/GroupList.js"/>
         <script path="Connector/src/panel/Selector.js"/>
+        <script path="Connector/src/panel/HelpCenter.js"/>
         <script path="Connector/src/grid/Panel.js"/>
 
         <!-- Application plugins -->

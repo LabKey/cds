@@ -798,6 +798,90 @@ div.hopscotch-bubble {
   }
 }
 
+.helpcenter-title {
+  font: 20px Georgia,serif;
+}
+
+.helpcenter-panel {
+  // background-color: $heat-scale-6;
+  .header {
+    padding: 18px 18px 18px 9px;
+
+    .main-title {
+      font: 26px Georgia,serif;
+      color: $heat-scale-2;
+    }
+
+    .sub-title {
+      margin-top: 3px;
+
+      .nav-text {
+        color: $black;
+        font: $title-font;
+      }
+    }
+  }
+
+  p {
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+
+  h3 {
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  a {
+    color: $gray-4!important;
+  }
+
+  .#{$connector-prefix}panel-body {
+    background-color: $heat-scale-6;
+  }
+
+  .#{$connector-prefix}form-textarea {
+    height: 390px;
+  }
+
+  .footer {
+    padding-right: 20px;
+  }
+
+  .helpcenter-body {
+    height: 520px !important;
+    overflow-y: scroll;
+
+    .x-form-focus {
+      border-color: $gray-4!important;
+      color: $black;
+    }
+  }
+
+  .helpcenter-search-input {
+    clear: both;
+    width: 66%;
+    tbody,
+    tr,
+    td.x-form-item-body {
+      width: 100%!important;
+    }
+
+    input {
+      width: 100%;
+      font-size: 12px;
+      border-radius: 2px;
+      border-color: $gray-7!important;
+      height: 30px;
+
+    }
+    input.x-form-focus {
+      border-color: $gray-6!important;
+      color: $black;
+    }
+  }
+}
+
 @import 'windows';
 
 @import 'grid/Panel';

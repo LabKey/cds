@@ -19,6 +19,7 @@ package org.labkey.cds;
 import org.apache.commons.lang3.StringUtils;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.DbSchema;
+import org.labkey.api.data.DbSchemaType;
 import org.labkey.api.data.RuntimeSQLException;
 import org.labkey.api.data.SQLFragment;
 import org.labkey.api.data.SimpleFilter;
@@ -31,6 +32,7 @@ import org.labkey.api.exp.list.ListService;
 import org.labkey.api.security.User;
 import org.labkey.api.util.ContainerUtil;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,5 +147,31 @@ public class CDSManager
     {
         SQLFragment sql = new SQLFragment("SELECT * FROM cds.Properties WHERE Container = ?", container);
         return new SqlSelector(CDSSchema.getInstance().getSchema(), sql).getObject(CDSController.PropertiesForm.class);
+    }
+
+    public CDSController.HelpForm getHelpCenterForm(Container container, String pageName) throws SQLException
+    {
+        if (pageName == null)
+            return null;
+        SQLFragment sql = new SQLFragment("SELECT\n" +
+                "\tBody AS Html, \tTitle\n" +
+                "FROM comm.PageVersions as WikiVersions\n" +
+                "JOIN comm.Pages AS Wiki ON \n" +
+                "\tWikiVersions.PageEntityId = Wiki.EntityId\n" +
+                "WHERE Wiki.Name = ? and Wiki.Container = ?\n" +
+                "ORDER BY WikiVersions.Version DESC", pageName, container);
+
+        SqlSelector selector = new SqlSelector(DbSchema.get("comm", DbSchemaType.Module), sql);
+        CDSController.HelpForm helpForm = new CDSController.HelpForm();
+        try (ResultSet rs = selector.getResultSet())
+        {
+            if (rs.next())
+            {
+                helpForm.setTitle(rs.getString("Title"));
+                helpForm.setHtmlBody(rs.getString("Html"));
+            }
+
+        }
+        return helpForm;
     }
 }

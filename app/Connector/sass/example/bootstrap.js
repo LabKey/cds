@@ -90,6 +90,7 @@ Ext.Loader.addClassPathMappings({
   "Connector.panel.Feedback": "../../../../webapp/Connector/src/panel/Feedback.js",
   "Connector.panel.FilterPanel": "../../../../webapp/Connector/src/panel/FilterPanel.js",
   "Connector.panel.GroupList": "../../../../webapp/Connector/src/panel/GroupList.js",
+  "Connector.panel.HelpCenter": "../../../../webapp/Connector/src/panel/HelpCenter.js",
   "Connector.panel.Selection": "../../../../webapp/Connector/src/panel/Selection.js",
   "Connector.panel.Selector": "../../../../webapp/Connector/src/panel/Selector.js",
   "Connector.plugin.HeaderLock": "../../../../webapp/Connector/src/view/Page.js",
@@ -273,6 +274,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Connector.panel.Feedback": [],
   "Connector.panel.FilterPanel": [],
   "Connector.panel.GroupList": [],
+  "Connector.panel.HelpCenter": [],
   "Connector.panel.Selection": [],
   "Connector.panel.Selector": [],
   "Connector.plugin.HeaderLock": [],
@@ -1298,6 +1300,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Connector.panel.GroupList": [
     "widget.grouplist"
+  ],
+  "Connector.panel.HelpCenter": [
+    "widget.helpcenter"
   ],
   "Connector.panel.Selection": [
     "widget.selectionpanel"

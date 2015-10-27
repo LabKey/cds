@@ -209,6 +209,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/GroupList.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/panel/Selector.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/panel/HelpCenter.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/grid/Panel.js"></script>
 
     <!-- Application plugins -->

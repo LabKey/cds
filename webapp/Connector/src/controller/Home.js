@@ -25,6 +25,10 @@ Ext.define('Connector.controller.Home', {
             }
         });
 
+        this.control('#helppopup', {
+            boxready: this.loadHelpFile
+        });
+
         this.callParent();
     },
 
@@ -74,5 +78,25 @@ Ext.define('Connector.controller.Home', {
                 });
             }, this);
         }
+    },
+
+    loadHelpFile : function(helpView, pageName) {
+        var helpTitleView = Ext.getCmp('helptitle');
+        var helpBodyView = Ext.getCmp('helpcenterbody');
+        if (!pageName)
+            var pageName = 'HelpHome';
+        Ext.Ajax.request({
+            url: LABKEY.ActionURL.buildURL('cds', 'HelpCenterHome.api'),
+            method: 'GET',
+            params: {
+                name: pageName
+            },
+            success: function(response) {
+                var json = Ext.decode(response.responseText);
+                helpTitleView.setText(json.title);
+                helpBodyView.setTemplate(json.htmlBody);
+            },
+            scope: this
+        });
     }
 });
