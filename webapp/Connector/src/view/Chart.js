@@ -378,25 +378,38 @@ Ext.define('Connector.view.Chart', {
                     align: 'stretch',
                     pack: 'start'
                 },
-                items: [{
-                    xtype: 'panel',
-                    border: false,
-                    flex: 10,
-                    cls: 'plot',
-                    style: {'background-color': '#FFFFFF'},
-                    listeners: {
-                        afterrender: {
-                            fn: function(box) {
-                                this.plotEl = box.getEl();
-                            },
-                            single: true,
-                            scope: this
-                        }
-                    }
-                },this.getStudyAxisPanel()]
+                items: [
+                    this.getPlotPanel(),
+                    this.getStudyAxisPanel()
+                ]
             });
         }
         return this.centerContainer;
+    },
+
+    getPlotPanel : function() {
+        if (!this.plotPanel)
+        {
+            this.plotPanel = Ext.create('Ext.panel.Panel', {
+                border: false,
+                flex: 10,
+                cls: 'plot',
+                style: {
+                    'background-color': '#FFFFFF'
+                },
+                listeners: {
+                    afterrender: {
+                        fn: function(box) {
+                            this.plotEl = box.getEl();
+                        },
+                        single: true,
+                        scope: this
+                    }
+                }
+            });
+        }
+
+        return this.plotPanel;
     },
 
     getStudyAxisPanel : function() {
@@ -487,23 +500,41 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getPlotSize : function(box) {
-        var size = {};
+    getPlotSize : function(box, properties)
+    {
+        var size = {},
+            discretePlotWidth;
 
-        if (this.requireStudyAxis && this.hasStudyAxisData) {
+        if (this.requireStudyAxis && this.hasStudyAxisData)
+        {
             size.width = box.width - this.studyAxisWidthOffset;
         }
-        else if (this.requireYGutter) {
+        else if (this.requireYGutter)
+        {
             size.width = box.width - this.yGutterWidth;
         }
-        else {
+        else
+        {
             size.width = box.width;
         }
 
-        if (this.requireXGutter) {
+        // for discrete x-axis, expand width for large number of discrete values
+        if (Ext.isDefined(properties) && Ext.isObject(properties.xaxis) && !properties.xaxis.isContinuous && !this.requireYGutter)
+        {
+            discretePlotWidth = properties.xaxis.discreteValueCount * 50;
+            if (discretePlotWidth > size.width)
+            {
+                size.width = discretePlotWidth;
+                size.extended = true;
+            }
+        }
+
+        if (this.requireXGutter)
+        {
             size.height = box.height - this.xGutterHeight;
         }
-        else {
+        else
+        {
             size.height = box.height;
         }
 
@@ -734,15 +765,24 @@ Ext.define('Connector.view.Chart', {
         };
     },
 
-    getMainPlotConfig : function(data, aes, scales, yAxisMargin) {
-        var size = this.getPlotSize(this.plotEl.getSize());
+    getMainPlotConfig : function(data, aes, scales, yAxisMargin, properties) {
+        var size = this.getPlotSize(this.plotEl.getSize(), properties);
+
+        if (size.extended === true)
+        {
+            this.getPlotPanel().addCls('plot-scroll');
+        }
+        else
+        {
+            this.getPlotPanel().removeCls('plot-scroll');
+        }
 
         return Ext.apply(this.getBasePlotConfig(), {
             margins : {
                 top: 25,
                 left: yAxisMargin + (this.requireYGutter ? 0 : 24),
                 right: 50,
-                bottom: 53
+                bottom: size.extended === true ? 73 : 53
             },
             width : size.width,
             height : size.height,
@@ -979,7 +1019,7 @@ Ext.define('Connector.view.Chart', {
 
         scaleConfig = this.getScaleConfigs(noplot, properties, chartData, studyAxisInfo, layerScope);
         aesConfig = this.getAesConfigs();
-        plotConfig = this.getMainPlotConfig(allDataRows.main, aesConfig, scaleConfig, yAxisMargin);
+        plotConfig = this.getMainPlotConfig(allDataRows.main, aesConfig, scaleConfig, yAxisMargin, properties);
 
         if (!noplot) {
             // set the scale type to linear or log

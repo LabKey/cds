@@ -99,7 +99,7 @@ Ext.define('Connector.utility.Query', {
     },
 
     _sqlLiteralFn : function(type) {
-        if (type == "VARCHAR" || type.startsWith("Text")) {
+        if (type == "VARCHAR" || type.indexOf("Text") == 0) {
             return LABKEY.Query.sqlStringLiteral;
         }
         else if (type == "DOUBLE") {

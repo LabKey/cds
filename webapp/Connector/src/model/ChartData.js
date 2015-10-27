@@ -214,6 +214,7 @@ Ext.define('Connector.model.ChartData', {
             invalidLogPlotRowCount = 0,
             xDomain = [null,null], yDomain = [null,null],
             xVal, yVal, colorVal = null,
+            distinctXVals = {},
             hasNegOrZeroX = false, hasNegOrZeroY = false,
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
             excludeAliases = [],
@@ -334,6 +335,11 @@ Ext.define('Connector.model.ChartData', {
             xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
             colorVal = color ? this._getColorValue(color, _cid, _row) : undefined;
 
+            if (!xa.isContinuous)
+            {
+                distinctXVals[xVal] = true;
+            }
+
             // check that the plot value are valid on a log scale
             if (!this.isValidPlotValue('y', ya, yVal) || !this.isValidPlotValue('x', xa, xVal))
             {
@@ -406,6 +412,11 @@ Ext.define('Connector.model.ChartData', {
             // the main data row map will still include the x/y null rows,
             // but the main plot won't render them (plotNullPoints = false)
             mainPlotRows.push(entry);
+        }
+
+        if (Object.keys(distinctXVals).length > 0)
+        {
+            xa.discreteValueCount = Object.keys(distinctXVals).length;
         }
 
         // for continuous axis with data, always start the plot at the origin (could be negative as well)
