@@ -586,7 +586,7 @@ Ext.define('Connector.utility.Query', {
                 arr = v.split(';');
                 if (forDebugging === true && arr.length > 10)
                 {
-                    clause += '{MORE THAN 10 ITEMS}';
+                    clause += '{' + arr.length + ' ITEMS}';
                 }
                 else
                 {
