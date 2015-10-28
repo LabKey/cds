@@ -993,23 +993,12 @@ Ext.define('Connector.model.Filter', {
 
         if (Ext.isArray(this.getTimeFilters()))
         {
-            var jsonGridFilters = [];
-            Ext.each(this.getTimeFilters(), function(filter)
-            {
-                if (filter)
-                {
-                    if (Ext.isString(filter))
-                    {
-                        jsonGridFilters.push(filter);
-                    }
-                    else
-                    {
-                        jsonGridFilters.push(filter.getURLParameterName() + '=' + filter.getURLParameterValue());
-                    }
-                }
-            });
+            jsonable.timeFilters = this._convertToJsonFilters(this.getTimeFilters(), false);
+        }
 
-            jsonable.timeFilters = jsonGridFilters;
+        if (Ext.isArray(this.get('gridFilter')))
+        {
+            jsonable.gridFilter = this._convertToJsonFilters(this.get('gridFilter'), true);
         }
 
         delete jsonable.dataFilter;
@@ -1018,6 +1007,28 @@ Ext.define('Connector.model.Filter', {
         delete jsonable.yMeasure;
 
         return jsonable;
+    },
+
+    _convertToJsonFilters : function(origFilters, encodeValue)
+    {
+        var jsonFilters = [];
+        Ext.each(origFilters, function(filter)
+        {
+            if (filter)
+            {
+                if (Ext.isString(filter))
+                {
+                    jsonFilters.push(filter);
+                }
+                else
+                {
+                    jsonFilters.push(filter.getURLParameterName() + '='
+                            + (encodeValue ? encodeURIComponent(filter.getURLParameterValue()) : filter.getURLParameterValue()));
+                }
+            }
+        });
+
+        return jsonFilters;
     },
 
     /**
