@@ -7,6 +7,8 @@ Ext.define('Connector.utility.Query', {
 
     STUDY_ALIAS_PREFIX: 'cds_GridBase_',
 
+    logging: false,
+
     constructor : function(config)
     {
         this.callParent([config]);
@@ -17,6 +19,11 @@ Ext.define('Connector.utility.Query', {
         this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_');
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
+
+        if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
+        {
+            this.logging = true;
+        }
     },
 
     /**
@@ -24,9 +31,6 @@ Ext.define('Connector.utility.Query', {
      */
     getData : function(config)
     {
-        for (var i=0 ; i<config.measures.length ; i++)
-            console.log(JSON.stringify(config.measures[i].measure));
-
         var result = this._generateVisGetDataSql(config.measures, config.extraFilters, {});
 
         LABKEY.Query.executeSql({
@@ -38,12 +42,17 @@ Ext.define('Connector.utility.Query', {
             success: function(response)
             {
                 response.columnAliasMap = result.columnAliasMap;
-                console.log(response.queryName);
-                console.trace();
+                if (this.logging)
+                {
+                    console.log('Query:', window.location.origin + LABKEY.ActionURL.buildURL('query', 'executeQuery', undefined, {
+                        schemaName: 'study',
+                        queryName: response.queryName
+                    }));
+                }
                 config.success.call(config.scope, response);
             },
             failure: config.failure,
-            scope: config.scope
+            scope: this
         });
     },
 
@@ -223,7 +232,7 @@ Ext.define('Connector.utility.Query', {
                     mapAxisToAssay[m.measure.axisName] = m.measure.queryName;
                 else if (mapAxisToAssay[m.measure.axisName] != m.measure.queryName)
                 {
-                    console.log("WARNING: two datasets on axis '" + m.measure.axisName + "' - '" + mapAxisToAssay[m.measure.axisName] + "' and '" + m.measure.queryName + "'");
+                    console.warn("Two datasets on axis '" + m.measure.axisName + "' - '" + mapAxisToAssay[m.measure.axisName] + "' and '" + m.measure.queryName + "'");
                     debugger;
                     break;
                 }
@@ -323,7 +332,7 @@ Ext.define('Connector.utility.Query', {
             term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, options);
             unionSQL += union + term.sql;
 
-            if (LABKEY.devMode)
+            if (this.logging)
             {
                 term = this._generateVisDatasetSql(measures, name, tables, hasMultiple, extraFilterMap, options, true);
                 debugUnionSQL += union + term.sql;
@@ -342,12 +351,11 @@ Ext.define('Connector.utility.Query', {
 
         sql = 'SELECT * FROM (' + unionSQL + ') AS _0' + orderSQL;
 
-        if (LABKEY.devMode)
+        if (this.logging)
         {
             var debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
             var SHOW_TRUNCATED_IN_CLAUSES = true;
             console.log(SHOW_TRUNCATED_IN_CLAUSES ? debugSql : sql);
-            console.trace();
         }
 
         return {
