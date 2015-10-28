@@ -356,7 +356,7 @@ public class CDSHelper
     public static final String GRID_COL_STUDY = "Study";
     public static final String GRID_COL_VISIT = "Visit";
     public static final String GRID_COL_TREATMENT_SUMMARY = "Treatment Summary";
-    public static final String GRID_COL_STUDY_DAY = "Study Day";
+    public static final String GRID_COL_STUDY_DAY = "Study days";
     public static final String GRID_COL_CUR_COL = "Current columns";
     public static final String GRID_COL_ALL_VARS = "All variables from this session";
 

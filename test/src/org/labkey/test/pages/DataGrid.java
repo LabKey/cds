@@ -183,17 +183,17 @@ public class DataGrid
         _test.waitForElement(Locators.sysmsg.containing("Filter removed."));
     }
 
-    public void assertRowCount(int count)
+    public void assertRowCount(int expCount)
     {
-        if (count > 25)
+        if (expCount > 25)
         {
-            long expCount = getExportRowCount();
+            long actualCount = getExportRowCount();
             _test.waitForElements(Locators.dataRow, 25);
-            Assert.assertEquals("Wrong number of rows in export. Expected " + count + " found " + expCount + ".", count, expCount);
+            Assert.assertEquals("Wrong number of rows in export.", expCount, actualCount);
         }
         else
         {
-            _test.waitForElements(Locators.dataRow, count);
+            _test.waitForElements(Locators.dataRow, expCount);
         }
     }
 

@@ -162,7 +162,7 @@ public class CDSTest extends CDSReadOnlyTest
         // Validate counts and about link
         //
         Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "57 studies to learn about.");
-        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "48,359 data points collected from 57 studies.");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "48,359 data points collected from 53 studies.");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
 
@@ -756,8 +756,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         log("Validating gid counts");
         _asserts.assertFilterStatusCounts(28, 12, -1);
-        grid.assertPageTotal(22);
-        grid.assertRowCount(543);
+        grid.assertPageTotal(7);
+        grid.assertRowCount(154);
 
         log("Applying a column filter.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Greater Than or Equal To", "1");
@@ -765,7 +765,7 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(3, 3, -1);
         grid.assertPageTotal(1);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
-        grid.assertRowCount(14);
+        grid.assertRowCount(6);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
         // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
@@ -791,23 +791,23 @@ public class CDSTest extends CDSReadOnlyTest
         log("Filter on new column.");
         grid.setCheckBoxFilter(CDSHelper.DEMO_SEX, true, "Male");
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertRowCount(10);
+        grid.assertRowCount(4);
 
         log("Now add a new column to the mix.");
         gridColumnSelector.openSelectorWindow();
         shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, ' content ')]")));
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // TODO tired of trying to find a good fix for this.
-        gridColumnSelector.pickSource(CDSHelper.ELISPOT);
-        gridColumnSelector.pickVariable(CDSHelper.ELISPOT_ANTIGEN, false);
+        gridColumnSelector.pickSource(CDSHelper.NAB);
+        gridColumnSelector.pickVariable(CDSHelper.NAB_TITERIC50, false);
         gridColumnSelector.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertPageTotal(2);
+        grid.assertPageTotal(1);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Study ELISPOT Antigen");
-        grid.assertRowCount(28);
+                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(15);
 
         log("Validate checkerboarding.");
         List<WebElement> gridRows, gridRowCells;
@@ -816,16 +816,21 @@ public class CDSTest extends CDSReadOnlyTest
         for(WebElement row : gridRows)
         {
             gridRowCells = row.findElements(By.xpath("./descendant::td"));
-            switch(gridRowCells.get(0).getText().toLowerCase())
+
+            // If the Magnitude Background subtracted column is "empty"
+            if(gridRowCells.get(4).getText().trim().length() == 0)
             {
-                case "hvtn 054":
-                    assertTrue(gridRowCells.get(5).getAttribute("class").toLowerCase().contains("no-value"));
-                    assertTrue(!gridRowCells.get(3).getText().trim().isEmpty());
-                    break;
-                case "hvtn 060":
-                    assertTrue(gridRowCells.get(3).getAttribute("class").toLowerCase().contains("no-value"));
-                    assertTrue(!gridRowCells.get(5).getText().trim().isEmpty());
-                    break;
+                // There should be no lab id
+                assertTrue(gridRowCells.get(12).getAttribute("class").toLowerCase().contains("no-value"));
+                // but there should be a value for Titer IC50.
+                assertTrue(!gridRowCells.get(14).getText().trim().isEmpty());
+            }
+            else
+            {
+                // There should be a lab id
+                assertTrue(!gridRowCells.get(12).getText().trim().isEmpty());
+                // but there should not be a value for Titer IC50.
+                assertTrue(gridRowCells.get(14).getAttribute("class").toLowerCase().contains("no-value"));
             }
 
         }
@@ -835,11 +840,11 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clearFilter(0);
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertPageTotal(4);
+        grid.assertPageTotal(1);
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
                 CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Study ELISPOT Antigen");
-        grid.assertRowCount(92);
+                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(21);
 
         cds.goToAppHome();
         cds.clearFilters();
@@ -894,7 +899,7 @@ public class CDSTest extends CDSReadOnlyTest
         log("Validate expected columns are present.");
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                "Study NAb Titer Ic50", CDSHelper.DEMO_RACE);
+                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE);
 
         gridColumnSelector.openSelectorWindow();
         Map<String, Boolean> columns = new HashMap<>();
@@ -936,7 +941,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                "Study NAb Titer Ic50", CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
         log("Filter on added column, check to make sure it is now 'locked' in the selector.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Less Than or Equal To", "0.003");
@@ -964,7 +969,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY,
                 CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_ANTIGEN,
-                "Study NAb Titer Ic50", CDSHelper.DEMO_RACE);
+                CDSHelper.NAB_TITERIC50, CDSHelper.DEMO_RACE);
 
         log("Validate the column chooser is correct when a column is removed.");
         String selectorText, selectorTextClean;
