@@ -285,6 +285,7 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Statistics.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/StoreCache.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/utility/Chart.js"></script>
+    <script type="text/javascript" src="<%=text(srcPath)%>/utility/HelpRouter.js"></script>
 
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Assay.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/app/model/Dataset.js"></script>

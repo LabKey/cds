@@ -154,7 +154,7 @@ public class CDSManager
         if (pageName == null)
             return null;
         SQLFragment sql = new SQLFragment("SELECT\n" +
-                "\tBody AS Html, \tTitle\n" +
+                "\tBody AS Html, \tTitle, \tName\n" +
                 "FROM comm.PageVersions as WikiVersions\n" +
                 "JOIN comm.Pages AS Wiki ON \n" +
                 "\tWikiVersions.PageEntityId = Wiki.EntityId\n" +
@@ -168,6 +168,7 @@ public class CDSManager
             if (rs.next())
             {
                 helpForm.setTitle(rs.getString("Title"));
+                helpForm.setName(rs.getString("Name"));
                 helpForm.setHtmlBody(rs.getString("Html"));
             }
 

@@ -802,6 +802,12 @@ div.hopscotch-bubble {
   font: 20px Georgia,serif;
 }
 
+.helpcenter-back {
+  font: 16px Georgia,serif;
+  color: orchid;
+  cursor: pointer;
+}
+
 .helpcenter-panel {
   // background-color: $heat-scale-6;
   .header {
@@ -851,7 +857,7 @@ div.hopscotch-bubble {
   .helpcenter-body {
     height: 520px !important;
     overflow-y: scroll;
-
+    background-color: $heat-scale-6;
     .x-form-focus {
       border-color: $gray-4!important;
       color: $black;

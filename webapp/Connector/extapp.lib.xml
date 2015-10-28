@@ -183,6 +183,7 @@
         <script path="Connector/src/utility/Statistics.js"/>
         <script path="Connector/src/utility/StoreCache.js"/>
         <script path="Connector/src/utility/Chart.js"/>
+        <script path="Connector/src/utility/HelpRouter.js"/>
 
         <script path="Connector/src/app/model/Assay.js"/>
         <script path="Connector/src/app/model/Dataset.js"/>
