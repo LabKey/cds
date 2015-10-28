@@ -657,80 +657,50 @@ Ext.define('Connector.controller.Query', {
      */
     getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys)
     {
-        var allMeasures = [],
-            perFilterMeasures,
-            dimensionFilterValues,
+        var whereFilterMeasures = [],
+            measureFilter,
             queryKeys = Ext.Array.toMap(relevantQueryKeys, function(key) {
                 return key.toLowerCase();
-            }),
-            queryKey, include;
+            });;
 
         Ext.each(filters, function(filter)
         {
             if (filter.isWhereFilter())
             {
-                perFilterMeasures = [];
-                dimensionFilterValues = {};
-
-                Ext.each(filter.getMeasureSet(), function(m)
+                measureFilter = filter.getPlotXMeasureFilter();
+                if (measureFilter != null && this._includeMeasureFilterForQueryKeys(measureFilter, includeDemographic, queryKeys))
                 {
-                    queryKey = m.measure.schemaName + '|' + m.measure.queryName;
+                    whereFilterMeasures.push(measureFilter);
+                }
 
-                    include = Ext.isDefined(queryKeys[queryKey.toLowerCase()]);
-                    if (m.measure.isDemographic)
-                    {
-                        include = !Ext.isBoolean(includeDemographic) || includeDemographic;
-                    }
-
-                    if (include)
-                    {
-                        if (Ext.isArray(m.filterArray))
-                        {
-                            perFilterMeasures.push(m);
-                        }
-                        else if (Ext.isDefined(m.measure.values))
-                        {
-                            dimensionFilterValues[m.measure.alias] = m.measure.values;
-                        }
-                    }
-                });
-
-                Ext.each(perFilterMeasures, function(filterMeasure)
+                measureFilter = filter.getPlotYMeasureFilter();
+                if (measureFilter != null && this._includeMeasureFilterForQueryKeys(measureFilter, includeDemographic, queryKeys))
                 {
-                    if (Object.keys(dimensionFilterValues).length > 0)
-                    {
-                        filterMeasure.dimensions = dimensionFilterValues;
-                    }
+                    whereFilterMeasures.push(measureFilter);
+                }
 
-                    allMeasures.push(filterMeasure);
-                });
+                measureFilter = filter.getGridDataFilter();
+                if (measureFilter != null && this._includeMeasureFilterForQueryKeys(measureFilter, includeDemographic, queryKeys))
+                {
+                    whereFilterMeasures.push(measureFilter);
+                }
             }
         }, this);
 
-        return allMeasures;
+        return whereFilterMeasures;
     },
 
-    /**
-     * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
-     * in plot brushing filters.
-     * @param includeAxisFilters
-     */
-    getPlotBrushFilterMeasures : function(includeAxisFilters) {
-        var measures = [], filters = Connector.getState().getFilters();
+    _includeMeasureFilterForQueryKeys : function(m, includeDemographic, queryKeysMap)
+    {
+        var queryKey = m.measure.schemaName + '|' + m.measure.queryName,
+            include = Ext.isDefined(queryKeysMap[queryKey.toLowerCase()]);
 
-        Ext.each(filters, function(filter) {
-            // TODO: This might be able to go away if the scenario can be supported with filter changes
-            // during fb_refinement
-            if (filter.isPlot() && filter.isWhereFilter()) {
-                Ext.each(filter.getMeasureSet(), function(m) {
-                    if (includeAxisFilters || Ext.isArray(m.filterArray)) {
-                        measures.push(m);
-                    }
-                });
-            }
-        }, this);
+        if (m.measure.isDemographic)
+        {
+            include = !Ext.isBoolean(includeDemographic) || includeDemographic;
+        }
 
-        return measures;
+        return include;
     },
 
     clearSourceCountsCache : function() {

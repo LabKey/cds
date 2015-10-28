@@ -1030,6 +1030,56 @@ Ext.define('Connector.model.Filter', {
         }, this);
 
         return remove;
+    },
+
+    getPlotXMeasureFilter : function()
+    {
+        var gridFilters = this.get('gridFilter');
+        if (this.get('plotMeasures')[0] != null &&  gridFilters.length == 4
+                && gridFilters[0] != null && gridFilters[1] != null)
+        {
+            return {
+                measure: this.get('plotMeasures')[0].measure,
+                filterArray: [
+                    gridFilters[0],
+                    gridFilters[1]
+                ]
+            };
+        }
+
+        return null;
+    },
+
+    getPlotYMeasureFilter : function()
+    {
+        var gridFilters = this.get('gridFilter');
+        if (this.get('plotMeasures')[1] != null &&  gridFilters.length == 4
+                && gridFilters[2] != null && gridFilters[3] != null)
+        {
+            return {
+                measure: this.get('plotMeasures')[1].measure,
+                filterArray: [
+                    gridFilters[2],
+                    gridFilters[3]
+                ]
+            };
+        }
+
+        return null;
+    },
+
+    getGridDataFilter : function()
+    {
+        // TODO: there must be a better way to get this
+        if (this.get('gridFilter').length == 1)
+        {
+            return {
+                measure: Connector.getQueryService().getMeasureRecordByAlias(this.get('gridFilter')[0].getColumnName()).data,
+                filterArray: this.get('gridFilter')
+            };
+        }
+
+        return null;
     }
 });
 

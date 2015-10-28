@@ -218,7 +218,7 @@ Ext.define('Connector.model.ChartData', {
             hasNegOrZeroX = false, hasNegOrZeroY = false,
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
             excludeAliases = [],
-            brushFilterAliases = [], mainCount = 0,
+            mainCount = 0,
             _row;
 
         ca = this.getBaseMeasureConfig();
@@ -315,11 +315,6 @@ Ext.define('Connector.model.ChartData', {
 
         dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases, nonAggregated), nonAggregated);
 
-        // issue 24021: get the array of plot related brush filter measures so we can exclude gutter plots appropriately
-        Ext.each(Connector.getQueryService().getPlotBrushFilterMeasures(false), function(brushFilterMeasure) {
-            brushFilterAliases.push(LABKEY.Utils.getMeasureAlias(brushFilterMeasure.measure));
-        });
-
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)
         {
@@ -392,17 +387,11 @@ Ext.define('Connector.model.ChartData', {
             }
             else if (xVal == null)
             {
-                if (brushFilterAliases.indexOf(_xid) == -1) // issue 24021
-                {
-                    undefinedXRows.push(entry);
-                }
+                undefinedXRows.push(entry);
             }
             else if (xa.isContinuous && yVal == null)
             {
-                if (brushFilterAliases.indexOf(_yid) == -1) // issue 24021
-                {
-                    undefinedYRows.push(entry);
-                }
+                undefinedYRows.push(entry);
             }
             else
             {

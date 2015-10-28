@@ -2293,18 +2293,17 @@ Ext.define('Connector.view.Chart', {
                 {
                     // see if the "plot selection" filter matches all dimension values for either the x-axis or y-axis
                     // otherwise don't don't include that filter measure in the plot data request
-                    if (Ext.isDefined(filterMeasure.dimensions))
+                    if (activeMeasures.x != null && activeMeasures.x.alias == filterMeasure.measure.alias
+                            && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, filterMeasure.measure).length == 0)
                     {
-                        if (activeMeasures.x != null && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, {options: filterMeasure}).length == 0)
-                        {
-                            filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y);
-                            measures.push(filterMeasure);
-                        }
-                        else if (ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.y, {options: filterMeasure}).length == 0)
-                        {
-                            filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
-                            measures.push(filterMeasure);
-                        }
+                        filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y);
+                        measures.push(filterMeasure);
+                    }
+                    else if (activeMeasures.y != null && activeMeasures.y.alias == filterMeasure.measure.alias
+                            && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.y, filterMeasure.measure).length == 0)
+                    {
+                        filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
+                        measures.push(filterMeasure);
                     }
                     else
                     {
