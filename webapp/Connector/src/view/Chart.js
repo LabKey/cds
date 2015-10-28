@@ -2267,54 +2267,93 @@ Ext.define('Connector.view.Chart', {
      * @param {boolean} [includeFilterMeasures=false] Include all measures declared in all state filters
      * @returns {{measures: (*|Array), wrapped: *}}
      */
-    getMeasureSet : function(activeMeasures, includeFilterMeasures) {
-
-        var additionalMeasures = this.getAdditionalMeasures(activeMeasures),
+    getMeasureSet : function(activeMeasures, includeFilterMeasures)
+    {
+        var measures = this.getAdditionalMeasures(activeMeasures),
             wrappedMeasures = this.getWrappedMeasures(activeMeasures),
-            queryService = Connector.getQueryService(),
-            nonNullMeasures = [],
-            filterMeasures,
-            hasPlotSelectionFilter = {},
-            measures, i;
+            hasPlotSelectionFilter = {};
 
-        for (i=0; i < wrappedMeasures.length; i++) {
-            if (wrappedMeasures[i]) {
-                nonNullMeasures.push(wrappedMeasures[i]);
+        Ext.each(wrappedMeasures, function(wrapped)
+        {
+            if (wrapped)
+            {
+                measures.push(wrapped);
             }
-        }
-
-        measures = additionalMeasures.concat(nonNullMeasures);
+        });
 
         // set of measures from data filters
         if (includeFilterMeasures === true)
         {
-            filterMeasures = queryService.getWhereFilterMeasures(Connector.getState().getFilters(), true, this.getQueryKeys(measures));
-            if (!Ext.isEmpty(filterMeasures)) {
-                Ext.each(filterMeasures, function(filterMeasure)
+            var queryKeys = Ext.Array.toMap(this.getQueryKeys(measures), function(key) { return key.toLowerCase(); }),
+                xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
+                yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
+                hasX = activeMeasures.x != null,
+                hasY = activeMeasures.y != null;
+
+            /**
+             * A comparator to determine if measureB qualifies against measureA. This has been overloaded
+             * to examine isDemographic or if measureB is from the same schema/query.
+             * @param measureA
+             * @param measureB
+             * @returns {boolean}
+             */
+            var comparator = function(measureA, measureB)
+            {
+                if (measureB.isDemographic === true)
+                    return true;
+
+                var key = measureB.schemaName + '|' + measureB.queryName;
+                if (Ext.isDefined(queryKeys[key.toLowerCase()]))
                 {
-                    // see if the "plot selection" filter matches all dimension values for either the x-axis or y-axis
-                    // otherwise don't don't include that filter measure in the plot data request
-                    if (activeMeasures.x != null && activeMeasures.x.alias == filterMeasure.measure.alias
-                            && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.x, filterMeasure.measure).length == 0)
+                    return true;
+                }
+
+                return measureA.alias === measureB.alias &&
+                    ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
+            };
+
+            Ext.each(Connector.getState().getFilters(), function(filter)
+            {
+                if (filter.isGrid())
+                {
+                    if (filter.isPlot())
                     {
-                        filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y);
-                        measures.push(filterMeasure);
-                        hasPlotSelectionFilter.x = true;
-                    }
-                    else if (activeMeasures.y != null && activeMeasures.y.alias == filterMeasure.measure.alias
-                            && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.y, filterMeasure.measure).length == 0)
-                    {
-                        filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
-                        measures.push(filterMeasure);
-                        hasPlotSelectionFilter.y = true;
+                        // plot selection
+                        if (hasX)
+                        {
+                            var xMeasures = filter.getXMeasures(xAxisName, activeMeasures.x, comparator);
+                            if (xMeasures.length > 0)
+                            {
+                                measures = measures.concat(xMeasures);
+                                hasPlotSelectionFilter.x = true;
+                            }
+                        }
+
+                        if (hasY)
+                        {
+                            var yMeasures = filter.getYMeasures(yAxisName, activeMeasures.y, comparator);
+                            if (yMeasures.length > 0)
+                            {
+                                measures = measures.concat(yMeasures);
+                                hasPlotSelectionFilter.y = true;
+                            }
+                        }
                     }
                     else
                     {
-                        this.setAxisNameMeasureProperty(filterMeasure.measure, activeMeasures.x, activeMeasures.y);
-                        measures.push(filterMeasure);
+                        // grid
+                        if (hasX)
+                        {
+                            measures = measures.concat(filter.getXMeasures(xAxisName));
+                        }
+
+                        if (hasY)
+                        {
+                            measures = measures.concat(filter.getYMeasures(yAxisName));
+                        }
                     }
-                }, this);
-            }
+                }
+            }, this);
         }
 
         return {

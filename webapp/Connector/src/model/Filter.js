@@ -13,6 +13,8 @@ Ext.define('Connector.model.Filter', {
          */
         {name : 'dataFilter', defaultValue: {}},
         {name : 'measureSet', defaultValue: []},
+        {name : 'xMeasures', defaultValue: []},
+        {name : 'yMeasures', defaultValue: []},
         {name : 'isAggregated', type: 'boolean', defaultValue: false},
 
         {name : 'isTime', type: 'boolean', defaultValue: false},
@@ -184,12 +186,12 @@ Ext.define('Connector.model.Filter', {
                         _merge = false;
                         break;
                     }
-                    else if (ChartUtils.getAssayDimensionsWithDifferentValues(pm.measure, fpm.measure).length > 0)
-                    {
-                        // compare the options to determine if the axis values are different
-                        _merge = false;
-                        break;
-                    }
+                    //else if (ChartUtils.getAssayDimensionsWithDifferentValues(pm.measure, fpm.measure).length > 0)
+                    //{
+                    //    // compare the options to determine if the axis values are different
+                    //    _merge = false;
+                    //    break;
+                    //}
                 }
                 else
                 {
@@ -329,6 +331,74 @@ Ext.define('Connector.model.Filter', {
     getTimeFilters : function()
     {
         return this.get('timeFilters')
+    },
+
+    getXMeasures : function(axisName, matchMeasure, comparator)
+    {
+        var xMeasures = [];
+
+        if (matchMeasure)
+        {
+            if (Ext.isFunction(comparator))
+            {
+                var pm = this.get('plotMeasures')[0];
+
+                if (!pm || !comparator(matchMeasure, pm.measure))
+                {
+                    return xMeasures;
+                }
+            }
+            else
+            {
+                throw 'A "comparator" function must be supplied when attempting to match a measure';
+            }
+        }
+
+        Ext.each(this.get('xMeasures'), function(m)
+        {
+            var xm = Ext.clone(m);
+            if (axisName)
+            {
+                xm.measure.axisName = axisName;
+            }
+            xMeasures.push(xm);
+        }, this);
+
+        return xMeasures;
+    },
+
+    getYMeasures : function(axisName, matchMeasure, comparator)
+    {
+        var yMeasures = [];
+
+        if (matchMeasure)
+        {
+            if (Ext.isFunction(comparator))
+            {
+                var pm = this.get('plotMeasures')[1];
+
+                if (!pm || !comparator(matchMeasure, pm.measure))
+                {
+                    return yMeasures;
+                }
+            }
+            else
+            {
+                throw 'A "comparator" function must be supplied when attempting to match a measure';
+            }
+        }
+
+        Ext.each(this.get('yMeasures'), function(m)
+        {
+            var ym = Ext.clone(m);
+            if (axisName)
+            {
+                ym.measure.axisName = axisName;
+            }
+            yMeasures.push(ym);
+        }, this);
+
+        return yMeasures;
     },
 
     /**
@@ -609,8 +679,9 @@ Ext.define('Connector.model.Filter', {
 
     _generateDataFilters : function()
     {
-
-        var dataFilterMap = {};
+        var dataFilterMap = {},
+            xMeasures = [],
+            yMeasures = [];
 
         if (this.isAggregated())
         {
@@ -627,34 +698,47 @@ Ext.define('Connector.model.Filter', {
              * (each axis considered separately), unless both axes are the same source then plot selection filters,
              * including axis filters, are applied as a compound global data filter."
              */
+            var sameSource = this.samePlotMeasureSources(),
+                xFilters = [],
+                yFilters = [];
 
-            if (this.samePlotMeasureSources())
+            if (sameSource)
             {
                 this._generateCompoundFilter(dataFilterMap);
-
-                // TODO: and apply situational filters
             }
-            else
-            {
-                // plot selection filter
-                if (this.isGrid())
-                {
-                    Ext.each(this.get('gridFilter'), function(gridFilter)
-                    {
-                        if (gridFilter)
-                        {
-                            this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
-                        }
-                    }, this);
-                }
 
-                // in the plot filter
-                Ext.each(this.get('plotMeasures'), function(plotMeasure, i)
+            // plot selection filter
+            if (this.isGrid())
+            {
+                Ext.each(this.get('gridFilter'), function(gridFilter, i)
                 {
-                    if (i < 2 /* do not include color */ && plotMeasure && plotMeasure.measure)
+                    if (gridFilter)
+                    {
+                        if (i < 2)
+                        {
+                            xFilters.push(gridFilter);
+                        }
+                        else if (i < 4)
+                        {
+                            yFilters.push(gridFilter);
+                        }
+
+                        if (!sameSource)
+                            this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
+                    }
+                }, this);
+            }
+
+            // in the plot filter
+            Ext.each(this.get('plotMeasures'), function(plotMeasure, i)
+            {
+                if (i < 2 /* do not include color */ && plotMeasure && plotMeasure.measure)
+                {
+                    var measure = plotMeasure.measure;
+
+                    if (!sameSource)
                     {
                         // axis filters -> data filters
-                        var measure = plotMeasure.measure;
                         if (measure.options && measure.options.dimensions)
                         {
                             Ext.iterate(measure.options.dimensions, function(alias, values)
@@ -683,13 +767,32 @@ Ext.define('Connector.model.Filter', {
                                 }
                             }, this);
                         }
-                        // TODO: Might need to calculate compound filter for situational filters. The primary example case
-                        // TODO: being if you filter log > 0, you end up inadvertently dropping "undefined" values on demographic axes
-
-                        // TODO: #2. Also, what happens to situational filters when generating compound filters?
                     }
-                }, this);
-            }
+
+                    if (this.isGrid())
+                    {
+                        // plot selection
+                        var wrapped = {
+                            measure: measure,
+                            filterArray: i == 0 ? xFilters : yFilters
+                        };
+
+                        if (plotMeasure.dateOptions)
+                        {
+                            wrapped.dateOptions = Ext.clone(plotMeasure.dateOptions);
+                        }
+
+                        if (i == 0)
+                        {
+                            xMeasures.push(wrapped);
+                        }
+                        else
+                        {
+                            yMeasures.push(wrapped);
+                        }
+                    }
+                }
+            }, this);
         }
         else if (this.isGrid())
         {
@@ -705,13 +808,35 @@ Ext.define('Connector.model.Filter', {
                     this._dataFilterHelper(dataFilterMap, gridFilter.getColumnName(), gridFilter);
                 }
             }, this);
+
+            // grid filters apply to both x/y
+            var queryService = Connector.getQueryService();
+            Ext.iterate(dataFilterMap, function(alias, filters)
+            {
+                var measure = queryService.getMeasure(alias);
+                if (measure)
+                {
+                    xMeasures.push({
+                        measure: measure,
+                        filterArray: filters
+                    });
+                    yMeasures.push({
+                        measure: measure,
+                        filterArray: filters
+                    });
+                }
+            });
         }
         else
         {
             // olap filter -- nothing to do
         }
 
-        this._set('dataFilter', dataFilterMap);
+        this._set({
+            dataFilter: dataFilterMap,
+            xMeasures: xMeasures,
+            yMeasures: yMeasures
+        });
     },
 
     /**
@@ -808,11 +933,29 @@ Ext.define('Connector.model.Filter', {
             }, this);
         }
 
-        // create a compound filter
-        var xFilter = Connector.Filter.compound(xfilterSet, 'AND'),
-            yFilter = Connector.Filter.compound(yfilterSet, 'AND');
+        if (Ext.isEmpty(xfilterSet) && Ext.isEmpty(yfilterSet))
+        {
+            return;
+        }
 
-        filterMap[Connector.Filter.COMPOUND_ALIAS] = [Connector.Filter.compound([xFilter, yFilter], 'OR')];
+        var compounds = [];
+        if (Ext.isEmpty(yfilterSet))
+        {
+            compounds.push(Connector.Filter.compound(xfilterSet, 'AND'));
+        }
+        else if (Ext.isEmpty(xfilterSet))
+        {
+            compounds.push(Connector.Filter.compound(yfilterSet, 'AND'));
+        }
+        else
+        {
+            compounds.push(Connector.Filter.compound([
+                Connector.Filter.compound(xfilterSet, 'AND'),
+                Connector.Filter.compound(yfilterSet, 'AND')
+            ], 'OR'));
+        }
+
+        filterMap[Connector.Filter.COMPOUND_ALIAS] = compounds;
     },
 
     jsonify : function()
@@ -839,6 +982,11 @@ Ext.define('Connector.model.Filter', {
 
             jsonable.timeFilters = jsonGridFilters;
         }
+
+        delete jsonable.dataFilter;
+        delete jsonable.measureSet;
+        delete jsonable.xMeasure;
+        delete jsonable.yMeasure;
 
         return jsonable;
     },
@@ -1030,56 +1178,6 @@ Ext.define('Connector.model.Filter', {
         }, this);
 
         return remove;
-    },
-
-    getPlotXMeasureFilter : function()
-    {
-        var gridFilters = this.get('gridFilter');
-        if (this.get('plotMeasures')[0] != null &&  gridFilters.length == 4
-                && gridFilters[0] != null && gridFilters[1] != null)
-        {
-            return {
-                measure: this.get('plotMeasures')[0].measure,
-                filterArray: [
-                    gridFilters[0],
-                    gridFilters[1]
-                ]
-            };
-        }
-
-        return null;
-    },
-
-    getPlotYMeasureFilter : function()
-    {
-        var gridFilters = this.get('gridFilter');
-        if (this.get('plotMeasures')[1] != null &&  gridFilters.length == 4
-                && gridFilters[2] != null && gridFilters[3] != null)
-        {
-            return {
-                measure: this.get('plotMeasures')[1].measure,
-                filterArray: [
-                    gridFilters[2],
-                    gridFilters[3]
-                ]
-            };
-        }
-
-        return null;
-    },
-
-    getGridDataFilter : function()
-    {
-        // TODO: there must be a better way to get this
-        if (this.get('gridFilter').length == 1)
-        {
-            return {
-                measure: Connector.getQueryService().getMeasureRecordByAlias(this.get('gridFilter')[0].getColumnName()).data,
-                filterArray: this.get('gridFilter')
-            };
-        }
-
-        return null;
     }
 });
 

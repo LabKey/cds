@@ -398,7 +398,8 @@ Ext.define('Connector.controller.Query', {
                 // get the relevant application filters to add to the measure set
                 // (i.e. if it is from the same query or is from a demographic dataset)
                 filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters(), true, [dimQueryKey]);
-                Ext.each(filterMeasures, function(filterMeasure) {
+                Ext.each(filterMeasures, function(filterMeasure)
+                {
                     alias = LABKEY.Utils.getMeasureAlias(filterMeasure.measure);
                     index = aliases.indexOf(alias);
 
@@ -573,8 +574,8 @@ Ext.define('Connector.controller.Query', {
         return this.DEFINED_MEASURE_SOURCE_MAP;
     },
 
-    getData : function(measures, success, failure, scope, applyCompound) {
-
+    getData : function(measures, success, failure, scope, applyCompound, extraFilters)
+    {
         var config = {
             measures: measures,
             metaDataOnly: true,
@@ -588,7 +589,19 @@ Ext.define('Connector.controller.Query', {
         // be included in the request
         if (applyCompound)
         {
-            config = this._includeFilterMeasures(config);
+            Ext.apply(config, this._includeCompoundMeasures(config.measures, Connector.getState().getFilters()));
+        }
+
+        if (Ext.isArray(extraFilters))
+        {
+            if (config.extraFilters)
+            {
+                config.extraFilters = config.extraFilters.concat(extraFilters);
+            }
+            else
+            {
+                config.extraFilters = extraFilters;
+            }
         }
 
         QueryUtils.getData(config);
@@ -658,32 +671,31 @@ Ext.define('Connector.controller.Query', {
     getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys)
     {
         var whereFilterMeasures = [],
-            measureFilter,
+            measure,
+            wrapped,
             queryKeys = Ext.Array.toMap(relevantQueryKeys, function(key) {
                 return key.toLowerCase();
-            });;
+            });
 
+        // TODO: Adjust this, it either needs to be "like the plot" or "like the grid" or have a way to be either.
+        // Currently, it is "like the grid"
         Ext.each(filters, function(filter)
         {
-            if (filter.isWhereFilter())
+            if (filter.isGrid())
             {
-                measureFilter = filter.getPlotXMeasureFilter();
-                if (measureFilter != null && this._includeMeasureFilterForQueryKeys(measureFilter, includeDemographic, queryKeys))
+                Ext.iterate(filter.getDataFilters(), function(alias, filters)
                 {
-                    whereFilterMeasures.push(measureFilter);
-                }
-
-                measureFilter = filter.getPlotYMeasureFilter();
-                if (measureFilter != null && this._includeMeasureFilterForQueryKeys(measureFilter, includeDemographic, queryKeys))
-                {
-                    whereFilterMeasures.push(measureFilter);
-                }
-
-                measureFilter = filter.getGridDataFilter();
-                if (measureFilter != null && this._includeMeasureFilterForQueryKeys(measureFilter, includeDemographic, queryKeys))
-                {
-                    whereFilterMeasures.push(measureFilter);
-                }
+                    if (alias !== Connector.Filter.COMPOUND_ALIAS)
+                    {
+                        measure = this.getMeasure(alias);
+                        wrapped = {measure: measure};
+                        if (measure && this._includeMeasureFilterForQueryKeys(wrapped, includeDemographic, queryKeys))
+                        {
+                            wrapped.filterArray = filters;
+                            whereFilterMeasures.push(wrapped);
+                        }
+                    }
+                }, this);
             }
         }, this);
 
@@ -828,41 +840,49 @@ Ext.define('Connector.controller.Query', {
      * Appends any measures that are declared by compound filters to the getDataConfig.
      * This is used so that each caller of getData doesn't need to account for compound filters on their
      * own.
-     * @param getDataConfig
+     * @param wrappedMeasures
+     * @param {Connector.model.Filter[]} filters Filters to look at for resolving compound filters
      * @returns {*}
      * @private
      */
-    _includeFilterMeasures : function(getDataConfig) {
-
+    _includeCompoundMeasures : function(wrappedMeasures, filters)
+    {
         // build a map of aliases
         var aliasMap = {},
             extraFilters = [];
 
-        Ext.each(getDataConfig.measures, function(measure) {
+        Ext.each(wrappedMeasures, function(measure)
+        {
             aliasMap[measure.measure.alias] = true;
         });
 
         // add any additional measures to the configuration that come from the compound filters
-        Ext.each(Connector.getState().getFilters(), function(appFilter) {
-            Ext.iterate(appFilter.getDataFilters(), function(alias, filters) {
-                if (alias === Connector.Filter.COMPOUND_ALIAS) {
-                    Ext.each(filters, function(compound) {
-
+        Ext.each(filters, function(appFilter)
+        {
+            Ext.iterate(appFilter.getDataFilters(), function(alias, filters)
+            {
+                if (alias === Connector.Filter.COMPOUND_ALIAS)
+                {
+                    Ext.each(filters, function(compound)
+                    {
                         // process each measure alias from this compound filter
-                        Ext.iterate(compound.getAliases(), function(cAlias) {
-                            if (!aliasMap[cAlias]) {
-
+                        Ext.iterate(compound.getAliases(), function(cAlias)
+                        {
+                            if (!aliasMap[cAlias])
+                            {
                                 // clear to append this measure result
                                 var m = Connector.getQueryService().getMeasure(cAlias);
-                                if (m) {
-                                    getDataConfig.measures.push({
+                                if (m)
+                                {
+                                    wrappedMeasures.push({
                                         measure: Ext.clone(m),
                                         filterArray: []
                                     });
 
                                     aliasMap[cAlias] = true;
                                 }
-                                else {
+                                else
+                                {
                                     throw 'Unable to find measure "' + cAlias + '" included in compound filter.';
                                 }
                             }
@@ -874,11 +894,10 @@ Ext.define('Connector.controller.Query', {
             });
         });
 
-        if (!Ext.isEmpty(extraFilters)) {
-            getDataConfig.extraFilters = extraFilters;
-        }
-
-        return getDataConfig;
+        return {
+            measures: wrappedMeasures,
+            extraFilters: extraFilters
+        };
     }
 });
 
