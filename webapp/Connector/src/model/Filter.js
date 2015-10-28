@@ -335,7 +335,13 @@ Ext.define('Connector.model.Filter', {
 
     getXMeasures : function(axisName, matchMeasure, comparator)
     {
-        var xMeasures = [];
+        var xMeasures = [],
+            myXMeasures = this.get('xMeasures');
+
+        if (this.isTime() && myXMeasures.length > 0)
+        {
+            xMeasures.push(myXMeasures[0]);
+        }
 
         if (matchMeasure)
         {
@@ -354,7 +360,7 @@ Ext.define('Connector.model.Filter', {
             }
         }
 
-        Ext.each(this.get('xMeasures'), function(m)
+        Ext.each(myXMeasures, function(m)
         {
             var xm = Ext.clone(m);
             if (axisName)
@@ -369,7 +375,13 @@ Ext.define('Connector.model.Filter', {
 
     getYMeasures : function(axisName, matchMeasure, comparator)
     {
-        var yMeasures = [];
+        var yMeasures = [],
+            myYMeasures = this.get('yMeasures');
+
+        if (this.isTime() && myYMeasures.length > 0)
+        {
+            yMeasures.push(myYMeasures[0]);
+        }
 
         if (matchMeasure)
         {
@@ -388,7 +400,7 @@ Ext.define('Connector.model.Filter', {
             }
         }
 
-        Ext.each(this.get('yMeasures'), function(m)
+        Ext.each(myYMeasures, function(m)
         {
             var ym = Ext.clone(m);
             if (axisName)
@@ -637,7 +649,7 @@ Ext.define('Connector.model.Filter', {
                     console.warn('Unable to find measure for query parameter', gf.getURLParameterName() + '=' + gf.getURLParameterValue());
                 }
             }
-        }, this);
+        });
     },
 
     _mapToMeasures : function(measureMap)
@@ -699,6 +711,7 @@ Ext.define('Connector.model.Filter', {
              * including axis filters, are applied as a compound global data filter."
              */
             var sameSource = this.samePlotMeasureSources(),
+                accountedForTime = false,
                 xFilters = [],
                 yFilters = [];
 
@@ -773,13 +786,29 @@ Ext.define('Connector.model.Filter', {
                     {
                         // plot selection
                         var wrapped = {
-                            measure: measure,
-                            filterArray: i == 0 ? xFilters : yFilters
+                            measure: measure
                         };
 
                         if (plotMeasure.dateOptions)
                         {
                             wrapped.dateOptions = Ext.clone(plotMeasure.dateOptions);
+                        }
+
+                        if (this.isTime() && !accountedForTime)
+                        {
+                            accountedForTime = true;
+                            Ext.each(this.getMeasureSet(), function(_wrapped)
+                            {
+                                if (_wrapped.measure.alias.toLowerCase() === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
+                                {
+                                    xMeasures.push(_wrapped);
+                                    yMeasures.push(_wrapped);
+                                }
+                            });
+                        }
+                        else if (wrapped.measure.variableType !== 'TIME')
+                        {
+                            wrapped.filterArray = i == 0 ? xFilters : yFilters;
                         }
 
                         if (i == 0)
@@ -825,7 +854,7 @@ Ext.define('Connector.model.Filter', {
                         filterArray: filters
                     });
                 }
-            });
+            }, this);
         }
         else
         {
