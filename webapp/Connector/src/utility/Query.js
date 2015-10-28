@@ -158,8 +158,7 @@ Ext.define('Connector.utility.Query', {
             tables = this._getTables(),
             columnAliasMap = {},
             aliasMeasureMap = {},
-            datasets = {},
-            hasAssayDataset = false;
+            datasets = {}, assayDatasets = {};
 
         // I want to modify these measures for internal bookkeeping,
         // but I don't own this config, so clone here.
@@ -181,7 +180,6 @@ Ext.define('Connector.utility.Query', {
                 }
 
                 var axisTable = Ext.clone(table);
-                axisTable.tableAlias;//todo: remove: += '_' + m.measure.axisName;
                 axisTable.displayName = m.measure.axisName;
                 tables[axisQueryName] = axisTable;
                 table = axisTable;
@@ -193,11 +191,14 @@ Ext.define('Connector.utility.Query', {
             _m.queryName = queryName;
             _m.literalFn = me._sqlLiteralFn(m.measure.type);
 
-            // find the list of datasets
-            if (_m.table && _m.table.isAssayDataset)
+            // find the full list of datasets and hold on to a separate list of just the assay datasets
+            if (_m.table)
             {
-                hasAssayDataset = true;
                 datasets[_m.fullQueryName] = _m.table;
+                if (_m.table.isAssayDataset)
+                {
+                    assayDatasets[_m.fullQueryName] = _m.table;
+                }
             }
 
             aliasMeasureMap[alias] = _m;
@@ -205,10 +206,16 @@ Ext.define('Connector.utility.Query', {
             return _m;
         });
 
-        // if we don't have any assay datasets, use GridBase as the root
-        if (!hasAssayDataset)
+        // if we don't have any assay datasets, use GridBase as the root for the intersect SQL case
+        if (options.intersect && Object.keys(assayDatasets).length == 0)
         {
-            datasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
+            assayDatasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
+        }
+
+        // if we have at least one assayDatasets value, use that instead of the full datasets map
+        if (Object.keys(assayDatasets).length > 0)
+        {
+            datasets = assayDatasets;
         }
         else
         {
