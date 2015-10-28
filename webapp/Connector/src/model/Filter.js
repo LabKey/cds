@@ -1026,6 +1026,10 @@ Ext.define('Connector.model.Filter', {
                             + (encodeValue ? encodeURIComponent(filter.getURLParameterValue()) : filter.getURLParameterValue()));
                 }
             }
+            else
+            {
+                jsonFilters.push(null);
+            }
         });
 
         return jsonFilters;
