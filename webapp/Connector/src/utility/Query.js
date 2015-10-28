@@ -163,6 +163,7 @@ Ext.define('Connector.utility.Query', {
         var measures = measuresIN.map(function(m)
         {
             var _m = Ext.clone(m),
+                alias = (_m.measure.alias || [_m.measure.schemaName, _m.measure.queryName, _m.measure.name].join('_')).toLowerCase(),
                 queryName = (_m.measure.schemaName + '.' + m.measure.queryName).toLowerCase(),
                 axisQueryName = queryName + (m.measure.axisName ? '.' + m.measure.axisName : ''),
                 table = tables[axisQueryName];
@@ -195,7 +196,7 @@ Ext.define('Connector.utility.Query', {
                 datasets[_m.fullQueryName] = _m.table;
             }
 
-            aliasMeasureMap[_m.measure.alias] = _m;
+            aliasMeasureMap[alias] = _m;
 
             return _m;
         });
@@ -208,23 +209,39 @@ Ext.define('Connector.utility.Query', {
 
         // calculate a map of source to filter.
         // Each compound filter should match to 1 and only 1 source.
-        var extraFilterMap = {};
+        var extraFilterMap = {},
+            baseAlias = this.STUDY_ALIAS_PREFIX.toLowerCase();
+
         if (!Ext.isEmpty(extraFilters))
         {
             Ext.each(extraFilters, function(f)
             {
-                var aliases = f.getAliases(),
-                    included = false;
+                var included = false,
+                    targetQuery,
+                    baseQuery,
+                    hasBaseFilter = false,
+                    baseMeasures = {};
 
-                Ext.iterate(aliases, function(alias)
+                Ext.iterate(f.getAliases(), function(alias)
                 {
-                    var measure = aliasMeasureMap[alias];
+                    var lowerAlias = alias.toLowerCase();
+
+                    var measure = aliasMeasureMap[lowerAlias];
                     if (measure)
                     {
+                        if (lowerAlias.indexOf(baseAlias) === 0)
+                        {
+                            hasBaseFilter = true;
+                            baseQuery = measure.queryName;
+                            baseMeasures[alias] = measure;
+                            return;
+                        }
+
                         if (tables[measure.queryName])
                         {
                             if (!extraFilterMap[measure.queryName])
                             {
+                                targetQuery = measure.queryName;
                                 extraFilterMap[measure.queryName] = {
                                     measures : {},
                                     filterArray: []
@@ -249,6 +266,21 @@ Ext.define('Connector.utility.Query', {
                         throw 'Unable to find measure "' + alias + '" from compound filter. This measure must be included.';
                     }
                 });
+
+                if (hasBaseFilter)
+                {
+                    var queryName = Ext.isDefined(targetQuery) ? targetQuery : baseQuery;
+                    Ext.iterate(baseMeasures, function(alias, measure)
+                    {
+                        extraFilterMap[queryName].measures[alias] = measure;
+
+                        if (!included)
+                        {
+                            included = true;
+                            extraFilterMap[queryName].filterArray.push(f);
+                        }
+                    });
+                }
             });
         }
 
@@ -553,11 +585,15 @@ Ext.define('Connector.utility.Query', {
             {
                 f = f._filters[0];
                 _measure = measure[f.getColumnName()];
+                if (!_measure)
+                    throw 'Unable to map measure for "' + f.getColumnName() + '"';
             }
         }
         else if (recursed)
         {
             _measure = measure[f.getColumnName()];
+            if (!_measure)
+                throw 'Unable to map measure for "' + f.getColumnName() + '"';
         }
 
         columnName = _measure.columnName;
