@@ -53,6 +53,12 @@ Ext.define('Connector.panel.Selector', {
             }
         }
 
+        // Issue 24648: with more hidden variables allow for a module property to be used to view them in devMode
+        if (LABKEY.devMode && LABKEY.getModuleContext('cds')['ShowHiddenVariables'] === 'true')
+        {
+            config.sourceMeasureFilter.includeHidden = true;
+        }
+
         this.callParent([config]);
 
         this.addEvents('remove', 'cancel', 'selectionmade', 'beforeSourceCountsLoad', 'afterSourceCountsLoad');
@@ -397,13 +403,13 @@ Ext.define('Connector.panel.Selector', {
                     {
                         renderHeader : function(value) {
                             var hdr = value;
-                            if (value === '0') {
+                            if (value === '0_Recommended') {
                                 hdr = 'Recommended';
                             }
-                            else if (value === '1') {
+                            else if (value === '1_AssayRequired') {
                                 hdr = 'Assay required columns';
                             }
-                            else if (value === '2') {
+                            else if (value === '2_Additional') {
                                 hdr = 'Additional';
                             }
                             return hdr;
@@ -623,11 +629,13 @@ Ext.define('Connector.panel.Selector', {
             else {
                 // enable or disable the measure grid grouping feature based on the
                 // presence of a 'recommended' or 'assay required columns' variable
-                if (this.measureStore.findExact('recommendedVariableGrouper', '0') > -1 ||
-                    this.measureStore.findExact('recommendedVariableGrouper', '1') > -1) {
+                if (this.measureStore.findExact('recommendedVariableGrouper', '0_Recommended') > -1 ||
+                    this.measureStore.findExact('recommendedVariableGrouper', '1_AssayRequired') > -1)
+                {
                     this.groupingFeature.enable();
                 }
-                else {
+                else
+                {
                     this.groupingFeature.disable();
                 }
 
@@ -1193,7 +1201,7 @@ Ext.define('Connector.panel.Selector', {
             selections = selModel.getSelection();
 
         for (var i=0; i < selections.length; i++) {
-            if (selections[i].get('recommendedVariableGrouper') !== '1') {
+            if (selections[i].get('recommendedVariableGrouper') !== '1_AssayRequired') {
                 selectedNonRequired = true;
                 break;
             }
@@ -1202,7 +1210,7 @@ Ext.define('Connector.panel.Selector', {
         // sadly, store.query() does not respect filters
         var requiredMeasures = [];
         Ext.each(this.measureStore.getRange(), function(record) {
-            if (record.get('recommendedVariableGrouper') === '1') {
+            if (record.get('recommendedVariableGrouper') === '1_AssayRequired') {
                 requiredMeasures.push(record);
             }
         });

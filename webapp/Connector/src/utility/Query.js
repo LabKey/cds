@@ -24,6 +24,9 @@ Ext.define('Connector.utility.Query', {
      */
     getData : function(config)
     {
+        for (var i=0 ; i<config.measures.length ; i++)
+            console.log(JSON.stringify(config.measures[i].measure));
+
         var result = this._generateVisGetDataSql(config.measures, config.extraFilters, {});
 
         LABKEY.Query.executeSql({
@@ -35,7 +38,8 @@ Ext.define('Connector.utility.Query', {
             success: function(response)
             {
                 response.columnAliasMap = result.columnAliasMap;
-                //console.log(response.queryName);
+                console.log(response.queryName);
+                console.trace();
                 config.success.call(config.scope, response);
             },
             failure: config.failure,
@@ -206,6 +210,26 @@ Ext.define('Connector.utility.Query', {
         {
             datasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
         }
+        else
+        {
+            // sanity check that no axis has measures from more than one assay dataset
+            var mapAxisToAssay = {};
+            for (var i=0 ; i< measures.length ; i++)
+            {
+                var m = measures[i];
+                if (!m.measure.axisName || !datasets[m.fullQueryName])
+                    continue;
+                if (!mapAxisToAssay[m.measure.axisName])
+                    mapAxisToAssay[m.measure.axisName] = m.measure.queryName;
+                else if (mapAxisToAssay[m.measure.axisName] != m.measure.queryName)
+                {
+                    console.log("WARNING: two datasets on axis '" + m.measure.axisName + "' - '" + mapAxisToAssay[m.measure.axisName] + "' and '" + m.measure.queryName + "'");
+                    debugger;
+                    break;
+                }
+            }
+        }
+
 
         // calculate a map of source to filter.
         // Each compound filter should match to 1 and only 1 source.
@@ -322,7 +346,8 @@ Ext.define('Connector.utility.Query', {
         {
             var debugSql = 'SELECT * FROM (' + debugUnionSQL + ') AS _0' + orderSQL;
             var SHOW_TRUNCATED_IN_CLAUSES = true;
-            //console.log(SHOW_TRUNCATED_IN_CLAUSES ? debugSql : sql);
+            console.log(SHOW_TRUNCATED_IN_CLAUSES ? debugSql : sql);
+            console.trace();
         }
 
         return {
