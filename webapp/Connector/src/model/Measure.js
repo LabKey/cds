@@ -53,12 +53,12 @@ Ext.define('Connector.model.Measure', {
         {name: 'recommendedVariableGrouper', convert: function(val, rec) {
             // see Selector.js measuresGridGrouping for mapping to display value
             if (rec.get('isRecommendedVariable')) {
-                return '0'; // Recommended
+                return '0_Recommended'; // Recommended
             }
             else if (rec.get('dimensions') && rec.get('dimensions').indexOf(rec.get('alias')) > -1) {
-                return '1'; // Assay required columns
+                return '1_AssayRequired'; // Assay required columns
             }
-            return '2'; // Additional
+            return '2_Additional'; // Additional
         }},
         {name: 'defaultScale', defaultValue: 'LINEAR'},
         {name: 'sortOrder', type: 'int', defaultValue: 0},

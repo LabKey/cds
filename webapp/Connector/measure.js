@@ -141,11 +141,13 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false, value: 'CD4+'}
                 },
                 'study_ICS_functional_marker_name': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
                 'study_ICS_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Protein Panel'}
@@ -172,11 +174,13 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 // study|NAb
                 'study_NAb_target_cell': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'TZM-bl'}
                 },
                 'study_NAb_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Virus'}
@@ -201,6 +205,7 @@ Ext.define('Connector.measure.Configuration', {
                     defaultSelection: {all: false}
                 },
                 'study_BAMA_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Antigen'}
@@ -216,11 +221,13 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 // study|ELISPOT
                 'study_ELISPOT_functional_marker_name': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false}
                 },
                 'study_ELISPOT_summary_level': {
+                    hidden: true,
                     requiresSelection: true,
                     allowMultiSelect: false,
                     defaultSelection: {all: false, value: 'Peptide Pool'}
@@ -316,10 +323,12 @@ Ext.define('Connector.measure.Configuration', {
                     isRecommendedVariable: true
                 },
                 'study_Demographics_sexatbirth': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hidden: true
                 },
                 'study_Demographics_age_enrollment': {
-                    isRecommendedVariable: true
+                    isRecommendedVariable: true,
+                    hidden: true
                 },
                 'study_Demographics_study_label': {
                     isRecommendedVariable: true
@@ -329,6 +338,18 @@ Ext.define('Connector.measure.Configuration', {
                 },
 
                 // hidden variables
+                'study_ICS_assay_identifier': {
+                    hidden: true
+                },
+                'study_ICS_ics_lab_source_key': {
+                    hidden: true
+                },
+                'study_ICS_exp_assayid': {
+                    hidden: true
+                },
+                'study_ICS_functional_marker_type': {
+                    hidden: true
+                },
                 'study_ICS_protein_panel_protein_peptide_pool': {
                     hidden: true
                 },
@@ -336,6 +357,18 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ICS_SubjectVisit_Visit': {
+                    hidden: true
+                },
+                'study_ICS_visit_day': {
+                    hidden: true
+                },
+                'study_NAb_assay_identifier': {
+                    hidden: true
+                },
+                'study_NAb_exp_assayid': {
+                    hidden: true
+                },
+                'study_NAb_nab_lab_source_key': {
                     hidden: true
                 },
                 'study_NAb_tier_clade_virus': {
@@ -347,10 +380,22 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_visit_day': {
                     hidden: true
                 },
+                'study_BAMA_assay_identifier': {
+                    hidden: true
+                },
+                'study_BAMA_bama_lab_source_key': {
+                    hidden: true
+                },
+                'study_BAMA_exp_assayid': {
+                    hidden: true
+                },
                 'study_BAMA_SubjectVisit_Visit': {
                     hidden: true
                 },
                 'study_BAMA_visit_day': {
+                    hidden: true
+                },
+                'study_ELISPOT_assay_identifier': {
                     hidden: true
                 },
                 'study_ELISPOT_protein_panel_protein_peptide_pool': {
@@ -359,10 +404,55 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ELISPOT_protein_panel_protein': {
                     hidden: true
                 },
+                'study_ELISPOT_els_ifng_lab_source_key': {
+                    hidden: true
+                },
+                'study_ELISPOT_exp_assayid': {
+                    hidden: true
+                },
+                'study_ELISPOT_functional_marker_type': {
+                    hidden: true
+                },
                 'study_ELISPOT_SubjectVisit_Visit': {
                     hidden: true
                 },
                 'study_ELISPOT_visit_day': {
+                    hidden: true
+                },
+                'study_Demographics_agegroup_range': {
+                    hidden: true
+                },
+                'study_Demographics_bmi_enrollment': {
+                    hidden: true
+                },
+                'study_Demographics_circumcised_enrollment': {
+                    hidden: true
+                },
+                'study_Demographics_country_enrollment': {
+                    hidden: true
+                },
+                'study_Demographics_ethnicity': {
+                    hidden: true
+                },
+                'study_Demographics_race': {
+                    hidden: true
+                },
+                'study_Demographics_study_arm': {
+                    hidden: true
+                },
+                'study_Demographics_study_first_enr_date': {
+                    hidden: true
+                },
+                'study_Demographics_study_fu_complete_date': {
+                    hidden: true
+                },
+                'study_Demographics_study_public_date': {
+                    hidden: true
+                },
+                'study_Demographics_study_start_date': {
+                    hidden: true
+                },
+                'study_Demographics_subspecies': {
                     hidden: true
                 },
                 'study_Demographics_SubjectVisit_Visit': {

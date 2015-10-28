@@ -490,14 +490,15 @@ Ext.define('Connector.controller.Query', {
 
         var sources = {}, sourceArray = [], measures = {}, measureArray = [],
             queryTypeMatch, measureOnlyMatch, timepointMatch,
-            hiddenMatch, notSubjectColMatch, userFilterMatch,
+            hiddenMatch, notSubjectColMatch, userFilterMatch, requiredVarMatch,
             key, source, sourceContextMap = Connector.measure.Configuration.context.sources;
 
         Ext.each(this.MEASURE_STORE.getRange(), function(record) {
             queryTypeMatch = !config.queryType || record.get('queryType') == config.queryType;
             measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
             timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
-            hiddenMatch = config.includeHidden || !record.get('hidden');
+            requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
+            hiddenMatch = config.includeHidden || (!record.get('hidden') || requiredVarMatch);
             notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
 
             // The userFilter is a function used to further filter down the available measures.
