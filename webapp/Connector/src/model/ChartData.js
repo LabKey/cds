@@ -12,6 +12,7 @@ Ext.define('Connector.model.ChartData', {
         {name: 'plotMeasures', defaultValue: [null, null, null]}, // Array [x, y, color]
         {name: 'measureStore', defaultValue: null}, // LABKEY.Query.experimental.MeasureStore
         {name: 'plotScales', defaultValue: {}}, // {x: log/linear, y: log/linear}
+        {name: 'hasPlotSelectionFilter', defaultValue: {}},
 
         /* generated properties based on the processing of the MeasureStore */
         {name: 'containerAlignmentDayMap', defaultValue: {}},
@@ -49,6 +50,10 @@ Ext.define('Connector.model.ChartData', {
 
     getPlotScales : function() {
         return this.get('plotScales');
+    },
+
+    hasPlotSelectionFilter : function() {
+        return this.get('hasPlotSelectionFilter');
     },
 
     getColumnAliasMap : function() {
@@ -387,11 +392,17 @@ Ext.define('Connector.model.ChartData', {
             }
             else if (xVal == null)
             {
-                undefinedXRows.push(entry);
+                if (!Ext.isDefined(this.hasPlotSelectionFilter().x))
+                {
+                    undefinedXRows.push(entry);
+                }
             }
             else if (xa.isContinuous && yVal == null)
             {
-                undefinedYRows.push(entry);
+                if (!Ext.isDefined(this.hasPlotSelectionFilter().y))
+                {
+                    undefinedYRows.push(entry);
+                }
             }
             else
             {

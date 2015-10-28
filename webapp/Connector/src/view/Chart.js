@@ -2274,6 +2274,7 @@ Ext.define('Connector.view.Chart', {
             queryService = Connector.getQueryService(),
             nonNullMeasures = [],
             filterMeasures,
+            hasPlotSelectionFilter = {},
             measures, i;
 
         for (i=0; i < wrappedMeasures.length; i++) {
@@ -2298,12 +2299,14 @@ Ext.define('Connector.view.Chart', {
                     {
                         filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y);
                         measures.push(filterMeasure);
+                        hasPlotSelectionFilter.x = true;
                     }
                     else if (activeMeasures.y != null && activeMeasures.y.alias == filterMeasure.measure.alias
                             && ChartUtils.getAssayDimensionsWithDifferentValues(activeMeasures.y, filterMeasure.measure).length == 0)
                     {
                         filterMeasure.measure.axisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
                         measures.push(filterMeasure);
+                        hasPlotSelectionFilter.y = true;
                     }
                     else
                     {
@@ -2316,7 +2319,8 @@ Ext.define('Connector.view.Chart', {
 
         return {
             measures: measures,
-            wrapped: wrappedMeasures
+            wrapped: wrappedMeasures,
+            hasPlotSelectionFilter: hasPlotSelectionFilter
         };
     },
 
@@ -2360,19 +2364,22 @@ Ext.define('Connector.view.Chart', {
                 }
             }
 
-            var measures = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */).measures;
+            var measureSet = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */);
 
-            this.applyFiltersToMeasure(measures, subjectFilter);
+            this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
-            Connector.getQueryService().getMeasureStore(measures, this.onChartDataSuccess, this.onFailure, this);
+            Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore) {
+                this.onChartDataSuccess(measureStore, measureSet);
+            }, this.onFailure, this);
         }, this);
     },
 
     onChartDataSuccess : function(measureStore, measureSet)
     {
         var chartData = Ext.create('Connector.model.ChartData', {
-            measureSet: measureSet,
+            measureSet: measureSet.measures,
+            hasPlotSelectionFilter: measureSet.hasPlotSelectionFilter,
             plotMeasures: this.getWrappedMeasures(this.getActiveMeasures()),
             measureStore: measureStore,
             plotScales: {
