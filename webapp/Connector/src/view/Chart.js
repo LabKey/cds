@@ -2501,7 +2501,9 @@ Ext.define('Connector.view.Chart', {
                 title: 'Log filter on',
                 xOffset: -115,
                 arrowOffset: 145,
-                content: 'Values ≤ 0 have no log and were dropped from the plot. Use a linear scale to see all values.'
+                content: 'Values ≤ 0 have no log. ' + Ext.util.Format.number(this.invalidLogPlotRowCount, '0,000')
+                    + ' points are not plotted but are still included in the grid and subject count.'
+                    + ' Use a linear scale to see all values.'
             };
 
             ChartUtils.showCallout(config, 'hidelogscalemsg', this);
