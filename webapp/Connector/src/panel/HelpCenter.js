@@ -306,53 +306,75 @@ Ext.define('Connector.panel.HelpCenter', {
     getHelpTemplate: function(json, name)
     {
         var pages = json.pages;
-//        var name = json.container.wikiname;
-        var template = json.container.wikibody;
+        var template = json.container.wikibody; // display wiki body, unless current wiki has children wiki, then display children
 
-
-        if (!name)  // this is the 1st categorical home page
-        {
-            template = '<div>';
-            for (var j = 0; j < pages.length; j++)
-            {
-                var category = pages[j];
-                template += '<h3>' + category.text + '</h3>'; // to do get rid of name
-                for (var i = 0; i < category.children.length; i++)
-                {
-
-                    var child = category.children[i];
-                    template += '<p><a href="' + child.href + '">' + child.text.replace(name, '') + '</a></p>'; // to do get rid of name
-                }
-            }
-            template += '</div>';
+        if (!name)  {
+            // the home view is a summary for all categories
+            template = this.getMainCategoricalView(pages);
         }
-        else
-        {
-            var targetWiki = null;
-            for (var i = 0; i < pages.length; i++)
-            {
-                targetWiki = this.findWikiName(pages[i], name);
-                if (targetWiki != null)
-                {
-                    break;
-                }
-            }
-
-            if (targetWiki && targetWiki.children)
-            {
-                // build html body with children nodes
-                template = '<div>';
-                for (var i = 0; i < targetWiki.children.length; i++)
-                {
-
-                    var child = targetWiki.children[i];
-                    template += '<p><a href="' + child.href + '">' + child.text.replace(name, '') + '</a></p>'; // to do get rid of name
-                }
-                template += '</div>';
-            }
+        else {
+            template = this.getSubCategoricalView(template, pages, name);
         }
         return template;
 
+    },
+
+    getMainCategoricalView: function (pages) {
+        var template = '<div>';
+        template += '<p><span style="font-size: 12px;">The help center will have answers to FQA, ';
+        template += 'How to articles and video added regularly. Search capability will be available in December. Below is a few articles to help get you started.</span></p>';
+        template += '<table>';
+        template += '<tbody>';
+        template += '<tr valign="top">';
+        template += '<td width="220px">';
+        for (var j = 0; j < (pages.length + 1) /2; j++) {
+            template += this.buildIndividualCategory(pages[j]);
+        }
+        template += '</td>';
+        template += '<td width="30px">&nbsp;</td>';
+        template += '<td width="220px">';
+        for (; j < pages.length; j++)
+        {
+            template += this.buildIndividualCategory(pages[j]);
+        }
+        template += '</td>';
+        template += '</tr>';
+        template += '</tbody>';
+        template += '</table>';
+        template += '</div>';
+        return template;
+    },
+
+    buildIndividualCategory: function (category) {
+        var template = '<h3>' + category.text.replace(category.name, '').replace('()', '') + '</h3>';
+        for (var i = 0; i < category.children.length && i < 3; i++) {
+            var child = category.children[i];
+            template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';
+        }
+        if (category.children.length > 3) {
+            template += '<p><a style="color: mediumorchid" href="' + category.href + '">' + 'See all' + '</a></p>';
+        }
+        return template;
+    },
+
+    getSubCategoricalView: function (originalTemplate, pages, name) {
+        var targetWiki = null;
+        var template = originalTemplate; // if there are no children wiki for the current page, use wikibody as content
+        for (var i = 0; i < pages.length; i++) {
+            targetWiki = this.findWikiName(pages[i], name);
+            if (targetWiki != null) {
+                break;
+            }
+        }
+        if (targetWiki && targetWiki.children)  {
+            template = '<div>';
+            for (var i = 0; i < targetWiki.children.length; i++) {
+                var child = targetWiki.children[i];
+                template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';
+            }
+            template += '</div>';
+        }
+        return template;
     },
 
     findWikiName: function (node, name) {
