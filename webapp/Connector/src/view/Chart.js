@@ -2284,11 +2284,14 @@ Ext.define('Connector.view.Chart', {
         // set of measures from data filters
         if (includeFilterMeasures === true)
         {
-            var queryKeys = Ext.Array.toMap(this.getQueryKeys(measures), function(key) { return key.toLowerCase(); }),
+            // TODO: allowOtherRanges can be removed once it is determined that we're sticking with strict axis filter
+            // equality in order for a filter to apply to a given axis (see comparator()'s use of queryKeys)
+            var allowOtherRanges = false,
                 xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
                 yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
                 hasX = activeMeasures.x != null,
-                hasY = activeMeasures.y != null;
+                hasY = activeMeasures.y != null,
+                queryKeys = Ext.Array.toMap(this.getQueryKeys(measures, allowOtherRanges), function(key) { return key.toLowerCase(); })
 
             /**
              * A comparator to determine if measureB qualifies against measureA. This has been overloaded
@@ -2363,20 +2366,23 @@ Ext.define('Connector.view.Chart', {
         };
     },
 
-    getQueryKeys : function(measures)
+    getQueryKeys : function(measures, allowOtherRanges)
     {
         // always include the base table query keys
         var queryKeys = [Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase],
             key;
 
-        Ext.each(measures, function(m)
+        if (allowOtherRanges)
         {
-            key = m.measure.schemaName + '|' + m.measure.queryName;
-            if (queryKeys.indexOf(key) == -1)
+            Ext.each(measures, function(m)
             {
-                queryKeys.push(key);
-            }
-        });
+                key = m.measure.schemaName + '|' + m.measure.queryName;
+                if (queryKeys.indexOf(key) == -1)
+                {
+                    queryKeys.push(key);
+                }
+            });
+        }
 
         return queryKeys;
     },
