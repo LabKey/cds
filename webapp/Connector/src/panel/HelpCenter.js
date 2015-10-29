@@ -90,51 +90,39 @@ Ext.define('Connector.panel.HelpCenter', {
                 data: {title:'test'},
                 height: '400px',
                 setTemplate: function(template) {
-                    //this.tpl = new Ext.XTemplate(template);
                     this.update(template, false, function(win) {
+                        var wikiController = 'wiki';
+                        var currentContainer = encodeURIComponent(LABKEY.ActionURL.getContainerName());
                         Ext.select('#helpcenterbody a').each(function(link) {
+                            // if target _blank, open in new tab, no link hijacking
                             if (link.dom.target.toString().toLowerCase() !== '_blank') {
-                               // link.un('click', me.interceptHref);
-                                link.on('click', function interceptHref(e) {
-                                    console.log("clicked" + i++);
-                                    e.preventDefault();
-                                    var href = e.target.href;
+                                var href = link.dom.href;
+                                if (href.indexOf(currentContainer) > 0 && href.indexOf(wikiController) > 0) {
+                                    var wikiName;
+                                    if (href.indexOf('download.view') > 0) {
+                                        // no hijacking for attachments
+                                        return;
+                                    }
                                     var params = LABKEY.ActionURL.getParameters(href);
-                                    me.loadHelpFile(params.name);
-                                },null, {single: true});
+                                    wikiName = params.name;
+                                    link.on('click', function interceptHref(e){
+                                        e.preventDefault();
+                                        me.loadHelpFile(wikiName);
+                                    }, null, {single: true});
+                                }
+                                else {
+                                    // this is an external link or non-wiki link, force open in a new tab
+                                    link.dom.target = '_blank';
+                                }
                             }
                         })
                     });
-                },
-                listeners: {
-                   //afterlayout: function(win) {
-                   //     Ext.select('#helpcenterbody a').each(function(link) {
-                   //         if (link.dom.target.toString().toLowerCase() !== '_blank') {
-                   //             link.un('click', me.interceptHref)
-                   //              link.on('click', function interceptHref(e) {
-                   //                  console.log("clicked" + i++);
-                   //                 e.preventDefault();
-                   //                 var href = e.target.href;
-                   //                 var params = LABKEY.ActionURL.getParameters(href);
-                   //                 me.loadHelpFile(params.name);
-                   //             },null, {single: true});
-                   //         }
-                   //     })
-                   // }
                 }
             });
           }
 
         return this.helpcenterBody;
     },
-
-    //interceptHref: function (e, scope) {
-    //    console.log("clicked" + i++);
-    //    e.preventDefault();
-    //    var href = e.target.href;
-    //    var params = LABKEY.ActionURL.getParameters(href);
-    //    scope.loadHelpFile(params.name);
-    //},
 
     getHeader : function() {
         if (!this.headerPanel) {
@@ -289,7 +277,7 @@ Ext.define('Connector.panel.HelpCenter', {
                 var template = me.getHelpTemplate(json, pageName);
                 var pageTitle = 'Help Center';
                 if (pageName)
-                    pageTitle = json.container.wikititle
+                    pageTitle = json.container.wikititle;
                 helpTitleView.setText(pageTitle);
                 helpBodyView.setTemplate(template);
                 if (HelpRouter.showBackButton()) {
@@ -306,7 +294,7 @@ Ext.define('Connector.panel.HelpCenter', {
     getHelpTemplate: function(json, name)
     {
         var pages = json.pages;
-        var template = json.container.wikibody; // display wiki body, unless current wiki has children wiki, then display children
+        var template = json.container.wikihtml; // display wiki body, unless current wiki has children wiki, then display children
 
         if (!name)  {
             // the home view is a summary for all categories
@@ -359,7 +347,7 @@ Ext.define('Connector.panel.HelpCenter', {
 
     getSubCategoricalView: function (originalTemplate, pages, name) {
         var targetWiki = null;
-        var template = originalTemplate; // if there are no children wiki for the current page, use wikibody as content
+        var template = originalTemplate; // if there are no children wiki for the current page, use wikihtml as content
         for (var i = 0; i < pages.length; i++) {
             targetWiki = this.findWikiName(pages[i], name);
             if (targetWiki != null) {
