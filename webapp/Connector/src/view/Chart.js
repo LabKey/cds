@@ -821,9 +821,10 @@ Ext.define('Connector.view.Chart', {
     },
 
     getScaleConfigs : function(noplot, properties, chartData, studyAxisInfo, layerScope) {
-        var scales = {}, domain, xDomain;
+        var scales = {}, domain;
 
-        if (noplot) {
+        if (noplot)
+        {
             scales.x = {
                 scaleType: 'continuous',
                 domain: [0, 0],
@@ -836,54 +837,75 @@ Ext.define('Connector.view.Chart', {
                 tickFormat: ChartUtils.tickFormat.empty
             };
         }
-        else {
-            if (Ext.isDefined(properties.xaxis) && !properties.xaxis.isDimension && properties.xaxis.isContinuous) {
-                // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
-                domain = chartData.getXDomain(studyAxisInfo);
-                if(this.requireYGutter && domain[0] == null && domain[1] == null) {
-                    domain = [0,1];
-                }
+        else
+        {
+            if (Ext.isDefined(properties.xaxis) && properties.xaxis.name != null)
+            {
+                if (!properties.xaxis.isDimension && properties.xaxis.isContinuous)
+                {
+                    // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
+                    domain = chartData.getXDomain(studyAxisInfo);
+                    if(this.requireYGutter && domain[0] == null && domain[1] == null)
+                    {
+                        domain = [0,1];
+                    }
 
-                scales.x = {
-                    scaleType: 'continuous',
-                    domain: domain
-                };
+                    scales.x = {
+                        scaleType: 'continuous',
+                        domain: domain
+                    };
 
-                if (properties.xaxis.isNumeric) {
-                    scales.x.tickFormat = ChartUtils.tickFormat.numeric;
+                    if (properties.xaxis.isNumeric)
+                    {
+                        scales.x.tickFormat = ChartUtils.tickFormat.numeric;
+                    }
+                    else if (properties.xaxis.type === 'TIMESTAMP')
+                    {
+                        scales.x.tickFormat = ChartUtils.tickFormat.date;
+                    }
                 }
-                else if (properties.xaxis.type === 'TIMESTAMP') {
-                    scales.x.tickFormat = ChartUtils.tickFormat.date;
+                else
+                {
+                    scales.x = {
+                        scaleType: 'discrete',
+                        tickCls: 'xaxis-tick-text',
+                        tickRectCls: 'xaxis-tick-rect',
+                        tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
+                        tickMouseOver: Ext.bind(this.xAxisMouseOver, this, [layerScope], true),
+                        tickMouseOut: Ext.bind(this.xAxisMouseOut, this, [layerScope], true),
+                        tickRectWidthOffset: 30,
+                        tickRectHeightOffset: 30,
+                        tickHoverText: function(value) { return value; },
+                        fontSize: 9,
+                        sortFn: function(a, b)
+                        {
+                            // sort empty category to the right side
+                            if (a == ChartUtils.emptyTxt)
+                            {
+                                return 1;
+                            }
+                            else if (b == ChartUtils.emptyTxt)
+                            {
+                                return -1;
+                            }
+                            return LABKEY.app.model.Filter.sorters.natural(a, b);
+                        }
+                    };
                 }
             }
-            else {
+            else
+            {
+                // simple x scale config if no x-axis variable selected (i.e. display as a single box plot)
                 scales.x = {
                     scaleType: 'discrete',
-                    sortFn: function(a, b) {
-                        // sort empty category to the right side
-                        if (a == ChartUtils.emptyTxt) {
-                            return 1;
-                        }
-                        else if (b == ChartUtils.emptyTxt) {
-                            return -1;
-                        }
-                        return LABKEY.app.model.Filter.sorters.natural(a, b);
-                    },
-                    tickCls: 'xaxis-tick-text',
-                    tickRectCls: 'xaxis-tick-rect',
-                    tickClick: Ext.bind(this.xAxisClick, this, [layerScope], true),
-                    tickMouseOver: Ext.bind(this.xAxisMouseOver, this, [layerScope], true),
-                    tickMouseOut: Ext.bind(this.xAxisMouseOut, this, [layerScope], true),
-                    tickRectWidthOffset: 30,
-                    tickRectHeightOffset: 30,
-                    tickHoverText: function(value) { return value; },
-                    fontSize: 9
+                    tickFormat: ChartUtils.tickFormat.empty
                 };
             }
 
             // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
             domain = chartData.getYDomain();
-            if(this.requireXGutter && domain[0] == null && domain[1] == null) {
+            if (this.requireXGutter && domain[0] == null && domain[1] == null)
+            {
                 domain = [0,1];
             }
 
@@ -894,7 +916,8 @@ Ext.define('Connector.view.Chart', {
                 domain: domain
             };
 
-            if (this.measures[2]) {
+            if (this.measures[2])
+            {
                 scales.color = {
                     scaleType: 'discrete',
                     range: LABKEY.vis.Scale.DataspaceColor()
