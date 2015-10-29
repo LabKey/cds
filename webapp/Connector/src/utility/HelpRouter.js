@@ -31,6 +31,6 @@ Ext.define('HelpRouter', {
                 wikiCount++;
             }
         }
-        return wikiCount > 1;
+        return wikiCount > 0;
     }
 });

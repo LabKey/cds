@@ -25,10 +25,6 @@ Ext.define('Connector.controller.Home', {
             }
         });
 
-        this.control('#helppopup', {
-            boxready: this.loadHelpFile
-        });
-
         this.callParent();
     },
 

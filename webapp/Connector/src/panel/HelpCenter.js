@@ -18,7 +18,7 @@ Ext.define('Connector.panel.HelpCenter', {
             var resizer = function() {
                 this.center();
             };
-
+            var me = this;
             var win = Ext.create('Ext.window.Window', {
                 ui: 'axiswindow',
                 id: 'helppopup',
@@ -37,6 +37,10 @@ Ext.define('Connector.panel.HelpCenter', {
                             //removes the listener if the window is hidden so center isnt called for no reason
                             Ext.EventManager.removeResizeListener(resizer, win);
                             win.hide(animateTarget);
+                        },
+                        afterrender: function() {
+                            HelpRouter.clearHistory();
+                            me.prototype.loadHelpFile();
                         },
                         scope: this
                     }
@@ -74,6 +78,7 @@ Ext.define('Connector.panel.HelpCenter', {
                     '<h1>Help</h1>'
             );
             var me = this;
+            var i=0;
             this.helpcenterBody = Ext.create('Ext.panel.Panel', {
                 ui: 'custom',
                 id: 'helpcenterbody',
@@ -85,28 +90,51 @@ Ext.define('Connector.panel.HelpCenter', {
                 data: {title:'test'},
                 height: '400px',
                 setTemplate: function(template) {
-                    this.tpl = new Ext.XTemplate(template);
-                    this.update({});
-                },
-                listeners: {
-                   afterlayout: function(win) {
+                    //this.tpl = new Ext.XTemplate(template);
+                    this.update(template, false, function(win) {
                         Ext.select('#helpcenterbody a').each(function(link) {
                             if (link.dom.target.toString().toLowerCase() !== '_blank') {
-                                link.on('click', function (e) {
+                               // link.un('click', me.interceptHref);
+                                link.on('click', function interceptHref(e) {
+                                    console.log("clicked" + i++);
                                     e.preventDefault();
                                     var href = e.target.href;
                                     var params = LABKEY.ActionURL.getParameters(href);
                                     me.loadHelpFile(params.name);
-                                });
+                                },null, {single: true});
                             }
                         })
-                    }
+                    });
+                },
+                listeners: {
+                   //afterlayout: function(win) {
+                   //     Ext.select('#helpcenterbody a').each(function(link) {
+                   //         if (link.dom.target.toString().toLowerCase() !== '_blank') {
+                   //             link.un('click', me.interceptHref)
+                   //              link.on('click', function interceptHref(e) {
+                   //                  console.log("clicked" + i++);
+                   //                 e.preventDefault();
+                   //                 var href = e.target.href;
+                   //                 var params = LABKEY.ActionURL.getParameters(href);
+                   //                 me.loadHelpFile(params.name);
+                   //             },null, {single: true});
+                   //         }
+                   //     })
+                   // }
                 }
             });
           }
 
         return this.helpcenterBody;
     },
+
+    //interceptHref: function (e, scope) {
+    //    console.log("clicked" + i++);
+    //    e.preventDefault();
+    //    var href = e.target.href;
+    //    var params = LABKEY.ActionURL.getParameters(href);
+    //    scope.loadHelpFile(params.name);
+    //},
 
     getHeader : function() {
         if (!this.headerPanel) {
@@ -233,20 +261,21 @@ Ext.define('Connector.panel.HelpCenter', {
         var helpBackView = Ext.getCmp('helpback');
         var helpTitleView = Ext.getCmp('helptitle');
         var helpBodyView = Ext.getCmp('helpcenterbody');
-        if (!pageName) {
-            var pageName = 'HelpHome';
-        }
 
         if (isBackAction) {
             var pageName = HelpRouter.retrieveHistory();
+            if (pageName.wiki || !Ext.isString(pageName.wiki)) {
+                pageName = pageName.wiki;
+            }
         }
 
         var me = this;
+
         Ext.Ajax.request({
-            url: LABKEY.ActionURL.buildURL('cds', 'HelpCenterHome.api'),
+            url: LABKEY.ActionURL.buildURL('wiki', 'GetWikiToc'),
             method: 'GET',
             params: {
-                name: pageName
+                currentPage: pageName
             },
             success: function(response) {
                 var json = Ext.decode(response.responseText);
@@ -255,10 +284,14 @@ Ext.define('Connector.panel.HelpCenter', {
                     HelpRouter.removeHistory();
                 }
                 else {
-                    HelpRouter.addHelpHistory(json.name);
+                    HelpRouter.addHelpHistory(pageName);
                 }
-                helpTitleView.setText(json.title);
-                helpBodyView.setTemplate(json.htmlBody);
+                var template = me.getHelpTemplate(json, pageName);
+                var pageTitle = 'Help Center';
+                if (pageName)
+                    pageTitle = json.container.wikititle
+                helpTitleView.setText(pageTitle);
+                helpBodyView.setTemplate(template);
                 if (HelpRouter.showBackButton()) {
                     helpBackView.setText('&#8592; Back &nbsp; &nbsp; &nbsp; &nbsp;', false);
                 }
@@ -268,6 +301,70 @@ Ext.define('Connector.panel.HelpCenter', {
             },
             scope: this
         });
+    },
+
+    getHelpTemplate: function(json, name)
+    {
+        var pages = json.pages;
+//        var name = json.container.wikiname;
+        var template = json.container.wikibody;
+
+
+        if (!name)  // this is the 1st categorical home page
+        {
+            template = '<div>';
+            for (var j = 0; j < pages.length; j++)
+            {
+                var category = pages[j];
+                template += '<h3>' + category.text + '</h3>'; // to do get rid of name
+                for (var i = 0; i < category.children.length; i++)
+                {
+
+                    var child = category.children[i];
+                    template += '<p><a href="' + child.href + '">' + child.text.replace(name, '') + '</a></p>'; // to do get rid of name
+                }
+            }
+            template += '</div>';
+        }
+        else
+        {
+            var targetWiki = null;
+            for (var i = 0; i < pages.length; i++)
+            {
+                targetWiki = this.findWikiName(pages[i], name);
+                if (targetWiki != null)
+                {
+                    break;
+                }
+            }
+
+            if (targetWiki && targetWiki.children)
+            {
+                // build html body with children nodes
+                template = '<div>';
+                for (var i = 0; i < targetWiki.children.length; i++)
+                {
+
+                    var child = targetWiki.children[i];
+                    template += '<p><a href="' + child.href + '">' + child.text.replace(name, '') + '</a></p>'; // to do get rid of name
+                }
+                template += '</div>';
+            }
+        }
+        return template;
+
+    },
+
+    findWikiName: function (node, name) {
+        if (node.name === name)
+            return node;
+        var children = node.children;
+        if (!children)
+            return null;
+        for (var i = 0; i < children.length; i++) {
+            return this.findWikiName(children[i], name);
+        }
+        return null;
     },
 
     updateHelpContent: function (json, isBackAction) {
@@ -293,24 +390,5 @@ Ext.define('Connector.panel.HelpCenter', {
         else {
             helpBackView.setText('');
         }
-    },
-
-    bindHeader : function(header, data) {
-        if (header && header.getEl() && data) {
-            if (Ext.isFunction(data.action)) {
-                var backActionEl = Ext.DomQuery.select('.back-action', header.getEl().id);
-                if (backActionEl.length > 0) {
-                    Ext.get(backActionEl[0]).on('click', data.action);
-                }
-            }
-        }
-    },
-
-    setHeaderData : function(data) {
-        this.headerData = data;
-        this.getHeader().update(data);
-        this.bindHeader(this.getHeader(), data);
     }
-
-
 });
