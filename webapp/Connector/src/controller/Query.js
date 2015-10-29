@@ -368,66 +368,51 @@ Ext.define('Connector.controller.Query', {
                 measureSet = [measureSet];
             }
 
-            // get the cube subjectList so that we can filter the advanced option values accordingly
-            Connector.getFilterService().getSubjects(function(subjectFilter) {
-                subjectMeasure = new LABKEY.Query.Visualization.Measure({
-                    schemaName: dimension.get('schemaName'),
-                    queryName: dimension.get('queryName'),
-                    name: Connector.studyContext.subjectColumn,
-                    type: 'VARCHAR'
-                });
+            // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
+            // so that we can filter the advanced option values accordingly
+            // (i.e. for antigen selection in variable selector, get subject count for all filters except the antigen selection itself)
+            Connector.getState().onMDXReady(function(mdx) {
+                mdx.query({
+                    onRows: {level: "[Subject].[Subject]", members:"members"},
+                    countFilter: Connector.getQueryService().configureOlapFilters(mdx, Connector.getState().getFilters(), 'Subject', true),
+                    scope: this,
+                    success: function(cellset)
+                    {
+                        subjectMeasure = new LABKEY.Query.Visualization.Measure({
+                            schemaName: dimension.get('schemaName'),
+                            queryName: dimension.get('queryName'),
+                            name: Connector.studyContext.subjectColumn,
+                            type: 'VARCHAR'
+                        });
 
-                subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
-                if (subjectFilter.hasFilters) {
-                    subjectMeasure.values = subjectFilter.subjects;
-                }
+                        subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
+                        subjectMeasure.values = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions),'name');
 
-                aliases.push(Connector.studyContext.subjectColumn);
-                wrappedMeasureSet.push({measure: subjectMeasure});
+                        aliases.push(Connector.studyContext.subjectColumn);
+                        wrappedMeasureSet.push({measure: subjectMeasure});
 
-                Ext.each(measureSet, function(measure) {
-                    measureData = Ext.clone(measure.data);
-                    if (Ext.isArray(filterValuesMap[measure.get('alias')])) {
-                        measureData.values = filterValuesMap[measure.get('alias')];
-                    }
+                        Ext.each(measureSet, function(measure) {
+                            measureData = Ext.clone(measure.data);
+                            if (Ext.isArray(filterValuesMap[measure.get('alias')])) {
+                                measureData.values = filterValuesMap[measure.get('alias')];
+                            }
 
-                    aliases.push(measure.get('alias'));
-                    wrappedMeasureSet.push({measure: measureData});
-                });
+                            aliases.push(measure.get('alias'));
+                            wrappedMeasureSet.push({measure: measureData});
+                        });
 
-                // get the relevant application filters to add to the measure set
-                // (i.e. if it is from the same query or is from a demographic dataset)
-                filterMeasures = this.getWhereFilterMeasures(Connector.getState().getFilters(), true, [dimQueryKey]);
-                Ext.each(filterMeasures, function(filterMeasure)
-                {
-                    alias = LABKEY.Utils.getMeasureAlias(filterMeasure.measure);
-                    index = aliases.indexOf(alias);
-
-                    // if we already have this measure in our set, then just tack on the filterArray
-                    if (index > -1) {
-                        wrappedMeasureSet[index].filterArray = filterMeasure.filterArray;
-                    }
-                    else {
-                        filterMeasureRecord = this.getMeasureRecordByAlias(alias);
-                        if (Ext.isDefined(filterMeasureRecord)) {
-                            wrappedMeasureSet.push({
-                                filterArray: filterMeasure.filterArray,
-                                measure: Ext.clone(filterMeasureRecord.data)
-                            });
-                        }
+                        QueryUtils.getData({
+                            measures: wrappedMeasureSet,
+                            metaDataOnly: true,
+                            scope: this,
+                            success: function(response) {
+                                if (Ext.isFunction(callback)) {
+                                    callback.call(scope || this, response);
+                                }
+                            }
+                        });
                     }
                 }, this);
-
-                QueryUtils.getData({
-                    measures: wrappedMeasureSet,
-                    metaDataOnly: true,
-                    scope: this,
-                    success: function(response) {
-                        if (Ext.isFunction(callback)) {
-                            callback.call(scope || this, response);
-                        }
-                    }
-                });
             }, this);
         }
     },
@@ -625,7 +610,7 @@ Ext.define('Connector.controller.Query', {
      * @param subjectName {String} or an appFilterData
      * @returns {Array}
      */
-    configureOlapFilters : function(mdx, filters, subjectName)
+    configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlot)
     {
         var olapFilters = [],
             measures = [];
@@ -655,7 +640,7 @@ Ext.define('Connector.controller.Query', {
                             measures.push(filter);
                         });
                     }
-                    else
+                    else if (excludeInThePlot !== true)
                     {
                         // in the plot
                         Ext.each(filter.getMeasureSet(), function(filter)
@@ -692,47 +677,6 @@ Ext.define('Connector.controller.Query', {
         }
 
         return olapFilters;
-    },
-
-    /**
-     * Given a set of LABKEY.app.model.Filter filters this method will return the set of measures that are used
-     * in all whereFilters with the appropriate configuration.
-     * @param filters
-     * @param includeDemographic true to include all filters from demographic queries
-     * @param relevantQueryKeys array of relevant query keys (schema|query) for which filters to be included from
-     */
-    getWhereFilterMeasures : function(filters, includeDemographic, relevantQueryKeys)
-    {
-        var whereFilterMeasures = [],
-            measure,
-            wrapped,
-            queryKeys = Ext.Array.toMap(relevantQueryKeys, function(key) {
-                return key.toLowerCase();
-            });
-
-        // TODO: Adjust this, it either needs to be "like the plot" or "like the grid" or have a way to be either.
-        // Currently, it is "like the grid"
-        Ext.each(filters, function(filter)
-        {
-            if (filter.isGrid())
-            {
-                Ext.iterate(filter.getDataFilters(), function(alias, filters)
-                {
-                    if (alias !== Connector.Filter.COMPOUND_ALIAS)
-                    {
-                        measure = this.getMeasure(alias);
-                        wrapped = {measure: measure};
-                        if (measure && this._includeMeasureFilterForQueryKeys(wrapped, includeDemographic, queryKeys))
-                        {
-                            wrapped.filterArray = filters;
-                            whereFilterMeasures.push(wrapped);
-                        }
-                    }
-                }, this);
-            }
-        }, this);
-
-        return whereFilterMeasures;
     },
 
     _includeMeasureFilterForQueryKeys : function(m, includeDemographic, queryKeysMap)

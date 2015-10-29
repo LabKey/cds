@@ -42,15 +42,9 @@ Ext.define('Connector.controller.Filter', {
             Connector.getState().addPrivateSelection(filters, this.SUBJECT_FILTER, function(mdx) {
                 mdx.queryParticipantList({
                     useNamedFilters: [this.SUBJECT_FILTER],
-                    success : function(cellset) {
-                        var subjects = [],
-                                pos = cellset.axes[1].positions,
-                                a = 0;
-
-                        for (; a < pos.length; a++) {
-                            subjects.push(pos[a][0].name);
-                        }
-
+                    success : function(cellset)
+                    {
+                        var subjects = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions),'name');
                         this._loadCache(true, subjects);
 
                         if (Ext.isFunction(callback)) {

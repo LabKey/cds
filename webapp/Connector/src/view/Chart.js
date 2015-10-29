@@ -2737,6 +2737,8 @@ Ext.define('Connector.view.Chart', {
         }
 
         state.getApplication().fireEvent('plotmeasures');
+
+        Connector.getQueryService().clearSourceCountsCache();
     },
 
     noPlot : function(showEmptyMsg, chartData)
