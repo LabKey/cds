@@ -245,7 +245,6 @@ Ext.define('Connector.utility.Query', {
                 else if (mapAxisToAssay[m.measure.axisName] != m.measure.queryName)
                 {
                     console.warn("Two datasets on axis '" + m.measure.axisName + "' - '" + mapAxisToAssay[m.measure.axisName] + "' and '" + m.measure.queryName + "'");
-                    debugger;
                     break;
                 }
             }
