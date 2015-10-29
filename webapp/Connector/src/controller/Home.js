@@ -74,29 +74,5 @@ Ext.define('Connector.controller.Home', {
                 });
             }, this);
         }
-    },
-
-    loadHelpFile : function(helpView, pageName) {
-        var helpBackView = Ext.getCmp('helpback');
-        var helpTitleView = Ext.getCmp('helptitle');
-        var helpBodyView = Ext.getCmp('helpcenterbody');
-        if (!pageName)
-            var pageName = 'HelpHome';
-        Ext.Ajax.request({
-            url: LABKEY.ActionURL.buildURL('cds', 'HelpCenterHome.api'),
-            method: 'GET',
-            params: {
-                name: pageName
-            },
-            success: function(response) {
-                HelpRouter.clearHistory();
-                var json = Ext.decode(response.responseText);
-                helpBackView.setText('');
-                helpTitleView.setText(json.title);
-                helpBodyView.setTemplate(json.htmlBody);
-                HelpRouter.addHelpHistory(json.name);
-            },
-            scope: this
-        });
     }
 });

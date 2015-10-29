@@ -206,61 +206,6 @@ public class CDSController extends SpringActionController
         }
     }
 
-    public static class HelpForm
-    {
-        private String _title;
-        private String _name;
-        private String _htmlBody;
-        private Container _container;
-
-        public String getName()
-        {
-            return _name;
-        }
-
-        public void setName(String name)
-        {
-            _name = name;
-        }
-
-        public String getTitle()
-        {
-            return _title;
-        }
-
-        public void setTitle(String title)
-        {
-            _title = title;
-        }
-
-
-        public String getHtmlBody()
-        {
-            return _htmlBody;
-        }
-
-        public void setHtmlBody(String body)
-        {
-            _htmlBody = body;
-        }
-
-        public String getContainerId()
-        {
-            return _container != null ? _container.getId() : "";
-        }
-
-        @JsonIgnore
-        public Container getContainer()
-        {
-            return _container;
-        }
-
-        public void setContainer(Container container)
-        {
-            _container = container;
-        }
-
-    }
 
     public static class PropertiesForm
     {
@@ -405,25 +350,6 @@ public class CDSController extends SpringActionController
             //
             // Generate the response by querying for this containers result
             //
-            return model;
-        }
-    }
-
-    @RequiresNoPermission
-    @Marshal(Marshaller.Jackson)
-    public class HelpCenterHomeAction extends ApiAction<HelpForm>
-    {
-        @Override
-        public Object execute(HelpForm form, BindException errors) throws Exception
-        {
-            String name = form.getName();
-            HelpForm model = CDSManager.get().getHelpCenterForm(getContainer(), name);
-
-            if (model == null)
-            {
-                model = new HelpForm();
-            }
-
             return model;
         }
     }

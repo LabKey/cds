@@ -260,7 +260,7 @@ Ext.define('Connector.panel.HelpCenter', {
         var me = this;
 
         Ext.Ajax.request({
-            url: LABKEY.ActionURL.buildURL('wiki', 'GetWikiToc'),
+            url: LABKEY.ActionURL.buildURL('wiki', 'getWikiToc'),
             method: 'GET',
             params: {
                 currentPage: pageName

@@ -9,7 +9,6 @@ Ext.define('HelpRouter', {
     singleton: true,
     histories: [],
     addHelpHistory: function (pageName) {
-        // to do, skip if it's the same
         this.histories.push({wiki: pageName});
     },
     addSearchHistory: function (searchText) {
