@@ -95,7 +95,7 @@ Ext.define('Connector.utility.Query', {
         }, this);
 
         // add on the cds.GridBase query to the tables object
-        tables[this.SUBJECTVISIT_TABLE] = this._createTableObj(Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, ['container', 'participantsequencenum']);
+        tables[this.SUBJECTVISIT_TABLE] = this._createTableObj(Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, ['container', 'participantsequencenum'], false);
 
         return tables;
     },
@@ -167,7 +167,8 @@ Ext.define('Connector.utility.Query', {
             tables = this._getTables(),
             columnAliasMap = {},
             aliasMeasureMap = {},
-            datasets = {}, assayDatasets = {};
+            datasets = {}, assayDatasets = {},
+            subjectVisitTableRequested = false;
 
         // I want to modify these measures for internal bookkeeping,
         // but I don't own this config, so clone here.
@@ -208,15 +209,19 @@ Ext.define('Connector.utility.Query', {
                 {
                     assayDatasets[_m.fullQueryName] = _m.table;
                 }
+                else if (_m.queryName == this.SUBJECTVISIT_TABLE)
+                {
+                    subjectVisitTableRequested = true;
+                }
             }
 
             aliasMeasureMap[alias] = _m;
 
             return _m;
-        });
+        }, this);
 
-        // if we don't have any assay datasets, use GridBase as the root for the intersect SQL case
-        if (options.intersect && Object.keys(assayDatasets).length == 0)
+        // if we don't have any assay datasets, use GridBase as the root for the intersect SQL case or if it was requested
+        if (Object.keys(assayDatasets).length == 0 && (subjectVisitTableRequested || options.intersect))
         {
             assayDatasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
         }
