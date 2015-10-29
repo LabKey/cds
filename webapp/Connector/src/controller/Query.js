@@ -665,9 +665,9 @@ Ext.define('Connector.controller.Query', {
                         });
                     }
                 }
-                else if (filter.isGrid())
+                else if (filter.isGrid() || filter.isAggregated())
                 {
-                    // grid
+                    // grid / aggregated
                     Ext.each(filter.getMeasureSet(), function(filter)
                     {
                         filter.measure.axisName = axisId;
