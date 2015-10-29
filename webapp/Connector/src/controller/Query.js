@@ -637,11 +637,43 @@ Ext.define('Connector.controller.Query', {
             var axisId = Ext.id(undefined, 'axis-');
             if (filter.get('filterSource') === 'GETDATA')
             {
-                Ext.each(filter.getMeasureSet(), function(filter)
+                if (filter.isPlot())
                 {
-                    filter.measure.axisName = axisId;
-                    measures.push(filter);
-                });
+                    if (filter.isGrid())
+                    {
+                        // plot selection
+                        Ext.each(filter.getMeasureSet('x'), function(filter)
+                        {
+                            filter.measure.axisName = axisId;
+                            measures.push(filter);
+                        });
+
+                        axisId = Ext.id(undefined, 'axis-');
+                        Ext.each(filter.getMeasureSet('y'), function(filter)
+                        {
+                            filter.measure.axisName = axisId;
+                            measures.push(filter);
+                        });
+                    }
+                    else
+                    {
+                        // in the plot
+                        Ext.each(filter.getMeasureSet(), function(filter)
+                        {
+                            filter.measure.axisName = axisId;
+                            measures.push(filter);
+                        });
+                    }
+                }
+                else if (filter.isGrid() || filter.isAggregated())
+                {
+                    // grid / aggregated
+                    Ext.each(filter.getMeasureSet(), function(filter)
+                    {
+                        filter.measure.axisName = axisId;
+                        measures.push(filter);
+                    });
+                }
             }
             else
             {
