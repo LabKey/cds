@@ -39,6 +39,8 @@ Ext.define('Connector.view.Chart', {
 
     initiatedBrushing: '',
 
+    filtersActivated: false,
+
     statics: {
         // Template used for contents of VisitTag tooltips
         studyAxisTipTpl: new Ext.XTemplate(
@@ -2036,7 +2038,7 @@ Ext.define('Connector.view.Chart', {
     /**
      * This allows the active measures to be set from the 'In the plot' filter
      * @param filter
-     * @returns {{x: null, y: null, color: null}}
+     * @returns {boolean} hasMeasures
      */
     setActiveMeasureSelectionFromFilter : function(filter)
     {
@@ -2693,14 +2695,13 @@ Ext.define('Connector.view.Chart', {
 
     /**
      * Update the values within the 'In the plot' filter
-     * @param activeMeasures
      */
-    updatePlotBasedFilter : function(activeMeasures)
+    updatePlotBasedFilter : function()
     {
         this.plotLock = true;
 
         var state = Connector.getState(),
-            wrapped = this.getMeasureSet(activeMeasures).wrapped,
+            wrapped = this.getMeasureSet(this.getActiveMeasures()).wrapped,
             sqlFilters = [null, null, null, null],
             inPlotFilter;
 
@@ -3000,7 +3001,7 @@ Ext.define('Connector.view.Chart', {
         {
             Connector.getState().clearSelections(true);
 
-            this.updatePlotBasedFilter(this.getActiveMeasures());
+            this.updatePlotBasedFilter();
             this.onShowGraph();
 
             win.hide(targetEl);
@@ -3081,30 +3082,27 @@ Ext.define('Connector.view.Chart', {
 
         if (this.isActiveView)
         {
-            this.onReady(function()
+            if (!this.filterClear)
             {
-                if (!this.filterClear)
+                // if a user adds a "In the plot" filter back via undo, the only time the chart get
+                // notified is when the filters change
+                var activeMeasures = this.getActiveMeasures();
+
+                if (!activeMeasures.x && !activeMeasures.y && !activeMeasures.color)
                 {
-                    // if a user adds a "In the plot" filter back via undo, the only time the chart get
-                    // notified is when the filters change
-                    var activeMeasures = this.getActiveMeasures();
-
-                    if (!activeMeasures.x && !activeMeasures.y && !activeMeasures.color)
+                    // determine if there is an "in the plot" filter present, if so set the active measures
+                    Ext.each(filters, function(filter)
                     {
-                        // determine if there is an "in the plot" filter present, if so set the active measures
-                        Ext.each(Connector.getState().getFilters(), function(filter)
+                        if (filter.isPlot() && !filter.isGrid())
                         {
-                            if (filter.isPlot() && !filter.isGrid())
-                            {
-                                this.setActiveMeasureSelectionFromFilter(filter);
-                                return false;
-                            }
-                        }, this);
-                    }
+                            this.setActiveMeasureSelectionFromFilter(filter);
+                            return false;
+                        }
+                    }, this);
                 }
+            }
 
-                this.onShowGraph();
-            }, this);
+            this.onShowGraph();
         }
         else
         {
@@ -3119,39 +3117,43 @@ Ext.define('Connector.view.Chart', {
         this.isActiveView = true;
         if (this.refreshRequired)
         {
-            this.onReady(function()
+            if (this.initialized)
             {
-                if (this.initialized)
-                {
-                    this.onShowGraph();
-                }
-                else
+                this.onShowGraph();
+            }
+            else
+            {
+                this.onReady(function()
                 {
                     this.initialized = true;
-
-                    var hasMeasures = false;
+                    var state = Connector.getState();
 
                     // determine if there is an "in the plot" filter present, if so set the active measures
-                    Ext.each(Connector.getState().getFilters(), function(filter)
+                    Ext.each(state.getFilters(), function(filter)
                     {
                         if (filter.isPlot() && !filter.isGrid())
                         {
-                            hasMeasures = this.setActiveMeasureSelectionFromFilter(filter);
+                            if (this.setActiveMeasureSelectionFromFilter(filter))
+                            {
+                                // lock the plot, to ignore filter change
+                                if (!this.filtersActivated)
+                                {
+                                    this.plotLock = true;
+                                }
+                            }
+
                             return false;
                         }
                     }, this);
 
                     this.onShowGraph();
 
-                    if (hasMeasures)
-                    {
-                        // lock the plot, to ignore filter change
-                        this.plotLock = true;
-                    }
-
-                    this._hookState();
-                }
-            }, this);
+                    // bind state events
+                    state.on('filterchange', this.onFilterChange, this);
+                    state.on('plotselectionremoved', this.onPlotSelectionRemoved, this);
+                    state.on('selectionchange', this.onSelectionChange, this);
+                }, this);
+            }
         }
 
         if (Ext.isObject(this.visibleWindow))
@@ -3165,14 +3167,6 @@ Ext.define('Connector.view.Chart', {
         this.fireEvent('hideload', this);
         this.hideMessage();
         this.hideVisibleWindow();
-    },
-
-    _hookState : function()
-    {
-        var state = Connector.getState();
-        state.on('filterchange', this.onFilterChange, this);
-        state.on('plotselectionremoved', this.onPlotSelectionRemoved, this);
-        state.on('selectionchange', this.onSelectionChange, this);
     },
 
     applyFiltersToMeasure : function(measureSet, subjectFilter) {
