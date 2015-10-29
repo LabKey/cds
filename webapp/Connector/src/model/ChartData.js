@@ -185,6 +185,12 @@ Ext.define('Connector.model.ChartData', {
             }
         }, this);
 
+        // the measure store will add a '_rowIndex' property for uniqueness to return all rows in the select() call
+        if (nonAggregated)
+        {
+            dimensionKeys.push('_rowIndex');
+        }
+
         // use sharedKeys when we have the possibility of aggregation (see rules from nonAggregated)
         // or the x-axis and y-axis measures are not from the same source
         useSharedKeys = !nonAggregated && !this.isSameSource(x, y) && sharedKeys.length > 0;
@@ -224,6 +230,7 @@ Ext.define('Connector.model.ChartData', {
             yMeasureFilter = {}, xMeasureFilter = {}, zMeasureFilter = {},
             excludeAliases = [],
             mainCount = 0,
+            nonAggregated,
             _row;
 
         ca = this.getBaseMeasureConfig();
@@ -313,12 +320,12 @@ Ext.define('Connector.model.ChartData', {
         //  2) the x-axis or y-axis measure is from a demographic dataset
         //  3) the x-axis is a time point
         //  4) the x-axis and y-axis measures are from the same source and have the exact same assay dimension filter values
-        var nonAggregated = !Ext.isDefined(x) // #1
+        nonAggregated = !Ext.isDefined(x) // #1
             || x.isDemographic === true || y.isDemographic === true // #2
             || x.variableType === 'TIME' // #3
             || (this.isSameSource(xa, ya) && ChartUtils.getAssayDimensionsWithDifferentValues(y, x).length == 0); //#4
 
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases, nonAggregated), nonAggregated);
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases, nonAggregated));
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)
