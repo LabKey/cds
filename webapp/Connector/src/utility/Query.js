@@ -229,8 +229,8 @@ Ext.define('Connector.utility.Query', {
             return _m;
         }, this);
 
-        // if we don't have any assay datasets, use GridBase as the root if it was requested
-        if (Object.keys(assayDatasets).length == 0 && subjectVisitTableRequested)
+        // if we don't have any assay datasets, use GridBase as the root for the intersect SQL case or if it was requested
+        if (Object.keys(assayDatasets).length == 0 && (subjectVisitTableRequested || options.intersect))
         {
             assayDatasets[this.SUBJECTVISIT_TABLE] = tables[this.SUBJECTVISIT_TABLE];
         }
