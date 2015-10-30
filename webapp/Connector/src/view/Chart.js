@@ -2370,7 +2370,7 @@ Ext.define('Connector.view.Chart', {
                     else
                     {
                         // grid
-                        if (hasX)
+                        if (hasX && activeMeasures.x.variableType !== 'TIME')
                         {
                             measures = measures.concat(filter.getXMeasures(xAxisName));
                         }
