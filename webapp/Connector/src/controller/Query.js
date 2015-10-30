@@ -42,6 +42,16 @@ Ext.define('Connector.controller.Query', {
             this.GRID_MEASURES = [];
         }
 
+        // Issue 24670: allow a measure to specify what other measure it was sourced from and return
+        // that measure if request made with altLookupType='parent' or altLookupType='child'
+        if (!this.SOURCE_MEASURE_ALIAS_MAP)
+        {
+            this.SOURCE_MEASURE_ALIAS_MAP = {
+                parent: {},
+                child: {}
+            };
+        }
+
         // include only GridBase and study datasets
         var filters = [
             LABKEY.Query.Visualization.Filter.create({
@@ -187,6 +197,16 @@ Ext.define('Connector.controller.Query', {
 
             this.MEASURE_STORE.add(datas);
             this.addSource(datas);
+            this.addMeasureAliasMap(datas);
+        }
+    },
+
+    addMeasureAliasMap : function(measure)
+    {
+        if (Ext.isString(measure.sourceMeasureAlias))
+        {
+            this.SOURCE_MEASURE_ALIAS_MAP.parent[measure.alias] = measure.sourceMeasureAlias;
+            this.SOURCE_MEASURE_ALIAS_MAP.child[measure.sourceMeasureAlias] = measure.alias;
         }
     },
 
@@ -211,11 +231,23 @@ Ext.define('Connector.controller.Query', {
         return Ext.copyTo({}, record, Ext.Array.pluck(fields, 'name'));
     },
 
-    getMeasureRecordByAlias : function(alias) {
+    getMeasureRecordByAlias : function(alias, altLookupType) {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
-        return this.MEASURE_STORE.getById(alias.toLowerCase());
+
+        var record = this.MEASURE_STORE.getById(alias.toLowerCase());
+
+        if (altLookupType === 'parent' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.parent[alias]))
+        {
+            record = this.MEASURE_STORE.getById(this.SOURCE_MEASURE_ALIAS_MAP.parent[alias].toLowerCase());
+        }
+        else if (altLookupType === 'child' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.child[alias]))
+        {
+            record = this.MEASURE_STORE.getById(this.SOURCE_MEASURE_ALIAS_MAP.child[alias].toLowerCase());
+        }
+
+        return record;
     },
 
     getMeasureNameFromAlias : function(alias) {
@@ -228,7 +260,7 @@ Ext.define('Connector.controller.Query', {
      * @param measureAlias
      * @returns {*}
      */
-    getMeasure : function(measureAlias) {
+    getMeasure : function(measureAlias, altLookupType) {
         if (!this._ready) {
             console.warn('Requested measure before measure caching prepared.');
         }
@@ -236,8 +268,8 @@ Ext.define('Connector.controller.Query', {
         // for lookups, just resolve the base column (e.g. study_Nab_Lab/PI becomes study_Nab_Lab)
         var cleanAlias = Ext.clone(measureAlias).split('/')[0];
 
-        if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias))) {
-            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias).getData());
+        if (Ext.isString(cleanAlias) && Ext.isObject(this.getMeasureRecordByAlias(cleanAlias, altLookupType))) {
+            return Ext.clone(this.getMeasureRecordByAlias(cleanAlias, altLookupType).getData());
         }
 
         console.warn('measure cache miss:', measureAlias, 'Resolved as:', cleanAlias);
@@ -475,7 +507,7 @@ Ext.define('Connector.controller.Query', {
 
         var sources = {}, sourceArray = [], measures = {}, measureArray = [],
             queryTypeMatch, measureOnlyMatch, timepointMatch,
-            hiddenMatch, notSubjectColMatch, userFilterMatch, requiredVarMatch,
+            hiddenMatch, demogSubjectColMatch, userFilterMatch, requiredVarMatch,
             key, source, sourceContextMap = Connector.measure.Configuration.context.sources;
 
         Ext.each(this.MEASURE_STORE.getRange(), function(record) {
@@ -483,14 +515,14 @@ Ext.define('Connector.controller.Query', {
             measureOnlyMatch = !config.measuresOnly || record.get('isMeasure');
             timepointMatch = config.includeTimpointMeasures && (record.get('variableType') == 'TIME' || record.get('variableType') == 'USER_GROUPS');
             requiredVarMatch = config.includeAssayRequired && record.get('recommendedVariableGrouper') == '1_AssayRequired';
-            hiddenMatch = config.includeHidden || (!record.get('hidden') || requiredVarMatch);
-            notSubjectColMatch = record.get('name') != Connector.studyContext.subjectColumn;
+            demogSubjectColMatch = config.includeAssayRequired && record.get('isDemographic') && record.get('name') == Connector.studyContext.subjectColumn;
+            hiddenMatch = config.includeHidden || !record.get('hidden') || requiredVarMatch || demogSubjectColMatch;
 
             // The userFilter is a function used to further filter down the available measures.
             // Needed so the color picker only displays categorical measures.
             userFilterMatch = !Ext.isFunction(config.userFilter) || config.userFilter(record.data);
 
-            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && notSubjectColMatch && userFilterMatch)
+            if ((queryTypeMatch || timepointMatch) && measureOnlyMatch && hiddenMatch && userFilterMatch)
             {
                 measures[record.get('alias')] = true;
                 measureArray.push(Ext.clone(record.raw));

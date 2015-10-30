@@ -1280,7 +1280,7 @@ Ext.define('Connector.panel.Selector', {
         // Issue 24112: reset selected measures each time selector window is opened so 'cancel' works
         this.selectedMeasures = [];
         Ext.each(aliases, function(alias) {
-            var record = this.queryService.getMeasureRecordByAlias(alias);
+            var record = this.queryService.getMeasureRecordByAlias(alias, 'parent');
             this.selectedMeasures.push(record);
         }, this);
     },
@@ -1293,7 +1293,7 @@ Ext.define('Connector.panel.Selector', {
         // track the lockedMeasures array so they show up in Current/Session columns for the grid column chooser
         this.lockedMeasures = [];
         Ext.each(aliases, function(alias) {
-            var record = this.queryService.getMeasureRecordByAlias(alias);
+            var record = this.queryService.getMeasureRecordByAlias(alias, 'parent');
             this.lockedMeasures.push(record);
         }, this);
     }

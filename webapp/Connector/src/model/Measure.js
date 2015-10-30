@@ -67,6 +67,7 @@ Ext.define('Connector.model.Measure', {
         {name: 'sourceCount', type: 'int', defaultValue: undefined},
         {name: 'uniqueKeys', defaultValue: undefined},
         {name: 'selectedSourceKey', defaultValue: undefined}, // when used with variable selected, track what source it was selected from
+        {name: 'sourceMeasureAlias', defaultValue: undefined}, // mapping from one measure alias to another for filtering in the grid
 
         // Array of configs for what options to display in the Advanced options panel of the Variable Selector.
         // If undefined, fallback to the dimensions defined on the source query.

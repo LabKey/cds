@@ -94,6 +94,7 @@ Ext.define('Connector.measure.Configuration', {
                     subjectCountQueryName: 'Demographics',
                     variableType: 'DEFINED_MEASURES',
                     measures: [
+                        'study_Demographics_SubjectId',
                         'study_Demographics_species',
                         'study_Demographics_subspecies',
                         'study_Demographics_sexatbirth',
@@ -251,6 +252,15 @@ Ext.define('Connector.measure.Configuration', {
                     hierarchicalSelectionParent: null,
                     distinctValueFilterColumnAlias: 'study_ELISPOT_summary_level',
                     distinctValueFilterColumnValue: 'Protein Panel'
+                },
+                'CDS_GridBase_Study': {
+                    sourceMeasureAlias: 'study_Demographics_study_label'
+                },
+                'CDS_GridBase_SubjectId': {
+                    sourceMeasureAlias: 'study_Demographics_SubjectId'
+                },
+                'CDS_GridBase_TreatmentSummary': {
+                    sourceMeasureAlias: 'study_Demographics_study_arm_summary'
                 }
             },
 
@@ -356,6 +366,9 @@ Ext.define('Connector.measure.Configuration', {
                 'study_ICS_protein_panel_protein': {
                     hidden: true
                 },
+                'study_ICS_SubjectId': {
+                    hidden: true
+                },
                 'study_ICS_SubjectVisit_Visit': {
                     hidden: true
                 },
@@ -374,6 +387,9 @@ Ext.define('Connector.measure.Configuration', {
                 'study_NAb_tier_clade_virus': {
                     hidden: true
                 },
+                'study_NAb_SubjectId': {
+                    hidden: true
+                },
                 'study_NAb_SubjectVisit_Visit': {
                     hidden: true
                 },
@@ -387,6 +403,9 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_BAMA_exp_assayid': {
+                    hidden: true
+                },
+                'study_BAMA_SubjectId': {
                     hidden: true
                 },
                 'study_BAMA_SubjectVisit_Visit': {
@@ -411,6 +430,9 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_ELISPOT_functional_marker_type': {
+                    hidden: true
+                },
+                'study_ELISPOT_SubjectId': {
                     hidden: true
                 },
                 'study_ELISPOT_SubjectVisit_Visit': {
@@ -453,6 +475,9 @@ Ext.define('Connector.measure.Configuration', {
                     hidden: true
                 },
                 'study_Demographics_subspecies': {
+                    hidden: true
+                },
+                'study_Demographics_SubjectId': {
                     hidden: true
                 },
                 'study_Demographics_SubjectVisit_Visit': {
