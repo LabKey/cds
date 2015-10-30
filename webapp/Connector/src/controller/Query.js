@@ -560,7 +560,7 @@ Ext.define('Connector.controller.Query', {
         return this.DEFINED_MEASURE_SOURCE_MAP;
     },
 
-    getData : function(measures, success, failure, scope, applyCompound, extraFilters)
+    getData : function(measures, success, failure, scope, extraFilters)
     {
         var config = {
             measures: measures,
@@ -570,24 +570,9 @@ Ext.define('Connector.controller.Query', {
             scope: scope
         };
 
-        // include any compound filters defined in the application filters.
-        // If they are included the measures which each compound filter relies on must also
-        // be included in the request
-        if (applyCompound)
-        {
-            Ext.apply(config, this._includeCompoundMeasures(config.measures, Connector.getState().getFilters()));
-        }
-
         if (Ext.isArray(extraFilters))
         {
-            if (config.extraFilters)
-            {
-                config.extraFilters = config.extraFilters.concat(extraFilters);
-            }
-            else
-            {
-                config.extraFilters = extraFilters;
-            }
+            config.extraFilters = extraFilters;
         }
 
         QueryUtils.getData(config);
@@ -677,19 +662,6 @@ Ext.define('Connector.controller.Query', {
         }
 
         return olapFilters;
-    },
-
-    _includeMeasureFilterForQueryKeys : function(m, includeDemographic, queryKeysMap)
-    {
-        var queryKey = m.measure.schemaName + '|' + m.measure.queryName,
-            include = Ext.isDefined(queryKeysMap[queryKey.toLowerCase()]);
-
-        if (m.measure.isDemographic)
-        {
-            include = !Ext.isBoolean(includeDemographic) || includeDemographic;
-        }
-
-        return include;
     },
 
     clearSourceCountsCache : function() {
@@ -811,70 +783,6 @@ Ext.define('Connector.controller.Query', {
 
     encodeURLFilter : function(filter) {
         return encodeURIComponent(filter.getURLParameterName()) + '=' + encodeURIComponent(filter.getURLParameterValue());
-    },
-
-    /**
-     * Appends any measures that are declared by compound filters to the getDataConfig.
-     * This is used so that each caller of getData doesn't need to account for compound filters on their
-     * own.
-     * @param wrappedMeasures
-     * @param {Connector.model.Filter[]} filters Filters to look at for resolving compound filters
-     * @returns {*}
-     * @private
-     */
-    _includeCompoundMeasures : function(wrappedMeasures, filters)
-    {
-        // build a map of aliases
-        var aliasMap = {},
-            extraFilters = [];
-
-        Ext.each(wrappedMeasures, function(measure)
-        {
-            aliasMap[measure.measure.alias] = true;
-        });
-
-        // add any additional measures to the configuration that come from the compound filters
-        Ext.each(filters, function(appFilter)
-        {
-            Ext.iterate(appFilter.getDataFilters(), function(alias, filters)
-            {
-                if (alias === Connector.Filter.COMPOUND_ALIAS)
-                {
-                    Ext.each(filters, function(compound)
-                    {
-                        // process each measure alias from this compound filter
-                        Ext.iterate(compound.getAliases(), function(cAlias)
-                        {
-                            if (!aliasMap[cAlias])
-                            {
-                                // clear to append this measure result
-                                var m = Connector.getQueryService().getMeasure(cAlias);
-                                if (m)
-                                {
-                                    wrappedMeasures.push({
-                                        measure: Ext.clone(m),
-                                        filterArray: []
-                                    });
-
-                                    aliasMap[cAlias] = true;
-                                }
-                                else
-                                {
-                                    throw 'Unable to find measure "' + cAlias + '" included in compound filter.';
-                                }
-                            }
-                        });
-
-                        extraFilters.push(compound);
-                    });
-                }
-            });
-        });
-
-        return {
-            measures: wrappedMeasures,
-            extraFilters: extraFilters
-        };
     }
 });
 

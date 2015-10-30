@@ -12,6 +12,8 @@ Ext.define('Connector.model.Filter', {
          * Can be accessed using filter.getDataFilters()
          */
         {name : 'dataFilter', defaultValue: {}},
+        {name : 'xSource'},
+        {name : 'ySource'},
 
         {name : 'measureSet', defaultValue: []},
         {name : 'xMeasureSet', defaultValue: []},
@@ -547,7 +549,8 @@ Ext.define('Connector.model.Filter', {
      */
     _processPlotMeasures : function(measureMap, xMeasureMap, yMeasureMap)
     {
-        var queryService = Connector.getQueryService();
+        var queryService = Connector.getQueryService(),
+            xSource, ySource;
 
         Ext.each(this.get('plotMeasures'), function(plotMeasure, i)
         {
@@ -564,6 +567,10 @@ Ext.define('Connector.model.Filter', {
 
                     if (i == 0)
                     {
+                        if (!xSource)
+                        {
+                            xSource = measure.schemaName + '|' + measure.queryName;
+                        }
                         xMeasureMap[measure.alias] = {
                             measure: Ext.clone(measure),
                             filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
@@ -571,6 +578,10 @@ Ext.define('Connector.model.Filter', {
                     }
                     else if (i == 1)
                     {
+                        if (!ySource)
+                        {
+                            ySource = measure.schemaName + '|' + measure.queryName;
+                        }
                         yMeasureMap[measure.alias] = {
                             measure: Ext.clone(measure),
                             filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
@@ -696,6 +707,11 @@ Ext.define('Connector.model.Filter', {
                 }
             }
         }, this);
+
+        this._set({
+            xSource: xSource ? xSource.toLowerCase() : undefined,
+            ySource: ySource ? ySource.toLowerCase() : undefined
+        });
     },
 
     /**
@@ -1149,6 +1165,8 @@ Ext.define('Connector.model.Filter', {
         delete jsonable.measureSet;
         delete jsonable.xMeasure;
         delete jsonable.yMeasure;
+        delete jsonable.xSource;
+        delete jsonable.ySource;
 
         return jsonable;
     },

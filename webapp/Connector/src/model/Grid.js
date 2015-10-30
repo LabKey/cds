@@ -13,6 +13,7 @@ Ext.define('Connector.model.Grid', {
         {name: 'filterArray', defaultValue: []},
         {name: 'baseFilterArray', defaultValue: []},
         {name: 'subjectFilter', defaultValue: undefined},
+        {name: 'extraFilters', defaultValue: []},
 
         {name: 'defaultMeasures', defaultValue: []},
         {name: 'measures', defaultValue: []},
@@ -61,7 +62,7 @@ Ext.define('Connector.model.Grid', {
 
         this.metadataTask = new Ext.util.DelayedTask(function()
         {
-            Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this, true /* apply compound filters */);
+            Connector.getQueryService().getData(this.getWrappedMeasures(), this.onMetaData, this.onFailure, this, this.get('extraFilters'));
         }, this);
 
         Connector.getState().onReady(function()
@@ -194,12 +195,15 @@ Ext.define('Connector.model.Grid', {
         // Cross-reference application measures
         //
         var SQLMeasures = [],
+            plotFilters = [],
+            extraFilters = [],
             queryService = Connector.getQueryService(),
             measureMap = {},
             sourceMap = {};
 
         Ext.each(Connector.getState().getFilters(), function(filter)
         {
+            // Always include the set of measures each filter describes
             Ext.each(filter.getMeasureSet(), function(wrapped)
             {
                 var measure = queryService.getMeasure(wrapped.measure.alias);
@@ -230,33 +234,28 @@ Ext.define('Connector.model.Grid', {
                 }
             }, this);
 
-            Ext.iterate(filter.getDataFilters(), function(alias, filters)
+            if (filter.isPlot())
             {
-                if (alias === Connector.Filter.COMPOUND_ALIAS)
-                    return;
-
-                var measure = queryService.getMeasure(alias);
-
-                if (measure)
-                {
-                    // ensure this filtered measure is included in the grid
-                    if (!measureMap[measure.alias])
-                    {
-                        measureMap[measure.alias] = {
-                            measure: Ext.clone(measure),
-                            filterArray: []
-                        };
-                        sourceMap[measure.schemaName + '|' + measure.queryName] = true;
-                    }
-
-                    // apply the filters to the base request
-                    for (var i=0; i < filters.length; i++)
-                    {
-                        measureMap[measure.alias].filterArray.push(filters[i]);
-                    }
-                }
-            }, this);
+                plotFilters.push(filter);
+            }
+            else
+            {
+                extraFilters = this._processDataFilters(filter, measureMap, sourceMap, extraFilters);
+            }
         }, this);
+
+        if (plotFilters.length > 0)
+        {
+            // no need to compound a single filter
+            if (plotFilters.length == 1)
+            {
+                extraFilters = this._processDataFilters(plotFilters[0], measureMap, sourceMap, extraFilters);
+            }
+            else
+            {
+                extraFilters = this._compound(plotFilters, measureMap, sourceMap, extraFilters);
+            }
+        }
 
         // gather required columns from each source
         Ext.iterate(sourceMap, function(sourceKey)
@@ -283,13 +282,238 @@ Ext.define('Connector.model.Grid', {
         });
 
         this.set({
-            SQLMeasures: SQLMeasures
+            SQLMeasures: SQLMeasures,
+            extraFilters: extraFilters
         });
 
         if (!this.isActive())
         {
             this.activeMeasure = true;
         }
+    },
+
+    _sourceKey : function(measure)
+    {
+        var source = measure.schemaName + '|' + measure.queryName;
+        return source.toLowerCase();
+    },
+
+    /**
+     * Takes an array of Connector.model.Filter instances and generates a set of compound filters
+     * based on source type for a each dimension (x/y).
+     * @private
+     */
+    _compound : function(appFilters, measureMap, sourceMap, extraFilters)
+    {
+        var filtersBySource = {},
+            compound;
+
+        Ext.each(appFilters, function(filter)
+        {
+            if (filter.isPlot())
+            {
+                var xSource = filter.get('xSource'),
+                    ySource = filter.get('ySource'),
+                    isTime = filter.isTime(),
+                    compoundMap = Ext.Array.toValueMap(filter.getMeasureSet(), function(m)
+                    {
+                        return m.measure.alias.toLowerCase();
+                    }),
+                    xFilters = [],
+                    yFilters = [],
+                    sourceKey;
+
+                if (xSource)
+                {
+                    if (!filtersBySource[xSource])
+                    {
+                        filtersBySource[xSource] = [];
+                    }
+                }
+
+                if (ySource)
+                {
+                    if (!filtersBySource[ySource])
+                    {
+                        filtersBySource[ySource] = [];
+                    }
+                }
+
+                Ext.iterate(filter.getDataFilters(), function(alias, dataFilters)
+                {
+                    if (alias === Connector.Filter.COMPOUND_ALIAS)
+                    {
+                        filtersBySource[xSource] = filtersBySource[xSource].concat(dataFilters);
+                        return false;
+                    }
+                    else
+                    {
+                        var _alias = alias.toLowerCase();
+                        if (compoundMap[_alias])
+                        {
+                            sourceKey = this._sourceKey(compoundMap[_alias].measure);
+
+                            if (xSource && sourceKey === xSource)
+                            {
+                                if (isTime)
+                                {
+                                    var measure = Connector.getQueryService().getMeasure(_alias);
+
+                                    if (measure)
+                                    {
+                                        // ensure this filtered measure is included in the grid
+                                        if (!measureMap[_alias])
+                                        {
+                                            measureMap[_alias] = {
+                                                measure: Ext.clone(measure),
+                                                filterArray: []
+                                            };
+                                            sourceMap[measure.schemaName + '|' + measure.queryName] = true;
+                                        }
+
+                                        // apply the filters to the base request
+                                        for (var i=0; i < dataFilters.length; i++)
+                                        {
+                                            measureMap[_alias].filterArray.push(dataFilters[i]);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw 'Unable to find measure: "' + _alias + '"';
+                                    }
+                                }
+                                else
+                                {
+                                    xFilters = xFilters.concat(dataFilters);
+                                }
+                            }
+
+                            if (ySource && sourceKey === ySource)
+                            {
+                                yFilters = yFilters.concat(dataFilters);
+                            }
+                        }
+                        else
+                        {
+                            throw 'Invalid state. Expected "' + _alias + '" to be in measureSet';
+                        }
+                    }
+                }, this);
+
+                if (xFilters.length > 0)
+                {
+                    filtersBySource[xSource].push(Connector.Filter.compound(xFilters, 'AND'));
+                }
+
+                if (yFilters.length > 0)
+                {
+                    filtersBySource[ySource].push(Connector.Filter.compound(yFilters, 'AND'));
+                }
+            }
+            else
+            {
+                throw 'Grid does not support compounding non-plot filters.';
+            }
+        }, this);
+
+        Ext.iterate(filtersBySource, function(sourceKey, compoundFilters)
+        {
+            if (compoundFilters.length > 0)
+            {
+                if (compoundFilters.length == 1)
+                {
+                    compound = compoundFilters[0];
+                }
+                else
+                {
+                    compound = Connector.Filter.compound(compoundFilters, 'OR');
+                }
+
+                this._applyCompoundFilterMeasures(compound, measureMap, sourceMap);
+                extraFilters.push(compound);
+            }
+        }, this);
+
+        return extraFilters;
+    },
+
+    /**
+     * Takes a compound filter and applies the measures that make up that compound filter to the
+     * provided measureMap and sourceMap.
+     * @private
+     */
+    _applyCompoundFilterMeasures : function(compound, measureMap, sourceMap)
+    {
+        // process each measure alias from this compound filter
+        Ext.iterate(compound.getAliases(), function(cAlias)
+        {
+            if (!measureMap[cAlias])
+            {
+                // clear to append this measure result
+                var m = Connector.getQueryService().getMeasure(cAlias);
+                if (m)
+                {
+                    measureMap[cAlias] = {
+                        measure: Ext.clone(m),
+                        filterArray: []
+                    };
+
+                    sourceMap[m.schemaName + '|' + m.queryName] = true;
+                }
+                else
+                {
+                    throw 'Unable to find measure "' + cAlias + '" included in compound filter.';
+                }
+            }
+        });
+    },
+
+    /**
+     * Takes a Connector.modelFilter and applies the filters data filters (getDataFilters()) to
+     * the provided measureMap and sourceMap. Additionally, if any extraFilters are declared they
+     * are appended to extraFilters and returned (these would be appended for compound filters for
+     * example)
+     * @private
+     */
+    _processDataFilters : function(appFilter, measureMap, sourceMap, extraFilters)
+    {
+        // process all non-plot filter data filters
+        Ext.iterate(appFilter.getDataFilters(), function(alias, filters)
+        {
+            if (alias === Connector.Filter.COMPOUND_ALIAS)
+            {
+                Ext.each(filters, function(compound)
+                {
+                    this._applyCompoundFilterMeasures(compound, measureMap, sourceMap);
+                    extraFilters.push(compound);
+                }, this);
+            }
+            else
+            {
+                var measure = Connector.getQueryService().getMeasure(alias);
+
+                if (measure)
+                {
+                    // ensure this filtered measure is included in the grid
+                    if (!measureMap[measure.alias])
+                    {
+                        measureMap[measure.alias] = {
+                            measure: Ext.clone(measure),
+                            filterArray: []
+                        };
+                        sourceMap[measure.schemaName + '|' + measure.queryName] = true;
+                    }
+
+                    // apply the filters to the base request
+                    for (var i=0; i < filters.length; i++)
+                    {
+                        measureMap[measure.alias].filterArray.push(filters[i]);
+                    }
+                }
+            }
+        }, this);
+
+        return extraFilters;
     },
 
     /**

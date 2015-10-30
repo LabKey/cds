@@ -20,6 +20,7 @@ Ext.define('Connector.window.Facet', {
         var model = this.dataView.getModel();
 
         var wrappedMeasures = model.getWrappedMeasures(),
+            extraFilters = model.get('extraFilters'),
             fieldAlias = this.columnMetadata.filterField.toLowerCase(),
             matchFilters = [],
             newMeasures = [];
@@ -78,7 +79,7 @@ Ext.define('Connector.window.Facet', {
         function()
         {
             console.log('Failed to load...');
-        }, this, true /* apply compound filters */);
+        }, this, extraFilters);
 
         return [loader];
     },
