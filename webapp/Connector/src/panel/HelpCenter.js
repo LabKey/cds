@@ -247,6 +247,7 @@ Ext.define('Connector.panel.HelpCenter', {
 
     loadHelpFile : function(pageName, isBackAction) {
         var helpBackView = Ext.getCmp('helpback');
+        var helpSearchElement = Ext.get('helpsearchinput');
         var helpTitleView = Ext.getCmp('helptitle');
         var helpBodyView = Ext.getCmp('helpcenterbody');
 
@@ -282,9 +283,13 @@ Ext.define('Connector.panel.HelpCenter', {
                 helpBodyView.setTemplate(template);
                 if (HelpRouter.showBackButton()) {
                     helpBackView.setText('&#8592; Back &nbsp; &nbsp; &nbsp; &nbsp;', false);
+                    helpSearchElement.dom.style.display = 'none';
+                  //  this.getHeader().doLayout();
                 }
                 else {
                     helpBackView.setText('');
+                    helpSearchElement.dom.style.display = 'table';
+                 //   this.getHeader().doLayout();
                 }
             },
             scope: this
@@ -308,6 +313,9 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     getMainCategoricalView: function (pages) {
+        if (!pages) {
+            return '';
+        }
         var template = '<div>';
         template += '<p><span style="font-size: 12px;">The help center will have answers to FQA, ';
         template += 'How to articles and video added regularly. Search capability will be available in December. Below is a few articles to help get you started.</span></p>';
@@ -315,7 +323,8 @@ Ext.define('Connector.panel.HelpCenter', {
         template += '<tbody>';
         template += '<tr valign="top">';
         template += '<td width="220px">';
-        for (var j = 0; j < (pages.length + 1) /2; j++) {
+
+        for (var j = 0; j < Math.ceil((pages.length) / 2.0); j++) {
             template += this.buildIndividualCategory(pages[j]);
         }
         template += '</td>';
@@ -335,6 +344,9 @@ Ext.define('Connector.panel.HelpCenter', {
 
     buildIndividualCategory: function (category) {
         var template = '<h3>' + category.text.replace(category.name, '').replace('()', '') + '</h3>';
+        if (!category.children) {
+            return template;
+        }
         for (var i = 0; i < category.children.length && i < 3; i++) {
             var child = category.children[i];
             template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';

@@ -813,6 +813,13 @@ div.hopscotch-bubble {
   .header {
     padding: 18px 18px 18px 9px;
 
+    .x-panel-body {
+      height: 32px !important;
+    }
+    .x-box-inner {
+      height: 32px !important;
+    }
+
     .main-title {
       font: 26px Georgia,serif;
       color: $heat-scale-2;
@@ -867,6 +874,8 @@ div.hopscotch-bubble {
 
   .helpcenter-search-input {
     clear: both;
+    position: absolute !important;
+    top: 0px !important;
     width: 66%;
     tbody,
     tr,
