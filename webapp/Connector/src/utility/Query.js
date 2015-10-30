@@ -144,18 +144,27 @@ Ext.define('Connector.utility.Query', {
         throw "unsupported constant: " + v;
     },
 
-    _toSqlLiteral : function(v) {
-        if (!Ext.isDefined(v) || null === v) {
+    _toSqlLiteral : function(v)
+    {
+        if (!Ext.isDefined(v) || null === v)
+        {
             return "NULL";
         }
-        else if (Ext.isNumber(v)) {
+        else if (Ext.isNumber(v))
+        {
             return "" + v;
         }
-        else if (Ext.isString(v)) {
+        else if (Ext.isString(v))
+        {
             return LABKEY.Query.sqlStringLiteral(v);
         }
-        else if (Ext.isDate(v)) {
+        else if (Ext.isDate(v))
+        {
             return LABKEY.Query.sqlDatetimeLiteral(v);
+        }
+        else if (Ext.isBoolean(v))
+        {
+            return v;
         }
 
         throw "unsupported constant: " + v;
