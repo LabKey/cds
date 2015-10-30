@@ -238,16 +238,26 @@ Ext.define('Connector.controller.Query', {
 
         var record = this.MEASURE_STORE.getById(alias.toLowerCase());
 
-        if (altLookupType === 'parent' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.parent[alias]))
+        if (this.getMeasureSourceAlias(alias, altLookupType) != null)
         {
-            record = this.MEASURE_STORE.getById(this.SOURCE_MEASURE_ALIAS_MAP.parent[alias].toLowerCase());
-        }
-        else if (altLookupType === 'child' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.child[alias]))
-        {
-            record = this.MEASURE_STORE.getById(this.SOURCE_MEASURE_ALIAS_MAP.child[alias].toLowerCase());
+            record = this.MEASURE_STORE.getById(this.getMeasureSourceAlias(alias, altLookupType).toLowerCase());
         }
 
         return record;
+    },
+
+    getMeasureSourceAlias : function(alias, altLookupType)
+    {
+        if (altLookupType === 'parent' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.parent[alias]))
+        {
+            return this.SOURCE_MEASURE_ALIAS_MAP.parent[alias];
+        }
+        else if (altLookupType === 'child' && Ext.isDefined(this.SOURCE_MEASURE_ALIAS_MAP.child[alias]))
+        {
+            return this.SOURCE_MEASURE_ALIAS_MAP.child[alias];
+        }
+
+        return null;
     },
 
     getMeasureNameFromAlias : function(alias) {

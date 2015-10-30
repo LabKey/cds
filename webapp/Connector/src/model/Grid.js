@@ -206,8 +206,7 @@ Ext.define('Connector.model.Grid', {
             // Always include the set of measures each filter describes
             Ext.each(filter.getMeasureSet(), function(wrapped)
             {
-                var measure = queryService.getMeasure(wrapped.measure.alias);
-                //var measure = queryService.getMeasure(wrapped.measure.alias, 'child');
+                var measure = queryService.getMeasure(wrapped.measure.alias, 'child');
 
                 if (measure)
                 {

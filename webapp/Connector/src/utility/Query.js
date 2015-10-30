@@ -277,10 +277,18 @@ Ext.define('Connector.utility.Query', {
 
                 Ext.iterate(f.getAliases(), function(alias)
                 {
-                    var lowerAlias = alias.toLowerCase();
+                    var lowerAlias = alias.toLowerCase(),
+                        altAlias = Connector.getQueryService().getMeasureSourceAlias(alias, 'child'),
+                        measure;
 
-                    var measure = aliasMeasureMap[lowerAlias];
-                    if (measure)
+                    // if measure does not exist by the given alias, try looking up by the sourceMeasureAlias
+                    if (!Ext.isDefined(aliasMeasureMap[lowerAlias]) && altAlias != null)
+                    {
+                        lowerAlias = altAlias.toLowerCase();
+                    }
+
+                    measure = aliasMeasureMap[lowerAlias];
+                    if (Ext.isDefined(measure))
                     {
                         if (lowerAlias.indexOf(baseAlias) === 0)
                         {

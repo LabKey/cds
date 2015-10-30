@@ -546,7 +546,16 @@ Ext.define('Connector.view.Grid', {
 
         Ext.each(this.getModel().getFilterArray(), function(filter)
         {
-            colMeta = filterFieldMap[filter.getColumnName()];
+            var alias = filter.getColumnName(),
+                altAlias = Connector.getQueryService().getMeasureSourceAlias(alias, 'child');
+
+            // if measure does not exist by the given alias, try looking up by the sourceMeasureAlias
+            if (!Ext.isDefined(filterFieldMap[alias]) && altAlias != null)
+            {
+                alias = altAlias;
+            }
+
+            colMeta = filterFieldMap[alias];
             if (colMeta)
             {
                 var columnIndex = this.columnMap[colMeta.dataIndex];
