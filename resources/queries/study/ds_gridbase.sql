@@ -30,3 +30,4 @@ FROM study.ParticipantVisit AS SV
 LEFT JOIN cds.study AS STUDY ON (SV.container = study.container)
 LEFT JOIN cds.treatmentarmsubjectmap AS TASM ON (TASM.participantId = SV.participantId AND TASM.container = SV.container)
 LEFT JOIN cds.treatmentarm AS TS ON (TASM.arm_id = TS.arm_id)
+WHERE SV.sequencenum >= 0
