@@ -316,6 +316,14 @@ Ext.define('Connector.utility.Query', {
                     var queryName = Ext.isDefined(targetQuery) ? targetQuery : baseQuery;
                     Ext.iterate(baseMeasures, function(alias, measure)
                     {
+                        if (!extraFilterMap[queryName])
+                        {
+                            extraFilterMap[measure.queryName] = {
+                                measures : {},
+                                filterArray: []
+                            };
+                        }
+
                         extraFilterMap[queryName].measures[alias] = measure;
 
                         if (!included)
