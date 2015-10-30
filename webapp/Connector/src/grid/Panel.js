@@ -169,7 +169,8 @@ Ext.define('Connector.grid.Panel', {
 
     groupColumns : function(columns)
     {
-        var queryService = Connector.getQueryService(),
+        var defaultGroup = 'Study and time',
+            queryService = Connector.getQueryService(),
             defaultColumns = queryService.getDefaultGridAliases(false, true),
             definedMeasureSourceMap = queryService.getDefinedMeasuresSourceTitleMap(),
             groups = [],
@@ -192,7 +193,7 @@ Ext.define('Connector.grid.Panel', {
         }, this);
 
         groups.push({
-            text: 'Study and time',
+            text: defaultGroup,
             columns: studyTime
         });
 
@@ -234,8 +235,24 @@ Ext.define('Connector.grid.Panel', {
         {
             groups.push({
                 text: value.length > 2 ? key : Ext.String.ellipsis(key, columnCharacterWidth * value.length, true),
-                columns: value
+                columns: value.sort(function(a, b)
+                {
+                    var ah = a.header.toLowerCase(),
+                        bh = b.header.toLowerCase();
+
+                    // sort columns alphabetically by header
+                    return ah == bh ? 0 : (ah > bh ? 1 : -1);
+                })
             });
+        });
+
+        groups.sort(function(a, b)
+        {
+            if (a.text === defaultGroup)
+                return -1;
+            else if (b.text === defaultGroup)
+                return 1;
+            return a.text == b.text ? 0 : (a.text > b.text ? 1 : -1);
         });
 
         return groups;
