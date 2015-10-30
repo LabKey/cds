@@ -1022,7 +1022,7 @@ Ext.define('Connector.view.Chart', {
         this.logRowCount(allDataRows);
 
         this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
-        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : (allDataRows.totalCount > 2500 ? 20 : 0);
+        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : (allDataRows.totalCount > 1000 ? 30 : 0);
         this.toggleHeatmapMode();
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
