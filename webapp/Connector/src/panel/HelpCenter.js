@@ -132,10 +132,7 @@ Ext.define('Connector.panel.HelpCenter', {
                 border: true
             };
 
-            var tpl = new Ext.XTemplate(
-                    '<div class="main-title">Help Center</div>'
-            );
-            this.headerPanel = Ext.create('Ext.panel.Panel', {
+            this.headerPanel = Ext.create('Connector.panel.HelpCenterHeader', {
                 cls: 'header',
                 border: false,
                 data: initialData,
@@ -144,11 +141,27 @@ Ext.define('Connector.panel.HelpCenter', {
                     align: 'middle'
                 },
                 margin: "0 0 0 0",
-                items: [this.getBackArrow(), this.getTitle(), this.getSearchField()]
+
+                listeners: {
+                    helpsearchchanged: this.onSearchChange,
+                    backbuttonclicked: this.loadHelpFile,
+                    scope: this
+                }
             });
         }
 
         return this.headerPanel;
+    },
+
+    onSearchChange: function (searchKey) {
+        if (Ext.isString(searchKey)) {
+            console.log(searchKey);
+            this.loadSearch(searchKey, false);
+        }
+    },
+
+    loadSearch: function(searchKey, isBackAction, me) {
+        // to do, implement search
     },
 
     getHeader2 : function() {
@@ -196,70 +209,28 @@ Ext.define('Connector.panel.HelpCenter', {
         return this.headerPanel;
     },
 
-    getSearchField : function() {
-        if (!this.searchField) {
-            this.searchField = Ext.create('Ext.form.field.Text', {
-                id: 'helpsearchinput',
-                emptyText: 'Search by name or keywords',
-                cls: 'helpcenter-search-input',
-                margin: "0 0 0 55",
-                checkChangeBuffer: 500,
-                validator: Ext.bind(function(value) {
-                    this.fireEvent('searchchanged', value);
-                    return true;
-                }, this)
-            });
-        }
-        return this.searchField;
-    },
-
-    getTitle : function() {
-        if (!this.helpTitle) {
-            this.helpTitle = Ext.create('Ext.form.Label', {
-                id: 'helptitle',
-                margin: "0 0 0 5",
-                text: 'Help',
-                cls: 'helpcenter-title'
-            });
-        }
-        return this.helpTitle;
-    },
-
-    getBackArrow : function() {
-        if (!this.backArrow) {
-            var me = this;
-            this.backArrow = Ext.create('Ext.form.Label', {
-                id: 'helpback',
-                margin: "0 0 0 0",
-                html: '<- Back &nbsp; &nbsp; &nbsp; &nbsp;',
-                cls: 'helpcenter-back',
-                listeners: {
-                    afterrender: function() {
-                        Ext.getCmp('helpback').getEl().on('click',function(){
-                            me.loadHelpFile(null, true);
-                        });
-                    }
-                }
-            });
-        }
-        return this.backArrow;
-    },
-
     loadHelpFile : function(pageName, isBackAction) {
+        var me = this;
+        if (isBackAction) {
+            var history = HelpRouter.retrieveHistory();
+            if (history.wiki || !Ext.isString(history.wiki)) {
+                history = history.wiki;
+                this.loadWiki(history, isBackAction, me);
+            }
+            else if (history.search) {
+                this.loadSearch(history.search, isBackAction, me);
+            }
+            return;
+        }
+
+        this.loadWiki(pageName, isBackAction, me);
+    },
+
+    loadWiki: function(pageName, isBackAction, me) {
         var helpBackView = Ext.getCmp('helpback');
         var helpSearchElement = Ext.get('helpsearchinput');
         var helpTitleView = Ext.getCmp('helptitle');
         var helpBodyView = Ext.getCmp('helpcenterbody');
-
-        if (isBackAction) {
-            var pageName = HelpRouter.retrieveHistory();
-            if (pageName.wiki || !Ext.isString(pageName.wiki)) {
-                pageName = pageName.wiki;
-            }
-        }
-
-        var me = this;
-
         Ext.Ajax.request({
             url: LABKEY.ActionURL.buildURL('wiki', 'getWikiToc'),
             method: 'GET',
@@ -268,7 +239,7 @@ Ext.define('Connector.panel.HelpCenter', {
             },
             success: function(response) {
                 var json = Ext.decode(response.responseText);
-               // me.updateHelpContent(json, isBackAction);
+                // me.updateHelpContent(json, isBackAction);
                 if (isBackAction) {
                     HelpRouter.removeHistory();
                 }
@@ -277,27 +248,27 @@ Ext.define('Connector.panel.HelpCenter', {
                 }
                 var template = me.getHelpTemplate(json, pageName);
                 var pageTitle = 'Help Center';
-                if (pageName)
+                if (pageName) {
                     pageTitle = json.container.wikititle;
+                }
                 helpTitleView.setText(pageTitle);
                 helpBodyView.setTemplate(template);
                 if (HelpRouter.showBackButton()) {
-                    helpBackView.setText('&#8592; Back &nbsp; &nbsp; &nbsp; &nbsp;', false);
+                    helpBackView.setText('&nbsp; &#8592; Back &nbsp; &nbsp; &nbsp;', false);
                     helpSearchElement.dom.style.display = 'none';
-                  //  this.getHeader().doLayout();
+                    //  this.getHeader().doLayout();
                 }
                 else {
                     helpBackView.setText('');
                     helpSearchElement.dom.style.display = 'table';
-                 //   this.getHeader().doLayout();
+                    //   this.getHeader().doLayout();
                 }
             },
-            scope: this
+            scope: me
         });
     },
 
-    getHelpTemplate: function(json, name)
-    {
+    getHelpTemplate: function(json, name) {
         var pages = json.pages;
         var template = json.container.wikihtml; // display wiki body, unless current wiki has children wiki, then display children
 
@@ -413,4 +384,63 @@ Ext.define('Connector.panel.HelpCenter', {
             helpBackView.setText('');
         }
     }
+});
+
+Ext.define('Connector.panel.HelpCenterHeader', {
+    extend: 'Ext.panel.Panel',
+    initComponent: function() {
+        this.items = [this.getBackArrow(), this.getTitle(), this.getSearchField()];
+        this.callParent();
+        this.addEvents('helpsearchchanged', 'backbuttonclicked');
+    },
+
+    getSearchField : function() {
+        if (!this.searchField) {
+            this.searchField = Ext.create('Ext.form.field.Text', {
+                id: 'helpsearchinput',
+                emptyText: 'Search by name or keywords',
+                cls: 'helpcenter-search-input',
+                margin: "0 0 0 55",
+                checkChangeBuffer: 500,
+                validator: Ext.bind(function(value) {
+                    this.fireEvent('helpsearchchanged', value);
+                    return true;
+                }, this)
+            });
+        }
+        return this.searchField;
+    },
+
+    getTitle : function() {
+        if (!this.helpTitle) {
+            this.helpTitle = Ext.create('Ext.form.Label', {
+                id: 'helptitle',
+                margin: "0 0 0 5",
+                text: 'Help',
+                cls: 'helpcenter-title'
+            });
+        }
+        return this.helpTitle;
+    },
+
+    getBackArrow : function() {
+        if (!this.backArrow) {
+            var me = this;
+            this.backArrow = Ext.create('Ext.form.Label', {
+                id: 'helpback',
+                margin: "0 0 0 0",
+                html: '&nbsp; <- Back &nbsp; &nbsp; &nbsp;',
+                cls: 'helpcenter-back',
+                listeners: {
+                    afterrender: function() {
+                        Ext.getCmp('helpback').getEl().on('click',function(){
+                            me.fireEvent('backbuttonclicked', null, true);
+                        });
+                    }
+                }
+            });
+        }
+        return this.backArrow;
+    }
+
 });

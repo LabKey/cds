@@ -15,7 +15,12 @@ Ext.define('HelpRouter', {
         this.histories.push({search: searchText});
     },
     retrieveHistory: function() {
-        return this.histories[this.histories.length-2]
+        if (this.histories.length >= 2) {
+            return this.histories[this.histories.length - 2];
+        }
+        else {
+            return null;
+        }
     },
     removeHistory: function() {
         return this.histories.pop();
