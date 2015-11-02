@@ -33,11 +33,6 @@ Ext.define('Connector.panel.HelpCenter', {
                 items: [{
                     xtype: 'helpcenter',
                     listeners: {
-                        hide: function() {
-                            //removes the listener if the window is hidden so center isnt called for no reason
-                            Ext.EventManager.removeResizeListener(resizer, win);
-                            win.hide(animateTarget);
-                        },
                         afterrender: function() {
                             HelpRouter.clearHistory();
                             me.prototype.loadHelpFile();
@@ -56,7 +51,11 @@ Ext.define('Connector.panel.HelpCenter', {
             win.show(animateTarget);
 
             win.mon(Ext.getBody(), 'click', function(el, e){
-                win.close(win.closeAction);
+                win.hide(animateTarget, function() {
+                    this.fireEvent('close', this);
+                    this.destroy();
+                }, this);
+             //   win.close(win.closeAction);
             }, win, { delegate: '.x-mask' });
         }
     },
@@ -154,59 +153,45 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     onSearchChange: function (searchKey) {
-        if (Ext.isString(searchKey)) {
-            console.log(searchKey);
-            this.loadSearch(searchKey, false);
-        }
+        this.loadSearch(searchKey, false);
     },
 
-    loadSearch: function(searchKey, isBackAction, me) {
-        // to do, implement search
-    },
-
-    getHeader2 : function() {
-        if (!this.headerPanel) {
-            var initialData = {
-                title: "Help",
-                showBack: true,
-                showSearch: true
-            };
-
-            var tpl = new Ext.XTemplate(
-                    '<div>',
-                    '<tpl if="showBack">',
-                    '<span class="back-action">',
-                    '<span class="arrow">Back</span>',
-                    '</span>',
-                    '</tpl>',
-                    '<span>',
-                    '<label id="helptitle" class="helpcenter-title">{title:htmlEncode}</label>',
-                    '</span>',
-                    '<tpl if="showSearch">',
-                    '<span>',
-                    '<input id="helpsearchinput" class="helpcenter-search-input" placeholder="Search by name or keywords" type="text"/>',
-                    '</span>',
-                    '</tpl>',
-                    '</div>'
-            );
-
-            this.headerPanel = Ext.create('Ext.panel.Panel', {
-                cls: 'header',
-                tpl: tpl,
-                data: initialData,
-                listeners: {
-                    afterrender: {
-                        fn: function(header) {
-                            this.bindHeader(header, this.headerData ? this.headerData : initialData);
-                        },
-                        scope: this,
-                        single: true
-                    }
+    loadSearch: function(searchKey, isBackAction) {
+        var me = this;
+        var queryStr = searchKey;
+        var helpBackView = Ext.getCmp('helpback');
+        var helpSearchElement = Ext.get('helpsearchinput');
+        var helpTitleView = Ext.getCmp('helptitle');
+        var helpBodyView = Ext.getCmp('helpcenterbody');
+        Ext.Ajax.request({
+            url: LABKEY.ActionURL.buildURL('search', 'json'),
+            method: 'GET',
+            params: {
+                query: [queryStr],
+                scope: 'FolderAndSubfolders',
+                includeHelpLink: false,
+                category: 'wiki'
+            },
+            success: function(response) {
+                var json = Ext.decode(response.responseText);
+                // me.updateHelpContent(json, isBackAction);
+                if (isBackAction) {
+                    HelpRouter.removeHistory();
                 }
-            });
-        }
+                else {
+                    HelpRouter.addSearchHistory(searchKey);
+                }
+                var template = '';
+                //template = me.getSearchTemplate(json);
+                var pageTitle = 'Help Center';
 
-        return this.headerPanel;
+                helpTitleView.setText(pageTitle);
+                helpBodyView.setTemplate(template);
+                helpBackView.setText('');
+                helpSearchElement.dom.style.display = 'table';
+            },
+            scope: me
+        });
     },
 
     loadHelpFile : function(pageName, isBackAction) {
@@ -228,7 +213,7 @@ Ext.define('Connector.panel.HelpCenter', {
 
     loadWiki: function(pageName, isBackAction, me) {
         var helpBackView = Ext.getCmp('helpback');
-        var helpSearchElement = Ext.get('helpsearchinput');
+        // var helpSearchElement = Ext.get('helpsearchinput'); //Search will be supported in a later phase
         var helpTitleView = Ext.getCmp('helptitle');
         var helpBodyView = Ext.getCmp('helpcenterbody');
         Ext.Ajax.request({
@@ -255,13 +240,15 @@ Ext.define('Connector.panel.HelpCenter', {
                 helpBodyView.setTemplate(template);
                 if (HelpRouter.showBackButton()) {
                     helpBackView.setText('&nbsp; &#8592; Back &nbsp; &nbsp; &nbsp;', false);
-                    helpSearchElement.dom.style.display = 'none';
-                    //  this.getHeader().doLayout();
+
+                    //Search will be supported in a later phase
+                    //helpSearchElement.dom.style.display = 'none';
                 }
                 else {
                     helpBackView.setText('');
-                    helpSearchElement.dom.style.display = 'table';
-                    //   this.getHeader().doLayout();
+
+                    //Search will be supported in a later phase
+                    //helpSearchElement.dom.style.display = 'table';
                 }
             },
             scope: me
@@ -288,8 +275,8 @@ Ext.define('Connector.panel.HelpCenter', {
             return '';
         }
         var template = '<div>';
-        template += '<p><span style="font-size: 12px;">The help center will have answers to FQA, ';
-        template += 'How to articles and video added regularly. Search capability will be available in December. Below is a few articles to help get you started.</span></p>';
+        template += '<p><span style="font-size: 13px;font-weight: 500">The help center will have answers to FQA, ';
+        template += 'How to articles and videos added regularly. Search capability will be available in December. Below is a few articles to help get you started.</span></p>';
         template += '<table>';
         template += '<tbody>';
         template += '<tr valign="top">';
@@ -376,9 +363,6 @@ Ext.define('Connector.panel.HelpCenter', {
         helpBodyView.setTemplate(json.htmlBody);
         if (HelpRouter.showBackButton()) {
             helpBackView.setText('&#8592; Back &nbsp; &nbsp; &nbsp; &nbsp;', false);
-            //helpBackView.on('click', function() {
-            //    me.loadHelpFile(null, true);
-            //})
         }
         else {
             helpBackView.setText('');
@@ -389,7 +373,10 @@ Ext.define('Connector.panel.HelpCenter', {
 Ext.define('Connector.panel.HelpCenterHeader', {
     extend: 'Ext.panel.Panel',
     initComponent: function() {
-        this.items = [this.getBackArrow(), this.getTitle(), this.getSearchField()];
+        // Search will be supported in a later phase
+        // this.items = [this.getBackArrow(), this.getTitle(), this.getSearchField()];
+        this.items = [this.getBackArrow(), this.getTitle()];
+
         this.callParent();
         this.addEvents('helpsearchchanged', 'backbuttonclicked');
     },
