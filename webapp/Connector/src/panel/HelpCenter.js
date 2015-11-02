@@ -50,6 +50,7 @@ Ext.define('Connector.panel.HelpCenter', {
             });
             win.show(animateTarget);
 
+            // when click outside popup, first hide so that animate works, then close so that layout is correct when re-created..
             win.mon(Ext.getBody(), 'click', function(el, e){
                 win.hide(animateTarget, function() {
                     this.fireEvent('close', this);
@@ -70,14 +71,8 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     getForm : function() {
-
         if (!this.helpcenterBody) {
-
-            var tpl = new Ext.XTemplate(
-                    '<h1>Help</h1>'
-            );
             var me = this;
-            var i=0;
             this.helpcenterBody = Ext.create('Ext.panel.Panel', {
                 ui: 'custom',
                 id: 'helpcenterbody',
@@ -85,8 +80,6 @@ Ext.define('Connector.panel.HelpCenter', {
                 border: false,
                 flex: 1,
                 cls: 'helpcenter-body',
-                tpl: tpl,
-                data: {title:'test'},
                 height: '400px',
                 setTemplate: function(template) {
                     this.update(template, false, function(win) {
@@ -125,16 +118,9 @@ Ext.define('Connector.panel.HelpCenter', {
 
     getHeader : function() {
         if (!this.headerPanel) {
-            var initialData = {
-                title: this.headerTitle,
-                showCount: false,
-                border: true
-            };
-
             this.headerPanel = Ext.create('Connector.panel.HelpCenterHeader', {
                 cls: 'header',
                 border: false,
-                data: initialData,
                 layout: {
                     type: 'hbox',
                     align: 'middle'
@@ -195,23 +181,23 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     loadHelpFile : function(pageName, isBackAction) {
-        var me = this;
         if (isBackAction) {
             var history = HelpRouter.retrieveHistory();
             if (history.wiki || !Ext.isString(history.wiki)) {
                 history = history.wiki;
-                this.loadWiki(history, isBackAction, me);
+                this.loadWiki(history, isBackAction);
             }
             else if (history.search) {
-                this.loadSearch(history.search, isBackAction, me);
+                this.loadSearch(history.search, isBackAction);
             }
             return;
         }
 
-        this.loadWiki(pageName, isBackAction, me);
+        this.loadWiki(pageName, isBackAction);
     },
 
-    loadWiki: function(pageName, isBackAction, me) {
+    loadWiki: function(pageName, isBackAction) {
+        var me = this;
         var helpBackView = Ext.getCmp('helpback');
         // var helpSearchElement = Ext.get('helpsearchinput'); //Search will be supported in a later phase
         var helpTitleView = Ext.getCmp('helptitle');
