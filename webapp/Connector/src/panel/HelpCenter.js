@@ -160,7 +160,6 @@ Ext.define('Connector.panel.HelpCenter', {
             },
             success: function(response) {
                 var json = Ext.decode(response.responseText);
-                // me.updateHelpContent(json, isBackAction);
                 if (isBackAction) {
                     HelpRouter.removeHistory();
                 }
@@ -210,7 +209,7 @@ Ext.define('Connector.panel.HelpCenter', {
             },
             success: function(response) {
                 var json = Ext.decode(response.responseText);
-                // me.updateHelpContent(json, isBackAction);
+
                 if (isBackAction) {
                     HelpRouter.removeHistory();
                 }
@@ -331,29 +330,8 @@ Ext.define('Connector.panel.HelpCenter', {
             return this.findWikiName(children[i], name);
         }
         return null;
-    },
-
-    updateHelpContent: function (json, isBackAction) {
-        if (isBackAction) {
-            HelpRouter.removeHistory();
-        }
-        else {
-            HelpRouter.addHelpHistory(json.name);
-        }
-        var me = this;
-        var helpBackView = Ext.getCmp('helpback');
-        var helpTitleView = Ext.getCmp('helptitle');
-        var helpBodyView = Ext.getCmp('helpcenterbody');
-
-        helpTitleView.setText(json.title);
-        helpBodyView.setTemplate(json.htmlBody);
-        if (HelpRouter.showBackButton()) {
-            helpBackView.setText('&#8592; Back &nbsp; &nbsp; &nbsp; &nbsp;', false);
-        }
-        else {
-            helpBackView.setText('');
-        }
     }
+
 });
 
 Ext.define('Connector.panel.HelpCenterHeader', {

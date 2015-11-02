@@ -798,20 +798,6 @@ div.hopscotch-bubble {
   }
 }
 
-.helpcenter-title {
-  font: 17px Georgia,serif;
-  position: absolute !important;
-  top: 4px !important;
-}
-
-.helpcenter-back {
-  font: 16px Georgia,serif;
-  color: mediumorchid;
-  cursor: pointer;
-  position: absolute !important;
-  top: 4px !important;
-}
-
 .helpcenter-panel {
   // background-color: $heat-scale-6;
   .header {
@@ -837,6 +823,46 @@ div.hopscotch-bubble {
         font: $title-font;
       }
     }
+
+    .helpcenter-title {
+      font: 17px Georgia,serif;
+      position: absolute !important;
+      top: 4px !important;
+    }
+
+    .helpcenter-back {
+      font: 16px Georgia,serif;
+      color: mediumorchid;
+      cursor: pointer;
+      position: absolute !important;
+      top: 4px !important;
+    }
+
+    .helpcenter-search-input {
+      clear: both;
+      position: absolute !important;
+      top: 0px !important;
+      width: 66%;
+      tbody,
+      tr,
+      td.x-form-item-body {
+        width: 100%!important;
+      }
+
+      input {
+        width: 100%;
+        font-size: 12px;
+        border-radius: 2px;
+        border-color: $gray-7!important;
+        height: 30px;
+
+      }
+      input.x-form-focus {
+        border-color: $gray-6!important;
+        color: $black;
+      }
+    }
+
   }
 
   p {
@@ -880,30 +906,6 @@ div.hopscotch-bubble {
     }
   }
 
-  .helpcenter-search-input {
-    clear: both;
-    position: absolute !important;
-    top: 0px !important;
-    width: 66%;
-    tbody,
-    tr,
-    td.x-form-item-body {
-      width: 100%!important;
-    }
-
-    input {
-      width: 100%;
-      font-size: 12px;
-      border-radius: 2px;
-      border-color: $gray-7!important;
-      height: 30px;
-
-    }
-    input.x-form-focus {
-      border-color: $gray-6!important;
-      color: $black;
-    }
-  }
 }
 
 @import 'windows';
