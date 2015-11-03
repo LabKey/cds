@@ -568,11 +568,11 @@ Ext.define('Connector.model.Filter', {
 
                         if (i == 0)
                         {
-                            xMeasureMap[measure.alias].time = plotMeasure.time;
+                            xMeasureMap[measure.alias].dimension = plotMeasure.dimension;
                         }
                         else if (i == 1)
                         {
-                            yMeasureMap[measure.alias].time = plotMeasure.time;
+                            yMeasureMap[measure.alias].dimension = plotMeasure.dimension;
                         }
                     }
 
@@ -582,11 +582,11 @@ Ext.define('Connector.model.Filter', {
 
                         if (i == 0)
                         {
-                            measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
+                            xMeasureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
                         }
                         else if (i == 1)
                         {
-                            measureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
+                            yMeasureMap[measure.alias].dateOptions = plotMeasure.dateOptions;
                         }
                     }
 
@@ -599,9 +599,9 @@ Ext.define('Connector.model.Filter', {
                         if (optionMeasure)
                         {
                             // ensure mapping
-                            if (!measureMap[optionMeasure.alias])
+                            if (!measureMap[optionAlias])
                             {
-                                measureMap[optionMeasure.alias] = {
+                                measureMap[optionAlias] = {
                                     measure: optionMeasure,
                                     filterArray: []
                                 }
@@ -609,20 +609,20 @@ Ext.define('Connector.model.Filter', {
 
                             if (i == 0)
                             {
-                                if (!xMeasureMap[optionMeasure.alias])
+                                if (!xMeasureMap[optionAlias])
                                 {
-                                    xMeasureMap[optionMeasure.alias] = {
-                                        measure: optionMeasure,
+                                    xMeasureMap[optionAlias] = {
+                                        measure: queryService.getMeasure(optionAlias), // Issue 24728: make sure to get a new clone of the measure from the queryService
                                         filterArray: []
                                     }
                                 }
                             }
                             else if (i == 1)
                             {
-                                if (!yMeasureMap[optionMeasure.alias])
+                                if (!yMeasureMap[optionAlias])
                                 {
-                                    yMeasureMap[optionMeasure.alias] = {
-                                        measure: optionMeasure,
+                                    yMeasureMap[optionAlias] = {
+                                        measure: queryService.getMeasure(optionAlias), // Issue 24728: make sure to get a new clone of the measure from the queryService
                                         filterArray: []
                                     }
                                 }
@@ -631,31 +631,31 @@ Ext.define('Connector.model.Filter', {
                             // ensure filters
                             if (!Ext.isEmpty(axisFilterRecord.values))
                             {
-                                if (Ext.isEmpty(measureMap[optionMeasure.alias].measure.values))
+                                if (Ext.isEmpty(measureMap[optionAlias].measure.values))
                                 {
-                                    measureMap[optionMeasure.alias].measure.values = [];
+                                    measureMap[optionAlias].measure.values = [];
                                 }
 
                                 // Issue 24136: concatenate values array filters for measure aliases that exist on both x and y axis
-                                measureMap[optionMeasure.alias].measure.values = Ext.Array.unique(measureMap[optionMeasure.alias].measure.values.concat(axisFilterRecord.values));
+                                measureMap[optionAlias].measure.values = Ext.Array.unique(measureMap[optionAlias].measure.values.concat(axisFilterRecord.values));
 
                                 if (i == 0)
                                 {
-                                    if (Ext.isEmpty(xMeasureMap[optionMeasure.alias].measure.values))
+                                    if (Ext.isEmpty(xMeasureMap[optionAlias].measure.values))
                                     {
-                                        xMeasureMap[optionMeasure.alias].measure.values = [];
+                                        xMeasureMap[optionAlias].measure.values = [];
                                     }
 
-                                    xMeasureMap[optionMeasure.alias].measure.values = Ext.Array.unique(xMeasureMap[optionMeasure.alias].measure.values.concat(axisFilterRecord.values));
+                                    xMeasureMap[optionAlias].measure.values = Ext.Array.unique(xMeasureMap[optionAlias].measure.values.concat(axisFilterRecord.values));
                                 }
                                 else if (i == 1)
                                 {
-                                    if (Ext.isEmpty(yMeasureMap[optionMeasure.alias].measure.values))
+                                    if (Ext.isEmpty(yMeasureMap[optionAlias].measure.values))
                                     {
-                                        yMeasureMap[optionMeasure.alias].measure.values = [];
+                                        yMeasureMap[optionAlias].measure.values = [];
                                     }
 
-                                    yMeasureMap[optionMeasure.alias].measure.values = Ext.Array.unique(yMeasureMap[optionMeasure.alias].measure.values.concat(axisFilterRecord.values));
+                                    yMeasureMap[optionAlias].measure.values = Ext.Array.unique(yMeasureMap[optionAlias].measure.values.concat(axisFilterRecord.values));
                                 }
                             }
                         }
