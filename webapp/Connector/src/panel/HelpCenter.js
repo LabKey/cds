@@ -97,9 +97,12 @@ Ext.define('Connector.panel.HelpCenter', {
                                     }
                                     var params = LABKEY.ActionURL.getParameters(href);
                                     wikiName = params.name;
-                                    link.on('click', function interceptHref(e){
+                                    link.on('mouseup', function interceptHref(e){
                                         e.preventDefault();
                                         me.loadHelpFile(wikiName);
+                                    }, null, {single: true});
+                                    link.on('click', function interceptHref(e){
+                                        e.preventDefault();
                                     }, null, {single: true});
                                 }
                                 else {
@@ -139,12 +142,19 @@ Ext.define('Connector.panel.HelpCenter', {
     },
 
     onSearchChange: function (searchKey) {
-        this.loadSearch(searchKey, false);
+        if (searchKey !== HelpRouter.getSearchKey()) {
+            if (searchKey !== ''){
+                this.loadSearch(searchKey, false);
+            }
+            else {
+                this.loadHelpFile(null, false); // show home page if search string is blank
+            }
+        }
     },
 
     loadSearch: function(searchKey, isBackAction) {
         var me = this;
-        var queryStr = searchKey;
+        var query = [searchKey];
         var helpBackView = Ext.getCmp('helpback');
         var helpSearchElement = Ext.get('helpsearchinput');
         var helpTitleView = Ext.getCmp('helptitle');
@@ -153,10 +163,10 @@ Ext.define('Connector.panel.HelpCenter', {
             url: LABKEY.ActionURL.buildURL('search', 'json'),
             method: 'GET',
             params: {
-                query: [queryStr],
+                q: query,
                 scope: 'FolderAndSubfolders',
                 includeHelpLink: false,
-                category: 'wiki'
+                category: 'Wiki'  // this parameter is not yet respected by the api, will manually filter result as of now
             },
             success: function(response) {
                 var json = Ext.decode(response.responseText);
@@ -166,8 +176,7 @@ Ext.define('Connector.panel.HelpCenter', {
                 else {
                     HelpRouter.addSearchHistory(searchKey);
                 }
-                var template = '';
-                //template = me.getSearchTemplate(json);
+                var template = me.getSearchTemplate(json);
                 var pageTitle = 'Help Center';
 
                 helpTitleView.setText(pageTitle);
@@ -179,16 +188,46 @@ Ext.define('Connector.panel.HelpCenter', {
         });
     },
 
+    getSearchTemplate: function (json) {
+        var template = '<div>';
+        if (!json || !json.hits || json.hits.length <= 0) {
+            template += '<p>0 results</p></div>';
+            return template;
+        }
+        var hits = json.hits;
+        var validCount = 0; //the search.json api doesn't respect category parameter, need to manually filter result.
+        for (var i = 0; i < hits.length; i++) {
+            var hit = hits[i];
+            if (hit.id && hit.id.indexOf('wiki') == 0) {
+                validCount++;
+            }
+        }
+
+        template = '<p>' + validCount + ' results</p>';
+
+        for (var i = 0; i < hits.length; i++) {
+            var hit = hits[i];
+            if (hit.id && hit.id.indexOf('wiki') == 0) {
+                template += '<p><a href="' + hit.url + '">' + hit.title + '</a></p>';
+            }
+        }
+
+        template += '</div>';
+        return template;
+    },
+
+
     loadHelpFile : function(pageName, isBackAction) {
         if (isBackAction) {
             var history = HelpRouter.retrieveHistory();
-            if (history.wiki || !Ext.isString(history.wiki)) {
+            if (history.search) {
+                this.loadSearch(history.search, isBackAction);
+            }
+            else if (history.wiki || !Ext.isString(history.wiki)) {
                 history = history.wiki;
                 this.loadWiki(history, isBackAction);
             }
-            else if (history.search) {
-                this.loadSearch(history.search, isBackAction);
-            }
+
             return;
         }
 
@@ -198,7 +237,7 @@ Ext.define('Connector.panel.HelpCenter', {
     loadWiki: function(pageName, isBackAction) {
         var me = this;
         var helpBackView = Ext.getCmp('helpback');
-        // var helpSearchElement = Ext.get('helpsearchinput'); //Search will be supported in a later phase
+        var helpSearchElement = Ext.get('helpsearchinput');
         var helpTitleView = Ext.getCmp('helptitle');
         var helpBodyView = Ext.getCmp('helpcenterbody');
         Ext.Ajax.request({
@@ -225,15 +264,11 @@ Ext.define('Connector.panel.HelpCenter', {
                 helpBodyView.setTemplate(template);
                 if (HelpRouter.showBackButton()) {
                     helpBackView.setText('&nbsp; &#8592; Back &nbsp; &nbsp; &nbsp;', false);
-
-                    //Search will be supported in a later phase
-                    //helpSearchElement.dom.style.display = 'none';
+                    helpSearchElement.dom.style.display = 'none';
                 }
                 else {
                     helpBackView.setText('');
-
-                    //Search will be supported in a later phase
-                    //helpSearchElement.dom.style.display = 'table';
+                    helpSearchElement.dom.style.display = 'table';
                 }
             },
             scope: me
@@ -261,7 +296,7 @@ Ext.define('Connector.panel.HelpCenter', {
         }
         var template = '<div>';
         template += '<p><span style="font-size: 13px;font-weight: 500">The help center will have answers to FQA, ';
-        template += 'How to articles and videos added regularly. Search capability will be available in December. Below is a few articles to help get you started.</span></p>';
+        template += 'How to articles and videos added regularly. Below is a few articles to help get you started.</span></p>';
         template += '<table>';
         template += '<tbody>';
         template += '<tr valign="top">';
@@ -337,9 +372,7 @@ Ext.define('Connector.panel.HelpCenter', {
 Ext.define('Connector.panel.HelpCenterHeader', {
     extend: 'Ext.panel.Panel',
     initComponent: function() {
-        // Search will be supported in a later phase
-        // this.items = [this.getBackArrow(), this.getTitle(), this.getSearchField()];
-        this.items = [this.getBackArrow(), this.getTitle()];
+        this.items = [this.getBackArrow(), this.getTitle(), this.getSearchField()];
 
         this.callParent();
         this.addEvents('helpsearchchanged', 'backbuttonclicked');
