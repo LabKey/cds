@@ -426,17 +426,24 @@ Ext.define('Connector.utility.Query', {
             sep = "\n\t";
 
         SELECT.push(sep + rootTable.tableAlias + '.container AS "' + this.CONTAINER_ALIAS + '" @title=\'Container\'');
-        sep = ",\n\t";
-        SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
-
         columnAliasMap[this.CONTAINER_ALIAS] = {
             name: 'Container',
             queryName: rootTable.displayName,
             schemaName: rootTable.schemaName
         };
 
+        sep = ",\n\t";
+        SELECT.push(sep + rootTable.tableAlias + '.subjectid AS "' + this.SUBJECT_ALIAS + '" @title=\'Subject Id\'');
         columnAliasMap[this.SUBJECT_ALIAS] = {
             name: 'SubjectId',
+            queryName: rootTable.displayName,
+            schemaName: rootTable.schemaName
+        };
+
+        // Issue 24728: always include the ParticipantSequenceNum column in the intersect SQL case as well
+        SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS + '" @title=\'Participant Sequence Num\'');
+        columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
+            name: 'ParticipantSequenceNum',
             queryName: rootTable.displayName,
             schemaName: rootTable.schemaName
         };
@@ -448,31 +455,11 @@ Ext.define('Connector.utility.Query', {
                 // only include the Dataset column if we have multiple assay datasets in the query
                 SELECT.push(sep + LABKEY.Query.sqlStringLiteral(rootTable.displayName) + " AS " + "\"" + this.DATASET_ALIAS + "\" @title=\'Dataset\'");
                 columnAliasMap[this.DATASET_ALIAS] = {name: 'Dataset'};
-                sep = ",\n\t";
             }
+
             SELECT.push(sep + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS + '" @title=\'Sequence Num\'');
-            SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS + '" @title=\'Participant Sequence Num\'');
-
-            columnAliasMap[this.CONTAINER_ALIAS] = {
-                name: 'Container',
-                queryName: rootTable.displayName,
-                schemaName: rootTable.schemaName
-            };
-
-            columnAliasMap[this.SUBJECT_ALIAS] = {
-                name: 'SubjectId',
-                queryName: rootTable.displayName,
-                schemaName: rootTable.schemaName
-            };
-
             columnAliasMap[this.SEQUENCENUM_ALIAS] = {
                 name: 'SequenceNum',
-                queryName: rootTable.displayName,
-                schemaName: rootTable.schemaName
-            };
-
-            columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
-                name: 'ParticipantSequenceNum',
                 queryName: rootTable.displayName,
                 schemaName: rootTable.schemaName
             };
