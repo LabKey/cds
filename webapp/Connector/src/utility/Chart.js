@@ -464,6 +464,11 @@ Ext.define('Connector.utility.Chart', {
         return true;
     },
 
+    hasMeasureAssayDimensions : function(measure)
+    {
+        return measure != null && Ext.isObject(measure.options) && Ext.isObject(measure.options.dimensions);
+    },
+
     /*
      * Return the array of which assay dimension properties have different values arrays between the two measures.
      * Used for plot to determine which dimension keys to use for the grouping / aggregation.

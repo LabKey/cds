@@ -2309,75 +2309,77 @@ Ext.define('Connector.view.Chart', {
         // set of measures from data filters
         if (includeFilterMeasures === true)
         {
-            // TODO: allowOtherRanges can be removed once it is determined that we're sticking with strict axis filter
-            // equality in order for a filter to apply to a given axis (see comparator()'s use of queryKeys)
-            var allowOtherRanges = false,
-                xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
+            var xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
                 yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
                 hasX = activeMeasures.x != null,
-                hasY = activeMeasures.y != null,
-                queryKeys = Ext.Array.toMap(this.getQueryKeys(measures, allowOtherRanges), function(key) { return key.toLowerCase(); })
+                hasY = activeMeasures.y != null;
 
             /**
-             * A comparator to determine if measureB qualifies against measureA. This has been overloaded
-             * to examine isDemographic or if measureB is from the same schema/query.
+             * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
+             *    1) the measureB filter is from a demographic dataset or from GridBase (which can always be applied)
+             *    2) the measureB filter is a grid filter (i.e. no assay dimensions) from the same source as measureA
+             *    3) the measureB filter is an exact match based on sourceKey and assay dimension filters to measureA
              * @param measureA
              * @param measureB
              * @returns {boolean}
              */
             var comparator = function(measureA, measureB)
             {
-                if (measureB.isDemographic === true)
-                    return true;
+                var gridBaseKey = Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase,
+                    measureAKey = measureA.schemaName + '|' + measureA.queryName,
+                    measureBKey = measureB.schemaName + '|' + measureB.queryName;
 
-                var key = measureB.schemaName + '|' + measureB.queryName;
-                if (Ext.isDefined(queryKeys[key.toLowerCase()]))
+                // case #1 from comment above
+                if (measureB.isDemographic === true || gridBaseKey.toLowerCase() == measureBKey.toLowerCase())
                 {
                     return true;
                 }
+                else if (measureA.isDemographic === true || !ChartUtils.hasMeasureAssayDimensions(measureA))
+                {
+                    return false;
+                }
 
-                return measureA.alias === measureB.alias &&
-                    ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
+                // case #2 from comment above
+                if (!ChartUtils.hasMeasureAssayDimensions(measureB))
+                {
+                    return measureAKey == measureBKey;
+                }
+                // case #3 from comment above
+                else
+                {
+                    return measureAKey == measureBKey && ChartUtils.getAssayDimensionsWithDifferentValues(measureA, measureB).length == 0;
+                }
             };
 
             Ext.each(Connector.getState().getFilters(), function(filter)
             {
                 if (filter.isGrid())
                 {
-                    if (filter.isPlot())
+                    if (hasX && (filter.isPlot() || activeMeasures.x.variableType !== 'TIME'))
                     {
-                        // plot selection
-                        if (hasX)
+                        var xMeasures = filter.getPlotAxisMeasures(xAxisName, activeMeasures.x, comparator);
+                        if (xMeasures.length > 0)
                         {
-                            var xMeasures = filter.getXMeasures(xAxisName, activeMeasures.x, comparator);
-                            if (xMeasures.length > 0)
+                            measures = measures.concat(xMeasures);
+
+                            if (filter.isPlot())
                             {
-                                measures = measures.concat(xMeasures);
                                 hasPlotSelectionFilter.x = true;
                             }
                         }
+                    }
 
-                        if (hasY)
+                    if (hasY)
+                    {
+                        var yMeasures = filter.getPlotAxisMeasures(yAxisName, activeMeasures.y, comparator);
+                        if (yMeasures.length > 0)
                         {
-                            var yMeasures = filter.getYMeasures(yAxisName, activeMeasures.y, comparator);
-                            if (yMeasures.length > 0)
+                            measures = measures.concat(yMeasures);
+
+                            if (filter.isPlot())
                             {
-                                measures = measures.concat(yMeasures);
                                 hasPlotSelectionFilter.y = true;
                             }
-                        }
-                    }
-                    else
-                    {
-                        // grid
-                        if (hasX && activeMeasures.x.variableType !== 'TIME')
-                        {
-                            measures = measures.concat(filter.getXMeasures(xAxisName));
-                        }
-
-                        if (hasY)
-                        {
-                            measures = measures.concat(filter.getYMeasures(yAxisName));
                         }
                     }
                 }
@@ -2389,27 +2391,6 @@ Ext.define('Connector.view.Chart', {
             wrapped: wrappedMeasures,
             hasPlotSelectionFilter: hasPlotSelectionFilter
         };
-    },
-
-    getQueryKeys : function(measures, allowOtherRanges)
-    {
-        // always include the base table query keys
-        var queryKeys = [Connector.studyContext.gridBaseSchema + '|' + Connector.studyContext.gridBase],
-            key;
-
-        if (allowOtherRanges)
-        {
-            Ext.each(measures, function(m)
-            {
-                key = m.measure.schemaName + '|' + m.measure.queryName;
-                if (queryKeys.indexOf(key) == -1)
-                {
-                    queryKeys.push(key);
-                }
-            });
-        }
-
-        return queryKeys;
     },
 
     /**

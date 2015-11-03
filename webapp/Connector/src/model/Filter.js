@@ -19,8 +19,7 @@ Ext.define('Connector.model.Filter', {
         {name : 'xMeasureSet', defaultValue: []},
         {name : 'yMeasureSet', defaultValue: []},
 
-        {name : 'xMeasures', defaultValue: []},
-        {name : 'yMeasures', defaultValue: []},
+        {name : 'plotAxisMeasures', defaultValue: []},
         {name : 'isAggregated', type: 'boolean', defaultValue: false},
 
         {name : 'isTime', type: 'boolean', defaultValue: false},
@@ -351,84 +350,45 @@ Ext.define('Connector.model.Filter', {
         return this.get('timeFilters')
     },
 
-    getXMeasures : function(axisName, matchMeasure, comparator)
+    getPlotAxisMeasures: function(axisName, compareMeasure, comparator)
     {
-        var xMeasures = [],
-            myXMeasures = this.get('xMeasures');
+        var matchingMeasures = [],
+            plotAxisMeasures = this.get('plotAxisMeasures');
 
-        if (this.isTime() && myXMeasures.length > 0)
+        if (this.isTime() && plotAxisMeasures.length > 0)
         {
-            xMeasures.push(myXMeasures[0]);
+            matchingMeasures.push(plotAxisMeasures[0]);
         }
 
-        if (matchMeasure)
+        Ext.each(plotAxisMeasures, function(m)
         {
-            if (Ext.isFunction(comparator))
+            var paMeasure = Ext.clone(m);
+            if (axisName)
             {
-                var pm = this.get('plotMeasures')[0];
+                paMeasure.measure.axisName = axisName;
+            }
 
-                if (!pm || !comparator(matchMeasure, pm.measure))
+            if (compareMeasure)
+            {
+                if (Ext.isFunction(comparator))
                 {
-                    return xMeasures;
+                    if (paMeasure && comparator(compareMeasure, paMeasure.measure))
+                    {
+                        matchingMeasures.push(paMeasure);
+                    }
+                }
+                else
+                {
+                    throw 'A "comparator" function must be supplied when attempting to match a measure';
                 }
             }
             else
             {
-                throw 'A "comparator" function must be supplied when attempting to match a measure';
+                matchingMeasures.push(paMeasure);
             }
-        }
-
-        Ext.each(myXMeasures, function(m)
-        {
-            var xm = Ext.clone(m);
-            if (axisName)
-            {
-                xm.measure.axisName = axisName;
-            }
-            xMeasures.push(xm);
         }, this);
 
-        return xMeasures;
-    },
-
-    getYMeasures : function(axisName, matchMeasure, comparator)
-    {
-        var yMeasures = [],
-            myYMeasures = this.get('yMeasures');
-
-        if (this.isTime() && myYMeasures.length > 0)
-        {
-            yMeasures.push(myYMeasures[0]);
-        }
-
-        if (matchMeasure)
-        {
-            if (Ext.isFunction(comparator))
-            {
-                var pm = this.get('plotMeasures')[1];
-
-                if (!pm || !comparator(matchMeasure, pm.measure))
-                {
-                    return yMeasures;
-                }
-            }
-            else
-            {
-                throw 'A "comparator" function must be supplied when attempting to match a measure';
-            }
-        }
-
-        Ext.each(myYMeasures, function(m)
-        {
-            var ym = Ext.clone(m);
-            if (axisName)
-            {
-                ym.measure.axisName = axisName;
-            }
-            yMeasures.push(ym);
-        }, this);
-
-        return yMeasures;
+        return matchingMeasures;
     },
 
     /**
@@ -852,8 +812,7 @@ Ext.define('Connector.model.Filter', {
     _generateDataFilters : function()
     {
         var dataFilterMap = {},
-            xMeasures = [],
-            yMeasures = [];
+            plotAxisMeasures = [];
 
         if (this.isAggregated())
         {
@@ -961,8 +920,7 @@ Ext.define('Connector.model.Filter', {
                             {
                                 if (_wrapped.measure.alias.toLowerCase() === QueryUtils.SUBJECT_SEQNUM_ALIAS.toLowerCase())
                                 {
-                                    xMeasures.push(_wrapped);
-                                    yMeasures.push(_wrapped);
+                                    plotAxisMeasures.push(_wrapped);
                                 }
                             });
                         }
@@ -971,14 +929,7 @@ Ext.define('Connector.model.Filter', {
                             wrapped.filterArray = i == 0 ? xFilters : yFilters;
                         }
 
-                        if (i == 0)
-                        {
-                            xMeasures.push(wrapped);
-                        }
-                        else
-                        {
-                            yMeasures.push(wrapped);
-                        }
+                        plotAxisMeasures.push(wrapped);
                     }
                 }
             }, this);
@@ -1005,11 +956,7 @@ Ext.define('Connector.model.Filter', {
                 var measure = queryService.getMeasure(alias);
                 if (measure)
                 {
-                    xMeasures.push({
-                        measure: measure,
-                        filterArray: filters
-                    });
-                    yMeasures.push({
+                    plotAxisMeasures.push({
                         measure: measure,
                         filterArray: filters
                     });
@@ -1023,8 +970,7 @@ Ext.define('Connector.model.Filter', {
 
         this._set({
             dataFilter: dataFilterMap,
-            xMeasures: xMeasures,
-            yMeasures: yMeasures
+            plotAxisMeasures: plotAxisMeasures
         });
     },
 
