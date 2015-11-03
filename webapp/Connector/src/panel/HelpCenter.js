@@ -166,7 +166,7 @@ Ext.define('Connector.panel.HelpCenter', {
                 q: query,
                 scope: 'FolderAndSubfolders',
                 includeHelpLink: false,
-                category: 'Wiki'  // this parameter is not yet respected by the api, will manually filter result as of now
+                category: 'Wiki'
             },
             success: function(response) {
                 var json = Ext.decode(response.responseText);
@@ -191,24 +191,24 @@ Ext.define('Connector.panel.HelpCenter', {
     getSearchTemplate: function (json) {
         var template = '<div>';
         if (!json || !json.hits || json.hits.length <= 0) {
-            template += '<p>0 results</p></div>';
+            template += '<p style="color: #969696;" class="searchresult">0 results</p></div>';
             return template;
         }
         var hits = json.hits;
-        var validCount = 0; //the search.json api doesn't respect category parameter, need to manually filter result.
+        var validCount = 0; //results other than wiki are returned (such as attachments in wiki), need to manually filter.
         for (var i = 0; i < hits.length; i++) {
             var hit = hits[i];
-            if (hit.id && hit.id.indexOf('wiki') == 0) {
+            if (hit.id && hit.id.indexOf('wiki') === 0) {
                 validCount++;
             }
         }
 
-        template = '<p>' + validCount + ' results</p>';
+        template = '<p style="color: #969696;" class="searchresult">' + validCount + ' results</p>';
 
         for (var i = 0; i < hits.length; i++) {
             var hit = hits[i];
-            if (hit.id && hit.id.indexOf('wiki') == 0) {
-                template += '<p><a href="' + hit.url + '">' + hit.title + '</a></p>';
+            if (hit.id && hit.id.indexOf('wiki') === 0) {
+                template += '<p class="searchresult"><a href="' + hit.url + '">' + hit.title + '</a></p>';
             }
         }
 
@@ -295,8 +295,8 @@ Ext.define('Connector.panel.HelpCenter', {
             return '';
         }
         var template = '<div>';
-        template += '<p><span style="font-size: 13px;font-weight: 500">The help center will have answers to FQA, ';
-        template += 'How to articles and videos added regularly. Below is a few articles to help get you started.</span></p>';
+        //template += '<p><span style="font-size: 13px;font-weight: 500">The help center will have answers to FQA, ';
+        //template += 'How to articles and videos added regularly. Below is a few articles to help get you started.</span></p>';
         template += '<table>';
         template += '<tbody>';
         template += '<tr valign="top">';
@@ -325,11 +325,11 @@ Ext.define('Connector.panel.HelpCenter', {
         if (!category.children) {
             return template;
         }
-        for (var i = 0; i < category.children.length && i < 3; i++) {
+        for (var i = 0; i < category.children.length && i < 4; i++) {
             var child = category.children[i];
             template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';
         }
-        if (category.children.length > 3) {
+        if (category.children.length > 4) {
             template += '<p><a style="color: mediumorchid" href="' + category.href + '">' + 'See all' + '</a></p>';
         }
         return template;

@@ -799,7 +799,6 @@ div.hopscotch-bubble {
 }
 
 .helpcenter-panel {
-  // background-color: $heat-scale-6;
   .header {
     padding: 14px 18px 14px 9px;
     height: 60px !important;
@@ -841,7 +840,7 @@ div.hopscotch-bubble {
     .helpcenter-search-input {
       clear: both;
       position: absolute !important;
-      top: 0px !important;
+      top: 0 !important;
       width: 66%;
       tbody,
       tr,
@@ -866,8 +865,8 @@ div.hopscotch-bubble {
   }
 
   p {
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
   }
 
   h3 {
@@ -896,13 +895,16 @@ div.hopscotch-bubble {
     padding: 10px 20px 10px 10px;
     height: 532px !important;
     .x-scroll-bar-y {
-      width: 0px; /*CHANGE: replace width: 6px;*/
+      width: 0; /*CHANGE: replace width: 6px;*/
     }
     overflow-y: auto;
     background-color: $heat-scale-6;
     .x-form-focus {
       border-color: $gray-4!important;
       color: $black;
+    }
+    p.searchresult {
+      border-bottom: thin solid #D1D2D4; padding-bottom: 15px;
     }
   }
 
