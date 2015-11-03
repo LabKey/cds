@@ -33,6 +33,9 @@ Ext.define('Connector.model.ChartData', {
     constructor : function(config) {
         this.callParent([config]);
 
+        // URL option to show gutter plots that are hidden because of 1D or 2D plot selection filter
+        this.SHOW_GUTTER_PLOTS = Ext.isDefined(LABKEY.ActionURL.getParameters()['showGutters']);
+
         this.processMeasureStore();
     },
 
@@ -399,14 +402,14 @@ Ext.define('Connector.model.ChartData', {
             }
             else if (xVal == null)
             {
-                if (!Ext.isDefined(this.hasPlotSelectionFilter().x))
+                if (this.SHOW_GUTTER_PLOTS || !Ext.isDefined(this.hasPlotSelectionFilter().x))
                 {
                     undefinedXRows.push(entry);
                 }
             }
             else if (xa.isContinuous && yVal == null)
             {
-                if (!Ext.isDefined(this.hasPlotSelectionFilter().y))
+                if (this.SHOW_GUTTER_PLOTS || !Ext.isDefined(this.hasPlotSelectionFilter().y))
                 {
                     undefinedYRows.push(entry);
                 }

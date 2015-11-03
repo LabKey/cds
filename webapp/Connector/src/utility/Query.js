@@ -440,14 +440,6 @@ Ext.define('Connector.utility.Query', {
             schemaName: rootTable.schemaName
         };
 
-        // Issue 24728: always include the ParticipantSequenceNum column in the intersect SQL case as well
-        SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS + '" @title=\'Participant Sequence Num\'');
-        columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
-            name: 'ParticipantSequenceNum',
-            queryName: rootTable.displayName,
-            schemaName: rootTable.schemaName
-        };
-
         if (!options.subjectOnly)
         {
             if (hasMultiple)
@@ -460,6 +452,13 @@ Ext.define('Connector.utility.Query', {
             SELECT.push(sep + rootTable.tableAlias + '.sequencenum AS "' + this.SEQUENCENUM_ALIAS + '" @title=\'Sequence Num\'');
             columnAliasMap[this.SEQUENCENUM_ALIAS] = {
                 name: 'SequenceNum',
+                queryName: rootTable.displayName,
+                schemaName: rootTable.schemaName
+            };
+
+            SELECT.push(sep + rootTable.tableAlias + '.participantsequencenum AS "' + this.SUBJECT_SEQNUM_ALIAS + '" @title=\'Participant Sequence Num\'');
+            columnAliasMap[this.SUBJECT_SEQNUM_ALIAS] = {
+                name: 'ParticipantSequenceNum',
                 queryName: rootTable.displayName,
                 schemaName: rootTable.schemaName
             };
