@@ -2795,7 +2795,7 @@ Ext.define('Connector.view.Chart', {
         {
             if (Ext.isDefined(this.yAxisSelector))
             {
-                axisSelector = this.getYSelector();
+                axisSelector = this.getYAxisSelector();
             }
         }
         else if (axis == 'x')
