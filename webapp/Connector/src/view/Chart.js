@@ -1457,9 +1457,8 @@ Ext.define('Connector.view.Chart', {
             return;
         }
 
-        // Skip adding a selection for the 'undefined' box plot click.
-        // If someone finds a scenario that this filter actually is meaningful, feel free to remove this.
-        if (target == ChartUtils.emptyTxt)
+        // Skip adding a selection for the 'undefined' box plot click for non-demographic variables.
+        if (target == ChartUtils.emptyTxt && this.activeMeasures.x && !this.activeMeasures.x.isDemographic)
         {
             return;
         }
