@@ -520,13 +520,14 @@ Ext.define('Connector.model.Filter', {
 
                 if (measure)
                 {
-                    measureMap[measure.alias] = {
-                        measure: Ext.clone(measure),
-                        filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
-                    };
-
+                    // index 0 => x-axis plot measure
                     if (i == 0)
                     {
+                        measureMap[measure.alias] = {
+                            measure: Ext.clone(measure),
+                            filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
+                        };
+
                         if (!xSource)
                         {
                             xSource = measure.schemaName + '|' + measure.queryName;
@@ -536,13 +537,27 @@ Ext.define('Connector.model.Filter', {
                             filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
                         };
                     }
+                    // index 1 => y-axis plot measure
                     else if (i == 1)
                     {
+                        measureMap[measure.alias] = {
+                            measure: Ext.clone(measure),
+                            filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
+                        };
+
                         if (!ySource)
                         {
                             ySource = measure.schemaName + '|' + measure.queryName;
                         }
                         yMeasureMap[measure.alias] = {
+                            measure: Ext.clone(measure),
+                            filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
+                        };
+                    }
+                    // index 2 => color plot measure
+                    else if (i == 2 && ChartUtils.hasValidColorMeasure(this.get('plotMeasures')))
+                    {
+                        measureMap[measure.alias] = {
                             measure: Ext.clone(measure),
                             filterArray: Ext.isArray(plotMeasure.filterArray) ? plotMeasure.filterArray : []
                         };

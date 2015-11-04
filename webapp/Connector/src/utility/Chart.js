@@ -513,5 +513,30 @@ Ext.define('Connector.utility.Chart', {
         }, this);
 
         return dimAliases;
+    },
+
+    // Issue 23885: Do not include the color measure in request if it's not from the x, y, or demographic datasets
+    hasValidColorMeasure : function(activeMeasures)
+    {
+        var plotMeasures = activeMeasures;
+        if (Ext.isArray(activeMeasures) && activeMeasures.length == 3)
+        {
+            plotMeasures = {
+                x: activeMeasures[0] != null ? activeMeasures[0].measure : null,
+                y: activeMeasures[1] != null ? activeMeasures[1].measure : null,
+                color: activeMeasures[2] != null ? activeMeasures[2].measure : null
+            };
+        }
+
+        if (Ext.isObject(plotMeasures.color))
+        {
+            var demographicSource = plotMeasures.color.isDemographic,
+                matchXSource = Ext.isObject(plotMeasures.x) && plotMeasures.x.queryName == plotMeasures.color.queryName,
+                matchYSource = Ext.isObject(plotMeasures.y) && plotMeasures.y.queryName == plotMeasures.color.queryName;
+
+            return demographicSource || matchXSource || matchYSource;
+        }
+
+        return false;
     }
 });

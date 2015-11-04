@@ -2402,17 +2402,9 @@ Ext.define('Connector.view.Chart', {
     {
         Connector.getFilterService().getSubjects(function(subjectFilter)
         {
-            // 23885: Do not include the color measure in request if it's not from the x, y, or demographic datasets
-            if (activeMeasures.color)
+            if (!ChartUtils.hasValidColorMeasure(activeMeasures))
             {
-                var demographicSource = activeMeasures.color.isDemographic,
-                    matchXSource = activeMeasures.x && activeMeasures.x.queryName == activeMeasures.color.queryName,
-                    matchYSource = activeMeasures.y && activeMeasures.y.queryName == activeMeasures.color.queryName;
-
-                if (!demographicSource && !matchXSource && !matchYSource)
-                {
-                    activeMeasures.color = null;
-                }
+                activeMeasures.color = null;
             }
 
             var measureSet = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */);
