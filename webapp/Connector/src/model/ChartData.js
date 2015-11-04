@@ -154,7 +154,7 @@ Ext.define('Connector.model.ChartData', {
         return measure.alias;
     },
 
-    getDimensionKeys : function(x, y, excludeAliases, nonAggregated)
+    getDimensionKeys : function(x, y, color, excludeAliases, nonAggregated)
     {
         var measureSet = this.getMeasureSet(),
             dimensionKeys = [],
@@ -192,6 +192,12 @@ Ext.define('Connector.model.ChartData', {
         if (nonAggregated)
         {
             dimensionKeys.push('_rowIndex');
+        }
+
+        // If we use shared keys, we want to tack on the demographic color alias so that it is applied as expected to the gutter plots
+        if (color.alias != null && color.isDemographic)
+        {
+            sharedKeys.push(color.alias);
         }
 
         // use sharedKeys when we have the possibility of aggregation (see rules from nonAggregated)
@@ -246,7 +252,8 @@ Ext.define('Connector.model.ChartData', {
                 alias  : color.alias,
                 colName: _cid, // Stash colName so we can query the getData temp table in the brushend handler.
                 label  : color.label,
-                type   : color.type
+                type   : color.type,
+                isDemographic: color.isDemographic
             };
         }
 
@@ -288,7 +295,6 @@ Ext.define('Connector.model.ChartData', {
         }
 
         // if there is a DATASET_ALIAS column from the axisName property, use it to filter
-        // TODO issue with demographic color variable not applied to both gutter plots
         if (this.hasDatasetAliasColumn())
         {
             xMeasureFilter[QueryUtils.DATASET_ALIAS] = ChartUtils.xAxisNameProp;
@@ -328,7 +334,7 @@ Ext.define('Connector.model.ChartData', {
             || x.variableType === 'TIME' // #3
             || (this.isSameSource(xa, ya) && ChartUtils.getAssayDimensionsWithDifferentValues(y, x).length == 0); //#4
 
-        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, excludeAliases, nonAggregated));
+        dataRows = axisMeasureStore.select(this.getDimensionKeys(xa, ya, ca, excludeAliases, nonAggregated));
 
         // process each row and separate those destined for the gutter plot (i.e. undefined x value or undefined y value)
         for (var r = 0; r < dataRows.length; r++)

@@ -1450,6 +1450,11 @@ Ext.define('Connector.view.Chart', {
         if(this.selectionInProgress != null)
             return;
 
+        // Skip adding a selection for the 'undefined' box plot click.
+        // If someone finds a scenario that this filter actually is meaningful, feel free to remove this.
+        if (target == ChartUtils.emptyTxt)
+            return;
+
         this.selectionInProgress = target;
 
         // node is needed for animation
@@ -2806,6 +2811,7 @@ Ext.define('Connector.view.Chart', {
     getYAxisSelector : function() {
         if (!this.yAxisSelector) {
             this.yAxisSelector = Ext.create('Connector.panel.Selector', {
+                plotAxis: 'y',
                 headerTitle: 'y-axis',
                 testCls: 'y-axis-selector',
                 activeMeasure: this.activeYSelection,
@@ -2852,6 +2858,7 @@ Ext.define('Connector.view.Chart', {
     getXAxisSelector : function() {
         if (!this.xAxisSelector) {
             this.xAxisSelector = Ext.create('Connector.panel.Selector', {
+                plotAxis: 'x',
                 headerTitle: 'x-axis',
                 testCls: 'x-axis-selector',
                 activeMeasure: this.activeXSelection,

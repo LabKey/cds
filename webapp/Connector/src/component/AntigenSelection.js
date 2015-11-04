@@ -25,6 +25,7 @@ Ext.define('Connector.panel.AntigenSelection', {
             this.hierarchyMeasures[this.hierarchyMeasures.length - 1],
             this.measureSetStore.measureSet,
             this.filterOptionValues,
+            this.plotAxis,
             this.loadDistinctValuesStore,
             this
         );

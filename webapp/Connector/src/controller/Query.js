@@ -399,7 +399,7 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
+    getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
         var subjectMeasure,
             state = Connector.getState(),
             wrappedMeasureSet = [],
@@ -424,7 +424,7 @@ Ext.define('Connector.controller.Query', {
                         level: '[Subject].[Subject]',
                         members: 'members'
                     },
-                    countFilter: Connector.getQueryService().configureOlapFilters(mdx, state.getFilters(), state.subjectName, true),
+                    countFilter: Connector.getQueryService().configureOlapFilters(mdx, state.getFilters(), state.subjectName, plotAxis),
                     scope: this,
                     success: function(cellset)
                     {
@@ -482,10 +482,10 @@ Ext.define('Connector.controller.Query', {
      * @param {Object} [scope]
      * @returns {Object}
      */
-    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, callback, scope) {
+    getMeasureValueSubjectCount : function(dimension, measureSet, filterValuesMap, plotAxis, callback, scope) {
 
         // get the temp query information from the cds getData API call for the measureSet with the application filters added in
-        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, function(response) {
+        this.getMeasureSetGetDataResponse(dimension, measureSet, filterValuesMap, plotAxis, function(response) {
             var alias = dimension.getFilterMeasure().get('alias'), sql;
 
             // SQL to get the subject count for each value of the filter measure
@@ -650,7 +650,7 @@ Ext.define('Connector.controller.Query', {
      * @param {boolean} [excludeInThePlot=false] - exclude the "in the plot" filter from the query
      * @returns {Array}
      */
-    configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlot)
+    configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlotAxis)
     {
         var olapFilters = [],
             measures = [];
@@ -665,14 +665,18 @@ Ext.define('Connector.controller.Query', {
                 if (filter.isPlot())
                 {
                     // plot selection or "in the plot"
-                    if (filter.isGrid() || excludeInThePlot !== true)
+
+                    if (excludeInThePlotAxis !== 'x')
                     {
-                        Ext.each(filter.getMeasureSet('x'), function(filter)
+                        Ext.each(filter.getMeasureSet('x'), function (filter)
                         {
                             filter.measure.axisName = axisId;
                             measures.push(filter);
                         });
+                    }
 
+                    if (excludeInThePlotAxis !== 'y')
+                    {
                         axisId = Ext.id(undefined, 'axis-');
                         Ext.each(filter.getMeasureSet('y'), function(filter)
                         {

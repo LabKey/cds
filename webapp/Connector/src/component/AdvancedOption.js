@@ -177,14 +177,21 @@ Ext.define('Connector.component.AdvancedOptionBase', {
         this.fireEvent('click', this, this.isHierarchical);
     },
 
-    showDropdownPanel : function(filterOptionValues) {
+    showDropdownPanel : function(filterOptionValues, plotAxis) {
         var dropdownPanel = this.getDropdownPanel(),
             displayEl = this.getDisplayField().getEl(),
             displayLabelEl, displayValueEl, pos;
 
         if (dropdownPanel != null) {
             if (Ext.isDefined(filterOptionValues)) {
-                Connector.getService('Query').getMeasureValueSubjectCount(this.dimension, this.store.measureSet, filterOptionValues, this.loadValueSubjectCounts, this);
+                Connector.getService('Query').getMeasureValueSubjectCount(
+                    this.dimension,
+                    this.store.measureSet,
+                    filterOptionValues,
+                    plotAxis,
+                    this.loadValueSubjectCounts,
+                    this
+                );
             }
 
             displayLabelEl = displayEl.down('.field-label');

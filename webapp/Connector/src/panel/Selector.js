@@ -667,6 +667,7 @@ Ext.define('Connector.panel.Selector', {
         this.getHierarchySelectionPane().removeAll();
 
         var antigenSelectionPanel = Ext.create('Connector.panel.AntigenSelection', {
+            plotAxis: this.plotAxis,
             dimension: advancedOptionCmp.dimension,
             initSelection: advancedOptionCmp.value,
             measureSetStore: this.measureSetStore,
@@ -920,7 +921,7 @@ Ext.define('Connector.panel.Selector', {
                         });
                     }
                     else {
-                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension));
+                        cmp.showDropdownPanel(this.getFilterValuesMap(dimension), this.plotAxis);
                     }
                 },
                 change: function(cmp) {
