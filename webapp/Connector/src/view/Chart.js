@@ -1024,7 +1024,7 @@ Ext.define('Connector.view.Chart', {
         this.logRowCount(allDataRows);
 
         this.showPointsAsBin = allDataRows ? allDataRows.totalCount > this.binRowLimit : false;
-        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : (allDataRows.totalCount > 1000 ? 30 : 0);
+        ChartUtils.BRUSH_DELAY = this.showPointsAsBin ? 0 : ChartUtils.calculateDelay(allDataRows.totalCount);
         this.toggleHeatmapMode();
 
         this.showAsMedian = chartData instanceof Connector.model.ChartData ? chartData.usesMedian() : false;
@@ -1443,7 +1443,7 @@ Ext.define('Connector.view.Chart', {
             }
             if (allDataRows && allDataRows.invalidLogPlotRowCount > 0)
             {
-                console.log('not plotted log rows: ', allDataRows.invalidLogPlotRowCount);
+                console.log('not plotted log rows:', allDataRows.invalidLogPlotRowCount);
             }
         }
     },

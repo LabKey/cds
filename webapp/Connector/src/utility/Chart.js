@@ -82,6 +82,35 @@ Ext.define('Connector.utility.Chart', {
         };
     },
 
+    /**
+     * Uses linear equation to determine delay based on the totalPoints
+     * @param totalPoints
+     * @returns {number}
+     */
+    calculateDelay : function(totalPoints)
+    {
+        var minPoints = 1000,
+            maxPoints = 5000,
+            minDelay = 30,
+            maxDelay = 80,
+            brushDelay = 0;
+
+        if (totalPoints >= minPoints)
+        {
+            var m = (maxDelay - minDelay) / (maxPoints - minPoints),
+                b = maxDelay - (m * maxPoints);
+
+            brushDelay = Math.ceil((m * totalPoints) + b);
+        }
+
+        if (LABKEY.devMode)
+        {
+            console.log('brush delay:', brushDelay, 'ms');
+        }
+
+        return brushDelay;
+    },
+
     brushBins : function(event, layerData, extent, plot) {
         var min, max,
             subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
@@ -266,11 +295,14 @@ Ext.define('Connector.utility.Chart', {
         this.brushedSubjects = subjects;
     },
 
-    brushPoints : function(event, layerData, extent) {
-        if (ChartUtils.BRUSH_DELAY) {
+    brushPoints : function(event, layerData, extent)
+    {
+        if (ChartUtils.BRUSH_DELAY)
+        {
             ChartUtils.brushDelayTask.delay(ChartUtils.BRUSH_DELAY, undefined /* newFn */, this, [extent]);
         }
-        else {
+        else
+        {
             ChartUtils._onBrush.call(this, extent);
         }
     },
