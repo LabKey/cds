@@ -1318,7 +1318,7 @@ Ext.define('Connector.view.Chart', {
         var me = this;
         var gutterXLabels = {
             y: {
-                value: 'Undefined y value',
+                value: 'Undefined Y value',
                 fontSize: 11,
                 position: 8,
                 rotate: 0,
@@ -1375,7 +1375,7 @@ Ext.define('Connector.view.Chart', {
         var me = this;
         var gutterYLabels = {
             x: {
-                value: 'Undefined x value',
+                value: 'Undefined X value',
                 fontSize: 11,
                 position: 45,
                 cls: 'yGutter-label',
@@ -2461,8 +2461,8 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth: 325,
             target: document.querySelector("svg g text.xGutter-label"),
             placement: 'top',
-            title: 'Percent with undefined y value: ' + percent + '%',
-            content: 'Data points may have no matching y value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
+            title: 'Percent with undefined Y value: ' + percent + '%',
+            content: 'Data points may have no matching Y value due to differing visits, antigens, or assay dimensions. See Help for more details.',
             xOffset: -20
         }, 'hideguttermsg', this);
     },
@@ -2475,8 +2475,8 @@ Ext.define('Connector.view.Chart', {
             bubbleWidth: 325,
             target: document.querySelector("svg g text.yGutter-label"),
             placement: 'right',
-            title: 'Percent with undefined x value: ' + percent + '%',
-            content: 'Data points may have no matching x value due to differing subject, visit, assay, antigen, analyte, and other factors. See Help for more details',
+            title: 'Percent with undefined X value: ' + percent + '%',
+            content: 'Data points may have no matching X value due to differing visits, antigens, or assay dimensions. See Help for more details.',
             yOffset: -40,
             arrowOffset: 30
         }, 'hideguttermsg', this);
