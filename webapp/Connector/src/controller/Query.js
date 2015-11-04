@@ -647,7 +647,7 @@ Ext.define('Connector.controller.Query', {
      * @param {LABKEY.query.olap.MDX} mdx - The object which will be added as a COUNT/WHERE filter.
      * @param {Connector.model.Filter} filters - or an appFilterData
      * @param {String} subjectName - or an appFilterData
-     * @param {boolean} [excludeInThePlot=false] - exclude the "in the plot" filter from the query
+     * @param {boolean} [excludeInThePlotAxis=undefined] - exclude the "in the plot" filter for the query from a specific axis
      * @returns {Array}
      */
     configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlotAxis)
@@ -668,7 +668,7 @@ Ext.define('Connector.controller.Query', {
 
                     if (excludeInThePlotAxis !== 'x')
                     {
-                        Ext.each(filter.getMeasureSet('x'), function (filter)
+                        Ext.each(filter.getMeasureSet('x'), function(filter)
                         {
                             filter.measure.axisName = axisId;
                             measures.push(filter);
