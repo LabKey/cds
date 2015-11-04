@@ -1226,7 +1226,6 @@ public class CDSTest extends CDSReadOnlyTest
 
         // save the group and request cancel
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
-        waitForText("Live: Update group with new data");
         waitForText("replace an existing group");
         setFormElement(Locator.name("groupname"), GROUP_NULL);
         click(CDSHelper.Locators.cdsButtonLocator("cancel", "cancelgroupsave"));

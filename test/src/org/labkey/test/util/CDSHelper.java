@@ -65,7 +65,7 @@ public class CDSHelper
             "ICS (Intracellular Cytokine Staining)",
             "IFNg ELISpot (IFNg ELISpot)", "NAB (HIV Neutralizing Antibody)"};
     public static final String[] LEARN_ABOUT_BAMA_ANALYTE_DATA = {"Assay Analytes", "Antigen name", "A1.con.env03 140", "C.1086C_V1_V2 Tags", "Specimen type", "Serum"};
-    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Subject Id", "Subject identifier"};
+    public static final String[] LEARN_ABOUT_BAMA_VARIABLES_DATA = {"Antigen clade", "The clade (gene subtype) to which", "Protein Panel", "The name of the panel of proteins"};
     public static final String[] LEARN_ABOUT_BAMA_ANTIGEN_DATA = {"A1.con.env03 140 CF", "p24"};
     public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"Any v503 Vaccine Matched Antigen", "POL: POL 1", "NEF: NEF 1", "GAG: GAG 1", "Combined: NA"};
 //    public static final String[] LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA = {"POL: POL 1, POL 2", "NEF: NEF 1, NEF 2", "GAG: GAG 1, GAG 2", "Combined: NA"};
@@ -868,7 +868,7 @@ public class CDSHelper
         }
         else
         {
-            _test.setFormElement(Locator.xpath("//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input"), " ");
+            _test.setFormElement(Locator.xpath("//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input"), "false");
         }
         _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
         _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
