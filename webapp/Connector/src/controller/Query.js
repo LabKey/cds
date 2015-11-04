@@ -400,23 +400,31 @@ Ext.define('Connector.controller.Query', {
      * @returns {Object}
      */
     getMeasureSetGetDataResponse : function(dimension, measureSet, filterValuesMap, callback, scope) {
-        var subjectMeasure, wrappedMeasureSet = [], aliases = [],
-            measureData, filterMeasures, index, filterMeasureRecord, alias,
-            dimQueryKey = dimension.get('schemaName') + '|' + dimension.get('queryName');
+        var subjectMeasure,
+            state = Connector.getState(),
+            wrappedMeasureSet = [],
+            aliases = [],
+            measureData,
+            alias;
 
         if (Ext.isDefined(measureSet))
         {
-            if (!Ext.isArray(measureSet)) {
+            if (!Ext.isArray(measureSet))
+            {
                 measureSet = [measureSet];
             }
 
             // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
             // so that we can filter the advanced option values accordingly
             // (i.e. for antigen selection in variable selector, get subject count for all filters except the antigen selection itself)
-            Connector.getState().onMDXReady(function(mdx) {
+            state.onMDXReady(function(mdx)
+            {
                 mdx.query({
-                    onRows: {level: "[Subject].[Subject]", members:"members"},
-                    countFilter: Connector.getQueryService().configureOlapFilters(mdx, Connector.getState().getFilters(), 'Subject', true),
+                    onRows: {
+                        level: '[Subject].[Subject]',
+                        members: 'members'
+                    },
+                    countFilter: Connector.getQueryService().configureOlapFilters(mdx, state.getFilters(), state.subjectName, true),
                     scope: this,
                     success: function(cellset)
                     {
@@ -428,14 +436,16 @@ Ext.define('Connector.controller.Query', {
                         });
 
                         subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
-                        subjectMeasure.values = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions),'name');
+                        subjectMeasure.values = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions), 'name');
 
                         aliases.push(Connector.studyContext.subjectColumn);
                         wrappedMeasureSet.push({measure: subjectMeasure});
 
-                        Ext.each(measureSet, function(measure) {
+                        Ext.each(measureSet, function(measure)
+                        {
                             measureData = Ext.clone(measure.data);
-                            if (Ext.isArray(filterValuesMap[measure.get('alias')])) {
+                            if (Ext.isArray(filterValuesMap[measure.get('alias')]))
+                            {
                                 measureData.values = filterValuesMap[measure.get('alias')];
                             }
 
@@ -447,8 +457,10 @@ Ext.define('Connector.controller.Query', {
                             measures: wrappedMeasureSet,
                             metaDataOnly: true,
                             scope: this,
-                            success: function(response) {
-                                if (Ext.isFunction(callback)) {
+                            success: function(response)
+                            {
+                                if (Ext.isFunction(callback))
+                                {
                                     callback.call(scope || this, response);
                                 }
                             }
@@ -632,9 +644,10 @@ Ext.define('Connector.controller.Query', {
 
     /**
      * Get a LABKEY.Query.Visualization.getData configuration back based on the LABKEY.app.model.Filter given.
-     * @param mdx The object which will be added as a COUNT/WHERE filter.
-     * @param filters {Connector.model.Filter} or an appFilterData
-     * @param subjectName {String} or an appFilterData
+     * @param {LABKEY.query.olap.MDX} mdx - The object which will be added as a COUNT/WHERE filter.
+     * @param {Connector.model.Filter} filters - or an appFilterData
+     * @param {String} subjectName - or an appFilterData
+     * @param {boolean} [excludeInThePlot=false] - exclude the "in the plot" filter from the query
      * @returns {Array}
      */
     configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlot)
@@ -651,9 +664,9 @@ Ext.define('Connector.controller.Query', {
             {
                 if (filter.isPlot())
                 {
-                    if (filter.isGrid())
+                    // plot selection or "in the plot"
+                    if (filter.isGrid() || excludeInThePlot !== true)
                     {
-                        // plot selection
                         Ext.each(filter.getMeasureSet('x'), function(filter)
                         {
                             filter.measure.axisName = axisId;
@@ -662,15 +675,6 @@ Ext.define('Connector.controller.Query', {
 
                         axisId = Ext.id(undefined, 'axis-');
                         Ext.each(filter.getMeasureSet('y'), function(filter)
-                        {
-                            filter.measure.axisName = axisId;
-                            measures.push(filter);
-                        });
-                    }
-                    else if (excludeInThePlot !== true)
-                    {
-                        // in the plot
-                        Ext.each(filter.getMeasureSet(), function(filter)
                         {
                             filter.measure.axisName = axisId;
                             measures.push(filter);
