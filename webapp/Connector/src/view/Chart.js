@@ -2277,12 +2277,6 @@ Ext.define('Connector.view.Chart', {
             wrappedMeasure.filterArray = [LABKEY.Filter.create(measure.alias, null, LABKEY.Filter.Types.NOT_MISSING)];
         }
 
-        // we still respect the value if it is set explicitly on the measure
-        if (!Ext.isDefined(wrappedMeasure.measure.inNotNullSet))
-        {
-            wrappedMeasure.measure.inNotNullSet = Connector.model.ChartData.isContinuousMeasure(measure);
-        }
-
         return wrappedMeasure;
     },
 
