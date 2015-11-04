@@ -80,6 +80,11 @@ Ext.define('Connector.view.Chart', {
         }
 
         Ext.apply(config, {
+            activeMeasures: {
+                x: null,
+                y: null,
+                color: null
+            },
             isActiveView: true,
             refreshRequired: true,
             initialized: false
@@ -792,7 +797,7 @@ Ext.define('Connector.view.Chart', {
 
     getGutterPlotConfig : function(aes, scales)
     {
-        if (this.getActiveMeasures().color)
+        if (this.activeMeasures.color)
         {
             aes.color = function(row) {return row.color};
             aes.shape = function(row) {return row.color};
@@ -842,7 +847,7 @@ Ext.define('Connector.view.Chart', {
                 {
                     // Issue 24395: Fill out domain for brushing if no data in main plot and one gutter plot.
                     domain = chartData.getXDomain(studyAxisInfo);
-                    if(this.requireYGutter && domain[0] == null && domain[1] == null)
+                    if (this.requireYGutter && domain[0] == null && domain[1] == null)
                     {
                         domain = [0,1];
                     }
@@ -913,7 +918,7 @@ Ext.define('Connector.view.Chart', {
                 domain: domain
             };
 
-            if (this.getActiveMeasures().color)
+            if (this.activeMeasures.color)
             {
                 scales.color = {
                     scaleType: 'discrete',
@@ -936,7 +941,7 @@ Ext.define('Connector.view.Chart', {
             yLeft: function(row) {return row.y}
         };
 
-        if (this.getActiveMeasures().color)
+        if (this.activeMeasures.color)
         {
             aes.color = function(row) {return row.color};
             aes.shape = function(row) {return row.color};
@@ -1080,7 +1085,7 @@ Ext.define('Connector.view.Chart', {
             }
 
             // If using color variables sync color and shape with yGutter plot if it exists
-            if (this.getActiveMeasures().color)
+            if (this.activeMeasures.color)
             {
                 var plotLayer = this.yGutterPlot.layers[0];
                 if (Ext.isDefined(plotLayer.geom.colorScale)) {
@@ -1102,7 +1107,7 @@ Ext.define('Connector.view.Chart', {
                 this.hidePlotMsg();
                 this.plot.render();
 
-                if (!noplot && this.getActiveMeasures().color)
+                if (!noplot && this.activeMeasures.color)
                 {
                     this.getColorSelector().setLegend(this.plot.getLegendData());
                 }
@@ -1122,7 +1127,7 @@ Ext.define('Connector.view.Chart', {
         if (!noplot && this.requireXGutter) {
 
             // If using color variables sync color and shape with yGutter plot if it exists
-            if (this.getActiveMeasures().color && this.plot)
+            if (this.activeMeasures.color && this.plot)
             {
                 var plotLayer = this.plot.layers[0];
                 if (Ext.isDefined(plotLayer.geom.colorScale)) {
@@ -1266,7 +1271,7 @@ Ext.define('Connector.view.Chart', {
             dimension: _dimension,
             brushstart: Ext.bind(ChartUtils.brushStart, this, [layerScope, dimension]),
             brush: Ext.bind(brushFn, this),
-            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.getActiveMeasures(), properties, dimension], true),
+            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.activeMeasures, properties, dimension], true),
             brushclear: Ext.bind(ChartUtils.brushClear, this, [layerScope, dimension])
         };
     },
@@ -1447,13 +1452,17 @@ Ext.define('Connector.view.Chart', {
         var multi = e.ctrlKey||e.shiftKey||e.metaKey, nodes, node = null;
 
         // If a selection in progress have to wait until done
-        if(this.selectionInProgress != null)
+        if (this.selectionInProgress != null)
+        {
             return;
+        }
 
         // Skip adding a selection for the 'undefined' box plot click.
         // If someone finds a scenario that this filter actually is meaningful, feel free to remove this.
         if (target == ChartUtils.emptyTxt)
+        {
             return;
+        }
 
         this.selectionInProgress = target;
 
@@ -1466,7 +1475,14 @@ Ext.define('Connector.view.Chart', {
                 }
             });
 
-            this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.getActiveMeasures().x.alias, target, multi]);
+            if (this.activeMeasures.x)
+            {
+                this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.activeMeasures.x.alias, target, multi]);
+            }
+            else
+            {
+                console.warn('xAxisClick() occurred without a valid activeMeasures.x');
+            }
 
             this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         }
@@ -1925,11 +1941,11 @@ Ext.define('Connector.view.Chart', {
         {
             if (selection.gridFilter[0] || selection.gridFilter[1])
             {
-                selection.plotMeasures[0] = this._getAxisWrappedMeasure(this.activeXSelection);
+                selection.plotMeasures[0] = this._getAxisWrappedMeasure(this.activeMeasures.x);
                 var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
 
                 // Create a 'time filter'
-                if (this.activeXSelection.variableType === 'TIME')
+                if (this.activeMeasures.x.variableType === 'TIME')
                 {
                     Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
                     {
@@ -1956,7 +1972,7 @@ Ext.define('Connector.view.Chart', {
         {
             if (selection.gridFilter[2] || selection.gridFilter[3])
             {
-                selection.plotMeasures[1] = this._getAxisWrappedMeasure(this.activeYSelection);
+                selection.plotMeasures[1] = this._getAxisWrappedMeasure(this.activeMeasures.y);
             }
 
             callback.call(scope, selection);
@@ -1999,7 +2015,8 @@ Ext.define('Connector.view.Chart', {
         this.selectionInProgress = null;
         this.highlightLabels(this.plot, this.getCategoricalSelectionValues(), this.labelTextHltColor, this.labelBkgdHltColor, false);
 
-        if(this.mouseOverInProgress != null) {
+        if (this.mouseOverInProgress != null)
+        {
             this.highlightLabels(this.plot, [this.mouseOverInProgress], this.labelTextColor, this.labelBkgdHltColor, false);
             this.highlightPlotData(this.mouseOverInProgress);
             this.mouseOverInProgress = null;
@@ -2010,11 +2027,13 @@ Ext.define('Connector.view.Chart', {
     getScale : function(axis) {
         var scale = 'linear';
 
-        if (axis == 'y' && this.activeYSelection) {
-            scale = this.getSelectedOptionScale(this.activeYSelection);
+        if (axis == 'y' && this.activeMeasures.y)
+        {
+            scale = this.getSelectedOptionScale(this.activeMeasures.y);
         }
-        else if (axis == 'x' && this.activeXSelection) {
-            scale = this.getSelectedOptionScale(this.activeXSelection);
+        else if (axis == 'x' && this.activeMeasures.x)
+        {
+            scale = this.getSelectedOptionScale(this.activeMeasures.x);
         }
 
         return scale.toLowerCase();
@@ -2046,68 +2065,53 @@ Ext.define('Connector.view.Chart', {
             x = plotMeasures[0],
             y = plotMeasures[1],
             color = plotMeasures[2],
-            hasMeasures = false,
-            activeMeasures = {
-                x: null,
-                y: null,
-                color: null
-            };
+            axisSelector,
+            hasMeasures = false;
 
         if (x)
         {
-            activeMeasures.x = x.measure;
             hasMeasures = true;
 
-            this.activeXSelection = activeMeasures.x;
-            this.getXSelector().getModel().updateVariable([this.activeXSelection]);
+            this.activeMeasures.x = x.measure;
+            this.getXSelector().getModel().updateVariable([this.activeMeasures.x]);
 
-            // Issue 24580: only update the variable selector if it has already been initialized
-            if (this.getAxisSelectorIfInitialized('x') != null)
+            axisSelector = this.getAxisSelectorIfInitialized('x');
+            if (axisSelector)
             {
-                this.getXAxisSelector().setActiveMeasure(this.activeXSelection);
+                axisSelector.setActiveMeasure(this.activeMeasures.x);
             }
         }
 
         if (y)
         {
-            activeMeasures.y = y.measure;
             hasMeasures = true;
 
-            this.activeYSelection = activeMeasures.y;
-            this.getYSelector().getModel().updateVariable([this.activeYSelection]);
+            this.activeMeasures.y = y.measure;
+            this.getYSelector().getModel().updateVariable([this.activeMeasures.y]);
 
-            // Issue 24580: only update the variable selector if it has already been initialized
-            if (this.getAxisSelectorIfInitialized('y') != null)
+            axisSelector = this.getAxisSelectorIfInitialized('y');
+            if (axisSelector)
             {
-                this.getYAxisSelector().setActiveMeasure(this.activeYSelection);
+                axisSelector.setActiveMeasure(this.activeMeasures.y);
             }
         }
 
         if (color)
         {
-            activeMeasures.color = color.measure;
             hasMeasures = true;
 
-            this.activeColorSelection = activeMeasures.color;
-            this.getColorSelector().getModel().updateVariable([this.activeColorSelection]);
+            console.log('setting color from filter');
+            this.activeMeasures.color = color.measure;
+            this.getColorSelector().getModel().updateVariable([this.activeMeasures.color]);
 
-            // Issue 24580: only update the variable selector if it has already been initialized
-            if (this.getAxisSelectorIfInitialized('color') != null)
+            axisSelector = this.getAxisSelectorIfInitialized('color');
+            if (axisSelector)
             {
-                this.getColorAxisSelector().setActiveMeasure(this.activeColorSelection);
+                axisSelector.setActiveMeasure(this.activeMeasures.color);
             }
         }
 
         return hasMeasures;
-    },
-
-    getActiveMeasures : function()
-    {
-        return {
-            x: this.activeXSelection ? this.activeXSelection : null,
-            y: this.activeYSelection ? this.activeYSelection : null,
-            color: this.activeColorSelection ? this.activeColorSelection : null
-        };
     },
 
     clearPlotSelections : function() {
@@ -2120,23 +2124,23 @@ Ext.define('Connector.view.Chart', {
     {
         if (axis == 'y')
         {
-            this.activeYSelection = undefined;
+            this.activeMeasures.y = null;
             this.getYSelector().clearModel();
         }
         else if (axis == 'x')
         {
-            this.activeXSelection = undefined;
+            this.activeMeasures.x = null;
             this.getXSelector().clearModel();
         }
         else if (axis == 'color')
         {
-            this.activeColorSelection = undefined;
+            this.activeMeasures.color = null;
             this.getColorSelector().clearModel();
         }
 
         // Issue 24580: only update the variable selector if it has already been initialized
         var axisSelector = this.getAxisSelectorIfInitialized(axis);
-        if (axisSelector != null)
+        if (axisSelector)
         {
             axisSelector.clearSelection();
         }
@@ -2158,23 +2162,21 @@ Ext.define('Connector.view.Chart', {
                 this.clearPlotSelections();
             }
 
-            var activeMeasures = this.getActiveMeasures();
+            if (this.activeMeasures.y)
+            {
+                this.fireEvent('showload', this);
 
-            if (activeMeasures.y == null)
+                this.requireStudyAxis = this.activeMeasures.x && this.activeMeasures.x.variableType === 'TIME';
+
+                this.requestChartData();
+            }
+            else
             {
                 this.hideMessage();
                 this.getStudyAxisPanel().setVisible(false);
                 Connector.getState().clearSelections(true);
                 this.filterClear = false;
                 this.noPlot(false);
-            }
-            else
-            {
-                this.fireEvent('showload', this);
-
-                this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === 'TIME';
-
-                this.requestChartData(activeMeasures);
             }
         }
     },
@@ -2214,9 +2216,10 @@ Ext.define('Connector.view.Chart', {
         }
     },
 
-    getWrappedMeasures : function(activeMeasures)
+    getWrappedMeasures : function()
     {
-        var xAxisNameProp = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
+        var activeMeasures = this.activeMeasures,
+            xAxisNameProp = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
             yAxisNameProp = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y);
 
         return [
@@ -2228,14 +2231,18 @@ Ext.define('Connector.view.Chart', {
 
     _getColorWrappedMeasure : function(activeMeasures)
     {
-        if (!activeMeasures.color)
+        var wrapped = null;
+
+        if (activeMeasures.color && ChartUtils.hasValidColorMeasure(activeMeasures))
         {
-            return null;
+            wrapped = {
+                measure: Ext.clone(activeMeasures.color)
+            };
+
+            this.setAxisNameMeasureProperty(wrapped.measure, activeMeasures.x, activeMeasures.y);
         }
 
-        var wrappedMeasure = {measure : Ext.clone(activeMeasures.color)};
-        this.setAxisNameMeasureProperty(wrappedMeasure.measure, activeMeasures.x, activeMeasures.y);
-        return wrappedMeasure;
+        return wrapped;
     },
 
     _getAxisWrappedMeasure : function(measure, axis)
@@ -2279,16 +2286,19 @@ Ext.define('Connector.view.Chart', {
     },
 
     /**
-     *
-     * @param activeMeasures Set of active measures (x, y, color)
-     * @param {boolean} [includeFilterMeasures=false] Include all measures declared in all state filters
-     * @returns {{measures: (*|Array), wrapped: *}}
+     * Returns a metadata object containing the measures, wrappedMeasures, and a hasPlotSelectionFilter object.
+     * The measures/wrappedMeasures are established from the current 'activeMeasures'. The hasPlotSelectionFilter
+     * object has a property for each axis (x/y) stating if that axis is being affected directly by a "plot selection"
+     * filter in the app.
+     * @param {boolean} [includeFilterMeasures=false] - Include all measures declared in all state filters
+     * @returns {{measures: (*|Array), wrapped: (*|Array)}}
      */
-    getMeasureSet : function(activeMeasures, includeFilterMeasures)
+    getMeasureSet : function(includeFilterMeasures)
     {
-        var measures = this.getAdditionalMeasures(activeMeasures),
-            wrappedMeasures = this.getWrappedMeasures(activeMeasures),
-            hasPlotSelectionFilter = {};
+        var activeMeasures = this.activeMeasures,
+            measures = this.getAdditionalMeasures(activeMeasures),
+            wrappedMeasures = this.getWrappedMeasures(),
+            hasPlotSelectionFilter = {x: false, y: false};
 
         Ext.each(wrappedMeasures, function(wrapped)
         {
@@ -2303,8 +2313,8 @@ Ext.define('Connector.view.Chart', {
         {
             var xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
                 yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
-                hasX = activeMeasures.x != null,
-                hasY = activeMeasures.y != null;
+                hasX = activeMeasures.x !== null,
+                hasY = activeMeasures.y !== null;
 
             /**
              * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
@@ -2388,23 +2398,18 @@ Ext.define('Connector.view.Chart', {
     /**
      * This creates a temp query via cds getData which is then used to query for unique participants, and is also what
      * we use to back the chart data (via an AxisMeasureStore).
-     * @param activeMeasures
      */
-    requestChartData : function(activeMeasures)
+    requestChartData : function()
     {
         Connector.getFilterService().getSubjects(function(subjectFilter)
         {
-            if (!ChartUtils.hasValidColorMeasure(activeMeasures))
-            {
-                activeMeasures.color = null;
-            }
-
-            var measureSet = this.getMeasureSet(activeMeasures, true /* includeFilterMeasures */);
+            var measureSet = this.getMeasureSet(true /* includeFilterMeasures */);
 
             this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
 
             // Request Chart MeasureStore Data
-            Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore) {
+            Connector.getQueryService().getMeasureStore(measureSet.measures, function(measureStore)
+            {
                 this.onChartDataSuccess(measureStore, measureSet);
             }, this.onFailure, this);
         }, this);
@@ -2415,7 +2420,7 @@ Ext.define('Connector.view.Chart', {
         var chartData = Ext.create('Connector.model.ChartData', {
             measureSet: measureSet.measures,
             hasPlotSelectionFilter: measureSet.hasPlotSelectionFilter,
-            plotMeasures: this.getWrappedMeasures(this.getActiveMeasures()),
+            plotMeasures: this.getWrappedMeasures(),
             measureStore: measureStore,
             plotScales: {
                 x: this.getScale('x'),
@@ -2666,7 +2671,7 @@ Ext.define('Connector.view.Chart', {
         this.plotLock = true;
 
         var state = Connector.getState(),
-            wrapped = this.getMeasureSet(this.getActiveMeasures()).wrapped,
+            wrapped = this.getMeasureSet().wrapped,
             sqlFilters = [null, null, null, null],
             inPlotFilter;
 
@@ -2785,20 +2790,31 @@ Ext.define('Connector.view.Chart', {
 
     getAxisSelectorIfInitialized : function(axis)
     {
+        var axisSelector;
+
         if (axis == 'y')
         {
-            return Ext.isDefined(this.yAxisSelector) ? this.getYAxisSelector() : null;
+            if (Ext.isDefined(this.yAxisSelector))
+            {
+                axisSelector = this.getYSelector();
+            }
         }
         else if (axis == 'x')
         {
-            return Ext.isDefined(this.xAxisSelector) ? this.getXAxisSelector() : null;
+            if (Ext.isDefined(this.xAxisSelector))
+            {
+                axisSelector = this.getXAxisSelector();
+            }
         }
         else if (axis == 'color')
         {
-            return Ext.isDefined(this.colorAxisSelector) ? this.getColorAxisSelector() : null;
+            if (Ext.isDefined(this.colorAxisSelector))
+            {
+                axisSelector = this.getColorAxisSelector();
+            }
         }
 
-        return null;
+        return axisSelector;
     },
 
     getYAxisSelector : function() {
@@ -2807,7 +2823,7 @@ Ext.define('Connector.view.Chart', {
                 plotAxis: 'y',
                 headerTitle: 'y-axis',
                 testCls: 'y-axis-selector',
-                activeMeasure: this.activeYSelection,
+                activeMeasure: this.activeMeasures.y,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
@@ -2818,7 +2834,7 @@ Ext.define('Connector.view.Chart', {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        this.activeYSelection = selected;
+                        this.activeMeasures.y = selected;
                         this.getYSelector().getModel().updateVariable([selected]);
 
                         this.variableSelectionMade(this.ywin, this.getYSelector().getEl());
@@ -2828,7 +2844,7 @@ Ext.define('Connector.view.Chart', {
 
                         this.ywin.hide(this.getYSelector().getEl());
                         // reset the selection back to previous active selection
-                        this.yAxisSelector.setActiveMeasure(this.activeYSelection);
+                        this.yAxisSelector.setActiveMeasure(this.activeMeasures.y);
                     },
                     scope: this
                 }
@@ -2854,7 +2870,7 @@ Ext.define('Connector.view.Chart', {
                 plotAxis: 'x',
                 headerTitle: 'x-axis',
                 testCls: 'x-axis-selector',
-                activeMeasure: this.activeXSelection,
+                activeMeasure: this.activeMeasures.x,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
@@ -2865,7 +2881,7 @@ Ext.define('Connector.view.Chart', {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        this.activeXSelection = selected;
+                        this.activeMeasures.x = selected;
                         this.getXSelector().getModel().updateVariable([selected]);
 
                         this.variableSelectionMade(this.xwin, this.getXSelector().getEl());
@@ -2881,7 +2897,7 @@ Ext.define('Connector.view.Chart', {
 
                         this.xwin.hide(this.getXSelector().getEl());
                         // reset the selection back to previous active selection
-                        this.xAxisSelector.setActiveMeasure(this.activeXSelection);
+                        this.xAxisSelector.setActiveMeasure(this.activeMeasures.x);
                     },
                     scope: this
                 }
@@ -2891,14 +2907,17 @@ Ext.define('Connector.view.Chart', {
         return this.xAxisSelector;
     },
 
-    showXMeasureSelection : function() {
+    showXMeasureSelection : function()
+    {
+        var xAxisSelector = this.getXAxisSelector();
 
-        if (!this.xwin) {
-            this.xwin = this.createSelectorWindow(this.getXAxisSelector());
+        if (!this.xwin)
+        {
+            this.xwin = this.createSelectorWindow(xAxisSelector);
         }
 
-        this.getXAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeXSelection) && this.activeXSelection != null);
-        this.getXAxisSelector().loadSourceCounts();
+        xAxisSelector.toggleRemoveVariableButton(this.activeMeasures.x !== null);
+        xAxisSelector.loadSourceCounts();
         this.xwin.show(this.getXSelector().getEl());
     },
 
@@ -2908,7 +2927,7 @@ Ext.define('Connector.view.Chart', {
                 headerTitle: 'color',
                 testCls: 'color-axis-selector',
                 disableAdvancedOptions: true,
-                activeMeasure: this.activeColorSelection,
+                activeMeasure: this.activeMeasures.color,
                 sourceMeasureFilter: {
                     queryType: LABKEY.Query.Visualization.Filter.QueryType.DATASETS,
                     includeHidden: this.canShowHidden,
@@ -2921,7 +2940,8 @@ Ext.define('Connector.view.Chart', {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        this.activeColorSelection = selected;
+                        console.log('setting color...');
+                        this.activeMeasures.color = selected;
                         this.getColorSelector().getModel().updateVariable([selected]);
 
                         this.variableSelectionMade(this.colorwin, this.getColorSelector().getEl());
@@ -2937,7 +2957,7 @@ Ext.define('Connector.view.Chart', {
 
                         this.colorwin.hide(this.getColorSelector().getEl());
                         // reset the selection back to previous active selection
-                        this.colorAxisSelector.setActiveMeasure(this.activeColorSelection);
+                        this.colorAxisSelector.setActiveMeasure(this.activeMeasures.color);
                     },
                     scope: this
                 }
@@ -2947,13 +2967,17 @@ Ext.define('Connector.view.Chart', {
         return this.colorAxisSelector;
     },
 
-    showColorSelection : function() {
-        if (!this.colorwin) {
-            this.colorwin = this.createSelectorWindow(this.getColorAxisSelector());
+    showColorSelection : function()
+    {
+        var colorAxisSelector = this.getColorAxisSelector();
+
+        if (!this.colorwin)
+        {
+            this.colorwin = this.createSelectorWindow(colorAxisSelector);
         }
 
-        this.getColorAxisSelector().toggleRemoveVariableButton(Ext.isDefined(this.activeColorSelection) && this.activeColorSelection != null);
-        this.getColorAxisSelector().loadSourceCounts();
+        colorAxisSelector.toggleRemoveVariableButton(this.activeMeasures.color !== null);
+        colorAxisSelector.loadSourceCounts();
         this.colorwin.show(this.getColorSelector().getEl());
     },
 
@@ -2964,7 +2988,7 @@ Ext.define('Connector.view.Chart', {
      */
     variableSelectionMade : function(win, targetEl)
     {
-        if (Ext.isDefined(this.activeYSelection))
+        if (this.activeMeasures.y)
         {
             Connector.getState().clearSelections(true);
 
@@ -2975,9 +2999,9 @@ Ext.define('Connector.view.Chart', {
 
             this.fireEvent('userplotchange', this, {
                 targetId : targetEl.id,
-                x: this.activeXSelection,
-                y: this.activeYSelection,
-                color: this.activeColorSelection
+                x: this.activeMeasures.x,
+                y: this.activeMeasures.y,
+                color: this.activeMeasures.color
             });
         }
         else
@@ -3014,19 +3038,6 @@ Ext.define('Connector.view.Chart', {
         return win;
     },
 
-    getPlotsFilter : function() {
-        var filters = Connector.getState().getFilters(),
-            _filter;
-
-        for (var f=0; f < filters.length; f++) {
-            if (filters[f].isPlot() && !filters[f].isGrid()) {
-                _filter = filters[f]; break;
-            }
-        }
-
-        return _filter;
-    },
-
     onFilterChange : function(filters)
     {
         // plot lock prevents from listening to plots own changes to state filters
@@ -3053,9 +3064,8 @@ Ext.define('Connector.view.Chart', {
             {
                 // if a user adds a "In the plot" filter back via undo, the only time the chart get
                 // notified is when the filters change
-                var activeMeasures = this.getActiveMeasures();
 
-                if (!activeMeasures.x && !activeMeasures.y && !activeMeasures.color)
+                if (!this.activeMeasures.x && !this.activeMeasures.y && !this.activeMeasures.color)
                 {
                     // determine if there is an "in the plot" filter present, if so set the active measures
                     Ext.each(filters, function(filter)
@@ -3208,7 +3218,7 @@ Ext.define('Connector.view.Chart', {
 
         var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
             records: containerFilteredRecords,
-            measure: this.getActiveMeasures().x,
+            measure: this.activeMeasures.x,
             containerAlignmentDayMap: alignMap
         });
 
