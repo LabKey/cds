@@ -211,11 +211,6 @@ Ext.define('Connector.view.Chart', {
         return this.emptyplotmsg;
     },
 
-    onReady : function(callback, scope)
-    {
-        Connector.getState().onReady(callback, scope);
-    },
-
     getNorth : function() {
         return {
             xtype: 'panel',
@@ -466,9 +461,9 @@ Ext.define('Connector.view.Chart', {
     attachInternalListeners : function() {
 
         // TODO: This resize task can still cause double-rendering
-        // TODO: Repro: Load a chart, drag a selection. Swtich to the grid. Reload. Go back to the chart (double render)
+        // TODO: Repro: Load a chart, drag a selection. Switch to the grid. Reload. Go back to the chart (double render)
         this.resizeTask = new Ext.util.DelayedTask(function() {
-            this.onReady(this.handleResize, this);
+            Connector.getState().onReady(this.handleResize, this);
         }, this);
 
         this.hideHeatmapModeTask = new Ext.util.DelayedTask(function() {
@@ -3095,7 +3090,7 @@ Ext.define('Connector.view.Chart', {
             }
             else
             {
-                this.onReady(function()
+                Connector.getState().onReady(function()
                 {
                     this.initialized = true;
                     var state = Connector.getState();
