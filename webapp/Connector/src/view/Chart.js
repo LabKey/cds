@@ -86,7 +86,6 @@ Ext.define('Connector.view.Chart', {
         });
 
         Ext.applyIf(config, {
-            measures: [],
             hasStudyAxisData: false
         });
 
@@ -796,9 +795,10 @@ Ext.define('Connector.view.Chart', {
         });
     },
 
-    getGutterPlotConfig : function(aes, scales) {
-
-        if (this.measures[2]) {
+    getGutterPlotConfig : function(aes, scales)
+    {
+        if (this.getActiveMeasures().color)
+        {
             aes.color = function(row) {return row.color};
             aes.shape = function(row) {return row.color};
 
@@ -918,7 +918,7 @@ Ext.define('Connector.view.Chart', {
                 domain: domain
             };
 
-            if (this.measures[2])
+            if (this.getActiveMeasures().color)
             {
                 scales.color = {
                     scaleType: 'discrete',
@@ -934,13 +934,15 @@ Ext.define('Connector.view.Chart', {
         return scales;
     },
 
-    getAesConfigs : function() {
+    getAesConfigs : function()
+    {
         var aes = {
             x: function(row) {return row.x;},
             yLeft: function(row) {return row.y}
         };
 
-        if (this.measures[2]) {
+        if (this.getActiveMeasures().color)
+        {
             aes.color = function(row) {return row.color};
             aes.shape = function(row) {return row.color};
         }
@@ -1083,7 +1085,8 @@ Ext.define('Connector.view.Chart', {
             }
 
             // If using color variables sync color and shape with yGutter plot if it exists
-            if (this.measures[2]) {
+            if (this.getActiveMeasures().color)
+            {
                 var plotLayer = this.yGutterPlot.layers[0];
                 if (Ext.isDefined(plotLayer.geom.colorScale)) {
                     plotConfig.scales.color = plotLayer.geom.colorScale;
@@ -1104,7 +1107,8 @@ Ext.define('Connector.view.Chart', {
                 this.hidePlotMsg();
                 this.plot.render();
 
-                if (!noplot && this.measures[2]) {
+                if (!noplot && this.getActiveMeasures().color)
+                {
                     this.getColorSelector().setLegend(this.plot.getLegendData());
                 }
             }
@@ -1123,7 +1127,8 @@ Ext.define('Connector.view.Chart', {
         if (!noplot && this.requireXGutter) {
 
             // If using color variables sync color and shape with yGutter plot if it exists
-            if (this.measures[2] && this.plot) {
+            if (this.getActiveMeasures().color && this.plot)
+            {
                 var plotLayer = this.plot.layers[0];
                 if (Ext.isDefined(plotLayer.geom.colorScale)) {
                     gutterXPlotConfig.scales.color = plotLayer.geom.colorScale;
@@ -1266,7 +1271,7 @@ Ext.define('Connector.view.Chart', {
             dimension: _dimension,
             brushstart: Ext.bind(ChartUtils.brushStart, this, [layerScope, dimension]),
             brush: Ext.bind(brushFn, this),
-            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.measures, properties, dimension], true),
+            brushend: Ext.bind(ChartUtils.brushEnd, this, [this.getActiveMeasures(), properties, dimension], true),
             brushclear: Ext.bind(ChartUtils.brushClear, this, [layerScope, dimension])
         };
     },
@@ -1466,12 +1471,7 @@ Ext.define('Connector.view.Chart', {
                 }
             });
 
-            if (node) {
-                this.clickTask.delay(150, null, null, [node, this, this.measures[0].alias, target, multi]);
-            }
-            else {
-                this.clickTask.delay(150, null, null, [e.target, this, this.measures[0].alias, target, multi]);
-            }
+            this.clickTask.delay(150, null, null, [(node ? node : e.target), this, this.getActiveMeasures().x.alias, target, multi]);
 
             this.showMessage('Hold Shift, CTRL, or CMD to select multiple');
         }
@@ -2175,8 +2175,6 @@ Ext.define('Connector.view.Chart', {
             }
             else
             {
-                this.measures = [activeMeasures.x, activeMeasures.y, activeMeasures.color];
-
                 this.fireEvent('showload', this);
 
                 this.requireStudyAxis = activeMeasures.x !== null && activeMeasures.x.variableType === 'TIME';
@@ -3215,7 +3213,7 @@ Ext.define('Connector.view.Chart', {
 
         var studyAxisData = Ext.create('Connector.model.StudyAxisData', {
             records: containerFilteredRecords,
-            measure: this.measures[0],
+            measure: this.getActiveMeasures().x,
             containerAlignmentDayMap: alignMap
         });
 

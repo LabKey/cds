@@ -208,17 +208,10 @@ Ext.define('Connector.utility.Chart', {
 
         var xExtent = [extent[0][0], extent[1][0]],
             yExtent = [extent[0][1], extent[1][1]],
-            xMeasure = measures[0],
-            yMeasure = measures[1],
+            xMeasure = measures.x,
+            yMeasure = measures.y,
             sqlFilters = [null, null, null, null],
             yMin, yMax, xMin, xMax;
-
-        yMeasure.colName = properties.yaxis.colName;
-
-        if (xMeasure)
-        {
-            xMeasure.colName = properties.xaxis.colName;
-        }
 
         if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
         {
@@ -234,13 +227,13 @@ Ext.define('Connector.utility.Chart', {
 
             if (xMeasure.type === 'TIMESTAMP')
             {
-                sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL);
-                sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL);
+                sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin.toISOString(), LABKEY.Filter.Types.DATE_GREATER_THAN_OR_EQUAL);
+                sqlFilters[1] = LABKEY.Filter.create(properties.xaxis.colName, xMax.toISOString(), LABKEY.Filter.Types.DATE_LESS_THAN_OR_EQUAL);
             }
             else
             {
-                sqlFilters[0] = LABKEY.Filter.create(xMeasure.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
-                sqlFilters[1] = LABKEY.Filter.create(xMeasure.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
+                sqlFilters[0] = LABKEY.Filter.create(properties.xaxis.colName, xMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+                sqlFilters[1] = LABKEY.Filter.create(properties.xaxis.colName, xMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
             }
         }
 
@@ -249,8 +242,8 @@ Ext.define('Connector.utility.Chart', {
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true);
             yMax = ChartUtils.transformVal(yExtent[1], yMeasure.type, false);
 
-            sqlFilters[2] = LABKEY.Filter.create(yMeasure.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
-            sqlFilters[3] = LABKEY.Filter.create(yMeasure.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
+            sqlFilters[2] = LABKEY.Filter.create(properties.yaxis.colName, yMin, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL);
+            sqlFilters[3] = LABKEY.Filter.create(properties.yaxis.colName, yMax, LABKEY.Filter.Types.LESS_THAN_OR_EQUAL);
         }
 
         this.createSelectionFilter(sqlFilters, true /* fromBrush */);
