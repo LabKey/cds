@@ -2662,7 +2662,7 @@ Ext.define('Connector.view.Chart', {
 
         if (!Ext.isEmpty(values))
         {
-            measureMap[key].values = measureMap[key].values.concat(values);
+            measureMap[key].values = Ext.Array.unique(measureMap[key].values.concat(values));
         }
     },
 
