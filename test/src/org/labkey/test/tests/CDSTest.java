@@ -78,6 +78,9 @@ public class CDSTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
+
+        cds.showHiddenVariables(true);
+
         cds.enterApplication();
 
         // clean up groups

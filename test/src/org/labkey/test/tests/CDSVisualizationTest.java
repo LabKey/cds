@@ -77,6 +77,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
+        cds.showHiddenVariables(true);
         cds.enterApplication();
         cds.ensureNoFilter();
         cds.ensureNoSelection();

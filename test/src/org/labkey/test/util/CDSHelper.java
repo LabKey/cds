@@ -855,6 +855,27 @@ public class CDSHelper
 
     }
 
+    public void showHiddenVariables(boolean turnOn)
+    {
+        _test._ext4Helper.resetCssPrefix();
+        _test.goToProjectHome();
+        _test.goToFolderManagement();
+        _test.waitForText(1000, "Module Properties");
+        _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
+        _test.waitForText(1000, "CDSTest Project");
+
+        if(turnOn)
+        {
+            _test.setFormElement(Locator.xpath("//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input"), "true");
+        }
+        else
+        {
+            _test.setFormElement(Locator.xpath("//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input"), " ");
+        }
+        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
+        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+    }
+
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)
     {
         if (_test.isElementPresent(Locator.id("single-axis-explorer")))

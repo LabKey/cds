@@ -40,6 +40,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
+        cds.showHiddenVariables(true);
         Ext4Helper.setCssPrefix("x-");
         deletePermissionGroups();
         beginAt("project/" + getProjectName() + "/begin.view?");
