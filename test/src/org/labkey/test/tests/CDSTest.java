@@ -465,17 +465,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
         _asserts.assertFilterStatusCounts(8, 2, -1); // TODO Test data dependent.
-        assertTextPresent("Study Group Verify", "Description", "Updates", studyGroupDescModified);
-
-        // Change from live to snapshot, verify choice remains after navigating away.
-        click(Locator.tagWithText("label", "Snapshot: Keep this group static"));
-        CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
-        waitForText(STUDY_GROUP);
-        click(Locator.tagWithClass("div", "grouplabel").withText(STUDY_GROUP));
-        waitForText(studyGroupDescModified);
-        Locator selectedRadio = Ext4Helper.Locators.radiobutton(this, "Snapshot: Keep this group static")
-                .withPredicate(Locator.xpath("ancestor-or-self::table").withClass("x-form-cb-checked"));
-        assertElementPresent(selectedRadio);
+        assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
 
         // Verify that you can cancel delete
         click(CDSHelper.Locators.cdsButtonLocator("delete"));

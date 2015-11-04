@@ -476,7 +476,6 @@ public class CDSHelper
     private void saveGroup(String name, @Nullable String description, String type)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.waitForText("Live: Update group with new data");
         _test.waitForText("replace an existing group");
         _test.setFormElement(Locator.name("groupname"), name);
         if (null != description)
@@ -496,7 +495,6 @@ public class CDSHelper
     public void saveOverGroup(String name)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.waitForText("Live: Update group with new data");
         _test.click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
         _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
         _test.click(Locators.cdsButtonLocator("save", "groupupdatesave"));
