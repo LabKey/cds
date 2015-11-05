@@ -855,6 +855,10 @@ public class CDSHelper
 
     public void showHiddenVariables(boolean turnOn)
     {
+        String xpathValueTxtBox = "//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input";
+        String curValue;
+        Boolean changed = false;
+
         _test._ext4Helper.resetCssPrefix();
         _test.goToProjectHome();
         _test.goToFolderManagement();
@@ -862,16 +866,32 @@ public class CDSHelper
         _test.click(Locator.xpath("//div//ul[contains(@class, 'labkey-tab-strip')]//li[@id='tabprops']//a"));
         _test.waitForText(1000, "CDSTest Project");
 
+        curValue = _test.getFormElement(Locator.xpath(xpathValueTxtBox));
+
         if(turnOn)
         {
-            _test.setFormElement(Locator.xpath("//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input"), "true");
+            if (!curValue.trim().toLowerCase().equals("true"))
+            {
+                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "true");
+                changed = true;
+            }
         }
         else
         {
-            _test.setFormElement(Locator.xpath("//label[contains(text(), 'CDSTest Project')]/../following-sibling::td[1]//input"), "false");
+            if ((curValue.trim().length() == 0) || (!curValue.trim().toLowerCase().equals("false")))
+            {
+                _test.setFormElement(Locator.xpath(xpathValueTxtBox), "false");
+                changed = true;
+            }
         }
-        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
-        _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+
+        if(changed)
+        {
+            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'Save Changes')]/.."));
+            _test.waitForText(1000, "Success");
+            _test.click(Locator.xpath("//span[contains(@class, 'x4-btn-inner')][contains(text(), 'OK')]/.."));
+        }
+
     }
 
     private void applyAndMaybeWaitForBars(Function<Void, Void> function)

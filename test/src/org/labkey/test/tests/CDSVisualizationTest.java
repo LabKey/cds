@@ -1958,8 +1958,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setVirusName(y1VirusId);
         yaxis.confirmSelection();
 
-        waitForElement(plotTickLinear.withText("5000"));
-        assertElementPresent(plotPoint, 1321);
+        waitForElement(plotTickLinear.withText("1800"));
+        assertElementPresent(plotPoint, 60);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
