@@ -34,85 +34,86 @@ public class CDSMeasureStoreTest extends CDSReadOnlyTest
 
         verifyPlot(new Plot(
             "No X-Axis Measure",
-            3713,
+            3627,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
             new String[]{""}
         ));
 
         verifyPlot(new Plot(
             "Categorical X-Axis Measure from Demographic",
-            3713,
+            3627,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
-            new String[]{"Asian", "Black", "Multiracial", "Native American/Alas", "Native Hawaiian/Paci", "Other", "White"}
+            new String[]{"Asian", "Asian/Pacific Island", "Black", "Hawaiian/Pacific Isl", "Multiracial",
+                    "Native American", "Native American/Alas. Other", "Native Hawaiian/Paci", "Unknown", "White"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Demographic",
-                3713,
+            3627,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
-            new String[]{"20", "25", "30", "35", "40", "45", "50"}
+            new String[]{"20", "25", "30", "35", "40", "45", "50", "55", "60"}
         ));
 
         verifyPlot(new Plot(
             "Categorical X-Axis Measure from Same Assay",
-            3713,
+            3627,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
             new String[]{"Any HIV PTEA", "Any HIV PTEg", "Any v503 Vaccine Matched Antigen"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Same Assay",
-            3713,
+            3627,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
             new String[]{"0", "0.002", "0.004", "0.006", "0.008", "0.01"}
         ));
 
         verifyPlot(new Plot(
             "Same X-Axis Measure with Different Filter",
-            3978,
+            3894,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
             new String[]{"0", "2", "4", "6", "8", "10", "12", "14"}
         ));
 
         verifyPlot(new Plot(
             "Same X-Axis Measure with Different Filter (axisName)",
-            3978,
+            3894,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5","5"},
             new String[]{"0", "2", "4", "6", "8", "10", "12", "14"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (1)",
-            3861,
+            4531,
             new String[]{"0","0.5","1","1.5","2","2.5","3","3.5","4","4.5"},
-            new String[]{"20", "40", "60", "80", "100", "120", "140"}
+            new String[]{"50", "100", "150", "200", "250", "300", "350"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (2)",
-            4255,
+            4174,
             new String[]{"0", "200", "400", "600", "800", "1000", "1200", "1400", "1600", "1800", "2000", "2200"},
             new String[]{"0", "2", "4", "6", "8", "10", "12", "14"}
         ));
 
         verifyPlot(new Plot(
             "Numeric X-Axis Measure from Different Assay (3)",
-            1453,
+            1393,
             new String[]{"50", "100", "150", "200", "250", "300", "350"},
-            new String[]{"5000", "10000", "15000", "20000", "25000"}
+            new String[]{"500", "1000", "1500", "2000"}
         ));
 
         verifyPlot(new Plot(
             "Time Point X-Axis Measure (Unaligned)",
-            4396,
-            new String[]{"200", "400", "600", "800", "1000", "1200", "1400", "1600", "1800"},
+            3796,
+            new String[]{"100", "200", "300", "400", "500", "600", "700"},
             new String[]{"0", "5", "10", "15", "20", "25", "30", "35", "40", "45"}
         ));
 
         verifyPlot(new Plot(
             "Time Point X-Axis Measure (Aligned)",
-            3920,
-            new String[]{"200", "400", "600", "800", "1000", "1200", "1400", "1600", "1800"},
+            3320,
+            new String[]{"100", "200", "300", "400", "500", "600", "700"},
             new String[]{"-10", "-8", "-6", "-4", "-2", "0"}
         ));
     }

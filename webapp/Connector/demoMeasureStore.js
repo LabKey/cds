@@ -543,7 +543,7 @@
                     { measure: yMeasure},
                     { measure: getVisMeasure('NAb', 'SubjectId')},
                     { measure: getVisMeasure('NAb', 'SequenceNum', false, undefined, undefined, 'DOUBLE')},
-                    { measure: getVisMeasure('NAb', 'target_cell', false, ['A3R5'])},
+                    { measure: getVisMeasure('NAb', 'target_cell', false, ['TZM-bl'])},
                     { measure: getVisMeasure('NAb', 'summary_level', false, ['Virus'])},
                     { measure: getVisMeasure('NAb', 'neutralization_tier')},
                     { measure: getVisMeasure('NAb', 'clade')},
@@ -566,7 +566,7 @@
                     config.labels = {
                         main: {value: 'Numeric X-Axis Measure from Different Assay (1)'},
                         y: {value: 'ICS Magnitude Median Value (CD4+, Protein Panel)'},
-                        x: {value: 'NAb IC50 Titer Median Value (A3R5, Virus)'}
+                        x: {value: 'NAb IC50 Titer Median Value (TZM-bl, Virus)'}
                     };
                     config.aes = {
                         y: function(row) {
@@ -672,7 +672,7 @@
                     { measure: yMeasure},
                     { measure: getVisMeasure('BAMA', 'SubjectId')},
                     { measure: getVisMeasure('BAMA', 'SequenceNum', false, undefined, undefined, 'DOUBLE')},
-                    //{ measure: getVisMeasure('BAMA', 'antibody_isotype', false, ['IgA'])},
+                    { measure: getVisMeasure('BAMA', 'antibody_isotype', false, ['IgA'])},
                     { measure: getVisMeasure('BAMA', 'summary_level', false, ['Antigen'])},
                     { measure: getVisMeasure('BAMA', 'antigen')},
                     { measure: getVisMeasure('BAMA', 'dilution', false, [50], undefined, 'INTEGER')},
