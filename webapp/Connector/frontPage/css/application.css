@@ -153,6 +153,12 @@ div.links {
       background-color: #ed365e; }
       div.links a.signin-modal-trigger:hover, div.links input[type="submit"].signin-modal-trigger:hover, div.links span.signin-modal-trigger:hover {
         background-color: #dd133f; }
+      
+    div.links a.create-account-modal-trigger, div.links input[type="submit"].create-account-modal-trigger, div.links span.create-account-modal-trigger a.create-account-modal-trigger{
+      margin-right: 0;
+      background-color: #ed365e; }
+    div.links a.create-account-modal-trigger:hover, div.links input[type="submit"].create-account-modal-trigger:hover, div.links span.create-account-modal-trigger:hover a.create-account-modal-trigger:hover{
+      background-color: #dd133f; }
 
 img.gif {
   margin: 0 auto;

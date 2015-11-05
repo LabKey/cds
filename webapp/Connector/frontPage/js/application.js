@@ -10,6 +10,11 @@ require(['jquery', 'scroll', 'modal', 'util'], function( $, scroll, modal, util)
      * and initialize each section.
      */
     initialize: function() {
+      if (LABKEY.ActionURL.getParameter('create_account') != 'true') {
+        $('.create-account-modal-trigger').each(function(){
+          $(this).css('display', 'none');
+        })
+      }
 
       scroll.initialize({
         section_selector: '.section',

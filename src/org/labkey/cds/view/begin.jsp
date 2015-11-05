@@ -35,6 +35,8 @@
     newsFeedURL.addParameter("schemaName", "announcement");
     newsFeedURL.addParameter("query.queryName", "RSSFeeds");
 
+    ActionURL addUserUrl = new ActionURL("security", "addUsers", c);
+    addUserUrl.addParameter("provider", "cds");
     // 15438
     if (StudyService.get().getStudy(c) != null)
     {
@@ -54,6 +56,7 @@
         <li><%=textLink("Run ETLs", PageFlowUtil.urlProvider(DataIntegrationUrls.class).getBeginURL(c))%></li>
         <li><%=textLink("Browse Schema", PageFlowUtil.urlProvider(QueryUrls.class).urlSchemaBrowser(c, CDSUserSchema.SCHEMA_NAME))%></li>
         <li><%=textLink("Manage News Feed", PageFlowUtil.urlProvider(QueryUrls.class).urlExecuteQuery(newsFeedURL))%></li>
+        <li><%=textLink("Add Users", addUserUrl)%></li>
     </ul>
 </div>
 <%
