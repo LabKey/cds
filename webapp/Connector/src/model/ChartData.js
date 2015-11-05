@@ -408,14 +408,14 @@ Ext.define('Connector.model.ChartData', {
             }
             else if (xVal == null)
             {
-                if (this.SHOW_GUTTER_PLOTS || !Ext.isDefined(this.hasPlotSelectionFilter().x))
+                if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().x !== true)
                 {
                     undefinedXRows.push(entry);
                 }
             }
             else if (xa.isContinuous && yVal == null)
             {
-                if (this.SHOW_GUTTER_PLOTS || !Ext.isDefined(this.hasPlotSelectionFilter().y))
+                if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().y !== true)
                 {
                     undefinedYRows.push(entry);
                 }
