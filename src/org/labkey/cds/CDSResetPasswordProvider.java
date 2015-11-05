@@ -16,10 +16,13 @@ public class CDSResetPasswordProvider implements ResetPasswordProvider
     private static final String NAME        = "cds";
     private static final String DESCRIPTION = "CDS Reset Password Provider";
     @Override
-    public ActionURL getAPIVerificationURL(Container c)
+    public ActionURL getAPIVerificationURL(Container c, boolean isAddUser)
     {
         ActionURL url = new ActionURL(CDSController.AppAction.class, LookAndFeelProperties.getSettingsContainer(c));
-        url.addParameter("create_password", true);
+        if (isAddUser)
+            url.addParameter("create_account", true);
+        else
+            url.addParameter("create_password", true);
 
         return url;
     }
