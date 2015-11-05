@@ -15,7 +15,6 @@
  */
 package org.labkey.test.tests;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -131,41 +130,16 @@ public class CDSTest extends CDSReadOnlyTest
         Ext4Helper.setCssPrefix("x-");
     }
 
-    @AfterClass
-    public static void afterClassCleanUp()
-    {
-        CDSTest init = (CDSTest)getCurrentTest();
-
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_NAME);
-        groups.add(GROUP_NAME2);
-        groups.add(GROUP_NAME3);
-        groups.add(GROUP_LIVE_FILTER);
-        groups.add(GROUP_STATIC_FILTER);
-        groups.add(STUDY_GROUP);
-        groups.add(HOME_PAGE_GROUP);
-        init.ensureGroupsDeleted(groups);
-
-        init.cds.ensureNoFilter();
-        init.cds.ensureNoSelection();
-    }
-
     @Test
     public void verifyHomePage()
     {
-        /**
-         * Header
-         * ------
-         * Counts (logged out -- once ajax login is present)
-         */
-
         log("Verify Home Page");
 
         //
         // Validate counts and about link
         //
-        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "57 studies to learn about.");
-        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "48,359 data points collected from 53 studies.");
+        Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "55 studies to learn about.");
+        Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "46,644 data points collected from 51 studies.");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
 
@@ -211,13 +185,13 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectBars(CDSHelper.RACE_VALUES[2]);
         cds.useSelectionAsSubjectFilter();
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.RACE_VALUES[2]));
-        _asserts.assertFilterStatusCounts(538, 14, -1);
+        _asserts.assertFilterStatusCounts(139, 12, -1);
 
         final String clippedGroup = HOME_PAGE_GROUP.substring(0, 20);
         final String saveLabel = "Group \"A Plotted...\" saved.";
         Locator.XPathLocator clippedLabel = Locator.tagWithClass("div", "grouplabel").containing(clippedGroup);
 
-        cds.saveLiveGroup(HOME_PAGE_GROUP, "A Plottable group");
+        cds.saveGroup(HOME_PAGE_GROUP, "A Plottable group");
         waitForText(saveLabel);
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
@@ -229,17 +203,16 @@ public class CDSTest extends CDSReadOnlyTest
         waitAndClick(clippedLabel);
         waitForText("Your filters have been");
         assertElementPresent(CDSHelper.Locators.filterMemberLocator("In the plot: " + CDSHelper.ICS_ANTIGEN + ", " + CDSHelper.ICS_MAGNITUDE_BACKGROUND + ", " + CDSHelper.DEMO_RACE));
-        _asserts.assertFilterStatusCounts(538, 14, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(139, 12, -1); // TODO Test data dependent.
 
         // remove just the plot filter
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         cds.clearFilter(0);
         cds.saveOverGroup(HOME_PAGE_GROUP);
         waitForText(saveLabel);
-        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(829, 48, -1); // TODO Test data dependent.
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForElementToDisappear(Locator.css("div.groupicon img"));
-
     }
 
     @Test
@@ -272,7 +245,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(829, 48, -1); // TODO Test data dependent.
 
         //
         // Undo a info pane generated filter
@@ -284,7 +257,7 @@ public class CDSTest extends CDSReadOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember));
-        _asserts.assertFilterStatusCounts(2737, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(829, 48, -1); // TODO Test data dependent.
 
         //
         // open the filter pane via a created filter
@@ -297,7 +270,7 @@ public class CDSTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
 
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
-        _asserts.assertFilterStatusCounts(23, 13, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(839, 47, -1); // TODO Test data dependent.
 
         //
         // update the current filter
@@ -309,7 +282,7 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember2));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember3));
         // TODO Test data dependent.
-        _asserts.assertFilterStatusCounts(173, 36, -1); // default is 'OR'
+        _asserts.assertFilterStatusCounts(1654, 49, -1); // default is 'OR'
 
         //
         // change the operator
@@ -330,7 +303,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(raceMember4, true);
         click(CDSHelper.Locators.cdsButtonLocator("Update", "filterinfoaction"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(raceMember4));
-        _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(777, 48, -1); // TODO Test data dependent.
         cds.ensureNoFilter();
 
         //
@@ -344,7 +317,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         Locator.XPathLocator countryFilter = CDSHelper.Locators.filterMemberLocator("United States");
         waitForElement(countryFilter);
-        _asserts.assertFilterStatusCounts(5519, 47, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(2797, 49, -1); // TODO Test data dependent.
         cds.openFilterInfoPane(countryFilter);
         assertElementPresent(CDSHelper.Locators.infoPaneSortButtonLocator().notHidden());
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
@@ -357,38 +330,38 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.pickSort("Lab");
-        for(String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
-        for(String lab : CDSHelper.LABS)
+        for (String lab : CDSHelper.LABS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(lab));
         }
         cds.pickSort("Immunogenicity Type");
-        for(String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
-        for(String i_type : CDSHelper.I_TYPES)
+        for (String i_type : CDSHelper.I_TYPES)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(i_type));
         }
         cds.pickSort("Study");
-        for(String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
-        for(String prot : CDSHelper.PROT_NAMES)
+        for (String protocol : CDSHelper.PROT_NAMES)
         {
-            assertElementPresent(CDSHelper.Locators.barLabel.withText(prot));
+            assertElementPresent(CDSHelper.Locators.barLabel.withText(protocol));
         }
         cds.pickSort("Assay Name");
-        for(String assay : CDSHelper.ASSAYS)
+        for (String assay : CDSHelper.ASSAYS)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(assay));
         }
-        for(String h_type : CDSHelper.H_TYPES)
+        for (String h_type : CDSHelper.H_TYPES)
         {
             assertElementPresent(CDSHelper.Locators.barLabel.withText(h_type));
         }
@@ -412,7 +385,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
-        cds.saveLiveGroup(STUDY_GROUP, studyGroupDesc);
+        cds.saveGroup(STUDY_GROUP, studyGroupDesc);
 
         // verify group save messaging
         //ISSUE 19997
@@ -435,7 +408,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         // verify group save messaging
         waitForText("Group \"Study Group...\" saved.");
-        _asserts.assertFilterStatusCounts(8, 2, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(89, 2, -1); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
@@ -455,7 +428,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        _asserts.assertFilterStatusCounts(1690, 15, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(1604, 14, -1); // TODO Test data dependent.
 
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         waitForText(STUDY_GROUP);
@@ -464,7 +437,7 @@ public class CDSTest extends CDSReadOnlyTest
         // Verify that filters get replaced when viewing group.
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
-        _asserts.assertFilterStatusCounts(8, 2, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(89, 2, -1); // TODO Test data dependent.
         assertTextPresent("Study Group Verify", "Description", studyGroupDescModified);
 
         // Verify that you can cancel delete
@@ -510,12 +483,12 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[0]));
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
         assertElementPresent(Locator.tagWithClass("div", "selitem").withText("Study (Treatment Assignment Summary)"));
-        _asserts.assertSelectionStatusCounts(8, 2, -1); // TODO Test data dependent.
+        _asserts.assertSelectionStatusCounts(89, 2, -1); // TODO Test data dependent.
 
         // clear by selection
         cds.selectBars(CDSHelper.STUDIES[1]);
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
-       _asserts.assertSelectionStatusCounts(3, 1, -1); // TODO Test data dependent.
+       _asserts.assertSelectionStatusCounts(84, 1, -1); // TODO Test data dependent.
         cds.clearSelection();
 
         // verify multi-level filtering
@@ -528,7 +501,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.useSelectionAsSubjectFilter();
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]), 1);
         assertElementPresent(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[4]), 1);
-        _asserts.assertFilterStatusCounts(195, 5, -1); // TODO Test data dependent.
+        _asserts.assertFilterStatusCounts(137, 3, -1); // TODO Test data dependent.
 
         // remove filter
         cds.clearFilters();
@@ -539,7 +512,7 @@ public class CDSTest extends CDSReadOnlyTest
         // verify undo
         click(Locator.linkWithText("Undo"));
         waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.ASSAYS[1]));
-       _asserts.assertFilterStatusCounts(195, 5, -1); // TODO Test data dependent.
+       _asserts.assertFilterStatusCounts(137, 3, -1); // TODO Test data dependent.
 
         // remove an undo filter
         cds.clearFilters();
@@ -708,13 +681,11 @@ public class CDSTest extends CDSReadOnlyTest
             grid.assertRowCount(16528); // TODO Test data dependent.
             _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
         }
-
     }
 
     @Test
     public void verifyGridCheckerboarding()
     {
-
         log("Verify Grid with filters and checkerboarding.");
 
         DataGrid grid = new DataGrid(this);
@@ -806,12 +777,12 @@ public class CDSTest extends CDSReadOnlyTest
         List<WebElement> gridRows, gridRowCells;
         String xpathAllGridRows = "//div[contains(@class, 'connector-grid')]//div[contains(@class, 'x-grid-body')]//div//table//tr[contains(@class, 'x-grid-data-row')]";
         gridRows = Locator.xpath(xpathAllGridRows).findElements(getDriver());
-        for(WebElement row : gridRows)
+        for (WebElement row : gridRows)
         {
             gridRowCells = row.findElements(By.xpath("./descendant::td"));
 
             // If the Magnitude Background subtracted column is "empty"
-            if(gridRowCells.get(4).getText().trim().length() == 0)
+            if (gridRowCells.get(4).getText().trim().length() == 0)
             {
                 // There should be no lab id
                 assertTrue(gridRowCells.get(12).getAttribute("class").toLowerCase().contains("no-value"));
@@ -841,13 +812,11 @@ public class CDSTest extends CDSReadOnlyTest
 
         cds.goToAppHome();
         cds.clearFilters();
-
     }
 
     @Test
     public void verifyGridColumnSelector()
     {
-
         CDSHelper cds = new CDSHelper(this);
 
         log("Verify Grid column selector.");
@@ -1038,7 +1007,6 @@ public class CDSTest extends CDSReadOnlyTest
         gridColumnSelector.cancelSelection();
 
         cds.goToAppHome();
-
     }
 
     private void gridColumnSelectorValidator(DataGridVariableSelector gridColumnSelector, String source, Map<String, Boolean> columns)
@@ -1051,7 +1019,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         gridColumnSelector.pickSource(source);
 
-        for(Map.Entry<String, Boolean> entry : columns.entrySet())
+        for (Map.Entry<String, Boolean> entry : columns.entrySet())
         {
             xpathSelectorColumnName = xpathColumnNameTemplate.replaceAll("[*]", entry.getKey());
             assertElementVisible(Locator.xpath(xpathSelectorColumnName));
@@ -1060,7 +1028,7 @@ public class CDSTest extends CDSReadOnlyTest
             checkBox = Locator.xpath(xpathSpecificCheckbox).findElement(getDriver());
 
             // Should the checkbox be enabled/checkable?
-            if(entry.getValue())
+            if (entry.getValue())
             {
                 assertFalse("Check-box for " + entry.getKey() + " is disabled and it should not be.", checkBox.getAttribute("class").toLowerCase().contains("checker-disabled"));
             }
@@ -1071,7 +1039,6 @@ public class CDSTest extends CDSReadOnlyTest
         }
 
         gridColumnSelector.backToSource();
-
     }
 
     // TODO Still needs work. Counts are changing with each new dataset.
@@ -1095,7 +1062,7 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.assertFilterStatusCounts(5, 1, -1);
         cds.goToSummary();
 
-        // Verify multi-select tooltip has dissappeared
+        // Verify multi-select tooltip has disappeared
         //waitForTextToDisappear(TOOLTIP);
 
         cds.clickBy("Studies");
@@ -1136,9 +1103,7 @@ public class CDSTest extends CDSReadOnlyTest
         _asserts.assertSelectionStatusCounts(5423, 47, -1);
         cds.applySelection("Thailand");
         _asserts.assertSelectionStatusCounts(12, 1, -1);
-
     }
-
 
     @Test
     public void verifyFilters()
@@ -1164,7 +1129,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(CDSHelper.STUDIES[1], true);
         cds.selectInfoPaneItem(CDSHelper.STUDIES[4], false);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
-        cds.saveLiveGroup(GROUP_NAME, GROUP_DESC);
+        cds.saveGroup(GROUP_NAME, GROUP_DESC);
         _asserts.assertFilterStatusCounts(113, 2, -1);
         cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
@@ -1232,10 +1197,10 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElementToDisappear(Locator.xpath("//div[starts-with(@id, 'groupsave')]").notHidden());
 
         // save the group and request save
-        cds.saveLiveGroup(GROUP_NAME2, null);
+        cds.saveGroup(GROUP_NAME2, null);
 
         // save a group with an interior group
-        cds.saveLiveGroup(GROUP_NAME3, null);
+        cds.saveGroup(GROUP_NAME3, null);
 
         cds.clearFilters();
     }
@@ -1297,7 +1262,7 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         log("Size: " + returnedItems.size());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1310,7 +1275,7 @@ public class CDSTest extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1323,7 +1288,7 @@ public class CDSTest extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1401,7 +1366,7 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
         log("Size: " + returnedItems.size());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1414,7 +1379,7 @@ public class CDSTest extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1427,7 +1392,7 @@ public class CDSTest extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1440,7 +1405,7 @@ public class CDSTest extends CDSReadOnlyTest
         this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         returnedItems = Locator.xpath(XPATH_RESULTLIST).findElements(getDriver());
-        for(WebElement listItem : returnedItems)
+        for (WebElement listItem : returnedItems)
         {
             itemText = listItem.getText();
             itemParts = itemText.split("\n");
@@ -1531,8 +1496,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
     }
 
-// TODO still debugging this test.
-    @Test @Ignore("Needs to be implemented without side-effects")
+    @Test
     public void verifyLiveFilterGroups()
     {
         final String initialBMI = "21";
@@ -1553,27 +1517,22 @@ public class CDSTest extends CDSReadOnlyTest
         cds.pickSort("Baseline BMI category");
         cds.selectBars(initialBMI);
         cds.useSelectionAsSubjectFilter();
-        cds.saveLiveGroup(GROUP_LIVE_FILTER, null);
-        cds.saveSnapshotGroup(GROUP_STATIC_FILTER, null);
+        cds.saveGroup(GROUP_LIVE_FILTER, null);
 
-        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
-        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembers);
+        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, liveGroupMembers);
 
         Set<String> removedGroupMembers = setBmisTo(participants, changedBMI);
 
         // groups shouldn't be updated yet
         _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
-        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembers);
 
         // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
         updateParticipantGroups("NAb", "Lab Results", "ADCC");
         liveGroupMembers.removeAll(removedGroupMembers);
         assertElementPresent(Locator.css("div.uslog").containing(String.format("\"%s\" now has %d subjects.", GROUP_LIVE_FILTER, liveGroupMembers.size())));
-        assertElementNotPresent(Locator.css("div.uslog").containing(GROUP_STATIC_FILTER));
 
         // verify that our static group still ha the original members in it now
         _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
-        _asserts.assertParticipantIds(GROUP_STATIC_FILTER, liveGroupMembers);
     }
 
     private Set<String> setBmisTo(String[] participantsId, String value)
@@ -1581,12 +1540,12 @@ public class CDSTest extends CDSReadOnlyTest
         Ext4Helper.resetCssPrefix();
         DataRegionTable dataset;
         Set<String> modifiedParticipants = new HashSet<>();
-        for (int i = 0; i < participantsId.length; i++)
+        for (String aParticipantsId : participantsId)
         {
             beginAt(WebTestHelper.buildURL("study", getProjectName(), "dataset", Maps.of("datasetId", "5003"))); // Demographics
             dataset = new DataRegionTable("Dataset", this);
             dataset.setSort("SubjectId", SortDirection.ASC);
-            clickAndWait(Locator.linkWithText(participantsId[i]).index(0));
+            clickAndWait(Locator.linkWithText(aParticipantsId).index(0));
             clickAndWait(Locator.linkWithText("edit data"));
             setFormElement(Locator.name("quf_bmi_enrollment"), value);
             modifiedParticipants.add(getFormElement(Locator.name("quf_ParticipantId")));
@@ -1605,10 +1564,11 @@ public class CDSTest extends CDSReadOnlyTest
             String subName = group.substring(0, 10);
 
             // Adding this test for the scenario of a test failure and this is called after the page has been removed.
-            try{
+            try
+            {
                 isVisible = isElementVisible(Locator.xpath("//div[contains(@class, 'grouplist-view')]//div[contains(@class, 'grouprow')]//div[contains(@title, '" + subName + "')]"));
             }
-            catch(org.openqa.selenium.NoSuchElementException nse)
+            catch (org.openqa.selenium.NoSuchElementException nse)
             {
                 isVisible = false;
             }
@@ -1619,10 +1579,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (deletable.size() > 0)
         {
-            for (String d : deletable)
-            {
-                cds.deleteGroupFromSummaryPage(d);
-            }
+            deletable.forEach(cds::deleteGroupFromSummaryPage);
         }
     }
 

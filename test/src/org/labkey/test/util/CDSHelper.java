@@ -463,28 +463,13 @@ public class CDSHelper
         _test.waitForElement(Locators.activeDimensionHeaderLocator(dimension));
     }
 
-    public void saveLiveGroup(String name, @Nullable String description)
-    {
-        saveGroup(name, description, "live");
-    }
-
-    public void saveSnapshotGroup(String name, @Nullable String description)
-    {
-        saveGroup(name, description, "snapshot");
-    }
-
-    private void saveGroup(String name, @Nullable String description, String type)
+    public void saveGroup(String name, @Nullable String description)
     {
         _test.click(Locators.cdsButtonLocator("save", "filtersave"));
         _test.waitForText("replace an existing group");
         _test.setFormElement(Locator.name("groupname"), name);
         if (null != description)
             _test.setFormElement(Locator.name("groupdescription"), description);
-
-        if ("snapshot".equals(type))
-        {
-            _test.click(Ext4Helper.Locators.radiobutton(_test, "Snapshot: Keep this group static"));
-        }
 
         applyAndMaybeWaitForBars(aVoid -> {
             _test.click(Locators.cdsButtonLocator("save", "groupcreatesave"));

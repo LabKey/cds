@@ -95,14 +95,9 @@ public class DataGrid
             _test.click(Locator.xpath(cellXpath));
         }
 
-        applyAndWaitForGrid(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
-                return null;
-            }
+        applyAndWaitForGrid(aVoid -> {
+            _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
+            return null;
         });
 
     }
@@ -121,14 +116,9 @@ public class DataGrid
 
         _test.waitForElement(Locator.id("value_1"));
         _test.setFormElement(Locator.css("#value_1 input"), value);
-        applyAndWaitForGrid(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
-                return null;
-            }
+        applyAndWaitForGrid(aVoid -> {
+            _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn"));
+            return null;
         });
         _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
     }
@@ -154,16 +144,11 @@ public class DataGrid
 
         final WebElement button = buttons.get(0);
 
-        applyAndWaitForGrid(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                button.click();
-                _test.sleep(500);
-                _test._ext4Helper.waitForMaskToDisappear();
-                return null;
-            }
+        applyAndWaitForGrid(aVoid -> {
+            button.click();
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
+            return null;
         });
     }
 
@@ -171,14 +156,9 @@ public class DataGrid
     public void clearFilters(@LoggedParam String columnName)
     {
         openFilterPanel(columnName);
-        applyAndWaitForGrid(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
-                return null;
-            }
+        applyAndWaitForGrid(aVoid -> {
+            _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
+            return null;
         });
         _test.waitForElement(Locators.sysmsg.containing("Filter removed."));
     }
@@ -220,16 +200,11 @@ public class DataGrid
     @LogMethod
     public void sort(@LoggedParam final String columnName)
     {
-        applyAndWaitForGrid(new Function<Void, Void>()
-        {
-            @Override
-            public Void apply(Void aVoid)
-            {
-                _test.click(Locators.columnHeaderLocator(columnName));
-                _test.sleep(500);
-                _test._ext4Helper.waitForMaskToDisappear();
-                return null;
-            }
+        applyAndWaitForGrid(aVoid -> {
+            _test.click(Locators.columnHeaderLocator(columnName));
+            _test.sleep(500);
+            _test._ext4Helper.waitForMaskToDisappear();
+            return null;
         });
         assertSortPresent(columnName);
     }

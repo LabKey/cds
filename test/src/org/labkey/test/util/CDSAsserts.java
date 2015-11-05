@@ -15,14 +15,11 @@
  */
 package org.labkey.test.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.AssayDetailsPage;
 import org.labkey.test.pages.StudyDetailsPage;
-import org.openqa.selenium.SearchContext;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -199,7 +196,7 @@ public class CDSAsserts
 
     public void assertDefaultFilterStatusCounts()
     {
-        assertFilterStatusCounts(8469, 53, -1); // TODO Test data dependent.
+        assertFilterStatusCounts(8277, 51, -1); // TODO Test data dependent.
     }
 
     public void assertSelectionStatusCounts(int subjectCount, int studyCount, int assayCount)
