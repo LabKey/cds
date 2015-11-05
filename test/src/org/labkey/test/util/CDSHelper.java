@@ -33,15 +33,15 @@ import java.util.List;
 
 public class CDSHelper
 {
-    public static final String[] STUDIES = {"CAVD 256", "CAVD 264", "CAVD 317", "AVEG 007C", "HVTN 039", "HVTN 040",
-            "HVTN 041", "HVTN 042", "HVTN 044", "HVTN 045", "HVTN 048", "HVTN 049", "HVTN 049x", "HVTN 052",
-            "HVTN 054", "HVTN 055", "HVTN 056", "HVTN 057", "HVTN 059", "HVTN 060", "HVTN 063", "HVTN 064",
-            "HVTN 065", "HVTN 067", "HVTN 068", "HVTN 069", "HVTN 070", "HVTN 071", "HVTN 072", "HVTN 073",
-            "HVTN 076", "HVTN 077", "HVTN 078", "HVTN 080", "HVTN 082", "HVTN 083", "HVTN 084", "HVTN 085", "HVTN 086",
-            "HVTN 087", "HVTN 088", "HVTN 090", "HVTN 091", "HVTN 092", "HVTN 094", "HVTN 096", "HVTN 097",
-            "HVTN 100", "HVTN 104", "HVTN 106", "HVTN 203", "HVTN 204", "HVTN 205", "HVTN 503", "HVTN 504", "HVTN 505", "HVTN 908"}; // TODO Test data dependent.
+    public static final String[] STUDIES = {"QED 1", "QED 2", "QED 3", "QED 4",
+            "RED 1", "RED 2", "RED 3", "RED 4", "RED 5", "RED 6", "RED 7", "RED 8", "RED 9",
+            "YOYO 55",
+            "ZAP 100", "ZAP 101", "ZAP 102", "ZAP 103", "ZAP 104", "ZAP 105", "ZAP 106", "ZAP 107", "ZAP 108", "ZAP 109", "ZAP 110",
+            "ZAP 111", "ZAP 112", "ZAP 113", "ZAP 114", "ZAP 115", "ZAP 116", "ZAP 117", "ZAP 118", "ZAP 119", "ZAP 120",
+            "ZAP 121", "ZAP 122", "ZAP 123", "ZAP 124", "ZAP 125", "ZAP 126", "ZAP 127", "ZAP 128", "ZAP 129", "ZAP 130",
+            "ZAP 131", "ZAP 132", "ZAP 133", "ZAP 134", "ZAP 135", "ZAP 136", "ZAP 137", "ZAP 138", "ZAP 139", "ZAP 140",};
 
-    public static final String[] PROT_NAMES = {"HVTN 078", "HVTN 044", "HVTN 503", "HVTN 060", "HVTN 204", "HVTN 041", "HVTN 205", "HVTN 049", "HVTN 049", "HVTN 505"}; //incomplete list, only first and last under each assay in find subjects view.
+    public static final String[] PROT_NAMES = {"ZAP 117", "ZAP 102", "ZAP 136", "ZAP 110", "ZAP 134", "QED 2", "ZAP 135", "ZAP 139"}; //incomplete list, only first and last under each assay in find subjects view.
 
     public static final String[] PRODUCTS = {"3BNC117", "acyclovir", "AIDSVAX B/B", "AIDSVAX B/E", "ALVAC-HIV (vCP1452)",
             "ALVAC-HIV (vCP1521)", "ALVAC-HIV (vCP2438)", "AS01B", "AS02A", "AVX101", "AVX201", "BufferGel", "Buprenorphine/naloxone",
@@ -55,9 +55,9 @@ public class CDSHelper
             "SPL7013 (VivaGel)", "Subtype C gp120", "Subtype C gp120/MF59", "Tenofovir Gel", "Tetavax", "tgAXH68",
             "tgAXH95", "TLR7", "TLR9", "Truvada", "VRC-ADJDNA004-IL2-VP", "VRC-HIVADV014-00-VP", "VRC-HIVADV027-00-VP",
             "VRC-HIVADV038-00-VP", "VRC-HIVADV052-00-VP", "VRC-HIVADV053-00-VP", "VRC-HIVADV054-00-VP", "VRC-HIVDNA-016-00-VP",
-            "VRC-HIVDNA009-00-VP", "VRC-HIVDNA044-00-VP", "VRC01", "VSV HIV envC^2", "VSV HIV gag"};  // TODO Test data dependent.
+            "VRC-HIVDNA009-00-VP", "VRC-HIVDNA044-00-VP", "VRC01", "VSV HIV envC^2", "VSV HIV gag"};
 
-    public static final String[] LABS = {"GT", "FH", "DM"};
+    public static final String[] LABS = {"DL", "WA", "PC", "JN"};
     public static final String[] I_TYPES = {"Cellular", "Humoral"};
     public static final String[] H_TYPES = {"HIV Immunogenicity"};
     public static final String[] ASSAYS = {"BAMA Biotin LX", "ICS", "IFNg ELS", "NAB A3R5", "NAB TZM-bl"};
