@@ -20,8 +20,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
-import org.labkey.test.SortDirection;
-import org.labkey.test.WebTestHelper;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
@@ -32,10 +30,6 @@ import org.labkey.test.pages.XAxisVariableSelector;
 import org.labkey.test.pages.YAxisVariableSelector;
 import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
-import org.labkey.test.util.DataRegionTable;
-import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.Maps;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,10 +37,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -57,7 +49,6 @@ public class CDSTest extends CDSReadOnlyTest
 {
     private static final String GROUP_NULL = "Group creation cancelled";
     private static final String GROUP_DESC = "Intersection of " + CDSHelper.STUDIES[1] + " and " + CDSHelper.STUDIES[4];
-    private static final String TOOLTIP = "Hold Shift, CTRL, or CMD to select multiple";
 
     // Known Test Groups
     private static final String GROUP_NAME = "CDSTest_AGroup";
@@ -75,7 +66,6 @@ public class CDSTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
-
         cds.showHiddenVariables(true);
 
         cds.enterApplication();
@@ -113,20 +103,6 @@ public class CDSTest extends CDSReadOnlyTest
         return Arrays.asList("CDS");
     }
 
-    @LogMethod(quiet = true)
-    private void updateParticipantGroups(String... exclusions)
-    {
-        goToProjectHome();
-        clickAndWait(Locator.linkWithText("Update Participant Groups"));
-        for (String s : exclusions)
-        {
-            uncheckCheckbox(Locator.checkboxByNameAndValue("dataset", s));
-        }
-        submit();
-        waitForElement(Locator.css("div.uslog").withText("Success!"), defaultWaitForPage);
-        Ext4Helper.setCssPrefix("x-");
-    }
-
     @Test
     public void verifyHomePage()
     {
@@ -152,25 +128,25 @@ public class CDSTest extends CDSReadOnlyTest
         assertTextPresent("My saved groups and plots");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // Not sure why I need this but test is more reliable with it.
-        yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
-        yaxis.confirmSelection();
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.ICS);
+        yAxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND);
+        yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yAxis.confirmSelection();
 
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
-        xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_ANTIGEN);
-        xaxis.confirmSelection();
+        XAxisVariableSelector xAxis = new XAxisVariableSelector(this);
+        xAxis.openSelectorWindow();
+        xAxis.pickSource(CDSHelper.ICS);
+        xAxis.pickVariable(CDSHelper.ICS_ANTIGEN);
+        xAxis.confirmSelection();
 
-        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
-        coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        coloraxis.pickVariable(CDSHelper.DEMO_RACE);
-        coloraxis.confirmSelection();
+        ColorAxisVariableSelector colorAxis = new ColorAxisVariableSelector(this);
+        colorAxis.openSelectorWindow();
+        colorAxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        colorAxis.pickVariable(CDSHelper.DEMO_RACE);
+        colorAxis.confirmSelection();
 
         CDSHelper.NavigationLink.SUMMARY.makeNavigationSelection(this);
         cds.clickBy(CDSHelper.SUBJECT_CHARS);
@@ -1028,17 +1004,11 @@ public class CDSTest extends CDSReadOnlyTest
         cds.applySelection(CDSHelper.STUDIES[0]);
         _asserts.assertSelectionStatusCounts(5, 1, -1);
 
-        // Verify multi-select tooltip -- this only shows the first time
-        //assertTextPresent(TOOLTIP);
-
         cds.useSelectionAsSubjectFilter();
         cds.hideEmpty();
         waitForElementToDisappear(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[1]), CDSHelper.CDS_WAIT);
         _asserts.assertFilterStatusCounts(5, 1, -1);
         cds.goToSummary();
-
-        // Verify multi-select tooltip has disappeared
-        //waitForTextToDisappear(TOOLTIP);
 
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[0]);
@@ -1052,7 +1022,6 @@ public class CDSTest extends CDSReadOnlyTest
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[1]);
         _asserts.assertSelectionStatusCounts(84, 1, -1);
-//        assertTextNotPresent(TOOLTIP);
         cds.applySelection(CDSHelper.STUDIES[2]);
         _asserts.assertSelectionStatusCounts(30, 1, -1);
         cds.clearSelection();
@@ -1450,64 +1419,6 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(CDSHelper.Locators.activeDimensionHeaderLocator("Subject characteristics"));
         waitForFormElementToEqual(hierarchySelector, "Country at enrollment");
         cds.goToSummary();
-    }
-
-    @Test
-    public void verifyLiveFilterGroups()
-    {
-        final String initialBMI = "21";
-        final String changedBMI = "16";
-        String[] participants = {"052-001", "052-002", "052-003", "052-004"};
-        Set<String> staticGroupMembers = setBmisTo(participants, initialBMI);
-        Set<String> liveGroupMembers = new HashSet<>(staticGroupMembers);
-
-        // exit the app and verify no live filter groups exist
-        updateParticipantGroups();
-        assertElementPresent(Locator.css("div.uslog").withText("No Subject Groups with live filters are defined."));
-
-        cds.enterApplication();
-        cds.goToSummary();
-
-        // create two groups one that is a live filter and one that is not
-        cds.clickBy("Subject characteristics");
-        cds.pickSort("Baseline BMI category");
-        cds.selectBars(initialBMI);
-        cds.useSelectionAsSubjectFilter();
-        cds.saveGroup(GROUP_LIVE_FILTER, null);
-
-        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, liveGroupMembers);
-
-        Set<String> removedGroupMembers = setBmisTo(participants, changedBMI);
-
-        // groups shouldn't be updated yet
-        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
-
-        // now repopulate the cube with a subset of subjects and ensure the live filter is updated while the static filter is not
-        updateParticipantGroups("NAb", "Lab Results", "ADCC");
-        liveGroupMembers.removeAll(removedGroupMembers);
-        assertElementPresent(Locator.css("div.uslog").containing(String.format("\"%s\" now has %d subjects.", GROUP_LIVE_FILTER, liveGroupMembers.size())));
-
-        // verify that our static group still ha the original members in it now
-        _asserts.assertParticipantIds(GROUP_LIVE_FILTER, staticGroupMembers);
-    }
-
-    private Set<String> setBmisTo(String[] participantsId, String value)
-    {
-        Ext4Helper.resetCssPrefix();
-        DataRegionTable dataset;
-        Set<String> modifiedParticipants = new HashSet<>();
-        for (String aParticipantsId : participantsId)
-        {
-            beginAt(WebTestHelper.buildURL("study", getProjectName(), "dataset", Maps.of("datasetId", "5003"))); // Demographics
-            dataset = new DataRegionTable("Dataset", this);
-            dataset.setSort("SubjectId", SortDirection.ASC);
-            clickAndWait(Locator.linkWithText(aParticipantsId).index(0));
-            clickAndWait(Locator.linkWithText("edit data"));
-            setFormElement(Locator.name("quf_bmi_enrollment"), value);
-            modifiedParticipants.add(getFormElement(Locator.name("quf_ParticipantId")));
-            clickButton("Submit");
-        }
-        return modifiedParticipants;
     }
 
     private void ensureGroupsDeleted(List<String> groups)
