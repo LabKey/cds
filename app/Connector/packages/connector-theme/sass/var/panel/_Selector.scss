@@ -342,10 +342,15 @@
       }
 
       .col-check .x-form-cb-label {
-        width: 80%;
+        width: 99%; // 100% does not induce ellipsis text-overflow
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+
+        &:hover {
+          width: 100%;
+          text-overflow: initial;
+        }
       }
     }
   }

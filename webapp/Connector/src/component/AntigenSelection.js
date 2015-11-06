@@ -11,8 +11,8 @@ Ext.define('Connector.panel.AntigenSelection', {
 
     border: false,
 
-    totalColumnWidth: 340,
-    subjectColumnWidth: 83,
+    totalColumnWidth: 390,
+    subjectColumnWidth: 75,
 
     constructor : function(config) {
         this.callParent([config]);
@@ -198,14 +198,18 @@ Ext.define('Connector.panel.AntigenSelection', {
     },
 
     createCheckboxCmp : function(record, fields, index, value, addCls) {
+        var alias = fields[index],
+            label = record.get(alias) || '[Blank]',
+            dataValue = alias + '-' + value.replace(/\|/g, '-').replace(/ /g, '_');
+
         var checkbox = Ext.create('Ext.form.field.Checkbox', {
-            name: fields[index] + '-check',
-            boxLabel: record.get(fields[index]) || '[Blank]',
+            name: alias + '-check',
+            boxLabel: label,
             cls: 'checkbox2 col-check ' + addCls,
-            boxLabelAttrTpl: 'test-data-value=' + fields[index] + '-' + value.replace(/\|/g, '-').replace(/ /g, '_'),
+            boxLabelAttrTpl: 'test-data-value="' + dataValue + '" title="' + label + '"',
             parentFieldAlias: index > 0 ? fields[index - 1] : null,
-            fieldAlias: fields[index],
-            fieldValue: record.get(fields[index]) || 'null',
+            fieldAlias: alias,
+            fieldValue: record.get(alias) || 'null',
             inputValue: value,
             checked: this.initSelection && this.initSelection.indexOf(value) > -1, // this will set only the leaf checkboxes as checked
             width: Math.floor(this.totalColumnWidth / this.hierarchyMeasures.length),
