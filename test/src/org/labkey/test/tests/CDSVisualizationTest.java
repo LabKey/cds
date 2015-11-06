@@ -2434,16 +2434,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Test plot with x gutter only and data in main plot as well.");
 
+        cds.openStatusInfoPane("Races");
+        sleep(500);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        sleep(500); // Wait for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
         yaxis.openSelectorWindow();
         yaxis.pickSource(CDSHelper.ICS);
         yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        xaxis.pickVariable(CDSHelper.DEMO_AGE);
+        xaxis.pickSource(CDSHelper.ICS);
+        xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        xaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -2458,16 +2465,23 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Test plot with y gutter only and data in main plot as well.");
 
+        cds.openStatusInfoPane("Races");
+        sleep(500);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
+        sleep(500); // Wait for the mask to show up.
+        _ext4Helper.waitForMaskToDisappear();
+
         yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        yaxis.pickVariable(CDSHelper.DEMO_AGE);
+        yaxis.pickSource(CDSHelper.ICS);
+        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_RAW);
+        yaxis.setCellType(CDSHelper.CELL_TYPE_CD4, CDSHelper.CELL_TYPE_CD8);
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
         xaxis.pickSource(CDSHelper.ICS);
         xaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
         xaxis.setCellType(CDSHelper.CELL_TYPE_CD4);
-        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
 
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
@@ -2489,8 +2503,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.BAMA);
-        xaxis.pickVariable(CDSHelper.BAMA_MAGNITUDE_DELTA);
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_TITERIC50);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
         sleep(500);
@@ -2666,16 +2680,6 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         log("Apply the brushing as a filter.");
         applyBrushAsFilter(subjectCountBefore);
-
-        // A filter created in one gutter should exclude all points in the other gutter (and make that gutter go away).
-        if(isXGutter)
-        {
-            assertFalse("There is an y gutter and there should not be.", hasYGutter());
-        }
-        else
-        {
-            assertFalse("There is an x gutter and there should not be.", hasXGutter());
-        }
 
         cds.clearFilter(1);
         sleep(1000);
