@@ -280,16 +280,25 @@ Ext.define('Connector.utility.Chart', {
 
     _onBrush : function(extent)
     {
-        var subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
+        // Stash all of the selected subjects so we can highlight associated points.
+        var subjects = {};
 
-        ChartUtils._brushPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
-
+        // first we go through and get the selected points/subjects for the main plot and both gutters
+        ChartUtils._brushSelectedPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
         if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushSelectedPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+        }
+        if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
+            ChartUtils._brushSelectedPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
 
+        // second we go back through and highlight the subject associated points in the main plot and both gutters
+        ChartUtils._brushAssociatedPointsByCanvas(this.plot.renderer.canvas, extent, subjects);
+        if (this.requireXGutter && Ext.isDefined(this.xGutterPlot)) {
+            ChartUtils._brushAssociatedPointsByCanvas(this.xGutterPlot.renderer.canvas, extent, subjects);
+        }
         if (this.requireYGutter && Ext.isDefined(this.yGutterPlot)) {
-            ChartUtils._brushPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
+            ChartUtils._brushAssociatedPointsByCanvas(this.yGutterPlot.renderer.canvas, extent, subjects);
         }
 
         this.brushedSubjects = subjects;
@@ -315,25 +324,30 @@ Ext.define('Connector.utility.Chart', {
         }
     },
 
-    _brushPointsByCanvas : function(canvas, extent, subjects)
+    _brushSelectedPointsByCanvas : function(canvas, extent, subjects)
     {
         canvas.selectAll('.point path')
                 .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPreFill, [extent, subjects]))
-                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
-                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke))
-                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
-                .attr('fill-opacity', 1)
-                .attr('stroke-opacity', 1);
+                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPreStroke));
 
-
-        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function()
+        // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function()
         {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
         });
+    },
+
+    _brushAssociatedPointsByCanvas : function(canvas, extent, subjects)
+    {
+        canvas.selectAll('.point path')
+                .attr('fill', ChartUtils.d3Bind(ChartUtils._brushPointPostFill, [extent, subjects]))
+                .attr('stroke', ChartUtils.d3Bind(ChartUtils._brushPointPostStroke, [extent, subjects]))
+                .attr('fill-opacity', 1)
+                .attr('stroke-opacity', 1);
 
         // Re-append the node so it is on top of all the other nodes, this way highlighted points are always visible. (issue 24076)
-        canvas.selectAll('.point path[fill="' + ChartUtils.colors.SELECTED + '"]').each(function()
+        canvas.selectAll('.point path[fill="' + ChartUtils.colors.BLACK + '"]').each(function()
         {
             var node = this.parentNode;
             node.parentNode.appendChild(node);
