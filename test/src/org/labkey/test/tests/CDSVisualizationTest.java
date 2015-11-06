@@ -57,6 +57,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotBox;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotPoint;
+import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotSquare;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTick;
 import static org.labkey.test.tests.CDSVisualizationTest.Locators.plotTickLinear;
 
@@ -337,10 +338,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_SUBJ_ENR);
         xaxis.confirmSelection();
-        expectedXYValues = "9/8/2001\n4/10/2003\n11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date First Subject Enrolled x-axis gutter plot was not present.", hasXGutter());
         assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
@@ -352,10 +353,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_FUP_COMP);
         xaxis.confirmSelection();
-        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n12/13/2015\n7/13/2017\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date Followed Up Complete x-axis gutter plot was not present.", hasXGutter());
-        assertTrue("For Date Followed Up Complete y-axis gutter plot was not present.", hasYGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
@@ -367,10 +368,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_PUB);
         xaxis.confirmSelection();
-        expectedXYValues = "1/10/2008\n8/11/2009\n3/12/2011\n10/11/2012\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "3/12/2011\n7/6/2011\n10/30/2011\n2/23/2012\n6/17/2012\n10/11/2012\n2/4/2013\n5/31/2013\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date Study Published x-axis gutter plot was not present.", hasXGutter());
-        assertTrue("For Date Study Published y-axis gutter plot was not present.", hasYGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
@@ -382,10 +383,10 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.openSelectorWindow();
         xaxis.pickVariable(CDSHelper.DEMO_DATE_START);
         xaxis.confirmSelection();
-        expectedXYValues = "9/8/2001\n11/9/2004\n1/10/2008\n3/12/2011\n5/13/2014\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
+        expectedXYValues = "11/9/2004\n6/10/2006\n1/10/2008\n8/11/2009\n3/12/2011\n0\n2\n4\n6\n8\n10\n12\n14"; // TODO Test data dependent.
 
-        assertTrue("For Date Study Start x-axis gutter plot was not present.", hasXGutter());
-        assertTrue("For Date Study Start y-axis gutter plot was not present.", hasYGutter());
+        assertTrue("For Date First Subject Enrolled y-axis gutter plot was not present.", hasYGutter());
+        assertFalse("For Date First Subject Enrolled x-axis gutter plot was present, it should not be.", hasXGutter());
 
         if (CDSHelper.validateCounts)
         {
@@ -1981,7 +1982,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.confirmSelection();
 
         waitForElement(plotTickLinear.withText("1000"));
-        assertElementPresent(plotPoint, 1261);
+        assertElementPresent(plotPoint, 1209);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
@@ -1989,7 +1990,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         Ext4Helper.resetCssPrefix();
         DataRegionTable plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
-        assertElementPresent(Locator.paginationText(1, 100, 2331));
+        assertElementPresent(Locator.paginationText(1, 100, 2279));
         getDriver().close();
         switchToMainWindow();
         Ext4Helper.setCssPrefix("x-");
@@ -2000,9 +2001,21 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         yaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
         yaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT);
+        xaxis.openSelectorWindow();
+        xaxis.pickSource(CDSHelper.NAB);
+        xaxis.pickVariable(CDSHelper.NAB_DATA);
+        xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        xaxis.setVirusName(cds.buildIdentifier(CDSHelper.COLUMN_ID_NEUTRAL_TIER, "all"));
+        xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.openStatusInfoPane("Races");
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        cds.selectInfoPaneItem(CDSHelper.RACE_BLACK, true);
+        click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
 
-        waitForElement(plotTickLinear.withText("300"));
-        assertElementPresent(plotPoint, 1070);
+        waitForElement(plotTickLinear.withText("6000"));
+        assertElementPresent(plotPoint, 580);
 
         click(CDSHelper.Locators.cdsButtonLocator("view data"));
         sleep(CDSHelper.CDS_WAIT);
@@ -2010,7 +2023,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         Ext4Helper.resetCssPrefix();
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
-        assertElementPresent(Locator.paginationText(1, 100, 1070));
+        assertElementPresent(Locator.paginationText(1, 100, 580));
         getDriver().close();
         switchToMainWindow();
     }
@@ -2160,7 +2173,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         scaleValues = "1\n10\n100\n1000";
         expectedCount = 796;
-        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, true);
+        verifyLogAndLinearHelper(scaleValues, 0, expectedCount, false);
 
         log("Change y-axis to be linear.");
 
@@ -3131,6 +3144,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         public static Locator plotTickLinear = Locator.css("g.tick-text > g > text");
         public static Locator plotTick = Locator.css("g.tick-text > a > text");
         public static Locator plotPoint = Locator.css("svg a.point");
+        public static Locator plotSquare = Locator.css("svg a.vis-bin-square");
         public static Locator filterDataButton = Locator.xpath("//span[text()='Filter']");
         public static Locator removeButton = Locator.xpath("//span[text()='Remove']");
     }
