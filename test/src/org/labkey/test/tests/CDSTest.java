@@ -133,17 +133,12 @@ public class CDSTest extends CDSReadOnlyTest
         log("Verify Home Page");
 
         //
-        // Validate counts and about link
+        // Validate splash counts
         //
         Locator.XPathLocator studyPoints = Locator.tagWithText("h1", "55 studies to learn about.");
         Locator.XPathLocator dataPoints = Locator.tagWithText("h1", "46,644 data points collected from 51 studies.");
         waitForElement(studyPoints);
         waitForElement(dataPoints);
-
-        click(Locator.tagWithText("a", "About"));
-        waitForText("About the CAVD DataSpace");
-        getDriver().navigate().back();
-        waitForElement(dataPoints.notHidden());
 
         //
         // Validate News feed

@@ -127,7 +127,6 @@
         <script path="Connector/src/store/StudyVisitTag.js"/>
 
         <!-- Application Views -->
-        <script path="Connector/src/view/About.js"/>
         <script path="Connector/src/view/DetailStatus.js"/>
         <script path="Connector/src/view/Selection.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>

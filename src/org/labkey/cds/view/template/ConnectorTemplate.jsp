@@ -227,7 +227,6 @@
     <script type="text/javascript" src="<%=text(srcPath)%>/store/StudyVisitTag.js"></script>
 
     <!-- Application Views -->
-    <script type="text/javascript" src="<%=text(srcPath)%>/view/About.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/Selection.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/DetailStatus.js"></script>
     <script type="text/javascript" src="<%=text(srcPath)%>/view/FilterStatus.js"></script>
