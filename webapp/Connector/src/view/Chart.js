@@ -107,7 +107,7 @@ Ext.define('Connector.view.Chart', {
 
         this.callParent([config]);
 
-        this.addEvents('userplotchange');
+        this.addEvents('userplotchange', 'plotdatarequest');
 
         this.labelTextColor = ChartUtils.colors.HEATSCALE1;
         this.labelTextHltColor = ChartUtils.colors.WHITE;
@@ -2176,6 +2176,8 @@ Ext.define('Connector.view.Chart', {
                 Connector.getState().clearSelections(true);
                 this.filterClear = false;
                 this.noPlot(false);
+
+                this.fireEvent('plotdatarequest', this);
             }
         }
     },
@@ -2411,6 +2413,8 @@ Ext.define('Connector.view.Chart', {
             {
                 this.onChartDataSuccess(measureStore, measureSet);
             }, this.onFailure, this);
+
+            this.fireEvent('plotdatarequest', this, measureSet.measures);
         }, this);
     },
 

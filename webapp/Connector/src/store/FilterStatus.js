@@ -12,8 +12,16 @@ Ext.define('Connector.store.FilterStatus', {
     // initial data record to show loading spinner on page load
     data: [{
         label: "Subjects",
+        count: -1,
         subcount: -1,
         highlight: true
+    }],
+
+    plotCountRecordsCache: [{
+        label: 'Time Points',
+        count: -1,
+        subcount: -1,
+        plotBasedCount: true
     }],
 
     constructor : function(config) {
@@ -67,7 +75,7 @@ Ext.define('Connector.store.FilterStatus', {
                             },
                             highlight: lvl.activeCount === 'highlight',
                             activeCountLink: lvl.activeCountLink === true,
-                            dataBasedCount: lvl.dataBasedCount,
+                            plotBasedCount: lvl.plotBasedCount,
                             cellbased: lvl.cellbased,
                             priority: Ext.isDefined(lvl.countPriority) ? lvl.countPriority : 1000
                         });
@@ -221,7 +229,7 @@ Ext.define('Connector.store.FilterStatus', {
                 level: ca.level,
                 highlight: ca.highlight,
                 activeCountLink: ca.activeCountLink,
-                dataBasedCount: ca.dataBasedCount
+                plotBasedCount: ca.plotBasedCount
             };
 
             if (_counts) {
@@ -244,7 +252,35 @@ Ext.define('Connector.store.FilterStatus', {
             recs.push(rec);
         });
 
+        recs = recs.concat(this.plotCountRecordsCache);
+
         this.loadData(recs);
         this.fireEvent('load', this);
+    },
+
+    updatePlotCountRecord : function(label, count)
+    {
+        var recData, record;
+
+        // find the existing record cache object and store record so that we can update the count
+        for (var i = 0; i < this.plotCountRecordsCache.length; i++)
+        {
+            recData = this.plotCountRecordsCache[i];
+            if (Ext.isObject(recData) && recData.label == label)
+            {
+                recData.count = count;
+
+                // if the store has already been loaded, update that count as well
+                record = this.getById(label);
+                if (record != null)
+                {
+                    record.set('count', count);
+                }
+
+                return;
+            }
+        }
+
+        console.warn('Requested update for plot count record that is not defined: ' + label);
     }
 });

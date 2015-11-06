@@ -34,7 +34,7 @@ Ext4.define('Connector.cube.Configuration', {
         // Levels:
         //      activeCount     - false/true/highlight. Default is false.
         //      activeCountLink - declare whether an 'activeCount' level exposes navigation. false/true. Default is true.
-        //      dataBasedCount  - false/true. Default is false.
+        //      plotBasedCount  - false/true whether this is a plot specific info pane count. Default is false.
         //      countPriority   - Default is 0.
         //      countSingular   - The count label displayed when there is one match. Default is undefined.
         //      countPlural     - The count label displayed when there are zero/multiple matches. Default is undefined.
@@ -446,7 +446,7 @@ Ext4.define('Connector.cube.Configuration', {
             level: {
                 activeCount: false,
                 activeCountLink: true,
-                dataBasedCount: false,
+                plotBasedCount: false,
                 countPriority: 0,
                 countSingular: undefined,
                 countPlural: undefined,

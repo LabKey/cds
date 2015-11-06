@@ -88,6 +88,10 @@ Ext.define('Connector.controller.FilterStatus', {
             }
         });
 
+        this.control('plot', {
+            plotdatarequest: this.onPlotDataRequest
+    });
+
         this.callParent();
     },
 
@@ -99,10 +103,14 @@ Ext.define('Connector.controller.FilterStatus', {
             store: store
         });
 
-        this.getViewManager().on('afterchangeview', function(controller, view) {
+        this.getViewManager().on('afterchangeview', function(controller, view)
+        {
             store.clearFilter();
-            if (view !== 'plot' && view !== 'datagrid') {
-                store.filter('dataBasedCount', false);
+
+            // if we are not on the plot view, hide the plot based counts from the info pane
+            if (view !== 'plot')
+            {
+                store.filter('plotBasedCount', false);
             }
         }, this);
 
@@ -246,6 +254,27 @@ Ext.define('Connector.controller.FilterStatus', {
             if (view) {
                 view.showUndoMessage();
             }
+        }
+    },
+
+    onPlotDataRequest : function(view, measures)
+    {
+        if (Ext.isArray(measures))
+        {
+            // Request distinct timepoint information for info pane plot counts
+            LABKEY.Query.executeSql({
+                schemaName: 'study',
+                sql: QueryUtils.getDistinctTimepointSQL({measures: measures}),
+                scope: this,
+                success: function(data)
+                {
+                    this.getStore('FilterStatus').updatePlotCountRecord('Time Points', data.rows.length);
+                }
+            });
+        }
+        else
+        {
+            this.getStore('FilterStatus').updatePlotCountRecord('Time Points', -1);
         }
     }
 });

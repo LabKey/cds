@@ -31,18 +31,18 @@ Ext.define('Connector.view.DetailStatus', {
                         '<tpl if="highlight != undefined && highlight == true">',
                                 '<li>',
                                       '<span class="statme hl-status-label">{label:htmlEncode}</span>',
-                                      '<span class="statme hl-status-count status-subcount maskit {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
-                                      '<span class="statme hl-status-count status-of {subcount:this.subFormat}">/</span>',
-                                      '<span class="statme hl-status-count maskit">{count:this.commaFormat}</span>',
+                                      '<span class="statme hl-status-count status-subcount maskit {subcount:this.shouldHide}">{subcount:this.commaFormat}</span>',
+                                      '<span class="statme hl-status-count status-of {subcount:this.shouldHide}">/</span>',
+                                      '<span class="statme hl-status-count maskit {count:this.shouldHide}">{count:this.commaFormat}</span>',
                                 '</li>',
                             '</div>',
                         '</tpl>',
                         '<tpl if="highlight == undefined || !highlight">',
                             '<li>',
                                 '<span class="statme status-label">{label:htmlEncode}</span>',
-                                '<span class="statme status-count status-subcount maskit {subcount:this.subFormat}">{subcount:this.commaFormat}</span>',
-                                '<span class="statme status-count status-of {subcount:this.subFormat}">/</span>',
-                                '<span class="statme status-count maskit">{count:this.commaFormat}</span>',
+                                '<span class="statme status-count status-subcount maskit {subcount:this.shouldHide}">{subcount:this.commaFormat}</span>',
+                                '<span class="statme status-count status-of {subcount:this.shouldHide}">/</span>',
+                                '<span class="statme status-count maskit {count:this.shouldHide}">{count:this.commaFormat}</span>',
                             '</li>',
                         '</tpl>',
                     '</div>',
@@ -58,8 +58,8 @@ Ext.define('Connector.view.DetailStatus', {
                 commaFormat : function(v) {
                     return Ext.util.Format.number(v, '0,000');
                 },
-                subFormat : function(subcount) {
-                    return subcount === -1 ? 'hideit' : '';
+                shouldHide : function(value) {
+                    return value === -1 ? 'hideit' : '';
                 }
             }
     ),

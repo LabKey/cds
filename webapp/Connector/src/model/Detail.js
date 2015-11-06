@@ -7,12 +7,14 @@ Ext.define('Connector.model.Detail', {
 
     extend : 'Ext.data.Model',
 
+    idProperty : 'label',
+
     fields : [
         {name: 'label'},
         {name: 'value'},
         {name: 'count', type: 'int'},
         {name: 'subcount', type: 'int'}, // a value of -1 determines that the subcount is not provided
-        {name: 'dataBasedCount', type: 'boolean'},
+        {name: 'plotBasedCount', type: 'boolean'},
         {name: 'valueLabel'},
         {name: 'highlight'},
         {name: 'activeCountLink', type: 'boolean'},
