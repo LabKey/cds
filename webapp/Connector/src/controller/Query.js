@@ -415,58 +415,46 @@ Ext.define('Connector.controller.Query', {
             }
 
             // get the cube subjectList, excluding the "In the plot" filter...see last param to configureOlapFilters,
-            // so that we can filter the advanced option values accordingly
-            // (i.e. for antigen selection in variable selector, get subject count for all filters except the antigen selection itself)
-            state.onMDXReady(function(mdx)
-            {
-                mdx.query({
-                    onRows: {
-                        level: '[Subject].[Subject]',
-                        members: 'members'
-                    },
-                    countFilter: Connector.getQueryService().configureOlapFilters(mdx, state.getFilters(), state.subjectName, plotAxis),
-                    scope: this,
-                    success: function(cellset)
+            // so that we can filter the advanced option values accordingly (i.e. for antigen selection in variable
+            // selector, get subject count for all filters except the antigen selection itself)
+            this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
+                subjectMeasure = new LABKEY.Query.Visualization.Measure({
+                    schemaName: dimension.get('schemaName'),
+                    queryName: dimension.get('queryName'),
+                    name: Connector.studyContext.subjectColumn,
+                    type: 'VARCHAR'
+                });
+
+                subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
+                subjectMeasure.values = subjects;
+
+                aliases.push(Connector.studyContext.subjectColumn);
+                wrappedMeasureSet.push({measure: subjectMeasure});
+
+                Ext.each(measureSet, function(measure)
+                {
+                    measureData = Ext.clone(measure.data);
+                    if (Ext.isArray(filterValuesMap[measure.get('alias')]))
                     {
-                        subjectMeasure = new LABKEY.Query.Visualization.Measure({
-                            schemaName: dimension.get('schemaName'),
-                            queryName: dimension.get('queryName'),
-                            name: Connector.studyContext.subjectColumn,
-                            type: 'VARCHAR'
-                        });
-
-                        subjectMeasure.alias = LABKEY.Utils.getMeasureAlias(subjectMeasure);
-                        subjectMeasure.values = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions), 'name');
-
-                        aliases.push(Connector.studyContext.subjectColumn);
-                        wrappedMeasureSet.push({measure: subjectMeasure});
-
-                        Ext.each(measureSet, function(measure)
-                        {
-                            measureData = Ext.clone(measure.data);
-                            if (Ext.isArray(filterValuesMap[measure.get('alias')]))
-                            {
-                                measureData.values = filterValuesMap[measure.get('alias')];
-                            }
-
-                            aliases.push(measure.get('alias'));
-                            wrappedMeasureSet.push({measure: measureData});
-                        });
-
-                        QueryUtils.getData({
-                            measures: wrappedMeasureSet,
-                            metaDataOnly: true,
-                            scope: this,
-                            success: function(response)
-                            {
-                                if (Ext.isFunction(callback))
-                                {
-                                    callback.call(scope || this, response);
-                                }
-                            }
-                        });
+                        measureData.values = filterValuesMap[measure.get('alias')];
                     }
-                }, this);
+
+                    aliases.push(measure.get('alias'));
+                    wrappedMeasureSet.push({measure: measureData});
+                });
+
+                QueryUtils.getData({
+                    measures: wrappedMeasureSet,
+                    metaDataOnly: true,
+                    scope: this,
+                    success: function(response)
+                    {
+                        if (Ext.isFunction(callback))
+                        {
+                            callback.call(scope || this, response);
+                        }
+                    }
+                });
             }, this);
         }
     },
@@ -647,7 +635,7 @@ Ext.define('Connector.controller.Query', {
      * @param {LABKEY.query.olap.MDX} mdx - The object which will be added as a COUNT/WHERE filter.
      * @param {Connector.model.Filter} filters - or an appFilterData
      * @param {String} subjectName - or an appFilterData
-     * @param {boolean} [excludeInThePlotAxis=undefined] - exclude the "in the plot" filter for the query from a specific axis
+     * @param {String} [excludeInThePlotAxis=undefined] - exclude the "in the plot" filter for the query from a specific axis
      * @returns {Array}
      */
     configureOlapFilters : function(mdx, filters, subjectName, excludeInThePlotAxis)
@@ -714,44 +702,68 @@ Ext.define('Connector.controller.Query', {
         return olapFilters;
     },
 
-    clearSourceCountsCache : function() {
-        this.SOURCE_COUNTS = undefined;
-    },
+    getSourceCounts : function(sourceModels, plotAxis, callback, scope) {
 
-    getSourceCounts : function(sourceModels, callback, scope) {
+        var json = {
+            schema: 'study',
+            sources: []
+        };
 
-        Connector.getFilterService().getSubjects(function(subjectFilter) {
-
-            // we cache the source count results so they can share between variable sectors
-            if (Ext.isDefined(this.SOURCE_COUNTS)) {
-                callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
-                return;
+        Ext.each(sourceModels, function(source) {
+            var queryName = source.get('subjectCountQueryName') || source.get('queryName');
+            if (json.sources.indexOf(queryName) == -1) {
+                json.sources.push(queryName);
             }
+        });
 
-            var json = {
-                schema: 'study',
-                members: subjectFilter.hasFilters ? subjectFilter.subjects : undefined,
-                sources: []
-            };
-
-            Ext.each(sourceModels, function(source) {
-                var queryName = source.get('subjectCountQueryName') || source.get('queryName');
-                if (json.sources.indexOf(queryName) == -1) {
-                    json.sources.push(queryName);
-                }
-            });
+        this.getSubjectsExcludingPlotAxisFilters(plotAxis, function(hasFilters, subjects) {
+            json.members = hasFilters ? subjects : undefined;
 
             Ext.Ajax.request({
                 url: LABKEY.ActionURL.buildURL('visualization', 'getSourceCounts.api'),
                 method: 'POST',
                 jsonData: json,
                 success: function(response) {
-                    this.SOURCE_COUNTS = Ext.decode(response.responseText).counts;
-                    callback.call(scope || this, sourceModels, this.SOURCE_COUNTS);
+                    var counts = Ext.decode(response.responseText).counts;
+                    callback.call(scope || this, sourceModels, counts);
                 },
                 scope: this
             });
         }, this);
+    },
+
+    /**
+     * Get the array of subjects that match all application filters, with the option to exclude plot filters from a given axis.
+     * @param {String} excludeInThePlotAxis - exclude the "in the plot" filter for the subject count from a specific axis (x/y)
+     * @param {Function} callback
+     * @param {Object} scope
+     * @returns {boolean} indicates if the subject count request has filters or not
+     * @returns {Array} subjects returned by the MDX query
+     */
+    getSubjectsExcludingPlotAxisFilters : function(excludeInThePlotAxis, callback, scope)
+    {
+        var state = Connector.getState(),
+            queryService = Connector.getQueryService(),
+            countFilters,
+            subjects;
+
+        state.onMDXReady(function(mdx)
+        {
+            countFilters = queryService.configureOlapFilters(mdx, state.getFilters(), state.subjectName, excludeInThePlotAxis);
+
+            mdx.query({
+                onRows: {
+                    level: '[Subject].[Subject]',
+                    members: 'members'
+                },
+                countFilter: countFilters,
+                success: function (cellset)
+                {
+                    subjects = Ext.Array.pluck(Ext.Array.flatten(cellset.axes[1].positions), 'name');
+                    callback.call(scope || this, countFilters.length > 0, subjects);
+                }
+            });
+        });
     },
 
     /**

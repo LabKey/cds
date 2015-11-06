@@ -219,7 +219,7 @@ Ext.define('Connector.panel.Selector', {
             return Ext.isString(record.get('queryName')) || Ext.isString(record.get('subjectCountQueryName'));
         }).items;
 
-        this.queryService.getSourceCounts(sources, function(s, counts) {
+        this.queryService.getSourceCounts(sources, this.plotAxis, function(s, counts) {
             Ext.each(sources, function(source) {
                 var count = counts[source.get('subjectCountQueryName') || source.get('queryName')];
                 if (Ext.isDefined(count)) {

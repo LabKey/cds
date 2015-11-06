@@ -297,8 +297,6 @@ Ext.define('Connector.view.Grid', {
 
         //store.filterArray = model.getFilterArray();
         store.loadPage(1);
-
-        Connector.getService('Query').clearSourceCountsCache();
     },
 
     getColumnSelector : function() {
