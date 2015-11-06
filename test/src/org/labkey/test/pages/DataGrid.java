@@ -52,6 +52,13 @@ public class DataGrid
 
     public void ensureColumnsPresent(String... columns)
     {
+        String[] defaultColumns = {
+            CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY
+        };
+
+        for (String column : defaultColumns)
+            _test.waitForElement(Locators.columnHeaderLocator(column));
+
         for (String column : columns)
             _test.waitForElement(Locators.columnHeaderLocator(column));
     }

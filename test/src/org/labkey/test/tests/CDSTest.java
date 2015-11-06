@@ -34,7 +34,6 @@ import org.labkey.test.util.CDSAsserts;
 import org.labkey.test.util.CDSHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.Maps;
 import org.openqa.selenium.By;
@@ -43,7 +42,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -107,7 +105,6 @@ public class CDSTest extends CDSReadOnlyTest
     public BrowserType bestBrowser()
     {
         return BrowserType.CHROME;
-//        return BrowserType.FIREFOX;
     }
 
     @Override
@@ -534,7 +531,6 @@ public class CDSTest extends CDSReadOnlyTest
         DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
-//        sleep(1000); // I have no idea why, but w/o this wait the automation will trigger the mask and it won't go away.
 
         waitForText("View data grid"); // grid warning
 
@@ -544,8 +540,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(24487); // TODO Test data dependent.
-            grid.assertPageTotal(980); // TODO Test data dependent.
+            grid.assertRowCount(10783); // TODO Test data dependent.
+            grid.assertPageTotal(432); // TODO Test data dependent.
         }
 
         //
@@ -557,26 +553,25 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCurrentPage(980); // TODO Test data dependent.
-            grid.assertCellContent("908-047"); // TODO Test data dependent.
-            grid.assertCellContent("c256-001"); // TODO Test data dependent.
+            grid.assertCurrentPage(432); // TODO Test data dependent.
+            grid.assertCellContent("z139-2398"); // TODO Test data dependent.
+            grid.assertCellContent("z139-2500"); // TODO Test data dependent.
         }
 
         grid.clickPreviousBtn();
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCurrentPage(979); // TODO Test data dependent.
-            grid.assertCellContent("908-020"); // TODO Test data dependent.
-            grid.assertCellContent("908-026"); // TODO Test data dependent.
+            grid.assertCurrentPage(431); // TODO Test data dependent.
+            grid.assertCellContent("z139-2157"); // TODO Test data dependent.
+            grid.assertCellContent("z139-2358"); // TODO Test data dependent.
         }
 
         grid.goToFirstPage();
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("039-001"); // TODO Test data dependent.
-            grid.assertCellContent("039-017"); // TODO Test data dependent.
+            grid.assertCellContent("q2-003"); // TODO Test data dependent.
         }
 
         //
@@ -585,10 +580,10 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Studies");
         cds.hideEmpty();
-        cds.selectBars(CDSHelper.STUDIES[4]);
+        cds.selectBars(CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
 
-        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[4]));
+        waitForElement(CDSHelper.Locators.filterMemberLocator(CDSHelper.STUDIES[1]));
 
         //
         // Check to see if grid is properly filtering based on explorer filter
@@ -598,7 +593,7 @@ public class CDSTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             sleep(CDSHelper.CDS_WAIT_ANIMATION);
-            grid.assertRowCount(110); // TODO Test data dependent.
+            grid.assertRowCount(1075); // TODO Test data dependent.
         }
 
         cds.clearFilters();
@@ -606,8 +601,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(24487); // TODO Test data dependent.
-            assertElementPresent(DataGrid.Locators.cellLocator("039-001")); // TODO Test data dependent.
+            grid.assertRowCount(10783); // TODO Test data dependent.
+            assertElementPresent(DataGrid.Locators.cellLocator("q2-003")); // TODO Test data dependent.
         }
 
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
@@ -616,7 +611,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(24487); // TODO Test data dependent.
+            grid.assertRowCount(10783); // TODO Test data dependent.
         }
 
         log("Remove a column");
@@ -626,16 +621,16 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertRowCount(24487); // TODO Test data dependent.
+            grid.assertRowCount(10783); // TODO Test data dependent.
         }
 
         grid.setFacet(CDSHelper.DEMO_RACE, "White");
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertPageTotal(662); // TODO Test data dependent.
-            grid.assertRowCount(16528); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
+            grid.assertPageTotal(32); // TODO Test data dependent.
+            grid.assertRowCount(792); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, -1); // TODO Test data dependent.
         }
 
         //
@@ -649,8 +644,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("908-024"); // TODO Test data dependent.
-            grid.assertCellContent("908-023"); // TODO Test data dependent.
+            grid.assertCellContent("z139-0599"); // TODO Test data dependent.
         }
 
         grid.clickPreviousBtn();
@@ -659,7 +653,7 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("505-2473"); // TODO Test data dependent.
+            grid.assertCellContent("z135-197"); // TODO Test data dependent.
         }
 
         grid.goToNextPage();
@@ -667,8 +661,8 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertCellContent("505-2410"); // TODO Test data dependent.
-            grid.assertCellContent("505-2402"); // TODO Test data dependent.
+            grid.assertCellContent("z135-030"); // TODO Test data dependent.
+            grid.assertCellContent("z135-005"); // TODO Test data dependent.
         }
 
         log("Change column set and ensure still filtered");
@@ -677,9 +671,9 @@ public class CDSTest extends CDSReadOnlyTest
 
         if (CDSHelper.validateCounts)
         {
-            grid.assertPageTotal(662); // TODO Test data dependent.
-            grid.assertRowCount(16528); // TODO Test data dependent.
-            _asserts.assertFilterStatusCounts(4992, 50, -1); // TODO Test data dependent.
+            grid.assertPageTotal(32); // TODO Test data dependent.
+            grid.assertRowCount(792); // TODO Test data dependent.
+            _asserts.assertFilterStatusCounts(777, 48, -1); // TODO Test data dependent.
         }
     }
 
@@ -699,37 +693,35 @@ public class CDSTest extends CDSReadOnlyTest
         log("Create a plot that will filter.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
 
         // There was a regression when only the y axis was set the filter counts would go to 0.
         // That is why this test is here.
-        yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.ICS);
-        yaxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
-        yaxis.setCellType("All");
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
-        yaxis.confirmSelection();
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.ICS);
+        yAxis.pickVariable(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        yAxis.setCellType("All");
+        yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yAxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        waitForText("View data grid"); // grid warning
-
         log("Validate expected columns are present.");
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
 
-        log("Validating gid counts");
-        _asserts.assertFilterStatusCounts(28, 12, -1);
-        grid.assertPageTotal(7);
-        grid.assertRowCount(154);
+        log("Validating grid counts");
+        _asserts.assertFilterStatusCounts(159, 13, -1);
+        grid.assertPageTotal(27);
+        grid.assertRowCount(658);
 
         log("Applying a column filter.");
         grid.setFilter(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, "Is Greater Than or Equal To", "1");
 
-        _asserts.assertFilterStatusCounts(3, 3, -1);
+        _asserts.assertFilterStatusCounts(4, 3, -1);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_SUBJECT_ID, CDSHelper.GRID_COL_STUDY, CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY, CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
-        grid.assertRowCount(6);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
+        grid.assertRowCount(4);
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
         // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
@@ -747,30 +739,20 @@ public class CDSTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
-        waitForText("View data grid"); // grid warning
-
         log("Validate new column added to grid.");
         grid.ensureColumnsPresent(CDSHelper.DEMO_SEX);
 
         log("Filter on new column.");
         grid.setCheckBoxFilter(CDSHelper.DEMO_SEX, true, "Male");
         _asserts.assertFilterStatusCounts(2, 2, -1);
-        grid.assertRowCount(4);
+        grid.assertRowCount(2);
 
         log("Now add a new column to the mix.");
-        gridColumnSelector.openSelectorWindow();
-        shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath("//div[contains(@class, 'column-axis-selector')]//div[contains(@class, ' content ')]")));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // TODO tired of trying to find a good fix for this.
-        gridColumnSelector.pickSource(CDSHelper.NAB);
-        gridColumnSelector.pickVariable(CDSHelper.NAB_TITERIC50, false);
-        gridColumnSelector.confirmSelection();
-        _ext4Helper.waitForMaskToDisappear();
+        gridColumnSelector.addGridColumn(CDSHelper.NAB, CDSHelper.GRID_TITLE_NAB, CDSHelper.NAB_TITERIC50, false, true);
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
-                CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
         grid.assertRowCount(15);
 
         log("Validate checkerboarding.");
@@ -782,19 +764,19 @@ public class CDSTest extends CDSReadOnlyTest
             gridRowCells = row.findElements(By.xpath("./descendant::td"));
 
             // If the Magnitude Background subtracted column is "empty"
-            if (gridRowCells.get(4).getText().trim().length() == 0)
+            if (gridRowCells.get(8).getText().trim().length() == 0)
             {
                 // There should be no lab id
-                assertTrue(gridRowCells.get(12).getAttribute("class").toLowerCase().contains("no-value"));
+                assertTrue(gridRowCells.get(7).getAttribute("class").toLowerCase().contains("no-value"));
                 // but there should be a value for Titer IC50.
-                assertTrue(!gridRowCells.get(14).getText().trim().isEmpty());
+                assertTrue(!gridRowCells.get(18).getText().trim().isEmpty());
             }
             else
             {
                 // There should be a lab id
-                assertTrue(!gridRowCells.get(12).getText().trim().isEmpty());
+                assertTrue(!gridRowCells.get(7).getText().trim().isEmpty());
                 // but there should not be a value for Titer IC50.
-                assertTrue(gridRowCells.get(14).getAttribute("class").toLowerCase().contains("no-value"));
+                assertTrue(gridRowCells.get(18).getAttribute("class").toLowerCase().contains("no-value"));
             }
 
         }
@@ -805,16 +787,15 @@ public class CDSTest extends CDSReadOnlyTest
 
         _asserts.assertFilterStatusCounts(2, 2, -1);
         grid.assertPageTotal(1);
-        grid.ensureColumnsPresent(CDSHelper.GRID_COL_STUDY,
-                CDSHelper.GRID_COL_TREATMENT_SUMMARY, CDSHelper.GRID_COL_STUDY_DAY,
-                CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
-        grid.assertRowCount(21);
+        grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB, CDSHelper.NAB_TITERIC50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
+        grid.assertRowCount(17);
 
         cds.goToAppHome();
         cds.clearFilters();
     }
 
-    @Test
+    // TODO: Still needs work, mainly blocked by issue https://www.labkey.org/issues/home/Developer/issues/details.view?issueId=24128
+    @Test @Ignore
     public void verifyGridColumnSelector()
     {
         CDSHelper cds = new CDSHelper(this);
@@ -827,30 +808,30 @@ public class CDSTest extends CDSReadOnlyTest
         log("Create a plot that will filter.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        YAxisVariableSelector yaxis = new YAxisVariableSelector(this);
-        XAxisVariableSelector xaxis = new XAxisVariableSelector(this);
-        ColorAxisVariableSelector coloraxis = new ColorAxisVariableSelector(this);
+        YAxisVariableSelector yAxis = new YAxisVariableSelector(this);
+        XAxisVariableSelector xAxis = new XAxisVariableSelector(this);
+        ColorAxisVariableSelector colorAxis = new ColorAxisVariableSelector(this);
 
-        yaxis.openSelectorWindow();
-        yaxis.pickSource(CDSHelper.NAB);
-        yaxis.pickVariable(CDSHelper.NAB_TITERIC50);
-        yaxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
-        yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
+        yAxis.openSelectorWindow();
+        yAxis.pickSource(CDSHelper.NAB);
+        yAxis.pickVariable(CDSHelper.NAB_TITERIC50);
+        yAxis.setVirusName(cds.buildIdentifier(CDSHelper.TITLE_NAB, CDSHelper.COLUMN_ID_NEUTRAL_TIER, CDSHelper.NEUTRAL_TIER_1));
+        yAxis.setScale(DataspaceVariableSelector.Scale.Linear);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        yaxis.confirmSelection();
+        yAxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
-        xaxis.openSelectorWindow();
-        xaxis.pickSource(CDSHelper.ICS);
-        xaxis.pickVariable(CDSHelper.ICS_ANTIGEN);
+        xAxis.openSelectorWindow();
+        xAxis.pickSource(CDSHelper.ICS);
+        xAxis.pickVariable(CDSHelper.ICS_ANTIGEN);
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        xaxis.confirmSelection();
+        xAxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
-        coloraxis.openSelectorWindow();
-        coloraxis.pickSource(CDSHelper.SUBJECT_CHARS);
-        coloraxis.pickVariable(CDSHelper.DEMO_RACE);
-        coloraxis.confirmSelection();
+        colorAxis.openSelectorWindow();
+        colorAxis.pickSource(CDSHelper.SUBJECT_CHARS);
+        colorAxis.pickVariable(CDSHelper.DEMO_RACE);
+        colorAxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
@@ -1041,8 +1022,7 @@ public class CDSTest extends CDSReadOnlyTest
         gridColumnSelector.backToSource();
     }
 
-    // TODO Still needs work. Counts are changing with each new dataset.
-    @Test @Ignore
+    @Test
     public void verifyCounts()
     {
         cds.goToSummary();
@@ -1071,38 +1051,37 @@ public class CDSTest extends CDSReadOnlyTest
         sleep(CDSHelper.CDS_WAIT_ANIMATION);
         cds.clearFilters();
         waitForElement(Locator.css("span.barlabel").withText(CDSHelper.STUDIES[2]), CDSHelper.CDS_WAIT);
-        cds.clearSelection();
-        cds.goToSummary();
         // end 14902
 
+        cds.goToSummary();
         cds.clickBy("Studies");
         cds.applySelection(CDSHelper.STUDIES[1]);
-        _asserts.assertSelectionStatusCounts(3, 1, -1);
-        assertTextNotPresent(TOOLTIP);
+        _asserts.assertSelectionStatusCounts(84, 1, -1);
+//        assertTextNotPresent(TOOLTIP);
         cds.applySelection(CDSHelper.STUDIES[2]);
-        _asserts.assertSelectionStatusCounts(110, 1, -1);
+        _asserts.assertSelectionStatusCounts(30, 1, -1);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Assays");
         cds.applySelection(CDSHelper.ASSAYS[0]);
-        _asserts.assertSelectionStatusCounts(270, 1, -1);
+        _asserts.assertSelectionStatusCounts(75, 1, -1);
         cds.applySelection(CDSHelper.ASSAYS[1]);
-        _asserts.assertSelectionStatusCounts(969, 8, -1);
-        cds.applySelection(CDSHelper.ASSAYS[3]);
-        _asserts.assertSelectionStatusCounts(899, 14, -1);
+        _asserts.assertSelectionStatusCounts(1604, 14, -1);
         cds.applySelection(CDSHelper.ASSAYS[2]);
-        _asserts.assertSelectionStatusCounts(1690, 15, -1);
+        _asserts.assertSelectionStatusCounts(477, 4, -1);
+        cds.applySelection(CDSHelper.ASSAYS[3]);
+        _asserts.assertSelectionStatusCounts(337, 5, -1);
         cds.clearSelection();
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
         _asserts.assertDefaultFilterStatusCounts();
         cds.pickSort("Country at enrollment");
         cds.applySelection("South Africa");
-        _asserts.assertSelectionStatusCounts(1530, 8, -1);
+        _asserts.assertSelectionStatusCounts(43, 21, -1);
         cds.applySelection("United States");
-        _asserts.assertSelectionStatusCounts(5423, 47, -1);
+        _asserts.assertSelectionStatusCounts(2797, 49, -1);
         cds.applySelection("Thailand");
-        _asserts.assertSelectionStatusCounts(12, 1, -1);
+        _asserts.assertSelectionStatusCounts(98, 32, -1);
     }
 
     @Test
@@ -1115,10 +1094,10 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Study products");
         waitForFormElementToEqual(hierarchySelector, "Product Type");
-        cds.shiftSelectBars("Poly ICLC", "DEC-205-p24");
-        waitForElement(CDSHelper.Locators.filterMemberLocator("Vaccine"), WAIT_FOR_JAVASCRIPT);
-        assertElementPresent(CDSHelper.Locators.filterMemberLocator("Poly ICLC, Vaccine, DEC-205-p24"));
-        _asserts.assertSelectionStatusCounts(1, 1, -1);
+        cds.shiftSelectBars("Adjuvant", "Risperidone");
+        waitForElement(CDSHelper.Locators.filterMemberLocator("benztropine mesylate"), WAIT_FOR_JAVASCRIPT);
+        assertElementPresent(CDSHelper.Locators.filterMemberLocator("Adjuvant, benztropine mesylate, Risperidone"));
+        _asserts.assertSelectionStatusCounts(5, 1, -1);
         cds.clearSelection();
         _asserts.assertDefaultFilterStatusCounts();
         // end 14910
@@ -1130,7 +1109,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.selectInfoPaneItem(CDSHelper.STUDIES[4], false);
         click(CDSHelper.Locators.cdsButtonLocator("Filter", "filterinfoaction"));
         cds.saveGroup(GROUP_NAME, GROUP_DESC);
-        _asserts.assertFilterStatusCounts(113, 2, -1);
+        _asserts.assertFilterStatusCounts(194, 2, -1);
         cds.clearFilters();
         _asserts.assertDefaultFilterStatusCounts();
 
@@ -1165,9 +1144,7 @@ public class CDSTest extends CDSReadOnlyTest
         assertElementPresent(Locator.css("option").withText("Subjects related to any (OR)"));
         _asserts.assertFilterStatusCounts(115, 2, -1);  // or
         cds.clearFilters();
-        waitForText("All subjects");
         _asserts.assertDefaultFilterStatusCounts();
-        assertTextPresent("All subjects");
 
         log("Verify selection messaging");
         cds.goToSummary();
@@ -1187,7 +1164,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToSummary();
         cds.clickBy("Subject characteristics");
         cds.pickSort("Country at enrollment");
-        cds.selectBars("Switzerland");
+        cds.selectBars("United States");
 
         // save the group and request cancel
         click(CDSHelper.Locators.cdsButtonLocator("save", "filtersave"));
@@ -1460,22 +1437,6 @@ public class CDSTest extends CDSReadOnlyTest
         waitForElement(Locator.tagWithClass("div", "list-title-bar").append("/div").containing("Protein Panel"));
         waitForText(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA[0]);
         assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
-    }
-
-    // TODO Putting this test on hold. "Learn about Sites " is a future feature.
-    @Test  @Ignore
-    public void testLearnAboutSites()
-    {
-        cds.viewLearnAboutPage("Sites");
-
-        List<String> sites = Collections.emptyList();
-        _asserts.verifyLearnAboutPage(sites);
-    }
-
-// TODO Need a test for "Learn about Labs " (a future feature).
-    @Test  @Ignore
-    public void testLearnAboutLabs()
-    {
     }
 
     @Test
