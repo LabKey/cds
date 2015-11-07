@@ -333,12 +333,11 @@
         font-size: 11px;
         font-weight: bold;
         color: $heat-scale-2;
-        padding: 0 8px 16px 0;
+        padding-bottom: 16px;
       }
 
       .col-count-title {
-        padding-right: 0;
-        text-align: right;
+        margin-left: -18px;
       }
 
       .col-check .x-form-cb-label {
