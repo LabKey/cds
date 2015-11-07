@@ -257,24 +257,33 @@ Ext.define('Connector.controller.FilterStatus', {
         }
     },
 
-    onPlotDataRequest : function(view, measures)
+    onPlotDataRequest : function(view, measures, includesSelections)
     {
         if (Ext.isArray(measures))
         {
-            // Request distinct timepoint information for info pane plot counts
+            // Request distinct timepoint information for info pane plot counts or subcounts
             LABKEY.Query.executeSql({
                 schemaName: 'study',
                 sql: QueryUtils.getDistinctTimepointSQL({measures: measures}),
                 scope: this,
                 success: function(data)
                 {
-                    this.getStore('FilterStatus').updatePlotCountRecord('Time Points', data.rows.length);
+                    if (includesSelections)
+                        this.getStore('FilterStatus').updatePlotCountRecord('Time Points', undefined, data.rows.length);
+                    else
+                        this.getStore('FilterStatus').updatePlotCountRecord('Time Points', data.rows.length, -1);
                 }
             });
         }
+        else if (includesSelections)
+        {
+            // reset just the timepoint subcount
+            this.getStore('FilterStatus').updatePlotCountRecord('Time Points', undefined, -1);
+        }
         else
         {
-            this.getStore('FilterStatus').updatePlotCountRecord('Time Points', -1);
+            // reset both timepoint count and subcount
+            this.getStore('FilterStatus').updatePlotCountRecord('Time Points', -1, -1);
         }
     }
 });

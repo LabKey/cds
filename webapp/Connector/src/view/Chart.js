@@ -2099,7 +2099,6 @@ Ext.define('Connector.view.Chart', {
         {
             hasMeasures = true;
 
-            console.log('setting color from filter');
             this.activeMeasures.color = color.measure;
             this.getColorSelector().getModel().updateVariable([this.activeMeasures.color]);
 
@@ -2292,9 +2291,10 @@ Ext.define('Connector.view.Chart', {
      * object has a property for each axis (x/y) stating if that axis is being affected directly by a "plot selection"
      * filter in the app.
      * @param {boolean} [includeFilterMeasures=false] - Include all measures declared in all state filters
+     * @param {boolean} [includeSelectionMeasures=false] - Include all measures declared in all state selections
      * @returns {{measures: (*|Array), wrapped: (*|Array)}}
      */
-    getMeasureSet : function(includeFilterMeasures)
+    getMeasureSet : function(includeFilterMeasures, includeSelectionMeasures)
     {
         var activeMeasures = this.activeMeasures,
             measures = this.getAdditionalMeasures(activeMeasures),
@@ -2310,12 +2310,13 @@ Ext.define('Connector.view.Chart', {
         });
 
         // set of measures from data filters
-        if (includeFilterMeasures === true)
+        if (includeFilterMeasures === true || includeSelectionMeasures === true)
         {
             var xAxisName = this.getAxisNameMeasureProperty('x', activeMeasures.x, activeMeasures.y),
                 yAxisName = this.getAxisNameMeasureProperty('y', activeMeasures.x, activeMeasures.y),
                 hasX = activeMeasures.x !== null,
-                hasY = activeMeasures.y !== null;
+                hasY = activeMeasures.y !== null,
+                stateFilters = [];
 
             /**
              * A comparator to determine if a filter from measureB qualifies against measureA. Determine by the following:
@@ -2354,7 +2355,16 @@ Ext.define('Connector.view.Chart', {
                 }
             };
 
-            Ext.each(Connector.getState().getFilters(), function(filter)
+            if (includeFilterMeasures)
+            {
+                stateFilters = stateFilters.concat(Connector.getState().getFilters());
+            }
+            if (includeSelectionMeasures)
+            {
+                stateFilters = stateFilters.concat(Connector.getState().getSelections());
+            }
+
+            Ext.each(stateFilters, function(filter)
             {
                 if (filter.isGrid())
                 {
@@ -2404,7 +2414,7 @@ Ext.define('Connector.view.Chart', {
     {
         Connector.getFilterService().getSubjects(function(subjectFilter)
         {
-            var measureSet = this.getMeasureSet(true /* includeFilterMeasures */);
+            var measureSet = this.getMeasureSet(true /* includeFilterMeasures */, false /* includeSelectionMeasures */);
 
             this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
 
@@ -2414,7 +2424,7 @@ Ext.define('Connector.view.Chart', {
                 this.onChartDataSuccess(measureStore, measureSet);
             }, this.onFailure, this);
 
-            this.fireEvent('plotdatarequest', this, measureSet.measures);
+            this.fireEvent('plotdatarequest', this, measureSet.measures, false);
         }, this);
     },
 
@@ -2941,7 +2951,6 @@ Ext.define('Connector.view.Chart', {
                     selectionmade: function(selected) {
                         this.clearVisibleWindow();
 
-                        console.log('setting color...');
                         this.activeMeasures.color = selected;
                         this.getColorSelector().getModel().updateVariable([selected]);
 
@@ -3191,6 +3200,21 @@ Ext.define('Connector.view.Chart', {
 
         if (Ext.isFunction(this.highlightSelectedFn)) {
             this.highlightSelectedFn();
+        }
+
+        // update the timepoint info pane subcount based on adding/removing selections
+        if (selections.length > 0)
+        {
+            Connector.getFilterService().getSubjects(function(subjectFilter)
+            {
+                var measureSet = this.getMeasureSet(true /* includeFilterMeasures */, true /* includeSelectionMeasures */);
+                this.applyFiltersToMeasure(measureSet.measures, subjectFilter);
+                this.fireEvent('plotdatarequest', this, measureSet.measures, true);
+            }, this);
+        }
+        else
+        {
+            this.fireEvent('plotdatarequest', this, undefined, true);
         }
     },
 

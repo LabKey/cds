@@ -258,7 +258,7 @@ Ext.define('Connector.store.FilterStatus', {
         this.fireEvent('load', this);
     },
 
-    updatePlotCountRecord : function(label, count)
+    updatePlotCountRecord : function(label, count, subcount)
     {
         var recData, record;
 
@@ -268,13 +268,25 @@ Ext.define('Connector.store.FilterStatus', {
             recData = this.plotCountRecordsCache[i];
             if (Ext.isObject(recData) && recData.label == label)
             {
-                recData.count = count;
-
                 // if the store has already been loaded, update that count as well
                 record = this.getById(label);
-                if (record != null)
+
+                if (Ext.isDefined(count))
                 {
-                    record.set('count', count);
+                    recData.count = count;
+                    if (record != null)
+                    {
+                        record.set('count', count);
+                    }
+                }
+
+                if (Ext.isDefined(subcount))
+                {
+                    recData.subcount = subcount;
+                    if (record != null)
+                    {
+                        record.set('subcount', subcount);
+                    }
                 }
 
                 return;
