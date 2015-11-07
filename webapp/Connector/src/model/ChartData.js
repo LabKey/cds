@@ -348,7 +348,7 @@ Ext.define('Connector.model.ChartData', {
             }
 
             yVal = this._getYValue(y, _yid, _row);
-            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous) : '';
+            xVal = x ? this._getXValue(x, _xid, _row, xa.isContinuous, xa.isDimension) : '';
             colorVal = color ? this._getColorValue(color, _cid, _row) : undefined;
 
             if (!xa.isContinuous)
@@ -406,14 +406,14 @@ Ext.define('Connector.model.ChartData', {
                 // note: we don't currently do anything with these null/null points
                 undefinedBothRows.push(entry);
             }
-            else if (xVal == null)
+            else if (xVal == null && xa.isContinuous && !xa.isDimension)
             {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().x !== true)
                 {
                     undefinedXRows.push(entry);
                 }
             }
-            else if (xa.isContinuous && yVal == null)
+            else if (yVal == null && xa.isContinuous && !xa.isDimension)
             {
                 if (this.SHOW_GUTTER_PLOTS || this.hasPlotSelectionFilter().y !== true)
                 {
@@ -497,12 +497,12 @@ Ext.define('Connector.model.ChartData', {
         return null;
     },
 
-    _getXValue : function(measure, alias, row, xIsContinuous) {
+    _getXValue : function(measure, alias, row, xIsContinuous, xIsDimension) {
         if (row.x.hasOwnProperty('isUnique')) {
             if (Ext.isDefined(row.x.value) && row.x.value != null) {
                 return this._getValue(row.x.value, measure.type);
             }
-            return xIsContinuous ? null : ChartUtils.emptyTxt;
+            return xIsContinuous ? (xIsDimension ? 'null' : null) : ChartUtils.emptyTxt;
         }
 
         if (!this.usesMedian() && row.x.values.length > 1) {
@@ -559,6 +559,6 @@ Ext.define('Connector.model.ChartData', {
 
     isValidPlotValue : function(axis, props, value)
     {
-        return value == null || !props.isContinuous || !this.isLogScale(axis) || value > 0;
+        return value == null || !props.isContinuous || props.isDimension || !this.isLogScale(axis) || value > 0;
     }
 });
