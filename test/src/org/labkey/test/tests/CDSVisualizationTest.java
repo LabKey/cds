@@ -229,6 +229,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         xaxis.pickVariable(CDSHelper.ELISPOT_DATA_PROV);
         xaxis.setScale(DataspaceVariableSelector.Scale.Linear);
         xaxis.confirmSelection();
+        sleep(CDSHelper.CDS_WAIT_ANIMATION);
         yaxis.pickSource(CDSHelper.ELISPOT);
         yaxis.pickVariable(CDSHelper.ELISPOT_MAGNITUDE_BACKGROUND_SUB);
         yaxis.setScale(DataspaceVariableSelector.Scale.Linear);
@@ -2274,6 +2275,7 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Try to protect from getting an index out of range error.
         pointToClick = getElementCount(Locator.css("div:not(.thumbnail) > svg:nth-of-type(1) a.point"))/4;
+        log("Going to click on the " + pointToClick + " element from \"div:not(.thumbnail) > svg:nth-of-type(1) a.point\".");
         brushPlot("div:not(.thumbnail) > svg:nth-of-type(1) a.point:nth-of-type(" + pointToClick + ")", 50, -350, true);
 
         // Clear the filter.
@@ -2695,6 +2697,8 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         tempStr = getText(Locator.xpath(XPATH_SUBJECT_COUNT));
         subjectCountBefore = Integer.parseInt(tempStr.replaceAll(",", ""));
 
+        // Going to move the mouse over the area where it is about to start dragging.
+        mouseOver(Locator.css(cssPathToPoint));
         dragAndDrop(Locator.css(cssPathToPoint), xOffSet, yOffSet);
         sleep(250);
 

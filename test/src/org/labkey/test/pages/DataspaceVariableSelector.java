@@ -494,6 +494,7 @@ public abstract class DataspaceVariableSelector
 
                 _test.sleep(CDSHelper.CDS_WAIT_ANIMATION);
                 _test.longWait().until(LabKeyExpectedConditions.animationIsDone(allTag));
+                _test.scrollIntoView(allTag);
                 _test.longWait().until(ExpectedConditions.elementToBeClickable(allTag.toBy()));
 
                 _test.waitForElement(allTag, CDSHelper.CDS_WAIT * 3);
