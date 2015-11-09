@@ -19,6 +19,7 @@ Ext.define('Connector.utility.Query', {
         this.SUBJECT_SEQNUM_ALIAS = [Connector.studyContext.gridBaseSchema, Connector.studyContext.gridBase, 'ParticipantSequenceNum'].join('_');
         this.SEQUENCENUM_ALIAS = this.STUDY_ALIAS_PREFIX + 'SequenceNum';
         this.CONTAINER_ALIAS = this.STUDY_ALIAS_PREFIX + 'Container';
+        this.VISITROWID_ALIAS = this.STUDY_ALIAS_PREFIX + 'VisitRowId';
 
         if (Ext.isDefined(LABKEY.ActionURL.getParameters()['logQuery']))
         {

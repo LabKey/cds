@@ -409,6 +409,11 @@ Ext.define('Connector.model.InfoPane', {
         store.loadRawData(modelDatas);
         store.group(store.groupField, 'DESC');
 
+        this.setReady();
+    },
+
+    setReady : function()
+    {
         this._ready = true;
         this.fireEvent('ready', this);
     },

@@ -268,6 +268,7 @@ Ext.define('Connector.controller.Query', {
     /**
      * Returns the raw measure data for the specified measureAlias. If not found, returns undefined.
      * @param measureAlias
+     * @param altLookupType - parent/child or undefined
      * @returns {*}
      */
     getMeasure : function(measureAlias, altLookupType) {
@@ -654,7 +655,7 @@ Ext.define('Connector.controller.Query', {
                 {
                     // plot selection or "in the plot"
 
-                    if (excludeInThePlotAxis !== 'x')
+                    if (excludeInThePlotAxis !== 'x' || filter.isGrid())
                     {
                         Ext.each(filter.getMeasureSet('x'), function(filter)
                         {
@@ -663,7 +664,7 @@ Ext.define('Connector.controller.Query', {
                         });
                     }
 
-                    if (excludeInThePlotAxis !== 'y')
+                    if (excludeInThePlotAxis !== 'y' || filter.isGrid())
                     {
                         axisId = Ext.id(undefined, 'axis-');
                         Ext.each(filter.getMeasureSet('y'), function(filter)

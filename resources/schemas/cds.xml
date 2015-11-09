@@ -644,7 +644,7 @@
             <column columnName="SubjectId"/>
             <column columnName="Study"/>
             <column columnName="TreatmentSummary"/>
-            <column columnName="SubjectVisit"/>
+            <column columnName="VisitRowId"/>
             <column columnName="ParticipantSequenceNum"/>
             <column columnName="SequenceNum"/>
             <column columnName="ProtocolDay"/>

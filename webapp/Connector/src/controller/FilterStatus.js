@@ -132,16 +132,19 @@ Ext.define('Connector.controller.FilterStatus', {
 
         if (parent) {
 
-            var clazz = 'Connector.view.InfoPane';
-
             //
             // configure info pane view
             //
-            var config = {
-                dimension: filterOrDetail.get('dimension'),
-                hierarchy: filterOrDetail.get('hierarchy'),
-                level: filterOrDetail.get('level')
-            };
+
+            var clazz = 'Connector.view.InfoPane',
+                config = {
+                    dimension: filterOrDetail.get('dimension'),
+                    hierarchy: filterOrDetail.get('hierarchy'),
+                    level: filterOrDetail.get('level')
+                },
+                params = {
+                    data: filterOrDetail.get('dataRows')
+                };
 
             if (filterOrDetail.$className === 'Connector.model.Filter')
             {
@@ -170,6 +173,7 @@ Ext.define('Connector.controller.FilterStatus', {
 
             var infoPane = Ext.create(clazz, {
                 model: Ext.create('Connector.model.InfoPane', config),
+                params: params,
                 listeners: {
                     hide: {
                         fn: this.resetInfoPane,
@@ -275,24 +279,13 @@ Ext.define('Connector.controller.FilterStatus', {
                 scope: this,
                 success: function(data)
                 {
-                    if (includesSelections)
-                    {
-                        store.updatePlotRecordSubcount('Timepoints', data.rows.length);
-                    }
-                    else
-                    {
-                        store.updatePlotRecordCount('Timepoints', data.rows.length);
-                    }
+                    store.updatePlotRecordCount('Timepoints', data.rows, includesSelections);
                 }
             });
         }
-        else if (includesSelections)
-        {
-            store.updatePlotRecordSubcount('Timepoints',  -1);
-        }
         else
         {
-            store.updatePlotRecordCount('Timepoints', -1);
+            store.updatePlotRecordCount('Timepoints',  undefined, includesSelections);
         }
     }
 });

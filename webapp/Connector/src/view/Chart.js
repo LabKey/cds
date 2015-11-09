@@ -1941,11 +1941,12 @@ Ext.define('Connector.view.Chart', {
             if (selection.gridFilter[0] || selection.gridFilter[1])
             {
                 selection.plotMeasures[0] = this._getAxisWrappedMeasure(this.activeMeasures.x);
-                var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
 
                 // Create a 'time filter'
                 if (this.activeMeasures.x.variableType === 'TIME')
                 {
+                    var timeFilters = [selection.gridFilter[0], selection.gridFilter[1]];
+
                     Connector.getFilterService().getTimeFilter(selection.plotMeasures[0], timeFilters, function(_filter)
                     {
                         selection.isTime = true;
@@ -2176,7 +2177,7 @@ Ext.define('Connector.view.Chart', {
                 this.filterClear = false;
                 this.noPlot(false);
 
-                this.fireEvent('plotdatarequest', this);
+                this.fireEvent('plotdatarequest', this, undefined, false);
             }
         }
     },

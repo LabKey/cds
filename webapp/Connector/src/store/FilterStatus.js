@@ -260,45 +260,34 @@ Ext.define('Connector.store.FilterStatus', {
         this.fireEvent('load', this);
     },
 
-    updatePlotRecordCount : function(label, count)
+    updatePlotRecordCount : function(label, dataRows, forSubcount)
     {
         var recIndex = this.findPlotCountRecordCache(label),
-                record;
-
-        if (recIndex > -1)
-        {
-            this.plotCountRecordsCache[recIndex].count = count;
-
-            // if the store has already been loaded, update that count as well
-            record = this.getById(label);
-            if (record != null)
-            {
-                record.set('count', count);
-            }
-
-            // anytime the count is updated, reset the subcount
-            this.updatePlotRecordSubcount('Timepoints', -1);
-        }
-        else
-        {
-            console.warn('Requested update for plot record that is not defined: ' + label);
-        }
-    },
-
-    updatePlotRecordSubcount : function(label, subcount)
-    {
-        var recIndex = this.findPlotCountRecordCache(label),
+            fieldName = forSubcount ? 'subcount' : 'count',
+            count = Ext.isArray(dataRows) ? dataRows.length : -1,
             record;
 
         if (recIndex > -1)
         {
-            this.plotCountRecordsCache[recIndex].subcount = subcount;
+            this.plotCountRecordsCache[recIndex][fieldName] = count;
 
             // if the store has already been loaded, update that count as well
             record = this.getById(label);
             if (record != null)
             {
-                record.set('subcount', subcount);
+                record.set(fieldName, count);
+            }
+
+            // anytime the count is updated, hold on to the data rows and reset the subcount
+            if (!forSubcount)
+            {
+                this.updatePlotRecordCount('Timepoints', undefined, true);
+
+                this.plotCountRecordsCache[recIndex].dataRows = dataRows;
+                if (record != null)
+                {
+                    record.set('dataRows', dataRows);
+                }
             }
         }
         else

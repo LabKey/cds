@@ -21,6 +21,7 @@ Ext.define('Connector.model.Detail', {
         {name: 'dimension', defaultValue: undefined},
         {name: 'hierarchy', defaultValue: undefined},
         {name: 'level', defaultValue: undefined},
-        {name: 'infoPaneViewClass', defaultValue: undefined} // alternate class name for the info pane to display on click
+        {name: 'infoPaneViewClass', defaultValue: undefined}, // alternate class name for the info pane to display on click
+        {name: 'dataRows', defaultValue: undefined} // array of data rows to use for the info pane grid members
     ]
 });

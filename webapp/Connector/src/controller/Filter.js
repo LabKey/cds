@@ -115,7 +115,14 @@ Ext.define('Connector.controller.Filter', {
     {
         Connector.getQueryService().onQueryReady(function(queryService)
         {
-            queryService.getData([wrappedTimeMeasure], function(metadata)
+            var wrappedMeasures = [
+                wrappedTimeMeasure,
+                {
+                    measure: Connector.getQueryService().getMeasure(QueryUtils.VISITROWID_ALIAS)
+                }
+            ];
+
+            queryService.getData(wrappedMeasures, function(metadata)
             {
                 var filters = [
                     LABKEY.Filter.create(QueryUtils.SEQUENCENUM_ALIAS, 0, LABKEY.Filter.Types.GREATER_THAN_OR_EQUAL)
