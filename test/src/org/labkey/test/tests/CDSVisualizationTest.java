@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.SortDirection;
 import org.labkey.test.categories.CDS;
 import org.labkey.test.categories.Git;
 import org.labkey.test.pages.ColorAxisVariableSelector;
@@ -1948,7 +1949,14 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         switchToWindow(1);
         plotDataTable = new DataRegionTable("query", this);
         assertEquals(100, plotDataTable.getDataRowCount());
-        assertEquals(19, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
+
+        // Sort the grid to try and get some predictability to number of specific values in a given column.
+        _ext4Helper.resetCssPrefix();
+        plotDataTable.setSort("cds_GridBase_SubjectId", SortDirection.ASC);
+        plotDataTable.setSort("cds_GridBase_ParticipantSequenceNum", SortDirection.ASC);
+        _ext4Helper.setCssPrefix("x-");
+
+        assertEquals(28, getElementCount(Locator.tagContainingText("td", uniqueVirus)));
         getDriver().close();
         switchToMainWindow();
 
@@ -2298,6 +2306,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         cds.clearFilters();
         sleep(500);
         waitForElement(Locator.xpath("//div[contains(@class, 'noplotmsg')][not(contains(@style, 'display: none'))]"));
+
+        // A hacky work around for the scrollIntoView issues I am seeing on Firefox.
+        refresh();
 
         log("Brush a binned plot.");
         xaxis.openSelectorWindow();
