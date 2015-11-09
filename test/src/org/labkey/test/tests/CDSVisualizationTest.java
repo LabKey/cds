@@ -2543,6 +2543,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
         int yGutterIndex, xGutterIndex, mainPlotIndex;
         String tempStr, cssPathBrushWindow;
 
+        refresh();
+        sleep(2000);
+
         if(hasYGutter)
         {
             yGutterIndex = 1;
