@@ -10,14 +10,15 @@ public class CDSHelpCenterUtil
 {
     public static final String HELP_EMPTY_CONTENT ="";
 
-    public static final String CATEGORY_1_NAME = "group_1";
+    public static final String CATEGORY_1_NAME  = "group_1";
     public static final String CATEGORY_1_TITLE = "About the CDS and the data";
-    public static final String HELP_1_1_NAME = "help_1_1";
-    public static final String HELP_1_1_TITLE = "What is the CDS?";
+    public static final String HELP_1_1_NAME    = "help_1_1";
+    public static final String HELP_1_1_TITLE   = "What is the CDS?";
     public static final String HELP_1_1_CONTENT = "<p>The CDS is a collaboration between SCHARP, LabKey, and Artefact. " +
             "The Bill &amp; Melinda Gates Foundation , has funded the program to date. The CDS is currently available to CAVD members.</p>";
-    public static final String HELP_1_2_NAME = "help_1_2";
-    public static final String HELP_1_2_TITLE = "How should I use CDS?";
+    public static final String HELP_1_2_CONTENT_SUB = "Full Terms of Use agreement";
+    public static final String HELP_1_2_NAME    = "help_1_2";
+    public static final String HELP_1_2_TITLE   = "How should I use CDS?";
     public static final String HELP_1_2_CONTENT = "<p class=\"p1\"><span class=\"s1\"><strong>Full Terms of Use agreement</strong></span></p>\n" +
             "<p class=\"p2\"><span class=\"s1\">To access and view data in this site you much agree to the Terms of User for CAVD DataSpace below. Please read these terms carefully. By accessing this site you agree to be bound by these terms. These terms are subject to change. Any changes will be incorporated into the terms posted to this site from time to time. If you do not agree with these terms, please do not access the site. If you are not an authorized user of this site you are hereby notified that any access or use of the information herein is strictly prohibited.</span></p>\n" +
             "<p class=\"p3\"><span class=\"s1\"><strong>GENERAL INFORMATION</strong></span></p>\n" +
@@ -47,57 +48,68 @@ public class CDSHelpCenterUtil
             "<p class=\"p2\"><span class=\"s1\">You agree to indemnify, defend and hold FHCRC and its officers, directors, owners, agents, employees, affiliates, licensees, licensors suppliers and subcontractors harmless from and against all claims, losses, liability, cost, and expenses (including attorneys\\' fees) arising from your violation of these Terms of Use or misuse of this Site, or any service, product, information or data provided through this Site. Your obligations under this Section will survive your termination of access to or use of this Site, or nonuse of any service, information or data.</span></p>\n" +
             "<p class=\"p3\"><span class=\"s1\"><strong>APPLICABLE LAW</strong></span></p>\n" +
             "<p class=\"p2\"><span class=\"s1\">These Terms of Use will be construed according to Washington law, without regard to provisions governing conflicts of laws. Any dispute arising under or relating to these Terms of Use, the content, the use of the Site, or any services obtained using this Site, will be resolved exclusively by the state and federal courts of the State of Washington. Your use of the Site constitutes your consent to the jurisdiction and venue of such courts with respect to any such dispute.</span></p>";
-    public static final String HELP_1_3_NAME = "help_1_3";
-    public static final String HELP_1_3_TITLE = "Where does the CDS data come from?";
+    public static final String HELP_1_3_NAME    = "help_1_3";
+    public static final String HELP_1_3_TITLE   = "Where does the CDS data come from?";
     public static final String HELP_1_3_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_1_4_NAME = "help_1_4";
-    public static final String HELP_1_4_TITLE = "What are the different kind of subjects";
+    public static final String HELP_1_4_NAME    = "help_1_4";
+    public static final String HELP_1_4_TITLE   = "What are the different kind of subjects";
     public static final String HELP_1_4_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_1_5_NAME = "help_1_5";
-    public static final String HELP_1_5_TITLE = "What is a gutter plot";
+    public static final String HELP_1_5_NAME    = "help_1_5";
+    public static final String HELP_1_5_TITLE   = "What is a gutter plot";
     public static final String HELP_1_5_CONTENT = HELP_EMPTY_CONTENT;
 
-    public static final String CATEGORY_2_NAME = "group_2";
+    public static final String CATEGORY_2_NAME  = "group_2";
     public static final String CATEGORY_2_TITLE = "Having Problems?";
-    public static final String HELP_2_1_NAME = "help_2_1";
-    public static final String HELP_2_1_TITLE = "My plot is not showing any dots";
+    public static final String HELP_2_1_NAME    = "help_2_1";
+    public static final String HELP_2_1_TITLE   = "My plot is not showing any dots";
     public static final String HELP_2_1_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_2_2_NAME = "help_2_2";
-    public static final String HELP_2_2_TITLE = "My plot is taking to long to load";
+    public static final String HELP_2_2_NAME    = "help_2_2";
+    public static final String HELP_2_2_TITLE   = "My plot is taking to long to load";
     public static final String HELP_2_2_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_2_3_NAME = "help_2_3";
-    public static final String HELP_2_3_TITLE = "Plot counts don't add up";
+    public static final String HELP_2_3_NAME    = "help_2_3";
+    public static final String HELP_2_3_TITLE   = "Plot counts don't add up";
     public static final String HELP_2_3_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_2_4_NAME = "help_2_4";
-    public static final String HELP_2_4_TITLE = "Cannot save filter";
+    public static final String HELP_2_4_NAME    = "help_2_4";
+    public static final String HELP_2_4_TITLE   = "Cannot save filter";
     public static final String HELP_2_4_CONTENT = HELP_EMPTY_CONTENT;
 
-    public static final String CATEGORY_3_NAME = "group_3";
+    public static final String CATEGORY_3_NAME  = "group_3";
     public static final String CATEGORY_3_TITLE = "How to";
-    public static final String HELP_3_1_NAME = "help_3_1";
-    public static final String HELP_3_1_TITLE = "How can I get my data imported into the CDS?";
+    public static final String HELP_3_1_NAME    = "help_3_1";
+    public static final String HELP_3_1_TITLE   = "How can I get my data imported into the CDS?";
     public static final String HELP_3_1_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_3_2_NAME = "help_3_2";
-    public static final String HELP_3_2_TITLE = "How to read Box Plot";
+    public static final String HELP_3_2_NAME    = "help_3_2";
+    public static final String HELP_3_2_TITLE   = "How to read Box Plot";
     public static final String HELP_3_2_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_3_3_NAME = "help_3_3";
-    public static final String HELP_3_3_TITLE = "How do I only show time points from peak data sets?";
+    public static final String HELP_3_3_NAME    = "help_3_3";
+    public static final String HELP_3_3_TITLE   = "How do I only show time points from peak data sets?";
     public static final String HELP_3_3_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_3_4_NAME = "help_3_4";
-    public static final String HELP_3_4_TITLE = "How to use color and filter in the legend.";
+    public static final String HELP_3_4_NAME    = "help_3_4";
+    public static final String HELP_3_4_TITLE   = "How to use color and filter in the legend.";
     public static final String HELP_3_4_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_3_5_NAME = "help_3_5";
-    public static final String HELP_3_5_TITLE = "How to read Binned Plot";
+    public static final String HELP_3_5_NAME    = "help_3_5";
+    public static final String HELP_3_5_TITLE   = "How to read Binned Plot";
     public static final String HELP_3_5_CONTENT = HELP_EMPTY_CONTENT;
-    public static final String HELP_3_6_NAME = "help_3_6";
-    public static final String HELP_3_6_TITLE = "How to select by subject";
+    public static final String HELP_3_6_NAME    = "help_3_6";
+    public static final String HELP_3_6_TITLE   = "How to select by subject";
     public static final String HELP_3_6_CONTENT = HELP_EMPTY_CONTENT;
 
-    public static final String CATEGORY_4_NAME = "group_4";
+    public static final String CATEGORY_4_NAME  = "group_4";
     public static final String CATEGORY_4_TITLE = "Videos";
-    public static final String HELP_4_1_NAME = "help_4_1";
-    public static final String HELP_4_1_TITLE = "CDS Introduction";
+    public static final String HELP_4_1_NAME    = "help_4_1";
+    public static final String HELP_4_1_TITLE   = "CDS Introduction";
     public static final String HELP_4_1_CONTENT = "<iframe src=\"https://player.vimeo.com/video/142939542?color=ff9933&title=0&byline=0&portrait=0\" width=\"500\" height=\"281\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
+
+    public static final String HELP_CENTER_TITLE = "Help Center";
+    public static final String HELP_BUTTON_TEXT = "Help";
+    public static final String SEE_ALL = "See all";
+    public static final Locator.XPathLocator HELP_POPUP_XPATH = Locator.tag("div").withAttribute("id", "helppopup");
+    public static final Locator.XPathLocator HELP_BACK_XPATH = Locator.tag("label").withAttribute("id", "helpback");
+    public static final Locator.XPathLocator HELP_SEARCH_INPUT = Locator.tag("input").withAttribute("id", "helpsearchinput-inputEl");
+    public static final String HELP_SEE_ALL_CSS = "p a.see-all";
+    public static final String HELP_SEARCH_RESULT_CSS = "p.searchresult";
+    public static final String OUTSIDE_POPUP_LOGO_CSS = "div.logo";
+
 
 
     private final BaseWebDriverTest _test;

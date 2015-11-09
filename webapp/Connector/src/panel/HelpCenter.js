@@ -330,7 +330,7 @@ Ext.define('Connector.panel.HelpCenter', {
             template += '<p><a href="' + child.href + '">' + child.text.replace(child.name, '').replace('()', '') + '</a></p>';
         }
         if (category.children.length > 4) {
-            template += '<p><a style="color: mediumorchid" href="' + category.href + '">' + 'See all' + '</a></p>';
+            template += '<p><a class="see-all" href="' + category.href + '">' + 'See all' + '</a></p>';
         }
         return template;
     },
