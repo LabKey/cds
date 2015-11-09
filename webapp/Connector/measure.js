@@ -258,10 +258,10 @@ Ext.define('Connector.measure.Configuration', {
                 },
                 'CDS_GridBase_SubjectId': {
                     sourceMeasureAlias: 'study_Demographics_SubjectId'
-                },
-                'CDS_GridBase_TreatmentSummary': {
-                    sourceMeasureAlias: 'study_Demographics_study_arm_summary'
                 }
+                //'CDS_GridBase_TreatmentSummary': {
+                //    sourceMeasureAlias: 'study_Demographics_study_arm_summary'
+                //}
             },
 
             // Override information about measures (i.e. query columns) defined by the server OR declare a measure.

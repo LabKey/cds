@@ -1999,12 +1999,12 @@ Ext.define('Connector.view.Chart', {
         }
 
         // issue 24244: filtering for emptyTxt category needs to apply a different filter
-        values = values.concat(target == ChartUtils.emptyTxt ? '' : target);
+        values = values.concat(target == ChartUtils.emptyTxt || target == 'null' ? '' : target);
 
         if (multi && selections.length > 0) {
             type = LABKEY.Filter.Types.EQUALS_ONE_OF;
         }
-        else if (target == ChartUtils.emptyTxt) {
+        else if (target == ChartUtils.emptyTxt || target == 'null') {
             type = LABKEY.Filter.Types.ISBLANK;
             allowInverseFilter = false;
         }

@@ -17,10 +17,8 @@ Ext.define('Connector.window.Facet', {
 
     getItems : function()
     {
-        var model = this.dataView.getModel();
-
-        var wrappedMeasures = model.getWrappedMeasures(),
-            extraFilters = model.get('extraFilters'),
+        var model = this.dataView.getModel(),
+            wrappedMeasures = model.getWrappedMeasures(),
             fieldAlias = this.columnMetadata.filterField.toLowerCase(),
             matchFilters = [],
             newMeasures = [];
@@ -32,27 +30,33 @@ Ext.define('Connector.window.Facet', {
         // Include all measures in the request removing the matching filters
         Ext.each(wrappedMeasures, function(wrapped)
         {
-            if (wrapped.measure.alias.toLowerCase() === fieldAlias)
-            {
-                var newMeasure = {
-                    measure: Ext.clone(wrapped.measure)
-                };
+            var wrappedAlias = wrapped.measure.alias.toLowerCase();
 
-                if (wrapped.dateOptions)
+            // base measures should not show up in filtering (e.g. subject filter)
+            if (!wrapped.isBaseMeasure)
+            {
+                if (wrappedAlias === fieldAlias)
                 {
-                    newMeasure.dateOptions = Ext.clone(wrapped.dateOptions);
+                    var newMeasure = {
+                        measure: Ext.clone(wrapped.measure)
+                    };
+
+                    if (wrapped.dateOptions)
+                    {
+                        newMeasure.dateOptions = Ext.clone(wrapped.dateOptions);
+                    }
+
+                    Ext.each(wrapped.filterArray, function(f)
+                    {
+                        matchFilters.push(f);
+                    });
+
+                    newMeasures.push(newMeasure);
                 }
-
-                Ext.each(wrapped.filterArray, function(f)
+                else
                 {
-                    matchFilters.push(f);
-                });
-
-                newMeasures.push(newMeasure);
-            }
-            else
-            {
-                newMeasures.push(wrapped);
+                    newMeasures.push(wrapped);
+                }
             }
         });
 
@@ -79,7 +83,7 @@ Ext.define('Connector.window.Facet', {
         function()
         {
             console.log('Failed to load...');
-        }, this, extraFilters);
+        }, this, model.get('extraFilters'));
 
         return [loader];
     },

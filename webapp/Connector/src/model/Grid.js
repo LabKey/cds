@@ -136,6 +136,9 @@ Ext.define('Connector.model.Grid', {
             if (defaultMeasure.measure.alias.toLowerCase() === subjectAlias)
             {
                 subjectMeasure = defaultMeasure;
+
+                // respected by filter displays
+                subjectMeasure.isBaseMeasure = true;
                 return false;
             }
         });
