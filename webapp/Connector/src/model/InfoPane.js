@@ -9,9 +9,9 @@ Ext.define('Connector.model.InfoPane', {
     fields: [
         {name: 'filter', defaultValue: undefined}, // if bound to a filter
         {name: 'memberStore'}, // type: Store
-        {name: 'dimension'},
-        {name: 'hierarchy'},
-        {name: 'level'},
+        {name: 'dimension', defaultValue: undefined},
+        {name: 'hierarchy', defaultValue: undefined},
+        {name: 'level', defaultValue: undefined},
         {name: 'hierarchyLabel'},
         {name: 'hierarchyItems', defaultValue: []}, // generated array of labels
         {name: 'selectedItems', defaultValue: []},
@@ -23,22 +23,8 @@ Ext.define('Connector.model.InfoPane', {
 
         this.callParent([config]);
 
-        if (!Ext.ModelManager.isRegistered('Connector.model.Members')) {
-            Ext.define('Connector.model.Members', {
-                extend: 'Ext.data.Model',
-                fields: [
-                    {name: 'uniqueName'},
-                    {name: 'name'},
-                    {name: 'count', type: 'int'},
-                    {name: 'hasData', type: 'boolean', convert: function(val, rec) { return rec.data.count > 0; }},
-                    {name: 'hasDetails', type: 'boolean', defaultValue: false},
-                    {name: 'detailLink'}
-                ]
-            });
-        }
-
         var store = Ext.create('Ext.data.Store', {
-            model: 'Connector.model.Members',
+            model: 'Connector.model.InfoPaneMember',
             groupField: 'hasData'
         });
         this.set('memberStore', store);
@@ -85,8 +71,8 @@ Ext.define('Connector.model.InfoPane', {
     /**
      * Can be called to have this model instance produce a set of Connector.model.Filter instances
      * from it's current configuration
-     * @param members - Array of Connector.model.Members instance records
-     * @param totalCount - Number of total Connector.model.Members instance records
+     * @param members - Array of Connector.model.InfoPaneMember instance records
+     * @param totalCount - Number of total Connector.model.InfoPaneMember instance records
      */
     onCompleteFilter : function(members, totalCount) {
         var uniques = [];
@@ -172,7 +158,10 @@ Ext.define('Connector.model.InfoPane', {
             level: undefined
         });
 
-        this.setDimensionHierarchy(dimName, hierName, lvlName);
+        if (dimName || hierName || lvlName)
+        {
+            this.setDimensionHierarchy(dimName, hierName, lvlName);
+        }
     },
 
     _configureFilter : function(hierName) {
@@ -297,10 +286,8 @@ Ext.define('Connector.model.InfoPane', {
         //
         // lookup level first
         //
-//        console.log(arguments);
         var lvl = mdx.getLevel(lvlName), hier, dim;
         if (lvl && lvl.hierarchy) {
-//            console.log('found by lvl:', lvl.uniqueName);
             hier = lvl.hierarchy;
             dim = hier.dimension;
         }
@@ -311,8 +298,6 @@ Ext.define('Connector.model.InfoPane', {
             hier = mdx.getHierarchy(hName);
 
             if (hier && hier.dimension) {
-//                console.log('found by hier:', hier.uniqueName);
-
                 // hidden hierarchy?
                 lvl = hier.levels[1];
                 dim = hier.dimension;
@@ -324,7 +309,6 @@ Ext.define('Connector.model.InfoPane', {
                 dim = mdx.getDimension(dName);
 
                 if (dim) {
-//                    console.log('found by dim:', dim.uniqueName);
                     hier = this.getDefaultHierarchy(dim);
                     lvl = hier.levels[1];
                 }

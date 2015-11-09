@@ -16,10 +16,11 @@ Ext.define('Connector.model.Detail', {
         {name: 'subcount', type: 'int'}, // a value of -1 determines that the subcount is not provided
         {name: 'plotBasedCount', type: 'boolean'},
         {name: 'valueLabel'},
-        {name: 'highlight'},
+        {name: 'highlight', type: 'boolean'},
         {name: 'activeCountLink', type: 'boolean'},
-        {name: 'dimension'},
-        {name: 'hierarchy'},
-        {name: 'level'}
+        {name: 'dimension', defaultValue: undefined},
+        {name: 'hierarchy', defaultValue: undefined},
+        {name: 'level', defaultValue: undefined},
+        {name: 'infoPaneViewClass', defaultValue: undefined} // alternate class name for the info pane to display on click
     ]
 });

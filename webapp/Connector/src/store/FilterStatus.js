@@ -18,10 +18,12 @@ Ext.define('Connector.store.FilterStatus', {
     }],
 
     plotCountRecordsCache: [{
-        label: 'Time Points',
+        label: 'Timepoints',
         count: -1,
         subcount: -1,
-        plotBasedCount: true
+        plotBasedCount: true,
+        activeCountLink: true,
+        infoPaneViewClass: 'Connector.view.TimepointPane'
     }],
 
     constructor : function(config) {
@@ -258,41 +260,64 @@ Ext.define('Connector.store.FilterStatus', {
         this.fireEvent('load', this);
     },
 
-    updatePlotCountRecord : function(label, count, subcount)
+    updatePlotRecordCount : function(label, count)
     {
-        var recData, record;
+        var recIndex = this.findPlotCountRecordCache(label),
+                record;
 
-        // find the existing record cache object and store record so that we can update the count
+        if (recIndex > -1)
+        {
+            this.plotCountRecordsCache[recIndex].count = count;
+
+            // if the store has already been loaded, update that count as well
+            record = this.getById(label);
+            if (record != null)
+            {
+                record.set('count', count);
+            }
+
+            // anytime the count is updated, reset the subcount
+            this.updatePlotRecordSubcount('Timepoints', -1);
+        }
+        else
+        {
+            console.warn('Requested update for plot record that is not defined: ' + label);
+        }
+    },
+
+    updatePlotRecordSubcount : function(label, subcount)
+    {
+        var recIndex = this.findPlotCountRecordCache(label),
+            record;
+
+        if (recIndex > -1)
+        {
+            this.plotCountRecordsCache[recIndex].subcount = subcount;
+
+            // if the store has already been loaded, update that count as well
+            record = this.getById(label);
+            if (record != null)
+            {
+                record.set('subcount', subcount);
+            }
+        }
+        else
+        {
+            console.warn('Requested update for plot record that is not defined: ' + label);
+        }
+    },
+
+    findPlotCountRecordCache : function(label)
+    {
         for (var i = 0; i < this.plotCountRecordsCache.length; i++)
         {
-            recData = this.plotCountRecordsCache[i];
+            var recData = this.plotCountRecordsCache[i];
             if (Ext.isObject(recData) && recData.label == label)
             {
-                // if the store has already been loaded, update that count as well
-                record = this.getById(label);
-
-                if (Ext.isDefined(count))
-                {
-                    recData.count = count;
-                    if (record != null)
-                    {
-                        record.set('count', count);
-                    }
-                }
-
-                if (Ext.isDefined(subcount))
-                {
-                    recData.subcount = subcount;
-                    if (record != null)
-                    {
-                        record.set('subcount', subcount);
-                    }
-                }
-
-                return;
+                return i;
             }
         }
 
-        console.warn('Requested update for plot count record that is not defined: ' + label);
+        return -1;
     }
 });

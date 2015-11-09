@@ -143,7 +143,8 @@ Ext.define('Connector.controller.FilterStatus', {
                 level: filterOrDetail.get('level')
             };
 
-            if (filterOrDetail.$className === 'Connector.model.Filter') {
+            if (filterOrDetail.$className === 'Connector.model.Filter')
+            {
 
                 if (filterOrDetail.isGrid() || filterOrDetail.isAggregated()) {
                     clazz = 'Connector.view.GridPane';
@@ -153,6 +154,10 @@ Ext.define('Connector.controller.FilterStatus', {
                 }
 
                 config.filter = filterOrDetail;
+            }
+            else if (filterOrDetail.get('infoPaneViewClass'))
+            {
+                clazz = filterOrDetail.get('infoPaneViewClass');
             }
 
             //
@@ -259,6 +264,8 @@ Ext.define('Connector.controller.FilterStatus', {
 
     onPlotDataRequest : function(view, measures, includesSelections)
     {
+        var store = this.getStore('FilterStatus');
+
         if (Ext.isArray(measures))
         {
             // Request distinct timepoint information for info pane plot counts or subcounts
@@ -269,21 +276,23 @@ Ext.define('Connector.controller.FilterStatus', {
                 success: function(data)
                 {
                     if (includesSelections)
-                        this.getStore('FilterStatus').updatePlotCountRecord('Time Points', undefined, data.rows.length);
+                    {
+                        store.updatePlotRecordSubcount('Timepoints', data.rows.length);
+                    }
                     else
-                        this.getStore('FilterStatus').updatePlotCountRecord('Time Points', data.rows.length, -1);
+                    {
+                        store.updatePlotRecordCount('Timepoints', data.rows.length);
+                    }
                 }
             });
         }
         else if (includesSelections)
         {
-            // reset just the timepoint subcount
-            this.getStore('FilterStatus').updatePlotCountRecord('Time Points', undefined, -1);
+            store.updatePlotRecordSubcount('Timepoints',  -1);
         }
         else
         {
-            // reset both timepoint count and subcount
-            this.getStore('FilterStatus').updatePlotCountRecord('Time Points', -1, -1);
+            store.updatePlotRecordCount('Timepoints', -1);
         }
     }
 });
